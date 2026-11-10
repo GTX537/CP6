@@ -1,5 +1,56 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC FileContent 原历史归档
+
+实际 Engineering 与 FileContent Owner 为 A/B 写入各自原件。A 的 v11 五成员与独立 PostgreSQL COPY 逐字节一致，B 的独立历史通过校验。W433 已随 #869 采用并完成分支和 DEV-2 收尾。 [W429](../development/evidence/W429-01/DELIVERY.md) · [W433](https://github.com/GTX537/CP6/pull/869)
+
+## 2026-11-10 UTC 新租户创建回执接 Core/RMA
+
+同一原创建回执解析实际 TenantId。正确 Owner 以原计划完成首次 Core 初始化，CLI 重放原字节，实际 Draft 写入及重放各保留一份业务和 journal。W434 已随 #868 采用并完成分支与 DEV-1 收尾。[W433](../development/evidence/W433-01/DELIVERY.md) · [W434](https://github.com/GTX537/CP6/pull/868)
+
+## 2026-11-10 UTC IAM 成员关系角色引用
+
+实际 PostgreSQL 校验角色和用户复合键，原角色停用历史保留。PGT-027 合用同 schema COPY、归属更新与共享引用原生证据。W428 已随 #867 采用并完成分支和 DEV-1 收尾。[W434](../development/evidence/W434-01/DELIVERY.md) · [W428](https://github.com/GTX537/CP6/pull/867)
+
+## 2026-11-10 UTC IAM 用户复合外键
+
+实际 PostgreSQL 迁移保留原历史与主键，合法 IAM 授权通过，晚提交的错属用户及同事务角色写入全部回滚。W425 已随 #866 采用并释放席位。 [W428](../development/evidence/W428-01/DELIVERY.md) · [W425](https://github.com/GTX537/CP6/pull/866)
+
+## 2026-11-10 UTC PGT-003 实库错借
+
+实际 A 后端在 B 事务入口被身份守卫拒绝，真实日志、业务计数和 A/B 原行摘要吻合。W432 已随 #865 采用并完成分支及席位收尾。 [W425](../development/evidence/W425-01/DELIVERY.md) · [W432](https://github.com/GTX537/CP6/pull/865)
+
+## 2026-11-10 UTC PGT-010 实库验证
+
+保存点原生错误、事务内状态恢复、归还再借和 B 独立写入与原托管取消实证共同通过。W422 的 C03 关闭候选已随 #864 采用并完成席位收尾。 [W432](../development/evidence/W432-01/DELIVERY.md) · [W422](https://github.com/GTX537/CP6/pull/864)
+
+## 2026-11-10 UTC ERP 原 C03 隔离候选
+
+受控 `import` 与 `recover` 实测保留原八表成员、原 token、B 隔离与精确回执。候选验收范围为关闭状态。 [W422](../development/evidence/W422-01/DELIVERY.md)
+
+## 2026-11-09 UTC PGT-015 原全局键和受控冲突
+
+采用原生普通角色并发、同事务失败和新事务读权，原受控接收、原字节与独立队列域均有对应证据。 [W431](../development/evidence/W431-01/DELIVERY.md)
+
+## 2026-11-09 UTC 归属更新原生子场景
+
+已验证同 schema 的两层租户归属拒绝，核对实际 xid 和 A/B 全写集。 [W430](../development/evidence/W430-01/DELIVERY.md)
+
+## 2026-11-09 UTC PGT-008 原生权限实证
+
+隔离共享表四条原策略、独立 B 原行、实际密钥列拒绝与原 ERP/Identity/Stock 实证采用。 [W427](../development/evidence/W427-01/DELIVERY.md)
+
+
+## 2026-11-09 UTC PGT-001 正向实证
+
+普通 Stock V2 可信绑定、原审计与 Outbox、同键恢复和 A/B 隔离按原实测采用。 [W426](../development/evidence/W426-01/DELIVERY.md)
+
+
+## 2026-11-09 UTC 原 PGT-023 实测采用
+
+Stock/RMA N10/N100、双组件原生峰值、组件旧池排空和宿主受控重启轮换按原证据采用。 [W424](../development/evidence/W424-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 同源文件原件
 
 W420 同一 W372 库的 A/B 实际 Engineering、FileContent 原件和分别五份原生 COPY 一致，原 RMA 和四条原流水逐字节保持。 [W420](../development/evidence/W420-01/DELIVERY.md)

@@ -188,21 +188,25 @@ public sealed class TenantStorageUnitTests
         => Assert.Equal(failure, (await Assert.ThrowsAsync<TenantStorageException>(action)).Failure);
 }
 
-internal sealed class TenantStorageContext : IContextSourceVerifierV1<Guid>, IContextBindingAuthorityV1
+internal sealed class TenantStorageContext(ContextEntryKindV1 entryKind = ContextEntryKindV1.Background)
+    : IContextSourceVerifierV1<Guid>, IContextBindingAuthorityV1
 {
     internal static readonly Guid A = Guid.Parse("11111111-1111-4111-8111-111111111111");
     internal static readonly Guid B = Guid.Parse("22222222-2222-4222-8222-222222222222");
     public ContextScopeAccessorV1 Accessor { get; } = new();
     public string Host { get; set; } = "main";
     public Task Run(Guid tenant, Func<CancellationToken, Task> action) =>
-        new TrustedContextExecutorV1(this, Accessor).ExecuteAsync(ContextEntryKindV1.Background, tenant, this, action);
+        new TrustedContextExecutorV1(this, Accessor).ExecuteAsync(entryKind, tenant, this, action);
 
     public ValueTask<ContextResolutionInputV1?> VerifyAsync(Guid tenant, CancellationToken cancellationToken = default)
     {
         var now = DateTimeOffset.UtcNow;
-        var actor = new ContextActorV1(tenant, "https://synthetic.invalid", "synthetic-service", ContextActorKindV1.Service, null);
+        var human = entryKind == ContextEntryKindV1.Http;
+        Guid? userId = human ? Guid.NewGuid() : null;
+        var actor = new ContextActorV1(tenant, "https://synthetic.invalid", userId?.ToString("D") ?? "synthetic-service",
+            human ? ContextActorKindV1.Human : ContextActorKindV1.Service, userId);
         return ValueTask.FromResult<ContextResolutionInputV1?>(new(
-            new(ContextEntryKindV1.Background, Host, "synthetic-profile", "synthetic-audience", "storage-test", tenant,
+            new(entryKind, Host, "synthetic-profile", "synthetic-audience", "storage-test", tenant,
                 "synthetic-operation", "synthetic-correlation", ["read"]),
             new(actor, actor, "synthetic-audience", "local", now.AddMinutes(-1), now.AddMinutes(5), "synthetic-authentication", null, ["read"])));
     }

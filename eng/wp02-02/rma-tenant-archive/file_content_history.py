@@ -3,7 +3,9 @@
 
 import argparse
 import csv
+from datetime import datetime
 import hashlib
+from itertools import zip_longest
 import json
 import os
 from pathlib import Path
@@ -12,10 +14,12 @@ import stat
 import subprocess
 import sys
 from typing import NamedTuple
+from uuid import UUID
 
 sys.dont_write_bytecode = True
 import archive
 import file_content_assets as assets
+from privacy_evidence import CSV_LIMIT_LOCK
 
 
 FORMAT = "cp6-file-content-history-v1"
@@ -198,6 +202,189 @@ def capture(query, tenant, owner_oid):
 
 def member_shape(part):
     return {"relation": part.relation, "columns": list(part.columns), "types": list(part.types), "key": list(part.key)}
+
+
+def archive_section(counts):
+    return {"format": FORMAT, "dependencies": DEPENDENCIES, "assetProjection": assets.MEMBER,
+            "members": {filename(key): {**member_shape(part), "rows": counts[key]} for key, part in MEMBERS.items()}}
+
+
+def archive_counts(section):
+    members = section.get("members") if isinstance(section, dict) else None
+    if not isinstance(members, dict) or set(members) != {filename(key) for key in MEMBERS}:
+        raise archive.ArchiveError("file-content-history-archive-section-rejected")
+    counts = {key: members[filename(key)].get("rows") if isinstance(members[filename(key)], dict) else None
+              for key in MEMBERS}
+    if any(type(count) is not int or not 0 <= count < 2**63 for count in counts.values()) \
+            or section != archive_section(counts):
+        raise archive.ArchiveError("file-content-history-archive-section-rejected")
+    return counts
+
+
+def uuid_text(value):
+    if str(UUID(value)) != value:
+        raise ValueError("noncanonical UUID")
+    return value
+
+
+def positive_bigint(value):
+    if not isinstance(value, str) or not re.fullmatch(r"[1-9][0-9]{0,18}", value) or int(value) >= 2**63:
+        raise ValueError("invalid positive bigint")
+    return int(value)
+
+
+def json_value(value):
+    def reject_constant(_):
+        raise ValueError("invalid JSON constant")
+
+    return json.loads(value, parse_constant=reject_constant)
+
+
+def typed_field(name, typ, value):
+    if "\0" in value:
+        raise ValueError("NUL in native field")
+    if typ == "uuid":
+        return uuid_text(value)
+    if typ == "bigint":
+        return positive_bigint(value)
+    if typ == "bytea":
+        if not value and name == "input_bytes":
+            return None
+        if not value.startswith("\\x") or len(value) % 2 or not re.fullmatch(r"[0-9a-f]*", value[2:]):
+            raise ValueError("invalid native bytea")
+        return bytes.fromhex(value[2:])
+    if typ == "uuid[]":
+        if not value.startswith("{") or not value.endswith("}"):
+            raise ValueError("invalid native UUID array")
+        return () if value == "{}" else tuple(uuid_text(item) for item in value[1:-1].split(","))
+    if typ == "jsonb":
+        return json_value(value)
+    if typ == "timestamp with time zone" and value not in ("infinity", "-infinity"):
+        # COPY fixes ISO and UTC. Keep PostgreSQL's extended year and BC representation.
+        stamp = re.fullmatch(r"([0-9]{4,6})(-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}"
+                             r"(?:\.[0-9]{1,6})?\+00)( BC)?", value)
+        if stamp is None or int(stamp[1]) == 0:
+            raise ValueError("invalid native UTC timestamp")
+        year = 1 - int(stamp[1]) if stamp[3] else int(stamp[1])
+        datetime.fromisoformat(f"{(year - 1) % 400 + 1:04d}" + stamp[2] + ":00")
+    return value
+
+
+def archive_rows(bundle, key, tenant, count):
+    part = MEMBERS[key]
+    name = filename(key)
+    with (bundle / name).open(encoding="utf-8", newline="") as stream:
+        rows = csv.reader(stream, strict=True)
+        if next(rows, None) != list(part.columns):
+            raise archive.ArchiveError("file-content-history-archive-header-rejected: " + name)
+        previous = None
+        actual = 0
+        for values in rows:
+            actual += 1
+            if actual > count:
+                raise archive.ArchiveError("file-content-history-archive-count-mismatch: " + name)
+            if len(values) != len(part.columns) or values[0] != str(tenant):
+                raise archive.ArchiveError("file-content-history-archive-row-scope-rejected: " + name)
+            try:
+                row = {field: typed_field(field, typ, value) for field, typ, value in zip(part.columns, part.types, values)}
+            except (ValueError, TypeError) as error:
+                raise archive.ArchiveError("file-content-history-archive-row-type-rejected: " + name) from error
+            primary = tuple(row[field] for field in part.key)
+            if previous is not None and primary <= previous:
+                raise archive.ArchiveError("file-content-history-archive-key-order-rejected: " + name)
+            previous = primary
+            yield row
+        if actual != count:
+            raise archive.ArchiveError("file-content-history-archive-count-mismatch: " + name)
+
+
+def archive_body(row, object_key):
+    body = json_value(row["body_bytes"])
+    if not isinstance(body, dict) or body.get("tenantId") != row["tenant_id"] or body.get("id") != row[object_key] \
+            or str(body.get("version")) != str(row["revision"]) \
+            or hashlib.sha256(row["body_bytes"]).hexdigest() != row["body_digest"]:
+        raise archive.ArchiveError("file-content-history-archive-body-rejected")
+    return body
+
+
+def archive_events(bundle, tenant, counts):
+    heads = {row["file_id"]: row["revision"] for row in archive_rows(bundle, "heads", tenant, counts["heads"])}
+    states, originals = {}, {}
+    for row in archive_rows(bundle, "events", tenant, counts["events"]):
+        file_id, revision = row["file_id"], row["revision"]
+        body = archive_body(row, "file_id")
+        etag = body.get("etag")
+        archive.guid(etag)
+        if body.get("actorId") != row["actor_id"] or revision != states.get(file_id, (0,))[0] + 1:
+            raise archive.ArchiveError("file-content-history-archive-event-rejected")
+        states[file_id] = (revision, etag, row["body_digest"])
+        originals[file_id, revision] = (row["actor_id"], row["body_digest"])
+    if heads != {file_id: state[0] for file_id, state in states.items()}:
+        raise archive.ArchiveError("file-content-history-archive-head-rejected")
+    return states, originals
+
+
+def verify_archive_operations(bundle, tenant, count, originals):
+    for row in archive_rows(bundle, "operations", tenant, count):
+        result = json_value(row["result_bytes"])
+        if row["owner"] != assets.OWNER or row["contract"] != CONTRACT or not isinstance(result, dict) \
+                or result.get("OperationId") != row["operation_id"]:
+            raise archive.ArchiveError("file-content-history-archive-operation-rejected")
+        if row["state"] == "CLOSED":
+            if row["input_bytes"] is not None or row["input_sha256"] or row["object_ids"] \
+                    or result.get("State") != "CLOSED" or result.get("Result") is not None:
+                raise archive.ArchiveError("file-content-history-archive-operation-rejected")
+        else:
+            file_id, revision = result.get("ObjectId"), result.get("Version")
+            if row["state"] != "COMMITTED" or row["input_bytes"] is None or result.get("Kind") != "FILE_CONTENT" \
+                    or len(row["object_ids"]) != 1 or row["object_ids"][0] != file_id \
+                    or hashlib.sha256(row["input_bytes"]).hexdigest() != row["input_sha256"] \
+                    or originals.pop((file_id, positive_bigint(revision)), None) != (row["actor_id"], result.get("Digest")):
+                raise archive.ArchiveError("file-content-history-archive-operation-rejected")
+    if originals:
+        raise archive.ArchiveError("file-content-history-archive-operation-rejected")
+
+
+def archive_references(bundle, tenant, counts, asset_count, states):
+    contents = archive_rows(bundle, "contents", tenant, counts["contents"])
+    projection = assets.member_rows(bundle / assets.MEMBER, tenant, asset_count)
+    common = (set(MEMBERS["contents"].columns) & set(assets.COLUMNS)) - {"byte_length"}
+    parents, external = set(), {}
+    for content, projected in zip_longest(contents, projection):
+        if content is None or projected is None:
+            raise archive.ArchiveError("file-content-history-archive-projection-rejected")
+        row, length = projected
+        key = content["store_path"]
+        if any(content[field] != row[field] for field in common) or content["byte_length"] != length \
+                or states.pop(content["file_id"], None) != (positive_bigint(row["state_version"]), row["state_etag"], row["state_digest"]) \
+                or key in external:
+            raise archive.ArchiveError("file-content-history-archive-projection-rejected")
+        external[key] = (length, content["digest"])
+        parents.add((content["parent_id"], positive_bigint(content["parent_version"]), content["parent_digest"]))
+    if states:
+        raise archive.ArchiveError("file-content-history-archive-projection-rejected")
+    for row in archive_rows(bundle, "parent-versions", tenant, counts["parent-versions"]):
+        key = (row["revision_id"], row["revision"], row["body_digest"])
+        archive_body(row, "revision_id")
+        if key not in parents:
+            raise archive.ArchiveError("file-content-history-archive-parent-rejected")
+        parents.remove(key)
+    if parents:
+        raise archive.ArchiveError("file-content-history-archive-parent-rejected")
+    return external
+
+
+def verify_archive_members(bundle, tenant, counts, asset_count, root):
+    with CSV_LIMIT_LOCK:
+        previous_limit = csv.field_size_limit(2_147_483_647)
+        try:
+            states, originals = archive_events(bundle, tenant, counts)
+            verify_archive_operations(bundle, tenant, counts["operations"], originals)
+            external = archive_references(bundle, tenant, counts, asset_count, states)
+        finally:
+            csv.field_size_limit(previous_limit)
+    for key, (length, digest) in external.items():
+        assets.verify_file(root, key, length, digest)
 
 
 def verify_assets(bundle, tenant, count, root):

@@ -95,18 +95,53 @@ public sealed class ImpersonationPostgreSqlTests(TenantManagementPostgresFixture
     public async Task Http_round_trip_preserves_identity_cookie_audit_and_effective_role_boundaries()
     {
         var (actor, target) = await Seed();
+        int activeMenuId;
         await using (var seed = Context(target.TenantId))
         {
+            var lastMenuId = await seed.Sys_Menus.MaxAsync(menu => (int?)menu.MenuId) ?? 0;
+            activeMenuId = checked(lastMenuId + 1);
             seed.Sys_Roles.AddRange(new Sys_Role { RoleId = 1, RoleName = "active", Enable = true },
                 new Sys_Role { RoleId = 2, RoleName = "disabled", Enable = false }, new Sys_Role { RoleId = 3, RoleName = "foreign-membership", Enable = true });
             foreach (var i in new[] { 1, 2, 3 })
             {
-                seed.Sys_Menus.Add(new Sys_Menu { MenuId = 71025 + i, MenuName = "menu" + i, MenuKey = "w25-imp-" + i, Enable = true });
-                seed.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = i, MenuId = 71025 + i });
+                var menuId = checked(lastMenuId + i);
+                seed.Sys_Menus.Add(new Sys_Menu { MenuId = menuId, MenuName = "menu" + i, MenuKey = $"w25-imp-{target.TenantId:N}-{i}", Enable = true });
+                seed.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = i, MenuId = menuId });
             }
-            seed.Sys_UserRoles.AddRange(new Sys_UserRole { UserId = target.Id, RoleId = 2 },
-                new Sys_UserRole { TenantId = actor.TenantId, UserId = target.Id, RoleId = 3 });
+            seed.Sys_UserRoles.Add(new Sys_UserRole { UserId = target.Id, RoleId = 2 });
             await seed.SaveChangesAsync();
+        }
+        await using (var forged = Context(actor.TenantId))
+        {
+            await using var transaction = await forged.Database.BeginTransactionAsync();
+            forged.Sys_Roles.Add(new Sys_Role { RoleId = 3, RoleName = "actor-tenant role", Enable = true });
+            await forged.SaveChangesAsync();
+            await forged.Database.ExecuteSqlInterpolatedAsync($"""
+                INSERT INTO public."Sys_UserRole" ("Id", "TenantId", "UserId", "RoleId", "CreateDate")
+                VALUES ({Guid.NewGuid()}, {actor.TenantId}, {target.Id}, 3, LOCALTIMESTAMP)
+                """);
+            var error = await Assert.ThrowsAsync<PostgresException>(() => transaction.CommitAsync());
+            Assert.Equal(PostgresErrorCodes.ForeignKeyViolation, error.SqlState);
+            Assert.Equal("FK_Sys_UserRole_TenantUser", error.ConstraintName);
+        }
+        await using (var forged = Context(actor.TenantId))
+        {
+            await using var transaction = await forged.Database.BeginTransactionAsync();
+            forged.Sys_Roles.Add(new Sys_Role { RoleId = 4, RoleName = "actor-tenant role", Enable = true });
+            await forged.SaveChangesAsync();
+            await forged.Database.ExecuteSqlInterpolatedAsync($"""
+                INSERT INTO public."Sys_UserRole" ("Id", "TenantId", "UserId", "RoleId", "CreateDate")
+                VALUES ({Guid.NewGuid()}, {actor.TenantId}, {actor.Id}, 4, LOCALTIMESTAMP),
+                       ({Guid.NewGuid()}, {actor.TenantId}, {actor.Id}, 3, LOCALTIMESTAMP)
+                """);
+            var error = await Assert.ThrowsAsync<PostgresException>(() => transaction.CommitAsync());
+            Assert.Equal(PostgresErrorCodes.ForeignKeyViolation, error.SqlState);
+            Assert.Equal("FK_Sys_UserRole_TenantRole", error.ConstraintName);
+        }
+        await using (var witness = Context(actor.TenantId))
+        {
+            Assert.False(await witness.Sys_Roles.AnyAsync(role => role.RoleId == 3 || role.RoleId == 4));
+            Assert.False(await witness.Sys_UserRoles.AnyAsync(link => link.UserId == target.Id || link.UserId == actor.Id));
         }
         await using var host = await TenantManagementHttpHost.Start(server, includeImpersonation: true);
         var source = host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor), jti: actor.Id.ToString());
@@ -115,7 +150,7 @@ public sealed class ImpersonationPostgreSqlTests(TenantManagementPostgresFixture
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Single(response.Headers.GetValues("Set-Cookie"));
         var result = (await response.Content.ReadFromJsonAsync<ImpersonationStartResult>())!;
-        Assert.Equal(71026, Assert.Single(result.Menus).Id);
+        Assert.Equal(activeMenuId, Assert.Single(result.Menus).Id);
         var impToken = AccessToken(response); var imp = new JwtSecurityTokenHandler().ReadJwtToken(impToken);
         Assert.Equal(target.TenantId.ToString(), imp.Claims.Single(x => x.Type == "tenant_id").Value);
         Assert.Equal(actor.TenantId.ToString(), imp.Claims.Single(x => x.Type == "impersonator_tenant_id").Value);
