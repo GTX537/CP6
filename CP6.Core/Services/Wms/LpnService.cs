@@ -85,12 +85,18 @@ public sealed class LpnService : ILpnService
     {
         if (!_db.Database.IsNpgsql())
             return await command(userName, ct);
+        return await ExecuteOwnedCommandAsync((access, token) => command(access.Actor, token), ct);
+    }
+
+    private async Task<LogisticsUnitDto> ExecuteOwnedCommandAsync(
+        Func<OperationsAccessV1, CancellationToken, Task<LogisticsUnitDto>> command, CancellationToken ct)
+    {
         if (_owner == null || !_owner.Owns(_db))
             throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
         return await _owner.ExecuteAsync(OperationsOwnerV1.Mobile, "lpn-manage", true,
             async (access, token) =>
             {
-                try { return await command(access.Actor, token); }
+                try { return await command(access, token); }
                 // Preserve the existing HTTP business error through the Owner rollback protocol.
                 catch (ArgumentException error) { throw new InvalidOperationException(error.Message, error); }
             }, ct);
@@ -293,9 +299,34 @@ public sealed class LpnService : ILpnService
         EnsureCommand(request);
         if (string.IsNullOrWhiteSpace(request.ToLocationCd))
             throw new ArgumentException("WM-LPN-TARGET-REQUIRED");
+        if (!_db.Database.IsNpgsql()) return await MoveCoreAsync(lpnNo, request, userName, ct);
+        if (_stock is not StockMovementService mover || !mover.Owns(_db))
+            throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
+        var effects = new List<CP6.Entity.DomainModels.Wms.StockTransaction>();
+        var result = await ExecuteOwnedCommandAsync(async (access, token) =>
+        {
+            var moved = await MoveCoreAsync(lpnNo, request, access.Actor, token, access);
+            effects.AddRange(_db.ChangeTracker.Entries<CP6.Entity.DomainModels.Wms.StockTransaction>().Select(e => e.Entity));
+            return moved;
+        }, ct);
+        foreach (var effect in effects) await mover.PublishCommittedCancellationAsync(effect);
+        return result;
+    }
+
+    private async Task<LogisticsUnitDto> MoveCoreAsync(
+        string lpnNo, MoveLpnRequest request, string? userName, CancellationToken ct, OperationsAccessV1? access = null)
+    {
         var key = Key(lpnNo);
         var replay = await ReplayAsync(key, request.OperationId, "move", ct);
-        if (replay is not null) return replay;
+        if (replay is not null)
+        {
+            if (access is not null)
+            {
+                await access.RequireLocation(replay.WarehouseCd, replay.LocationCd, ct);
+                access.AtCommit(token => access.RequireLocation(replay.WarehouseCd, replay.LocationCd, token));
+            }
+            return replay;
+        }
         IDbContextTransaction? tx = await BeginTransactionAsync(ct);
         try
         {
@@ -309,6 +340,11 @@ public sealed class LpnService : ILpnService
                 ?? throw new ArgumentException("WM-V2-LOCATION-NOT-FOUND");
             if (target.IsBlocked)
                 throw new MobileTaskConflictException("WM-V2-LOCATION-BLOCKED");
+            if (access is not null)
+            {
+                await access.GuardNewLocationUse(root.WarehouseCd, root.LocationCd, ct);
+                await access.GuardNewLocationUse(root.WarehouseCd, targetCd, ct);
+            }
             if (root.LocationCd == targetCd) return await MapAsync(root, ct);
             var sourceLocationCd = root.LocationCd;
 
@@ -326,9 +362,11 @@ public sealed class LpnService : ILpnService
                 .ToListAsync(ct);
             var totalQty = contents.Sum(x => x.Qty);
             await EnsureTargetCapacityAsync(target, totalQty, ct);
+            var stockAccess = access is not null && contents.Count > 0
+                ? await access.ActionAsync(OperationsOwnerV1.Stock, "move", ct) : null;
             foreach (var group in contents.GroupBy(x => new { x.ProductCd, x.LotNo }))
             {
-                var moved = await _stock.MoveAsync(new StockMoveRequest
+                var movement = new StockMoveRequest
                 {
                     WarehouseCd = root.WarehouseCd,
                     FromLocationCd = sourceLocationCd,
@@ -338,8 +376,19 @@ public sealed class LpnService : ILpnService
                     Qty = group.Sum(x => x.Qty),
                     OperatorCd = userName,
                     Remark = $"Atomic LPN tree move {root.LpnNo}"
-                }, ct);
-                _ = moved;
+                };
+                if (stockAccess is not null)
+                {
+                    await stockAccess.RequireStockKey(movement.WarehouseCd, sourceLocationCd, movement.ProductCd, movement.LotNo, true, ct);
+                    await stockAccess.RequireStockKey(movement.WarehouseCd, targetCd, movement.ProductCd, movement.LotNo, true, ct);
+                    await ((StockMovementService)_stock).MoveWithinOwnerAsync(movement, access!, ct);
+                    stockAccess.AtCommit(async token =>
+                    {
+                        await stockAccess.RequireStockKey(movement.WarehouseCd, sourceLocationCd, movement.ProductCd, movement.LotNo, false, token);
+                        await stockAccess.RequireStockKey(movement.WarehouseCd, targetCd, movement.ProductCd, movement.LotNo, false, token);
+                    });
+                }
+                else await _stock.MoveAsync(movement, ct);
             }
             var serials = await LoadContentSerialsAsync(contents, ct);
             foreach (var serial in serials)

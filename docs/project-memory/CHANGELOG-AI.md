@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-10 UTC LPN Move 库存事务组合
+
+W439 实际复现非空树 HTTP 500 和空树 HTTP 200 越过暂停；修复后 2 项完整场景通过、0 跳过，十三类原行保持；记录 W438 的 1079.269563 秒完整窗口和 28 小时校准。本窗采用及席位处置以 PR 和 finish 为准。[W439 交付](../development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md)
+
 ## 2026-11-10 UTC LPN 树和内容命令当前授权
 
 W438 四条路径实际复现 HTTP 200 越过暂停，修复后 4 项通过、0 跳过，原写集保持；记录 W437 的 967.600299 秒完整窗口和 28 小时校准。本窗采用及席位处置以 PR 和 finish 为准。[W438 交付](../development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md)
