@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 操作日志当前授权与清理父事务
+
+继续WP02-03其余query/write/export/download和字段V1真实来源；字段审计record已有业务Owner，不因列表仍直接查询而重复实现record；系统日志当前授权不替代完整字段V1、负载/全Main/跨仓和PGT-017验收，完整WMS-CTRL R3审批/Drain/应用仍未采用。 本窗只涉及系统业务操作日志，权限/租户拒绝与原模拟行保持按实际证据记录。 [W453交付](../development/evidence/BUG-907-OPERLOG-AUTHORITY-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 有效功能配置当前查询
 
 继续WP02-03其余query/write/export/download和字段V1真实来源；有效配置DTO不替代R3不可变FeatureContext，WMS-CTRL原生审批/前提/Drain/正式应用协议及PGT-017、全Main/跨仓验收仍NOT_RUN。 当前配置读取仍为既有元数据范围，不宣称R3资格或物理业务效果。 [W452交付](../development/evidence/BUG-905-WMS-FEATURE-QUERY-FENCE/DELIVERY.md)

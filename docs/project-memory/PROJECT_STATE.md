@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC 操作日志当前授权与清理父事务
+
+现存业务操作日志Get/Clear在PostgreSQL采用同Context当前query/delete及签名会话，共同认证根先于实际Sys_OperLogs读取/清理锁，计数/分页与清理处同父事务，最终会话/取消及明确故障/未知处理；原关键词、分页、排序、返回实体/total/count及租户过滤保持，历史非PostgreSQL完整路径与构造器保留。 7项实际Main/PostgreSQL通过、零跳过。模拟日志和身份/控制输入，真实宿主/认证/SQL执行；未清理用户环境日志。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，预算172800秒，40h实采144047/下一158400保持。 [W453交付](../development/evidence/BUG-907-OPERLOG-AUTHORITY-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 有效功能配置当前查询
 
 现存有效功能配置GET移入既有功能控制Owner，复用当前device-manage/签名会话和认证父事务，读取实际配置表SHARE；完整保留原租户/删除过滤、排序、五字段和版本编码，直接PUT410保持；申请路径默认表选择及其余授权/事务逻辑经精确逆向比较保持，并实际复测一个申请完整正常周期。 本窗5项实际Main/PostgreSQL通过、零跳过；明确模拟身份、仓库和配置。此前W451的12项及兼容5项按未变路径和原来源复用，不改称本窗新执行。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，48小时172800秒。 [W452交付](../development/evidence/BUG-905-WMS-FEATURE-QUERY-FENCE/DELIVERY.md)
