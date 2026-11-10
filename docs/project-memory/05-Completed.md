@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC PGT-003 实库错借
+
+实际 A 后端在 B 事务入口被身份守卫拒绝，真实日志、业务计数和 A/B 原行摘要吻合。W432 已随 #865 采用并完成分支及席位收尾。 [W425](../development/evidence/W425-01/DELIVERY.md) · [W432](https://github.com/GTX537/CP6/pull/865)
+
 ## 2026-11-10 UTC PGT-010 实库验证
 
 保存点原生错误、事务内状态恢复、归还再借和 B 独立写入与原托管取消实证共同通过。W422 的 C03 关闭候选已随 #864 采用并完成席位收尾。 [W432](../development/evidence/W432-01/DELIVERY.md) · [W422](https://github.com/GTX537/CP6/pull/864)

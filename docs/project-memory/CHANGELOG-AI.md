@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-10 UTC 登记原 PGT-003
+
+纳入真实物理连接错借、原生守卫 SQL 和零写入证据，记录合并测试源码的定向编译以及 W432 远端收尾。 [W425](../development/evidence/W425-01/DELIVERY.md)
+
 ## 2026-11-10 UTC 登记原 PGT-010
 
 新增普通 A/B 真实 PostgreSQL 保存点回归，登记两类原生错误、连接复用与停机原件，合用 W344 原始 TRX 与数据库日志。同步 W422 正常合并和固定席位释放。 [W432](../development/evidence/W432-01/DELIVERY.md)
