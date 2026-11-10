@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC IAM 用户成员引用
+
+W428 正常 Core EF 将隔离库迁移历史从 224 条推进到 225 条，两个 IAM 用例和实际模拟登录 HTTP 通过。原 PGT-027 待成员关系的角色复合引用。正式 PostgreSQL 为 14 PASS、13 NOT_RUN，原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W428](../development/evidence/W428-01/DELIVERY.md)
+
 ## 2026-11-10 UTC PostgreSQL 物理连接错借
 
 W425 使用实际普通 A 后端触发 B 绑定拒绝，业务命令计数为零，双方原行摘要一致。正式 PostgreSQL 为 14 PASS、13 NOT_RUN。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W425](../development/evidence/W425-01/DELIVERY.md)

@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W425 随 #866 采用并释放 DEV-2。W428 已实测正常 Core EF 升级、IAM 及模拟登录 HTTP，完成用户复合引用。原 PGT-027 的角色引用余项单列。 [W428](./evidence/W428-01/DELIVERY.md)
+
 > W432 随 #865 采用并释放 DEV-2。W425 实测同一 A 后端错借给 B 时零业务执行，采用 PGT-003。W428 保存两份定向编译产物并释放 DEV-1。 [W425](./evidence/W425-01/DELIVERY.md)
 
 > W422 随 #864 采用并释放 DEV-1。W432 结合实库保存点与真实 HTTP 取消、坏连接替换，采用 PGT-010。 [W432](./evidence/W432-01/DELIVERY.md)
