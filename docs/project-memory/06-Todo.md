@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 空间层级七写与货架坐标原子性
+
+继续WP02-03其他实际查询、写入、导出与下载及字段V1真实来源；现存巷道/货架删除改挂、停用/发布、场景差量另核同Context、事务和外部效果，不据本窗提升Stock、完整PGT-017、schema或跨仓。 不把已采用的七写扩为所有空间层级完整治理；旧历史数据清理、发布锚、物理Stock和版本化模型独立。 [W458交付](../development/evidence/BUG-917-SPACE-HIERARCHY-GEOMETRY-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 站点与楼层当前写入及父项决定
 
 继续WP02-03其他实际查询、写入、导出与下载及字段V1真实来源；站点/楼层本窗不采用其余层级、发布、Stock、schema、完整PGT-017或跨仓验收。 楼层编辑保持原站点；启用状态不充当父项存在资格，实际未删除、当前租户有效行即可。 [W457交付](../development/evidence/BUG-915-SPACE-SITE-FLOOR-FENCE/DELIVERY.md)

@@ -34,14 +34,16 @@ public class LocationGeometryService
     /// <summary>
     /// 重算某货架下全部「已放置」库位坐标缓存。不触发 LocationPublished（发布载荷无几何，章04）。
     /// </summary>
-    public async Task RecalcRackLocationsAsync(Guid rackId)
+    public Task RecalcRackLocationsAsync(Guid rackId) => RecalcRackLocationsAsync(rackId, CancellationToken.None);
+
+    internal async Task RecalcRackLocationsAsync(Guid rackId, CancellationToken token)
     {
-        var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId)
+        var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId, token)
                    ?? throw new BizException("E-SPACE-002");
         var locs = await _db.Space_Locations
-            .Where(l => l.RackId == rackId && l.Placed).ToListAsync();
+            .Where(l => l.RackId == rackId && l.Placed).ToListAsync(token);
         foreach (var l in locs)
             (l.AbsX, l.AbsY, l.AbsZ) = ComputeAbs(rack, l.Col!.Value, l.Level!.Value, l.Depth!.Value);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
     }
 }

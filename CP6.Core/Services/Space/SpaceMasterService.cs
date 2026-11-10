@@ -177,10 +177,12 @@ public partial class SpaceMasterService : ISpaceMasterService
     // Zone
     // ══════════════════════════════════════════════════════════════════════
 
-    public async Task<Guid> CreateZoneAsync(ZoneDto d, string? user)
+    private async Task<Guid> CreateZoneCoreAsync(ZoneDto d, string? user, CancellationToken token)
     {
         ValidatePolygon(d.Polygon);  // E-SPACE-006
-        if (await _db.Space_Zones.AnyAsync(x => x.FloorId == d.FloorId && x.ZoneCode == d.ZoneCode))
+        if (_db.Database.IsNpgsql() && !await _db.Space_Floors.AnyAsync(x => x.Id == d.FloorId, token))
+            throw new OrderPriceCorrectionException("SPACE_FLOOR_NOT_FOUND", 404);
+        if (await _db.Space_Zones.AnyAsync(x => x.FloorId == d.FloorId && x.ZoneCode == d.ZoneCode, token))
             throw new BizException("E-SPACE-001");
         var e = new Space_Zone
         {
@@ -196,14 +198,14 @@ public partial class SpaceMasterService : ISpaceMasterService
             CreateDate = DateTime.Now
         };
         _db.Space_Zones.Add(e);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
         return e.Id;
     }
 
-    public async Task UpdateZoneAsync(Guid id, ZoneDto d, string? user)
+    private async Task UpdateZoneCoreAsync(Guid id, ZoneDto d, string? user, CancellationToken token)
     {
         ValidatePolygon(d.Polygon);
-        var e = await _db.Space_Zones.FirstOrDefaultAsync(x => x.Id == id)
+        var e = await _db.Space_Zones.FirstOrDefaultAsync(x => x.Id == id, token)
                 ?? throw new BizException("E-SPACE-001");
         e.ZoneCode   = d.ZoneCode;
         e.ZoneName   = d.ZoneName;
@@ -213,7 +215,7 @@ public partial class SpaceMasterService : ISpaceMasterService
         e.Enable     = d.Enable;
         e.Modifier   = user;
         e.ModifyDate = DateTime.Now;
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
     }
 
     public async Task<List<ZoneDto>> ListZonesAsync(Guid floorId) =>
@@ -223,22 +225,24 @@ public partial class SpaceMasterService : ISpaceMasterService
             ZoneType = x.ZoneType, Polygon = x.Polygon, Color = x.Color, Enable = x.Enable
         }).ToListAsync();
 
-    public async Task DeleteZoneAsync(Guid id)
+    private async Task DeleteZoneCoreAsync(Guid id, CancellationToken token)
     {
-        if (await _db.Space_Aisles.AnyAsync(x => x.ZoneId == id) ||
-            await _db.Space_Racks.AnyAsync(x => x.ZoneId == id))
+        if (await _db.Space_Aisles.AnyAsync(x => x.ZoneId == id, token) ||
+            await _db.Space_Racks.AnyAsync(x => x.ZoneId == id, token))
             throw new BizException("E-SPACE-007");
-        var e = await _db.Space_Zones.FirstOrDefaultAsync(x => x.Id == id);
-        if (e != null) { _db.Space_Zones.Remove(e); await _db.SaveChangesAsync(); }
+        var e = await _db.Space_Zones.FirstOrDefaultAsync(x => x.Id == id, token);
+        if (e != null) { _db.Space_Zones.Remove(e); await _db.SaveChangesAsync(token); }
     }
 
     // ══════════════════════════════════════════════════════════════════════
     // Aisle
     // ══════════════════════════════════════════════════════════════════════
 
-    public async Task<Guid> CreateAisleAsync(AisleDto d, string? user)
+    private async Task<Guid> CreateAisleCoreAsync(AisleDto d, string? user, CancellationToken token)
     {
-        if (await _db.Space_Aisles.AnyAsync(x => x.ZoneId == d.ZoneId && x.AisleCode == d.AisleCode))
+        if (_db.Database.IsNpgsql() && !await _db.Space_Zones.AnyAsync(x => x.Id == d.ZoneId, token))
+            throw new OrderPriceCorrectionException("SPACE_ZONE_NOT_FOUND", 404);
+        if (await _db.Space_Aisles.AnyAsync(x => x.ZoneId == d.ZoneId && x.AisleCode == d.AisleCode, token))
             throw new BizException("E-SPACE-001");
         var e = new Space_Aisle
         {
@@ -251,20 +255,20 @@ public partial class SpaceMasterService : ISpaceMasterService
             CreateDate = DateTime.Now
         };
         _db.Space_Aisles.Add(e);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
         return e.Id;
     }
 
-    public async Task UpdateAisleAsync(Guid id, AisleDto d, string? user)
+    private async Task UpdateAisleCoreAsync(Guid id, AisleDto d, string? user, CancellationToken token)
     {
-        var e = await _db.Space_Aisles.FirstOrDefaultAsync(x => x.Id == id)
+        var e = await _db.Space_Aisles.FirstOrDefaultAsync(x => x.Id == id, token)
                 ?? throw new BizException("E-SPACE-001");
         e.AisleCode  = d.AisleCode;
         e.Polygon    = d.Polygon;
         e.Centerline = d.Centerline;
         e.Modifier   = user;
         e.ModifyDate = DateTime.Now;
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
     }
 
     public async Task<List<AisleDto>> ListAislesAsync(Guid zoneId) =>
@@ -354,25 +358,31 @@ public partial class SpaceMasterService : ISpaceMasterService
     // Rack
     // ══════════════════════════════════════════════════════════════════════
 
-    public async Task<Guid> CreateRackAsync(RackDto d, string? user)
+    private async Task<Guid> CreateRackCoreAsync(RackDto d, string? user, CancellationToken token)
     {
         if (d.ZoneId == Guid.Empty)
             throw new BizException("E-SPACE-002");  // 货架必须归库区
         if (d.Cols < 1 || d.Levels < 1 || d.DepthCount < 1 || d.CellW <= 0 || d.CellH <= 0 || d.CellD <= 0)
             throw new BizException("E-SPACE-002");  // 尺寸不变量
-        if (await _db.Space_Racks.AnyAsync(x => x.ZoneId == d.ZoneId && x.RackCode == d.RackCode))
+        if (await _db.Space_Racks.AnyAsync(x => x.ZoneId == d.ZoneId && x.RackCode == d.RackCode, token))
             throw new BizException("E-SPACE-001");
         // 冗余回填 FloorId（从 Zone 查）
         var floorId = await _db.Space_Zones
             .Where(z => z.Id == d.ZoneId)
-            .Select(z => z.FloorId)
-            .FirstOrDefaultAsync();
+            .Select(z => (Guid?)z.FloorId)
+            .FirstOrDefaultAsync(token);
+        if (_db.Database.IsNpgsql())
+        {
+            if (!floorId.HasValue)
+                throw new OrderPriceCorrectionException("SPACE_ZONE_NOT_FOUND", 404);
+            await RequireCurrentRackAisleAsync(d.ZoneId, d.AisleId, token);
+        }
         var e = new Space_Rack
         {
             Id         = Guid.NewGuid(),
             ZoneId     = d.ZoneId,
             AisleId    = d.AisleId,
-            FloorId    = floorId,
+            FloorId    = floorId.GetValueOrDefault(),
             TemplateId = d.TemplateId,
             RackCode   = d.RackCode,
             X          = d.X,
@@ -390,14 +400,16 @@ public partial class SpaceMasterService : ISpaceMasterService
             CreateDate = DateTime.Now
         };
         _db.Space_Racks.Add(e);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
         return e.Id;
     }
 
-    public async Task UpdateRackAsync(Guid id, RackDto d, string? user)
+    private async Task UpdateRackCoreAsync(Guid id, RackDto d, string? user, CancellationToken token)
     {
-        var e = await _db.Space_Racks.FirstOrDefaultAsync(x => x.Id == id)
+        var e = await _db.Space_Racks.FirstOrDefaultAsync(x => x.Id == id, token)
                 ?? throw new BizException("E-SPACE-002");
+        if (_db.Database.IsNpgsql())
+            await RequireCurrentRackAisleAsync(e.ZoneId, d.AisleId, token);
         // 乐观并发（真库生效；InMemory 测试跳过冲突）
         _db.Entry(e).Property(x => x.RowVersion).OriginalValue = d.RowVersion;
         e.X          = d.X;
@@ -413,10 +425,10 @@ public partial class SpaceMasterService : ISpaceMasterService
         e.AisleId    = d.AisleId;
         e.Modifier   = user;
         e.ModifyDate = DateTime.Now;
-        try { await _db.SaveChangesAsync(); }
+        try { await _db.SaveChangesAsync(token); }
         catch (DbUpdateConcurrencyException) { throw new BizException("E-SPACE-009", 409); }
         // ★ 位姿/尺寸变更后重算其下所有已放置库位的绝对坐标缓存
-        await _geo.RecalcRackLocationsAsync(id);
+        await _geo.RecalcRackLocationsAsync(id, token);
     }
 
     public async Task<List<RackDto>> ListRacksAsync(Guid zoneId) =>
