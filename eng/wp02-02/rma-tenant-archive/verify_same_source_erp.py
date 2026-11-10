@@ -43,7 +43,7 @@ def protect(args, label, sealed):
         for key, rows in history.rows_sql(tenant).items():
             name = history.filename(key)
             member = history.MEMBERS[key]
-            actual = original.copy(native, side + "-" + key, rows + " ORDER BY " + ", ".join(member.key))
+            actual = original.copy(native, f"{side}-file-content-{key}", rows + " ORDER BY " + ", ".join(member.key))
             c03.require(manifest["members"][name]["rows"] == 1 and actual == (bundle / name).read_bytes(),
                         f"Original {side} {name} changed")
     return original.psql(native, "business-partners", f"""
