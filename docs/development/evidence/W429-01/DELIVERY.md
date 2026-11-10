@@ -1,6 +1,6 @@
 # W429-01 · RMA 同一快照的 FileContent 原历史
 
-DEV-2 于 2026-11-09 21:16:13 UTC 从 Main #861 `4eb0e71863eeba4608490b6fd9cb83d7e1124832` 开工。工作树改动限 `archive.py`、`file_content_assets.py`、`file_content_history.py`、`verify_file_content_archive_v11.py`，由 COORD 集中审查并保存分支。当前状态为实现及离线门禁通过，待真实同源 PostgreSQL 验证。
+DEV-2 于 2026-11-09 21:16:13 UTC 从 Main #861 `4eb0e71863eeba4608490b6fd9cb83d7e1124832` 开工。原离线窗口保存于 `edb597ef09c92a1908e7d925dd9835c934cc79fd`。2026-11-10 03:24:04 UTC 由 COORD 在同一分支恢复，合入 Main #869 后的实测源码为 `75af8ff249c0efee853293248d4b4ec5c593816f`，四份归档实现与原检查点一致。
 
 ## 实现和边界
 
@@ -38,10 +38,15 @@ python -B eng/wp02-02/rma-tenant-archive/verify_file_content_archive_v11.py `
   --output "$b/W429-01/offline-final-02"
 ```
 
-## 下一真实来源
+## 同源 PostgreSQL 实测
 
-W420 有两租户真实 RMA 和 FileContent Owner 历史。其 FileContent 夹具使用进程内授权目录，未证明 v10 所需持久 privacy 环境及 Stock 原 route/authority。W423 已因资源延期，其计划中的同源 ERP/v8 尚无实际输出。W419 的停机来源已有完整真实 v10 切面和 Stock/隐私范围，FileContent 部分为空。W419 manifest pin `5a2711b967d03cd9258509ea04d24f0a5a004ff9243f154df23d2e0a7359a446`，物理库 `127.0.0.1:55567/w374_live`，OID `16386`，system `7706139311168619192`，安装 `7679733c-6e8e-4896-b8ae-b7f27a400c65`。
+沿 W422 最后一次停机移交接收 W419 v10 原件，manifest SHA-256 `5a2711b967d03cd9258509ea04d24f0a5a004ff9243f154df23d2e0a7359a446`。实际目标为 `127.0.0.1:55567/w374_live`、OID `16386`、system identifier `7706139311168619192`、安装 `7679733c-6e8e-4896-b8ae-b7f27a400c65`。只启动新增的任务专属副本，复制 11,375 个文件共 226,325,948 字节，前后核对五个控制文件。真实 W420 Owner 驱动沿用已核封存程序集，核对本次的物理身份、安装、数据目录与 A/B 登录绑定。数据和文件均为隔离的合成夹具。 [W419 原件](../W419-01/DELIVERY.md) · [W422 移交](../W422-01/DELIVERY.md) · [W420 Owner 入口](../W420-01/DELIVERY.md) · [复制原件](/D:/CP6-local-test/CP6-72H-20261109/W429-01/source-clone/copy.json)
 
-下一资源窗口可在协调方核准转用的单一隔离副本上，沿 W419 已有 v10 前置，向 W420 已实际通过的 FileContent Owner 驱动传入该物理目标、安装、真实 A/B 及新私有资产根。驱动按现有 RMA 原 COMMITTED 记录定位 actor，走真实 Engineering/FileContent Owner 写入。再用全套 v10 参数附加 `--include-file-content-history`，观察实际 holder 和五个原生 COPY，共同验证原 v10 成员与真实原文件。该路线直接复用 W419 的现行范围数据。本窗的 W419/W420 原数据库和资产保持停机原件，未启动 PostgreSQL 或 CLR。[W419 原件与验证](../W419-01/DELIVERY.md) · [W420 原 Owner 夹具](../W420-01/DELIVERY.md)
+- `native-01` 在 Windows PostgreSQL 18.6 执行。Owner 从 A/B 原 COMMITTED RMA 记录定位各自 actor，经过真实 EngineeringProduct、EngineeringRevision 和 FileContent 入口。A/B 以相同 FileId 和 OperationId 各写入一个不同的 45 字节文件，B 在自己的上传前读 A 时得到 403。原 A/B RMA heads、versions、迁移、共享 Outbound 和原 RMA journal 逐字节一致。全库原 7 条流水逐字节一致，只增加该夹具的 6 条准确 Owner 流水。 [原 Owner 执行](/D:/CP6-local-test/CP6-72H-20261109/W429-01/native-01/owner.stdout)
+- A 使用正常 `archive.py export` 全套 v10 参数加 `--include-file-content-history`，导出和 `verify` 各退出 0。清单 41 个成员，SHA-256 `c4d87a7a6d41376fea0e440c63d3661edc7f7b06340cdc5b0a991cbee22a7050`。PostgreSQL 后端 25880 导出快照 `00000007-00000004-1`，`pg_dump` 与各 COPY 合计 41 次导入同一快照。五个文件历史查询在各自后端先导入该快照，再按 A 租户执行 COPY，均在 holder 提交前完成。独立查询逐份核对原字节。五个历史成员各一行，真实文件长 45 字节，B 校验 A 包得到 `bundle-tenant-mismatch`。 [v11 清单](/D:/CP6-local-test/CP6-72H-20261109/W429-01/native-01/A-v11/bundle/manifest.json) · [原 PostgreSQL 导出日志](/D:/CP6-local-test/CP6-72H-20261109/W429-01/native-01/A-v11-postgres.log)
+- B 的 FileContent 独立历史也正常导出并按 manifest pin 校验，独立 COPY 的五个原成员与 B 制品逐字节相同。B 的同键原件用于隔离验证，组合 v11 的来源为 A。 [B 原件](/D:/CP6-local-test/CP6-72H-20261109/W429-01/native-01/after/B-history/bundle/manifest.json)
+- 首次验证器把旧 v10 的 IAM 投影也设为逐字节相同，导致末尾对账退出 1。实际夹具新增权限触发原 `cp6_sso_admission_revision_v1`，在 17 条 IAM 投影中只有 A 角色 72 的 `revision` 变化。修正私有对账后，复用已执行的导出、校验及原生 COPY。其余 33 个 v10 CSV 逐字节一致，三表 `pg_restore` COPY 数据也相同。资产投影由 0 行变为 1 行。 [IAM 原触发器](../../../../CP6.Persistence.PostgreSql/Migrations/Core/20261019155500_SsoIdentityMappingV1.cs) · [对账结果](/D:/CP6-local-test/CP6-72H-20261109/W429-01/reconcile-01/actual.json)
 
-COORD 已集中审查完整候选差异、显式启用与版本兼容、同 holder 导出链路、原 Owner 图、成员及外部资产完整性和 stage 入口边界。本检查点保留待原生验证的分支。真实同源 v11 的导出、校验和后续采用继续单列。
+本轮 PostgreSQL 起止为 03:36:17.304647–03:36:37.963623 UTC，历时 20.659 秒，真实 Owner 4.337 秒。运行 PostgreSQL 和 CLR 前的可用物理内存分别为 1,668 和 1,657 MiB，可用提交均超过 19,456 MiB。副本 postmaster 正常退出，原件与副本 `pg_ctl status=3`，临时 HBA 已移除，55567 已释放。原件与证据分开保留。 [停机回执](/D:/CP6-local-test/CP6-72H-20261109/W429-01/native-01/stopped.json)
+
+COORD 集中审查了候选差异和真实证据，覆盖显式 opt-in、旧格式兼容、单一 holder、原 Owner 图、外部资产及隔离边界。组合 v11 保持 `recoveryReady=false`。W423 与 W415 的恢复路径、当前权限和消息对账、正式 PGT-021/022 继续按原范围验收。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED，正式 PostgreSQL 为 16 PASS、11 NOT_RUN。
