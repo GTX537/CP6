@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Headers;
+using CP6.Client.Api;
 
 namespace CP6.Client.Core;
 
@@ -10,14 +11,17 @@ namespace CP6.Client.Core;
 public sealed class BearerTokenHandler : DelegatingHandler
 {
     private readonly IClientSessionService _sessions;
+    private readonly ClientOptions? _options;
 
-    public BearerTokenHandler(IClientSessionService sessions) => _sessions = sessions;
+    public BearerTokenHandler(IClientSessionService sessions) : this(sessions, null) { }
+    public BearerTokenHandler(IClientSessionService sessions, ClientOptions? options) { _sessions = sessions; _options = options; }
 
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
         CancellationToken cancellationToken)
     {
         var token = _sessions.AccessToken;
+        RequirePinnedScope(request, token);
         if (!string.IsNullOrWhiteSpace(token))
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -33,8 +37,20 @@ public sealed class BearerTokenHandler : DelegatingHandler
         if (retry == null) return response;
 
         response.Dispose();
-        retry.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _sessions.AccessToken);
+        var refreshed = _sessions.AccessToken;
+        RequirePinnedScope(retry, refreshed);
+        retry.Headers.Authorization = new AuthenticationHeaderValue("Bearer", refreshed);
         return await base.SendAsync(retry, cancellationToken);
+    }
+
+    private void RequirePinnedScope(HttpRequestMessage request, string? token)
+    {
+        if (!request.Options.TryGetValue(ClientRequestScope.Key, out var pinned)) return;
+        if (_options == null || !_options.ApiBaseAddress.Equals(pinned.Source) || _options.Context.DeviceId != pinned.DeviceId)
+            throw new LabelGatewayRecoveryException("RecoveryScopeChanged");
+        var actor = ClientLabelGatewayContext.ReadIdentity(token, pinned.Source, pinned.DeviceId);
+        if (actor.TenantId != pinned.TenantId || actor.ActorId != pinned.ActorId)
+            throw new LabelGatewayRecoveryException("RecoveryScopeChanged");
     }
 
     private static async Task<HttpRequestMessage> CloneAsync(
@@ -48,6 +64,8 @@ public sealed class BearerTokenHandler : DelegatingHandler
         };
         foreach (var header in request.Headers)
             clone.Headers.TryAddWithoutValidation(header.Key, header.Value);
+        foreach (var option in request.Options)
+            clone.Options.Set(new HttpRequestOptionsKey<object?>(option.Key), option.Value);
         if (request.Content != null)
         {
             var bytes = await request.Content.ReadAsByteArrayAsync(ct);

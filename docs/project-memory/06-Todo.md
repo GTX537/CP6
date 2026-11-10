@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 标签当前授权与持久冷恢复
+
+继续原WP02-03/CTX02-A4/A7其余query/write/export/download及字段V1真实来源采用，按实际Owner和直接前置推进；原WP10-09的完整R3来源资格、printIntentRoot/PrintAttempt、设备submission查询及物理确认仍待采用，PGT-017保持NOT_RUN。 Legacy COMPLETED没有改称物理CONFIRMED；标签成功不核销原移动、收发/盘点、tenant source/schema或TRACE范围。 [W444 交付](../development/evidence/BUG-889-LABEL-RECOVERY-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 条码配置与整批恢复
 
 继续原 WP02-03 / CTX02-A4/A7 的剩余 query/write/export/download 与字段 V1 真实来源采用；按实际提供者和 Owner 直接前置推进，PGT-017 未完成全体相关写者采用前保持 NOT_RUN。 配置的 read/parse 全面授权、完整字段注册、tenant source/schema、TRACE 和正式收发/盘点各保留原范围。[W443 交付](../development/evidence/BUG-887-BARCODE-CONFIG-FENCE/DELIVERY.md)

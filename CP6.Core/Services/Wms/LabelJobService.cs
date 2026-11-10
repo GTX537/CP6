@@ -8,12 +8,12 @@ using System.Transactions;
 
 namespace CP6.Core.Services.Wms;
 
-public sealed class LabelJobService : ILabelJobService
+public sealed partial class LabelJobService : ILabelJobService
 {
     private readonly CP6Context _db;
-    public LabelJobService(CP6Context db) => _db = db;
+    public LabelJobService(CP6Context db) : this(db, null, null) { }
 
-    public async Task<IReadOnlyList<LabelTemplateDto>> GetTemplatesAsync(
+    private async Task<IReadOnlyList<LabelTemplateDto>> LegacyGetTemplatesAsync(
         CancellationToken ct = default)
         => (await _db.LabelTemplates.AsNoTracking()
                 .Where(x => !x.IsDeleted)
@@ -21,7 +21,7 @@ public sealed class LabelJobService : ILabelJobService
                 .ToListAsync(ct))
             .Select(MapTemplate).ToList();
 
-    public async Task<LabelTemplateDto> UpsertTemplateAsync(
+    private async Task<LabelTemplateDto> LegacyUpsertTemplateAsync(
         UpsertLabelTemplateRequest request,
         string? userName,
         CancellationToken ct = default)
@@ -45,7 +45,7 @@ public sealed class LabelJobService : ILabelJobService
             row.ModifyDate = DateTime.Now;
         }
         row.TemplateName = request.TemplateName.Trim();
-        row.Format = request.Format.Trim().ToUpperInvariant();
+        row.Format = request.Format;
         row.TemplateBody = request.TemplateBody;
         row.Language = NullIfWhiteSpace(request.Language);
         row.IsEnabled = request.IsEnabled;
@@ -57,7 +57,7 @@ public sealed class LabelJobService : ILabelJobService
         return MapTemplate(row);
     }
 
-    public async Task<PagedResult<LabelJobDto>> GetJobsAsync(
+    private async Task<PagedResult<LabelJobDto>> LegacyGetJobsAsync(
         string? status,
         string? warehouseCd,
         int page,
@@ -88,7 +88,7 @@ public sealed class LabelJobService : ILabelJobService
         };
     }
 
-    public async Task<LabelJobDto> CreateJobAsync(
+    private async Task<LabelJobDto> LegacyCreateJobAsync(
         CreateLabelJobRequest request,
         string? userName,
         CancellationToken ct = default)
@@ -136,7 +136,7 @@ public sealed class LabelJobService : ILabelJobService
         return MapJob(job, template);
     }
 
-    public async Task<LabelJobDto> ClaimAsync(
+    private async Task<LabelJobDto> LegacyClaimAsync(
         string jobNo,
         LabelJobCommand request,
         string? userName,
@@ -177,7 +177,7 @@ public sealed class LabelJobService : ILabelJobService
         return result;
     }
 
-    public async Task<LabelJobDto> CompleteAsync(
+    private async Task<LabelJobDto> LegacyCompleteAsync(
         string jobNo,
         LabelJobCommand request,
         bool success,
@@ -300,14 +300,14 @@ public sealed class LabelJobService : ILabelJobService
         RowVersion = Encode(x.RowVersion)
     };
 
-    private static LabelJobDto MapJob(LabelJob x, LabelTemplate? template) => new()
+    private static LabelJobDto MapJob(LabelJob x, LabelTemplate? template, LabelJobDto? frozen = null) => new()
     {
         JobNo = x.JobNo,
         OperationId = x.OperationId,
         WarehouseCd = x.WarehouseCd,
         TemplateName = x.TemplateName,
-        Format = template?.Format ?? string.Empty,
-        TemplateBody = template?.TemplateBody ?? string.Empty,
+        Format = frozen?.Format ?? template?.Format ?? string.Empty,
+        TemplateBody = frozen?.TemplateBody ?? template?.TemplateBody ?? string.Empty,
         PayloadJson = x.PayloadJson,
         PrinterName = x.PrinterName,
         Status = x.Status,
