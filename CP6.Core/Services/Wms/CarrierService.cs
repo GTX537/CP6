@@ -5,18 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Wms;
 
-public class CarrierService : ICarrierService
+public partial class CarrierService : ICarrierService
 {
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
     private const string Prefix = "SHIP";
 
-    public CarrierService(CP6Context db, IWmsSequenceService seq)
-    {
-        _db = db; _seq = seq;
-    }
+    public CarrierService(CP6Context db, IWmsSequenceService seq) : this(db, seq, null, null) { }
 
-    public async Task<List<CarrierShipment>> SearchAsync(CarrierSearchQuery q)
+    private async Task<List<CarrierShipment>> SearchCoreAsync(CarrierSearchQuery q)
     {
         var query = _db.CarrierShipments.AsNoTracking().Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(q.ShipmentNo)) query = query.Where(x => x.ShipmentNo.Contains(q.ShipmentNo));
@@ -29,10 +26,10 @@ public class CarrierService : ICarrierService
             .Skip((q.Page - 1) * q.PageSize).Take(q.PageSize).ToListAsync();
     }
 
-    public async Task<CarrierShipment?> GetAsync(string shipmentNo)
+    private async Task<CarrierShipment?> GetCoreAsync(string shipmentNo)
         => await _db.CarrierShipments.AsNoTracking().FirstOrDefaultAsync(x => x.ShipmentNo == shipmentNo && !x.IsDeleted);
 
-    public async Task<string> CreateShipmentAsync(CarrierShipmentDto dto, string? userName)
+    private async Task<string> CreateShipmentCoreAsync(CarrierShipmentDto dto, string? userName)
     {
         if (string.IsNullOrWhiteSpace(dto.PackageNo))
             throw new InvalidOperationException("PackageNo required");
@@ -62,7 +59,7 @@ public class CarrierService : ICarrierService
         return no;
     }
 
-    public async Task AddEventAsync(string shipmentNo, CarrierEventDto evt, string? userName)
+    private async Task AddEventCoreAsync(string shipmentNo, CarrierEventDto evt, string? userName)
     {
         var s = await GetTracked(shipmentNo);
         var list = string.IsNullOrWhiteSpace(s.EventsJson)
@@ -74,7 +71,7 @@ public class CarrierService : ICarrierService
         await _db.SaveChangesAsync();
     }
 
-    public async Task MarkPickedUpAsync(string shipmentNo, string? userName)
+    private async Task MarkPickedUpCoreAsync(string shipmentNo, string? userName)
     {
         var s = await GetTracked(shipmentNo);
         if (s.Status != CarrierShipmentStatus.Created)
@@ -86,7 +83,7 @@ public class CarrierService : ICarrierService
         await _db.SaveChangesAsync();
     }
 
-    public async Task MarkInTransitAsync(string shipmentNo, string? userName)
+    private async Task MarkInTransitCoreAsync(string shipmentNo, string? userName)
     {
         var s = await GetTracked(shipmentNo);
         if (s.Status != CarrierShipmentStatus.PickedUp)
@@ -97,7 +94,7 @@ public class CarrierService : ICarrierService
         await _db.SaveChangesAsync();
     }
 
-    public async Task MarkDeliveredAsync(string shipmentNo, string? userName)
+    private async Task MarkDeliveredCoreAsync(string shipmentNo, string? userName)
     {
         var s = await GetTracked(shipmentNo);
         if (s.Status != CarrierShipmentStatus.InTransit && s.Status != CarrierShipmentStatus.PickedUp)
@@ -109,7 +106,7 @@ public class CarrierService : ICarrierService
         await _db.SaveChangesAsync();
     }
 
-    public async Task MarkFailedAsync(string shipmentNo, string reason, string? userName)
+    private async Task MarkFailedCoreAsync(string shipmentNo, string reason, string? userName)
     {
         var s = await GetTracked(shipmentNo);
         if (s.Status == CarrierShipmentStatus.Delivered)

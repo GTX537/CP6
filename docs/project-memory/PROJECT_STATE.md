@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC 承运元数据当前授权与并发追加
+
+现存承运元数据八入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与运单共父事务，原生INSERT/UPDATE故障完整回滚；读取事件前围栏使两次合法追加均完成并保留原事件及EF版本检查，原手工状态/错误与重量费用精度保持。 实际Main/PostgreSQL16项及相关兼容/种子5项通过，零跳过；业务输入明确构造。原375项仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PostgreSQL16 PASS/11 NOT_RUN，48小时预算172800秒。 [W447交付](../development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC IoT当前授权与最新记录投影
 
 现存IoT九入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与业务同父事务，原生传感器/读数/批次故障完整回滚；从实际历史修复最新记录投影并保留迟到及同时间合法输入，模拟值/时间一致且先检查类型和1–100×最多100边界。 实际Main/PostgreSQL26项及兼容/种子5项通过，零跳过，实插10000条；业务输入明确构造。原375项仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PostgreSQL16 PASS/11 NOT_RUN，48小时预算172800秒。 [W446交付](../development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md)

@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 承运元数据当前授权与并发追加
+
+继续原WP02-03/CTX02-A4/A7其余query/write/export/download及字段V1真实来源采用；WP10-52的销售SourceBinding、承运Attempt/Observation、逐行POD/不可变Fact、连续Proof、F0及财务原结果/Outbox同事务尚未实现/采用，可按同一完整合同使用明确模拟业务/服务验收，PGT-017仍NOT_RUN。 当前view须经既有IAM显式分配；原有版本检查保持，手工承运事件不具有POD或外部承运来源资格。 [W447交付](../development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC IoT当前授权与最新记录投影
 
 继续原WP02-03/CTX02-A4/A7其余query/write/export/download和字段V1来源采用；WP10-43完整Source/session、单位/时间政策、REAL-SIM隔离、可信序号/去重、版本化告警与页面尚未实现/采用，可用明确模拟业务/服务按同一合同验收，PGT-017仍NOT_RUN。 当前view须经既有IAM显式分配；旧阈值标志不等于版本化告警，名称或Creator不证明REAL/SIM模式。 [W446交付](../development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md)
