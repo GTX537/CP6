@@ -1,5 +1,28 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 登记原 PGT-015
+
+同步五组实际 PostgreSQL 并发原件、原 CRM Owner 与受控组件证据，并核各自源码和版本。 [W431](../development/evidence/W431-01/DELIVERY.md)
+
+## 2026-11-09 UTC RMA 归属更新实证
+
+登记真实 PostgreSQL 更新、原 ACL、临时列授权回收及原历史比对，正式 PGT-027 待正常 EF/IAM。 [W430](../development/evidence/W430-01/DELIVERY.md)
+
+## 2026-11-09 UTC 原生共享表隔离补验
+
+加入可复现的隔离共享表 DELETE 和原密钥列权限验证，登记 PGT-008。 [W427](../development/evidence/W427-01/DELIVERY.md)
+
+
+## 2026-11-09 UTC 原 Stock V2 验收
+
+复用原 PostgreSQL 通过记录，登记 PGT-001 实测范围及未执行项。 [W426](../development/evidence/W426-01/DELIVERY.md)
+
+
+## 2026-11-09 UTC PostgreSQL 容量原证据
+
+同步 PGT-023 原实测、保留未运行的 N1000 和远端检查点。 [W424](../development/evidence/W424-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 真实同源 RMA 与文件夹具
 
 新增真实 Engineering 与 FileContent Owner 定向驱动及原生五成员对照。 [W420](../development/evidence/W420-01/DELIVERY.md)

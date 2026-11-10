@@ -1,5 +1,18 @@
 # 多对话任务分配与交付
 
+> W430 随 #862 采用。W425 和 W428 保留各自已核实的检查点。W431 采用原 PGT-015。 [W431](./evidence/W431-01/DELIVERY.md)
+
+> W427 随 #861 采用。W428 与 W429 保留待实库检查点。W430 实测同 schema 归属更新。 [W430](./evidence/W430-01/DELIVERY.md)
+
+> W426 随 #860 采用。W425 留远端检查点，W428 在 DEV-1 补共享 IAM 用户引用。W427 完成原 PGT-008 实测。 [W427](./evidence/W427-01/DELIVERY.md)
+
+
+> W424 随 #859 采用。W422 留远端检查点并释放 DEV-1，W425 在 DEV-2 核真实事务入口。W426 采用 PGT-001 实证。 [W426](./evidence/W426-01/DELIVERY.md)
+
+
+> W420 已随 #858 采用。W423 留远端检查点并释放 DEV-2，W422 保留 DEV-1。W424 采用原 PGT-023 实测。 [W424](./evidence/W424-01/DELIVERY.md)
+
+
 > W421 随 #857 采用并释放 DEV-1。W420 实测 W372 同源 RMA、Engineering 和 FileContent 原件。 [W420](./evidence/W420-01/DELIVERY.md)
 
 

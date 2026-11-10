@@ -1,5 +1,28 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC PGT-015 原全局键和受控冲突
+
+采用原生普通角色并发、同事务失败和新事务读权，原受控接收、原字节与独立队列域均有对应证据。 [W431](../development/evidence/W431-01/DELIVERY.md)
+
+## 2026-11-09 UTC 归属更新原生子场景
+
+已验证同 schema 的两层租户归属拒绝，核对实际 xid 和 A/B 全写集。 [W430](../development/evidence/W430-01/DELIVERY.md)
+
+## 2026-11-09 UTC PGT-008 原生权限实证
+
+隔离共享表四条原策略、独立 B 原行、实际密钥列拒绝与原 ERP/Identity/Stock 实证采用。 [W427](../development/evidence/W427-01/DELIVERY.md)
+
+
+## 2026-11-09 UTC PGT-001 正向实证
+
+普通 Stock V2 可信绑定、原审计与 Outbox、同键恢复和 A/B 隔离按原实测采用。 [W426](../development/evidence/W426-01/DELIVERY.md)
+
+
+## 2026-11-09 UTC 原 PGT-023 实测采用
+
+Stock/RMA N10/N100、双组件原生峰值、组件旧池排空和宿主受控重启轮换按原证据采用。 [W424](../development/evidence/W424-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 同源文件原件
 
 W420 同一 W372 库的 A/B 实际 Engineering、FileContent 原件和分别五份原生 COPY 一致，原 RMA 和四条原流水逐字节保持。 [W420](../development/evidence/W420-01/DELIVERY.md)
