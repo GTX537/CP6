@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-10 UTC LPN 创建当前授权
+
+W437 交付候选采用现有 Mobile Owner 和 HTTP 错误映射，实际 PostgreSQL 回归记录修复前 HTTP 200 与修复后 HTTP 401 及原行一致。远端采用以关联 PR 为准。[W437 交付](../development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC LPN 策略当前授权
 
 W436 交付候选采用现有 Mobile Owner 和 HTTP 错误映射，实际 PostgreSQL 回归记录修复前 HTTP 200 与修复后 HTTP 401 及原行一致。远端采用以关联 PR 为准。[W436 交付](../development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md)

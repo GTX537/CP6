@@ -163877,6 +163877,11 @@
       "at": "2026-11-10T06:16:51.848583+00:00",
       "change": "W436 修复 LPN 混装策略当前授权写入并记录真实修复前后结果，核销 W435 远端采用和席位释放。",
       "evidence": "docs/development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-10T06:47:22.323825+00:00",
+      "change": "W437 修复 LPN 创建与回放当前授权写入并记录真实修复前后结果，核销 W436 远端采用和席位释放。",
+      "evidence": "docs/development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -174286,7 +174291,7 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-03",
-        "delivered": "当前IAM/CAS、撤权共同门、对象/字段和多类Owner动作，以及本轮隐私/FORM最终授权已采用。 W435 实际版本化租户暂停与普通 Stock V1 调整共享 PostgreSQL 认证根，两种真实提交顺序、已提交原写集和暂停后的旧会话拒绝通过。 W436 LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。",
+        "delivered": "当前IAM/CAS、撤权共同门、对象/字段和多类Owner动作，以及本轮隐私/FORM最终授权已采用。 W435 实际版本化租户暂停与普通 Stock V1 调整共享 PostgreSQL 认证根，两种真实提交顺序、已提交原写集和暂停后的旧会话拒绝通过。 W436 LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。 W437 LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。",
         "remaining": "全字段注册表与全部现存query/write/export/download写者尚未完成覆盖核销。",
         "next_action": "继续原 CTX02-A4/A7 的实际写者和撤权入口覆盖，其他 LPN 写入仍待逐项核对。PGT-017 保留 NOT_RUN，直到全体相关写者完成共同栅栏采用。",
         "evidence_refs": [
@@ -174335,11 +174340,12 @@
           "docs/development/evidence/W148-01/DELIVERY.md",
           "docs/development/evidence/W310-01/DELIVERY.md",
           "docs/development/evidence/W435-01/DELIVERY.md",
-          "docs/development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md"
+          "docs/development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md",
+          "docs/development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W436-01"
+        "latest_window": "W437-01"
       },
       "wave435_delivery": {
         "status": "CLOSED",
@@ -174363,12 +174369,32 @@
         "seat_released": true
       },
       "wave436_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md",
         "validation": "LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。",
         "tested_baseline": "576fb14ccff0aa6bea1be296a58ec434c865dfe1",
         "issue": "https://github.com/GTX537/CP6/issues/873",
         "actual_result_sha256": "b6e7bc8ef6bb6bfd90bf1a0712c8ba875598da4bf09c88d466ea2cdaab2dc5e6",
+        "formal_case": "PGT-017",
+        "formal_acceptance": "NOT_RUN",
+        "full_task_complete": false,
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/874",
+          "commit": "9a6d8633c2828978853c3ef360ce2013fb52fec4",
+          "target_head": "9a6d8633c2828978853c3ef360ce2013fb52fec4"
+        },
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse",
+        "seat_released": true
+      },
+      "wave437_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md",
+        "validation": "LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。",
+        "tested_baseline": "9a6d8633c2828978853c3ef360ce2013fb52fec4",
+        "issue": "https://github.com/GTX537/CP6/issues/875",
+        "actual_result_sha256": "201a9287cc219c94ffc035602587b57b014920622b776dd82c2021f0dca38d85",
         "formal_case": "PGT-017",
         "formal_acceptance": "NOT_RUN",
         "full_task_complete": false
@@ -208282,10 +208308,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W436",
-      "path": "docs/development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md",
-      "baseline_sha": "576fb14ccff0aa6bea1be296a58ec434c865dfe1",
-      "registered_at": "2026-11-10T00:20:41.876956-05:00",
+      "id": "W437",
+      "path": "docs/development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md",
+      "baseline_sha": "9a6d8633c2828978853c3ef360ce2013fb52fec4",
+      "registered_at": "2026-11-10T06:35:06.867006+00:00",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "COORD"
@@ -208303,31 +208329,31 @@
       "next_action": "继续原 CTX02-A4/A7 的实际写者和撤权入口覆盖，其他 LPN 写入仍待逐项核对。PGT-017 保留 NOT_RUN，直到全体相关写者完成共同栅栏采用。",
       "windows": [
         {
-          "id": "W436-01",
-          "workspace_task": "BUG-873-LPN-POLICY-FENCE",
+          "id": "W437-01",
+          "workspace_task": "BUG-875-LPN-CREATE-FENCE",
           "related_tasks": [
             "WP02-03"
           ],
-          "title": "LPN 混装策略当前租户授权事务",
+          "title": "LPN 创建与回放当前租户授权事务",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/bug-873-lpn-policy-fence",
-          "planned_scope_ref": "docs/development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md",
+          "branch": "codex/bug-875-lpn-create-fence",
+          "planned_scope_ref": "docs/development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "file:Main:CP6.Tests/Erp/LpnPolicyPausePostgreSqlTests.cs",
+            "file:Main:CP6.Tests/Erp/LpnCreatePausePostgreSqlTests.cs",
             "file:Main:CP6.Core/Services/Wms/LpnService.cs",
             "file:Main:CP6.WebApi/Controllers/Wms/LpnsController.cs"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md"
         }
       ],
       "storage": {
@@ -252998,6 +253024,69 @@
           "reuse_worktree": "D:/CP6-worktrees/dev-2",
           "new_worktrees": 0
         }
+      },
+      {
+        "id": "W436",
+        "path": "docs/development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md",
+        "baseline_sha": "576fb14ccff0aa6bea1be296a58ec434c865dfe1",
+        "registered_at": "2026-11-10T00:20:41.876956-05:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "next_action": "继续原 CTX02-A4/A7 的实际写者和撤权入口覆盖，其他 LPN 写入仍待逐项核对。PGT-017 保留 NOT_RUN，直到全体相关写者完成共同栅栏采用。",
+        "windows": [
+          {
+            "id": "W436-01",
+            "workspace_task": "BUG-873-LPN-POLICY-FENCE",
+            "related_tasks": [
+              "WP02-03"
+            ],
+            "title": "LPN 混装策略当前租户授权事务",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/bug-873-lpn-policy-fence",
+            "planned_scope_ref": "docs/development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "file:Main:CP6.Tests/Erp/LpnPolicyPausePostgreSqlTests.cs",
+              "file:Main:CP6.Core/Services/Wms/LpnService.cs",
+              "file:Main:CP6.WebApi/Controllers/Wms/LpnsController.cs"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md",
+            "adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6/pull/874",
+              "commit": "9a6d8633c2828978853c3ef360ce2013fb52fec4",
+              "target_head": "9a6d8633c2828978853c3ef360ce2013fb52fec4"
+            },
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/dev-2",
+          "new_worktrees": 0
+        }
       }
     ],
     "development_priority": {
@@ -255925,6 +256014,15 @@
           "next_native_checkpoint_seconds": 100800,
           "raw": "D:\\CP6-local-test\\CP6-72H-20261109\\after-w435-adoption-calibration.json",
           "raw_sha256": "69433cf3ea0780fcea571367410363c7385ea6a0ee830d16ee2fe57991732cc8"
+        },
+        "w436_adopted": {
+          "native_elapsed_seconds": 99520,
+          "native_sample_utc": "2026-11-10T06:21:59.881799+00:00",
+          "capacity_seconds": 172800,
+          "next_native_checkpoint_seconds": 100800,
+          "native_status": "blocked",
+          "raw": "D:/CP6-local-test/CP6-72H-20261109/after-w436-adoption-calibration.json",
+          "raw_sha256": "aa6a229174f05cc7685f24284d90cf8302e2975aabec9c27fa779460b77a48dd"
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
@@ -258319,7 +258417,7 @@
         {
           "id": "W436-01",
           "workspace_task": "BUG-873-LPN-POLICY-FENCE",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-03"
           ],
@@ -258336,6 +258434,35 @@
           "dispatch": "docs/development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md",
           "issue": "https://github.com/GTX537/CP6/issues/873",
           "hosted_seconds": 39.64099999982864,
+          "formal_acceptance": "NOT_RUN",
+          "finished_at": "2026-11-10T06:21:08.576876+00:00",
+          "final_lease_seconds": 3626.69992,
+          "pr": "https://github.com/GTX537/CP6/pull/874",
+          "adopted_main": "9a6d8633c2828978853c3ef360ce2013fb52fec4",
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "seat_released": true
+        },
+        {
+          "id": "W437-01",
+          "workspace_task": "BUG-875-LPN-CREATE-FENCE",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-03"
+          ],
+          "started_at": "2026-11-10T06:35:06.867006+00:00",
+          "validation_ready_at": "2026-11-10T06:47:22.323825+00:00",
+          "estimate_minutes": [
+            25,
+            40
+          ],
+          "branch": "codex/bug-875-lpn-create-fence",
+          "tested_baseline": "9a6d8633c2828978853c3ef360ce2013fb52fec4",
+          "scope": "LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。",
+          "delivery": "docs/development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md",
+          "dispatch": "docs/development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md",
+          "issue": "https://github.com/GTX537/CP6/issues/875",
+          "hosted_seconds": 41.75,
           "formal_acceptance": "NOT_RUN"
         }
       ],

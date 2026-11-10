@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC LPN 创建当前授权
+
+LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。 W436 已由 #874 进入远端 main，旧分支已清理并完成该窗口席位释放。[W437 交付](../development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC LPN 策略当前授权
 
 LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。 W435 已由 #872 进入远端 main，旧分支已清理并完成该窗口席位释放。[W436 交付](../development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md)
