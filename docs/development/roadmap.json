@@ -163907,6 +163907,11 @@
       "at": "2026-11-10T13:55:59.424729+00:00",
       "change": "W442 修复托盘六个写入口的最终授权、库区/字段限制及编号原子性，核销 W441 的远端采用、含暂停墙钟与原生活跃区间、32小时校准和席位释放。",
       "evidence": "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-10T14:33:18.716747+00:00",
+      "change": "W443 修复条码配置三写入口最终授权及整批失败后的跟踪重刷，核销 W442 远端采用、43.77–44.15分钟实测及席位释放。",
+      "evidence": "docs/development/evidence/BUG-887-BARCODE-CONFIG-FENCE/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -174316,9 +174321,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-03",
-        "delivered": "当前IAM/CAS、撤权共同门、对象/字段和多类Owner动作，以及本轮隐私/FORM最终授权已采用。 W435 实际版本化租户暂停与普通 Stock V1 调整共享 PostgreSQL 认证根，两种真实提交顺序、已提交原写集和暂停后的旧会话拒绝通过。 W436 LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。 W437 LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。 W438 装箱、拆箱、拆分、合并及回放接入既有 Owner 当前授权事务；四条真实 HTTP/PostgreSQL 路径均复现旧请求在暂停后写入，修复后 401 REAUTH_REQUIRED、九类原行逐字节保持，正常树变化、序列号、精确数量、回放和原业务错误通过。 W439 LPN Move 在既有 Mobile Owner 中组合库存父事务原语；真实非空树由原 HTTP 500 恢复完整原子移动，保留八位数量、货主估值质量和四腿实际部门继承。空/非空树均在暂停先提交后 401、十三类原行保持，晚期回执故障完整回滚，范围、回放和原错误协议通过。 W440 设备票据、更新/禁用、快捷 PIN、匿名激活和签名心跳在实际身份共同根中提交；保留合法自失效，数据库 nonce 裁决双宿主重放，设备范围变更使旧客户端身份失效，已有数据升级保留设备原行并要求重新登录。 W441 序列转换与七种生命周期在实际 Mobile Owner 内决定并组合库存父事务；原五种库存请求从 400 恢复共同提交，收货错误后遗留的跟踪对象不再被日志保存刷入；八条真实暂停路径均拒绝，保留序列/库存对账、实际部门继承、原回执与完整七步周期。 W442 托盘六个元数据写者采用同一认证根、当前动作/库区/已有字段和实际 actor；编号与托盘同父事务，原生插入故障后无编号或记录残留；六条暂停及真实撤权竞争均拒绝，保留原状态、三位重量和无库存效果。",
+        "delivered": "当前IAM/CAS、撤权共同门、对象/字段和多类Owner动作，以及本轮隐私/FORM最终授权已采用。 W435 实际版本化租户暂停与普通 Stock V1 调整共享 PostgreSQL 认证根，两种真实提交顺序、已提交原写集和暂停后的旧会话拒绝通过。 W436 LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。 W437 LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。 W438 装箱、拆箱、拆分、合并及回放接入既有 Owner 当前授权事务；四条真实 HTTP/PostgreSQL 路径均复现旧请求在暂停后写入，修复后 401 REAUTH_REQUIRED、九类原行逐字节保持，正常树变化、序列号、精确数量、回放和原业务错误通过。 W439 LPN Move 在既有 Mobile Owner 中组合库存父事务原语；真实非空树由原 HTTP 500 恢复完整原子移动，保留八位数量、货主估值质量和四腿实际部门继承。空/非空树均在暂停先提交后 401、十三类原行保持，晚期回执故障完整回滚，范围、回放和原错误协议通过。 W440 设备票据、更新/禁用、快捷 PIN、匿名激活和签名心跳在实际身份共同根中提交；保留合法自失效，数据库 nonce 裁决双宿主重放，设备范围变更使旧客户端身份失效，已有数据升级保留设备原行并要求重新登录。 W441 序列转换与七种生命周期在实际 Mobile Owner 内决定并组合库存父事务；原五种库存请求从 400 恢复共同提交，收货错误后遗留的跟踪对象不再被日志保存刷入；八条真实暂停路径均拒绝，保留序列/库存对账、实际部门继承、原回执与完整七步周期。 W442 托盘六个元数据写者采用同一认证根、当前动作/库区/已有字段和实际 actor；编号与托盘同父事务，原生插入故障后无编号或记录残留；六条暂停及真实撤权竞争均拒绝，保留原状态、三位重量和无库存效果。 W443 条码 profile/alias 两种 upsert 与 XLSX 实际提交采用当前 actor、barcode-manage 和共同认证根；整批共父事务，第二行失败后不再被日志重刷出一条别名；三条暂停、实际撤权、预览/更新/恢复、原错误及八位转换精度完成真实验收。",
         "remaining": "全字段注册表与全部现存query/write/export/download写者尚未完成覆盖核销。",
-        "next_action": "继续原 WP02-03 / CTX02-A4/A7 的真实余项，盘点剩余可达写者与拒绝后恢复路径；租户 schema/source、完整 TRACE 与 PGT-017 仍待对应实际采用和验收。",
+        "next_action": "继续原 WP02-03 / CTX02-A4/A7 的剩余 query/write/export/download 与字段 V1 真实来源采用；按实际提供者和 Owner 直接前置推进，PGT-017 未完成全体相关写者采用前保持 NOT_RUN。",
         "evidence_refs": [
           "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
           "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
@@ -174371,11 +174376,12 @@
           "docs/development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md",
           "docs/development/evidence/BUG-881-DEVICE-LIFECYCLE-FENCE/DELIVERY.md",
           "docs/development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md",
-          "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md"
+          "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md",
+          "docs/development/evidence/BUG-887-BARCODE-CONFIG-FENCE/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W442-01"
+        "latest_window": "W443-01"
       },
       "wave435_delivery": {
         "status": "CLOSED",
@@ -174519,12 +174525,32 @@
         "seat_released": true
       },
       "wave442_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md",
         "validation": "托盘六个元数据写者采用同一认证根、当前动作/库区/已有字段和实际 actor；编号与托盘同父事务，原生插入故障后无编号或记录残留；六条暂停及真实撤权竞争均拒绝，保留原状态、三位重量和无库存效果。",
         "tested_baseline": "b7dabc8dbcc65b2a03823229ceb598b2b3273ba3",
         "issue": "https://github.com/GTX537/CP6/issues/885",
         "actual_result_sha256": "d65fe5bc65dc551ae369270499d1513ae2c0620350a788e2b7a5d0d773ebf035",
+        "formal_case": "PGT-017",
+        "formal_acceptance": "NOT_RUN",
+        "full_task_complete": false,
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/886",
+          "commit": "a8cae2da20f7e53c3f3342d4617741b61ae41183",
+          "target_head": "a8cae2da20f7e53c3f3342d4617741b61ae41183"
+        },
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse",
+        "seat_released": true
+      },
+      "wave443_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/BUG-887-BARCODE-CONFIG-FENCE/DELIVERY.md",
+        "validation": "条码 profile/alias 两种 upsert 与 XLSX 实际提交采用当前 actor、barcode-manage 和共同认证根；整批共父事务，第二行失败后不再被日志重刷出一条别名；三条暂停、实际撤权、预览/更新/恢复、原错误及八位转换精度完成真实验收。",
+        "tested_baseline": "a8cae2da20f7e53c3f3342d4617741b61ae41183",
+        "issue": "https://github.com/GTX537/CP6/issues/887",
+        "actual_result_sha256": "a91d866d46f39665a82b25596d532d8249854bae118ae70426c91042ad1fb003",
         "formal_case": "PGT-017",
         "formal_acceptance": "NOT_RUN",
         "full_task_complete": false
@@ -208438,10 +208464,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W442",
-      "path": "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md",
-      "baseline_sha": "b7dabc8dbcc65b2a03823229ceb598b2b3273ba3",
-      "registered_at": "2026-11-10T13:18:16.325323+00:00",
+      "id": "W443",
+      "path": "docs/development/evidence/BUG-887-BARCODE-CONFIG-FENCE/DELIVERY.md",
+      "baseline_sha": "a8cae2da20f7e53c3f3342d4617741b61ae41183",
+      "registered_at": "2026-11-10T14:12:24.705212+00:00",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "COORD"
@@ -208456,36 +208482,38 @@
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": false,
-      "next_action": "继续原 WP02-03 / CTX02-A4/A7 的真实余项，盘点剩余可达写者与拒绝后恢复路径；租户 schema/source、完整 TRACE 与 PGT-017 仍待对应实际采用和验收。",
+      "next_action": "继续原 WP02-03 / CTX02-A4/A7 的剩余 query/write/export/download 与字段 V1 真实来源采用；按实际提供者和 Owner 直接前置推进，PGT-017 未完成全体相关写者采用前保持 NOT_RUN。",
       "windows": [
         {
-          "id": "W442-01",
-          "workspace_task": "BUG-885-PALLET-WRITE-FENCE",
+          "id": "W443-01",
+          "workspace_task": "BUG-887-BARCODE-CONFIG-FENCE",
           "related_tasks": [
             "WP02-03"
           ],
-          "title": "托盘元数据与编号父事务",
+          "title": "条码配置与整批失败恢复",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/bug-885-pallet-write-fence",
-          "planned_scope_ref": "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md",
+          "branch": "codex/bug-887-barcode-config-fence",
+          "planned_scope_ref": "docs/development/evidence/BUG-887-BARCODE-CONFIG-FENCE/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "file:Main:CP6.Tests/Erp/PalletWritesPostgreSqlTests.cs",
-            "file:Main:CP6.Core/Services/Wms/PalletService.cs",
-            "file:Main:CP6.Core/Services/Wms/PalletService.Authority.cs",
-            "file:Main:CP6.WebApi/Controllers/Wms/PalletController.cs",
+            "file:Main:CP6.Tests/Erp/BarcodeConfigurationPostgreSqlTests.cs",
+            "file:Main:CP6.Core/Services/Wms/BarcodeWriteAuthority.cs",
+            "file:Main:CP6.Core/Services/Wms/BarcodeProfileService.cs",
+            "file:Main:CP6.Core/Services/Wms/BarcodeAliasService.cs",
+            "file:Main:CP6.WebApi/Controllers/Wms/BarcodeProfilesController.cs",
+            "file:Main:CP6.WebApi/Controllers/Wms/BarcodeAliasesController.cs",
             "file:Main:CP6.WebApi/Program.cs"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/BUG-887-BARCODE-CONFIG-FENCE/DELIVERY.md"
         }
       ],
       "storage": {
@@ -253542,6 +253570,71 @@
           "reuse_worktree": "D:/CP6-worktrees/dev-2",
           "new_worktrees": 0
         }
+      },
+      {
+        "id": "W442",
+        "path": "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md",
+        "baseline_sha": "b7dabc8dbcc65b2a03823229ceb598b2b3273ba3",
+        "registered_at": "2026-11-10T13:18:16.325323+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "next_action": "继续原 WP02-03 / CTX02-A4/A7 的真实余项，盘点剩余可达写者与拒绝后恢复路径；租户 schema/source、完整 TRACE 与 PGT-017 仍待对应实际采用和验收。",
+        "windows": [
+          {
+            "id": "W442-01",
+            "workspace_task": "BUG-885-PALLET-WRITE-FENCE",
+            "related_tasks": [
+              "WP02-03"
+            ],
+            "title": "托盘元数据与编号父事务",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/bug-885-pallet-write-fence",
+            "planned_scope_ref": "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "file:Main:CP6.Tests/Erp/PalletWritesPostgreSqlTests.cs",
+              "file:Main:CP6.Core/Services/Wms/PalletService.cs",
+              "file:Main:CP6.Core/Services/Wms/PalletService.Authority.cs",
+              "file:Main:CP6.WebApi/Controllers/Wms/PalletController.cs",
+              "file:Main:CP6.WebApi/Program.cs"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md",
+            "adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6/pull/886",
+              "commit": "a8cae2da20f7e53c3f3342d4617741b61ae41183",
+              "target_head": "a8cae2da20f7e53c3f3342d4617741b61ae41183"
+            },
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/dev-2",
+          "new_worktrees": 0
+        }
       }
     ],
     "development_priority": {
@@ -256541,10 +256634,22 @@
           "raw": "D:/CP6-local-test/CP6-72H-20261109/eighth-32h-calibration.json",
           "raw_sha256": "1c6a399b3f437cc2da7219249cf4af8ce36289a7cc8e96938821fcdd6bd6d1cc",
           "next_native_calibration_seconds": 129600
+        },
+        "w442_adopted": {
+          "native_elapsed_seconds": 118901,
+          "native_sample_utc": "2026-11-10T14:02:22+00:00",
+          "capacity_seconds": 172800,
+          "native_status": "active",
+          "raw": "D:/CP6-local-test/CP6-72H-20261109/after-w442-adoption-calibration.json",
+          "raw_sha256": "81a650ff3c7dd8ed09f627403c02e33e1e076d78367393d18a26c9334f7844c6",
+          "conservative_native_active_range_seconds": [
+            2626.01116,
+            2649
+          ]
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "继续原 WP02-03 / CTX02-A4/A7 的真实余项，盘点剩余可达写者与拒绝后恢复路径；租户 schema/source、完整 TRACE 与 PGT-017 仍待对应实际采用和验收。",
+      "next_priority": "继续原 WP02-03 / CTX02-A4/A7 的剩余 query/write/export/download 与字段 V1 真实来源采用；按实际提供者和 Owner 直接前置推进，PGT-017 未完成全体相关写者采用前保持 NOT_RUN。",
       "windows": [
         {
           "id": "W327-01",
@@ -259114,7 +259219,7 @@
         {
           "id": "W442-01",
           "workspace_task": "BUG-885-PALLET-WRITE-FENCE",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-03"
           ],
@@ -259132,6 +259237,41 @@
           "dispatch": "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md",
           "issue": "https://github.com/GTX537/CP6/issues/885",
           "hosted_seconds": 129.0,
+          "formal_acceptance": "NOT_RUN",
+          "finished_at": "2026-11-10T14:02:04.336483+00:00",
+          "final_lease_seconds": 2628.01116,
+          "lease_includes_user_pauses": false,
+          "conservative_native_active_range_seconds": [
+            2626.01116,
+            2649
+          ],
+          "pr": "https://github.com/GTX537/CP6/pull/886",
+          "adopted_main": "a8cae2da20f7e53c3f3342d4617741b61ae41183",
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "seat_released": true
+        },
+        {
+          "id": "W443-01",
+          "workspace_task": "BUG-887-BARCODE-CONFIG-FENCE",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-03"
+          ],
+          "started_at": "2026-11-10T14:12:24.705212+00:00",
+          "native_start_sample_seconds": 119473,
+          "validation_ready_at": "2026-11-10T14:33:18.716747+00:00",
+          "estimate_minutes": [
+            40,
+            70
+          ],
+          "branch": "codex/bug-887-barcode-config-fence",
+          "tested_baseline": "a8cae2da20f7e53c3f3342d4617741b61ae41183",
+          "scope": "条码 profile/alias 两种 upsert 与 XLSX 实际提交采用当前 actor、barcode-manage 和共同认证根；整批共父事务，第二行失败后不再被日志重刷出一条别名；三条暂停、实际撤权、预览/更新/恢复、原错误及八位转换精度完成真实验收。",
+          "delivery": "docs/development/evidence/BUG-887-BARCODE-CONFIG-FENCE/DELIVERY.md",
+          "dispatch": "docs/development/evidence/BUG-887-BARCODE-CONFIG-FENCE/DELIVERY.md",
+          "issue": "https://github.com/GTX537/CP6/issues/887",
+          "hosted_seconds": 77.875,
           "formal_acceptance": "NOT_RUN"
         }
       ],

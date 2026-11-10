@@ -1,4 +1,6 @@
 using CP6.Core.Auth;
+using CP6.Core.Services.Erp;
+using CP6.WebApi.Controllers.Erp;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +25,7 @@ public sealed class BarcodeAliasesController : ControllerBase
         CancellationToken ct = default)
         => _service.GetAsync(search, barcodeType, page, pageSize, ct);
 
-    [HttpPost]
+    [HttpPost, OrderOwnerResult]
     [RequirePermission("wms-mobile", "barcode-manage")]
     public async Task<ActionResult<BarcodeAliasDto>> Upsert(
         UpsertBarcodeAliasRequest request,
@@ -40,7 +42,7 @@ public sealed class BarcodeAliasesController : ControllerBase
         }
     }
 
-    [HttpPost("import")]
+    [HttpPost("import"), OrderOwnerResult]
     [RequirePermission("wms-mobile", "barcode-manage")]
     [RequestSizeLimit(10 * 1024 * 1024)]
     public async Task<ActionResult<BarcodeImportResult>> Import(
@@ -56,9 +58,8 @@ public sealed class BarcodeAliasesController : ControllerBase
             return Ok(await _service.ImportAsync(
                 stream, commit, User.Identity?.Name, ct));
         }
-        catch (Exception ex) when (ex is ArgumentException
-                                   or InvalidOperationException
-                                   or FormatException)
+        catch (Exception ex) when (ex is not OrderPriceCorrectionException
+                                   && (ex is ArgumentException or InvalidOperationException or FormatException))
         {
             return BadRequest(new { code = ex.Message, message = ex.Message });
         }

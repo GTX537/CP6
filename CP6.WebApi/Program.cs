@@ -1184,7 +1184,13 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsAccessScopeProvider, CP6.Co
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsRoleScopeService, CP6.Core.Services.Wms.WmsRoleScopeService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsFeatureFlagChangeService, CP6.Core.Services.Wms.WmsFeatureFlagChangeService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileTaskV2Service, CP6.Core.Services.Wms.MobileTaskV2Service>();
-builder.Services.AddScoped<CP6.Core.Services.Wms.IBarcodeAliasService, CP6.Core.Services.Wms.BarcodeAliasService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IBarcodeAliasService>(sp =>
+{
+    var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    return new CP6.Core.Services.Wms.BarcodeAliasService(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
+        http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp));
+});
 builder.Services.AddScoped<CP6.Core.Services.Wms.IClientDeviceService>(sp => new CP6.Core.Services.Wms.ClientDeviceService(
     sp.GetRequiredService<CP6Context>(), sp.GetRequiredService<CP6.Core.Services.Common.ITenantContext>(),
     sp.GetRequiredService<CP6.Core.Services.Sys.IRefreshTokenService>(), sp.GetRequiredService<Microsoft.Extensions.Caching.Distributed.IDistributedCache>(),
@@ -1193,7 +1199,13 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IClientDeviceService>(sp => new
     sp.GetRequiredService<CP6.Core.Services.Sys.IPasswordHasher>()));
 builder.Services.AddScoped<CP6.Core.Services.Wms.ISerialInventoryService, CP6.Core.Services.Wms.SerialInventoryService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ILpnService, CP6.Core.Services.Wms.LpnService>();
-builder.Services.AddScoped<CP6.Core.Services.Wms.IBarcodeProfileService, CP6.Core.Services.Wms.BarcodeProfileService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IBarcodeProfileService>(sp =>
+{
+    var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    return new CP6.Core.Services.Wms.BarcodeProfileService(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
+        http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp));
+});
 builder.Services.AddScoped<CP6.Core.Services.Wms.ILabelJobService, CP6.Core.Services.Wms.LabelJobService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileTaskNotifier, CP6.WebApi.Services.SignalRMobileTaskNotifier>();
 
