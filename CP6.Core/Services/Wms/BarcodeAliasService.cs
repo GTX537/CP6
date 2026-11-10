@@ -2,6 +2,8 @@ using System.Globalization;
 using System.Security.Cryptography;
 using ClosedXML.Excel;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Platform;
+using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -23,7 +25,12 @@ public sealed class BarcodeAliasService : IBarcodeAliasService
 
     private readonly CP6Context _db;
 
-    public BarcodeAliasService(CP6Context db) => _db = db;
+    private readonly BarcodeWriteAuthority _authority;
+    public BarcodeAliasService(CP6Context db) : this(db, null, null) { }
+    public BarcodeAliasService(CP6Context db, IamAdministrationV1? administration, TenantManagementSessionV1? session)
+    {
+        _db = db; _authority = new BarcodeWriteAuthority(db, administration, session);
+    }
 
     public async Task<PagedResult<BarcodeAliasDto>> GetAsync(
         string? search,
@@ -67,6 +74,12 @@ public sealed class BarcodeAliasService : IBarcodeAliasService
         CancellationToken ct = default)
     {
         Validate(request);
+        return await _authority.Execute(userName, (actor, token) => UpsertCoreAsync(request, actor, token), ct);
+    }
+
+    private async Task<BarcodeAliasDto> UpsertCoreAsync(UpsertBarcodeAliasRequest request,
+        string? userName, CancellationToken ct)
+    {
         var barcode = request.Barcode.Trim();
         var row = await _db.BarcodeAliases.FirstOrDefaultAsync(
             x => x.Barcode == barcode && !x.IsDeleted, ct);
@@ -131,23 +144,35 @@ public sealed class BarcodeAliasService : IBarcodeAliasService
 
         if (commit && parsed.All(x => x.error is null))
         {
-            IDbContextTransaction? tx = _db.Database.IsRelational()
-                ? await _db.Database.BeginTransactionAsync(ct)
-                : null;
-            try
+            if (_db.Database.IsNpgsql())
             {
-                foreach (var item in parsed)
-                    await UpsertAsync(item.request!, userName, ct);
-                if (tx is not null) await tx.CommitAsync(ct);
+                await _authority.Execute(userName, async (actor, token) =>
+                {
+                    // Every row was validated at the workbook boundary. One parent owns the batch.
+                    foreach (var item in parsed) await UpsertCoreAsync(item.request!, actor, token);
+                    return true;
+                }, ct);
             }
-            catch
+            else
             {
-                if (tx is not null) await tx.RollbackAsync(ct);
-                throw;
-            }
-            finally
-            {
-                if (tx is not null) await tx.DisposeAsync();
+                IDbContextTransaction? tx = _db.Database.IsRelational()
+                    ? await _db.Database.BeginTransactionAsync(ct)
+                    : null;
+                try
+                {
+                    foreach (var item in parsed)
+                        await UpsertCoreAsync(item.request!, userName, ct);
+                    if (tx is not null) await tx.CommitAsync(ct);
+                }
+                catch
+                {
+                    if (tx is not null) await tx.RollbackAsync(ct);
+                    throw;
+                }
+                finally
+                {
+                    if (tx is not null) await tx.DisposeAsync();
+                }
             }
         }
 
@@ -191,7 +216,7 @@ public sealed class BarcodeAliasService : IBarcodeAliasService
 
     private static void Apply(BarcodeAlias row, UpsertBarcodeAliasRequest request)
     {
-        row.BarcodeType = request.BarcodeType.Trim().ToUpperInvariant();
+        row.BarcodeType = request.BarcodeType;
         row.TargetKey = request.TargetKey.Trim();
         row.ProductCd = NullIfWhiteSpace(request.ProductCd);
         row.LotNo = NullIfWhiteSpace(request.LotNo);

@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 条码配置与整批恢复
+
+继续原 WP02-03 / CTX02-A4/A7 的剩余 query/write/export/download 与字段 V1 真实来源采用；按实际提供者和 Owner 直接前置推进，PGT-017 未完成全体相关写者采用前保持 NOT_RUN。 配置的 read/parse 全面授权、完整字段注册、tenant source/schema、TRACE 和正式收发/盘点各保留原范围。[W443 交付](../development/evidence/BUG-887-BARCODE-CONFIG-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 托盘元数据与编号事务
 
 继续原 WP02-03 / CTX02-A4/A7 的真实余项，盘点剩余可达写者与拒绝后恢复路径；租户 schema/source、完整 TRACE 与 PGT-017 仍待对应实际采用和验收。 正式收发/盘点和新版 TRACE 来源原件/摘要/UI 未核销；本窗标记发运保持既有托盘状态含义。[W442 交付](../development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md)

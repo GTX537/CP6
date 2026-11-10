@@ -1,4 +1,6 @@
 using CP6.Core.Auth;
+using CP6.Core.Services.Erp;
+using CP6.WebApi.Controllers.Erp;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +20,7 @@ public sealed class BarcodeProfilesController : ControllerBase
     public Task<IReadOnlyList<BarcodeProfileDto>> Get(CancellationToken ct)
         => _service.GetAsync(ct);
 
-    [HttpPost]
+    [HttpPost, OrderOwnerResult]
     [RequirePermission("wms-mobile", "barcode-manage")]
     public async Task<ActionResult<BarcodeProfileDto>> Upsert(
         UpsertBarcodeProfileRequest request, CancellationToken ct)

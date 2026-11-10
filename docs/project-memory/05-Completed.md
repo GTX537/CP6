@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC 条码配置与整批恢复
+
+条码 profile/alias 两种 upsert 与 XLSX 实际提交采用当前 actor、barcode-manage 和共同认证根；整批共父事务，第二行失败后不再被日志重刷出一条别名；三条暂停、实际撤权、预览/更新/恢复、原错误及八位转换精度完成真实验收。 W442 已经 #886 进入远端 main；准确任务分支已删，DEV-2 干净释放后复用。[W443 交付](../development/evidence/BUG-887-BARCODE-CONFIG-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 托盘元数据与编号事务
 
 托盘六个元数据写者采用同一认证根、当前动作/库区/已有字段和实际 actor；编号与托盘同父事务，原生插入故障后无编号或记录残留；六条暂停及真实撤权竞争均拒绝，保留原状态、三位重量和无库存效果。 W441 已经 #884 采用到远端 main；准确任务分支已删，固定 DEV-2 释放后按同一规则复用。[W442 交付](../development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md)

@@ -2,6 +2,8 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Platform;
+using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +12,12 @@ namespace CP6.Core.Services.Wms;
 public sealed class BarcodeProfileService : IBarcodeProfileService
 {
     private readonly CP6Context _db;
-    public BarcodeProfileService(CP6Context db) => _db = db;
+    private readonly BarcodeWriteAuthority _authority;
+    public BarcodeProfileService(CP6Context db) : this(db, null, null) { }
+    public BarcodeProfileService(CP6Context db, IamAdministrationV1? administration, TenantManagementSessionV1? session)
+    {
+        _db = db; _authority = new BarcodeWriteAuthority(db, administration, session);
+    }
 
     public async Task<IReadOnlyList<BarcodeProfileDto>> GetAsync(
         CancellationToken ct = default)
@@ -27,6 +34,12 @@ public sealed class BarcodeProfileService : IBarcodeProfileService
         CancellationToken ct = default)
     {
         Validate(request);
+        return await _authority.Execute(userName, (actor, token) => UpsertCoreAsync(request, actor, token), ct);
+    }
+
+    private async Task<BarcodeProfileDto> UpsertCoreAsync(UpsertBarcodeProfileRequest request,
+        string? userName, CancellationToken ct)
+    {
         BarcodeProfile? row = null;
         if (request.Id.HasValue)
             row = await _db.BarcodeProfiles.FirstOrDefaultAsync(
@@ -45,7 +58,7 @@ public sealed class BarcodeProfileService : IBarcodeProfileService
             row.ModifyDate = DateTime.Now;
         }
         row.ProfileName = request.ProfileName.Trim();
-        row.Format = request.Format.Trim().ToUpperInvariant();
+        row.Format = request.Format;
         row.Pattern = request.Pattern;
         row.MappingJson = request.MappingJson;
         row.Priority = request.Priority;
