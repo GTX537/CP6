@@ -30,6 +30,9 @@ public sealed partial class WmsFeatureFlagChangeService
         CancellationToken ct = default)
         => ExecuteFeatureRequest(true, (_, token) => GetCoreAsync(query, token), ct);
 
+    public Task<IReadOnlyList<WmsFeatureFlagDto>> GetFeaturesAsync(CancellationToken ct = default)
+        => ExecuteFeatureRequest(true, (_, token) => GetFeaturesCoreAsync(token), ct, featureConfiguration: true);
+
     public async Task CancelAsync(Guid id, Guid requestedById, string? requestedBy, CancellationToken ct = default)
     {
         await ExecuteFeatureRequest(false, async (actor, token) =>
@@ -41,7 +44,7 @@ public sealed partial class WmsFeatureFlagChangeService
     }
 
     private async Task<T> ExecuteFeatureRequest<T>(bool read,
-        Func<UserPermissionContext?, CancellationToken, Task<T>> body, CancellationToken ct)
+        Func<UserPermissionContext?, CancellationToken, Task<T>> body, CancellationToken ct, bool featureConfiguration = false)
     {
         if (!_db.Database.IsNpgsql()) return await body(null, ct);
         if (_administration?.Owns(_db) != true || _session == null)
@@ -52,7 +55,8 @@ public sealed partial class WmsFeatureFlagChangeService
             return await _administration.ExecuteCurrentAsync("wms-mobile:device-manage", _session.CurrentActor,
                 async (actor, token) =>
                 {
-                    await _db.Database.ExecuteSqlRawAsync("LOCK TABLE public.\"T_WmsFeatureFlagChange\" IN "
+                    await _db.Database.ExecuteSqlRawAsync("LOCK TABLE public.\""
+                        + (featureConfiguration ? "T_WmsFeatureFlag" : "T_WmsFeatureFlagChange") + "\" IN "
                         + (read ? "SHARE" : "SHARE ROW EXCLUSIVE") + " MODE", token);
                     if (!read)
                         await _db.Database.ExecuteSqlRawAsync("""

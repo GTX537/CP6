@@ -1,35 +1,24 @@
+using CP6.WebApi.Controllers.Erp;
 using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Controllers.Wms;
 
 [ApiController]
+[OrderOwnerResult]
 [Route("api/v2/admin/wms-features")]
 [Authorize]
 public sealed class WmsFeatureFlagsController : ControllerBase
 {
-    private readonly CP6.Core.EFDbContext.CP6Context _db;
-    public WmsFeatureFlagsController(CP6.Core.EFDbContext.CP6Context db) => _db = db;
+    private readonly IWmsFeatureFlagChangeService _service;
+    public WmsFeatureFlagsController(IWmsFeatureFlagChangeService service) => _service = service;
 
     [HttpGet]
     [RequirePermission("wms-mobile", "device-manage")]
-    public async Task<IReadOnlyList<WmsFeatureFlagDto>> Get(CancellationToken ct)
-        => await _db.WmsFeatureFlags.AsNoTracking()
-            .Where(x => !x.IsDeleted)
-            .OrderBy(x => x.WarehouseCd)
-            .Select(x => new WmsFeatureFlagDto
-            {
-                WarehouseCd = x.WarehouseCd,
-                ProductionMoveEnabled = x.ProductionMoveEnabled,
-                SerialLpnEnabled = x.SerialLpnEnabled,
-                ScanRetentionDays = x.ScanRetentionDays,
-                RowVersion = x.RowVersion == null
-                    ? string.Empty
-                    : Convert.ToBase64String(x.RowVersion)
-            }).ToListAsync(ct);
+    public Task<IReadOnlyList<WmsFeatureFlagDto>> Get(CancellationToken ct)
+        => _service.GetFeaturesAsync(ct);
 
     [HttpPut("{warehouseCd}")]
     [RequirePermission("wms-mobile", "device-manage")]

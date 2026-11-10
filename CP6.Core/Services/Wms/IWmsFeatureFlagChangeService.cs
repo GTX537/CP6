@@ -14,6 +14,8 @@ public interface IWmsFeatureFlagChangeService
         WmsFeatureFlagChangeQuery query,
         CancellationToken ct = default);
 
+    Task<IReadOnlyList<WmsFeatureFlagDto>> GetFeaturesAsync(CancellationToken ct = default);
+
     Task CancelAsync(
         Guid id,
         Guid requestedById,
