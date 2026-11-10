@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 接续实际租户创建和同源恢复
+
+W433 已保存最新远端检查点并释放 DEV-2。并入最新主线后，复用已核实的锁定包构建 CLI 与测试，执行原创建回执到 Core 和 RMA 的贯通。继续 W429、W423、W415 的同源余项及 PGT-017 的真实暂停提交顺序。[W433 检查点](https://github.com/GTX537/CP6/blob/d84bcf2436cc672abcbf1bfa2fabc40e6f5e451a/docs/development/evidence/W433-01/DELIVERY.md)
+
 ## 2026-11-10 UTC 继续创建回执与角色引用
 
 接续 W433 的完整构建及实际租户创建到 Core/RMA。原 PGT-027 还需在 PostgreSQL 成员关系中完成角色复合引用，保留原角色停用和历史可读语义。W429、W423、W415 按实际原件和资源继续同源恢复，原 PGT-017 继续两个真实提交顺序。 [本期计划](../development/planning/20261109-codex-72h-execution.md)
