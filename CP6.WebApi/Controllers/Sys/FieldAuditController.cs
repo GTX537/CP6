@@ -23,7 +23,8 @@ public class FieldAuditController : ControllerBase
 {
     private readonly CP6Context _db;
     private readonly FieldAuditReadOwnerV1? _owner;
-    public FieldAuditController(CP6Context db, FieldAuditReadOwnerV1? owner = null) { _db = db; _owner = owner; }
+    private readonly FieldAuditListOwnerV1? _listOwner;
+    public FieldAuditController(CP6Context db, FieldAuditReadOwnerV1? owner = null, FieldAuditListOwnerV1? listOwner = null) { _db = db; _owner = owner; _listOwner = listOwner; }
 
     /// <summary>分页查询字段审计日志。资源键 sys-field-audit（MenuKey 由 RoutePath 派生），操作点 query。</summary>
     [HttpGet]
@@ -37,6 +38,9 @@ public class FieldAuditController : ControllerBase
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
     {
+        if (_db.Database.IsNpgsql())
+            return Ok(await (_listOwner ?? throw new OrderPriceCorrectionException("FIELD_AUDIT_LIST_AUTHORITY_UNAVAILABLE", 503))
+                .ListAsync(entityName, entityKey, userId, from, to, page, pageSize, HttpContext.RequestAborted));
         page = Math.Max(1, page);                 // 防 page<=0 → 负数 Skip 抛异常
         pageSize = Math.Clamp(pageSize, 1, 200);  // 防一次拉全表
 

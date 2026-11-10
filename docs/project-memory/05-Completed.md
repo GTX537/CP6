@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC 字段审计摘要当前查询
+
+现存字段审计摘要列表采用同Context当前sys-field-audit query与实际签名会话，认证根先于实际Sys_FieldAuditLogs SHARE，Count/分页与最终会话/取消处同父事务；完整原筛选、1..200分页约束、双键排序和摘要解析保持，原record业务Owner/映射/安全投影/游标不变。 W453通过#908进入远端main，WP02-03交付核销，分支准确删除且DEV-2干净释放后复用。本窗最后远端/分支/工作区/席位以PR与finish为准。 [W454交付](../development/evidence/BUG-909-FIELD-AUDIT-LIST-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 操作日志当前授权与清理父事务
 
 现存业务操作日志Get/Clear在PostgreSQL采用同Context当前query/delete及签名会话，共同认证根先于实际Sys_OperLogs读取/清理锁，计数/分页与清理处同父事务，最终会话/取消及明确故障/未知处理；原关键词、分页、排序、返回实体/total/count及租户过滤保持，历史非PostgreSQL完整路径与构造器保留。 W452通过#906进入远端main，WP02-03交付核销；分支准确删除且DEV-2干净释放后复用。本窗远端采用/分支/席位以PR与finish为准。 [W453交付](../development/evidence/BUG-907-OPERLOG-AUTHORITY-FENCE/DELIVERY.md)

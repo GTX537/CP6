@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-10 UTC 字段审计摘要当前查询
+
+W454原产品3项列表当前授权/顺序失败、正常摘要及已有record2项通过；最终5项实际Main/PostgreSQL通过、零跳过。正常筛选、不可读null、200上限与尾页/同时间Id排序、其他租户及原审计保持。W453实测17.39–17.47分钟，比25–40估计短，同框架非物理Owner参考15–30；本次单查询估计15–25，不重复加租期或进程时间。 [W454交付](../development/evidence/BUG-909-FIELD-AUDIT-LIST-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 操作日志当前授权与清理父事务
 
 W453原产品6项回归/1项正常，最终7项实际Main/PostgreSQL通过；原DELETE故障500且3条原行保持，最终503/原行保持及恢复清理，未把原数据库回滚说成旧残留。首次fixture编译将Task<int>传入HTTP观察器失败，已用原生控制观察器修正并保留。W452原生区间22.70–27.58分钟与15–25预测重叠，租期22.73；宽度来自开工/收尾采样间隔，本窗补紧贴开工与finish采样，不以租期代替原生计时。 [W453交付](../development/evidence/BUG-907-OPERLOG-AUTHORITY-FENCE/DELIVERY.md)
