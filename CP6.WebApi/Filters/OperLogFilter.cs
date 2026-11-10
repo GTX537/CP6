@@ -1,12 +1,14 @@
 using System.Diagnostics;
 using System.Security.Claims;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Common;
 using CP6.Core.Services.Space.Observability;
 using CP6.Core.Utilities;
 using CP6.Entity.DomainModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Filters;
 
@@ -145,8 +147,21 @@ public class OperLogFilter : IAsyncActionFilter
         {
             try
             {
-                _context.Sys_OperLogs.Add(log);
-                await _context.SaveChangesAsync();
+                if (_context.Database.IsNpgsql())
+                {
+                    // Saving the log must not flush business changes left tracked by a rejected action.
+                    await using var scope = context.HttpContext.RequestServices.CreateAsyncScope();
+                    var services = scope.ServiceProvider;
+                    services.GetRequiredService<ITenantContext>().CurrentTenantId = log.TenantId;
+                    var logContext = services.GetRequiredService<CP6Context>();
+                    logContext.Sys_OperLogs.Add(log);
+                    await logContext.SaveChangesAsync();
+                }
+                else
+                {
+                    _context.Sys_OperLogs.Add(log);
+                    await _context.SaveChangesAsync();
+                }
             }
             catch (Exception ex)
             {

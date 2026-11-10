@@ -163992,6 +163992,11 @@
       "at": "2026-11-10T23:44:08.953303+00:00",
       "change": "W459采用场景导入及D7当前事务，9项实际Main/PostgreSQL及17项既有场景通过；核销W458采用与16.78–16.85分钟，保持40h与下一44h采样。",
       "evidence": "docs/development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-10T23:56:52.985910+00:00",
+      "change": "W460采用PG操作日志独立降级写，3项实际Main/PostgreSQL及26项既有过滤器通过；核销W459采用与16.73–16.82分钟，保持40h与下一44h采样。",
+      "evidence": "docs/development/evidence/BUG-921-OPERLOG-FALLBACK-ISOLATION/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -174961,7 +174966,7 @@
         "seat_released": true
       },
       "wave459_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md",
         "validation": "现存场景导入与D7绑码采用同Context当前space-floor:edit、签名会话及认证根。导入确认当前目标站点、真实几何骨架和库位两次保存同事务；绑码用实际货架/库位及原已发布未落位采纳资格。原导出/映射/算法、码/ID/状态/版本和其他场景路径保持。",
         "tested_baseline": "bd9743d50b1b1ad73be25d171b6db9283b16a90a",
@@ -174969,7 +174974,16 @@
         "actual_result_sha256": "495aa87ff3e0c96d028c6c3fe784d012fb0407a04009b2d0fcd6dd2c50a8ed02",
         "formal_case": "PGT-017",
         "formal_acceptance": "NOT_RUN",
-        "full_task_complete": false
+        "full_task_complete": false,
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/920",
+          "commit": "c0e56ee9b2bb9758e551d3cbcee0ff290d8cb77a",
+          "target_head": "c0e56ee9b2bb9758e551d3cbcee0ff290d8cb77a"
+        },
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse",
+        "seat_released": true
       }
     },
     {
@@ -179000,17 +179014,19 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-13",
-        "delivered": "多类实际Owner业务/原结果/审计同事务；FORM、TASK、DOC和隐私最小回执本轮已采用。",
+        "delivered": "多类实际Owner业务/原结果/审计同事务；FORM、TASK、DOC和隐私最小回执本轮已采用。 W460 PostgreSQL操作日志降级使用独立DI作用域及新Context，传递原已确认请求租户，只保存日志。拒绝后未提交业务不被日志写入带入数据库，正常/日志故障及原字段、异常状态映射、Kafka路径和历史非PG保持。",
         "remaining": "全域actor/effectiveActor/UTC/脱敏、计数/明细/导出同授权及policy/hold/unknown清理收据仍未完整纳管。",
-        "next_action": "从实际审计查询/清理Owner补出口和政策；现OperLogCleanupService按时间批删不能当完整保留治理。",
+        "next_action": "继续WP02-13必需原子审计、实际授权出口和保留治理，并沿WP02-03真实余项推进；本窗旁路日志隔离不替代业务原子审计、全场景当前权限、完整PGT-017、导出/hold/跨仓及生产传输验收。",
         "evidence_refs": [
           "docs/development/evidence/W135-01/DELIVERY.md",
           "docs/development/evidence/W153-01/DELIVERY.md",
           "docs/development/evidence/W64-01/DELIVERY.md",
-          "docs/development/evidence/W310-01/DELIVERY.md"
+          "docs/development/evidence/W310-01/DELIVERY.md",
+          "docs/development/evidence/BUG-921-OPERLOG-FALLBACK-ISOLATION/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "new_product_validation": false
+        "new_product_validation": true,
+        "latest_window": "W460-01"
       },
       "wave269_definition_audit_adoption": {
         "status": "CLOSED",
@@ -179101,6 +179117,16 @@
           "remote_target": "ee236f554ebde05203bed63b1baaebab41834c35",
           "pr": "https://github.com/GTX537/CP6/pull/705"
         }
+      },
+      "wave460_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/BUG-921-OPERLOG-FALLBACK-ISOLATION/DELIVERY.md",
+        "validation": "PostgreSQL操作日志降级使用独立DI作用域及新Context，传递原已确认请求租户，只保存日志。拒绝后未提交业务不被日志写入带入数据库，正常/日志故障及原字段、异常状态映射、Kafka路径和历史非PG保持。",
+        "tested_baseline": "c0e56ee9b2bb9758e551d3cbcee0ff290d8cb77a",
+        "issue": "https://github.com/GTX537/CP6/issues/921",
+        "actual_result_sha256": "47eeedebf56ee6edde4c6a1dac0141104bdb40aa181fefff92f12a3e566451bd",
+        "formal_acceptance": "NOT_RUN",
+        "full_task_complete": false
       }
     },
     {
@@ -209027,10 +209053,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W459",
-      "path": "docs/development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md",
-      "baseline_sha": "bd9743d50b1b1ad73be25d171b6db9283b16a90a",
-      "registered_at": "2026-11-10T23:30:07.091134+00:00",
+      "id": "W460",
+      "path": "docs/development/evidence/BUG-921-OPERLOG-FALLBACK-ISOLATION/DELIVERY.md",
+      "baseline_sha": "c0e56ee9b2bb9758e551d3cbcee0ff290d8cb77a",
+      "registered_at": "2026-11-10T23:49:22.485265+00:00",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "COORD"
@@ -209045,38 +209071,33 @@
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": false,
-      "next_action": "继续WP02-03其余实际query/write/export/download及字段V1真实来源；完整导入图资格、场景差量、巷道/货架改挂或停用/发布按原安全完成语义另验，避免把逐个停用改成一个父回滚；Stock、PGT-017、schema、跨仓和负载保持未完成。",
+      "next_action": "继续WP02-13必需原子审计、实际授权出口和保留治理，并沿WP02-03真实余项推进；本窗旁路日志隔离不替代业务原子审计、全场景当前权限、完整PGT-017、导出/hold/跨仓及生产传输验收。",
       "windows": [
         {
-          "id": "W459-01",
-          "workspace_task": "BUG-919-SPACE-SCENE-INGRESS-FENCE",
+          "id": "W460-01",
+          "workspace_task": "BUG-921-OPERLOG-FALLBACK-ISOLATION",
           "related_tasks": [
-            "WP02-03"
+            "WP02-13"
           ],
-          "title": "场景导入与D7绑码当前事务",
+          "title": "操作日志降级保存隔离",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/bug-919-space-scene-ingress-fence",
-          "planned_scope_ref": "docs/development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md",
+          "branch": "codex/bug-921-operlog-fallback-isolation",
+          "planned_scope_ref": "docs/development/evidence/BUG-921-OPERLOG-FALLBACK-ISOLATION/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "file:Main:CP6.Tests/Erp/SceneIngressPostgreSqlTests.cs",
-            "file:Main:CP6.Tests/Erp/SceneIngressPostgreSqlTests.Behavior.cs",
-            "file:Main:CP6.Core/Services/Space/SceneGeometryAuthorityV1.cs",
-            "file:Main:CP6.Core/Services/Space/SceneIoService.cs",
-            "file:Main:CP6.Core/Services/Space/SceneService.cs",
-            "file:Main:CP6.WebApi/Controllers/Space/SceneController.cs",
-            "file:Main:CP6.WebApi/Program.cs"
+            "file:Main:CP6.Tests/Erp/OperLogFallbackIsolationPostgreSqlTests.cs",
+            "file:Main:CP6.WebApi/Filters/OperLogFilter.cs"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/BUG-921-OPERLOG-FALLBACK-ISOLATION/DELIVERY.md"
         }
       ],
       "storage": {
@@ -255279,6 +255300,73 @@
           "reuse_worktree": "D:/CP6-worktrees/dev-2",
           "new_worktrees": 0
         }
+      },
+      {
+        "id": "W459",
+        "path": "docs/development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md",
+        "baseline_sha": "bd9743d50b1b1ad73be25d171b6db9283b16a90a",
+        "registered_at": "2026-11-10T23:30:07.091134+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "next_action": "继续WP02-03其余实际query/write/export/download及字段V1真实来源；完整导入图资格、场景差量、巷道/货架改挂或停用/发布按原安全完成语义另验，避免把逐个停用改成一个父回滚；Stock、PGT-017、schema、跨仓和负载保持未完成。",
+        "windows": [
+          {
+            "id": "W459-01",
+            "workspace_task": "BUG-919-SPACE-SCENE-INGRESS-FENCE",
+            "related_tasks": [
+              "WP02-03"
+            ],
+            "title": "场景导入与D7绑码当前事务",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/bug-919-space-scene-ingress-fence",
+            "planned_scope_ref": "docs/development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "file:Main:CP6.Tests/Erp/SceneIngressPostgreSqlTests.cs",
+              "file:Main:CP6.Tests/Erp/SceneIngressPostgreSqlTests.Behavior.cs",
+              "file:Main:CP6.Core/Services/Space/SceneGeometryAuthorityV1.cs",
+              "file:Main:CP6.Core/Services/Space/SceneIoService.cs",
+              "file:Main:CP6.Core/Services/Space/SceneService.cs",
+              "file:Main:CP6.WebApi/Controllers/Space/SceneController.cs",
+              "file:Main:CP6.WebApi/Program.cs"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md",
+            "adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6/pull/920",
+              "commit": "c0e56ee9b2bb9758e551d3cbcee0ff290d8cb77a",
+              "target_head": "c0e56ee9b2bb9758e551d3cbcee0ff290d8cb77a"
+            },
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/dev-2",
+          "new_worktrees": 0
+        }
       }
     ],
     "development_priority": {
@@ -258500,10 +258588,22 @@
             1006.900352,
             1011.182374
           ]
+        },
+        "w459_adopted": {
+          "native_elapsed_seconds": 153973,
+          "native_sample_utc": "2026-11-10T23:46:54+00:00",
+          "capacity_seconds": 172800,
+          "native_status": "active",
+          "raw": "D:/CP6-local-test/CP6-72H-20261109/after-w459-adoption-calibration.json",
+          "raw_sha256": "2990d8e2f11458f6ab63296f6f1bdeb40c9af6fe8ee99be6d19503202254bae0",
+          "conservative_native_active_range_seconds": [
+            1004,
+            1009.1560049999999
+          ]
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "继续WP02-03其余实际query/write/export/download及字段V1真实来源；完整导入图资格、场景差量、巷道/货架改挂或停用/发布按原安全完成语义另验，避免把逐个停用改成一个父回滚；Stock、PGT-017、schema、跨仓和负载保持未完成。",
+      "next_priority": "继续WP02-13必需原子审计、实际授权出口和保留治理，并沿WP02-03真实余项推进；本窗旁路日志隔离不替代业务原子审计、全场景当前权限、完整PGT-017、导出/hold/跨仓及生产传输验收。",
       "windows": [
         {
           "id": "W327-01",
@@ -261809,7 +261909,7 @@
         {
           "id": "W459-01",
           "workspace_task": "BUG-919-SPACE-SCENE-INGRESS-FENCE",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-03"
           ],
@@ -261835,6 +261935,50 @@
             "summary_sha256": "495aa87ff3e0c96d028c6c3fe784d012fb0407a04009b2d0fcd6dd2c50a8ed02",
             "main9": "green-hosted-01/actual.json",
             "original9": "red-hosted-01/actual.json"
+          },
+          "formal_acceptance": "NOT_RUN",
+          "finished_at": "2026-11-10T23:46:54.247139+00:00",
+          "final_lease_seconds": 1007.156005,
+          "lease_includes_user_pauses": false,
+          "conservative_native_active_range_seconds": [
+            1004,
+            1009.1560049999999
+          ],
+          "pr": "https://github.com/GTX537/CP6/pull/920",
+          "adopted_main": "c0e56ee9b2bb9758e551d3cbcee0ff290d8cb77a",
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "seat_released": true
+        },
+        {
+          "id": "W460-01",
+          "workspace_task": "BUG-921-OPERLOG-FALLBACK-ISOLATION",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-13"
+          ],
+          "started_at": "2026-11-10T23:49:22.485265+00:00",
+          "native_start_sample_seconds": 154111,
+          "native_post_start_sample_seconds": 154122,
+          "validation_ready_at": "2026-11-10T23:56:52.985910+00:00",
+          "estimate_minutes": [
+            12,
+            24
+          ],
+          "branch": "codex/bug-921-operlog-fallback-isolation",
+          "tested_baseline": "c0e56ee9b2bb9758e551d3cbcee0ff290d8cb77a",
+          "scope": "PostgreSQL操作日志降级使用独立DI作用域及新Context，传递原已确认请求租户，只保存日志。拒绝后未提交业务不被日志写入带入数据库，正常/日志故障及原字段、异常状态映射、Kafka路径和历史非PG保持。",
+          "delivery": "docs/development/evidence/BUG-921-OPERLOG-FALLBACK-ISOLATION/DELIVERY.md",
+          "dispatch": "docs/development/evidence/BUG-921-OPERLOG-FALLBACK-ISOLATION/DELIVERY.md",
+          "issue": "https://github.com/GTX537/CP6/issues/921",
+          "main_postgresql_cases": 3,
+          "compatibility_cases": 26,
+          "skipped": 0,
+          "validation_provenance": {
+            "summary": "D:/CP6-local-test/CP6-72H-20261109/W460-01/actual.json",
+            "summary_sha256": "47eeedebf56ee6edde4c6a1dac0141104bdb40aa181fefff92f12a3e566451bd",
+            "main3": "green-hosted-01/actual.json",
+            "original3": "red-hosted-01/actual.json"
           },
           "formal_acceptance": "NOT_RUN"
         }

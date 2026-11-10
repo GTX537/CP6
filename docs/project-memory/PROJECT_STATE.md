@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC 操作日志降级保存隔离
+
+PostgreSQL操作日志降级使用独立DI作用域及新Context，传递原已确认请求租户，只保存日志。拒绝后未提交业务不被日志写入带入数据库，正常/日志故障及原字段、异常状态映射、Kafka路径和历史非PG保持。 3项实际Main/PostgreSQL和26项既有过滤器通过、零跳过；模拟场景/身份/故障，真实宿主/业务/日志和数据库。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，172800秒、40h144047/下一158400保持。 [W460交付](../development/evidence/BUG-921-OPERLOG-FALLBACK-ISOLATION/DELIVERY.md)
+
 ## 2026-11-10 UTC 场景导入与D7绑码当前事务
 
 现存场景导入与D7绑码采用同Context当前space-floor:edit、签名会话及认证根。导入确认当前目标站点、真实几何骨架和库位两次保存同事务；绑码用实际货架/库位及原已发布未落位采纳资格。原导出/映射/算法、码/ID/状态/版本和其他场景路径保持。 9项实际Main/PostgreSQL和17项既有InMemory通过、零跳过。模拟场景/身份/故障输入，实际宿主、认证、数据库。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，172800秒、40h144047/下一158400保持。 [W459交付](../development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md)
