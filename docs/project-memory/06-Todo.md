@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 余料当前授权与输入边界
+
+继续原WP02-03/CTX02-A4/A7其余query/write/export/download和字段V1来源采用；WP10-35的真实Origin/RootCoverage、零Stock激活、RSV/MAT/Stock实际预留消费及报损尚未实现/采用，可按同一完整合同使用明确模拟业务/服务验收，PGT-017仍NOT_RUN。 现存四位余料数量保留，未按其他模块精度重写历史；旧手工状态不作物理效果证明，当前view须经既有IAM显式分配。 [W449交付](../development/evidence/BUG-899-REMNANT-LIFECYCLE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 卷材当前授权与分切原子性
 
 继续原WP02-03/CTX02-A4/A7其余query/write/export/download和字段V1来源采用；WP10-33/34的真实IN/Root、批准stockToGeometryMap/profile、RollCompositionBridge-1和真实废边/Stock组成尚未实现/采用，可按同一完整合同使用明确模拟业务/服务验收，PGT-017仍NOT_RUN。 旧卷材数据及阈值/手工状态不产生Stock或真实废边资格；当前view须经既有IAM显式分配。 [W448交付](../development/evidence/BUG-897-PAPER-ROLL-FENCE/DELIVERY.md)
