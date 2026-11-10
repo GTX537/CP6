@@ -163927,6 +163927,11 @@
       "at": "2026-11-10T17:55:34.200780+00:00",
       "change": "W446修复IoT九入口当前授权、编号/传感器/读数原子性、迟到投影及模拟边界；26项实际Main/PostgreSQL与5项兼容/种子零跳过，实插10000条；核销W445两处采用及34.72–36.27分钟实测。",
       "evidence": "docs/development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-10T18:25:54.260253+00:00",
+      "change": "W447修复承运八入口当前授权、原子编号/事件及并发追加；16项实际Main/PostgreSQL与5项兼容/种子零跳过；核销W446两处远端采用及40.26–44.30分钟实测。",
+      "evidence": "docs/development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -174336,9 +174341,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-03",
-        "delivered": "当前IAM/CAS、撤权共同门、对象/字段和多类Owner动作，以及本轮隐私/FORM最终授权已采用。 W435 实际版本化租户暂停与普通 Stock V1 调整共享 PostgreSQL 认证根，两种真实提交顺序、已提交原写集和暂停后的旧会话拒绝通过。 W436 LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。 W437 LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。 W438 装箱、拆箱、拆分、合并及回放接入既有 Owner 当前授权事务；四条真实 HTTP/PostgreSQL 路径均复现旧请求在暂停后写入，修复后 401 REAUTH_REQUIRED、九类原行逐字节保持，正常树变化、序列号、精确数量、回放和原业务错误通过。 W439 LPN Move 在既有 Mobile Owner 中组合库存父事务原语；真实非空树由原 HTTP 500 恢复完整原子移动，保留八位数量、货主估值质量和四腿实际部门继承。空/非空树均在暂停先提交后 401、十三类原行保持，晚期回执故障完整回滚，范围、回放和原错误协议通过。 W440 设备票据、更新/禁用、快捷 PIN、匿名激活和签名心跳在实际身份共同根中提交；保留合法自失效，数据库 nonce 裁决双宿主重放，设备范围变更使旧客户端身份失效，已有数据升级保留设备原行并要求重新登录。 W441 序列转换与七种生命周期在实际 Mobile Owner 内决定并组合库存父事务；原五种库存请求从 400 恢复共同提交，收货错误后遗留的跟踪对象不再被日志保存刷入；八条真实暂停路径均拒绝，保留序列/库存对账、实际部门继承、原回执与完整七步周期。 W442 托盘六个元数据写者采用同一认证根、当前动作/库区/已有字段和实际 actor；编号与托盘同父事务，原生插入故障后无编号或记录残留；六条暂停及真实撤权竞争均拒绝，保留原状态、三位重量和无库存效果。 W443 条码 profile/alias 两种 upsert 与 XLSX 实际提交采用当前 actor、barcode-manage 和共同认证根；整批共父事务，第二行失败后不再被日志重刷出一条别名；三条暂停、实际撤权、预览/更新/恢复、原错误及八位转换精度完成真实验收。 W444 现存标签七个HTTP入口采用当前动作/actor及共同认证根，设备当前资格先于回放，作业与版本化原结果回执共父事务；网关修正PENDING查询，持久化分区/原键/打印阶段，实际凭据与源绑定，未知打印不自动fail或重打，两个实际客户端进程在Main完成响应丢失后用原键恢复且只模拟打印一次。 W445 现存WCS手工任务八个读写入口采用当前actor/动作及共同认证根；新view仅登记目录不自动授予；创建编号与任务同父事务，晚期原生故障后不再残留编号或被日志重刷失败任务，保留原手工状态、八位数量及无库存效果。 W446 现存IoT九入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与业务同父事务，原生传感器/读数/批次故障完整回滚；从实际历史修复最新记录投影并保留迟到及同时间合法输入，模拟值/时间一致且先检查类型和1–100×最多100边界。",
+        "delivered": "当前IAM/CAS、撤权共同门、对象/字段和多类Owner动作，以及本轮隐私/FORM最终授权已采用。 W435 实际版本化租户暂停与普通 Stock V1 调整共享 PostgreSQL 认证根，两种真实提交顺序、已提交原写集和暂停后的旧会话拒绝通过。 W436 LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。 W437 LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。 W438 装箱、拆箱、拆分、合并及回放接入既有 Owner 当前授权事务；四条真实 HTTP/PostgreSQL 路径均复现旧请求在暂停后写入，修复后 401 REAUTH_REQUIRED、九类原行逐字节保持，正常树变化、序列号、精确数量、回放和原业务错误通过。 W439 LPN Move 在既有 Mobile Owner 中组合库存父事务原语；真实非空树由原 HTTP 500 恢复完整原子移动，保留八位数量、货主估值质量和四腿实际部门继承。空/非空树均在暂停先提交后 401、十三类原行保持，晚期回执故障完整回滚，范围、回放和原错误协议通过。 W440 设备票据、更新/禁用、快捷 PIN、匿名激活和签名心跳在实际身份共同根中提交；保留合法自失效，数据库 nonce 裁决双宿主重放，设备范围变更使旧客户端身份失效，已有数据升级保留设备原行并要求重新登录。 W441 序列转换与七种生命周期在实际 Mobile Owner 内决定并组合库存父事务；原五种库存请求从 400 恢复共同提交，收货错误后遗留的跟踪对象不再被日志保存刷入；八条真实暂停路径均拒绝，保留序列/库存对账、实际部门继承、原回执与完整七步周期。 W442 托盘六个元数据写者采用同一认证根、当前动作/库区/已有字段和实际 actor；编号与托盘同父事务，原生插入故障后无编号或记录残留；六条暂停及真实撤权竞争均拒绝，保留原状态、三位重量和无库存效果。 W443 条码 profile/alias 两种 upsert 与 XLSX 实际提交采用当前 actor、barcode-manage 和共同认证根；整批共父事务，第二行失败后不再被日志重刷出一条别名；三条暂停、实际撤权、预览/更新/恢复、原错误及八位转换精度完成真实验收。 W444 现存标签七个HTTP入口采用当前动作/actor及共同认证根，设备当前资格先于回放，作业与版本化原结果回执共父事务；网关修正PENDING查询，持久化分区/原键/打印阶段，实际凭据与源绑定，未知打印不自动fail或重打，两个实际客户端进程在Main完成响应丢失后用原键恢复且只模拟打印一次。 W445 现存WCS手工任务八个读写入口采用当前actor/动作及共同认证根；新view仅登记目录不自动授予；创建编号与任务同父事务，晚期原生故障后不再残留编号或被日志重刷失败任务，保留原手工状态、八位数量及无库存效果。 W446 现存IoT九入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与业务同父事务，原生传感器/读数/批次故障完整回滚；从实际历史修复最新记录投影并保留迟到及同时间合法输入，模拟值/时间一致且先检查类型和1–100×最多100边界。 W447 现存承运元数据八入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与运单共父事务，原生INSERT/UPDATE故障完整回滚；读取事件前围栏使两次合法追加均完成并保留原事件及EF版本检查，原手工状态/错误与重量费用精度保持。",
         "remaining": "全字段注册表与全部现存query/write/export/download写者尚未完成覆盖核销。",
-        "next_action": "继续原WP02-03/CTX02-A4/A7其余query/write/export/download和字段V1来源采用；WP10-43完整Source/session、单位/时间政策、REAL-SIM隔离、可信序号/去重、版本化告警与页面尚未实现/采用，可用明确模拟业务/服务按同一合同验收，PGT-017仍NOT_RUN。",
+        "next_action": "继续原WP02-03/CTX02-A4/A7其余query/write/export/download及字段V1真实来源采用；WP10-52的销售SourceBinding、承运Attempt/Observation、逐行POD/不可变Fact、连续Proof、F0及财务原结果/Outbox同事务尚未实现/采用，可按同一完整合同使用明确模拟业务/服务验收，PGT-017仍NOT_RUN。",
         "evidence_refs": [
           "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
           "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
@@ -174395,11 +174400,12 @@
           "docs/development/evidence/BUG-887-BARCODE-CONFIG-FENCE/DELIVERY.md",
           "docs/development/evidence/BUG-889-LABEL-RECOVERY-FENCE/DELIVERY.md",
           "docs/development/evidence/BUG-891-WCS-TASK-FENCE/DELIVERY.md",
-          "docs/development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md"
+          "docs/development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md",
+          "docs/development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W446-01"
+        "latest_window": "W447-01"
       },
       "wave435_delivery": {
         "status": "CLOSED",
@@ -174623,12 +174629,32 @@
         "seat_released": true
       },
       "wave446_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md",
         "validation": "现存IoT九入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与业务同父事务，原生传感器/读数/批次故障完整回滚；从实际历史修复最新记录投影并保留迟到及同时间合法输入，模拟值/时间一致且先检查类型和1–100×最多100边界。",
         "tested_baseline": "47ccfd54975fd23172a02f0f8ee97f65d8baabe4",
         "issue": "https://github.com/GTX537/CP6/issues/893",
         "actual_result_sha256": "2f6067ea6a93b6c779ef4b72acb17f0e6e1e08d028d6b7ad4e28a0bada75d3c6",
+        "formal_case": "PGT-017",
+        "formal_acceptance": "NOT_RUN",
+        "full_task_complete": false,
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/894",
+          "commit": "e2bfbf6978318599fda8910f4f3d7cf5f52365b2",
+          "target_head": "e2bfbf6978318599fda8910f4f3d7cf5f52365b2"
+        },
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse",
+        "seat_released": true
+      },
+      "wave447_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md",
+        "validation": "现存承运元数据八入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与运单共父事务，原生INSERT/UPDATE故障完整回滚；读取事件前围栏使两次合法追加均完成并保留原事件及EF版本检查，原手工状态/错误与重量费用精度保持。",
+        "tested_baseline": "e2bfbf6978318599fda8910f4f3d7cf5f52365b2",
+        "issue": "https://github.com/GTX537/CP6/issues/895",
+        "actual_result_sha256": "a39275bac2d7a0ba258f8dbd19c3e89fa7f2a2af93c94f91426221c85724673f",
         "formal_case": "PGT-017",
         "formal_acceptance": "NOT_RUN",
         "full_task_complete": false
@@ -197776,7 +197802,7 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave446_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md",
         "validation": "现存IoT九入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与业务同父事务，原生传感器/读数/批次故障完整回滚；从实际历史修复最新记录投影并保留迟到及同时间合法输入，模拟值/时间一致且先检查类型和1–100×最多100边界。",
         "tested_baseline": "47ccfd54975fd23172a02f0f8ee97f65d8baabe4",
@@ -197784,7 +197810,16 @@
         "actual_result_sha256": "2f6067ea6a93b6c779ef4b72acb17f0e6e1e08d028d6b7ad4e28a0bada75d3c6",
         "formal_case": "WMS-AUTO-01 full telemetry runtime",
         "formal_acceptance": "NOT_RUN",
-        "full_task_complete": false
+        "full_task_complete": false,
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/894",
+          "commit": "e2bfbf6978318599fda8910f4f3d7cf5f52365b2",
+          "target_head": "e2bfbf6978318599fda8910f4f3d7cf5f52365b2"
+        },
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse",
+        "seat_released": true
       },
       "remaining_scope": "本窗仅验证现存IoT入口当前授权、原子写入、严格ReadAt最新记录及模拟边界；完整Source/session、单位/时间政策、REAL/SIMULATION隔离、可信来源序号/去重、版本化告警episode、质量转交和页面尚未实现/采用，旧来源保持LEGACY_ORIGIN_UNPROVEN。可用明确模拟业务/服务执行同一完整合同，WP10-43保持PLANNED/NOT_CHECKED。"
     },
@@ -198726,7 +198761,19 @@
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "wave447_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md",
+        "validation": "现存承运元数据八入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与运单共父事务，原生INSERT/UPDATE故障完整回滚；读取事件前围栏使两次合法追加均完成并保留原事件及EF版本检查，原手工状态/错误与重量费用精度保持。",
+        "tested_baseline": "e2bfbf6978318599fda8910f4f3d7cf5f52365b2",
+        "issue": "https://github.com/GTX537/CP6/issues/895",
+        "actual_result_sha256": "a39275bac2d7a0ba258f8dbd19c3e89fa7f2a2af93c94f91426221c85724673f",
+        "formal_case": "WMS-DEL-01 full POD/F0 runtime",
+        "formal_acceptance": "NOT_RUN",
+        "full_task_complete": false
+      },
+      "remaining_scope": "本窗仅验证现存承运元数据当前授权、原子写入和受控双追加，不产生POD或财务结果；完整销售SourceBinding、承运Attempt/Observation、逐行POD/不可变Fact、连续累计Proof、F0当前源和财务原结果/Outbox同事务仍未实现/采用，不能从Delivered文本或手工状态推导。可用明确模拟业务/服务执行完整相同合同；WP10-52保持PLANNED/NOT_CHECKED及原直接前置。"
     },
     {
       "id": "WP11-01",
@@ -208596,10 +208643,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W446",
-      "path": "docs/development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md",
-      "baseline_sha": "47ccfd54975fd23172a02f0f8ee97f65d8baabe4",
-      "registered_at": "2026-11-10T17:23:28.631142+00:00",
+      "id": "W447",
+      "path": "docs/development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md",
+      "baseline_sha": "e2bfbf6978318599fda8910f4f3d7cf5f52365b2",
+      "registered_at": "2026-11-10T18:08:22.504476+00:00",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "COORD"
@@ -208614,40 +208661,40 @@
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": false,
-      "next_action": "继续原WP02-03/CTX02-A4/A7其余query/write/export/download和字段V1来源采用；WP10-43完整Source/session、单位/时间政策、REAL-SIM隔离、可信序号/去重、版本化告警与页面尚未实现/采用，可用明确模拟业务/服务按同一合同验收，PGT-017仍NOT_RUN。",
+      "next_action": "继续原WP02-03/CTX02-A4/A7其余query/write/export/download及字段V1真实来源采用；WP10-52的销售SourceBinding、承运Attempt/Observation、逐行POD/不可变Fact、连续Proof、F0及财务原结果/Outbox同事务尚未实现/采用，可按同一完整合同使用明确模拟业务/服务验收，PGT-017仍NOT_RUN。",
       "windows": [
         {
-          "id": "W446-01",
-          "workspace_task": "BUG-893-IOT-OBSERVATION-FENCE",
+          "id": "W447-01",
+          "workspace_task": "BUG-895-CARRIER-LIFECYCLE-FENCE",
           "related_tasks": [
             "WP02-03",
-            "WP10-43"
+            "WP10-52"
           ],
-          "title": "IoT当前授权、原子写入与最新记录投影",
+          "title": "承运元数据当前授权与并发追加",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/bug-893-iot-observation-fence",
-          "planned_scope_ref": "docs/development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md",
+          "branch": "codex/bug-895-carrier-lifecycle-fence",
+          "planned_scope_ref": "docs/development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "file:Main:CP6.Tests/Erp/IotLifecyclePostgreSqlTests.cs",
-            "file:Main:CP6.Tests/Erp/IotLifecyclePostgreSqlTests.Behavior.cs",
-            "file:Main:CP6.Core/Services/Wms/IotService.cs",
-            "file:Main:CP6.Core/Services/Wms/IotService.Authority.cs",
-            "file:Main:CP6.WebApi/Controllers/Wms/IotMonitorController.cs",
+            "file:Main:CP6.Tests/Erp/CarrierLifecyclePostgreSqlTests.cs",
+            "file:Main:CP6.Tests/Erp/CarrierLifecyclePostgreSqlTests.Behavior.cs",
+            "file:Main:CP6.Core/Services/Wms/CarrierService.cs",
+            "file:Main:CP6.Core/Services/Wms/CarrierService.Authority.cs",
+            "file:Main:CP6.WebApi/Controllers/Wms/CarrierController.cs",
             "file:Main:CP6.WebApi/Program.cs",
             "file:Main:CP6.WebApi/Seed/WmsPermissionSeed.cs",
-            "file:Main:CP6.Tests/IotPermissionSeedTests.cs"
+            "file:Main:CP6.Tests/CarrierPermissionSeedTests.cs"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md"
         }
       ],
       "storage": {
@@ -253984,6 +254031,75 @@
           "reuse_worktree": "D:/CP6-worktrees/dev-2",
           "new_worktrees": 0
         }
+      },
+      {
+        "id": "W446",
+        "path": "docs/development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md",
+        "baseline_sha": "47ccfd54975fd23172a02f0f8ee97f65d8baabe4",
+        "registered_at": "2026-11-10T17:23:28.631142+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "next_action": "继续原WP02-03/CTX02-A4/A7其余query/write/export/download和字段V1来源采用；WP10-43完整Source/session、单位/时间政策、REAL-SIM隔离、可信序号/去重、版本化告警与页面尚未实现/采用，可用明确模拟业务/服务按同一合同验收，PGT-017仍NOT_RUN。",
+        "windows": [
+          {
+            "id": "W446-01",
+            "workspace_task": "BUG-893-IOT-OBSERVATION-FENCE",
+            "related_tasks": [
+              "WP02-03",
+              "WP10-43"
+            ],
+            "title": "IoT当前授权、原子写入与最新记录投影",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/bug-893-iot-observation-fence",
+            "planned_scope_ref": "docs/development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "file:Main:CP6.Tests/Erp/IotLifecyclePostgreSqlTests.cs",
+              "file:Main:CP6.Tests/Erp/IotLifecyclePostgreSqlTests.Behavior.cs",
+              "file:Main:CP6.Core/Services/Wms/IotService.cs",
+              "file:Main:CP6.Core/Services/Wms/IotService.Authority.cs",
+              "file:Main:CP6.WebApi/Controllers/Wms/IotMonitorController.cs",
+              "file:Main:CP6.WebApi/Program.cs",
+              "file:Main:CP6.WebApi/Seed/WmsPermissionSeed.cs",
+              "file:Main:CP6.Tests/IotPermissionSeedTests.cs"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md",
+            "adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6/pull/894",
+              "commit": "e2bfbf6978318599fda8910f4f3d7cf5f52365b2",
+              "target_head": "e2bfbf6978318599fda8910f4f3d7cf5f52365b2"
+            },
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/dev-2",
+          "new_worktrees": 0
+        }
       }
     ],
     "development_priority": {
@@ -257040,10 +257156,22 @@
             2083.09491,
             2176
           ]
+        },
+        "w446_adopted": {
+          "native_elapsed_seconds": 133405,
+          "native_sample_utc": "2026-11-10T18:04:05+00:00",
+          "capacity_seconds": 172800,
+          "native_status": "active",
+          "raw": "D:/CP6-local-test/CP6-72H-20261109/after-w446-adoption-calibration.json",
+          "raw_sha256": "cc7f5459dc28d4e50c27c4725b3582b375f22a2dfceb8d48e4cbae70b433e332",
+          "conservative_native_active_range_seconds": [
+            2415.838031,
+            2658
+          ]
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "继续原WP02-03/CTX02-A4/A7其余query/write/export/download和字段V1来源采用；WP10-43完整Source/session、单位/时间政策、REAL-SIM隔离、可信序号/去重、版本化告警与页面尚未实现/采用，可用明确模拟业务/服务按同一合同验收，PGT-017仍NOT_RUN。",
+      "next_priority": "继续原WP02-03/CTX02-A4/A7其余query/write/export/download及字段V1真实来源采用；WP10-52的销售SourceBinding、承运Attempt/Observation、逐行POD/不可变Fact、连续Proof、F0及财务原结果/Outbox同事务尚未实现/采用，可按同一完整合同使用明确模拟业务/服务验收，PGT-017仍NOT_RUN。",
       "windows": [
         {
           "id": "W327-01",
@@ -259772,7 +259900,7 @@
         {
           "id": "W446-01",
           "workspace_task": "BUG-893-IOT-OBSERVATION-FENCE",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-03",
             "WP10-43"
@@ -259799,6 +259927,51 @@
             "main26": "green-hosted-01/actual.json",
             "compatibility5": "compatibility-01/actual.json",
             "original25_plus_normal1": "red-actual.json"
+          },
+          "formal_acceptance": "NOT_RUN",
+          "finished_at": "2026-11-10T18:03:45.469173+00:00",
+          "final_lease_seconds": 2416.838031,
+          "lease_includes_user_pauses": false,
+          "conservative_native_active_range_seconds": [
+            2415.838031,
+            2658
+          ],
+          "pr": "https://github.com/GTX537/CP6/pull/894",
+          "adopted_main": "e2bfbf6978318599fda8910f4f3d7cf5f52365b2",
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "seat_released": true
+        },
+        {
+          "id": "W447-01",
+          "workspace_task": "BUG-895-CARRIER-LIFECYCLE-FENCE",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-03",
+            "WP10-52"
+          ],
+          "started_at": "2026-11-10T18:08:22.504476+00:00",
+          "native_start_sample_seconds": 133640,
+          "validation_ready_at": "2026-11-10T18:25:54.260253+00:00",
+          "estimate_minutes": [
+            35,
+            55
+          ],
+          "branch": "codex/bug-895-carrier-lifecycle-fence",
+          "tested_baseline": "e2bfbf6978318599fda8910f4f3d7cf5f52365b2",
+          "scope": "现存承运元数据八入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与运单共父事务，原生INSERT/UPDATE故障完整回滚；读取事件前围栏使两次合法追加均完成并保留原事件及EF版本检查，原手工状态/错误与重量费用精度保持。",
+          "delivery": "docs/development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md",
+          "dispatch": "docs/development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md",
+          "issue": "https://github.com/GTX537/CP6/issues/895",
+          "main_postgresql_cases": 16,
+          "compatibility_cases": 5,
+          "skipped": 0,
+          "validation_provenance": {
+            "summary": "D:/CP6-local-test/CP6-72H-20261109/W447-01/actual.json",
+            "summary_sha256": "a39275bac2d7a0ba258f8dbd19c3e89fa7f2a2af93c94f91426221c85724673f",
+            "main16": "green-hosted-01/actual.json",
+            "compatibility5": "compatibility-01/actual.json",
+            "original16": "red-hosted-01/actual.json"
           },
           "formal_acceptance": "NOT_RUN"
         }

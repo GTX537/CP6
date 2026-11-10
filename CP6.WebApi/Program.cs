@@ -1182,7 +1182,15 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IWcsService>(sp =>
         http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp),
         http?.RequestAborted ?? CancellationToken.None);
 });
-builder.Services.AddScoped<CP6.Core.Services.Wms.ICarrierService, CP6.Core.Services.Wms.CarrierService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ICarrierService>(sp =>
+{
+    var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    return new CP6.Core.Services.Wms.CarrierService(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetRequiredService<CP6.Core.Services.Wms.IWmsSequenceService>(),
+        sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
+        http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp),
+        http?.RequestAborted ?? CancellationToken.None);
+});
 builder.Services.AddScoped<CP6.Core.Services.Wms.IIotService>(sp =>
 {
     var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;

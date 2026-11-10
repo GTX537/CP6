@@ -1,4 +1,6 @@
 using CP6.Core.Auth;
+using CP6.Core.Services.Erp;
+using CP6.WebApi.Controllers.Erp;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +9,7 @@ namespace CP6.WebApi.Controllers.Wms;
 
 /// <summary>MSBBWM320 — 配送業者連携 Web API</summary>
 [ApiController]
+[OrderOwnerResult]
 [Route("api/wms/carrier")]
 [Authorize]
 public class CarrierController : ControllerBase
@@ -16,10 +19,12 @@ public class CarrierController : ControllerBase
     private string? CurrentUser => User?.Identity?.Name;
 
     [HttpGet]
+    [RequirePermission("wms-carrier", "view")]
     public async Task<IActionResult> Search([FromQuery] CarrierSearchQuery q)
         => Ok(new { code = 0, message = "OK", data = await _svc.SearchAsync(q) });
 
     [HttpGet("{no}")]
+    [RequirePermission("wms-carrier", "view")]
     public async Task<IActionResult> Get(string no)
     {
         var s = await _svc.GetAsync(no);
@@ -36,7 +41,7 @@ public class CarrierController : ControllerBase
             var no = await _svc.CreateShipmentAsync(dto, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { shipmentNo = no } });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/event")]
@@ -44,7 +49,7 @@ public class CarrierController : ControllerBase
     public async Task<IActionResult> AddEvent(string no, [FromBody] CarrierEventDto evt)
     {
         try { await _svc.AddEventAsync(no, evt, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/pickup")]
@@ -52,7 +57,7 @@ public class CarrierController : ControllerBase
     public async Task<IActionResult> PickUp(string no)
     {
         try { await _svc.MarkPickedUpAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/in-transit")]
@@ -60,7 +65,7 @@ public class CarrierController : ControllerBase
     public async Task<IActionResult> InTransit(string no)
     {
         try { await _svc.MarkInTransitAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/delivered")]
@@ -68,7 +73,7 @@ public class CarrierController : ControllerBase
     public async Task<IActionResult> Delivered(string no)
     {
         try { await _svc.MarkDeliveredAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/fail")]
@@ -76,7 +81,7 @@ public class CarrierController : ControllerBase
     public async Task<IActionResult> Fail(string no, [FromBody] FailReq req)
     {
         try { await _svc.MarkFailedAsync(no, req.Reason, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     public class FailReq { public string Reason { get; set; } = string.Empty; }
