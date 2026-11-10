@@ -29,4 +29,14 @@ DEV-1 于 2026-11-09 20:46:41 UTC 从 Main #860 开工。原 WP02-02 / PGT-027 �
 
 物理空闲回升后，`compile-02` 在 1,497 MiB 物理空闲与 20,939 MiB 可用提交下启动完整 Provider 编译。PID 19384 实际用时 9.110 秒、退出 0，核到全部 228 个迁移标识。响应文件使用原固定输出路径，产物 8,606,208 字节，SHA-256 `41a528db4d850620ecf00823f88a1693a2352286ddf2a721aa3aba3039b66adf`。 [编译进程](/D:/CP6-local-test/CP6-72H-20261109/W428-01/provider-build/compile-02/csc.process.json) · [实际产物](/D:/CP6-local-test/CP6-72H-20261109/W428-01/provider-build/compile-02/artifact.json)
 
-接续同一分支，复用已封存的 Provider 与 IAM friend。正常 Core EF 升级和实际宿主尚待运行。预留独占实例窗口后用 W383 的单一隔离副本，通过原 `TenantManagementPostgresFixture.Context` 正常升级并核对 224 条原 Core 历史及新增的一条记录，再分进程运行 IAM 与 HTTP 回归，独立核对实际数据库写集和停机。原 PostgreSQL 六段与单文件编译继续复用。 [W383 停机原件](/D:/CP6-local-test/CP6-72H-20261109/W383-VERIFY/stop-verification.json) · [正式宿主入口](../../../../CP6.Tests/Platform/TenantManagementPostgresFixture.cs#L52)
+### 完整 Core 迁移与 IAM 实测
+
+2026-11-10 01:18 UTC 从远端检查点恢复 DEV-1。私有夹具节录改为读取隔离副本的原 SCRAM 凭据，保留原编译。`csc-02` 实际编译 1.437 秒，产物 SHA-256 `8129eb588f116020ea52a378a66ffdcadb52ebe185d487f78cf64bf098fa8075`。首次停机预检收到本机中文控制输出，固定工具语言后通过。仅复制一次 W383 的 302,588,097 字节 PGDATA，源和副本的初始控制、配置及 HBA 摘要一致。 [定向编译](/D:/CP6-local-test/CP6-72H-20261109/W428-01/iam-friend-build/csc-02/terminal.json) · [副本记录](/D:/CP6-local-test/CP6-72H-20261109/W428-01/permission-consumption-w428-runtime/copy.json)
+
+完整副本实际为 224 条 Core 历史、2 个用户、7 个角色、0 条成员关系。单后端在显式事务执行原 Up SQL 后可见延迟外键，回滚后目录和历史回到初始读数。单后端实际用时 0.294 秒。`host-01` 的 18 个启动样本最高 1,104 MiB，低于 1,200 MiB，退出 75。 [完整副本原生验证](/D:/CP6-local-test/CP6-72H-20261109/W428-01/full-baseline-01/actual.json) · [联合启动原始样本](/D:/CP6-local-test/CP6-72H-20261109/W428-01/host-01/combined-gate.jsonl)
+
+`host-02` 启动实际 PostgreSQL 18.6，原 `TenantManagementPostgresFixture.Context` 选用已核 Provider。EF 确认唯一待迁移后提交 `20261109204600_IamUserMembershipTenantReferenceV1`，保留原 224 条并增加一条。IAM 在首次读取合同时发现私有运行目录缺少合同包，在写入前退出。补入封存的 63 份原合同文件后，从同一已升级停机副本接续。 [实际 EF 升级](/D:/CP6-local-test/CP6-72H-20261109/W428-01/host-02/upgrade-actual.json) · [首次 IAM 错误](/D:/CP6-local-test/CP6-72H-20261109/W428-01/host-02/iam.stderr) · [原合同输入](/D:/CP6-local-test/CP6-72H-20261109/W428-01/runtime-closure/contracts-inputs.json)
+
+`host-03` 两个 IAM 原用例通过，包含同事务用户、主附角色、身份快照、原 Outbox、审计和原回执，以及禁用历史角色的保留。实际环回 HTTP 模拟登录用例通过，晚提交返回 `23503 FK_Sys_UserRole_TenantUser`，暂存角色和错属成员关系均回滚，之后原 Cookie、有效角色、审计与重放断言通过。原生前后约束保持，两个 postmaster 均经独立状态检查停止，原 W383 控制摘要一致。两段 PostgreSQL 日志从启动到停机合计 37.308 秒。 [IAM 实际结果](/D:/CP6-local-test/CP6-72H-20261109/W428-01/host-03/iam-actual.json) · [HTTP 实际结果](/D:/CP6-local-test/CP6-72H-20261109/W428-01/host-03/impersonation-actual.json) · [原生日志](/D:/CP6-local-test/CP6-72H-20261109/W428-01/host-03/postgres.log) · [停机](/D:/CP6-local-test/CP6-72H-20261109/W428-01/host-03/stopped.json)
+
+集中审查覆盖已采用的普通 IAM 写入、错误提交的完整回滚、前向迁移历史及原键。W428 完成用户复合引用子场景。原 PGT-027 还要求成员关系的角色复合外键及实测，维持 `NOT_RUN`。 [原验收卡](../../acceptance/postgresql-tenancy.json) · [W430 同 schema 子场景](../W430-01/DELIVERY.md)

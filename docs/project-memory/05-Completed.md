@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC IAM 用户复合外键
+
+实际 PostgreSQL 迁移保留原历史与主键，合法 IAM 授权通过，晚提交的错属用户及同事务角色写入全部回滚。W425 已随 #866 采用并释放席位。 [W428](../development/evidence/W428-01/DELIVERY.md) · [W425](https://github.com/GTX537/CP6/pull/866)
+
 ## 2026-11-10 UTC PGT-003 实库错借
 
 实际 A 后端在 B 事务入口被身份守卫拒绝，真实日志、业务计数和 A/B 原行摘要吻合。W432 已随 #865 采用并完成分支及席位收尾。 [W425](../development/evidence/W425-01/DELIVERY.md) · [W432](https://github.com/GTX537/CP6/pull/865)
