@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC 有效功能配置当前查询
+
+现存有效功能配置GET移入既有功能控制Owner，复用当前device-manage/签名会话和认证父事务，读取实际配置表SHARE；完整保留原租户/删除过滤、排序、五字段和版本编码，直接PUT410保持；申请路径默认表选择及其余授权/事务逻辑经精确逆向比较保持，并实际复测一个申请完整正常周期。 本窗5项实际Main/PostgreSQL通过、零跳过；明确模拟身份、仓库和配置。此前W451的12项及兼容5项按未变路径和原来源复用，不改称本窗新执行。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，48小时172800秒。 [W452交付](../development/evidence/BUG-905-WMS-FEATURE-QUERY-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 功能变更申请当前授权与流程父事务
 
 既有功能变更申请Get/Submit/Cancel采用当前wms-mobile:device-manage及实际签名会话，同Context认证父事务拥有申请和实际OA/WF提交/撤回，故障回滚清理跟踪、无孤立申请；按当前仓库和绑定/定义引用决定，保留原OperationId历史回放、保留天数/证据/版本校验及内部审批回调，旧办理410保持。 实际Main/PostgreSQL12项和既有兼容5项通过，零跳过，身份/业务/旧流程定义为明确模拟输入。原375项仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PostgreSQL16 PASS/11 NOT_RUN，48小时172800秒。 [W451交付](../development/evidence/BUG-903-WMS-FEATURE-REQUEST-FENCE/DELIVERY.md)

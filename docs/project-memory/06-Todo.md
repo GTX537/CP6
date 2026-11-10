@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 有效功能配置当前查询
+
+继续WP02-03其余query/write/export/download和字段V1真实来源；有效配置DTO不替代R3不可变FeatureContext，WMS-CTRL原生审批/前提/Drain/正式应用协议及PGT-017、全Main/跨仓验收仍NOT_RUN。 当前配置读取仍为既有元数据范围，不宣称R3资格或物理业务效果。 [W452交付](../development/evidence/BUG-905-WMS-FEATURE-QUERY-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 功能变更申请当前授权与流程父事务
 
 继续WP02-03其余query/write/export/download和字段V1真实来源；WMS-CTRL R3原生审批适配、资格/前提/Drain与正式应用协议尚未采用，旧申请/流程元数据不替代不可变合同或审批业务效果；PGT-017及全Main/跨仓消费者仍NOT_RUN。 本窗不将旧WF定义或元数据当成R3资格，不完成完整审批/Drain/应用或生产推广。 [W451交付](../development/evidence/BUG-903-WMS-FEATURE-REQUEST-FENCE/DELIVERY.md)
