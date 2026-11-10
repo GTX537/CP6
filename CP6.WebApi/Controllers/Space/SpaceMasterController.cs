@@ -1,3 +1,4 @@
+using CP6.WebApi.Controllers.Erp;
 using CP6.Core.Auth;
 using CP6.Core.Services.Space;
 using CP6.Entity.DTOs.Space;
@@ -31,6 +32,7 @@ public class SpaceMasterController : ControllerBase
 
     [HttpPost("site")]
     [RequirePermission("space-site", "add")]
+    [OrderOwnerResult]
     public async Task<IActionResult> CreateSite([FromBody] SiteDto d)
     {
         return Ok2(new { id = await _svc.CreateSiteAsync(d, CurrentUser) });
@@ -38,6 +40,7 @@ public class SpaceMasterController : ControllerBase
 
     [HttpPut("site/{id:guid}")]
     [RequirePermission("space-site", "edit")]
+    [OrderOwnerResult]
     public async Task<IActionResult> UpdateSite(Guid id, [FromBody] SiteDto d)
     {
         await _svc.UpdateSiteAsync(id, d, CurrentUser); return Ok2();
@@ -45,6 +48,7 @@ public class SpaceMasterController : ControllerBase
 
     [HttpDelete("site/{id:guid}")]
     [RequirePermission("space-site", "delete")]
+    [OrderOwnerResult]
     public async Task<IActionResult> DeleteSite(Guid id)
     {
         await _svc.DeleteSiteAsync(id); return Ok2();
@@ -58,6 +62,7 @@ public class SpaceMasterController : ControllerBase
 
     [HttpPost("floor")]
     [RequirePermission("space-floor", "add")]
+    [OrderOwnerResult]
     public async Task<IActionResult> CreateFloor([FromBody] FloorDto d)
     {
         return Ok2(new { id = await _svc.CreateFloorAsync(d, CurrentUser) });
@@ -65,6 +70,7 @@ public class SpaceMasterController : ControllerBase
 
     [HttpPut("floor/{id:guid}")]
     [RequirePermission("space-floor", "edit")]
+    [OrderOwnerResult]
     public async Task<IActionResult> UpdateFloor(Guid id, [FromBody] FloorDto d)
     {
         await _svc.UpdateFloorAsync(id, d, CurrentUser); return Ok2();
@@ -72,6 +78,7 @@ public class SpaceMasterController : ControllerBase
 
     [HttpDelete("floor/{id:guid}")]
     [RequirePermission("space-floor", "delete")]
+    [OrderOwnerResult]
     public async Task<IActionResult> DeleteFloor(Guid id)
     {
         await _svc.DeleteFloorAsync(id); return Ok2();

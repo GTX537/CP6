@@ -1,6 +1,7 @@
 using System.Text.Json;
 using CP6.WebApi.Localization;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Erp;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DTOs.Space;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,7 @@ namespace CP6.Core.Services.Space;
 ///   · 创建实体不写 TenantId = ...——SaveChanges 写入盖章自动补当前租户。
 ///   · 仅保留 Creator = user / CreateDate = DateTime.Now（日期用 DateTime.Now，仓约定）。
 /// </summary>
-public class SpaceMasterService : ISpaceMasterService
+public partial class SpaceMasterService : ISpaceMasterService
 {
     private readonly CP6Context _db;
     private readonly LocationGeometryService _geo;
@@ -35,9 +36,9 @@ public class SpaceMasterService : ISpaceMasterService
     // Site
     // ══════════════════════════════════════════════════════════════════════
 
-    public async Task<Guid> CreateSiteAsync(SiteDto d, string? user)
+    private async Task<Guid> CreateSiteCoreAsync(SiteDto d, string? user, CancellationToken token)
     {
-        if (await _db.Space_Sites.AnyAsync(x => x.SiteCode == d.SiteCode))
+        if (await _db.Space_Sites.AnyAsync(x => x.SiteCode == d.SiteCode, token))
             throw new BizException("E-SPACE-001");
         var e = new Space_Site
         {
@@ -53,13 +54,13 @@ public class SpaceMasterService : ISpaceMasterService
             CreateDate = DateTime.Now
         };
         _db.Space_Sites.Add(e);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
         return e.Id;
     }
 
-    public async Task UpdateSiteAsync(Guid id, SiteDto d, string? user)
+    private async Task UpdateSiteCoreAsync(Guid id, SiteDto d, string? user, CancellationToken token)
     {
-        var e = await _db.Space_Sites.FirstOrDefaultAsync(x => x.Id == id)
+        var e = await _db.Space_Sites.FirstOrDefaultAsync(x => x.Id == id, token)
                 ?? throw new BizException("E-SPACE-001");
 
         // 锚护栏（E-SPACE-406）：SiteCode/WarehouseCd 是 WMS join 锚上游（发布时 WarehouseCd
@@ -71,7 +72,7 @@ public class SpaceMasterService : ISpaceMasterService
             var floorIds = _db.Space_Floors.Where(f => f.SiteId == id).Select(f => f.Id);
             if (await _db.Space_Locations.AnyAsync(
                     l => l.FloorId != null && floorIds.Contains(l.FloorId.Value)
-                         && l.Status == 1 && !l.IsDeleted))
+                         && l.Status == 1 && !l.IsDeleted, token))
                 throw new BizException("E-SPACE-406");
         }
 
@@ -84,7 +85,7 @@ public class SpaceMasterService : ISpaceMasterService
         e.WarehouseCd = d.WarehouseCd;
         e.Modifier   = user;
         e.ModifyDate = DateTime.Now;
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
     }
 
     public async Task<List<SiteDto>> ListSitesAsync() =>
@@ -95,21 +96,23 @@ public class SpaceMasterService : ISpaceMasterService
             WarehouseCd = x.WarehouseCd
         }).ToListAsync();
 
-    public async Task DeleteSiteAsync(Guid id)
+    private async Task DeleteSiteCoreAsync(Guid id, CancellationToken token)
     {
-        if (await _db.Space_Floors.AnyAsync(x => x.SiteId == id))
+        if (await _db.Space_Floors.AnyAsync(x => x.SiteId == id, token))
             throw new BizException("E-SPACE-007");
-        var e = await _db.Space_Sites.FirstOrDefaultAsync(x => x.Id == id);
-        if (e != null) { _db.Space_Sites.Remove(e); await _db.SaveChangesAsync(); }
+        var e = await _db.Space_Sites.FirstOrDefaultAsync(x => x.Id == id, token);
+        if (e != null) { _db.Space_Sites.Remove(e); await _db.SaveChangesAsync(token); }
     }
 
     // ══════════════════════════════════════════════════════════════════════
     // Floor
     // ══════════════════════════════════════════════════════════════════════
 
-    public async Task<Guid> CreateFloorAsync(FloorDto d, string? user)
+    private async Task<Guid> CreateFloorCoreAsync(FloorDto d, string? user, CancellationToken token)
     {
-        if (await _db.Space_Floors.AnyAsync(x => x.SiteId == d.SiteId && x.FloorCode == d.FloorCode))
+        if (_db.Database.IsNpgsql() && !await _db.Space_Sites.AnyAsync(x => x.Id == d.SiteId, token))
+            throw new OrderPriceCorrectionException("SPACE_SITE_NOT_FOUND", 404);
+        if (await _db.Space_Floors.AnyAsync(x => x.SiteId == d.SiteId && x.FloorCode == d.FloorCode, token))
             throw new BizException("E-SPACE-001");
         var e = new Space_Floor
         {
@@ -129,13 +132,13 @@ public class SpaceMasterService : ISpaceMasterService
             CreateDate      = DateTime.Now
         };
         _db.Space_Floors.Add(e);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
         return e.Id;
     }
 
-    public async Task UpdateFloorAsync(Guid id, FloorDto d, string? user)
+    private async Task UpdateFloorCoreAsync(Guid id, FloorDto d, string? user, CancellationToken token)
     {
-        var e = await _db.Space_Floors.FirstOrDefaultAsync(x => x.Id == id)
+        var e = await _db.Space_Floors.FirstOrDefaultAsync(x => x.Id == id, token)
                 ?? throw new BizException("E-SPACE-001");
         e.Level           = d.Level;
         e.FloorCode       = d.FloorCode;
@@ -149,7 +152,7 @@ public class SpaceMasterService : ISpaceMasterService
         e.OriginY         = d.OriginY;
         e.Modifier        = user;
         e.ModifyDate      = DateTime.Now;
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
     }
 
     public async Task<List<FloorDto>> ListFloorsAsync(Guid siteId) =>
@@ -161,13 +164,13 @@ public class SpaceMasterService : ISpaceMasterService
             UnderlayOffsetY = x.UnderlayOffsetY, OriginX = x.OriginX, OriginY = x.OriginY
         }).ToListAsync();
 
-    public async Task DeleteFloorAsync(Guid id)
+    private async Task DeleteFloorCoreAsync(Guid id, CancellationToken token)
     {
-        if (await _db.Space_Zones.AnyAsync(x => x.FloorId == id) ||
-            await _db.Space_Markers.AnyAsync(x => x.FloorId == id))
+        if (await _db.Space_Zones.AnyAsync(x => x.FloorId == id, token) ||
+            await _db.Space_Markers.AnyAsync(x => x.FloorId == id, token))
             throw new BizException("E-SPACE-007");
-        var e = await _db.Space_Floors.FirstOrDefaultAsync(x => x.Id == id);
-        if (e != null) { _db.Space_Floors.Remove(e); await _db.SaveChangesAsync(); }
+        var e = await _db.Space_Floors.FirstOrDefaultAsync(x => x.Id == id, token);
+        if (e != null) { _db.Space_Floors.Remove(e); await _db.SaveChangesAsync(token); }
     }
 
     // ══════════════════════════════════════════════════════════════════════

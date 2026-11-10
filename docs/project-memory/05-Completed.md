@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC 站点与楼层当前写入及父项决定
+
+现存站点/楼层增改删六写采用同Context当前space-site/space-floor动作、签名会话及认证共同根；真实站点/楼层和原子项/锚引用锁，查询与写入同父事务。楼层创建只采用当前租户实际未删除站点，缺失/其他租户及删除先行拒绝；原坐标精度、编辑不重挂、查询及原护栏保持。 W456通过#914进入远端main，WP02-03采用核销，分支准确删除、DEV-2干净释放后复用。本窗最终采用、分支与席位以PR和finish为准。 [W457交付](../development/evidence/BUG-915-SPACE-SITE-FLOOR-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 空间编码规则当前写入与两阶段重建
 
 现存空间编码规则增改删、批量/单格生成五写采用同Context当前space-code-rule:add/edit/delete/generate、签名会话及认证根；真实规则写锁与生成来源读锁/库位写锁，重建清旧码和赋新码同父事务。并发默认与默认迁入作用域互斥，原布局和算法、列表/预览/预检、旧构造路径保持。 W455通过#912进入远端main，WP02-03采用核销，分支准确删除、DEV-2干净释放后复用。本窗最终采用、分支与席位状态以PR和finish为准。 [W456交付](../development/evidence/BUG-913-SPACE-CODE-WRITE-FENCE/DELIVERY.md)
