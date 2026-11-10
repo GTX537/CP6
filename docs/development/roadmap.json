@@ -163947,6 +163947,11 @@
       "at": "2026-11-10T20:05:10.349398+00:00",
       "change": "W450修复仓库角色范围当前授权/引用及整组替换事务，实际托盘消费者验证撤销/授予；11项Main/PostgreSQL及2项兼容通过，核销W449两处采用及22.01–22.52分钟实测。",
       "evidence": "docs/development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-10T20:32:45.313220+00:00",
+      "change": "W451修复功能变更申请三个现存入口的当前授权和实际OA/WF父事务，12项Main/PostgreSQL与5项既有兼容通过；核销W450采用及28.93–29.37分钟实测。",
+      "evidence": "docs/development/evidence/BUG-903-WMS-FEATURE-REQUEST-FENCE/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -174356,9 +174361,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-03",
-        "delivered": "当前IAM/CAS、撤权共同门、对象/字段和多类Owner动作，以及本轮隐私/FORM最终授权已采用。 W435 实际版本化租户暂停与普通 Stock V1 调整共享 PostgreSQL 认证根，两种真实提交顺序、已提交原写集和暂停后的旧会话拒绝通过。 W436 LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。 W437 LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。 W438 装箱、拆箱、拆分、合并及回放接入既有 Owner 当前授权事务；四条真实 HTTP/PostgreSQL 路径均复现旧请求在暂停后写入，修复后 401 REAUTH_REQUIRED、九类原行逐字节保持，正常树变化、序列号、精确数量、回放和原业务错误通过。 W439 LPN Move 在既有 Mobile Owner 中组合库存父事务原语；真实非空树由原 HTTP 500 恢复完整原子移动，保留八位数量、货主估值质量和四腿实际部门继承。空/非空树均在暂停先提交后 401、十三类原行保持，晚期回执故障完整回滚，范围、回放和原错误协议通过。 W440 设备票据、更新/禁用、快捷 PIN、匿名激活和签名心跳在实际身份共同根中提交；保留合法自失效，数据库 nonce 裁决双宿主重放，设备范围变更使旧客户端身份失效，已有数据升级保留设备原行并要求重新登录。 W441 序列转换与七种生命周期在实际 Mobile Owner 内决定并组合库存父事务；原五种库存请求从 400 恢复共同提交，收货错误后遗留的跟踪对象不再被日志保存刷入；八条真实暂停路径均拒绝，保留序列/库存对账、实际部门继承、原回执与完整七步周期。 W442 托盘六个元数据写者采用同一认证根、当前动作/库区/已有字段和实际 actor；编号与托盘同父事务，原生插入故障后无编号或记录残留；六条暂停及真实撤权竞争均拒绝，保留原状态、三位重量和无库存效果。 W443 条码 profile/alias 两种 upsert 与 XLSX 实际提交采用当前 actor、barcode-manage 和共同认证根；整批共父事务，第二行失败后不再被日志重刷出一条别名；三条暂停、实际撤权、预览/更新/恢复、原错误及八位转换精度完成真实验收。 W444 现存标签七个HTTP入口采用当前动作/actor及共同认证根，设备当前资格先于回放，作业与版本化原结果回执共父事务；网关修正PENDING查询，持久化分区/原键/打印阶段，实际凭据与源绑定，未知打印不自动fail或重打，两个实际客户端进程在Main完成响应丢失后用原键恢复且只模拟打印一次。 W445 现存WCS手工任务八个读写入口采用当前actor/动作及共同认证根；新view仅登记目录不自动授予；创建编号与任务同父事务，晚期原生故障后不再残留编号或被日志重刷失败任务，保留原手工状态、八位数量及无库存效果。 W446 现存IoT九入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与业务同父事务，原生传感器/读数/批次故障完整回滚；从实际历史修复最新记录投影并保留迟到及同时间合法输入，模拟值/时间一致且先检查类型和1–100×最多100边界。 W447 现存承运元数据八入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与运单共父事务，原生INSERT/UPDATE故障完整回滚；读取事件前围栏使两次合法追加均完成并保留原事件及EF版本检查，原手工状态/错误与重量费用精度保持。 W448 现存卷材七入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；创建/分切编号与父子卷同父事务；全部子宽先校验并用足够的整数累计，移除循环内重复校验，非法后项或原生故障不残留子卷/编号；并发消费在最终决定点读取当前剩长，八位长度及既有版本检查保持。 W449 现存余料十入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与记录共父事务，原生INSERT/UPDATE故障不残留业务；Create/Update共用已有正尺寸/数量及仓库库位输入边界，保留结束态错误优先级、合法预留态修改、四位余料数量及既有版本检查；并发预留按当前状态拒绝第二个用途。 W450 既有仓库角色范围Get/Replace采用当前pub-data-scope query/edit及实际签名会话；共同认证根后锁定范围与角色/仓库/区域引用，替换及失败清理同父事务，晚期故障不被日志重刷；并发替换保存整组结果，实际托盘HTTP采用撤销旧仓库/授予新仓库；范围引用由逐项查询改为至多两次集中查询，200项合法输入实际通过，保留规范化、通配符、清空、200上限及角色1语义，无新权限点。",
+        "delivered": "当前IAM/CAS、撤权共同门、对象/字段和多类Owner动作，以及本轮隐私/FORM最终授权已采用。 W435 实际版本化租户暂停与普通 Stock V1 调整共享 PostgreSQL 认证根，两种真实提交顺序、已提交原写集和暂停后的旧会话拒绝通过。 W436 LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。 W437 LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。 W438 装箱、拆箱、拆分、合并及回放接入既有 Owner 当前授权事务；四条真实 HTTP/PostgreSQL 路径均复现旧请求在暂停后写入，修复后 401 REAUTH_REQUIRED、九类原行逐字节保持，正常树变化、序列号、精确数量、回放和原业务错误通过。 W439 LPN Move 在既有 Mobile Owner 中组合库存父事务原语；真实非空树由原 HTTP 500 恢复完整原子移动，保留八位数量、货主估值质量和四腿实际部门继承。空/非空树均在暂停先提交后 401、十三类原行保持，晚期回执故障完整回滚，范围、回放和原错误协议通过。 W440 设备票据、更新/禁用、快捷 PIN、匿名激活和签名心跳在实际身份共同根中提交；保留合法自失效，数据库 nonce 裁决双宿主重放，设备范围变更使旧客户端身份失效，已有数据升级保留设备原行并要求重新登录。 W441 序列转换与七种生命周期在实际 Mobile Owner 内决定并组合库存父事务；原五种库存请求从 400 恢复共同提交，收货错误后遗留的跟踪对象不再被日志保存刷入；八条真实暂停路径均拒绝，保留序列/库存对账、实际部门继承、原回执与完整七步周期。 W442 托盘六个元数据写者采用同一认证根、当前动作/库区/已有字段和实际 actor；编号与托盘同父事务，原生插入故障后无编号或记录残留；六条暂停及真实撤权竞争均拒绝，保留原状态、三位重量和无库存效果。 W443 条码 profile/alias 两种 upsert 与 XLSX 实际提交采用当前 actor、barcode-manage 和共同认证根；整批共父事务，第二行失败后不再被日志重刷出一条别名；三条暂停、实际撤权、预览/更新/恢复、原错误及八位转换精度完成真实验收。 W444 现存标签七个HTTP入口采用当前动作/actor及共同认证根，设备当前资格先于回放，作业与版本化原结果回执共父事务；网关修正PENDING查询，持久化分区/原键/打印阶段，实际凭据与源绑定，未知打印不自动fail或重打，两个实际客户端进程在Main完成响应丢失后用原键恢复且只模拟打印一次。 W445 现存WCS手工任务八个读写入口采用当前actor/动作及共同认证根；新view仅登记目录不自动授予；创建编号与任务同父事务，晚期原生故障后不再残留编号或被日志重刷失败任务，保留原手工状态、八位数量及无库存效果。 W446 现存IoT九入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与业务同父事务，原生传感器/读数/批次故障完整回滚；从实际历史修复最新记录投影并保留迟到及同时间合法输入，模拟值/时间一致且先检查类型和1–100×最多100边界。 W447 现存承运元数据八入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与运单共父事务，原生INSERT/UPDATE故障完整回滚；读取事件前围栏使两次合法追加均完成并保留原事件及EF版本检查，原手工状态/错误与重量费用精度保持。 W448 现存卷材七入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；创建/分切编号与父子卷同父事务；全部子宽先校验并用足够的整数累计，移除循环内重复校验，非法后项或原生故障不残留子卷/编号；并发消费在最终决定点读取当前剩长，八位长度及既有版本检查保持。 W449 现存余料十入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与记录共父事务，原生INSERT/UPDATE故障不残留业务；Create/Update共用已有正尺寸/数量及仓库库位输入边界，保留结束态错误优先级、合法预留态修改、四位余料数量及既有版本检查；并发预留按当前状态拒绝第二个用途。 W450 既有仓库角色范围Get/Replace采用当前pub-data-scope query/edit及实际签名会话；共同认证根后锁定范围与角色/仓库/区域引用，替换及失败清理同父事务，晚期故障不被日志重刷；并发替换保存整组结果，实际托盘HTTP采用撤销旧仓库/授予新仓库；范围引用由逐项查询改为至多两次集中查询，200项合法输入实际通过，保留规范化、通配符、清空、200上限及角色1语义，无新权限点。 W451 既有功能变更申请Get/Submit/Cancel采用当前wms-mobile:device-manage及实际签名会话，同Context认证父事务拥有申请和实际OA/WF提交/撤回，故障回滚清理跟踪、无孤立申请；按当前仓库和绑定/定义引用决定，保留原OperationId历史回放、保留天数/证据/版本校验及内部审批回调，旧办理410保持。",
         "remaining": "全字段注册表与全部现存query/write/export/download写者尚未完成覆盖核销。",
-        "next_action": "继续原WP02-03/CTX02-A4/A7其余query/write/export/download和字段V1真实来源采用；保留已采用OperationsOwnerV1的当前/最终授权，不因名称差异重复开发；WMS审批功能变更链及其余真实消费者按当前调用链评估，PGT-017全writer仍NOT_RUN。",
+        "next_action": "继续WP02-03其余query/write/export/download和字段V1真实来源；WMS-CTRL R3原生审批适配、资格/前提/Drain与正式应用协议尚未采用，旧申请/流程元数据不替代不可变合同或审批业务效果；PGT-017及全Main/跨仓消费者仍NOT_RUN。",
         "evidence_refs": [
           "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
           "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
@@ -174419,11 +174424,12 @@
           "docs/development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md",
           "docs/development/evidence/BUG-897-PAPER-ROLL-FENCE/DELIVERY.md",
           "docs/development/evidence/BUG-899-REMNANT-LIFECYCLE-FENCE/DELIVERY.md",
-          "docs/development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md"
+          "docs/development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md",
+          "docs/development/evidence/BUG-903-WMS-FEATURE-REQUEST-FENCE/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W450-01"
+        "latest_window": "W451-01"
       },
       "wave435_delivery": {
         "status": "CLOSED",
@@ -174727,12 +174733,32 @@
         "seat_released": true
       },
       "wave450_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md",
         "validation": "既有仓库角色范围Get/Replace采用当前pub-data-scope query/edit及实际签名会话；共同认证根后锁定范围与角色/仓库/区域引用，替换及失败清理同父事务，晚期故障不被日志重刷；并发替换保存整组结果，实际托盘HTTP采用撤销旧仓库/授予新仓库；范围引用由逐项查询改为至多两次集中查询，200项合法输入实际通过，保留规范化、通配符、清空、200上限及角色1语义，无新权限点。",
         "tested_baseline": "ac73038fe9edc5d8041eab5fdd0bb014b9049bc0",
         "issue": "https://github.com/GTX537/CP6/issues/901",
         "actual_result_sha256": "1805e6bdd94a3d0672a3405a5334fb86f9800d3bb2ba79a4ca230a11161ac00c",
+        "formal_case": "PGT-017",
+        "formal_acceptance": "NOT_RUN",
+        "full_task_complete": false,
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/902",
+          "commit": "3e3a333f16cade8e9974f4cd9262de206b8be28c",
+          "target_head": "3e3a333f16cade8e9974f4cd9262de206b8be28c"
+        },
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse",
+        "seat_released": true
+      },
+      "wave451_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/BUG-903-WMS-FEATURE-REQUEST-FENCE/DELIVERY.md",
+        "validation": "既有功能变更申请Get/Submit/Cancel采用当前wms-mobile:device-manage及实际签名会话，同Context认证父事务拥有申请和实际OA/WF提交/撤回，故障回滚清理跟踪、无孤立申请；按当前仓库和绑定/定义引用决定，保留原OperationId历史回放、保留天数/证据/版本校验及内部审批回调，旧办理410保持。",
+        "tested_baseline": "3e3a333f16cade8e9974f4cd9262de206b8be28c",
+        "issue": "https://github.com/GTX537/CP6/issues/903",
+        "actual_result_sha256": "dbef991687c8838bc17087fd2b3c8798b633e963c7e09376d3a2e2ec6c05aad4",
         "formal_case": "PGT-017",
         "formal_acceptance": "NOT_RUN",
         "full_task_complete": false
@@ -208793,10 +208819,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W450",
-      "path": "docs/development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md",
-      "baseline_sha": "ac73038fe9edc5d8041eab5fdd0bb014b9049bc0",
-      "registered_at": "2026-11-10T19:41:17.037257+00:00",
+      "id": "W451",
+      "path": "docs/development/evidence/BUG-903-WMS-FEATURE-REQUEST-FENCE/DELIVERY.md",
+      "baseline_sha": "3e3a333f16cade8e9974f4cd9262de206b8be28c",
+      "registered_at": "2026-11-10T20:15:52.147289+00:00",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "COORD"
@@ -208811,37 +208837,37 @@
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": false,
-      "next_action": "继续原WP02-03/CTX02-A4/A7其余query/write/export/download和字段V1真实来源采用；保留已采用OperationsOwnerV1的当前/最终授权，不因名称差异重复开发；WMS审批功能变更链及其余真实消费者按当前调用链评估，PGT-017全writer仍NOT_RUN。",
+      "next_action": "继续WP02-03其余query/write/export/download和字段V1真实来源；WMS-CTRL R3原生审批适配、资格/前提/Drain与正式应用协议尚未采用，旧申请/流程元数据不替代不可变合同或审批业务效果；PGT-017及全Main/跨仓消费者仍NOT_RUN。",
       "windows": [
         {
-          "id": "W450-01",
-          "workspace_task": "BUG-901-WMS-ROLE-SCOPE-FENCE",
+          "id": "W451-01",
+          "workspace_task": "BUG-903-WMS-FEATURE-REQUEST-FENCE",
           "related_tasks": [
             "WP02-03"
           ],
-          "title": "仓库角色范围当前授权与引用事务",
+          "title": "功能变更申请当前授权与流程父事务",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/bug-901-wms-role-scope-fence",
-          "planned_scope_ref": "docs/development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md",
+          "branch": "codex/bug-903-wms-feature-request-fence",
+          "planned_scope_ref": "docs/development/evidence/BUG-903-WMS-FEATURE-REQUEST-FENCE/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "file:Main:CP6.Tests/Erp/WmsRoleScopePostgreSqlTests.cs",
-            "file:Main:CP6.Tests/Erp/WmsRoleScopePostgreSqlTests.Behavior.cs",
-            "file:Main:CP6.Core/Services/Wms/WmsRoleScopeService.cs",
-            "file:Main:CP6.Core/Services/Wms/WmsRoleScopeService.Authority.cs",
-            "file:Main:CP6.WebApi/Controllers/Wms/WmsRoleScopesController.cs",
+            "file:Main:CP6.Tests/Erp/WmsFeatureRequestPostgreSqlTests.cs",
+            "file:Main:CP6.Tests/Erp/WmsFeatureRequestPostgreSqlTests.Behavior.cs",
+            "file:Main:CP6.Core/Services/Wms/WmsFeatureFlagChangeService.cs",
+            "file:Main:CP6.Core/Services/Wms/WmsFeatureFlagChangeService.Authority.cs",
+            "file:Main:CP6.WebApi/Controllers/Wms/WmsFeatureFlagChangesController.cs",
             "file:Main:CP6.WebApi/Program.cs"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/BUG-903-WMS-FEATURE-REQUEST-FENCE/DELIVERY.md"
         }
       ],
       "storage": {
@@ -254455,6 +254481,72 @@
           "reuse_worktree": "D:/CP6-worktrees/dev-2",
           "new_worktrees": 0
         }
+      },
+      {
+        "id": "W450",
+        "path": "docs/development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md",
+        "baseline_sha": "ac73038fe9edc5d8041eab5fdd0bb014b9049bc0",
+        "registered_at": "2026-11-10T19:41:17.037257+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "next_action": "继续原WP02-03/CTX02-A4/A7其余query/write/export/download和字段V1真实来源采用；保留已采用OperationsOwnerV1的当前/最终授权，不因名称差异重复开发；WMS审批功能变更链及其余真实消费者按当前调用链评估，PGT-017全writer仍NOT_RUN。",
+        "windows": [
+          {
+            "id": "W450-01",
+            "workspace_task": "BUG-901-WMS-ROLE-SCOPE-FENCE",
+            "related_tasks": [
+              "WP02-03"
+            ],
+            "title": "仓库角色范围当前授权与引用事务",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/bug-901-wms-role-scope-fence",
+            "planned_scope_ref": "docs/development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "file:Main:CP6.Tests/Erp/WmsRoleScopePostgreSqlTests.cs",
+              "file:Main:CP6.Tests/Erp/WmsRoleScopePostgreSqlTests.Behavior.cs",
+              "file:Main:CP6.Core/Services/Wms/WmsRoleScopeService.cs",
+              "file:Main:CP6.Core/Services/Wms/WmsRoleScopeService.Authority.cs",
+              "file:Main:CP6.WebApi/Controllers/Wms/WmsRoleScopesController.cs",
+              "file:Main:CP6.WebApi/Program.cs"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md",
+            "adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6/pull/902",
+              "commit": "3e3a333f16cade8e9974f4cd9262de206b8be28c",
+              "target_head": "3e3a333f16cade8e9974f4cd9262de206b8be28c"
+            },
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/dev-2",
+          "new_worktrees": 0
+        }
       }
     ],
     "development_priority": {
@@ -257559,10 +257651,22 @@
             1320.362216,
             1351
           ]
+        },
+        "w450_adopted": {
+          "native_elapsed_seconds": 140974,
+          "native_sample_utc": "2026-11-10T20:10:15+00:00",
+          "capacity_seconds": 172800,
+          "native_status": "active",
+          "raw": "D:/CP6-local-test/CP6-72H-20261109/after-w450-adoption-calibration.json",
+          "raw_sha256": "df6e37d3d2bdde520007b5258bfcf36785d6326eef694f6cce917cabf2de661f",
+          "conservative_native_active_range_seconds": [
+            1735.5079600000001,
+            1762
+          ]
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "继续原WP02-03/CTX02-A4/A7其余query/write/export/download和字段V1真实来源采用；保留已采用OperationsOwnerV1的当前/最终授权，不因名称差异重复开发；WMS审批功能变更链及其余真实消费者按当前调用链评估，PGT-017全writer仍NOT_RUN。",
+      "next_priority": "继续WP02-03其余query/write/export/download和字段V1真实来源；WMS-CTRL R3原生审批适配、资格/前提/Drain与正式应用协议尚未采用，旧申请/流程元数据不替代不可变合同或审批业务效果；PGT-017及全Main/跨仓消费者仍NOT_RUN。",
       "windows": [
         {
           "id": "W327-01",
@@ -260472,7 +260576,7 @@
         {
           "id": "W450-01",
           "workspace_task": "BUG-901-WMS-ROLE-SCOPE-FENCE",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-03"
           ],
@@ -260498,6 +260602,50 @@
             "main11": "green-hosted-01/actual.json",
             "compatibility2": "compatibility-01/actual.json",
             "original11": "red-hosted-02/actual.json"
+          },
+          "formal_acceptance": "NOT_RUN",
+          "finished_at": "2026-11-10T20:10:14.545217+00:00",
+          "final_lease_seconds": 1737.50796,
+          "lease_includes_user_pauses": false,
+          "conservative_native_active_range_seconds": [
+            1735.5079600000001,
+            1762
+          ],
+          "pr": "https://github.com/GTX537/CP6/pull/902",
+          "adopted_main": "3e3a333f16cade8e9974f4cd9262de206b8be28c",
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "seat_released": true
+        },
+        {
+          "id": "W451-01",
+          "workspace_task": "BUG-903-WMS-FEATURE-REQUEST-FENCE",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-03"
+          ],
+          "started_at": "2026-11-10T20:15:52.147289+00:00",
+          "native_start_sample_seconds": 141281,
+          "validation_ready_at": "2026-11-10T20:32:45.313220+00:00",
+          "estimate_minutes": [
+            40,
+            65
+          ],
+          "branch": "codex/bug-903-wms-feature-request-fence",
+          "tested_baseline": "3e3a333f16cade8e9974f4cd9262de206b8be28c",
+          "scope": "既有功能变更申请Get/Submit/Cancel采用当前wms-mobile:device-manage及实际签名会话，同Context认证父事务拥有申请和实际OA/WF提交/撤回，故障回滚清理跟踪、无孤立申请；按当前仓库和绑定/定义引用决定，保留原OperationId历史回放、保留天数/证据/版本校验及内部审批回调，旧办理410保持。",
+          "delivery": "docs/development/evidence/BUG-903-WMS-FEATURE-REQUEST-FENCE/DELIVERY.md",
+          "dispatch": "docs/development/evidence/BUG-903-WMS-FEATURE-REQUEST-FENCE/DELIVERY.md",
+          "issue": "https://github.com/GTX537/CP6/issues/903",
+          "main_postgresql_cases": 12,
+          "compatibility_cases": 5,
+          "skipped": 0,
+          "validation_provenance": {
+            "summary": "D:/CP6-local-test/CP6-72H-20261109/W451-01/actual.json",
+            "summary_sha256": "dbef991687c8838bc17087fd2b3c8798b633e963c7e09376d3a2e2ec6c05aad4",
+            "main12": "green-hosted-01/actual.json",
+            "compatibility5": "compatibility-01/actual.json",
+            "original12": "red-hosted-01/actual.json"
           },
           "formal_acceptance": "NOT_RUN"
         }

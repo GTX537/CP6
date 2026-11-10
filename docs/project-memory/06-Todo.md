@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 功能变更申请当前授权与流程父事务
+
+继续WP02-03其余query/write/export/download和字段V1真实来源；WMS-CTRL R3原生审批适配、资格/前提/Drain与正式应用协议尚未采用，旧申请/流程元数据不替代不可变合同或审批业务效果；PGT-017及全Main/跨仓消费者仍NOT_RUN。 本窗不将旧WF定义或元数据当成R3资格，不完成完整审批/Drain/应用或生产推广。 [W451交付](../development/evidence/BUG-903-WMS-FEATURE-REQUEST-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 仓库角色范围当前授权与引用事务
 
 继续原WP02-03/CTX02-A4/A7其余query/write/export/download和字段V1真实来源采用；保留已采用OperationsOwnerV1的当前/最终授权，不因名称差异重复开发；WMS审批功能变更链及其余真实消费者按当前调用链评估，PGT-017全writer仍NOT_RUN。 本窗仅仓库范围管理及实际托盘采用，不完成完整字段V1/负载/全Main或跨仓消费者验收。 [W450交付](../development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md)

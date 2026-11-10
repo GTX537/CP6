@@ -1229,7 +1229,16 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsRoleScopeService>(sp =>
         http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp),
         http?.RequestAborted ?? CancellationToken.None);
 });
-builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsFeatureFlagChangeService, CP6.Core.Services.Wms.WmsFeatureFlagChangeService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsFeatureFlagChangeService>(sp =>
+{
+    var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    return new CP6.Core.Services.Wms.WmsFeatureFlagChangeService(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetRequiredService<CP6.Core.Services.Wf.IApprovalService>(),
+        sp.GetRequiredService<CP6.Core.Services.Wf.ITaskCenterService>(),
+        sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
+        http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp),
+        http?.RequestAborted ?? CancellationToken.None);
+});
 builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileTaskV2Service, CP6.Core.Services.Wms.MobileTaskV2Service>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IBarcodeAliasService>(sp =>
 {
