@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 序列生命周期与库存事务
+
+继续原 WP02-03 / CTX02-A4/A7，盘点余下可达业务写者，并验证租户 schema 映射/切换下的同源提交与恢复；PGT-017 直至全体相关写者完成采用和验收前保持 NOT_RUN。 TRACE 新版来源原件、输入摘要和 UI、正式收发及盘点 Owner 采用仍归原任务；PGT-021/022 恢复验收亦未核销。[W441 交付](../development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 设备生命周期与原生身份
 
 继续原 WP02-03 / CTX02-A4/A7，核对序列号等剩余实际写者、撤权入口及其恢复路径；PGT-017 直至全体相关写者完成采用和验收前保持 NOT_RUN。 设备新版 operation DTO、前端、发布策略和完整 SYS-CLIENT-01 验收仍归后续原任务；PGT-021/022 继续同源恢复、当前权限、消息对账和独立批准切换。[W440 交付](../development/evidence/BUG-881-DEVICE-LIFECYCLE-FENCE/DELIVERY.md)

@@ -1,5 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
+using CP6.Core.Services.Erp;
+using CP6.WebApi.Controllers.Erp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,6 +30,7 @@ public sealed class SerialsController : ControllerBase
 
     [HttpPost("enable-tracking")]
     [RequirePermission("wms-mobile", "serial-manage")]
+    [OrderOwnerResult]
     public Task<ActionResult<SerialOperationResult>> EnableTracking(
         EnableSerialTrackingRequest request,
         CancellationToken ct)
@@ -36,6 +39,7 @@ public sealed class SerialsController : ControllerBase
 
     [HttpPost]
     [RequirePermission("wms-mobile", "serial-manage")]
+    [OrderOwnerResult]
     public Task<ActionResult<SerialOperationResult>> Post(
         SerialLifecycleRequest request,
         CancellationToken ct)
@@ -49,7 +53,7 @@ public sealed class SerialsController : ControllerBase
         {
             return new ConflictObjectResult(new { code = ex.Code, message = ex.Code });
         }
-        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException and not OrderPriceCorrectionException)
         {
             return new BadRequestObjectResult(new { code = ex.Message, message = ex.Message });
         }

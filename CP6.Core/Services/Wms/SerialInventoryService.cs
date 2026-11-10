@@ -1,5 +1,6 @@
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Erp;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
@@ -7,17 +8,20 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Core.Services.Wms;
 
-public sealed class SerialInventoryService : ISerialInventoryService
+public sealed partial class SerialInventoryService : ISerialInventoryService
 {
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
     private readonly CP6Context _db;
     private readonly IStockMovementService _stock;
 
-    public SerialInventoryService(CP6Context db, IStockMovementService stock)
+    public SerialInventoryService(CP6Context db, IStockMovementService stock) : this(db, stock, null) { }
+
+    public SerialInventoryService(CP6Context db, IStockMovementService stock, OperationsOwnerV1? owner)
     {
         _db = db;
         _stock = stock;
+        _owner = owner;
     }
 
     public async Task<PagedResult<StockSerialDto>> GetAsync(
@@ -61,8 +65,14 @@ public sealed class SerialInventoryService : ISerialInventoryService
         if (string.IsNullOrWhiteSpace(request.ProductCd)
             || !ProductTrackingMode.UsesSerial(request.TrackingMode))
             throw new ArgumentException("WM-SERIAL-TRACKING-DATA");
+        return await ExecuteSerialCommand((actor, access, token) => EnableTrackingCoreAsync(request, actor, access, token), userName, false, ct);
+    }
+
+    private async Task<SerialOperationResult> EnableTrackingCoreAsync(EnableSerialTrackingRequest request,
+        string? userName, OperationsAccessV1? access, CancellationToken ct)
+    {
         var receiptKey = $"SERIAL:{request.ProductCd.Trim()}";
-        var replay = await ReplayAsync(receiptKey, request.OperationId, "enable", ct);
+        var replay = await ReplayAsync(receiptKey, request.OperationId, "enable", ct, access);
         if (replay is not null) return replay;
 
         IDbContextTransaction? tx = await BeginTransactionAsync(ct);
@@ -138,6 +148,11 @@ public sealed class SerialInventoryService : ISerialInventoryService
                     && (x.LotNo ?? string.Empty) == stock.LotNo);
                 if (count != (int)stock.PhysicalQty)
                     throw new MobileTaskConflictException("WM-SERIAL-CONVERSION-BUCKET-MISMATCH");
+                if (access is not null)
+                {
+                    await access.RequireStockKey(stock.WarehouseCd, stock.LocationCd, productCd, stock.LotNo, false, ct);
+                    access.AtCommit(token => access.RequireStockKey(stock.WarehouseCd, stock.LocationCd, productCd, stock.LotNo, false, token));
+                }
             }
 
             var rows = new List<StockSerial>();
@@ -198,9 +213,16 @@ public sealed class SerialInventoryService : ISerialInventoryService
         CancellationToken ct = default)
     {
         ValidateLifecycle(request);
+        var stockEffect = request.TxnType.Trim().ToUpperInvariant() is "RECEIVE" or "PUTAWAY" or "MOVE" or "SHIP" or "RETURN";
+        return await ExecuteSerialCommand((actor, access, token) => PostCoreAsync(request, actor, access, token), userName, stockEffect, ct);
+    }
+
+    private async Task<SerialOperationResult> PostCoreAsync(SerialLifecycleRequest request, string? userName,
+        OperationsAccessV1? access, CancellationToken ct)
+    {
         var productCd = request.ProductCd.Trim();
         var receiptKey = $"SERIAL:{productCd}";
-        var replay = await ReplayAsync(receiptKey, request.OperationId, "lifecycle", ct);
+        var replay = await ReplayAsync(receiptKey, request.OperationId, "lifecycle", ct, access);
         if (replay is not null) return replay;
         await EnsureFeatureAsync(request.WarehouseCd, ct);
 
@@ -234,6 +256,7 @@ public sealed class SerialInventoryService : ISerialInventoryService
                     if (existing.Count != 0)
                         throw new MobileTaskConflictException("WM-SERIAL-ALREADY-EXISTS");
                     RequireTarget(request);
+                    if (access is not null) await RequireSerialLocations(access, [(request.WarehouseCd.Trim(), request.ToLocationCd!.Trim())], ct);
                     foreach (var serialNo in serialNos)
                     {
                         var row = new StockSerial
@@ -252,16 +275,19 @@ public sealed class SerialInventoryService : ISerialInventoryService
                         _db.StockSerials.Add(row);
                         existing.Add(row);
                     }
-                    stockTxnNos.Add(await _stock.ApplyAsync(StockRequest(
+                    stockTxnNos.Add(await ApplySerialStock(StockRequest(
                         request, WmsTxnType.IN, serialNos.Count, userName,
-                        request.ToLocationCd!), ct));
+                        request.ToLocationCd!), access, ct));
                     break;
 
                 case "PUTAWAY":
                 case "MOVE":
                     EnsureExistingAtSource(existing, serialNos, request);
                     RequireTarget(request);
-                    var moved = await _stock.MoveAsync(new StockMoveRequest
+                    if (access is not null)
+                        await RequireSerialLocations(access, existing.Select(s => (s.WarehouseCd, s.LocationCd))
+                            .Append((request.WarehouseCd.Trim(), request.ToLocationCd!.Trim())), ct);
+                    var moved = await MoveSerialStock(new StockMoveRequest
                     {
                         WarehouseCd = request.WarehouseCd.Trim(),
                         FromLocationCd = request.FromLocationCd!.Trim(),
@@ -271,7 +297,7 @@ public sealed class SerialInventoryService : ISerialInventoryService
                         Qty = serialNos.Count,
                         OperatorCd = userName,
                         Remark = $"{type} serialized stock"
-                    }, ct);
+                    }, access, ct);
                     stockTxnNos.Add(moved.OutTxnNo);
                     stockTxnNos.Add(moved.InTxnNo);
                     foreach (var row in existing)
@@ -286,6 +312,7 @@ public sealed class SerialInventoryService : ISerialInventoryService
 
                 case "PICK":
                     EnsureExistingAtSource(existing, serialNos, request);
+                    if (access is not null) await RequireSerialLocations(access, existing.Select(s => (s.WarehouseCd, s.LocationCd)), ct);
                     foreach (var row in existing)
                     {
                         row.Status = StockSerialStatus.Picked;
@@ -297,9 +324,10 @@ public sealed class SerialInventoryService : ISerialInventoryService
 
                 case "SHIP":
                     EnsureExistingAtSource(existing, serialNos, request);
-                    stockTxnNos.Add(await _stock.ApplyAsync(StockRequest(
+                    if (access is not null) await RequireSerialLocations(access, existing.Select(s => (s.WarehouseCd, s.LocationCd)), ct);
+                    stockTxnNos.Add(await ApplySerialStock(StockRequest(
                         request, WmsTxnType.OUT, serialNos.Count, userName,
-                        request.FromLocationCd!), ct));
+                        request.FromLocationCd!), access, ct));
                     foreach (var row in existing)
                     {
                         row.Status = StockSerialStatus.Shipped;
@@ -311,6 +339,7 @@ public sealed class SerialInventoryService : ISerialInventoryService
 
                 case "COUNT":
                     EnsureExistingAtSource(existing, serialNos, request);
+                    if (access is not null) await RequireSerialLocations(access, existing.Select(s => (s.WarehouseCd, s.LocationCd)), ct);
                     foreach (var row in existing)
                         row.LastTxnNo = AddLedger(request.OperationId, type, row,
                             row.LocationCd, row.LocationCd, row.LpnNo,
@@ -322,9 +351,12 @@ public sealed class SerialInventoryService : ISerialInventoryService
                     if (existing.Count != serialNos.Count
                         || existing.Any(x => x.Status != StockSerialStatus.Shipped))
                         throw new MobileTaskConflictException("WM-SERIAL-NOT-SHIPPED");
-                    stockTxnNos.Add(await _stock.ApplyAsync(StockRequest(
+                    if (access is not null)
+                        await RequireSerialLocations(access, existing.Select(s => (s.WarehouseCd, s.LocationCd))
+                            .Append((request.WarehouseCd.Trim(), request.ToLocationCd!.Trim())), ct);
+                    stockTxnNos.Add(await ApplySerialStock(StockRequest(
                         request, WmsTxnType.IN, serialNos.Count, userName,
-                        request.ToLocationCd!), ct));
+                        request.ToLocationCd!), access, ct));
                     foreach (var row in existing)
                     {
                         row.WarehouseCd = request.WarehouseCd.Trim();
@@ -499,15 +531,16 @@ public sealed class SerialInventoryService : ISerialInventoryService
         string key,
         Guid operationId,
         string command,
-        CancellationToken ct)
+        CancellationToken ct, OperationsAccessV1? access = null)
     {
         var receipt = await _db.TaskCommandReceipts.AsNoTracking()
             .FirstOrDefaultAsync(x => x.OperationId == operationId, ct);
         if (receipt is null) return null;
         if (receipt.TaskNo != key || receipt.CommandName != command)
             throw new MobileTaskConflictException("WM-V2-OPERATION-ID-USED");
-        return JsonSerializer.Deserialize<SerialOperationResult>(
-            receipt.ResultJson, JsonOptions);
+        var result = JsonSerializer.Deserialize<SerialOperationResult>(receipt.ResultJson, JsonOptions)!;
+        if (access is not null) await RequireSerialLocations(access, result.Serials.Select(s => (s.WarehouseCd, s.LocationCd)), ct);
+        return result;
     }
 
     private void AddReceipt(
