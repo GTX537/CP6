@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC ERP 原 C03 隔离候选
+
+受控 `import` 与 `recover` 实测保留原八表成员、原 token、B 隔离与精确回执。候选验收范围为关闭状态。 [W422](../development/evidence/W422-01/DELIVERY.md)
+
 ## 2026-11-09 UTC PGT-015 原全局键和受控冲突
 
 采用原生普通角色并发、同事务失败和新事务读权，原受控接收、原字节与独立队列域均有对应证据。 [W431](../development/evidence/W431-01/DELIVERY.md)
