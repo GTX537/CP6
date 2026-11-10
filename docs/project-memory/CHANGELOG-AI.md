@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-10 UTC 登记原 PGT-027
+
+增加 PostgreSQL 共享 IAM 角色复合外键。纳入旧错误迁移回滚、普通登录批量写入、合法 Owner 及模拟登录证据。同步 W428 远端收尾和 W433 最新保存检查点。[W434](../development/evidence/W434-01/DELIVERY.md)
+
 ## 2026-11-10 UTC 记录 IAM 正常迁移及宿主验证
 
 采用 PostgreSQL 用户复合外键的正常 EF 迁移，纳入实际 IAM 原回执及模拟登录完整回归，并同步 W425 的远端合并与席位释放。 [W428](../development/evidence/W428-01/DELIVERY.md)

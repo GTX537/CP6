@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC PostgreSQL PGT-027
+
+W434 正常 Core EF 将隔离库迁移历史从 225 条推进到 226 条，IAM 与模拟登录通过。普通 SCRAM COPY 实测用户、角色错属各自全回滚，同号合法 A 行提交。正式 PostgreSQL 为 15 PASS、12 NOT_RUN，原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。[W434](../development/evidence/W434-01/DELIVERY.md)
+
 ## 2026-11-10 UTC IAM 用户成员引用
 
 W428 正常 Core EF 将隔离库迁移历史从 224 条推进到 225 条，两个 IAM 用例和实际模拟登录 HTTP 通过。原 PGT-027 待成员关系的角色复合引用。正式 PostgreSQL 为 14 PASS、13 NOT_RUN，原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W428](../development/evidence/W428-01/DELIVERY.md)

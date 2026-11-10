@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC IAM 成员关系角色引用
+
+实际 PostgreSQL 校验角色和用户复合键，原角色停用历史保留。PGT-027 合用同 schema COPY、归属更新与共享引用原生证据。W428 已随 #867 采用并完成分支和 DEV-1 收尾。[W434](../development/evidence/W434-01/DELIVERY.md) · [W428](https://github.com/GTX537/CP6/pull/867)
+
 ## 2026-11-10 UTC IAM 用户复合外键
 
 实际 PostgreSQL 迁移保留原历史与主键，合法 IAM 授权通过，晚提交的错属用户及同事务角色写入全部回滚。W425 已随 #866 采用并释放席位。 [W428](../development/evidence/W428-01/DELIVERY.md) · [W425](https://github.com/GTX537/CP6/pull/866)
