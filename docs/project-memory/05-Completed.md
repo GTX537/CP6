@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC 真实库存与租户暂停顺序
+
+库存先提交时保留原库存、流水、审计与 Outbox。暂停先提交时旧会话得到 401，库存写集逐字节一致。W423 已随 #871 采用，DEV-2 已在该窗收尾时释放。W415 已验证独立批准后普通 RMA 原操作及实际撤权，集成席位已释放。 [W435](../development/evidence/W435-01/DELIVERY.md)
+
 ## 2026-11-10 UTC W372 实际 ERP 与文件同源归档
 
 A、B 的真实 C03 终态和重复投递通过。正常 v8 的 ERP 八表与原文件引用共享 PostgreSQL 快照。W429 已随 #870 采用，本地及远端分支已清理，DEV-2 已释放。 [W423](../development/evidence/W423-01/DELIVERY.md) · [W429](https://github.com/GTX537/CP6/pull/870)

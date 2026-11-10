@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC 租户暂停与普通库存提交
+
+W435 在 PostgreSQL 18.6 实测普通库存 V1 调整与版本化租户暂停的两种顺序。正式 PGT-017 仍待全 writer 登记和共同栅栏采用。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED，正式 PostgreSQL 为 16 PASS、11 NOT_RUN。 [W435](../development/evidence/W435-01/DELIVERY.md)
+
 ## 2026-11-10 UTC W372 同源 ERP 与文件
 
 W423 在同一 PostgreSQL 18.6 快照核对 A 的 ERP 八表与 W420 原 45 字节文件。两个实际普通角色的 RMA 原数据和跨租户边界通过。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED，正式 PostgreSQL 为 16 PASS、11 NOT_RUN。 [W423](../development/evidence/W423-01/DELIVERY.md)
