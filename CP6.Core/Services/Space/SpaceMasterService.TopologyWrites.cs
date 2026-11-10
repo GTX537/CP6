@@ -17,6 +17,14 @@ public partial class SpaceMasterService
     private const string LocationRead = "LOCK TABLE public.\"Space_Location\" IN SHARE MODE;";
     private const string FloorChildrenRead = "LOCK TABLE public.\"Space_Zone\", public.\"Space_Marker\" IN SHARE MODE;";
 
+    private const string ZoneRead = "LOCK TABLE public.\"Space_Zone\" IN SHARE MODE;";
+    private const string ZoneWrite = "LOCK TABLE public.\"Space_Zone\" IN SHARE ROW EXCLUSIVE MODE;";
+    private const string AisleRead = "LOCK TABLE public.\"Space_Aisle\" IN SHARE MODE;";
+    private const string AisleWrite = "LOCK TABLE public.\"Space_Aisle\" IN SHARE ROW EXCLUSIVE MODE;";
+    private const string RackRead = "LOCK TABLE public.\"Space_Rack\" IN SHARE MODE;";
+    private const string RackWrite = "LOCK TABLE public.\"Space_Rack\" IN SHARE ROW EXCLUSIVE MODE;";
+    private const string LocationWrite = "LOCK TABLE public.\"Space_Location\" IN SHARE ROW EXCLUSIVE MODE;";
+
     private readonly IamAdministrationV1? _topologyAdministration;
     private readonly TenantManagementSessionV1? _topologySession;
     private readonly CancellationToken _topologyRequestCancellation;
@@ -47,6 +55,34 @@ public partial class SpaceMasterService
 
     public Task DeleteFloorAsync(Guid id)
         => ExecuteTopologyMutationAsync("space-floor:delete", FloorWrite + FloorChildrenRead, token => DeleteFloorCoreAsync(id, token));
+
+    public Task<Guid> CreateZoneAsync(ZoneDto d, string? user)
+        => ExecuteTopologyMutationAsync<Guid>("space-floor:edit", FloorRead + ZoneWrite, token => CreateZoneCoreAsync(d, user, token));
+
+    public Task UpdateZoneAsync(Guid id, ZoneDto d, string? user)
+        => ExecuteTopologyMutationAsync("space-floor:edit", ZoneWrite, token => UpdateZoneCoreAsync(id, d, user, token));
+
+    public Task DeleteZoneAsync(Guid id)
+        => ExecuteTopologyMutationAsync("space-floor:edit", ZoneWrite + AisleRead + RackRead, token => DeleteZoneCoreAsync(id, token));
+
+    public Task<Guid> CreateAisleAsync(AisleDto d, string? user)
+        => ExecuteTopologyMutationAsync<Guid>("space-floor:edit", ZoneRead + AisleWrite, token => CreateAisleCoreAsync(d, user, token));
+
+    public Task UpdateAisleAsync(Guid id, AisleDto d, string? user)
+        => ExecuteTopologyMutationAsync("space-floor:edit", AisleWrite, token => UpdateAisleCoreAsync(id, d, user, token));
+
+    public Task<Guid> CreateRackAsync(RackDto d, string? user)
+        => ExecuteTopologyMutationAsync<Guid>("space-floor:edit", ZoneRead + AisleRead + RackWrite, token => CreateRackCoreAsync(d, user, token));
+
+    public Task UpdateRackAsync(Guid id, RackDto d, string? user)
+        => ExecuteTopologyMutationAsync("space-floor:edit", AisleRead + RackWrite + LocationWrite, token => UpdateRackCoreAsync(id, d, user, token));
+
+    private async Task RequireCurrentRackAisleAsync(Guid zoneId, Guid? aisleId, CancellationToken token)
+    {
+        if (aisleId is Guid id && !await _db.Space_Aisles.AnyAsync(a => a.Id == id && a.ZoneId == zoneId, token))
+            throw new OrderPriceCorrectionException("SPACE_AISLE_SCOPE_INVALID", 400);
+    }
+
 
     private Task ExecuteTopologyMutationAsync(string permission, string tableLocks, Func<CancellationToken, Task> body)
         => ExecuteTopologyMutationAsync<bool>(permission, tableLocks, async token =>

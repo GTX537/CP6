@@ -92,6 +92,7 @@ public class SpaceMasterController : ControllerBase
 
     [HttpPost("zone")]
     [RequirePermission("space-floor", "edit")]
+    [OrderOwnerResult]
     public async Task<IActionResult> CreateZone([FromBody] ZoneDto d)
     {
         return Ok2(new { id = await _svc.CreateZoneAsync(d, CurrentUser) });
@@ -99,6 +100,7 @@ public class SpaceMasterController : ControllerBase
 
     [HttpPut("zone/{id:guid}")]
     [RequirePermission("space-floor", "edit")]
+    [OrderOwnerResult]
     public async Task<IActionResult> UpdateZone(Guid id, [FromBody] ZoneDto d)
     {
         await _svc.UpdateZoneAsync(id, d, CurrentUser); return Ok2();
@@ -106,6 +108,7 @@ public class SpaceMasterController : ControllerBase
 
     [HttpDelete("zone/{id:guid}")]
     [RequirePermission("space-floor", "edit")]
+    [OrderOwnerResult]
     public async Task<IActionResult> DeleteZone(Guid id)
     {
         await _svc.DeleteZoneAsync(id); return Ok2();
@@ -119,6 +122,7 @@ public class SpaceMasterController : ControllerBase
 
     [HttpPost("aisle")]
     [RequirePermission("space-floor", "edit")]
+    [OrderOwnerResult]
     public async Task<IActionResult> CreateAisle([FromBody] AisleDto d)
     {
         return Ok2(new { id = await _svc.CreateAisleAsync(d, CurrentUser) });
@@ -126,6 +130,7 @@ public class SpaceMasterController : ControllerBase
 
     [HttpPut("aisle/{id:guid}")]
     [RequirePermission("space-floor", "edit")]
+    [OrderOwnerResult]
     public async Task<IActionResult> UpdateAisle(Guid id, [FromBody] AisleDto d)
     {
         await _svc.UpdateAisleAsync(id, d, CurrentUser); return Ok2();
@@ -146,6 +151,7 @@ public class SpaceMasterController : ControllerBase
 
     [HttpPost("rack")]
     [RequirePermission("space-floor", "edit")]
+    [OrderOwnerResult]
     public async Task<IActionResult> CreateRack([FromBody] RackDto d)
     {
         return Ok2(new { id = await _svc.CreateRackAsync(d, CurrentUser) });
@@ -153,6 +159,7 @@ public class SpaceMasterController : ControllerBase
 
     [HttpPut("rack/{id:guid}")]
     [RequirePermission("space-floor", "edit")]
+    [OrderOwnerResult]
     public async Task<IActionResult> UpdateRack(Guid id, [FromBody] RackDto d)
     {
         await _svc.UpdateRackAsync(id, d, CurrentUser); return Ok2();

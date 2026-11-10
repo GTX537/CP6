@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC 空间层级七写与货架坐标原子性
+
+七个既有库区/巷道/货架写入采用同Context当前space-floor:edit、签名会话及认证根；锁定真实楼层/库区/巷道/货架/库位引用与写集。当前父项/同库区可选巷道决定、货架保存与坐标重算同父事务；原字段、坐标算法、码/状态/版本、RowVersion409和其余接口保持。 W457通过#916进入远端main，WP02-03采用核销，准确任务分支删除、DEV-2干净释放后复用。本窗最终采用、分支与席位以PR和finish为准。 [W458交付](../development/evidence/BUG-917-SPACE-HIERARCHY-GEOMETRY-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 站点与楼层当前写入及父项决定
 
 现存站点/楼层增改删六写采用同Context当前space-site/space-floor动作、签名会话及认证共同根；真实站点/楼层和原子项/锚引用锁，查询与写入同父事务。楼层创建只采用当前租户实际未删除站点，缺失/其他租户及删除先行拒绝；原坐标精度、编辑不重挂、查询及原护栏保持。 W456通过#914进入远端main，WP02-03采用核销，分支准确删除、DEV-2干净释放后复用。本窗最终采用、分支与席位以PR和finish为准。 [W457交付](../development/evidence/BUG-915-SPACE-SITE-FLOOR-FENCE/DELIVERY.md)
