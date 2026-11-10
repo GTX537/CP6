@@ -1,4 +1,3 @@
-using CP6.Core.EFDbContext;
 using CP6.WebApi.Localization;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DTOs.Space;
@@ -15,13 +14,8 @@ namespace CP6.Core.Services.Space;
 ///   · 查询不写 .Where(x => x.TenantId == ...)——CP6Context 全局过滤自动按当前租户隔离。
 ///   · 创建实体不写 TenantId = ...——SaveChanges 写入盖章自动补当前租户。
 /// </summary>
-public class CodeEngineService : ICodeEngineService
+public partial class CodeEngineService : ICodeEngineService
 {
-    private readonly CP6Context _db;
-
-    /// <summary>构造（v1.1：只注入 CP6Context；租户隔离由全局过滤 + SaveChanges 盖章自动处理）。</summary>
-    public CodeEngineService(CP6Context db) => _db = db;
-
     // ══════════════════════════════════════════════════════════════════════
     // CodeRule CRUD（ch03 §2.1）
     // ══════════════════════════════════════════════════════════════════════
@@ -32,12 +26,11 @@ public class CodeEngineService : ICodeEngineService
             .OrderBy(r => r.ScopeType).ThenBy(r => r.RuleName)
             .ToListAsync();
 
-    /// <inheritdoc/>
-    public async Task<Guid> CreateRuleAsync(CodeRuleDto d, string? user)
+    private async Task<Guid> CreateRuleCoreAsync(CodeRuleDto d, string? user, CancellationToken token)
     {
         // IsDefault 同作用域互斥：若新建为默认规则，把同作用域其他规则 IsDefault 置 false（同批 SaveChanges）
         if (d.IsDefault)
-            await ClearDefaultAsync(d.ScopeType, d.ScopeId, excludeId: null);
+            await ClearDefaultAsync(d.ScopeType, d.ScopeId, excludeId: null, token: token);
 
         var e = new Space_CodeRule
         {
@@ -51,19 +44,19 @@ public class CodeEngineService : ICodeEngineService
             CreateDate = DateTime.Now
         };
         _db.Space_CodeRules.Add(e);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
         return e.Id;
     }
 
-    /// <inheritdoc/>
-    public async Task UpdateRuleAsync(Guid id, CodeRuleDto d, string? user)
+    private async Task UpdateRuleCoreAsync(Guid id, CodeRuleDto d, string? user, CancellationToken token)
     {
-        var e = await _db.Space_CodeRules.FirstOrDefaultAsync(r => r.Id == id)
+        var e = await _db.Space_CodeRules.FirstOrDefaultAsync(r => r.Id == id, token)
                 ?? throw new BizException("E-SPACE-301");
 
-        // 改为默认时，把同作用域其他规则 IsDefault 置 false（排除自身，同批 SaveChanges）
-        if (d.IsDefault && !e.IsDefault)
-            await ClearDefaultAsync(d.ScopeType, d.ScopeId, excludeId: id);
+        // 改为默认或 PostgreSQL 默认规则迁入新作用域时，清除目标作用域的其他默认值。
+        if (d.IsDefault && (!e.IsDefault
+            || (_db.Database.IsNpgsql() && (e.ScopeType != d.ScopeType || e.ScopeId != d.ScopeId))))
+            await ClearDefaultAsync(d.ScopeType, d.ScopeId, excludeId: id, token: token);
 
         e.RuleName   = d.RuleName;
         e.ScopeType  = d.ScopeType;
@@ -72,29 +65,28 @@ public class CodeEngineService : ICodeEngineService
         e.IsDefault  = d.IsDefault;
         e.Modifier   = user;
         e.ModifyDate = DateTime.Now;
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
     }
 
-    /// <inheritdoc/>
-    public async Task DeleteRuleAsync(Guid id)
+    private async Task DeleteRuleCoreAsync(Guid id, CancellationToken token)
     {
-        var e = await _db.Space_CodeRules.FirstOrDefaultAsync(r => r.Id == id)
+        var e = await _db.Space_CodeRules.FirstOrDefaultAsync(r => r.Id == id, token)
                 ?? throw new BizException("E-SPACE-301");
         _db.Space_CodeRules.Remove(e);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
     }
 
     /// <summary>
     /// 将同作用域（ScopeType + ScopeId）的其他规则 IsDefault 置 false（不立即 SaveChanges，由调用方统一提交）。
     /// </summary>
-    private async Task ClearDefaultAsync(int scopeType, Guid? scopeId, Guid? excludeId)
+    private async Task ClearDefaultAsync(int scopeType, Guid? scopeId, Guid? excludeId, CancellationToken token)
     {
         var others = await _db.Space_CodeRules
             .Where(r => r.ScopeType == scopeType
                      && r.ScopeId  == scopeId
                      && r.IsDefault
                      && (excludeId == null || r.Id != excludeId))
-            .ToListAsync();
+            .ToListAsync(token);
         foreach (var r in others)
             r.IsDefault = false;
     }
@@ -103,24 +95,23 @@ public class CodeEngineService : ICodeEngineService
     // GenerateAsync — 批量生成（ch03 §4.2）
     // ══════════════════════════════════════════════════════════════════════
 
-    /// <inheritdoc/>
-    public async Task<List<string>> GenerateAsync(Guid floorId, string mode, Guid? scopeZoneId)
+    private async Task<List<string>> GenerateCoreAsync(Guid floorId, string mode, Guid? scopeZoneId, CancellationToken token)
     {
         // ── 1. 拉层级数据 ──────────────────────────────────────────────
 
         var zones = await _db.Space_Zones
             .Where(z => z.FloorId == floorId && (scopeZoneId == null || z.Id == scopeZoneId))
-            .ToListAsync();
+            .ToListAsync(token);
         var zoneIds = zones.Select(z => z.Id).ToList();
 
-        var racks  = await _db.Space_Racks .Where(r => zoneIds.Contains(r.ZoneId)).ToListAsync();
-        var aisles = await _db.Space_Aisles.Where(a => zoneIds.Contains(a.ZoneId)).ToListAsync();
+        var racks  = await _db.Space_Racks .Where(r => zoneIds.Contains(r.ZoneId)).ToListAsync(token);
+        var aisles = await _db.Space_Aisles.Where(a => zoneIds.Contains(a.ZoneId)).ToListAsync(token);
 
         // Floor + Site（用于 site-code / floor-level 取值源）
-        var floorEntity = await _db.Space_Floors.FirstOrDefaultAsync(f => f.Id == floorId);
+        var floorEntity = await _db.Space_Floors.FirstOrDefaultAsync(f => f.Id == floorId, token);
         Space_Site? siteEntity = null;
         if (floorEntity != null)
-            siteEntity = await _db.Space_Sites.FirstOrDefaultAsync(s => s.Id == floorEntity.SiteId);
+            siteEntity = await _db.Space_Sites.FirstOrDefaultAsync(s => s.Id == floorEntity.SiteId, token);
 
         // ── 2. 草稿库位（Status=0 ∧ CodeOrigin=1 ∧ 已落位）────────────
 
@@ -131,11 +122,11 @@ public class CodeEngineService : ICodeEngineService
                      && l.Placed
                      && l.RackId != null
                      && rackIds.Contains(l.RackId!.Value))
-            .ToListAsync();
+            .ToListAsync(token);
 
         // ── 3. 规则集（全量拉取，按 Zone 就近匹配） ───────────────────
 
-        var rules = await _db.Space_CodeRules.ToListAsync();
+        var rules = await _db.Space_CodeRules.ToListAsync(token);
 
         // ── 4. 序号字典 ────────────────────────────────────────────────
 
@@ -203,7 +194,7 @@ public class CodeEngineService : ICodeEngineService
         var existingCodes = await _db.Space_Locations
             .Where(l => l.LocationCode != null && !idsInBatch.Contains(l.Id))
             .Select(l => l.LocationCode!)
-            .ToListAsync();
+            .ToListAsync(token);
         var existingSet = existingCodes.ToHashSet(StringComparer.OrdinalIgnoreCase);
         if (candidates.Any(c => existingSet.Contains(c.Code)))
             throw new BizException("E-SPACE-304");
@@ -213,18 +204,17 @@ public class CodeEngineService : ICodeEngineService
         if (mode == "rebuild")
         {
             // 阶段一：所有目标草稿 LocationCode 置 NULL。
-            // 必须先 SaveChanges，防止 SQL Server 过滤唯一索引
-            // (TenantId, LocationCode) WHERE LocationCode IS NOT NULL
-            // 在 A↔B 交换时中途违约。InMemory 不触约束，仍须实现（真库 D-9 会测）。
+            // 先保存 NULL，避免租户内非空 LocationCode 唯一索引在 A↔B 重排中冲突。
+            // PostgreSQL 的两次保存由当前授权父事务一起提交。
             foreach (var l in drafts)
                 l.LocationCode = null;
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(token);
         }
 
         // 阶段二：赋新码
         foreach (var (loc, code) in candidates)
             loc.LocationCode = code;
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
 
         return candidates.Select(c => c.Code).ToList();
     }
@@ -332,32 +322,31 @@ public class CodeEngineService : ICodeEngineService
     // GenSingleAsync — 单格生成（ch03 §10）
     // ══════════════════════════════════════════════════════════════════════
 
-    /// <inheritdoc/>
-    public async Task<string> GenSingleAsync(Guid locationId)
+    private async Task<string> GenSingleCoreAsync(Guid locationId, CancellationToken token)
     {
-        var loc = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locationId)
+        var loc = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locationId, token)
                   ?? throw new BizException("E-SPACE-301");
 
         if (loc.RackId == null || !loc.Placed)
             throw new BizException("E-SPACE-301");
 
-        var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == loc.RackId)
+        var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == loc.RackId, token)
                    ?? throw new BizException("E-SPACE-301");
-        var zone = await _db.Space_Zones.FirstOrDefaultAsync(z => z.Id == rack.ZoneId)
+        var zone = await _db.Space_Zones.FirstOrDefaultAsync(z => z.Id == rack.ZoneId, token)
                    ?? throw new BizException("E-SPACE-301");
         var zoneRacks = await _db.Space_Racks
             .Where(r => r.ZoneId == zone.Id)
-            .ToListAsync();
+            .ToListAsync(token);
         Space_Aisle? aisle = rack.AisleId.HasValue
-            ? await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == rack.AisleId)
+            ? await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == rack.AisleId, token)
             : null;
 
-        var floor = await _db.Space_Floors.FirstOrDefaultAsync(f => f.Id == rack.FloorId);
+        var floor = await _db.Space_Floors.FirstOrDefaultAsync(f => f.Id == rack.FloorId, token);
         var site  = floor != null
-            ? await _db.Space_Sites.FirstOrDefaultAsync(s => s.Id == floor.SiteId)
+            ? await _db.Space_Sites.FirstOrDefaultAsync(s => s.Id == floor.SiteId, token)
             : null;
 
-        var rules   = await _db.Space_CodeRules.ToListAsync();
+        var rules   = await _db.Space_CodeRules.ToListAsync(token);
         var rule    = PickRule(rules, zone.Id, rack.FloorId);
         var segs    = DeserializeSegs(rule.Segments);
         var preErrs = CodePrecheck.Validate(segs);
@@ -372,7 +361,7 @@ public class CodeEngineService : ICodeEngineService
             loc.Col ?? 1, loc.Level ?? 1, loc.Depth ?? 1, zoneSeq, rackSeq);
 
         loc.LocationCode = code;
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
         return code;
     }
 

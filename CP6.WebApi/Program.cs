@@ -1190,7 +1190,14 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IReportCenterService, CP6.Core.
 builder.Services.AddScoped<CP6.Core.Services.Space.LocationGeometryService>();
 builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceMasterService, CP6.Core.Services.Space.SpaceMasterService>();
 builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceAnalyticsService, CP6.Core.Services.Space.SpaceAnalyticsService>();
-builder.Services.AddScoped<CP6.Core.Services.Space.ICodeEngineService, CP6.Core.Services.Space.CodeEngineService>();  // ch03 可配置编码引擎
+builder.Services.AddScoped<CP6.Core.Services.Space.ICodeEngineService>(sp =>
+{
+    var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    return new CP6.Core.Services.Space.CodeEngineService(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
+        http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp),
+        http?.RequestAborted ?? CancellationToken.None);
+});
 // 4.x.2 Space ch01 编辑器配套后端（F-1/G-1/G-3/I-1）
 builder.Services.AddScoped<CP6.Core.Services.Space.ITemplateService, CP6.Core.Services.Space.TemplateService>();
 builder.Services.AddScoped<CP6.Core.Services.Space.ISceneService, CP6.Core.Services.Space.SceneService>();
