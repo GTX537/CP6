@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC ERP C03 关闭候选实测
+
+W422 在实际 PostgreSQL 导入 W419 的 C03 原图，验证晚段全回滚、714 字节原回执、A/B 原字节和实际行版本序列。正式 PostgreSQL 为 12 PASS、15 NOT_RUN。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W422](../development/evidence/W422-01/DELIVERY.md)
+
 ## 2026-11-09 UTC 原全局消息键验收
 
 W431 实测五组原键竞争、完整回滚和独立键域，并复用原受控接收实证。正式 PostgreSQL 为 12 PASS、15 NOT_RUN。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W431](../development/evidence/W431-01/DELIVERY.md)

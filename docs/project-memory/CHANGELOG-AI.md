@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-10 UTC 登记原 ERP C03 关闭候选
+
+新增关闭候选导入与原回执入口，登记真实 PostgreSQL 两次回滚、跨进程恢复与准确行版本。修正回执验证的原生客户端行尾处理。 [W422](../development/evidence/W422-01/DELIVERY.md)
+
 ## 2026-11-09 UTC 登记原 PGT-015
 
 同步五组实际 PostgreSQL 并发原件、原 CRM Owner 与受控组件证据，并核各自源码和版本。 [W431](../development/evidence/W431-01/DELIVERY.md)
