@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC WCS手工任务当前授权与编号事务
+
+现存WCS手工任务八个读写入口采用当前actor/动作及共同认证根；新view仅登记目录不自动授予；创建编号与任务同父事务，晚期原生故障后不再残留编号或被日志重刷失败任务，保留原手工状态、八位数量及无库存效果。 Main/PostgreSQL14项与相关兼容/种子5项实际通过，零跳过；设备/业务输入明确构造。原375项仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PostgreSQL仍16 PASS/11 NOT_RUN，48小时预算172800秒。 [W445 交付](../development/evidence/BUG-891-WCS-TASK-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 标签当前授权与持久冷恢复
 
 现存标签七个HTTP入口采用当前动作/actor及共同认证根，设备当前资格先于回放，作业与版本化原结果回执共父事务；网关修正PENDING查询，持久化分区/原键/打印阶段，实际凭据与源绑定，未知打印不自动fail或重打，两个实际客户端进程在Main完成响应丢失后用原键恢复且只模拟打印一次。 Main/PostgreSQL 13项和客户端27项实际通过，零跳过；打印明确模拟。原375项仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PostgreSQL仍16 PASS/11 NOT_RUN。48小时预算172800秒，下次原生129600。 [W444 交付](../development/evidence/BUG-889-LABEL-RECOVERY-FENCE/DELIVERY.md)

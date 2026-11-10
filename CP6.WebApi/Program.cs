@@ -1173,7 +1173,15 @@ builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsWorkloadQuery, CP6.
 builder.Services.AddScoped<CP6.Core.Services.Integration.IWmsDeviceQuery, CP6.Core.Services.Wms.WmsDeviceQuery>();
 
 // 4.21 MSBBWM310/320/330 連携・モバイル・IoT
-builder.Services.AddScoped<CP6.Core.Services.Wms.IWcsService, CP6.Core.Services.Wms.WcsService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IWcsService>(sp =>
+{
+    var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    return new CP6.Core.Services.Wms.WcsService(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetRequiredService<CP6.Core.Services.Wms.IWmsSequenceService>(),
+        sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
+        http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp),
+        http?.RequestAborted ?? CancellationToken.None);
+});
 builder.Services.AddScoped<CP6.Core.Services.Wms.ICarrierService, CP6.Core.Services.Wms.CarrierService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IIotService, CP6.Core.Services.Wms.IotService>();
 

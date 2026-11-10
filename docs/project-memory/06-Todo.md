@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC WCS手工任务当前授权与编号事务
+
+继续原WP02-03/CTX02-A4/A7的其余query/write/export/download和字段V1真实来源采用；原WP10-42的稳定TaskIntent、OEM原回执/原键恢复、模式隔离及源Owner应用尚待实现，按同一合同使用明确模拟数据/服务验收，PGT-017仍NOT_RUN。 旧WCS元数据不能作REAL/OEM或完整新版模拟隔离采用证明；当前view须经既有IAM显式分配。 [W445 交付](../development/evidence/BUG-891-WCS-TASK-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 标签当前授权与持久冷恢复
 
 继续原WP02-03/CTX02-A4/A7其余query/write/export/download及字段V1真实来源采用，按实际Owner和直接前置推进；原WP10-09的完整R3来源资格、printIntentRoot/PrintAttempt、设备submission查询及物理确认仍待采用，PGT-017保持NOT_RUN。 Legacy COMPLETED没有改称物理CONFIRMED；标签成功不核销原移动、收发/盘点、tenant source/schema或TRACE范围。 [W444 交付](../development/evidence/BUG-889-LABEL-RECOVERY-FENCE/DELIVERY.md)
