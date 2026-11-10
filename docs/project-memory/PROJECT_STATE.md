@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC 序列生命周期与库存事务
+
+序列转换与七种生命周期在实际 Mobile Owner 内决定并组合库存父事务；原五种库存请求从 400 恢复共同提交，收货错误后遗留的跟踪对象不再被日志保存刷入；八条真实暂停路径均拒绝，保留序列/库存对账、实际部门继承、原回执与完整七步周期。 原 375 项保持 38 DONE、1 IN_PROGRESS、336 PLANNED；正式 PostgreSQL 16 PASS、11 NOT_RUN。48 小时总预算 172800 秒，下次原生校准 115200 秒。[W441 交付](../development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 设备生命周期与原生身份
 
 设备票据、更新/禁用、快捷 PIN、匿名激活和签名心跳在实际身份共同根中提交；保留合法自失效，数据库 nonce 裁决双宿主重放，设备范围变更使旧客户端身份失效，已有数据升级保留设备原行并要求重新登录。 原 375 项保持 38 DONE、1 IN_PROGRESS、336 PLANNED；正式 PostgreSQL 16 PASS、11 NOT_RUN。48 小时总预算 172800 秒，下次原生校准 115200 秒。[W440 交付](../development/evidence/BUG-881-DEVICE-LIFECYCLE-FENCE/DELIVERY.md)
