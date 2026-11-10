@@ -1,5 +1,7 @@
 using CP6.Core.Auth;
+using CP6.Core.Services.Erp;
 using CP6.Core.Services.Wms;
+using CP6.WebApi.Controllers.Erp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +9,7 @@ namespace CP6.WebApi.Controllers.Wms;
 
 /// <summary>MSBBWM310 — WCS タスク Web API</summary>
 [ApiController]
+[OrderOwnerResult]
 [Route("api/wms/wcs-task")]
 [Authorize]
 public class WcsTaskController : ControllerBase
@@ -16,10 +19,12 @@ public class WcsTaskController : ControllerBase
     private string? CurrentUser => User?.Identity?.Name;
 
     [HttpGet]
+    [RequirePermission("wms-wcs-task", "view")]
     public async Task<IActionResult> Search([FromQuery] WcsTaskSearchQuery q)
         => Ok(new { code = 0, message = "OK", data = await _svc.SearchAsync(q) });
 
     [HttpGet("{no}")]
+    [RequirePermission("wms-wcs-task", "view")]
     public async Task<IActionResult> Get(string no)
     {
         var t = await _svc.GetAsync(no);
@@ -36,7 +41,7 @@ public class WcsTaskController : ControllerBase
             var no = await _svc.CreateAsync(dto, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { taskNo = no } });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/dispatch")]
@@ -44,7 +49,7 @@ public class WcsTaskController : ControllerBase
     public async Task<IActionResult> Dispatch(string no, [FromBody] DispatchReq req)
     {
         try { await _svc.DispatchAsync(no, req.DeviceCd, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/start")]
@@ -52,7 +57,7 @@ public class WcsTaskController : ControllerBase
     public async Task<IActionResult> Start(string no)
     {
         try { await _svc.StartAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/complete")]
@@ -60,7 +65,7 @@ public class WcsTaskController : ControllerBase
     public async Task<IActionResult> Complete(string no)
     {
         try { await _svc.CompleteAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/fail")]
@@ -68,7 +73,7 @@ public class WcsTaskController : ControllerBase
     public async Task<IActionResult> Fail(string no, [FromBody] FailReq req)
     {
         try { await _svc.FailAsync(no, req.ErrorMessage, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpDelete("{no}")]
@@ -76,7 +81,7 @@ public class WcsTaskController : ControllerBase
     public async Task<IActionResult> Delete(string no)
     {
         try { await _svc.DeleteAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     public class DispatchReq { public string DeviceCd { get; set; } = string.Empty; }

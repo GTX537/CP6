@@ -4,18 +4,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Wms;
 
-public class WcsService : IWcsService
+public partial class WcsService : IWcsService
 {
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
     private const string Prefix = "WCS";
 
-    public WcsService(CP6Context db, IWmsSequenceService seq)
-    {
-        _db = db; _seq = seq;
-    }
+    public WcsService(CP6Context db, IWmsSequenceService seq) : this(db, seq, null, null) { }
 
-    public async Task<List<WcsTask>> SearchAsync(WcsTaskSearchQuery q)
+    private async Task<List<WcsTask>> SearchCoreAsync(WcsTaskSearchQuery q)
     {
         var query = _db.WcsTasks.AsNoTracking().Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(q.TaskNo))    query = query.Where(x => x.TaskNo.Contains(q.TaskNo));
@@ -27,10 +24,10 @@ public class WcsService : IWcsService
             .Skip((q.Page - 1) * q.PageSize).Take(q.PageSize).ToListAsync();
     }
 
-    public async Task<WcsTask?> GetAsync(string taskNo)
+    private async Task<WcsTask?> GetCoreAsync(string taskNo)
         => await _db.WcsTasks.AsNoTracking().FirstOrDefaultAsync(x => x.TaskNo == taskNo && !x.IsDeleted);
 
-    public async Task<string> CreateAsync(WcsTaskDto dto, string? userName)
+    private async Task<string> CreateCoreAsync(WcsTaskDto dto, string? userName)
     {
         if (string.IsNullOrWhiteSpace(dto.TaskType))
             throw new InvalidOperationException("TaskType required");
@@ -53,7 +50,7 @@ public class WcsService : IWcsService
         return no;
     }
 
-    public async Task DispatchAsync(string taskNo, string deviceCd, string? userName)
+    private async Task DispatchCoreAsync(string taskNo, string deviceCd, string? userName)
     {
         if (string.IsNullOrWhiteSpace(deviceCd)) throw new InvalidOperationException("deviceCd required");
         var t = await GetTracked(taskNo);
@@ -66,7 +63,7 @@ public class WcsService : IWcsService
         await _db.SaveChangesAsync();
     }
 
-    public async Task StartAsync(string taskNo, string? userName)
+    private async Task StartCoreAsync(string taskNo, string? userName)
     {
         var t = await GetTracked(taskNo);
         if (t.Status != WcsTaskStatus.Dispatched)
@@ -77,7 +74,7 @@ public class WcsService : IWcsService
         await _db.SaveChangesAsync();
     }
 
-    public async Task CompleteAsync(string taskNo, string? userName)
+    private async Task CompleteCoreAsync(string taskNo, string? userName)
     {
         var t = await GetTracked(taskNo);
         if (t.Status != WcsTaskStatus.Executing)
@@ -88,7 +85,7 @@ public class WcsService : IWcsService
         await _db.SaveChangesAsync();
     }
 
-    public async Task FailAsync(string taskNo, string errorMessage, string? userName)
+    private async Task FailCoreAsync(string taskNo, string errorMessage, string? userName)
     {
         var t = await GetTracked(taskNo);
         if (t.Status == WcsTaskStatus.Completed || t.Status == WcsTaskStatus.Failed)
@@ -100,7 +97,7 @@ public class WcsService : IWcsService
         await _db.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(string taskNo, string? userName)
+    private async Task DeleteCoreAsync(string taskNo, string? userName)
     {
         var t = await GetTracked(taskNo);
         if (t.Status == WcsTaskStatus.Executing)
