@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Erp;
 using CP6.WebApi.Localization;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DTOs.Space;
@@ -13,8 +14,12 @@ namespace CP6.Core.Services.Space;
 public class SceneIoService : ISceneIoService
 {
     private readonly CP6Context _db;
+    private readonly SceneGeometryAuthorityV1? _geometryAuthority;
 
     public SceneIoService(CP6Context db) => _db = db;
+
+    public SceneIoService(CP6Context db, SceneGeometryAuthorityV1 geometryAuthority) : this(db)
+        => _geometryAuthority = geometryAuthority;
 
     /// <inheritdoc/>
     public async Task<SceneExportDto> ExportAsync(Guid floorId)
@@ -67,8 +72,17 @@ public class SceneIoService : ISceneIoService
     }
 
     /// <inheritdoc/>
-    public async Task<Guid> ImportAsync(Guid siteId, SceneExportDto dto, string? user)
+    public Task<Guid> ImportAsync(Guid siteId, SceneExportDto dto, string? user)
     {
+        if (!_db.Database.IsNpgsql()) return ImportCoreAsync(siteId, dto, user, CancellationToken.None);
+        return (_geometryAuthority ?? throw new OrderPriceCorrectionException("SPACE_SCENE_AUTHORITY_UNAVAILABLE", 503))
+            .ExecuteAsync(_db, true, token => ImportCoreAsync(siteId, dto, user, token));
+    }
+
+    private async Task<Guid> ImportCoreAsync(Guid siteId, SceneExportDto dto, string? user, CancellationToken token)
+    {
+        if (_db.Database.IsNpgsql() && !await _db.Space_Sites.AnyAsync(x => x.Id == siteId, token))
+            throw new OrderPriceCorrectionException("SPACE_SITE_NOT_FOUND", 404);
         var meta = dto.Meta;
 
         // ── 新楼层 ──────────────────────────────────────────────────
@@ -159,7 +173,7 @@ public class SceneIoService : ISceneIoService
             rackMap[rd.Id] = newRack;
         }
 
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
 
         // ── 库位全枚举重建（按货架参数 col×level×depth）────────────────
         var locations = new List<Space_Location>();
@@ -195,7 +209,7 @@ public class SceneIoService : ISceneIoService
         }
 
         _db.Space_Locations.AddRange(locations);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
 
         return newFloor.Id;
     }

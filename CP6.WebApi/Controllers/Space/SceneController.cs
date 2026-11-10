@@ -1,3 +1,4 @@
+using CP6.WebApi.Controllers.Erp;
 using CP6.Core.Auth;
 using CP6.Core.Services.Space;
 using CP6.Entity.DTOs.Space;
@@ -53,6 +54,7 @@ public class SceneController : ControllerBase
     /// <summary>导入场景到指定站点（新 GUID 映射，库位按货架参数全枚举重建）</summary>
     [HttpPost("site/{id:guid}/import")]
     [RequirePermission("space-floor", "edit")]
+    [OrderOwnerResult]
     public async Task<IActionResult> Import(Guid id, [FromBody] SceneExportDto dto)
     {
         return Ok2(new { floorId = await _io.ImportAsync(id, dto, CurrentUser) });
@@ -63,6 +65,7 @@ public class SceneController : ControllerBase
     /// <summary>D7 反向建模绑码：校验 Status==1 &amp;&amp; !Placed &amp;&amp; CodeOrigin==2，回填几何坐标，不动 Code/Id/Status/Version</summary>
     [HttpPost("rack/{id:guid}/bind-codes")]
     [RequirePermission("space-floor", "edit")]
+    [OrderOwnerResult]
     public async Task<IActionResult> BindCodes(Guid id, [FromBody] BindCodesDto dto)
     {
         var pairs = dto.Pairs.Select(p => (p.LocationId, p.Col, p.Level, p.Depth));

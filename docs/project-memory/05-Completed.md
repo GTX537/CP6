@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC 场景导入与D7绑码当前事务
+
+现存场景导入与D7绑码采用同Context当前space-floor:edit、签名会话及认证根。导入确认当前目标站点、真实几何骨架和库位两次保存同事务；绑码用实际货架/库位及原已发布未落位采纳资格。原导出/映射/算法、码/ID/状态/版本和其他场景路径保持。 W458通过#918进入远端main，WP02-03采用核销，任务分支准确删除且DEV-2干净释放后复用。本窗最终采用、分支与席位以PR和finish为准。 [W459交付](../development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 空间层级七写与货架坐标原子性
 
 七个既有库区/巷道/货架写入采用同Context当前space-floor:edit、签名会话及认证根；锁定真实楼层/库区/巷道/货架/库位引用与写集。当前父项/同库区可选巷道决定、货架保存与坐标重算同父事务；原字段、坐标算法、码/状态/版本、RowVersion409和其余接口保持。 W457通过#916进入远端main，WP02-03采用核销，准确任务分支删除、DEV-2干净释放后复用。本窗最终采用、分支与席位以PR和finish为准。 [W458交付](../development/evidence/BUG-917-SPACE-HIERARCHY-GEOMETRY-FENCE/DELIVERY.md)
