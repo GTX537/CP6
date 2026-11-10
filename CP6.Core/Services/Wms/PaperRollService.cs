@@ -4,18 +4,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Wms;
 
-public class PaperRollService : IPaperRollService
+public partial class PaperRollService : IPaperRollService
 {
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
     private const string Prefix = "ROLL";
 
-    public PaperRollService(CP6Context db, IWmsSequenceService seq)
-    {
-        _db = db; _seq = seq;
-    }
+    public PaperRollService(CP6Context db, IWmsSequenceService seq) : this(db, seq, null, null) { }
 
-    public async Task<List<PaperRoll>> SearchAsync(PaperRollSearchQuery q)
+    private async Task<List<PaperRoll>> SearchCoreAsync(PaperRollSearchQuery q)
     {
         var query = _db.PaperRolls.AsNoTracking().Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(q.RollNo)) query = query.Where(x => x.RollNo.Contains(q.RollNo));
@@ -28,10 +25,10 @@ public class PaperRollService : IPaperRollService
             .Skip((q.Page - 1) * q.PageSize).Take(q.PageSize).ToListAsync();
     }
 
-    public async Task<PaperRoll?> GetAsync(string rollNo)
+    private async Task<PaperRoll?> GetCoreAsync(string rollNo)
         => await _db.PaperRolls.AsNoTracking().FirstOrDefaultAsync(x => x.RollNo == rollNo && !x.IsDeleted);
 
-    public async Task<string> CreateAsync(PaperRollDto dto, string? userName)
+    private async Task<string> CreateCoreAsync(PaperRollDto dto, string? userName)
     {
         if (string.IsNullOrWhiteSpace(dto.PaperGrade)) throw new InvalidOperationException("PaperGrade required");
         if (dto.WidthMm <= 0) throw new InvalidOperationException("WidthMm must be > 0");
@@ -57,7 +54,7 @@ public class PaperRollService : IPaperRollService
         return no;
     }
 
-    public async Task ConsumeAsync(string rollNo, decimal lengthM, string? userName)
+    private async Task ConsumeCoreAsync(string rollNo, decimal lengthM, string? userName)
     {
         if (lengthM <= 0) throw new InvalidOperationException("WM-MSG-202: 消費長は0より大きい値を指定");
         var roll = await _db.PaperRolls.FirstOrDefaultAsync(x => x.RollNo == rollNo && !x.IsDeleted)
@@ -80,7 +77,7 @@ public class PaperRollService : IPaperRollService
         await _db.SaveChangesAsync();
     }
 
-    public async Task<List<PaperRoll>> MatchAsync(string paperGrade, int widthMm, string grainDirection, decimal requiredLengthM)
+    private async Task<List<PaperRoll>> MatchCoreAsync(string paperGrade, int widthMm, string grainDirection, decimal requiredLengthM)
     {
         // 巾≥必要巾、流れ一致、残米≥必要長
         return await _db.PaperRolls.AsNoTracking()
@@ -96,7 +93,7 @@ public class PaperRollService : IPaperRollService
             .ToListAsync();
     }
 
-    public async Task<List<string>> SlitAsync(SlitRequest req, string? userName)
+    private async Task<List<string>> SlitCoreAsync(SlitRequest req, string? userName)
     {
         if (string.IsNullOrWhiteSpace(req.ParentRollNo)) throw new InvalidOperationException("ParentRollNo required");
         if (req.ChildWidths == null || req.ChildWidths.Count == 0)
@@ -107,14 +104,18 @@ public class PaperRollService : IPaperRollService
         if (parent.Status == PaperRollStatus.Disposed)
             throw new InvalidOperationException("WM-MSG-043: 廃棄済ロールは巾割り不可");
 
-        int totalChildWidth = req.ChildWidths.Sum();
+        long totalChildWidth = 0;
+        foreach (var width in req.ChildWidths)
+        {
+            if (width <= 0) throw new InvalidOperationException($"子巾 {width} は無効");
+            totalChildWidth += width;
+        }
         if (totalChildWidth > parent.WidthMm)
             throw new InvalidOperationException($"WM-MSG-203: 子ロール巾合計({totalChildWidth}) > 親巾({parent.WidthMm})");
 
         var created = new List<string>();
         foreach (var w in req.ChildWidths)
         {
-            if (w <= 0) throw new InvalidOperationException($"子巾 {w} は無効");
             var no = await _seq.NextAsync(Prefix);
             _db.PaperRolls.Add(new PaperRoll
             {
@@ -134,7 +135,7 @@ public class PaperRollService : IPaperRollService
         }
 
         // 残端も保存する場合
-        int remnantWidth = parent.WidthMm - totalChildWidth;
+        int remnantWidth = parent.WidthMm - (int)totalChildWidth;
         if (req.KeepRemnant && remnantWidth > 0)
         {
             var no = await _seq.NextAsync(Prefix);
@@ -164,7 +165,7 @@ public class PaperRollService : IPaperRollService
         return created;
     }
 
-    public async Task DisposeAsync(string rollNo, string? userName)
+    private async Task DisposeCoreAsync(string rollNo, string? userName)
     {
         var roll = await _db.PaperRolls.FirstOrDefaultAsync(x => x.RollNo == rollNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("WM-MSG-070");

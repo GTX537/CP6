@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC 卷材当前授权与分切原子性
+
+现存卷材七入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；创建/分切编号与父子卷同父事务；全部子宽先校验并用足够的整数累计，移除循环内重复校验，非法后项或原生故障不残留子卷/编号；并发消费在最终决定点读取当前剩长，八位长度及既有版本检查保持。 实际Main/PostgreSQL19项及相关兼容/种子6项通过，零跳过；业务输入明确构造。原375项仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PostgreSQL16 PASS/11 NOT_RUN，48小时预算172800秒。 [W448交付](../development/evidence/BUG-897-PAPER-ROLL-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 承运元数据当前授权与并发追加
 
 现存承运元数据八入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与运单共父事务，原生INSERT/UPDATE故障完整回滚；读取事件前围栏使两次合法追加均完成并保留原事件及EF版本检查，原手工状态/错误与重量费用精度保持。 实际Main/PostgreSQL16项及相关兼容/种子5项通过，零跳过；业务输入明确构造。原375项仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PostgreSQL16 PASS/11 NOT_RUN，48小时预算172800秒。 [W447交付](../development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md)
