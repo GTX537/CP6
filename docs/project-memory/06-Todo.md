@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 空间编码规则当前写入与两阶段重建
+
+继续WP02-03其余实际query/write/export/download及字段V1真实来源；空间编码旧接口保持原业务范围，不替代新版LocationDraft/发布、Stock或租户schema采用。完整字段V1/PGT-017/负载/全Main/跨仓及WMS-CTRL R3仍未验收。 不将旧空间编码范围解释为新版草稿/物理发布结果；原列表/合成预览/预检保持既有登录读取。 [W456交付](../development/evidence/BUG-913-SPACE-CODE-WRITE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 字典写入当前授权与提交后缓存失效
 
 继续WP02-03其余实际query/write/export/download及字段V1真实来源；共享字典不伪称租户隔离，本窗不完成通用可靠缓存outbox、未知提交缓存协调或DictService独立缓存采用。完整字段V1/PGT-017/负载/全Main/跨仓及WMS-CTRL R3仍未验收。 字典模型无TenantId，保留既有全局共享范围；未授权角色的公共下拉读取保持。身份/权限仍在各自可信租户边界检查，不把共享字典称为租户专属。 [W455交付](../development/evidence/BUG-911-DICT-MUTATION-FENCE/DELIVERY.md)

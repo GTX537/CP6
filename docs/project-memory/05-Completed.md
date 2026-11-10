@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC 空间编码规则当前写入与两阶段重建
+
+现存空间编码规则增改删、批量/单格生成五写采用同Context当前space-code-rule:add/edit/delete/generate、签名会话及认证根；真实规则写锁与生成来源读锁/库位写锁，重建清旧码和赋新码同父事务。并发默认与默认迁入作用域互斥，原布局和算法、列表/预览/预检、旧构造路径保持。 W455通过#912进入远端main，WP02-03采用核销，分支准确删除、DEV-2干净释放后复用。本窗最终采用、分支与席位状态以PR和finish为准。 [W456交付](../development/evidence/BUG-913-SPACE-CODE-WRITE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 字典写入当前授权与提交后缓存失效
 
 现存字典六项写入采用同Context当前dict:add/edit/delete、签名会话和认证根，两张实际全局字典表SREX；查重/查行/级联写入与最终会话同父事务，确认提交后原缓存失效。保持全局共享模型/读取/cache键和既有响应；并发新增同码与编辑撞码明确拒绝。 W454通过#910进入远端main，WP02-03采用核销，分支准确删除、DEV-2干净释放后复用。本窗最终采用、分支与席位状态以PR和finish为准。 [W455交付](../development/evidence/BUG-911-DICT-MUTATION-FENCE/DELIVERY.md)

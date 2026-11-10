@@ -1,3 +1,4 @@
+using CP6.WebApi.Controllers.Erp;
 using CP6.Core.Auth;
 using CP6.Core.Services.Space;
 using CP6.Entity.DTOs.Space;
@@ -35,6 +36,7 @@ public class CodeRuleController : ControllerBase
     /// <summary>新建编码规则。IsDefault=true 时同作用域其他规则 IsDefault 自动置 false。</summary>
     [HttpPost("code-rule")]
     [RequirePermission("space-code-rule", "add")]
+    [OrderOwnerResult]
     public async Task<IActionResult> CreateRule([FromBody] CodeRuleDto d)
     {
         return Ok2(new { id = await _svc.CreateRuleAsync(d, CurrentUser) });
@@ -43,6 +45,7 @@ public class CodeRuleController : ControllerBase
     /// <summary>修改编码规则。</summary>
     [HttpPut("code-rule/{id:guid}")]
     [RequirePermission("space-code-rule", "edit")]
+    [OrderOwnerResult]
     public async Task<IActionResult> UpdateRule(Guid id, [FromBody] CodeRuleDto d)
     {
         await _svc.UpdateRuleAsync(id, d, CurrentUser); return Ok2();
@@ -51,6 +54,7 @@ public class CodeRuleController : ControllerBase
     /// <summary>删除编码规则。</summary>
     [HttpDelete("code-rule/{id:guid}")]
     [RequirePermission("space-code-rule", "delete")]
+    [OrderOwnerResult]
     public async Task<IActionResult> DeleteRule(Guid id)
     {
         await _svc.DeleteRuleAsync(id); return Ok2();
@@ -72,6 +76,7 @@ public class CodeRuleController : ControllerBase
     /// </summary>
     [HttpPost("floor/{id:guid}/generate-codes")]
     [RequirePermission("space-code-rule", "generate")]
+    [OrderOwnerResult]
     public async Task<IActionResult> GenerateCodes(Guid id, [FromBody] GenerateCodesReq req)
     {
         return Ok2(await _svc.GenerateAsync(id, req.Mode, req.ScopeZoneId));
@@ -96,6 +101,7 @@ public class CodeRuleController : ControllerBase
     /// </summary>
     [HttpPost("location/{id:guid}/gen-code")]
     [RequirePermission("space-code-rule", "generate")]
+    [OrderOwnerResult]
     public async Task<IActionResult> GenCode(Guid id)
     {
         return Ok2(new { code = await _svc.GenSingleAsync(id) });

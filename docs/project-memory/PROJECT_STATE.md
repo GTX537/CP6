@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC 空间编码规则当前写入与两阶段重建
+
+现存空间编码规则增改删、批量/单格生成五写采用同Context当前space-code-rule:add/edit/delete/generate、签名会话及认证根；真实规则写锁与生成来源读锁/库位写锁，重建清旧码和赋新码同父事务。并发默认与默认迁入作用域互斥，原布局和算法、列表/预览/预检、旧构造路径保持。 14项实际Main/PostgreSQL和26项既有InMemory通过，零跳过；模拟规则/空间/身份/故障输入，实际宿主/认证/数据库执行。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，172800秒与实际40h144047/下一158400保持。 [W456交付](../development/evidence/BUG-913-SPACE-CODE-WRITE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 字典写入当前授权与提交后缓存失效
 
 现存字典六项写入采用同Context当前dict:add/edit/delete、签名会话和认证根，两张实际全局字典表SREX；查重/查行/级联写入与最终会话同父事务，确认提交后原缓存失效。保持全局共享模型/读取/cache键和既有响应；并发新增同码与编辑撞码明确拒绝。 15项实际Main/PostgreSQL和8项既有InMemory通过，零跳过；模拟字典/身份/故障/缓存输入，实际宿主/认证/数据库/缓存服务。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，172800秒与实际40h144047/下一158400保持。 [W455交付](../development/evidence/BUG-911-DICT-MUTATION-FENCE/DELIVERY.md)
