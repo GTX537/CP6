@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC LPN 树和内容命令当前授权
+
+装箱、拆箱、拆分、合并及回放接入既有 Owner 当前授权事务；四条真实 HTTP/PostgreSQL 路径均复现旧请求在暂停后写入，修复后 401 REAUTH_REQUIRED、九类原行逐字节保持，正常树变化、序列号、精确数量、回放和原业务错误通过。 W437 已由 #876 进入远端 main，准确任务分支已删除，固定 DEV-2 已释放后复用。[W438 交付](../development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC LPN 创建当前授权
 
 LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。 W436 已由 #874 进入远端 main，旧分支已清理并完成该窗口席位释放。[W437 交付](../development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md)

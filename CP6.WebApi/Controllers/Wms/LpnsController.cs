@@ -46,12 +46,14 @@ public sealed class LpnsController : ControllerBase
 
     [HttpPost("{lpnNo}/pack")]
     [RequirePermission("wms-mobile", "lpn-manage")]
+    [OrderOwnerResult]
     public Task<ActionResult<LogisticsUnitDto>> Pack(
         string lpnNo, PackLpnRequest request, CancellationToken ct)
         => Execute(() => _service.PackAsync(lpnNo, request, User.Identity?.Name, ct));
 
     [HttpPost("{lpnNo}/unpack")]
     [RequirePermission("wms-mobile", "lpn-manage")]
+    [OrderOwnerResult]
     public Task<ActionResult<LogisticsUnitDto>> Unpack(
         string lpnNo, UnpackLpnRequest request, CancellationToken ct)
         => Execute(() => _service.UnpackAsync(lpnNo, request, User.Identity?.Name, ct));
@@ -64,12 +66,14 @@ public sealed class LpnsController : ControllerBase
 
     [HttpPost("{lpnNo}/split")]
     [RequirePermission("wms-mobile", "lpn-manage")]
+    [OrderOwnerResult]
     public Task<ActionResult<LogisticsUnitDto>> Split(
         string lpnNo, SplitLpnRequest request, CancellationToken ct)
         => Execute(() => _service.SplitAsync(lpnNo, request, User.Identity?.Name, ct));
 
     [HttpPost("{lpnNo}/merge")]
     [RequirePermission("wms-mobile", "lpn-manage")]
+    [OrderOwnerResult]
     public Task<ActionResult<LogisticsUnitDto>> Merge(
         string lpnNo, MergeLpnRequest request, CancellationToken ct)
         => Execute(() => _service.MergeAsync(lpnNo, request, User.Identity?.Name, ct));

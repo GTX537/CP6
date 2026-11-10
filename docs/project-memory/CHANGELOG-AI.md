@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-10 UTC LPN 树和内容命令当前授权
+
+W438 四条路径实际复现 HTTP 200 越过暂停，修复后 4 项通过、0 跳过，原写集保持；记录 W437 的 967.600299 秒完整窗口和 28 小时校准。本窗采用及席位处置以 PR 和 finish 为准。[W438 交付](../development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC LPN 创建当前授权
 
 W437 交付候选采用现有 Mobile Owner 和 HTTP 错误映射，实际 PostgreSQL 回归记录修复前 HTTP 200 与修复后 HTTP 401 及原行一致。远端采用以关联 PR 为准。[W437 交付](../development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md)

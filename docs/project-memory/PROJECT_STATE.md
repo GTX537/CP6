@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC LPN 树和内容命令当前授权
+
+装箱、拆箱、拆分、合并及回放接入既有 Owner 当前授权事务；四条真实 HTTP/PostgreSQL 路径均复现旧请求在暂停后写入，修复后 401 REAUTH_REQUIRED、九类原行逐字节保持，正常树变化、序列号、精确数量、回放和原业务错误通过。 原 375 项保持 38 DONE、1 IN_PROGRESS、336 PLANNED；正式 PostgreSQL 16 PASS、11 NOT_RUN。原生实测 100915 秒，48 小时总预算 172800 秒，下次校准 115200 秒。[W438 交付](../development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC LPN 创建当前授权
 
 LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。 原 375 项仍为 38 DONE、1 IN_PROGRESS、336 PLANNED，正式 PostgreSQL 为 16 PASS、11 NOT_RUN。[W437 交付](../development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md)
