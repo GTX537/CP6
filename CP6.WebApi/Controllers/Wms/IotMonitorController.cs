@@ -1,4 +1,6 @@
 using CP6.Core.Auth;
+using CP6.Core.Services.Erp;
+using CP6.WebApi.Controllers.Erp;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +9,7 @@ namespace CP6.WebApi.Controllers.Wms;
 
 /// <summary>MSBBWM330 — IoT センサ Web API</summary>
 [ApiController]
+[OrderOwnerResult]
 [Route("api/wms/iot")]
 [Authorize]
 public class IotMonitorController : ControllerBase
@@ -17,10 +20,12 @@ public class IotMonitorController : ControllerBase
 
     // ─── センサマスタ ───
     [HttpGet("sensors")]
+    [RequirePermission("wms-iot", "view")]
     public async Task<IActionResult> SearchSensors([FromQuery] string? warehouseCd, [FromQuery] string? sensorType)
         => Ok(new { code = 0, message = "OK", data = await _svc.SearchSensorsAsync(warehouseCd, sensorType) });
 
     [HttpGet("sensors/{id}")]
+    [RequirePermission("wms-iot", "view")]
     public async Task<IActionResult> GetSensor(string id)
     {
         var s = await _svc.GetSensorAsync(id);
@@ -37,7 +42,7 @@ public class IotMonitorController : ControllerBase
             var id = await _svc.CreateSensorAsync(dto, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { sensorId = id } });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPut("sensors/{id}")]
@@ -45,7 +50,7 @@ public class IotMonitorController : ControllerBase
     public async Task<IActionResult> UpdateSensor(string id, [FromBody] IotSensorDto dto)
     {
         try { await _svc.UpdateSensorAsync(id, dto, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpDelete("sensors/{id}")]
@@ -53,11 +58,12 @@ public class IotMonitorController : ControllerBase
     public async Task<IActionResult> DeleteSensor(string id)
     {
         try { await _svc.DeleteSensorAsync(id, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     // ─── 計測値 ───
     [HttpGet("sensors/{id}/readings")]
+    [RequirePermission("wms-iot", "view")]
     public async Task<IActionResult> GetReadings(string id, [FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] int limit = 200)
         => Ok(new { code = 0, message = "OK", data = await _svc.GetReadingsAsync(id, from, to, limit) });
 
@@ -66,7 +72,7 @@ public class IotMonitorController : ControllerBase
     public async Task<IActionResult> PostReading(string id, [FromBody] PostReadingReq req)
     {
         try { await _svc.PostReadingAsync(id, req.Value, req.ReadAt, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     /// <summary>疑似データ生成（デモ用）— 全センサ × N 件</summary>
@@ -79,6 +85,7 @@ public class IotMonitorController : ControllerBase
     }
 
     [HttpGet("alerts")]
+    [RequirePermission("wms-iot", "view")]
     public async Task<IActionResult> Alerts()
         => Ok(new { code = 0, message = "OK", data = await _svc.CurrentAlertsAsync() });
 

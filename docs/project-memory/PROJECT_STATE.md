@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC IoT当前授权与最新记录投影
+
+现存IoT九入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与业务同父事务，原生传感器/读数/批次故障完整回滚；从实际历史修复最新记录投影并保留迟到及同时间合法输入，模拟值/时间一致且先检查类型和1–100×最多100边界。 实际Main/PostgreSQL26项及兼容/种子5项通过，零跳过，实插10000条；业务输入明确构造。原375项仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PostgreSQL16 PASS/11 NOT_RUN，48小时预算172800秒。 [W446交付](../development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC WCS手工任务当前授权与编号事务
 
 现存WCS手工任务八个读写入口采用当前actor/动作及共同认证根；新view仅登记目录不自动授予；创建编号与任务同父事务，晚期原生故障后不再残留编号或被日志重刷失败任务，保留原手工状态、八位数量及无库存效果。 Main/PostgreSQL14项与相关兼容/种子5项实际通过，零跳过；设备/业务输入明确构造。原375项仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PostgreSQL仍16 PASS/11 NOT_RUN，48小时预算172800秒。 [W445 交付](../development/evidence/BUG-891-WCS-TASK-FENCE/DELIVERY.md)

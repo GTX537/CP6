@@ -1183,7 +1183,15 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IWcsService>(sp =>
         http?.RequestAborted ?? CancellationToken.None);
 });
 builder.Services.AddScoped<CP6.Core.Services.Wms.ICarrierService, CP6.Core.Services.Wms.CarrierService>();
-builder.Services.AddScoped<CP6.Core.Services.Wms.IIotService, CP6.Core.Services.Wms.IotService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IIotService>(sp =>
+{
+    var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    return new CP6.Core.Services.Wms.IotService(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetRequiredService<CP6.Core.Services.Wms.IWmsSequenceService>(),
+        sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
+        http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp),
+        http?.RequestAborted ?? CancellationToken.None);
+});
 
 // 4.22 MSBBWM300 モバイル作業指示（RFハンディ）
 builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileService, CP6.Core.Services.Wms.MobileService>();
