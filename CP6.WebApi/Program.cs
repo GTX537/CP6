@@ -1126,7 +1126,15 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.ISlottingService, CP6.Core.Serv
 // 4.18 MSBBWM200/230/240/250 紙器業特化（原紙ロール + インキ + パレット + VMI）
 builder.Services.AddScoped<CP6.Core.Services.Wms.IPaperRollService, CP6.Core.Services.Wms.PaperRollService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IInkService, CP6.Core.Services.Wms.InkService>();
-builder.Services.AddScoped<CP6.Core.Services.Wms.IPalletService, CP6.Core.Services.Wms.PalletService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IPalletService>(sp =>
+{
+    var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    return new CP6.Core.Services.Wms.PalletService(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetRequiredService<CP6.Core.Services.Wms.IWmsSequenceService>(),
+        sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
+        http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp),
+        http?.RequestAborted ?? CancellationToken.None);
+});
 builder.Services.AddScoped<CP6.Core.Services.Wms.IVmiService, CP6.Core.Services.Wms.VmiService>();
 
 // 4.19 MSBBWM210/220/260 紙器業特化 第2弾（残材 + 印版・木型 + サンプル）

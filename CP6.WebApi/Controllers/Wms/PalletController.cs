@@ -1,5 +1,7 @@
 using CP6.Core.Auth;
+using CP6.Core.Services.Erp;
 using CP6.Core.Services.Wms;
+using CP6.WebApi.Controllers.Erp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,7 +30,7 @@ public class PalletController : ControllerBase
     }
 
     [HttpPost]
-    [RequirePermission("wms-pallet", "add")]
+    [RequirePermission("wms-pallet", "add"), OrderOwnerResult]
     public async Task<IActionResult> Create([FromBody] PalletDto dto)
     {
         try
@@ -36,47 +38,47 @@ public class PalletController : ControllerBase
             var no = await _svc.CreateAsync(dto, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { palletNo = no } });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPut("{no}")]
-    [RequirePermission("wms-pallet", "edit")]
+    [RequirePermission("wms-pallet", "edit"), OrderOwnerResult]
     public async Task<IActionResult> Update(string no, [FromBody] PalletDto dto)
     {
         try { await _svc.UpdateAsync(no, dto, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/complete-building")]
-    [RequirePermission("wms-pallet", "complete")]
+    [RequirePermission("wms-pallet", "complete"), OrderOwnerResult]
     public async Task<IActionResult> CompleteBuilding(string no)
     {
         try { await _svc.CompleteBuildingAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/move-to-shipping")]
-    [RequirePermission("wms-pallet", "move")]
+    [RequirePermission("wms-pallet", "move"), OrderOwnerResult]
     public async Task<IActionResult> MoveToShipping(string no, [FromBody] MoveRequest req)
     {
         try { await _svc.MoveToShippingWaitAsync(no, req.ToLocationCd, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/mark-shipped")]
-    [RequirePermission("wms-pallet", "ship")]
+    [RequirePermission("wms-pallet", "ship"), OrderOwnerResult]
     public async Task<IActionResult> MarkShipped(string no, [FromBody] ShipRequest req)
     {
         try { await _svc.MarkShippedAsync(no, req.OutboundNo, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpDelete("{no}")]
-    [RequirePermission("wms-pallet", "del")]
+    [RequirePermission("wms-pallet", "del"), OrderOwnerResult]
     public async Task<IActionResult> Delete(string no)
     {
         try { await _svc.DeleteAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     public class MoveRequest { public string ToLocationCd { get; set; } = string.Empty; }

@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC 托盘元数据与编号事务
+
+托盘六个元数据写者采用同一认证根、当前动作/库区/已有字段和实际 actor；编号与托盘同父事务，原生插入故障后无编号或记录残留；六条暂停及真实撤权竞争均拒绝，保留原状态、三位重量和无库存效果。 原 375 项仍为 38 DONE、1 IN_PROGRESS、336 PLANNED；正式 PostgreSQL 16 PASS、11 NOT_RUN。48 小时预算 172800 秒，32小时原生样本 115413，下次 129600。[W442 交付](../development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 序列生命周期与库存事务
 
 序列转换与七种生命周期在实际 Mobile Owner 内决定并组合库存父事务；原五种库存请求从 400 恢复共同提交，收货错误后遗留的跟踪对象不再被日志保存刷入；八条真实暂停路径均拒绝，保留序列/库存对账、实际部门继承、原回执与完整七步周期。 原 375 项保持 38 DONE、1 IN_PROGRESS、336 PLANNED；正式 PostgreSQL 16 PASS、11 NOT_RUN。48 小时总预算 172800 秒，下次原生校准 115200 秒。[W441 交付](../development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md)

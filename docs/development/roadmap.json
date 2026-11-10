@@ -163902,6 +163902,11 @@
       "at": "2026-11-10T12:44:36.540093+00:00",
       "change": "W441 修复序列转换、七种生命周期的当前授权及库存父事务，复现并封闭失败对象被日志再保存的部分效果，核销 W440 远端采用、工时和席位释放。",
       "evidence": "docs/development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-10T13:55:59.424729+00:00",
+      "change": "W442 修复托盘六个写入口的最终授权、库区/字段限制及编号原子性，核销 W441 的远端采用、含暂停墙钟与原生活跃区间、32小时校准和席位释放。",
+      "evidence": "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -174311,9 +174316,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-03",
-        "delivered": "当前IAM/CAS、撤权共同门、对象/字段和多类Owner动作，以及本轮隐私/FORM最终授权已采用。 W435 实际版本化租户暂停与普通 Stock V1 调整共享 PostgreSQL 认证根，两种真实提交顺序、已提交原写集和暂停后的旧会话拒绝通过。 W436 LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。 W437 LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。 W438 装箱、拆箱、拆分、合并及回放接入既有 Owner 当前授权事务；四条真实 HTTP/PostgreSQL 路径均复现旧请求在暂停后写入，修复后 401 REAUTH_REQUIRED、九类原行逐字节保持，正常树变化、序列号、精确数量、回放和原业务错误通过。 W439 LPN Move 在既有 Mobile Owner 中组合库存父事务原语；真实非空树由原 HTTP 500 恢复完整原子移动，保留八位数量、货主估值质量和四腿实际部门继承。空/非空树均在暂停先提交后 401、十三类原行保持，晚期回执故障完整回滚，范围、回放和原错误协议通过。 W440 设备票据、更新/禁用、快捷 PIN、匿名激活和签名心跳在实际身份共同根中提交；保留合法自失效，数据库 nonce 裁决双宿主重放，设备范围变更使旧客户端身份失效，已有数据升级保留设备原行并要求重新登录。 W441 序列转换与七种生命周期在实际 Mobile Owner 内决定并组合库存父事务；原五种库存请求从 400 恢复共同提交，收货错误后遗留的跟踪对象不再被日志保存刷入；八条真实暂停路径均拒绝，保留序列/库存对账、实际部门继承、原回执与完整七步周期。",
+        "delivered": "当前IAM/CAS、撤权共同门、对象/字段和多类Owner动作，以及本轮隐私/FORM最终授权已采用。 W435 实际版本化租户暂停与普通 Stock V1 调整共享 PostgreSQL 认证根，两种真实提交顺序、已提交原写集和暂停后的旧会话拒绝通过。 W436 LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。 W437 LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。 W438 装箱、拆箱、拆分、合并及回放接入既有 Owner 当前授权事务；四条真实 HTTP/PostgreSQL 路径均复现旧请求在暂停后写入，修复后 401 REAUTH_REQUIRED、九类原行逐字节保持，正常树变化、序列号、精确数量、回放和原业务错误通过。 W439 LPN Move 在既有 Mobile Owner 中组合库存父事务原语；真实非空树由原 HTTP 500 恢复完整原子移动，保留八位数量、货主估值质量和四腿实际部门继承。空/非空树均在暂停先提交后 401、十三类原行保持，晚期回执故障完整回滚，范围、回放和原错误协议通过。 W440 设备票据、更新/禁用、快捷 PIN、匿名激活和签名心跳在实际身份共同根中提交；保留合法自失效，数据库 nonce 裁决双宿主重放，设备范围变更使旧客户端身份失效，已有数据升级保留设备原行并要求重新登录。 W441 序列转换与七种生命周期在实际 Mobile Owner 内决定并组合库存父事务；原五种库存请求从 400 恢复共同提交，收货错误后遗留的跟踪对象不再被日志保存刷入；八条真实暂停路径均拒绝，保留序列/库存对账、实际部门继承、原回执与完整七步周期。 W442 托盘六个元数据写者采用同一认证根、当前动作/库区/已有字段和实际 actor；编号与托盘同父事务，原生插入故障后无编号或记录残留；六条暂停及真实撤权竞争均拒绝，保留原状态、三位重量和无库存效果。",
         "remaining": "全字段注册表与全部现存query/write/export/download写者尚未完成覆盖核销。",
-        "next_action": "继续原 WP02-03 / CTX02-A4/A7，盘点余下可达业务写者，并验证租户 schema 映射/切换下的同源提交与恢复；PGT-017 直至全体相关写者完成采用和验收前保持 NOT_RUN。",
+        "next_action": "继续原 WP02-03 / CTX02-A4/A7 的真实余项，盘点剩余可达写者与拒绝后恢复路径；租户 schema/source、完整 TRACE 与 PGT-017 仍待对应实际采用和验收。",
         "evidence_refs": [
           "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
           "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
@@ -174365,11 +174370,12 @@
           "docs/development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md",
           "docs/development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md",
           "docs/development/evidence/BUG-881-DEVICE-LIFECYCLE-FENCE/DELIVERY.md",
-          "docs/development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md"
+          "docs/development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md",
+          "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W441-01"
+        "latest_window": "W442-01"
       },
       "wave435_delivery": {
         "status": "CLOSED",
@@ -174493,12 +174499,32 @@
         "seat_released": true
       },
       "wave441_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md",
         "validation": "序列转换与七种生命周期在实际 Mobile Owner 内决定并组合库存父事务；原五种库存请求从 400 恢复共同提交，收货错误后遗留的跟踪对象不再被日志保存刷入；八条真实暂停路径均拒绝，保留序列/库存对账、实际部门继承、原回执与完整七步周期。",
         "tested_baseline": "cca06558efeea692895c2c757f6c5ff0b796b3d9",
         "issue": "https://github.com/GTX537/CP6/issues/883",
         "actual_result_sha256": "1b2221761b9c1135c747b9fe597f2bb005a7a0e82cd6d2cd96dbf1b7adedd085",
+        "formal_case": "PGT-017",
+        "formal_acceptance": "NOT_RUN",
+        "full_task_complete": false,
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/884",
+          "commit": "b7dabc8dbcc65b2a03823229ceb598b2b3273ba3",
+          "target_head": "b7dabc8dbcc65b2a03823229ceb598b2b3273ba3"
+        },
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse",
+        "seat_released": true
+      },
+      "wave442_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md",
+        "validation": "托盘六个元数据写者采用同一认证根、当前动作/库区/已有字段和实际 actor；编号与托盘同父事务，原生插入故障后无编号或记录残留；六条暂停及真实撤权竞争均拒绝，保留原状态、三位重量和无库存效果。",
+        "tested_baseline": "b7dabc8dbcc65b2a03823229ceb598b2b3273ba3",
+        "issue": "https://github.com/GTX537/CP6/issues/885",
+        "actual_result_sha256": "d65fe5bc65dc551ae369270499d1513ae2c0620350a788e2b7a5d0d773ebf035",
         "formal_case": "PGT-017",
         "formal_acceptance": "NOT_RUN",
         "full_task_complete": false
@@ -208412,10 +208438,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W441",
-      "path": "docs/development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md",
-      "baseline_sha": "cca06558efeea692895c2c757f6c5ff0b796b3d9",
-      "registered_at": "2026-11-10T09:24:28.256769+00:00",
+      "id": "W442",
+      "path": "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md",
+      "baseline_sha": "b7dabc8dbcc65b2a03823229ceb598b2b3273ba3",
+      "registered_at": "2026-11-10T13:18:16.325323+00:00",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "COORD"
@@ -208430,35 +208456,36 @@
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": false,
-      "next_action": "继续原 WP02-03 / CTX02-A4/A7，盘点余下可达业务写者，并验证租户 schema 映射/切换下的同源提交与恢复；PGT-017 直至全体相关写者完成采用和验收前保持 NOT_RUN。",
+      "next_action": "继续原 WP02-03 / CTX02-A4/A7 的真实余项，盘点剩余可达写者与拒绝后恢复路径；租户 schema/source、完整 TRACE 与 PGT-017 仍待对应实际采用和验收。",
       "windows": [
         {
-          "id": "W441-01",
-          "workspace_task": "BUG-883-SERIAL-LIFECYCLE-FENCE",
+          "id": "W442-01",
+          "workspace_task": "BUG-885-PALLET-WRITE-FENCE",
           "related_tasks": [
             "WP02-03"
           ],
-          "title": "序列生命周期与库存父事务",
+          "title": "托盘元数据与编号父事务",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/bug-883-serial-lifecycle-fence",
-          "planned_scope_ref": "docs/development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md",
+          "branch": "codex/bug-885-pallet-write-fence",
+          "planned_scope_ref": "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "file:Main:CP6.Tests/Erp/SerialLifecyclePostgreSqlTests.cs",
-            "file:Main:CP6.Core/Services/Wms/SerialInventoryService.cs",
-            "file:Main:CP6.Core/Services/Wms/SerialInventoryService.Authority.cs",
-            "file:Main:CP6.WebApi/Controllers/Wms/SerialsController.cs"
+            "file:Main:CP6.Tests/Erp/PalletWritesPostgreSqlTests.cs",
+            "file:Main:CP6.Core/Services/Wms/PalletService.cs",
+            "file:Main:CP6.Core/Services/Wms/PalletService.Authority.cs",
+            "file:Main:CP6.WebApi/Controllers/Wms/PalletController.cs",
+            "file:Main:CP6.WebApi/Program.cs"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md"
         }
       ],
       "storage": {
@@ -253451,6 +253478,70 @@
           "reuse_worktree": "D:/CP6-worktrees/dev-2",
           "new_worktrees": 0
         }
+      },
+      {
+        "id": "W441",
+        "path": "docs/development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md",
+        "baseline_sha": "cca06558efeea692895c2c757f6c5ff0b796b3d9",
+        "registered_at": "2026-11-10T09:24:28.256769+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "next_action": "继续原 WP02-03 / CTX02-A4/A7，盘点余下可达业务写者，并验证租户 schema 映射/切换下的同源提交与恢复；PGT-017 直至全体相关写者完成采用和验收前保持 NOT_RUN。",
+        "windows": [
+          {
+            "id": "W441-01",
+            "workspace_task": "BUG-883-SERIAL-LIFECYCLE-FENCE",
+            "related_tasks": [
+              "WP02-03"
+            ],
+            "title": "序列生命周期与库存父事务",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/bug-883-serial-lifecycle-fence",
+            "planned_scope_ref": "docs/development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "file:Main:CP6.Tests/Erp/SerialLifecyclePostgreSqlTests.cs",
+              "file:Main:CP6.Core/Services/Wms/SerialInventoryService.cs",
+              "file:Main:CP6.Core/Services/Wms/SerialInventoryService.Authority.cs",
+              "file:Main:CP6.WebApi/Controllers/Wms/SerialsController.cs"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md",
+            "adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6/pull/884",
+              "commit": "b7dabc8dbcc65b2a03823229ceb598b2b3273ba3",
+              "target_head": "b7dabc8dbcc65b2a03823229ceb598b2b3273ba3"
+            },
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/dev-2",
+          "new_worktrees": 0
+        }
       }
     ],
     "development_priority": {
@@ -256429,10 +256520,31 @@
           "native_status": "active",
           "raw": "D:/CP6-local-test/CP6-72H-20261109/after-w440-adoption-calibration.json",
           "raw_sha256": "9bdb81fe69269b1f0d2297516eead534421dcb2b0e9d7cf8775c85b10f9be930"
+        },
+        "w441_adopted": {
+          "native_elapsed_seconds": 114836,
+          "native_sample_utc": "2026-11-10T12:54:37.000Z",
+          "capacity_seconds": 172800,
+          "native_status": "active",
+          "raw": "D:/CP6-local-test/CP6-72H-20261109/after-w441-adoption-calibration.json",
+          "raw_sha256": "8ddf3793d447f894498f624ab1ff11bd519b1782e23fd994088f5246d2fac599",
+          "conservative_native_active_range_seconds": [
+            4873.607999999999,
+            5315
+          ]
+        },
+        "checkpoint_32h": {
+          "native_elapsed_seconds": 115413,
+          "native_sample_utc": "2026-11-10T13:04:14.000Z",
+          "capacity_seconds": 172800,
+          "native_status": "active",
+          "raw": "D:/CP6-local-test/CP6-72H-20261109/eighth-32h-calibration.json",
+          "raw_sha256": "1c6a399b3f437cc2da7219249cf4af8ce36289a7cc8e96938821fcdd6bd6d1cc",
+          "next_native_calibration_seconds": 129600
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "继续原 WP02-03 / CTX02-A4/A7，盘点余下可达业务写者，并验证租户 schema 映射/切换下的同源提交与恢复；PGT-017 直至全体相关写者完成采用和验收前保持 NOT_RUN。",
+      "next_priority": "继续原 WP02-03 / CTX02-A4/A7 的真实余项，盘点剩余可达写者与拒绝后恢复路径；租户 schema/source、完整 TRACE 与 PGT-017 仍待对应实际采用和验收。",
       "windows": [
         {
           "id": "W327-01",
@@ -258968,7 +259080,7 @@
         {
           "id": "W441-01",
           "workspace_task": "BUG-883-SERIAL-LIFECYCLE-FENCE",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-03"
           ],
@@ -258985,6 +259097,41 @@
           "dispatch": "docs/development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md",
           "issue": "https://github.com/GTX537/CP6/issues/883",
           "hosted_seconds": 206.35999999986961,
+          "formal_acceptance": "NOT_RUN",
+          "finished_at": "2026-11-10T12:52:46.864701+00:00",
+          "final_lease_seconds": 12498.607932,
+          "lease_includes_user_pauses": true,
+          "conservative_native_active_range_seconds": [
+            4873.607999999999,
+            5315
+          ],
+          "pr": "https://github.com/GTX537/CP6/pull/884",
+          "adopted_main": "b7dabc8dbcc65b2a03823229ceb598b2b3273ba3",
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "seat_released": true
+        },
+        {
+          "id": "W442-01",
+          "workspace_task": "BUG-885-PALLET-WRITE-FENCE",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-03"
+          ],
+          "started_at": "2026-11-10T13:18:16.325323+00:00",
+          "native_start_sample_seconds": 116254,
+          "validation_ready_at": "2026-11-10T13:55:59.424729+00:00",
+          "estimate_minutes": [
+            55,
+            85
+          ],
+          "branch": "codex/bug-885-pallet-write-fence",
+          "tested_baseline": "b7dabc8dbcc65b2a03823229ceb598b2b3273ba3",
+          "scope": "托盘六个元数据写者采用同一认证根、当前动作/库区/已有字段和实际 actor；编号与托盘同父事务，原生插入故障后无编号或记录残留；六条暂停及真实撤权竞争均拒绝，保留原状态、三位重量和无库存效果。",
+          "delivery": "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md",
+          "dispatch": "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md",
+          "issue": "https://github.com/GTX537/CP6/issues/885",
+          "hosted_seconds": 129.0,
           "formal_acceptance": "NOT_RUN"
         }
       ],

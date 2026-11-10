@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 托盘元数据与编号事务
+
+继续原 WP02-03 / CTX02-A4/A7 的真实余项，盘点剩余可达写者与拒绝后恢复路径；租户 schema/source、完整 TRACE 与 PGT-017 仍待对应实际采用和验收。 正式收发/盘点和新版 TRACE 来源原件/摘要/UI 未核销；本窗标记发运保持既有托盘状态含义。[W442 交付](../development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 序列生命周期与库存事务
 
 继续原 WP02-03 / CTX02-A4/A7，盘点余下可达业务写者，并验证租户 schema 映射/切换下的同源提交与恢复；PGT-017 直至全体相关写者完成采用和验收前保持 NOT_RUN。 TRACE 新版来源原件、输入摘要和 UI、正式收发及盘点 Owner 采用仍归原任务；PGT-021/022 恢复验收亦未核销。[W441 交付](../development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md)
