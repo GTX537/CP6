@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC PostgreSQL PGT-020
+
+W433 实测平台创建原回执接首次 Core 初始化及真实 RMA。DDL 后终止后端全回滚，原键恢复，未 Ready 时业务拒绝。正式 PostgreSQL 为 16 PASS、11 NOT_RUN，原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。[W433](../development/evidence/W433-01/DELIVERY.md)
+
 ## 2026-11-10 UTC PostgreSQL PGT-027
 
 W434 正常 Core EF 将隔离库迁移历史从 225 条推进到 226 条，IAM 与模拟登录通过。普通 SCRAM COPY 实测用户、角色错属各自全回滚，同号合法 A 行提交。正式 PostgreSQL 为 15 PASS、12 NOT_RUN，原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。[W434](../development/evidence/W434-01/DELIVERY.md)

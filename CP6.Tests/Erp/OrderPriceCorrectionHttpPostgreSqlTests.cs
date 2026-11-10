@@ -10,10 +10,14 @@ namespace CP6.Tests.Erp;
 
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
-    private static async Task<Dictionary<string, string>> Login(AuthenticationApiProcess host, Harness h)
+    private static Task<Dictionary<string, string>> Login(AuthenticationApiProcess host, Harness h)
+        => Login(host, "price-owner", "Price1!Password", h.Tenant.ToString("N"));
+
+    private static async Task<Dictionary<string, string>> Login(AuthenticationApiProcess host, string userName,
+        string password, string tenantCode)
     {
         using var response = await host.Send(new HttpRequestMessage(HttpMethod.Post, "api/auth/login")
-        { Content = JsonContent.Create(new { UserName = "price-owner", Password = "Price1!Password", TenantCode = h.Tenant.ToString("N") }) });
+        { Content = JsonContent.Create(new { UserName = userName, Password = password, TenantCode = tenantCode }) });
         Assert.True(response.StatusCode == HttpStatusCode.OK, await response.Content.ReadAsStringAsync());
         return response.Headers.GetValues("Set-Cookie").Select(x => x.Split(';')[0].Split('=', 2))
             .Where(x => x[1].Length > 0).ToDictionary(x => x[0], x => x[1]);

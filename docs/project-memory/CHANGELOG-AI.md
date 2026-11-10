@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-10 UTC 登记原 PGT-020
+
+新增以租户创建原回执准备并完成首次 Core commissioning 的 CLI V2，实际原生 DDL 后中断、原键恢复及 Main RMA 写入通过。同步原验收、W434 远端合并及固定席位回收。[W433](../development/evidence/W433-01/DELIVERY.md)
+
 ## 2026-11-10 UTC 登记原 PGT-027
 
 增加 PostgreSQL 共享 IAM 角色复合外键。纳入旧错误迁移回滚、普通登录批量写入、合法 Owner 及模拟登录证据。同步 W428 远端收尾和 W433 最新保存检查点。[W434](../development/evidence/W434-01/DELIVERY.md)

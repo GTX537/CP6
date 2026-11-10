@@ -30,29 +30,9 @@ internal static partial class RmaTenantStorageV1
         if (await CorePreparationExistsAsync(connection, tx, ct))
             return (await ReadCorePreparationAsync(connection, tx, request, ct)).Prepared;
 
-        if (await Scalar(connection, tx, TenantEmptyLayoutV1.Sql
-                + " AND NOT EXISTS (SELECT FROM pg_catalog.pg_default_acl)", ct) is not true)
-            throw new TenantProvisioningException("fresh-layout-required");
-
-        var result = JsonSerializer.Serialize(new
-        {
-            Outcome = "PREPARED",
-            Profile = CoreProfile,
-            request.InstallationId,
-            request.OperationId,
-            request.Target.DatabaseOid,
-            request.Target.SystemIdentifier,
-            PreparedAt = DateTimeOffset.UtcNow
-        });
-        await Sql(connection, tx, $"""
-            CREATE SCHEMA {CoreControl};
-            REVOKE ALL ON SCHEMA {CoreControl} FROM PUBLIC;
-            CREATE TABLE {CoreControl}.installation (
-                singleton boolean PRIMARY KEY CHECK (singleton),
-                request_json text NOT NULL, prepared_receipt text NOT NULL, commission_receipt text
-            );
-            REVOKE ALL ON {CoreControl}.installation FROM PUBLIC;
-            """, ct);
+        await RequireFreshCorePreparationAsync(connection, tx, ct);
+        var result = CorePreparedReceipt(request.Target, request.InstallationId, request.OperationId);
+        await CreateCoreControlAsync(connection, tx, ct);
         await using var save = new NpgsqlCommand($"""
             INSERT INTO {CoreControl}.installation VALUES (true,@request,@receipt,NULL)
             """, connection, tx);
@@ -75,6 +55,13 @@ internal static partial class RmaTenantStorageV1
         if (!await CorePreparationExistsAsync(connection, tx, ct))
             throw new TenantProvisioningException("core-preparation-required");
         var (_, previous) = await ReadCorePreparationAsync(connection, tx, request, ct);
+        var history = await LockCoreCommissionAsync(connection, tx, ct);
+        return await ApplyCoreCommissionAsync(connection, tx, request, previous, history, ct);
+    }
+
+    private static async Task<string[]> LockCoreCommissionAsync(NpgsqlConnection connection, NpgsqlTransaction tx,
+        CancellationToken ct)
+    {
         await RequireCoreTablesAsync(connection, tx, ct);
 
         // Match the legacy Owner order: authentication fence, then the affected business and result relations.
@@ -84,7 +71,12 @@ internal static partial class RmaTenantStorageV1
             LOCK TABLE cp6_rma_application_v1.heads, cp6_rma_application_v1.versions IN ACCESS EXCLUSIVE MODE;
             LOCK TABLE cp6_main_owner_v1.operations IN SHARE ROW EXCLUSIVE MODE;
             """, ct);
-        var history = await RequireCoreHistoryAsync(connection, tx, ct);
+        return await RequireCoreHistoryAsync(connection, tx, ct);
+    }
+
+    private static async Task<string> ApplyCoreCommissionAsync(NpgsqlConnection connection, NpgsqlTransaction tx,
+        RmaCoreCommissionRequestV1 request, string? previous, string[] history, CancellationToken ct)
+    {
         if (await Scalar(connection, tx, $"""
                 SELECT NOT EXISTS (SELECT FROM cp6_rma_application_v1.heads)
                    AND NOT EXISTS (SELECT FROM cp6_rma_application_v1.versions)
@@ -163,6 +155,37 @@ internal static partial class RmaTenantStorageV1
 
     private static string CanonicalCoreRequest(RmaCoreCommissionRequestV1 request) =>
         JsonSerializer.Serialize(request with { Tenants = request.Tenants.OrderBy(t => t.TenantId).ToArray() });
+
+    private static async Task RequireFreshCorePreparationAsync(NpgsqlConnection connection, NpgsqlTransaction tx,
+        CancellationToken ct)
+    {
+        if (await Scalar(connection, tx, TenantEmptyLayoutV1.Sql
+                + " AND NOT EXISTS (SELECT FROM pg_catalog.pg_default_acl)", ct) is not true)
+            throw new TenantProvisioningException("fresh-layout-required");
+    }
+
+    private static string CorePreparedReceipt(RmaTenantTargetV1 target, Guid installationId, Guid operationId) =>
+        JsonSerializer.Serialize(new
+        {
+            Outcome = "PREPARED",
+            Profile = CoreProfile,
+            InstallationId = installationId,
+            OperationId = operationId,
+            target.DatabaseOid,
+            target.SystemIdentifier,
+            PreparedAt = DateTimeOffset.UtcNow
+        });
+
+    private static Task CreateCoreControlAsync(NpgsqlConnection connection, NpgsqlTransaction tx, CancellationToken ct) =>
+        Sql(connection, tx, $"""
+            CREATE SCHEMA {CoreControl};
+            REVOKE ALL ON SCHEMA {CoreControl} FROM PUBLIC;
+            CREATE TABLE {CoreControl}.installation (
+                singleton boolean PRIMARY KEY CHECK (singleton),
+                request_json text NOT NULL, prepared_receipt text NOT NULL, commission_receipt text
+            );
+            REVOKE ALL ON {CoreControl}.installation FROM PUBLIC;
+            """, ct);
 
     private static async Task<bool> CorePreparationExistsAsync(NpgsqlConnection connection, NpgsqlTransaction tx, CancellationToken ct) =>
         await Scalar(connection, tx, $"SELECT to_regnamespace('{CoreControl}') IS NOT NULL", ct) is true;
