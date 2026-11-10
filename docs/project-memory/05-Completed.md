@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC W372 实际 ERP 与文件同源归档
+
+A、B 的真实 C03 终态和重复投递通过。正常 v8 的 ERP 八表与原文件引用共享 PostgreSQL 快照。W429 已随 #870 采用，本地及远端分支已清理，DEV-2 已释放。 [W423](../development/evidence/W423-01/DELIVERY.md) · [W429](https://github.com/GTX537/CP6/pull/870)
+
 ## 2026-11-10 UTC FileContent 原历史归档
 
 实际 Engineering 与 FileContent Owner 为 A/B 写入各自原件。A 的 v11 五成员与独立 PostgreSQL COPY 逐字节一致，B 的独立历史通过校验。W433 已随 #869 采用并完成分支和 DEV-2 收尾。 [W429](../development/evidence/W429-01/DELIVERY.md) · [W433](https://github.com/GTX537/CP6/pull/869)
