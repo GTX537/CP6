@@ -1,5 +1,37 @@
 # 项目当前状态
 
+## 2026-11-10 UTC PostgreSQL PGT-020
+
+W433 实测平台创建原回执接首次 Core 初始化及真实 RMA。DDL 后终止后端全回滚，原键恢复，未 Ready 时业务拒绝。正式 PostgreSQL 为 16 PASS、11 NOT_RUN，原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。[W433](../development/evidence/W433-01/DELIVERY.md)
+
+## 2026-11-10 UTC PostgreSQL PGT-027
+
+W434 正常 Core EF 将隔离库迁移历史从 225 条推进到 226 条，IAM 与模拟登录通过。普通 SCRAM COPY 实测用户、角色错属各自全回滚，同号合法 A 行提交。正式 PostgreSQL 为 15 PASS、12 NOT_RUN，原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。[W434](../development/evidence/W434-01/DELIVERY.md)
+
+## 2026-11-10 UTC IAM 用户成员引用
+
+W428 正常 Core EF 将隔离库迁移历史从 224 条推进到 225 条，两个 IAM 用例和实际模拟登录 HTTP 通过。原 PGT-027 待成员关系的角色复合引用。正式 PostgreSQL 为 14 PASS、13 NOT_RUN，原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W428](../development/evidence/W428-01/DELIVERY.md)
+
+## 2026-11-10 UTC PostgreSQL 物理连接错借
+
+W425 使用实际普通 A 后端触发 B 绑定拒绝，业务命令计数为零，双方原行摘要一致。正式 PostgreSQL 为 14 PASS、13 NOT_RUN。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W425](../development/evidence/W425-01/DELIVERY.md)
+
+## 2026-11-10 UTC PostgreSQL 连接取消和保存点
+
+W432 实测约束及语句超时后保存点恢复、A 原池再借和 B 独立写入，合用 W344 的真实取消与坏连接替换。正式 PostgreSQL 为 13 PASS、14 NOT_RUN。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W432](../development/evidence/W432-01/DELIVERY.md)
+
+## 2026-11-10 UTC ERP C03 关闭候选实测
+
+W422 在实际 PostgreSQL 导入 W419 的 C03 原图，验证晚段全回滚、714 字节原回执、A/B 原字节和实际行版本序列。正式 PostgreSQL 为 12 PASS、15 NOT_RUN。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W422](../development/evidence/W422-01/DELIVERY.md)
+
+## 2026-11-09 UTC 原全局消息键验收
+
+W431 实测五组原键竞争、完整回滚和独立键域，并复用原受控接收实证。正式 PostgreSQL 为 12 PASS、15 NOT_RUN。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W431](../development/evidence/W431-01/DELIVERY.md)
+
+## 2026-11-09 UTC RMA 同 schema 归属更新
+
+W430 实测普通 A 的 ACL 42501、固定 CHECK 23514、两次无半写及合法 A 提交。正式 PostgreSQL 为 11 PASS、16 NOT_RUN，原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W430](../development/evidence/W430-01/DELIVERY.md)
+
 ## 2026-11-09 UTC 共享 RLS 与原密钥列
 
 W427 实测普通 DELETE 0/1 和原密钥列 42501。正式 PostgreSQL 为 11 PASS、16 NOT_RUN。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W427](../development/evidence/W427-01/DELIVERY.md)

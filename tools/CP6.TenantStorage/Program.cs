@@ -15,11 +15,12 @@ var rmaInstall = args.SequenceEqual(["install-rma-tenant-storage-v1", "--stdin"]
 var rmaMigrate = args.SequenceEqual(["migrate-rma-tenant-storage-v1", "--stdin"]);
 var rmaPrepareCore = args.SequenceEqual(["prepare-rma-core-tenant-storage-v1", "--stdin"]);
 var rmaCommissionCore = args.SequenceEqual(["commission-rma-core-tenant-storage-v1", "--stdin"]);
+var rmaCreatedCore = args is ["prepare-rma-core-from-creation-v2" or "commission-rma-core-from-creation-v2", "--stdin"];
 var rmaOutboundIndex = args.SequenceEqual(["migrate-rma-core-outbound-index-v1", "--stdin"]);
 var rmaOriginalJournal = args.SequenceEqual(["install-rma-core-original-journal-v1", "--stdin"]);
 var rmaDraftWriter = args.SequenceEqual(["install-rma-core-draft-writer-v1", "--stdin"]);
 var rmaSubmitWriter = args.SequenceEqual(["install-rma-core-submit-writer-v1", "--stdin"]);
-var rmaControl = rmaInstall || rmaMigrate || rmaPrepareCore || rmaCommissionCore || rmaOutboundIndex
+var rmaControl = rmaInstall || rmaMigrate || rmaPrepareCore || rmaCommissionCore || rmaCreatedCore || rmaOutboundIndex
     || rmaOriginalJournal || rmaDraftWriter || rmaSubmitWriter;
 var stockReadInspect = args.SequenceEqual(["inspect-stock-read-v1", "--stdin"]);
 var stockInstallContract = args switch
@@ -36,21 +37,27 @@ var stockInstallContract = args switch
 var controlExecutionStarted = false;
 if ((!args.SequenceEqual(["provision", "--stdin"]) && !revocation && !serviceToken && !tenantControl && !directoryControl && !rmaControl && stockInstallContract is null) || !Console.IsInputRedirected)
 {
-    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1|install-identity-directory-v2|inspect-identity-directory-v2|install-rma-tenant-storage-v1|migrate-rma-tenant-storage-v1|prepare-rma-core-tenant-storage-v1|commission-rma-core-tenant-storage-v1|migrate-rma-core-outbound-index-v1|install-rma-core-original-journal-v1|install-rma-core-draft-writer-v1|install-rma-core-submit-writer-v1|install-stock-read-v1|inspect-stock-read-v1|install-stock-write-fence-v1|install-stock-original-journal-v1|install-stock-outbox-writer-v1|install-stock-movement-writer-v1|install-stock-adjust-owner-v1|install-stock-creation-writer-v2 --stdin (one bounded JSON document on redirected standard input).");
+    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1|install-identity-directory-v2|inspect-identity-directory-v2|install-rma-tenant-storage-v1|migrate-rma-tenant-storage-v1|prepare-rma-core-tenant-storage-v1|commission-rma-core-tenant-storage-v1|prepare-rma-core-from-creation-v2|commission-rma-core-from-creation-v2|migrate-rma-core-outbound-index-v1|install-rma-core-original-journal-v1|install-rma-core-draft-writer-v1|install-rma-core-submit-writer-v1|install-stock-read-v1|inspect-stock-read-v1|install-stock-write-fence-v1|install-stock-original-journal-v1|install-stock-outbox-writer-v1|install-stock-movement-writer-v1|install-stock-adjust-owner-v1|install-stock-creation-writer-v2 --stdin (one bounded JSON document on redirected standard input).");
     return 2;
 }
 try
 {
     using var timeout = new CancellationTokenSource(TimeSpan.FromMinutes(3));
-    var buffer = new char[16385];
+    // A creation plan carries up to 128 keys from the 128 KiB Tenant Creation V1 request.
+    // Allow six-character JSON escapes and the per-entry and control envelope fields.
+    const int standardInputLimit = 16_384;
+    var inputLimit = rmaCreatedCore ? standardInputLimit + 128 * (6 * 131_072 + 512) : standardInputLimit;
+    var buffer = new char[standardInputLimit + 1];
     var size = 0;
-    while (size < buffer.Length)
+    while (size <= inputLimit)
     {
+        if (size == buffer.Length)
+            Array.Resize(ref buffer, Math.Min(buffer.Length * 2, inputLimit + 1));
         var read = await Console.In.ReadAsync(buffer.AsMemory(size),timeout.Token);
         if (read == 0) break;
         size += read;
     }
-    if (size == buffer.Length) throw new TenantProvisioningException("input-rejected");
+    if (size > inputLimit) throw new TenantProvisioningException("input-rejected");
     using var document = JsonDocument.Parse(buffer.AsMemory(0,size));
     if (document.RootElement.ValueKind != JsonValueKind.Object || !Unique(document.RootElement))
         throw new TenantProvisioningException("input-rejected");
@@ -66,7 +73,9 @@ try
         var migrate = rmaMigrate || rmaOutboundIndex ? rmaInput.Request.Deserialize<RmaTenantMigrationRequestV1>(json) : null;
         var core = rmaPrepareCore || rmaCommissionCore || rmaOriginalJournal || rmaDraftWriter || rmaSubmitWriter
             ? rmaInput.Request.Deserialize<RmaCoreCommissionRequestV1>(json) : null;
-        var target = install?.Target ?? migrate?.Target ?? core?.Target ?? throw new TenantProvisioningException("input-rejected");
+        var created = rmaCreatedCore ? rmaInput.Request.Deserialize<RmaCreatedTenantCoreCommissionRequestV2>(json) : null;
+        var target = install?.Target ?? migrate?.Target ?? core?.Target ?? created?.Target
+            ?? throw new TenantProvisioningException("input-rejected");
         var ip = target.Validate();
         if (!Enum.TryParse<SslMode>(rmaInput.SslMode, out var rmaSsl) || rmaInput.SslMode != rmaSsl.ToString()
             || !(rmaSsl == SslMode.VerifyFull || rmaSsl == SslMode.Disable && System.Net.IPAddress.IsLoopback(ip)))
@@ -83,13 +92,16 @@ try
                 : rmaOutboundIndex ? "CP6.TenantStorage.RmaOutboundIndexV1"
                 : rmaOriginalJournal ? "CP6.TenantStorage.RmaOriginalJournalV1"
                 : rmaDraftWriter ? "CP6.TenantStorage.RmaDraftWriterV1"
-                : rmaSubmitWriter ? "CP6.TenantStorage.RmaSubmitWriterV1" : "CP6.TenantStorage.RmaCoreCommissionV1"
+                : rmaSubmitWriter ? "CP6.TenantStorage.RmaSubmitWriterV1"
+                : rmaCreatedCore ? "CP6.TenantStorage.RmaCoreFromCreationV2" : "CP6.TenantStorage.RmaCoreCommissionV1"
         }.ConnectionString);
         var receipt = args[0] switch
         {
             "install-rma-tenant-storage-v1" => await RmaTenantStorageV1.InstallAsync(control, install!, timeout.Token),
             "migrate-rma-tenant-storage-v1" => await RmaTenantStorageV1.MigrateAsync(control, migrate!, timeout.Token),
             "prepare-rma-core-tenant-storage-v1" => await RmaTenantStorageV1.PrepareCoreAsync(control, core!, timeout.Token),
+            "prepare-rma-core-from-creation-v2" => await RmaTenantStorageV1.PrepareCoreFromCreationAsync(control, created!, timeout.Token),
+            "commission-rma-core-from-creation-v2" => await RmaTenantStorageV1.CommissionCoreFromCreationAsync(control, created!, timeout.Token),
             "migrate-rma-core-outbound-index-v1" => await RmaTenantStorageV1.MigrateCoreOutboundIndexAsync(control, migrate!, timeout.Token),
             "install-rma-core-original-journal-v1" => await RmaTenantStorageV1.InstallCoreOriginalJournalAsync(control, core!, timeout.Token),
             "install-rma-core-draft-writer-v1" => await RmaTenantStorageV1.InstallCoreDraftWriterAsync(control, core!, timeout.Token),

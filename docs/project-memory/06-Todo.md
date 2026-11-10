@@ -1,5 +1,37 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 接续同源文件、恢复和暂停
+
+接续 W429 同一 holder 的 FileContent v11、W423 与 W415 的原恢复、PGT-017 的真实暂停与业务提交两种顺序。W433 本窗初次初始化的实际 PGT-020 已验证，既有布局后续租户配置继续在对应控制任务接续。[W433](../development/evidence/W433-01/DELIVERY.md)
+
+## 2026-11-10 UTC 接续实际租户创建和同源恢复
+
+W433 已保存最新远端检查点并释放 DEV-2。并入最新主线后，复用已核实的锁定包构建 CLI 与测试，执行原创建回执到 Core 和 RMA 的贯通。继续 W429、W423、W415 的同源余项及 PGT-017 的真实暂停提交顺序。[W433 检查点](https://github.com/GTX537/CP6/blob/d84bcf2436cc672abcbf1bfa2fabc40e6f5e451a/docs/development/evidence/W433-01/DELIVERY.md)
+
+## 2026-11-10 UTC 继续创建回执与角色引用
+
+接续 W433 的完整构建及实际租户创建到 Core/RMA。原 PGT-027 还需在 PostgreSQL 成员关系中完成角色复合引用，保留原角色停用和历史可读语义。W429、W423、W415 按实际原件和资源继续同源恢复，原 PGT-017 继续两个真实提交顺序。 [本期计划](../development/planning/20261109-codex-72h-execution.md)
+
+## 2026-11-10 UTC 继续 EF、创建与恢复
+
+W428 完整 Provider 和 IAM friend 已编译，接续原 Core EF 迁移及实际 IAM/HTTP。W433 接续完整构建和新租户实际 RMA 验证。W429、W423、W415 继续原同源和恢复余项。原 PGT-017 仍需补真实暂停与业务提交的两种先后顺序及相关写者采用。 [W428 检查点](https://github.com/GTX537/CP6/blob/f5ec5e068e6d943d16b87e997344317325e46378/docs/development/evidence/W428-01/DELIVERY.md)
+
+## 2026-11-10 UTC 继续原生错借、EF 和同源恢复
+
+W425 复用已编译用例执行错借，W428 复用已编译 Provider 与 IAM friend 执行正常 Core EF 升级和宿主验证，W433 恢复创建回执到 Core 的完整构建与实库贯通。继续 W429、W423、W415 及原 PGT-021/022 的完整恢复和现行消息对账。 [本期计划](../development/planning/20261109-codex-72h-execution.md)
+
+## 2026-11-10 UTC 接续实际恢复与租户绑定
+
+按资源接续 W428 正常 EF/IAM、W425 实库错借、W432 保存点、W429 同源 v11 和 W423、W415 恢复。W433 验证实际创建回执接 Core 初始化。PGT-021/022 继续验证原完整切换和当前消息对账。 [W422](../development/evidence/W422-01/DELIVERY.md)
+
+## 2026-11-09 UTC 继续正式 EF、池与同源恢复
+
+按资源接续 W428 正常 EF/IAM、W425 实库错借、W429 同源 v11，以及 W422、W423、W415 的恢复验证。 [W431](../development/evidence/W431-01/DELIVERY.md)
+
+## 2026-11-09 UTC 继续共享 IAM 引用与同源恢复
+
+继续 W428 正常 EF/IAM 验证与 W429 同源 v11，按实测内存接续 W422、W423、W425 和 W415。 [W430](../development/evidence/W430-01/DELIVERY.md)
+
 ## 2026-11-09 UTC 继续共享引用与恢复
 
 W428 补原用户成员关系复合引用，W425、W422 和 W423 保留远端检查点。 [W427](../development/evidence/W427-01/DELIVERY.md)
