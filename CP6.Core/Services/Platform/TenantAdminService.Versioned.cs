@@ -10,9 +10,9 @@ namespace CP6.Core.Services.Platform;
 
 public partial class TenantAdminService
 {
-    private static byte[] ManagementBytes<T>(T value) => JsonSerializer.SerializeToUtf8Bytes(value);
+    internal static byte[] ManagementBytes<T>(T value) => JsonSerializer.SerializeToUtf8Bytes(value);
     private static byte[] ManagementKey(string operation) => SHA256.HashData(ManagementBytes(operation));
-    private static void ManagementOperation(string operation)
+    internal static void ManagementOperation(string operation)
     {
         if (string.IsNullOrEmpty(operation)) throw new TenantManagementExceptionV1("TENANT_OPERATION_REQUIRED", 400);
         try { _ = new UTF8Encoding(false, true).GetByteCount(operation); }

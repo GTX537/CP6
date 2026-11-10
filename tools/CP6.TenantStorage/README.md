@@ -184,6 +184,14 @@ This stage gives the ordinary tenant logins read-only access to their own RMA ta
 
 Run `eng/wp02-02/rma-tenant-migration/verify_commission.py --help` for the real PostgreSQL and published-host fixture.
 
+### Initial Core commissioning from tenant creation receipts
+
+`prepare-rma-core-from-creation-v2 --stdin` binds a dedicated empty PostgreSQL database to a creation plan. Use the same private control envelope and the exact `Target`, `InstallationId` and `OperationId`. Supply `Creations` in place of `Tenants`. Each element has `CreationOperationRef`, `CreatorTenantId`, `CreatorActorId` and `Login`. Keep the exact operation string planned for the normal Tenant Creation V1 request. The login is an existing ordinary PostgreSQL principal.
+
+After normal Core initialization and Tenant Creation V1, submit the same plan to `commission-rma-core-from-creation-v2 --stdin`. The control transaction reads each original management receipt using the original operation bytes and the planned creator. It binds the receipt's actual tenant to the planned login, creates the tenant schema and commits the Ready history and original commissioning receipt together. A missing original, a missing tenant or a changed plan causes rejection. The same plan recovers its original result after interrupted output. The initial preparation requires an empty target, and later tenants need their own authorized provisioning flow.
+
+Use the resolved tenant and login mapping for the existing original journal and writer installation steps. The ordinary runtime still requires the live storage binding and the current authorization checks before business writes.
+
 ### Concurrent outbound index on a commissioned Core tenant
 
 Use `migrate-rma-core-outbound-index-v1 --stdin` with the same private envelope. Its `Request` contains the original `Target` and `InstallationId`, one Ready `TenantId`, and a new nonempty `OperationId` for this index step. The step builds a B-tree on the tenant's `heads.outbound_id`. The original Ready record and old-compatible reads continue while the index is prepared.

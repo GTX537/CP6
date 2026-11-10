@@ -18,12 +18,14 @@ internal static class TenantLoginDirectoryV1
         ArgumentNullException.ThrowIfNull(connection); ArgumentNullException.ThrowIfNull(transaction);
         ArgumentNullException.ThrowIfNull(bindings);
         if (connection.State != ConnectionState.Open || !ReferenceEquals(transaction.Connection, connection)
-            || bindings.Count == 0 || bindings.Any(x => x is null || x.TenantId == Guid.Empty
-                || string.IsNullOrWhiteSpace(x.Login) || x.Login.Any(char.IsControl) || Encoding.UTF8.GetByteCount(x.Login) > 63)
+            || bindings.Count == 0 || bindings.Any(x => x is null || x.TenantId == Guid.Empty || !IsLoginName(x.Login))
             || bindings.Select(x => x.TenantId).Distinct().Count() != bindings.Count
             || bindings.Select(x => x.Login).Distinct(StringComparer.Ordinal).Count() != bindings.Count)
             throw TenantStorageBindingV1.Rejected();
     }
+
+    internal static bool IsLoginName(string? login) => !string.IsNullOrWhiteSpace(login)
+        && !login.Any(char.IsControl) && Encoding.UTF8.GetByteCount(login) <= 63;
 
     internal static async Task InstallAsync(NpgsqlConnection connection, NpgsqlTransaction transaction,
         IReadOnlyCollection<TenantLoginV1> bindings, CancellationToken ct)
