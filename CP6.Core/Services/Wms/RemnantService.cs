@@ -4,18 +4,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Wms;
 
-public class RemnantService : IRemnantService
+public partial class RemnantService : IRemnantService
 {
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
     private const string Prefix = "REM";
 
-    public RemnantService(CP6Context db, IWmsSequenceService seq)
-    {
-        _db = db; _seq = seq;
-    }
+    public RemnantService(CP6Context db, IWmsSequenceService seq) : this(db, seq, null, null) { }
 
-    public async Task<List<RemnantMaterial>> SearchAsync(RemnantSearchQuery q)
+    private async Task<List<RemnantMaterial>> SearchCoreAsync(RemnantSearchQuery q)
     {
         var query = _db.RemnantMaterials.AsNoTracking().Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(q.RemnantNo)) query = query.Where(x => x.RemnantNo.Contains(q.RemnantNo));
@@ -29,15 +26,12 @@ public class RemnantService : IRemnantService
             .Skip((q.Page - 1) * q.PageSize).Take(q.PageSize).ToListAsync();
     }
 
-    public async Task<RemnantMaterial?> GetAsync(string remnantNo)
+    private async Task<RemnantMaterial?> GetCoreAsync(string remnantNo)
         => await _db.RemnantMaterials.AsNoTracking().FirstOrDefaultAsync(x => x.RemnantNo == remnantNo && !x.IsDeleted);
 
-    public async Task<string> CreateAsync(RemnantDto dto, string? userName)
+    private async Task<string> CreateCoreAsync(RemnantDto dto, string? userName)
     {
-        if (dto.WidthMm <= 0 || dto.LengthMm <= 0) throw new InvalidOperationException("Width / Length > 0");
-        if (string.IsNullOrWhiteSpace(dto.WarehouseCd) || string.IsNullOrWhiteSpace(dto.LocationCd))
-            throw new InvalidOperationException("Warehouse / Location 必須");
-        if (dto.Quantity <= 0) throw new InvalidOperationException("Quantity > 0");
+        ValidateMetadata(dto);
 
         var no = await _seq.NextAsync(Prefix);
         _db.RemnantMaterials.Add(new RemnantMaterial
@@ -56,12 +50,13 @@ public class RemnantService : IRemnantService
         return no;
     }
 
-    public async Task UpdateAsync(string remnantNo, RemnantDto dto, string? userName)
+    private async Task UpdateCoreAsync(string remnantNo, RemnantDto dto, string? userName)
     {
         var r = await GetTracked(remnantNo);
         if (r.Status == RemnantStatus.Used || r.Status == RemnantStatus.Disposed)
             throw new InvalidOperationException("WM-MSG-043: 使用済/廃棄は訂正不可");
 
+        ValidateMetadata(dto);
         r.MaterialType = dto.MaterialType; r.MaterialGrade = dto.MaterialGrade;
         r.WidthMm = dto.WidthMm; r.LengthMm = dto.LengthMm; r.ThicknessUm = dto.ThicknessUm;
         r.Quantity = dto.Quantity; r.UnitCd = dto.UnitCd;
@@ -72,7 +67,7 @@ public class RemnantService : IRemnantService
         await _db.SaveChangesAsync();
     }
 
-    public async Task<List<RemnantMaterial>> MatchAsync(string materialType, int minWidthMm, int minLengthMm)
+    private async Task<List<RemnantMaterial>> MatchCoreAsync(string materialType, int minWidthMm, int minLengthMm)
         => await _db.RemnantMaterials.AsNoTracking()
             .Where(x => !x.IsDeleted && x.Status == RemnantStatus.Available
                 && x.MaterialType == materialType
@@ -80,7 +75,7 @@ public class RemnantService : IRemnantService
             .OrderBy(x => x.WidthMm).ThenBy(x => x.LengthMm)
             .Take(100).ToListAsync();
 
-    public async Task ReserveAsync(string remnantNo, string reservedFor, string? userName)
+    private async Task ReserveCoreAsync(string remnantNo, string reservedFor, string? userName)
     {
         if (string.IsNullOrWhiteSpace(reservedFor))
             throw new InvalidOperationException("reservedFor required");
@@ -93,7 +88,7 @@ public class RemnantService : IRemnantService
         await _db.SaveChangesAsync();
     }
 
-    public async Task UnreserveAsync(string remnantNo, string? userName)
+    private async Task UnreserveCoreAsync(string remnantNo, string? userName)
     {
         var r = await GetTracked(remnantNo);
         if (r.Status != RemnantStatus.Reserved)
@@ -104,7 +99,7 @@ public class RemnantService : IRemnantService
         await _db.SaveChangesAsync();
     }
 
-    public async Task MarkUsedAsync(string remnantNo, string? userName)
+    private async Task MarkUsedCoreAsync(string remnantNo, string? userName)
     {
         var r = await GetTracked(remnantNo);
         if (r.Status == RemnantStatus.Used || r.Status == RemnantStatus.Disposed)
@@ -114,7 +109,7 @@ public class RemnantService : IRemnantService
         await _db.SaveChangesAsync();
     }
 
-    public async Task DisposeAsync(string remnantNo, string? userName)
+    private async Task DisposeCoreAsync(string remnantNo, string? userName)
     {
         var r = await GetTracked(remnantNo);
         if (r.Status == RemnantStatus.Disposed)
@@ -124,12 +119,20 @@ public class RemnantService : IRemnantService
         await _db.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(string remnantNo, string? userName)
+    private async Task DeleteCoreAsync(string remnantNo, string? userName)
     {
         var r = await GetTracked(remnantNo);
         r.IsDeleted = true;
         r.Modifier = userName; r.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();
+    }
+
+    private static void ValidateMetadata(RemnantDto dto)
+    {
+        if (dto.WidthMm <= 0 || dto.LengthMm <= 0) throw new InvalidOperationException("Width / Length > 0");
+        if (string.IsNullOrWhiteSpace(dto.WarehouseCd) || string.IsNullOrWhiteSpace(dto.LocationCd))
+            throw new InvalidOperationException("Warehouse / Location 必須");
+        if (dto.Quantity <= 0) throw new InvalidOperationException("Quantity > 0");
     }
 
     private async Task<RemnantMaterial> GetTracked(string remnantNo)

@@ -1146,7 +1146,15 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IPalletService>(sp =>
 builder.Services.AddScoped<CP6.Core.Services.Wms.IVmiService, CP6.Core.Services.Wms.VmiService>();
 
 // 4.19 MSBBWM210/220/260 紙器業特化 第2弾（残材 + 印版・木型 + サンプル）
-builder.Services.AddScoped<CP6.Core.Services.Wms.IRemnantService, CP6.Core.Services.Wms.RemnantService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IRemnantService>(sp =>
+{
+    var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    return new CP6.Core.Services.Wms.RemnantService(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetRequiredService<CP6.Core.Services.Wms.IWmsSequenceService>(),
+        sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
+        http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp),
+        http?.RequestAborted ?? CancellationToken.None);
+});
 builder.Services.AddScoped<CP6.Core.Services.Wms.IPlateMoldService, CP6.Core.Services.Wms.PlateMoldService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ISampleStockService, CP6.Core.Services.Wms.SampleStockService>();
 

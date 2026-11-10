@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC 余料当前授权与输入边界
+
+现存余料十入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与记录共父事务，原生INSERT/UPDATE故障不残留业务；Create/Update共用已有正尺寸/数量及仓库库位输入边界，保留结束态错误优先级、合法预留态修改、四位余料数量及既有版本检查；并发预留按当前状态拒绝第二个用途。 实际Main/PostgreSQL24项及相关兼容/种子4项通过，零跳过；业务输入明确构造。原375项仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PostgreSQL16 PASS/11 NOT_RUN，48小时预算172800秒。 [W449交付](../development/evidence/BUG-899-REMNANT-LIFECYCLE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 卷材当前授权与分切原子性
 
 现存卷材七入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；创建/分切编号与父子卷同父事务；全部子宽先校验并用足够的整数累计，移除循环内重复校验，非法后项或原生故障不残留子卷/编号；并发消费在最终决定点读取当前剩长，八位长度及既有版本检查保持。 实际Main/PostgreSQL19项及相关兼容/种子6项通过，零跳过；业务输入明确构造。原375项仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PostgreSQL16 PASS/11 NOT_RUN，48小时预算172800秒。 [W448交付](../development/evidence/BUG-897-PAPER-ROLL-FENCE/DELIVERY.md)
