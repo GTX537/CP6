@@ -1,4 +1,5 @@
 using CP6.Core.Auth;
+using CP6.Core.Services.Erp;
 using CP6.Core.Services.Wms;
 using CP6.WebApi.Controllers.Erp;
 using Microsoft.AspNetCore.Authorization;
@@ -38,6 +39,7 @@ public sealed class LpnsController : ControllerBase
 
     [HttpPost]
     [RequirePermission("wms-mobile", "lpn-manage")]
+    [OrderOwnerResult]
     public Task<ActionResult<LogisticsUnitDto>> Create(
         CreateLpnRequest request, CancellationToken ct)
         => Execute(() => _service.CreateAsync(request, User.Identity?.Name, ct));
@@ -101,7 +103,7 @@ public sealed class LpnsController : ControllerBase
         {
             return new ConflictObjectResult(new { code = ex.Code, message = ex.Code });
         }
-        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException and not OrderPriceCorrectionException)
         {
             return new BadRequestObjectResult(new { code = ex.Message, message = ex.Message });
         }

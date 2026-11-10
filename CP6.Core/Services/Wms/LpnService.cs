@@ -76,6 +76,22 @@ public sealed class LpnService : ILpnService
         EnsureOperation(request.OperationId);
         ValidateLpn(request.LpnNo, request.ContainerType,
             request.WarehouseCd, request.LocationCd);
+        if (!_db.Database.IsNpgsql())
+            return await CreateCoreAsync(request, userName, ct);
+        if (_owner == null || !_owner.Owns(_db))
+            throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
+        return await _owner.ExecuteAsync(OperationsOwnerV1.Mobile, "lpn-manage", true,
+            async (access, token) =>
+            {
+                try { return await CreateCoreAsync(request, access.Actor, token); }
+                // Preserve the existing HTTP business error through the Owner rollback protocol.
+                catch (ArgumentException error) { throw new InvalidOperationException(error.Message, error); }
+            }, ct);
+    }
+
+    private async Task<LogisticsUnitDto> CreateCoreAsync(
+        CreateLpnRequest request, string? userName, CancellationToken ct)
+    {
         var key = Key(request.LpnNo);
         var replay = await ReplayAsync(key, request.OperationId, "create", ct);
         if (replay is not null) return replay;

@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC LPN 创建当前授权
+
+继续原 CTX02-A4/A7 的实际写者和撤权入口覆盖，其他 LPN 写入仍待逐项核对。PGT-017 保留 NOT_RUN，直到全体相关写者完成共同栅栏采用。 PGT-021/022 继续同源恢复、当前权限、消息对账和独立批准切换。[W437 交付](../development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC LPN 策略当前授权
 
 继续原 CTX02-A4/A7 的实际写者和撤权入口覆盖，其他 LPN 写入仍待逐项核对。PGT-017 保留 NOT_RUN，直到全体相关写者完成共同栅栏采用。 PGT-021/022 继续同源恢复、当前权限、消息对账和独立批准切换。[W436 交付](../development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md)
