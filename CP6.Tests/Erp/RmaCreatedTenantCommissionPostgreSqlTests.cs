@@ -129,6 +129,10 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(pending, await CommissionStateAsync());
         await SqlAsync($"DROP SCHEMA {schema}");
 
+        await InterruptCommissionAfterSchemaAsync();
+        Assert.Equal(true, await ReadAsync($"SELECT pg_catalog.to_regnamespace('{schema}') IS NULL"));
+        Assert.Equal(pending, await CommissionStateAsync());
+
         _ = await CommissionAsync(); // Discard the first successful result and recover over a fresh connection.
         var durable = Assert.IsType<string>(await ReadAsync("SELECT commission_receipt FROM cp6_rma_core_commission_v1.installation"));
         Assert.Equal(durable, await CommissionAsync());
@@ -158,6 +162,56 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 
         Task<string> CommissionAsync() => ControlAsync(c => RmaTenantStorageV1.CommissionCoreFromCreationAsync(c, plan, default));
         Task<HttpResponseMessage> SendDraft() => host.Send(OperationsRequest(session, HttpMethod.Post, rma, draft));
+
+        async Task InterruptCommissionAfterSchemaAsync()
+        {
+            const string application = "w433-provision-interruption";
+            await using var blocker = new NpgsqlConnection(connection);
+            await blocker.OpenAsync();
+            await CurrentPermissionPostgresFixture.Sql(blocker, $"""
+                CREATE FUNCTION public.w433_fixture_schema_barrier() RETURNS event_trigger
+                LANGUAGE plpgsql SET search_path=pg_catalog AS $fixture$
+                BEGIN
+                    IF EXISTS (SELECT 1 FROM pg_event_trigger_ddl_commands()
+                        WHERE classid='pg_namespace'::regclass AND objid=to_regnamespace('{schema}')) THEN
+                        RAISE LOG 'W433 fixture reached tenant schema DDL in backend %', pg_backend_pid();
+                        PERFORM pg_advisory_xact_lock(433020,1);
+                    END IF;
+                END $fixture$;
+                CREATE EVENT TRIGGER w433_fixture_schema_barrier ON ddl_command_end WHEN TAG IN ('CREATE SCHEMA')
+                    EXECUTE FUNCTION public.w433_fixture_schema_barrier();
+                SELECT pg_catalog.pg_advisory_lock(433020,1);
+                """);
+            await using var interrupted = new NpgsqlConnection(new NpgsqlConnectionStringBuilder(connection)
+            { ApplicationName = application }.ConnectionString);
+            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+            try
+            {
+                var attempt = RmaTenantStorageV1.CommissionCoreFromCreationAsync(interrupted, plan, timeout.Token);
+                int? backend = null;
+                while (backend is null)
+                {
+                    Assert.False(attempt.IsCompleted);
+                    backend = await CurrentPermissionPostgresFixture.Scalar(blocker, $"""
+                        SELECT pid FROM pg_catalog.pg_stat_activity
+                        WHERE datname=current_database() AND application_name='{application}'
+                          AND wait_event_type='Lock' AND pg_backend_pid()=ANY(pg_blocking_pids(pid))
+                        """, timeout.Token) as int?;
+                    if (backend is null) await Task.Delay(25, timeout.Token);
+                }
+                Assert.Equal(true, await CurrentPermissionPostgresFixture.Scalar(blocker,
+                    $"SELECT pg_catalog.pg_terminate_backend({backend.Value},5000)", timeout.Token));
+                await Assert.ThrowsAnyAsync<NpgsqlException>(() => attempt);
+            }
+            finally
+            {
+                await CurrentPermissionPostgresFixture.Sql(blocker, """
+                    SELECT pg_catalog.pg_advisory_unlock(433020,1);
+                    DROP EVENT TRIGGER w433_fixture_schema_barrier;
+                    DROP FUNCTION public.w433_fixture_schema_barrier();
+                    """);
+            }
+        }
 
         async Task<T> ControlAsync<T>(Func<NpgsqlConnection, Task<T>> call)
         {
@@ -201,6 +255,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             if (tenantRow is null)
                 db.Sys_Tenants.Add(tenantRow = new() { Id = creatorTenant, TenantCode = "creation-core", TenantName = "Template" });
             tenantRow.Enable = true;
+            // The menu writer advances the catalog only for tenants already visible to its trigger.
+            await db.SaveChangesAsync();
             var role = await db.Sys_Roles.SingleOrDefaultAsync(x => x.RoleId == 1);
             if (role is null) db.Sys_Roles.Add(new() { RoleId = 1, RoleName = "Template", Enable = true });
             else role.Enable = true;
