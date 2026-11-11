@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC 关闭候选实际 FileContent Owner
+
+W471只编译新增验证驱动，复用W466应用输出，实际验证A/B同键、原件、真实拒绝及停机。 [W471交付](../development/evidence/W471-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 完整 v11 原源只读对账
 
 W470原四入口退出1，最终均通过真实只读数据库对账，原49关系与外部原件保持一致；保留夹具首轮42P01。 [W470交付](../development/evidence/W470-01/DELIVERY.md)
