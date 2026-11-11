@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-11 UTC 同源 v11 原 RMA Owner 流水导入
+
+同一真实W474 v11在关闭PostgreSQL候选导入RMA原1 head/2 version及2原COMMITTED，原3443字节、双回执、真实晚失败回滚及普通A/B隔离通过。 原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，容量172800。 [W475交付](../development/evidence/W475-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 实际 RMA Owner 原流水的同源完整 v11
 
 W372停机源独立副本以真实草稿和提交原流水生成同源完整v11；仅补模拟环境及空Stock路由，两租户原流水不变，原A两COMMITTED共3443字节与W372同。 原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，容量172800。 [W474交付](../development/evidence/W474-01/DELIVERY.md)
