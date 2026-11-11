@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-11 UTC 单库位停用库存与两侧原子决定
+
+现存独立HTTP停用用原space-publish:deactivate、当前签名会话和同Context事务稳定真实库存和层级、库位及WMS投影；两侧、LPB与原DEACTIVATE事件按已知提交处理，确认后才发成功通知。原库存、墓碑、同版本跳过和409合同保持。 实际44小时158458秒、下一172800；正式PG16 PASS/11 NOT_RUN，原375仍38 DONE/1 IN_PROGRESS/336 PLANNED。 [W464交付](../development/evidence/BUG-929-SPACE-LOCATION-DEACTIVATE-FENCE/DELIVERY.md)
+
 ## 2026-11-11 UTC 库位采纳并发跳过合同
 
 现存库位采纳使用原space-publish:adopt、同Context当前授权事务及实际库位写锁；先提交的同码按原合同跳过，后到批次其余行可导入。保留原顺序、历史占码、租户隔离和影子位置字段，无回发、通知、LPB或物理库存变化。 实际Main PostgreSQL18.6三新和四项受影响发布、29项既有服务通过。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，容量172800。 [W463交付](../development/evidence/BUG-927-SPACE-LOCATION-ADOPT-FENCE/DELIVERY.md)

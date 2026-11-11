@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-11 UTC 单库位停用库存与两侧原子决定
+
+现存独立HTTP停用用原space-publish:deactivate、当前签名会话和同Context事务稳定真实库存和层级、库位及WMS投影；两侧、LPB与原DEACTIVATE事件按已知提交处理，确认后才发成功通知。原库存、墓碑、同版本跳过和409合同保持。 W463经#928进入远端main，12.54–12.60分钟，分支准确删除、DEV-2干净释放。 [W464交付](../development/evidence/BUG-929-SPACE-LOCATION-DEACTIVATE-FENCE/DELIVERY.md)
+
 ## 2026-11-11 UTC 库位采纳并发跳过合同
 
 现存库位采纳使用原space-publish:adopt、同Context当前授权事务及实际库位写锁；先提交的同码按原合同跳过，后到批次其余行可导入。保留原顺序、历史占码、租户隔离和影子位置字段，无回发、通知、LPB或物理库存变化。 W462经#926进入远端main，分支准确删除、DEV-2干净释放后复用；实测15.22–15.27分钟低于20–35。 [W463交付](../development/evidence/BUG-927-SPACE-LOCATION-ADOPT-FENCE/DELIVERY.md)

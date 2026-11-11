@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC 单库位停用库存与两侧原子决定
+
+W464同仓库存先提交原200停用，最终原400拒绝；两类故障原留下WMS半状态，最终读回两侧保持，确认恢复后才通知。44h后最近已收尾中位16.8分钟。 [W464交付](../development/evidence/BUG-929-SPACE-LOCATION-DEACTIVATE-FENCE/DELIVERY.md)
+
 ## 2026-11-11 UTC 库位采纳并发跳过合同
 
 W463旧版并发后到500丢失余项，最终第二请求200、只跳过占用及批内重复，合法行落库；延期提交原500、最终503未知，未见部分写入。 [W463交付](../development/evidence/BUG-927-SPACE-LOCATION-ADOPT-FENCE/DELIVERY.md)

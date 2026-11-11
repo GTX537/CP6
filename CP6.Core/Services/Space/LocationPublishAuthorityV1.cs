@@ -18,12 +18,21 @@ public sealed class LocationPublishAuthorityV1(
         LOCK TABLE public."Space_Location", public."T_WmsBin" IN SHARE ROW EXCLUSIVE MODE
         """;
     private const string AdoptLocks = """LOCK TABLE public."Space_Location" IN SHARE ROW EXCLUSIVE MODE""";
+    private const string DeactivateLocks = """
+        LOCK TABLE public."Space_Site", public."Space_Floor", public."Space_Zone",
+            public."Space_Aisle", public."Space_Rack" IN SHARE MODE;
+        LOCK TABLE public."T_Stock" IN SHARE MODE;
+        LOCK TABLE public."Space_Location", public."T_WmsBin" IN SHARE ROW EXCLUSIVE MODE
+        """;
 
     internal Task<T> ExecuteFloorAsync<T>(CP6Context context, Func<CancellationToken, Task<T>> body)
         => ExecuteAsync(context, "space-publish:publish", FloorLocks, "SPACE_PUBLISH", body);
 
     internal Task<T> ExecuteAdoptAsync<T>(CP6Context context, Func<CancellationToken, Task<T>> body)
         => ExecuteAsync(context, "space-publish:adopt", AdoptLocks, "SPACE_ADOPT", body);
+
+    internal Task<T> ExecuteDeactivateAsync<T>(CP6Context context, Func<CancellationToken, Task<T>> body)
+        => ExecuteAsync(context, "space-publish:deactivate", DeactivateLocks, "SPACE_DEACTIVATE", body);
 
     private async Task<T> ExecuteAsync<T>(CP6Context context, string permission, string locks,
         string outcomePrefix, Func<CancellationToken, Task<T>> body)
