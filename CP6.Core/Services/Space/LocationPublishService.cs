@@ -282,13 +282,20 @@ public class LocationPublishService : ILocationPublishService
     }
 
     /// <inheritdoc/>
-    public async Task<(int imported, List<string> skipped)> AdoptAsync(
+    public Task<(int imported, List<string> skipped)> AdoptAsync(
         IEnumerable<(string code, Dictionary<string, object?>? attrs)> items, string? user)
+        => _db.Database.IsNpgsql()
+            ? (_publicationAuthority ?? throw new OrderPriceCorrectionException("SPACE_ADOPT_AUTHORITY_UNAVAILABLE", 503))
+                .ExecuteAdoptAsync(_db, token => AdoptCoreAsync(items, user, token))
+            : AdoptCoreAsync(items, user, default);
+
+    private async Task<(int imported, List<string> skipped)> AdoptCoreAsync(
+        IEnumerable<(string code, Dictionary<string, object?>? attrs)> items, string? user, CancellationToken token)
     {
         var existing = await _db.Space_Locations
             .Where(l => l.LocationCode != null)
             .Select(l => l.LocationCode!)
-            .ToListAsync();
+            .ToListAsync(token);
         var set = existing.ToHashSet(StringComparer.Ordinal);
 
         int n = 0;
@@ -314,7 +321,7 @@ public class LocationPublishService : ILocationPublishService
             set.Add(code);
             n++;
         }
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
         // 不发 LocationPublished（码本就来自 WMS）
         return (n, skipped);
     }

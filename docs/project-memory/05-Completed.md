@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-11 UTC 库位采纳并发跳过合同
+
+现存库位采纳使用原space-publish:adopt、同Context当前授权事务及实际库位写锁；先提交的同码按原合同跳过，后到批次其余行可导入。保留原顺序、历史占码、租户隔离和影子位置字段，无回发、通知、LPB或物理库存变化。 W462经#926进入远端main，分支准确删除、DEV-2干净释放后复用；实测15.22–15.27分钟低于20–35。 [W463交付](../development/evidence/BUG-927-SPACE-LOCATION-ADOPT-FENCE/DELIVERY.md)
+
 ## 2026-11-11 UTC 库位发布当前编码闸门
 
 现存整层/库区发布采用原space-publish:publish、签名会话和同Context授权事务；编码闸门在当前规则和拓扑内决定，真实库位、LPB、WMS投影及桥事件沿原合同提交。保留空批次、原409和旁路行为，确认提交后才发成功通知，未知结果明确。 W461经#924进入远端main，23.83–23.90分钟，分支准确删除、DEV-2干净释放后复用。 [W462交付](../development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md)

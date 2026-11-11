@@ -80,6 +80,7 @@ public class LocationPublishController : ControllerBase
     /// <summary>存量采纳导入（ch04 §8.1）。</summary>
     [HttpPost("location/adopt")]
     [RequirePermission("space-publish", "adopt")]
+    [OrderOwnerResult]
     public async Task<IActionResult> Adopt([FromBody] AdoptRequest req)
     {
         try

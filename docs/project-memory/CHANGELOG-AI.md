@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC 库位采纳并发跳过合同
+
+W463旧版并发后到500丢失余项，最终第二请求200、只跳过占用及批内重复，合法行落库；延期提交原500、最终503未知，未见部分写入。 [W463交付](../development/evidence/BUG-927-SPACE-LOCATION-ADOPT-FENCE/DELIVERY.md)
+
 ## 2026-11-11 UTC 库位发布当前编码闸门
 
 W462原4项3失败/1正常；最终4原生和既有兼容。规则先提交时原闸门拒绝；原500已回滚，最终明确503未知；实际SignalR只在恢复成功时收到成功通知。 [W462交付](../development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md)
