@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-11 UTC · 首条业务链12h执行
+
+W481同一v11的ERP/Core/RMA原journal/FileContent关闭候选、四类恢复回执和独立文件通过；现行撤权/全局键实测。真实epoch变化未运行，原375和正式PG基线不变；集中审查通过，待远端采用。 [本任务](../development/evidence/W481-01/DELIVERY.md) · [12h计划](../development/planning/20261111-codex-12h-business-chain.md)
+
 ## 2026-11-11 UTC · 48 小时执行结算
 
 本期原生时钟已达 172,802 秒，目标容量 172,800 秒。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED，正式 PostgreSQL 16 PASS、11 NOT_RUN。WP02-02 为在途项。 [48 小时结算](../development/evidence/W480-01/DELIVERY.md)

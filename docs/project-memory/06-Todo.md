@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-11 UTC · 首条业务链12h执行
+
+原WP02-02仍缺完整Stock候选/正式制品、非本C03图、恢复批准链及适用正式验收。12h后继按询盘实际直接前置推进，真实epoch变化保持未运行。 [本任务](../development/evidence/W481-01/DELIVERY.md) · [12h计划](../development/planning/20261111-codex-12h-business-chain.md)
+
 ## 2026-11-11 UTC · 48 小时执行结算
 
 WP02-02 继续同一 v11 的完整闭合候选、现行撤权与消息键或 route epoch 的变化验证，再做普通角色复测和批准切换。Stock 发布采用待 Platform 0.10.4 正式制品。 原 337 项余项仍以台账为准。 [48 小时结算](../development/evidence/W480-01/DELIVERY.md)

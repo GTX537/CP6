@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-11 UTC · 首条业务链12h执行
+
+本地完成W481组合和当前差异验证：普通A/B、错误顺序、真实晚段回滚、独立文件及回执恢复。尚待远端采用，不提升整卡或业务目标状态。 [本任务](../development/evidence/W481-01/DELIVERY.md) · [12h计划](../development/planning/20261111-codex-12h-business-chain.md)
+
 ## 2026-11-11 UTC · 48 小时执行结算
 
 W479 已经 #947 采用，任务分支准确清理、DEV-2 干净释放，实测 8.69–8.76 分钟。本期原卡只核销 WP02-28，末段证据见结算。 [48 小时结算](../development/evidence/W480-01/DELIVERY.md)
