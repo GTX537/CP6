@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-11 UTC 实际 v11 缺件拒绝和闭合回执
+
+同一实际 v11 对仅 schema、缺共享 ERP、缺文件和源库别名在暂存前拒绝。完整包闭合暂存，错键无法取回回执，正确键原样恢复。源 Published、归档 Pending 及 B 原件保持。 W479 实际 v11 五项拒绝与完整闭合回执通过，W478 已采用并释放，实测 9.42–9.49 分钟。 [W479交付](../development/evidence/W479-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 同源 v11 的 ERP 实际租约与发布对账
 
 同一实际四域 v11 的 ERP 原 Pending 在隔离 PostgreSQL 上由真实派送器取得租约并经一次模拟确认转为 Published。三次只读对账保留归档原值、当前状态与 B 原八表。 W478 实际 ERP 租约和 Published 对账通过，W477 已采用并释放，实测 8.76–8.85 分钟。 [W478交付](../development/evidence/W478-01/DELIVERY.md)
