@@ -160,7 +160,27 @@ public class LocationPublishService : ILocationPublishService
     /// <inheritdoc/>
     public async Task DeactivateAsync(Guid locationId, string? user)
     {
-        var l = await _db.Space_Locations.FirstOrDefaultAsync(x => x.Id == locationId)
+        // Hierarchy delete deliberately keeps each original per-location completion.
+        await DeactivateCoreAsync(locationId, user, notify: true, default);
+    }
+
+    public async Task DeactivateStandaloneAsync(Guid locationId, string? user)
+    {
+        if (!_db.Database.IsNpgsql())
+        {
+            await DeactivateAsync(locationId, user);
+            return;
+        }
+
+        var authority = _publicationAuthority ?? throw new OrderPriceCorrectionException("SPACE_DEACTIVATE_AUTHORITY_UNAVAILABLE", 503);
+        var batchNo = await authority.ExecuteDeactivateAsync(_db,
+            token => DeactivateCoreAsync(locationId, user, notify: false, token));
+        await _notifier.NotifyLocationPublishedAsync(batchNo, 1, "SUCCESS");
+    }
+
+    private async Task<string> DeactivateCoreAsync(Guid locationId, string? user, bool notify, CancellationToken token)
+    {
+        var l = await _db.Space_Locations.FirstOrDefaultAsync(x => x.Id == locationId, token)
                 ?? throw new BizException("E-SPACE-004");
         if (l.Status != 1)
             throw new BizException("E-SPACE-004");
@@ -173,12 +193,12 @@ public class LocationPublishService : ILocationPublishService
 
             // ① 前置校验（用户体验，连 RPC 都不发；ch04 §6.1①；H7 带仓维度防多仓同码误拦）
             // 波5：单库位也走统一预载，前置校验与后续 BuildItem 共用同一 lookup（FloorId/RackId 期间不变）。
-            var lk = await LoadLookupAsync(new[] { l }, default);
+            var lk = await LoadLookupAsync(new[] { l }, token);
             var warehouseCd = ResolveWarehouseCd(l, lk);
             if (_stock.DataSourceKind == SpaceDataSourceKind.Unavailable)
                 throw new BizException(SpaceDataSourceErrors.Unavailable, 503);
 
-            var qty = await _stock.GetStockQtyAsync(l.LocationCode ?? "", warehouseCd);
+            var qty = await _stock.GetStockQtyAsync(l.LocationCode ?? "", warehouseCd, token);
             if (qty > 0)
                 throw new BizException("E-SPACE-401");
 
@@ -191,7 +211,7 @@ public class LocationPublishService : ILocationPublishService
                 WarehouseCd = warehouseCd,
                 Version = newVersion,
                 User = user
-            });
+            }, token);
 
             // ③ 据同步返回决定本地 Status——被拒不前进，无翻转回滚（ch04 §6.3）
             if (!resp.Success)
@@ -210,14 +230,15 @@ public class LocationPublishService : ILocationPublishService
                 PublishedBy = user
             };
             batch.Items.Add(BuildItem(l, "DEACTIVATE", lk));
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(token);
 
             // ④ 异步事件兜底（对账/审计/漂移纠正，不参与本地 Status 决策；ch04 §6.1④）
-            await _hook.OnLocationPublishedAsync(batch, context.CorrelationId);
+            await _hook.OnLocationPublishedAsync(batch, context.CorrelationId, ct: token);
 
             // ⑤ SignalR プッシュ（兜底事件 hook 後：本地 Status 已 SaveChanges 確定。
             //    実装は例外を投げない契約 ── 推送失敗絕不坏业务）
-            await _notifier.NotifyLocationPublishedAsync(batch.BatchNo, 1, "SUCCESS");
+            if (notify) await _notifier.NotifyLocationPublishedAsync(batch.BatchNo, 1, "SUCCESS");
+            return batch.BatchNo;
         }
         finally
         {

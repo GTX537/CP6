@@ -61,11 +61,12 @@ public class LocationPublishController : ControllerBase
     /// <summary>停用已发布库位（ch04 §6）。</summary>
     [HttpPut("location/{id:guid}/deactivate")]
     [RequirePermission("space-publish", "deactivate")]
-    public async Task<IActionResult> Deactivate(Guid id)
+    [OrderOwnerResult]
+    public async Task<IActionResult> Deactivate(Guid id, [FromServices] LocationPublishService publication)
     {
         try
         {
-            await _svc.DeactivateAsync(id, CurrentUser);
+            await publication.DeactivateStandaloneAsync(id, CurrentUser);
             return Ok2();
         }
         catch (DbUpdateConcurrencyException)
