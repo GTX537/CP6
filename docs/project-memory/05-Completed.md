@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-11 UTC 同源 v11 原件暂存与文件落盘
+
+同源 v11 保留两条实际 RMA 原流水，含 A/B 原生 FileContent 与 ERP C03 验证数据。选定租户 14 份 PostgreSQL 暂存 CSV、45 字节原件和两份恢复回执精确一致。 W476 同源三域暂存和文件实测通过，W475 已采用并释放，实测 7.44–7.49 分钟。 [W476交付](../development/evidence/W476-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 同源 v11 原 RMA Owner 流水导入
 
 同一真实W474 v11在关闭PostgreSQL候选导入RMA原1 head/2 version及2原COMMITTED，原3443字节、双回执、真实晚失败回滚及普通A/B隔离通过。 W474经#942采用、准确清理分支、DEV-2干净释放；实际10.73–10.83分钟。 [W475交付](../development/evidence/W475-01/DELIVERY.md)
