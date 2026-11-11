@@ -1,6 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Space;
 using CP6.Core.Services.Space.Observability;
+using CP6.WebApi.Controllers.Erp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +41,7 @@ public class LocationPublishController : ControllerBase
     /// <summary>整层/库区发布（ch04 §4）。</summary>
     [HttpPost("floor/{id:guid}/publish")]
     [RequirePermission("space-publish", "publish")]
+    [OrderOwnerResult]
     public async Task<IActionResult> PublishFloor(Guid id, [FromBody] PublishFloorRequest? req)
     {
         try

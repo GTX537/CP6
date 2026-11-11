@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-11 UTC 库位发布当前编码闸门
+
+继续现存库位采纳、独立停用及改挂删除，保留同步库存和局部成功语义；其余WP02-03查询/导出、字段V1、完整场景图、新版空间与PGT-017按原范围验收。 已确认的延期故障写集保持仅限本次实际读回；接口未知不自动重试。 [W462交付](../development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md)
+
 ## 2026-11-11 UTC 场景差量当前事务与重发布
 
 继续WP02-03其余实际query/write/export/download和字段V1真实来源；完整场景图资格、独立发布/停用和改挂删除按原逐项安全语义另验。原WMS投影采用不等物理Stock、新版空间、schema、PGT-017及全Main/跨仓负载完成。 延期故障的实际无效果是本次独立观察，接口仍明确未知结果，无自动重试；桥事件写入原旁路语义不变。 [W461交付](../development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md)

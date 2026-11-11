@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-11 UTC 库位发布当前编码闸门
+
+现存整层/库区发布采用原space-publish:publish、签名会话和同Context授权事务；编码闸门在当前规则和拓扑内决定，真实库位、LPB、WMS投影及桥事件沿原合同提交。保留空批次、原409和旁路行为，确认提交后才发成功通知，未知结果明确。 实际Main PostgreSQL 18.6四项，既有发布、通知和观测链兼容按交付报告。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN；48h172800、40h144047及下一158400保持。 [W462交付](../development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md)
+
 ## 2026-11-11 UTC 场景差量当前事务与重发布
 
 现存场景差量采用同Context当前space-floor:edit、签名会话、认证共同根和实际当前目标楼层；实际层级/WMS投影表锁，原差量、坐标、墓碑、重发布、LPB和集成事件参与同一父事务。原输入、既有版本冲突、投影版本判定及桥旁路策略保持，未知提交明确。 9项实际Main/PostgreSQL（6新、3既有日志）和16项既有InMemory通过、零跳过；模拟空间/身份/故障输入，实际宿主/业务/本地WMS投影及数据库。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，172800秒及40h144047/下一158400保持。 [W461交付](../development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md)

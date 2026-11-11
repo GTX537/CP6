@@ -1,6 +1,7 @@
 using CP6.Core.EFDbContext;
 using CP6.WebApi.Localization;
 using CP6.Core.Services.Common;
+using CP6.Core.Services.Erp;
 using CP6.Core.Services.Integration;
 using CP6.Core.Services.Space.Observability;
 using CP6.Entity.DomainModels.Space;
@@ -29,6 +30,7 @@ public class LocationPublishService : ILocationPublishService
     private readonly ISpaceNotifier _notifier;
     private readonly ISpaceExecutionContextAccessor _execution;
     private readonly ISpaceExecutionContextManager _executionManager;
+    private readonly LocationPublishAuthorityV1? _publicationAuthority;
 
     public LocationPublishService(
         CP6Context db,
@@ -40,6 +42,21 @@ public class LocationPublishService : ILocationPublishService
         ISpaceNotifier notifier,
         ISpaceExecutionContextAccessor execution,
         ISpaceExecutionContextManager executionManager)
+        : this(db, t, code, hook, stock, deactivator, notifier, execution, executionManager, null)
+    {
+    }
+
+    public LocationPublishService(
+        CP6Context db,
+        ITenantContext t,
+        ICodeEngineService code,
+        ISpaceBridgeHook hook,
+        IWmsStockQuery stock,
+        IWmsBinDeactivator deactivator,
+        ISpaceNotifier notifier,
+        ISpaceExecutionContextAccessor execution,
+        ISpaceExecutionContextManager executionManager,
+        LocationPublishAuthorityV1? publicationAuthority)
     {
         _db = db;
         _t = t;
@@ -50,16 +67,29 @@ public class LocationPublishService : ILocationPublishService
         _notifier = notifier;
         _execution = execution;
         _executionManager = executionManager;
+        _publicationAuthority = publicationAuthority;
     }
 
     /// <inheritdoc/>
     public async Task<int> PublishFloorAsync(Guid floorId, Guid? zoneId, string? user)
     {
-        // InMemory 安全事务守卫（惯例见 SceneService）：真库开事务，InMemory 降级无事务。
-        // 事务范围＝闸门→翻状态→WMS 消费(T_WmsBin 写入)→事件落库，全部同库原子提交，
-        // 修复"翻了状态但事件静默丢失"的窗口（同一 CP6Context 实例，hook 内 SaveChanges 同事务）。
-        IDbContextTransaction? tx = _db.Database.IsRelational()
-            ? await _db.Database.BeginTransactionAsync()
+        var receipt = _db.Database.IsNpgsql()
+            ? await (_publicationAuthority ?? throw new OrderPriceCorrectionException("SPACE_PUBLISH_AUTHORITY_UNAVAILABLE", 503))
+                .ExecuteFloorAsync(_db, token => PublishFloorCoreAsync(floorId, zoneId, user, true, token))
+            : await PublishFloorCoreAsync(floorId, zoneId, user, false, default);
+
+        if (receipt is not { } published) return 0;
+
+        // The actual owner has finished committing; the existing best-effort notifier runs outside it.
+        await _notifier.NotifyLocationPublishedAsync(published.BatchNo, published.Count, "SUCCESS");
+        return published.Count;
+    }
+
+    private async Task<(string BatchNo, int Count)?> PublishFloorCoreAsync(
+        Guid floorId, Guid? zoneId, string? user, bool withinParent, CancellationToken token)
+    {
+        IDbContextTransaction? tx = !withinParent && _db.Database.IsRelational()
+            ? await _db.Database.BeginTransactionAsync(token)
             : null;
         IDisposable? executionScope = null;
         try
@@ -74,12 +104,12 @@ public class LocationPublishService : ILocationPublishService
                 .Where(l => l.FloorId == floorId && l.Status == 0 && l.LocationCode != null);
             if (zoneId != null)
             {
-                var rackIds = await _db.Space_Racks.Where(r => r.ZoneId == zoneId).Select(r => r.Id).ToListAsync();
+                var rackIds = await _db.Space_Racks.Where(r => r.ZoneId == zoneId).Select(r => r.Id).ToListAsync(token);
                 locQuery = locQuery.Where(l => l.RackId != null && rackIds.Contains(l.RackId.Value));
             }
-            var locs = await locQuery.ToListAsync();
+            var locs = await locQuery.ToListAsync(token);
 
-            if (locs.Count == 0) return 0;
+            if (locs.Count == 0) return null;
 
             // 只有真正进入发布流程时才建立一次发布意图；必须早于任何本地状态翻转和 Adapter 调用。
             var publishExecution = BeginPublishExecution();
@@ -97,7 +127,7 @@ public class LocationPublishService : ILocationPublishService
                 TenantId = _t.CurrentTenantId,  // DTO 字段，不被 EF 盖章，必须显式赋值
                 PublishedBy = user
             };
-            var lk = await LoadLookupAsync(locs, default);   // 波5：五表各一次预载，替代循环内逐库位连查
+            var lk = await LoadLookupAsync(locs, token);   // 波5：五表各一次预载，替代循环内逐库位连查
             foreach (var l in locs)
             {
                 l.Status = 1;
@@ -106,17 +136,13 @@ public class LocationPublishService : ILocationPublishService
                 l.ModifyDate = DateTime.Now;
                 batch.Items.Add(BuildItem(l, "UPSERT", lk));
             }
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(token);
 
             // 5. 发事件（hook 内部吞消费异常→Failed 事件落库，由 Worker 重试；不影响本事务提交）
             await _hook.OnLocationPublishedAsync(batch, context.CorrelationId);
 
-            if (tx != null) await tx.CommitAsync();
-
-            // 6. SignalR プッシュ（★事務 Commit 後：確定済みイベントのみ通知、推送不進事務。
-            //    実装は例外を投げない契約 ── 万一落ちても業務は既に確定済み、return を妨げない）
-            await _notifier.NotifyLocationPublishedAsync(batchNo, locs.Count, "SUCCESS");
-            return locs.Count;
+            if (tx != null) await tx.CommitAsync(token);
+            return (batchNo, locs.Count);
         }
         finally
         {

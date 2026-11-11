@@ -164002,6 +164002,11 @@
       "at": "2026-11-11T00:22:13.293048+00:00",
       "change": "W461采用场景差量当前事务与实际重发布，6新原生+3受影响原日志及16既有通过；核销W460采用及10.29–10.37分钟，保持40h与下一44h采样。",
       "evidence": "docs/development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-11T00:40:31.309754+00:00",
+      "change": "W462库位发布原4项对照和最终4项实际原生、32项兼容；W461采用核销，保留原任务和下一44小时采样。",
+      "evidence": "docs/development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -174411,9 +174416,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-03",
-        "delivered": "当前IAM/CAS、撤权共同门、对象/字段和多类Owner动作，以及本轮隐私/FORM最终授权已采用。 W435 实际版本化租户暂停与普通 Stock V1 调整共享 PostgreSQL 认证根，两种真实提交顺序、已提交原写集和暂停后的旧会话拒绝通过。 W436 LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。 W437 LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。 W438 装箱、拆箱、拆分、合并及回放接入既有 Owner 当前授权事务；四条真实 HTTP/PostgreSQL 路径均复现旧请求在暂停后写入，修复后 401 REAUTH_REQUIRED、九类原行逐字节保持，正常树变化、序列号、精确数量、回放和原业务错误通过。 W439 LPN Move 在既有 Mobile Owner 中组合库存父事务原语；真实非空树由原 HTTP 500 恢复完整原子移动，保留八位数量、货主估值质量和四腿实际部门继承。空/非空树均在暂停先提交后 401、十三类原行保持，晚期回执故障完整回滚，范围、回放和原错误协议通过。 W440 设备票据、更新/禁用、快捷 PIN、匿名激活和签名心跳在实际身份共同根中提交；保留合法自失效，数据库 nonce 裁决双宿主重放，设备范围变更使旧客户端身份失效，已有数据升级保留设备原行并要求重新登录。 W441 序列转换与七种生命周期在实际 Mobile Owner 内决定并组合库存父事务；原五种库存请求从 400 恢复共同提交，收货错误后遗留的跟踪对象不再被日志保存刷入；八条真实暂停路径均拒绝，保留序列/库存对账、实际部门继承、原回执与完整七步周期。 W442 托盘六个元数据写者采用同一认证根、当前动作/库区/已有字段和实际 actor；编号与托盘同父事务，原生插入故障后无编号或记录残留；六条暂停及真实撤权竞争均拒绝，保留原状态、三位重量和无库存效果。 W443 条码 profile/alias 两种 upsert 与 XLSX 实际提交采用当前 actor、barcode-manage 和共同认证根；整批共父事务，第二行失败后不再被日志重刷出一条别名；三条暂停、实际撤权、预览/更新/恢复、原错误及八位转换精度完成真实验收。 W444 现存标签七个HTTP入口采用当前动作/actor及共同认证根，设备当前资格先于回放，作业与版本化原结果回执共父事务；网关修正PENDING查询，持久化分区/原键/打印阶段，实际凭据与源绑定，未知打印不自动fail或重打，两个实际客户端进程在Main完成响应丢失后用原键恢复且只模拟打印一次。 W445 现存WCS手工任务八个读写入口采用当前actor/动作及共同认证根；新view仅登记目录不自动授予；创建编号与任务同父事务，晚期原生故障后不再残留编号或被日志重刷失败任务，保留原手工状态、八位数量及无库存效果。 W446 现存IoT九入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与业务同父事务，原生传感器/读数/批次故障完整回滚；从实际历史修复最新记录投影并保留迟到及同时间合法输入，模拟值/时间一致且先检查类型和1–100×最多100边界。 W447 现存承运元数据八入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与运单共父事务，原生INSERT/UPDATE故障完整回滚；读取事件前围栏使两次合法追加均完成并保留原事件及EF版本检查，原手工状态/错误与重量费用精度保持。 W448 现存卷材七入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；创建/分切编号与父子卷同父事务；全部子宽先校验并用足够的整数累计，移除循环内重复校验，非法后项或原生故障不残留子卷/编号；并发消费在最终决定点读取当前剩长，八位长度及既有版本检查保持。 W449 现存余料十入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与记录共父事务，原生INSERT/UPDATE故障不残留业务；Create/Update共用已有正尺寸/数量及仓库库位输入边界，保留结束态错误优先级、合法预留态修改、四位余料数量及既有版本检查；并发预留按当前状态拒绝第二个用途。 W450 既有仓库角色范围Get/Replace采用当前pub-data-scope query/edit及实际签名会话；共同认证根后锁定范围与角色/仓库/区域引用，替换及失败清理同父事务，晚期故障不被日志重刷；并发替换保存整组结果，实际托盘HTTP采用撤销旧仓库/授予新仓库；范围引用由逐项查询改为至多两次集中查询，200项合法输入实际通过，保留规范化、通配符、清空、200上限及角色1语义，无新权限点。 W451 既有功能变更申请Get/Submit/Cancel采用当前wms-mobile:device-manage及实际签名会话，同Context认证父事务拥有申请和实际OA/WF提交/撤回，故障回滚清理跟踪、无孤立申请；按当前仓库和绑定/定义引用决定，保留原OperationId历史回放、保留天数/证据/版本校验及内部审批回调，旧办理410保持。 W452 现存有效功能配置GET移入既有功能控制Owner，复用当前device-manage/签名会话和认证父事务，读取实际配置表SHARE；完整保留原租户/删除过滤、排序、五字段和版本编码，直接PUT410保持；申请路径默认表选择及其余授权/事务逻辑经精确逆向比较保持，并实际复测一个申请完整正常周期。 W453 现存业务操作日志Get/Clear在PostgreSQL采用同Context当前query/delete及签名会话，共同认证根先于实际Sys_OperLogs读取/清理锁，计数/分页与清理处同父事务，最终会话/取消及明确故障/未知处理；原关键词、分页、排序、返回实体/total/count及租户过滤保持，历史非PostgreSQL完整路径与构造器保留。 W454 现存字段审计摘要列表采用同Context当前sys-field-audit query与实际签名会话，认证根先于实际Sys_FieldAuditLogs SHARE，Count/分页与最终会话/取消处同父事务；完整原筛选、1..200分页约束、双键排序和摘要解析保持，原record业务Owner/映射/安全投影/游标不变。 W455 现存字典六项写入采用同Context当前dict:add/edit/delete、签名会话和认证根，两张实际全局字典表SREX；查重/查行/级联写入与最终会话同父事务，确认提交后原缓存失效。保持全局共享模型/读取/cache键和既有响应；并发新增同码与编辑撞码明确拒绝。 W456 现存空间编码规则增改删、批量/单格生成五写采用同Context当前space-code-rule:add/edit/delete/generate、签名会话及认证根；真实规则写锁与生成来源读锁/库位写锁，重建清旧码和赋新码同父事务。并发默认与默认迁入作用域互斥，原布局和算法、列表/预览/预检、旧构造路径保持。 W457 现存站点/楼层增改删六写采用同Context当前space-site/space-floor动作、签名会话及认证共同根；真实站点/楼层和原子项/锚引用锁，查询与写入同父事务。楼层创建只采用当前租户实际未删除站点，缺失/其他租户及删除先行拒绝；原坐标精度、编辑不重挂、查询及原护栏保持。 W458 七个既有库区/巷道/货架写入采用同Context当前space-floor:edit、签名会话及认证根；锁定真实楼层/库区/巷道/货架/库位引用与写集。当前父项/同库区可选巷道决定、货架保存与坐标重算同父事务；原字段、坐标算法、码/状态/版本、RowVersion409和其余接口保持。 W459 现存场景导入与D7绑码采用同Context当前space-floor:edit、签名会话及认证根。导入确认当前目标站点、真实几何骨架和库位两次保存同事务；绑码用实际货架/库位及原已发布未落位采纳资格。原导出/映射/算法、码/ID/状态/版本和其他场景路径保持。 W461 现存场景差量采用同Context当前space-floor:edit、签名会话、认证共同根和实际当前目标楼层；实际层级/WMS投影表锁，原差量、坐标、墓碑、重发布、LPB和集成事件参与同一父事务。原输入、既有版本冲突、投影版本判定及桥旁路策略保持，未知提交明确。",
+        "delivered": "当前IAM/CAS、撤权共同门、对象/字段和多类Owner动作，以及本轮隐私/FORM最终授权已采用。 W435 实际版本化租户暂停与普通 Stock V1 调整共享 PostgreSQL 认证根，两种真实提交顺序、已提交原写集和暂停后的旧会话拒绝通过。 W436 LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。 W437 LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。 W438 装箱、拆箱、拆分、合并及回放接入既有 Owner 当前授权事务；四条真实 HTTP/PostgreSQL 路径均复现旧请求在暂停后写入，修复后 401 REAUTH_REQUIRED、九类原行逐字节保持，正常树变化、序列号、精确数量、回放和原业务错误通过。 W439 LPN Move 在既有 Mobile Owner 中组合库存父事务原语；真实非空树由原 HTTP 500 恢复完整原子移动，保留八位数量、货主估值质量和四腿实际部门继承。空/非空树均在暂停先提交后 401、十三类原行保持，晚期回执故障完整回滚，范围、回放和原错误协议通过。 W440 设备票据、更新/禁用、快捷 PIN、匿名激活和签名心跳在实际身份共同根中提交；保留合法自失效，数据库 nonce 裁决双宿主重放，设备范围变更使旧客户端身份失效，已有数据升级保留设备原行并要求重新登录。 W441 序列转换与七种生命周期在实际 Mobile Owner 内决定并组合库存父事务；原五种库存请求从 400 恢复共同提交，收货错误后遗留的跟踪对象不再被日志保存刷入；八条真实暂停路径均拒绝，保留序列/库存对账、实际部门继承、原回执与完整七步周期。 W442 托盘六个元数据写者采用同一认证根、当前动作/库区/已有字段和实际 actor；编号与托盘同父事务，原生插入故障后无编号或记录残留；六条暂停及真实撤权竞争均拒绝，保留原状态、三位重量和无库存效果。 W443 条码 profile/alias 两种 upsert 与 XLSX 实际提交采用当前 actor、barcode-manage 和共同认证根；整批共父事务，第二行失败后不再被日志重刷出一条别名；三条暂停、实际撤权、预览/更新/恢复、原错误及八位转换精度完成真实验收。 W444 现存标签七个HTTP入口采用当前动作/actor及共同认证根，设备当前资格先于回放，作业与版本化原结果回执共父事务；网关修正PENDING查询，持久化分区/原键/打印阶段，实际凭据与源绑定，未知打印不自动fail或重打，两个实际客户端进程在Main完成响应丢失后用原键恢复且只模拟打印一次。 W445 现存WCS手工任务八个读写入口采用当前actor/动作及共同认证根；新view仅登记目录不自动授予；创建编号与任务同父事务，晚期原生故障后不再残留编号或被日志重刷失败任务，保留原手工状态、八位数量及无库存效果。 W446 现存IoT九入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与业务同父事务，原生传感器/读数/批次故障完整回滚；从实际历史修复最新记录投影并保留迟到及同时间合法输入，模拟值/时间一致且先检查类型和1–100×最多100边界。 W447 现存承运元数据八入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与运单共父事务，原生INSERT/UPDATE故障完整回滚；读取事件前围栏使两次合法追加均完成并保留原事件及EF版本检查，原手工状态/错误与重量费用精度保持。 W448 现存卷材七入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；创建/分切编号与父子卷同父事务；全部子宽先校验并用足够的整数累计，移除循环内重复校验，非法后项或原生故障不残留子卷/编号；并发消费在最终决定点读取当前剩长，八位长度及既有版本检查保持。 W449 现存余料十入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与记录共父事务，原生INSERT/UPDATE故障不残留业务；Create/Update共用已有正尺寸/数量及仓库库位输入边界，保留结束态错误优先级、合法预留态修改、四位余料数量及既有版本检查；并发预留按当前状态拒绝第二个用途。 W450 既有仓库角色范围Get/Replace采用当前pub-data-scope query/edit及实际签名会话；共同认证根后锁定范围与角色/仓库/区域引用，替换及失败清理同父事务，晚期故障不被日志重刷；并发替换保存整组结果，实际托盘HTTP采用撤销旧仓库/授予新仓库；范围引用由逐项查询改为至多两次集中查询，200项合法输入实际通过，保留规范化、通配符、清空、200上限及角色1语义，无新权限点。 W451 既有功能变更申请Get/Submit/Cancel采用当前wms-mobile:device-manage及实际签名会话，同Context认证父事务拥有申请和实际OA/WF提交/撤回，故障回滚清理跟踪、无孤立申请；按当前仓库和绑定/定义引用决定，保留原OperationId历史回放、保留天数/证据/版本校验及内部审批回调，旧办理410保持。 W452 现存有效功能配置GET移入既有功能控制Owner，复用当前device-manage/签名会话和认证父事务，读取实际配置表SHARE；完整保留原租户/删除过滤、排序、五字段和版本编码，直接PUT410保持；申请路径默认表选择及其余授权/事务逻辑经精确逆向比较保持，并实际复测一个申请完整正常周期。 W453 现存业务操作日志Get/Clear在PostgreSQL采用同Context当前query/delete及签名会话，共同认证根先于实际Sys_OperLogs读取/清理锁，计数/分页与清理处同父事务，最终会话/取消及明确故障/未知处理；原关键词、分页、排序、返回实体/total/count及租户过滤保持，历史非PostgreSQL完整路径与构造器保留。 W454 现存字段审计摘要列表采用同Context当前sys-field-audit query与实际签名会话，认证根先于实际Sys_FieldAuditLogs SHARE，Count/分页与最终会话/取消处同父事务；完整原筛选、1..200分页约束、双键排序和摘要解析保持，原record业务Owner/映射/安全投影/游标不变。 W455 现存字典六项写入采用同Context当前dict:add/edit/delete、签名会话和认证根，两张实际全局字典表SREX；查重/查行/级联写入与最终会话同父事务，确认提交后原缓存失效。保持全局共享模型/读取/cache键和既有响应；并发新增同码与编辑撞码明确拒绝。 W456 现存空间编码规则增改删、批量/单格生成五写采用同Context当前space-code-rule:add/edit/delete/generate、签名会话及认证根；真实规则写锁与生成来源读锁/库位写锁，重建清旧码和赋新码同父事务。并发默认与默认迁入作用域互斥，原布局和算法、列表/预览/预检、旧构造路径保持。 W457 现存站点/楼层增改删六写采用同Context当前space-site/space-floor动作、签名会话及认证共同根；真实站点/楼层和原子项/锚引用锁，查询与写入同父事务。楼层创建只采用当前租户实际未删除站点，缺失/其他租户及删除先行拒绝；原坐标精度、编辑不重挂、查询及原护栏保持。 W458 七个既有库区/巷道/货架写入采用同Context当前space-floor:edit、签名会话及认证根；锁定真实楼层/库区/巷道/货架/库位引用与写集。当前父项/同库区可选巷道决定、货架保存与坐标重算同父事务；原字段、坐标算法、码/状态/版本、RowVersion409和其余接口保持。 W459 现存场景导入与D7绑码采用同Context当前space-floor:edit、签名会话及认证根。导入确认当前目标站点、真实几何骨架和库位两次保存同事务；绑码用实际货架/库位及原已发布未落位采纳资格。原导出/映射/算法、码/ID/状态/版本和其他场景路径保持。 W461 现存场景差量采用同Context当前space-floor:edit、签名会话、认证共同根和实际当前目标楼层；实际层级/WMS投影表锁，原差量、坐标、墓碑、重发布、LPB和集成事件参与同一父事务。原输入、既有版本冲突、投影版本判定及桥旁路策略保持，未知提交明确。 W462 现存整层/库区发布采用原space-publish:publish、签名会话和同Context授权事务；编码闸门在当前规则和拓扑内决定，真实库位、LPB、WMS投影及桥事件沿原合同提交。保留空批次、原409和旁路行为，确认提交后才发成功通知，未知结果明确。",
         "remaining": "全字段注册表与全部现存query/write/export/download写者尚未完成覆盖核销。",
-        "next_action": "继续WP02-03其余实际query/write/export/download和字段V1真实来源；完整场景图资格、独立发布/停用和改挂删除按原逐项安全语义另验。原WMS投影采用不等物理Stock、新版空间、schema、PGT-017及全Main/跨仓负载完成。",
+        "next_action": "继续现存库位采纳、独立停用及改挂删除，保留同步库存和局部成功语义；其余WP02-03查询/导出、字段V1、完整场景图、新版空间与PGT-017按原范围验收。",
         "evidence_refs": [
           "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
           "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
@@ -174484,11 +174489,12 @@
           "docs/development/evidence/BUG-915-SPACE-SITE-FLOOR-FENCE/DELIVERY.md",
           "docs/development/evidence/BUG-917-SPACE-HIERARCHY-GEOMETRY-FENCE/DELIVERY.md",
           "docs/development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md",
-          "docs/development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md"
+          "docs/development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md",
+          "docs/development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W461-01"
+        "latest_window": "W462-01"
       },
       "wave435_delivery": {
         "status": "CLOSED",
@@ -174992,12 +174998,32 @@
         "seat_released": true
       },
       "wave461_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md",
         "validation": "现存场景差量采用同Context当前space-floor:edit、签名会话、认证共同根和实际当前目标楼层；实际层级/WMS投影表锁，原差量、坐标、墓碑、重发布、LPB和集成事件参与同一父事务。原输入、既有版本冲突、投影版本判定及桥旁路策略保持，未知提交明确。",
         "tested_baseline": "e596852ab4a58354e741d822540352dae62119e6",
         "issue": "https://github.com/GTX537/CP6/issues/923",
         "actual_result_sha256": "e844fed7d9514850a6b2dde6451f526ec650d138d3bbb9c6e84e336c77969607",
+        "formal_case": "PGT-017",
+        "formal_acceptance": "NOT_RUN",
+        "full_task_complete": false,
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/924",
+          "commit": "b362266387f450ff4e1a14fcd6a7ff2d0933a78b",
+          "target_head": "b362266387f450ff4e1a14fcd6a7ff2d0933a78b"
+        },
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse",
+        "seat_released": true
+      },
+      "wave462_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md",
+        "validation": "现存整层/库区发布采用原space-publish:publish、签名会话和同Context授权事务；编码闸门在当前规则和拓扑内决定，真实库位、LPB、WMS投影及桥事件沿原合同提交。保留空批次、原409和旁路行为，确认提交后才发成功通知，未知结果明确。",
+        "tested_baseline": "b362266387f450ff4e1a14fcd6a7ff2d0933a78b",
+        "issue": "https://github.com/GTX537/CP6/issues/925",
+        "actual_result_sha256": "e6dc565741601ed38869e98586317c27485a92a88b51873a81ee824af4ee88b8",
         "formal_case": "PGT-017",
         "formal_acceptance": "NOT_RUN",
         "full_task_complete": false
@@ -209079,10 +209105,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W461",
-      "path": "docs/development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md",
-      "baseline_sha": "e596852ab4a58354e741d822540352dae62119e6",
-      "registered_at": "2026-11-11T00:03:20.092322+00:00",
+      "id": "W462",
+      "path": "docs/development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md",
+      "baseline_sha": "b362266387f450ff4e1a14fcd6a7ff2d0933a78b",
+      "registered_at": "2026-11-11T00:28:46.646694+00:00",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "COORD"
@@ -209097,36 +209123,37 @@
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": false,
-      "next_action": "继续WP02-03其余实际query/write/export/download和字段V1真实来源；完整场景图资格、独立发布/停用和改挂删除按原逐项安全语义另验。原WMS投影采用不等物理Stock、新版空间、schema、PGT-017及全Main/跨仓负载完成。",
+      "next_action": "继续现存库位采纳、独立停用及改挂删除，保留同步库存和局部成功语义；其余WP02-03查询/导出、字段V1、完整场景图、新版空间与PGT-017按原范围验收。",
       "windows": [
         {
-          "id": "W461-01",
-          "workspace_task": "BUG-923-SPACE-SCENE-DELTA-FENCE",
+          "id": "W462-01",
+          "workspace_task": "BUG-925-SPACE-LOCATION-PUBLISH-FENCE",
           "related_tasks": [
             "WP02-03"
           ],
-          "title": "场景差量当前事务与重发布",
+          "title": "库位发布当前编码闸门",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/bug-923-space-scene-delta-fence",
-          "planned_scope_ref": "docs/development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md",
+          "branch": "codex/bug-925-space-location-publish-fence",
+          "planned_scope_ref": "docs/development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "file:Main:CP6.Tests/Erp/SceneDeltaPostgreSqlTests.cs",
-            "file:Main:CP6.Tests/Erp/SceneDeltaPostgreSqlTests.Behavior.cs",
-            "file:Main:CP6.Core/Services/Space/SceneService.cs",
-            "file:Main:CP6.Core/Services/Space/SceneGeometryAuthorityV1.cs",
-            "file:Main:CP6.WebApi/Controllers/Space/SceneController.cs"
+            "file:Main:CP6.Tests/Erp/LocationPublishPostgreSqlTests.cs",
+            "file:Main:CP6.Tests/Erp/LocationPublishPostgreSqlTests.Behavior.cs",
+            "file:Main:CP6.Core/Services/Space/LocationPublishService.cs",
+            "file:Main:CP6.Core/Services/Space/LocationPublishAuthorityV1.cs",
+            "file:Main:CP6.WebApi/Controllers/Space/LocationPublishController.cs",
+            "file:Main:CP6.WebApi/Program.cs"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md"
         }
       ],
       "storage": {
@@ -255458,6 +255485,71 @@
           "reuse_worktree": "D:/CP6-worktrees/dev-2",
           "new_worktrees": 0
         }
+      },
+      {
+        "id": "W461",
+        "path": "docs/development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md",
+        "baseline_sha": "e596852ab4a58354e741d822540352dae62119e6",
+        "registered_at": "2026-11-11T00:03:20.092322+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "next_action": "继续WP02-03其余实际query/write/export/download和字段V1真实来源；完整场景图资格、独立发布/停用和改挂删除按原逐项安全语义另验。原WMS投影采用不等物理Stock、新版空间、schema、PGT-017及全Main/跨仓负载完成。",
+        "windows": [
+          {
+            "id": "W461-01",
+            "workspace_task": "BUG-923-SPACE-SCENE-DELTA-FENCE",
+            "related_tasks": [
+              "WP02-03"
+            ],
+            "title": "场景差量当前事务与重发布",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/bug-923-space-scene-delta-fence",
+            "planned_scope_ref": "docs/development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "file:Main:CP6.Tests/Erp/SceneDeltaPostgreSqlTests.cs",
+              "file:Main:CP6.Tests/Erp/SceneDeltaPostgreSqlTests.Behavior.cs",
+              "file:Main:CP6.Core/Services/Space/SceneService.cs",
+              "file:Main:CP6.Core/Services/Space/SceneGeometryAuthorityV1.cs",
+              "file:Main:CP6.WebApi/Controllers/Space/SceneController.cs"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md",
+            "adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6/pull/924",
+              "commit": "b362266387f450ff4e1a14fcd6a7ff2d0933a78b",
+              "target_head": "b362266387f450ff4e1a14fcd6a7ff2d0933a78b"
+            },
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/dev-2",
+          "new_worktrees": 0
+        }
       }
     ],
     "development_priority": {
@@ -258703,10 +258795,22 @@
             617.514735,
             622.409594
           ]
+        },
+        "w461_adopted": {
+          "native_elapsed_seconds": 156391,
+          "native_sample_utc": "2026-11-11T00:27:12+00:00",
+          "capacity_seconds": 172800,
+          "native_status": "active",
+          "raw": "D:/CP6-local-test/CP6-72H-20261109/after-w461-adoption-calibration.json",
+          "raw_sha256": "b197b6a528386f114d7fa7a6dc3222b360ff0aea8137660ec66bd9af608a1c7d",
+          "conservative_native_active_range_seconds": [
+            1429.907678,
+            1434.1701580000001
+          ]
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "继续WP02-03其余实际query/write/export/download和字段V1真实来源；完整场景图资格、独立发布/停用和改挂删除按原逐项安全语义另验。原WMS投影采用不等物理Stock、新版空间、schema、PGT-017及全Main/跨仓负载完成。",
+      "next_priority": "继续现存库位采纳、独立停用及改挂删除，保留同步库存和局部成功语义；其余WP02-03查询/导出、字段V1、完整场景图、新版空间与PGT-017按原范围验收。",
       "windows": [
         {
           "id": "W327-01",
@@ -262100,7 +262204,7 @@
         {
           "id": "W461-01",
           "workspace_task": "BUG-923-SPACE-SCENE-DELTA-FENCE",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-03"
           ],
@@ -262127,6 +262231,50 @@
             "main9": "green-hosted-01/actual.json",
             "original6": "red-hosted-01/actual.json",
             "original_affected_log3_reused_from": "W460-01/green-hosted-01/actual.json"
+          },
+          "formal_acceptance": "NOT_RUN",
+          "finished_at": "2026-11-11T00:27:12.262480+00:00",
+          "final_lease_seconds": 1432.170158,
+          "lease_includes_user_pauses": false,
+          "conservative_native_active_range_seconds": [
+            1429.907678,
+            1434.1701580000001
+          ],
+          "pr": "https://github.com/GTX537/CP6/pull/924",
+          "adopted_main": "b362266387f450ff4e1a14fcd6a7ff2d0933a78b",
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "seat_released": true
+        },
+        {
+          "id": "W462-01",
+          "workspace_task": "BUG-925-SPACE-LOCATION-PUBLISH-FENCE",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-03"
+          ],
+          "started_at": "2026-11-11T00:28:46.646694+00:00",
+          "native_start_sample_seconds": 156464,
+          "native_post_start_sample_seconds": 156506,
+          "validation_ready_at": "2026-11-11T00:40:31.309754+00:00",
+          "estimate_minutes": [
+            20,
+            35
+          ],
+          "branch": "codex/bug-925-space-location-publish-fence",
+          "tested_baseline": "b362266387f450ff4e1a14fcd6a7ff2d0933a78b",
+          "scope": "现存整层/库区发布采用原space-publish:publish、签名会话和同Context授权事务；编码闸门在当前规则和拓扑内决定，真实库位、LPB、WMS投影及桥事件沿原合同提交。保留空批次、原409和旁路行为，确认提交后才发成功通知，未知结果明确。",
+          "delivery": "docs/development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md",
+          "dispatch": "docs/development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md",
+          "issue": "https://github.com/GTX537/CP6/issues/925",
+          "main_postgresql_cases": 4,
+          "compatibility_cases": 32,
+          "skipped": 0,
+          "validation_provenance": {
+            "summary": "D:/CP6-local-test/CP6-72H-20261109/W462-01/actual.json",
+            "summary_sha256": "e6dc565741601ed38869e98586317c27485a92a88b51873a81ee824af4ee88b8",
+            "main4": "green-hosted-01/actual.json",
+            "original4": "red-hosted-01/actual.json"
           },
           "formal_acceptance": "NOT_RUN"
         }
