@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-11 UTC 完整 v11 ERP C03 原图导入
+
+完整W429 v11的实际ERP C03原图在关闭PostgreSQL候选导入，A/B各八原成员逐字节一致；23505原生晚失败回滚、序列11、同原回执及源49关系保持。 原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，容量172800。 [W473交付](../development/evidence/W473-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 完整 v11 RMA 两表导入
 
 完整W429 v11的RMA head及version各一行在隔离PostgreSQL 18.6关闭Core候选逐字节导入，真实晚失败回滚，回执可原样恢复。W429的模拟RMA流水保持按原图校验拒绝。 原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，容量172800。 [W472交付](../development/evidence/W472-01/DELIVERY.md)

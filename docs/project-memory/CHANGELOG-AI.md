@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC 完整 v11 ERP C03 原图导入
+
+W473仅增加完整v11选项及相关验证，旧v10驱动逐字节不变，实库A/B原件和事务边界通过。 [W473交付](../development/evidence/W473-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 完整 v11 RMA 两表导入
 
 W472实际旧版本拒绝，最终仅交付关闭Core两表导入及回执；原模拟流水拒绝保留，旧v10驱动逐字节一致。 [W472交付](../development/evidence/W472-01/DELIVERY.md)

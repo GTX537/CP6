@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-11 UTC 完整 v11 ERP C03 原图导入
+
+准备含实际RMA Owner原操作的同源完整v11样本，沿同一归档和关闭候选验证原RMA流水导入。W429原快照保留，正式PGT-021/022及切换各自验收。 C03候选保持关闭。 [W473交付](../development/evidence/W473-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 完整 v11 RMA 两表导入
 
 继续W429 v11实际ERP C03原图导入。RMA流水待同一有效v11中由真实RMA Owner生成的回执，正式PGT-021/022和切换各自验收。 RMA两表候选保持关闭。 [W472交付](../development/evidence/W472-01/DELIVERY.md)
