@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC · W489配置预览一致性
+
+W489真实RED后修配置预览必填/optional与政策说明，原保存输入/权限/proof不改；三种相关实际浏览器流程及Next构建成功。CRM #181/Issue #180及DEV2准确生命周期已核销，Main协调和12h继续，无Actions/部署。 [本任务](../development/evidence/W489-01/DELIVERY.md)
+
 ## 2026-11-11 UTC · W488隐私消息恢复
 
 W488新增privacy-export真实原消息、HTTP丢回执及原租约实际到期恢复；两项最终成功，原202/Job/H01和发送事实保持。CRM #179及DEV2准确生命周期已核销，Main协调和12h继续，无产品源码/依赖、Actions或部署变化。 [本任务](../development/evidence/W488-01/DELIVERY.md)
