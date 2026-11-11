@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-11 UTC 场景差量当前事务与重发布
+
+现存场景差量采用同Context当前space-floor:edit、签名会话、认证共同根和实际当前目标楼层；实际层级/WMS投影表锁，原差量、坐标、墓碑、重发布、LPB和集成事件参与同一父事务。原输入、既有版本冲突、投影版本判定及桥旁路策略保持，未知提交明确。 9项实际Main/PostgreSQL（6新、3既有日志）和16项既有InMemory通过、零跳过；模拟空间/身份/故障输入，实际宿主/业务/本地WMS投影及数据库。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，172800秒及40h144047/下一158400保持。 [W461交付](../development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 操作日志降级保存隔离
 
 PostgreSQL操作日志降级使用独立DI作用域及新Context，传递原已确认请求租户，只保存日志。拒绝后未提交业务不被日志写入带入数据库，正常/日志故障及原字段、异常状态映射、Kafka路径和历史非PG保持。 3项实际Main/PostgreSQL和26项既有过滤器通过、零跳过；模拟场景/身份/故障，真实宿主/业务/日志和数据库。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，172800秒、40h144047/下一158400保持。 [W460交付](../development/evidence/BUG-921-OPERLOG-FALLBACK-ISOLATION/DELIVERY.md)

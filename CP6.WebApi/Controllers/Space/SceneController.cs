@@ -37,6 +37,7 @@ public class SceneController : ControllerBase
     /// <summary>整层差量保存（upsert zones/aisles/racks/markers/locations + deletes）</summary>
     [HttpPost("floor/{id:guid}/scene")]
     [RequirePermission("space-floor", "edit")]
+    [OrderOwnerResult]
     public async Task<IActionResult> SaveScene(Guid id, [FromBody] SceneSaveDto dto)
     {
         return Ok2(new { idMap = await _scene.SaveSceneAsync(id, dto, CurrentUser) });
