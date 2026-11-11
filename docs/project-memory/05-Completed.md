@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-11 UTC 关闭候选实际 FileContent Owner
+
+实际.NET FileContent Owner在W469关闭候选读取A/B原快照、Engineering父版本和同键原流水，A原45字节真实下载、B错摘要拒绝，15关系及候选回执不变。 W470经#938采用、准确清理分支、DEV-2干净释放；实际12.45–12.50分钟。 [W471交付](../development/evidence/W471-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 完整 v11 原源只读对账
 
 完整W429 v11在同一物理身份的私有副本通过四个只读入口，IAM 17、Identity Priority 1、ERP 2、Main Stock 2，49源关系及原件不变；recoveryReady=false。 W469经#937采用、准确清理分支、DEV-2干净释放；实际18.64–18.71分钟。 [W470交付](../development/evidence/W470-01/DELIVERY.md)

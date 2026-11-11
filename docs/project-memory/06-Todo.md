@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-11 UTC 关闭候选实际 FileContent Owner
+
+将完整v11的原RMA两表及独立RMA Owner流水接入现有关闭Core导入，沿用原始回执、租户及当前候选权限，正式PGT-021/022和切换各自验收。 FileContent候选保持关闭。 [W471交付](../development/evidence/W471-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 完整 v11 原源只读对账
 
 沿W469关闭候选验证实际FileContent Owner、原操作、父版本和W468原文件读取，并保持候选资格、正式PGT-021/022及切换独立。 对账结果为 OBSERVED。 [W470交付](../development/evidence/W470-01/DELIVERY.md)
