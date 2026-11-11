@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-11 UTC 同源 v11 的 ERP 实际租约与发布对账
+
+同一实际四域 v11 的 ERP 原 Pending 在隔离 PostgreSQL 上由真实派送器取得租约并经一次模拟确认转为 Published。三次只读对账保留归档原值、当前状态与 B 原八表。 原 375 项仍为 38 DONE、1 IN_PROGRESS、336 PLANNED，正式 PostgreSQL 16 PASS、11 NOT_RUN。 [W478交付](../development/evidence/W478-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 同源 v11 Stock 原件暂存与当前对账
 
 同源 v11 纳入 A/B 真实 Stock Owner 原库存操作。A 的 14 份 Stock CSV 与 PostgreSQL 源及中立暂存逐字节一致，复核 W476 的 16 份原 CSV、45 字节文件及待发送原状态。 原 375 项仍为 38 DONE、1 IN_PROGRESS、336 PLANNED，正式 PostgreSQL 16 PASS、11 NOT_RUN。 [W477交付](../development/evidence/W477-01/DELIVERY.md)
