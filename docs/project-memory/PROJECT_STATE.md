@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-11 UTC · W485实际Rejected保留
+
+W485三项独立实际验收通过：Next生产模式页面整链、Rejected原60分钟联合清除不复活、换版/撤回后的原政策导出。CRM #174已采用d0183afd2，Issue #173关闭，准确分支清理/DEV2干净释放；Main协调采用继续。原AC37/60，修订2/247，375仍38 DONE及PG16/11；12h原生8h01m09检查点已记录并滚动安排余4h。 [本任务](../development/evidence/W485-01/DELIVERY.md)
+
 ## 2026-11-11 UTC · W484保留原图与原验收
 
 W484 CRM #172/Issue #171已核销并准确清理/DEV2释放，修复含子图Lead擦除后实际版本封存；正常持久清除、末段I/O整体回滚/重试及15项相关回归通过。R1 POS/NEG按全部原义务采纳PASS，正式修订2/247；原60AC、原375、PG16/11和完整月度范围不提升，Main协调采用/finish待核。 [本任务](../development/evidence/W484-01/DELIVERY.md)
