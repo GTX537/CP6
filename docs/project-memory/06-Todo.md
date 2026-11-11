@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-11 UTC · W486公开输入合法组合
+
+先收妥W486 Main正常采用、远端核对及官方finish，再按原8h滚动安排独立核AC-INQ-054实际集合义务/权威使用边界；真实缺口才开新任务改生成入口。原23条AC及四disposition/月度native、共同服务正式前置保留，最后一小时聚焦收尾。 [本任务](../development/evidence/W486-01/DELIVERY.md)
+
 ## 2026-11-11 UTC · W485实际Rejected保留
 
 先完成W485 Main正常采用与finish，再从最新基线复用固定两席登记后继，核合法政策字段组合/必填输入，余量核054实际集合范围，最后一小时收尾。原23条未采纳AC、四disposition/月度native与共同服务正式前置继续；不把正常链或未来投影冒全目标完成。 [本任务](../development/evidence/W485-01/DELIVERY.md)
