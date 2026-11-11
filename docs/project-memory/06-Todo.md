@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-11 UTC 巷道和货架逐个停用与最终重查
+
+继续WP02-03尚未采用的实际空间写入和查询/导出，逐项按原权限和真实父关系；完整字段V1、跨仓、负载及正式PGT-017仍按原验收。 后到真实状态按最终原限制；有库存/故障不撤销已提交其它项，未知提交不自动重试。 [W466交付](../development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md)
+
 ## 2026-11-11 UTC 巷道和货架默认删除及改挂
 
 继续巷道和货架逐个停用路径的每项当前决定、部分成功和最终删除重查，保留原space-floor:edit与同步库存合同；其余查询/导出、完整字段和正式PGT-017仍按原范围。 改挂故障读回本次实际无效果；未知提交不自动重试。 [W465交付](../development/evidence/BUG-931-SPACE-TOPOLOGY-DELETE-FENCE/DELIVERY.md)

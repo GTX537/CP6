@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-11 UTC 巷道和货架逐个停用与最终重查
+
+巷道/货架原逐个停用采用原space-floor:edit、当前授权及实际当前归属，每项独立按同步WMS库存和两侧提交确认后通知；保留先成功和后拒绝，最后默认删除在当前事务重查子级。 实际Main/PostgreSQL18.6 12项及47既有通过；原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN。44h158458和容量/下一172800保持。 [W466交付](../development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md)
+
 ## 2026-11-11 UTC 巷道和货架默认删除及改挂
 
 现存巷道和货架默认删除及改挂使用原space-floor:edit、签名会话及同Context当前事务，实际子库位、目标、几何、墓碑与重发布一致决定。先发布则原402/403限制保持，已知提交与未知结果区分；逐个停用模式保持。 实际Main/PostgreSQL18.6及已有删除回归按交付报告。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN；44h158458，容量及下一172800。 [W465交付](../development/evidence/BUG-931-SPACE-TOPOLOGY-DELETE-FENCE/DELIVERY.md)

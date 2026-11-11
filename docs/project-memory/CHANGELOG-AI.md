@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC 巷道和货架逐个停用与最终重查
+
+W466原7项5失败2正常，最终12项实际和47兼容。实际部分成功保持、单项半状态消除、发布先完成后逐个停用和准确收尾。 [W466交付](../development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md)
+
 ## 2026-11-11 UTC 巷道和货架默认删除及改挂
 
 W465原巷道200解挂、货架500但持久行保持；最终先发布则原限制400。改挂实际原码/几何/WMS投影及LPB保持原行为，延期提交最终明确503未知。 [W465交付](../development/evidence/BUG-931-SPACE-TOPOLOGY-DELETE-FENCE/DELIVERY.md)

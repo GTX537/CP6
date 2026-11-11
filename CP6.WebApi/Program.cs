@@ -1193,7 +1193,7 @@ builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceMasterService>(sp =>
     var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
     return new CP6.Core.Services.Space.SpaceMasterService(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
         sp.GetRequiredService<CP6.Core.Services.Space.LocationGeometryService>(),
-        sp.GetRequiredService<CP6.Core.Services.Space.ILocationPublishService>(),
+        sp.GetRequiredService<CP6.Core.Services.Space.LocationPublishService>(),
         sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
         http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp),
         http?.RequestAborted ?? CancellationToken.None);

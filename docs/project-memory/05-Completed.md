@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-11 UTC 巷道和货架逐个停用与最终重查
+
+巷道/货架原逐个停用采用原space-floor:edit、当前授权及实际当前归属，每项独立按同步WMS库存和两侧提交确认后通知；保留先成功和后拒绝，最后默认删除在当前事务重查子级。 W465经#932采用，18.33–18.39分钟落16–28；分支准确删除，DEV-2干净释放。 [W466交付](../development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md)
+
 ## 2026-11-11 UTC 巷道和货架默认删除及改挂
 
 现存巷道和货架默认删除及改挂使用原space-floor:edit、签名会话及同Context当前事务，实际子库位、目标、几何、墓碑与重发布一致决定。先发布则原402/403限制保持，已知提交与未知结果区分；逐个停用模式保持。 W464经#930采用，19.31–19.38分钟落19–32预估；本地远端分支准确删除、DEV-2干净释放后复用。 [W465交付](../development/evidence/BUG-931-SPACE-TOPOLOGY-DELETE-FENCE/DELIVERY.md)
