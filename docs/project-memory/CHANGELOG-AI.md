@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC 同源 v11 的 ERP 实际租约与发布对账
+
+W478 使用真实 ERP 派送器与一次模拟确认复核旧 Pending、当前租约及 Published 对账。 [W478交付](../development/evidence/W478-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 同源 v11 Stock 原件暂存与当前对账
 
 W477 在同源完整 v11 中验证真实库存调整、Stock 原消息、14 份原件和只读 Pending 对账。 [W477交付](../development/evidence/W477-01/DELIVERY.md)
