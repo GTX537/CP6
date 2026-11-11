@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-11 UTC 巷道和货架默认删除及改挂
+
+现存巷道和货架默认删除及改挂使用原space-floor:edit、签名会话及同Context当前事务，实际子库位、目标、几何、墓碑与重发布一致决定。先发布则原402/403限制保持，已知提交与未知结果区分；逐个停用模式保持。 实际Main/PostgreSQL18.6及已有删除回归按交付报告。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN；44h158458，容量及下一172800。 [W465交付](../development/evidence/BUG-931-SPACE-TOPOLOGY-DELETE-FENCE/DELIVERY.md)
+
 ## 2026-11-11 UTC 单库位停用库存与两侧原子决定
 
 现存独立HTTP停用用原space-publish:deactivate、当前签名会话和同Context事务稳定真实库存和层级、库位及WMS投影；两侧、LPB与原DEACTIVATE事件按已知提交处理，确认后才发成功通知。原库存、墓碑、同版本跳过和409合同保持。 实际44小时158458秒、下一172800；正式PG16 PASS/11 NOT_RUN，原375仍38 DONE/1 IN_PROGRESS/336 PLANNED。 [W464交付](../development/evidence/BUG-929-SPACE-LOCATION-DEACTIVATE-FENCE/DELIVERY.md)

@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-11 UTC 巷道和货架默认删除及改挂
+
+继续巷道和货架逐个停用路径的每项当前决定、部分成功和最终删除重查，保留原space-floor:edit与同步库存合同；其余查询/导出、完整字段和正式PGT-017仍按原范围。 改挂故障读回本次实际无效果；未知提交不自动重试。 [W465交付](../development/evidence/BUG-931-SPACE-TOPOLOGY-DELETE-FENCE/DELIVERY.md)
+
 ## 2026-11-11 UTC 单库位停用库存与两侧原子决定
 
 下一窗核对巷道/货架默认删除和改挂的当前实际子级与重发布；逐个停用模式保留部分成功并另验。其余真实查询/导出、完整字段、新空间、跨仓和正式PGT-017仍按原范围。 独立停用普通写失败和未知COMMIT分别返回；库存负载及其他写入通道的协议不声称完成。 [W464交付](../development/evidence/BUG-929-SPACE-LOCATION-DEACTIVATE-FENCE/DELIVERY.md)

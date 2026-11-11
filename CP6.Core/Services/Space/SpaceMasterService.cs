@@ -278,21 +278,21 @@ public partial class SpaceMasterService : ISpaceMasterService
             Polygon = x.Polygon, Centerline = x.Centerline
         }).ToListAsync();
 
-    public async Task DeleteAisleAsync(Guid id, string? mode = null, Guid? targetAisleId = null, string? user = null)
+    private async Task DeleteAisleCoreAsync(Guid id, string? mode, Guid? targetAisleId, string? user, bool withinParent, CancellationToken token)
     {
-        var aisle = await _db.Space_Aisles.FirstOrDefaultAsync(x => x.Id == id);
+        var aisle = await _db.Space_Aisles.FirstOrDefaultAsync(x => x.Id == id, token);
         if (aisle == null) return;
 
         // I2：mode 白名单（在取 published 之前）——未知 mode 直接拒绝，不静默降级默认删除
         if (mode is not (null or "deactivate" or "rehome"))
             throw new BizException("E-SPACE-002");
 
-        var racks = await _db.Space_Racks.Where(r => r.AisleId == id).ToListAsync();
+        var racks = await _db.Space_Racks.Where(r => r.AisleId == id).ToListAsync(token);
         var rackIds = racks.Select(r => r.Id).ToList();
         var published = await _db.Space_Locations
             .Where(l => l.RackId != null && rackIds.Contains(l.RackId.Value) && l.Status == 1)
             .Select(l => l.Id)
-            .ToListAsync();
+            .ToListAsync(token);
 
         // 路径B（ch04 §7.2）：改挂目标巷道（null=脱巷道也是 path 变更）→ re-publish → 删。
         // I2：rehome 无论 published 数量都走本分支——「搬走」语义对全草稿同样成立（草稿只改挂不 re-publish）。
@@ -300,24 +300,24 @@ public partial class SpaceMasterService : ISpaceMasterService
         {
             if (targetAisleId != null)
             {
-                var target = await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == targetAisleId.Value)
+                var target = await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == targetAisleId.Value, token)
                              ?? throw new BizException("E-SPACE-407");
                 if (racks.Any(r => r.ZoneId != target.ZoneId))
                     throw new BizException("E-SPACE-407");
             }
             // I1：改挂 + re-publish + 删源 三段提交包一层事务（RepublishAsync 嵌套守卫自动加入，非原子重试黑洞闭合）
-            IDbContextTransaction? tx = _db.Database.IsRelational()
-                ? await _db.Database.BeginTransactionAsync()
+            IDbContextTransaction? tx = !withinParent && _db.Database.IsRelational()
+                ? await _db.Database.BeginTransactionAsync(token)
                 : null;
             try
             {
                 foreach (var r in racks) r.AisleId = targetAisleId;
-                await _db.SaveChangesAsync();                    // 先落改挂，BuildItemAsync 才拼得出新 path
+                await _db.SaveChangesAsync(token);                    // 先落改挂，BuildItemAsync 才拼得出新 path
                 if (published.Count > 0)
                     await _publish.RepublishAsync(published, user);
                 _db.Space_Aisles.Remove(aisle);                  // 货架已不挂本巷道，直接删
-                await _db.SaveChangesAsync();
-                if (tx != null) await tx.CommitAsync();
+                await _db.SaveChangesAsync(token);
+                if (tx != null) await tx.CommitAsync(token);
             }
             catch
             {
@@ -351,7 +351,7 @@ public partial class SpaceMasterService : ISpaceMasterService
         // 注：deactivate 后库位已 Status=2，其 WMS bin 已带最终态，path 陈旧无消费方，不再 re-publish。
         foreach (var r in racks) r.AisleId = null;
         _db.Space_Aisles.Remove(aisle);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
     }
 
     // ══════════════════════════════════════════════════════════════════════
@@ -441,9 +441,9 @@ public partial class SpaceMasterService : ISpaceMasterService
             RowVersion = x.RowVersion
         }).ToListAsync();
 
-    public async Task DeleteRackAsync(Guid id, string? mode = null, Guid? targetRackId = null, string? user = null)
+    private async Task DeleteRackCoreAsync(Guid id, string? mode, Guid? targetRackId, string? user, bool withinParent, CancellationToken token)
     {
-        var rack = await _db.Space_Racks.FirstOrDefaultAsync(x => x.Id == id);
+        var rack = await _db.Space_Racks.FirstOrDefaultAsync(x => x.Id == id, token);
         if (rack == null) return;
 
         // I2：mode 白名单（在取 published 之前）——未知 mode 直接拒绝，不静默降级默认删除
@@ -453,7 +453,7 @@ public partial class SpaceMasterService : ISpaceMasterService
         var published = await _db.Space_Locations
             .Where(l => l.RackId == id && l.Status == 1)
             .Select(l => l.Id)
-            .ToListAsync();
+            .ToListAsync(token);
 
         // 路径B（同规格换架）：C1——目标必须同库区（同 zone ⇒ 同 floor 同 site，
         // WarehouseCd 锚绝不漂移；比照巷道 rehome E-407 先例）；目标网格 ≥ 源、且无自有库位（否则格口冲突）。
@@ -462,22 +462,22 @@ public partial class SpaceMasterService : ISpaceMasterService
         {
             if (targetRackId == null)
                 throw new BizException("E-SPACE-002");
-            var target = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == targetRackId.Value)
+            var target = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == targetRackId.Value, token)
                          ?? throw new BizException("E-SPACE-002");
             if (target.ZoneId != rack.ZoneId)
                 throw new BizException("E-SPACE-002");
             if (target.Cols < rack.Cols || target.Levels < rack.Levels || target.DepthCount < rack.DepthCount)
                 throw new BizException("E-SPACE-002");
-            if (await _db.Space_Locations.AnyAsync(l => l.RackId == target.Id))
+            if (await _db.Space_Locations.AnyAsync(l => l.RackId == target.Id, token))
                 throw new BizException("E-SPACE-002");
 
             // I1：改挂 + re-publish + 删源 三段提交包一层事务（RepublishAsync 嵌套守卫自动加入，非原子重试黑洞闭合）
-            IDbContextTransaction? tx = _db.Database.IsRelational()
-                ? await _db.Database.BeginTransactionAsync()
+            IDbContextTransaction? tx = !withinParent && _db.Database.IsRelational()
+                ? await _db.Database.BeginTransactionAsync(token)
                 : null;
             try
             {
-                var movable = await _db.Space_Locations.Where(l => l.RackId == id).ToListAsync();
+                var movable = await _db.Space_Locations.Where(l => l.RackId == id).ToListAsync(token);
                 foreach (var l in movable)
                 {
                     l.RackId     = target.Id;
@@ -485,13 +485,13 @@ public partial class SpaceMasterService : ISpaceMasterService
                     l.Modifier   = user;
                     l.ModifyDate = DateTime.Now;
                 }
-                await _db.SaveChangesAsync();                         // 先落改挂
-                await _geo.RecalcRackLocationsAsync(target.Id);       // 几何回填（纯几何不发布，D4）
+                await _db.SaveChangesAsync(token);                         // 先落改挂
+                await _geo.RecalcRackLocationsAsync(target.Id, token);       // 几何回填（纯几何不发布，D4）
                 if (published.Count > 0)
                     await _publish.RepublishAsync(published, user);   // path.RackCode 变 → re-publish（§7.2 B）
                 _db.Space_Racks.Remove(rack);
-                await _db.SaveChangesAsync();
-                if (tx != null) await tx.CommitAsync();
+                await _db.SaveChangesAsync(token);
+                if (tx != null) await tx.CommitAsync(token);
             }
             catch
             {
@@ -525,14 +525,14 @@ public partial class SpaceMasterService : ISpaceMasterService
         // 波5 已清理：删库位时一并清其 T_WmsBin 墓碑锚（同一 SaveChanges/同事务）——停用位的 bin
         // （IsActive=false，主键=同 LocationId）此前留孤儿占住 (WarehouseCd, LocationCode) join 锚，
         // 同码再发布会被消费端锚碰撞 REJECTED；清墓碑即释放锚。
-        var children = await _db.Space_Locations.Where(l => l.RackId == id).ToListAsync();
+        var children = await _db.Space_Locations.Where(l => l.RackId == id).ToListAsync(token);
         if (children.Count > 0)
         {
             _db.Space_Locations.RemoveRange(children);
-            await RemoveTombstoneBinsAsync(_db, children.Select(l => l.Id).ToList());
+            await RemoveTombstoneBinsAsync(_db, children.Select(l => l.Id).ToList(), token);
         }
         _db.Space_Racks.Remove(rack);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
     }
 
     /// <summary>
@@ -543,12 +543,12 @@ public partial class SpaceMasterService : ISpaceMasterService
     /// 命中亦不删（Where !IsActive 已排除，绝不误删活跃库位目录）。
     /// internal static 单源：SpaceMasterService.DeleteRackAsync 与 SceneService 各库位删除通道共用（避免同构块漂移）。
     /// </summary>
-    internal static async Task RemoveTombstoneBinsAsync(CP6Context db, List<Guid> locationIds)
+    internal static async Task RemoveTombstoneBinsAsync(CP6Context db, List<Guid> locationIds, CancellationToken token = default)
     {
         if (locationIds.Count == 0) return;
         var tombstones = await db.WmsBins
             .Where(b => locationIds.Contains(b.Id) && !b.IsActive)
-            .ToListAsync();
+            .ToListAsync(token);
         if (tombstones.Count > 0) db.WmsBins.RemoveRange(tombstones);
     }
 

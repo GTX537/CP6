@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-11 UTC 巷道和货架默认删除及改挂
+
+现存巷道和货架默认删除及改挂使用原space-floor:edit、签名会话及同Context当前事务，实际子库位、目标、几何、墓碑与重发布一致决定。先发布则原402/403限制保持，已知提交与未知结果区分；逐个停用模式保持。 W464经#930采用，19.31–19.38分钟落19–32预估；本地远端分支准确删除、DEV-2干净释放后复用。 [W465交付](../development/evidence/BUG-931-SPACE-TOPOLOGY-DELETE-FENCE/DELIVERY.md)
+
 ## 2026-11-11 UTC 单库位停用库存与两侧原子决定
 
 现存独立HTTP停用用原space-publish:deactivate、当前签名会话和同Context事务稳定真实库存和层级、库位及WMS投影；两侧、LPB与原DEACTIVATE事件按已知提交处理，确认后才发成功通知。原库存、墓碑、同版本跳过和409合同保持。 W463经#928进入远端main，12.54–12.60分钟，分支准确删除、DEV-2干净释放。 [W464交付](../development/evidence/BUG-929-SPACE-LOCATION-DEACTIVATE-FENCE/DELIVERY.md)
