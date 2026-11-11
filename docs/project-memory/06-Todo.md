@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-11 UTC · 首条询盘链W482
+
+W482 验证/集中审查及 CRM 采用已完成，Main 同任务按正常 PR/远端核对/官方 finish 收尾。后继按 4h 检查点继续首条链：原 AC/R1 完整核销、错误/页面终态未覆盖族及共同服务真实适用；Converted 月度/四 disposition 保留范围明确，不造字段/调用、不缩短期限。WP02-02 其余及 Stock 正式依赖保留。 [本任务](../development/evidence/W482-01/DELIVERY.md)
+
 ## 2026-11-11 UTC · 首条业务链12h执行
 
 原WP02-02仍缺完整Stock候选/正式制品、非本C03图、恢复批准链及适用正式验收。12h后继按询盘实际直接前置推进，真实epoch变化保持未运行。 [本任务](../development/evidence/W481-01/DELIVERY.md) · [12h计划](../development/planning/20261111-codex-12h-business-chain.md)
