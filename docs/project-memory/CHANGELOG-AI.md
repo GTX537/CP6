@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC · 首条业务链12h执行
+
+W481新增两个显式原生验证入口，既有Owner/导入器/应用未改；记录闭合组合、晚段回滚、现行停用和全局键，保留原生失败与未运行范围。 [本任务](../development/evidence/W481-01/DELIVERY.md) · [12h计划](../development/planning/20261111-codex-12h-business-chain.md)
+
 ## 2026-11-11 UTC · 48 小时执行结算
 
 记录 172,802 秒原生时钟检查点、四仓远端目标、固定席位、W479 采用和实际工时校准。 [48 小时结算](../development/evidence/W480-01/DELIVERY.md)
