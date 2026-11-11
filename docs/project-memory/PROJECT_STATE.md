@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-11 UTC 实际 v11 缺件拒绝和闭合回执
+
+同一实际 v11 对仅 schema、缺共享 ERP、缺文件和源库别名在暂存前拒绝。完整包闭合暂存，错键无法取回回执，正确键原样恢复。源 Published、归档 Pending 及 B 原件保持。 原 375 项仍为 38 DONE、1 IN_PROGRESS、336 PLANNED，正式 PostgreSQL 16 PASS、11 NOT_RUN。 [W479交付](../development/evidence/W479-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 同源 v11 的 ERP 实际租约与发布对账
 
 同一实际四域 v11 的 ERP 原 Pending 在隔离 PostgreSQL 上由真实派送器取得租约并经一次模拟确认转为 Published。三次只读对账保留归档原值、当前状态与 B 原八表。 原 375 项仍为 38 DONE、1 IN_PROGRESS、336 PLANNED，正式 PostgreSQL 16 PASS、11 NOT_RUN。 [W478交付](../development/evidence/W478-01/DELIVERY.md)

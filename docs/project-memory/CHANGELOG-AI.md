@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC 实际 v11 缺件拒绝和闭合回执
+
+W479 实库核对缺件、源库别名及错恢复键拒绝，完整包仍可原样暂存和只读恢复。 [W479交付](../development/evidence/W479-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 同源 v11 的 ERP 实际租约与发布对账
 
 W478 使用真实 ERP 派送器与一次模拟确认复核旧 Pending、当前租约及 Published 对账。 [W478交付](../development/evidence/W478-01/DELIVERY.md)
