@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-11 UTC v11 候选文件原字节落盘
+
+消费W467真实v11暂存回执及原manifest pin，核对同一历史元数据，原LocalFileStore 45字节按原键写入独立私有候选，可原样恢复回执，旧41字节v10保留；recoveryReady=false。 W467经#935进入远端main，准确删除分支、DEV-2干净释放；实测16.71–16.80分钟。 [W468交付](../development/evidence/W468-01/DELIVERY.md)
+
 ## 2026-11-11 UTC v11 文件原历史隔离暂存
 
 已采用W429实际v11原件显式写入隔离暂存，五个FileContent原历史成员按原类型、键和租户落库及COPY逐字节回读，旧v10、晚段真实回滚和暂存回执保持；recoveryReady=false。 W466经#934进入远端main，18.95–19.02分钟；分支准确删除、DEV-2干净释放。 [W467交付](../development/evidence/W467-01/DELIVERY.md)

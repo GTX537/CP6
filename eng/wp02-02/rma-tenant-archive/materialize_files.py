@@ -21,7 +21,8 @@ from stage import StageError, digest_pin
 
 
 FORMAT = "cp6-file-content-materialization-v1"
-ASSET_FORMATS = (assets.FORMAT, erp_integration.FORMAT, privacy_evidence.FORMAT, archive.FORMAT_WITH_STOCK_OUTBOX)
+ASSET_FORMATS = (assets.FORMAT, erp_integration.FORMAT, privacy_evidence.FORMAT,
+                 archive.FORMAT_WITH_STOCK_OUTBOX, archive.FORMAT_WITH_FILE_CONTENT_HISTORY)
 
 
 def checked_directory(path):
@@ -73,6 +74,10 @@ def read_binding(args, bundle, tenant, output):
             or manifest.get("tenantId") != str(tenant) or manifest.get("recoveryReady") is not False \
             or not assets.matches_manifest(manifest):
         raise ValueError("file-materialize-manifest-binding-rejected")
+    if stage["format"] == archive.FORMAT_WITH_FILE_CONTENT_HISTORY:
+        history = manifest.get("fileContentHistory")
+        if not isinstance(history, dict) or stage.get("fileContentHistory") != history:
+            raise ValueError("file-materialize-history-binding-rejected")
     count = manifest["fileContentAssets"]["count"]
     members = manifest.get("members")
     member = members.get(assets.MEMBER) if isinstance(members, dict) else None
