@@ -178,6 +178,17 @@ public class LocationPublishService : ILocationPublishService
         await _notifier.NotifyLocationPublishedAsync(batchNo, 1, "SUCCESS");
     }
 
+    internal async Task DeactivateForTopologyAsync(Func<CancellationToken, Task<Space_Location?>> current, string? user)
+    {
+        var authority = _publicationAuthority ?? throw new OrderPriceCorrectionException("SPACE_TOPOLOGY_AUTHORITY_UNAVAILABLE", 503);
+        var batchNo = await authority.ExecuteTopologyDeactivateAsync(_db, async token =>
+        {
+            var location = await current(token);
+            return location is null ? null : await DeactivateCurrentCoreAsync(location, user, notify: false, token);
+        });
+        if (batchNo is not null) await _notifier.NotifyLocationPublishedAsync(batchNo, 1, "SUCCESS");
+    }
+
     private async Task<string> DeactivateCoreAsync(Guid locationId, string? user, bool notify, CancellationToken token)
     {
         var l = await _db.Space_Locations.FirstOrDefaultAsync(x => x.Id == locationId, token)
@@ -185,6 +196,11 @@ public class LocationPublishService : ILocationPublishService
         if (l.Status != 1)
             throw new BizException("E-SPACE-004");
 
+        return await DeactivateCurrentCoreAsync(l, user, notify, token);
+    }
+
+    private async Task<string> DeactivateCurrentCoreAsync(Space_Location l, string? user, bool notify, CancellationToken token)
+    {
         // 停用意图必须在任何库存数据源或 WMS Adapter 调用前建立。
         var publishExecution = BeginPublishExecution();
         try

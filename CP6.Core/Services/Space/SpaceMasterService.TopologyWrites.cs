@@ -32,6 +32,7 @@ public partial class SpaceMasterService
     private readonly IamAdministrationV1? _topologyAdministration;
     private readonly TenantManagementSessionV1? _topologySession;
     private readonly CancellationToken _topologyRequestCancellation;
+    private readonly LocationPublishService? _topologyPublisher;
 
     public SpaceMasterService(CP6Context db, LocationGeometryService geo, ILocationPublishService publish,
         IamAdministrationV1? administration, TenantManagementSessionV1? session, CancellationToken requestCancellation)
@@ -40,6 +41,13 @@ public partial class SpaceMasterService
         _topologyAdministration = administration;
         _topologySession = session;
         _topologyRequestCancellation = requestCancellation;
+    }
+
+    public SpaceMasterService(CP6Context db, LocationGeometryService geo, LocationPublishService publish,
+        IamAdministrationV1? administration, TenantManagementSessionV1? session, CancellationToken requestCancellation)
+        : this(db, geo, (ILocationPublishService)publish, administration, session, requestCancellation)
+    {
+        _topologyPublisher = publish;
     }
 
     public Task<Guid> CreateSiteAsync(SiteDto d, string? user)
@@ -82,16 +90,20 @@ public partial class SpaceMasterService
         => ExecuteTopologyMutationAsync("space-floor:edit", AisleRead + RackWrite + LocationWrite, token => UpdateRackCoreAsync(id, d, user, token));
 
     public Task DeleteAisleAsync(Guid id, string? mode = null, Guid? targetAisleId = null, string? user = null)
-        => _db.Database.IsNpgsql() && mode != "deactivate"
-            ? ExecuteTopologyMutationAsync("space-floor:edit", DeleteAisleLocks,
-                token => DeleteAisleCoreAsync(id, mode, targetAisleId, user, withinParent: true, token))
-            : DeleteAisleCoreAsync(id, mode, targetAisleId, user, withinParent: false, default);
+        => !_db.Database.IsNpgsql()
+            ? DeleteAisleCoreAsync(id, mode, targetAisleId, user, withinParent: false, default)
+            : mode == "deactivate"
+                ? DeactivateAndDeleteTopologyAsync(id, rack: false, user)
+                : ExecuteTopologyMutationAsync("space-floor:edit", DeleteAisleLocks,
+                    token => DeleteAisleCoreAsync(id, mode, targetAisleId, user, withinParent: true, token));
 
     public Task DeleteRackAsync(Guid id, string? mode = null, Guid? targetRackId = null, string? user = null)
-        => _db.Database.IsNpgsql() && mode != "deactivate"
-            ? ExecuteTopologyMutationAsync("space-floor:edit", DeleteRackLocks,
-                token => DeleteRackCoreAsync(id, mode, targetRackId, user, withinParent: true, token))
-            : DeleteRackCoreAsync(id, mode, targetRackId, user, withinParent: false, default);
+        => !_db.Database.IsNpgsql()
+            ? DeleteRackCoreAsync(id, mode, targetRackId, user, withinParent: false, default)
+            : mode == "deactivate"
+                ? DeactivateAndDeleteTopologyAsync(id, rack: true, user)
+                : ExecuteTopologyMutationAsync("space-floor:edit", DeleteRackLocks,
+                    token => DeleteRackCoreAsync(id, mode, targetRackId, user, withinParent: true, token));
 
     private async Task RequireCurrentRackAisleAsync(Guid zoneId, Guid? aisleId, CancellationToken token)
     {

@@ -34,6 +34,9 @@ public sealed class LocationPublishAuthorityV1(
     internal Task<T> ExecuteDeactivateAsync<T>(CP6Context context, Func<CancellationToken, Task<T>> body)
         => ExecuteAsync(context, "space-publish:deactivate", DeactivateLocks, "SPACE_DEACTIVATE", body);
 
+    internal Task<T> ExecuteTopologyDeactivateAsync<T>(CP6Context context, Func<CancellationToken, Task<T>> body)
+        => ExecuteAsync(context, "space-floor:edit", DeactivateLocks, "SPACE_TOPOLOGY", body);
+
     private async Task<T> ExecuteAsync<T>(CP6Context context, string permission, string locks,
         string outcomePrefix, Func<CancellationToken, Task<T>> body)
     {
