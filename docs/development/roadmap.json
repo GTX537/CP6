@@ -164934,6 +164934,16 @@
       "at": "2026-11-11T23:24:58.163049+00:00",
       "change": "W488两项实际隐私消息场景最终通过，原一分钟租约真实到期、原Request和一次发送事实保持；CRM #179正常采用65993e5e4，DEV2准确分支清理/干净/官方释放，Main协调继续。完整FX24/原验收不越级。",
       "evidence": "docs/development/evidence/W488-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-11T23:29:47.662338+00:00",
+      "change": "W488两仓准确采用和官方收尾完成；W489复用两席核配置预览与真实公开固定必填的一致性，先实际浏览器/Owner重现再修；整卡和正式验收保持。",
+      "evidence": "docs/development/evidence/W489-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-11T23:45:45.681981+00:00",
+      "change": "W489真实浏览器RED后修配置预览，原四字段政策不扩展，相关三种实际生命周期及Next构建通过；CRM #181正常采用21239ca95，Issue #180关闭、DEV2准确分支清理/干净/官方释放。完整原卡/验收保持，Main协调收尾。",
+      "evidence": "docs/development/evidence/W489-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -184177,6 +184187,23 @@
         "acceptance": "PASS_SIMULATED_REUSED",
         "scope_preserved": true,
         "consumer_completion_not_inferred": true
+      },
+      "wave489_delivery": {
+        "status": "PRODUCT_INTEGRATED_COORDINATOR_PENDING",
+        "report": "docs/development/evidence/W489-01/DELIVERY.md",
+        "full_task_complete": false,
+        "crm_source_sha": "411fa365ba6ab2eb1ccebd65f2d57c7c3ffa5014",
+        "crm_remote_main_sha": "21239ca957b54f41b7cc988164e99a92b7c1bfe0",
+        "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/181",
+        "crm_branch_disposition": "deleted-local-and-remote",
+        "crm_workspace_status": "fixed-seat-detached-for-reuse",
+        "crm_seat_released": true,
+        "scope": "修配置预览对固定必填/optional的呈现，原存储政策及权限/proof不变；两种合法政策及默认原生浏览器生命周期成功，9项未变API证据复用，Next实际重建。",
+        "actual_browser_pass": 3,
+        "reused_same_task_api_pass": 9,
+        "product_wire_changed": false,
+        "actions_triggered": false,
+        "deployment": false
       }
     },
     {
@@ -185956,7 +185983,7 @@
         "claimed_at": "2026-11-11T23:07:20.737734+00:00",
         "baseline_sha": "526817f7a9fa05ea4391b683f35466f360348927",
         "entry_evidence": "docs/development/evidence/W488-01/DELIVERY.md",
-        "phase": "PRODUCT_INTEGRATED_COORDINATOR_PENDING",
+        "phase": "CLOSED",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
@@ -186590,7 +186617,7 @@
         "main_seat_released": true
       },
       "wave488_delivery": {
-        "status": "PRODUCT_INTEGRATED_COORDINATOR_PENDING",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W488-01/DELIVERY.md",
         "full_task_complete": false,
         "crm_source_sha": "69d0621c705a574a6720a909aa300b46e73ca3bf",
@@ -186604,7 +186631,16 @@
         "skipped": 0,
         "product_source_changed": false,
         "actions_triggered": false,
-        "deployment": false
+        "deployment": false,
+        "main_adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/956",
+          "commit": "66ba654e79b4c21fcf1f37125e5522465147ecfe",
+          "target_head": "66ba654e79b4c21fcf1f37125e5522465147ecfe"
+        },
+        "main_branch_disposition": "deleted-local-and-remote",
+        "main_workspace_status": "fixed-seat-detached-for-reuse",
+        "main_seat_released": true
       }
     },
     {
@@ -210720,10 +210756,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W488",
-      "path": "docs/development/evidence/W488-01/DELIVERY.md",
-      "baseline_sha": "a4324b0df2c7cdaef221b77b16e40fd01deb49d4",
-      "registered_at": "2026-11-11T23:06:38.736387+00:00",
+      "id": "W489",
+      "path": "docs/development/evidence/W489-01/DELIVERY.md",
+      "baseline_sha": "66ba654e79b4c21fcf1f37125e5522465147ecfe",
+      "registered_at": "2026-11-11T23:29:47.662338+00:00",
       "phase": "PRODUCT_INTEGRATED_COORDINATOR_PENDING",
       "assigned_chats": [
         "COORD"
@@ -210740,13 +210776,14 @@
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": true,
-      "next_action": "Main正常采用/finish后，按剩余预算核已接受政策下配置预览与固定必填公开页面的一致性；真实问题再修，11h后集中当前任务与本轮结算。",
+      "next_action": "Main正常采用/finish后核本轮完整验收余项、实际活动BUG/正式包前置和下一轮可执行顺序；11h后集中收尾与12h结算，不新增宽产品范围。",
       "windows": [
         {
-          "id": "W488-01",
-          "workspace_task": "W488-01",
+          "id": "W489-01",
+          "workspace_task": "W489-01",
           "related_tasks": [
-            "WP03-04"
+            "WP03-01",
+            "WP03-02"
           ],
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
@@ -210754,22 +210791,21 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w488-01",
+          "branch": "codex/w489-01",
           "coordinator_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "coordinator_branch": "codex/w488-01",
-          "planned_scope_ref": "docs/development/evidence/W488-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W488-01/DELIVERY.md",
+          "coordinator_branch": "codex/w489-01",
+          "planned_scope_ref": "docs/development/evidence/W489-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W489-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "CRM:privacy-export-outbox",
-            "CRM:inquiry-outbox-recovery",
+            "CRM:configuration-preview-web",
             "Main:development-ledger"
           ],
-          "product_source_sha": "69d0621c705a574a6720a909aa300b46e73ca3bf",
-          "product_remote_main_sha": "65993e5e48c9b7a2d3a4b7d2ae11fea9fe1fefdd",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/179",
+          "product_source_sha": "411fa365ba6ab2eb1ccebd65f2d57c7c3ffa5014",
+          "product_remote_main_sha": "21239ca957b54f41b7cc988164e99a92b7c1bfe0",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/181",
           "product_branch_disposition": "deleted-local-and-remote",
           "product_workspace_status": "fixed-seat-detached-for-reuse",
           "product_seat_released": true
@@ -258859,6 +258895,79 @@
           ],
           "new_worktrees": 0
         }
+      },
+      {
+        "id": "W488",
+        "path": "docs/development/evidence/W488-01/DELIVERY.md",
+        "baseline_sha": "a4324b0df2c7cdaef221b77b16e40fd01deb49d4",
+        "registered_at": "2026-11-11T23:06:38.736387+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [
+          "COORD"
+        ],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "next_action": "Main正常采用/finish后，按剩余预算核已接受政策下配置预览与固定必填公开页面的一致性；真实问题再修，11h后集中当前任务与本轮结算。",
+        "windows": [
+          {
+            "id": "W488-01",
+            "workspace_task": "W488-01",
+            "related_tasks": [
+              "WP03-04"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w488-01",
+            "coordinator_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "coordinator_branch": "codex/w488-01",
+            "planned_scope_ref": "docs/development/evidence/W488-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W488-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CRM:privacy-export-outbox",
+              "CRM:inquiry-outbox-recovery",
+              "Main:development-ledger"
+            ],
+            "product_source_sha": "69d0621c705a574a6720a909aa300b46e73ca3bf",
+            "product_remote_main_sha": "65993e5e48c9b7a2d3a4b7d2ae11fea9fe1fefdd",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/179",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6/pull/956",
+              "commit": "66ba654e79b4c21fcf1f37125e5522465147ecfe",
+              "target_head": "66ba654e79b4c21fcf1f37125e5522465147ecfe"
+            },
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        }
       }
     ],
     "development_priority": {
@@ -265365,7 +265474,7 @@
         },
         {
           "id": "W488-01",
-          "state": "IN_PROGRESS",
+          "state": "CLOSED",
           "related_tasks": [
             "WP03-04"
           ],
@@ -265381,6 +265490,31 @@
           "product_integrated": true,
           "crm_adopted_main": "65993e5e48c9b7a2d3a4b7d2ae11fea9fe1fefdd",
           "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/179",
+          "full_task_completed": false,
+          "adopted_main": "66ba654e79b4c21fcf1f37125e5522465147ecfe",
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "seat_released": true
+        },
+        {
+          "id": "W489-01",
+          "state": "IN_PROGRESS",
+          "related_tasks": [
+            "WP03-01",
+            "WP03-02"
+          ],
+          "branch": "codex/w489-01",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "started_at": "2026-11-11T23:30:00.160843+00:00",
+          "delivery": "docs/development/evidence/W489-01/DELIVERY.md",
+          "scope": "核合法政策组合下配置预览与公开页面固定必填字段的一致性，实际React/BFF/PG先重现再最小修；保存/预览/生效继续保持原政策列表，不暗中扩字段或缩合法域。",
+          "repositories": {
+            "Main": "66ba654e79b4c21fcf1f37125e5522465147ecfe",
+            "CRM": "65993e5e48c9b7a2d3a4b7d2ae11fea9fe1fefdd"
+          },
+          "product_integrated": true,
+          "crm_adopted_main": "21239ca957b54f41b7cc988164e99a92b7c1bfe0",
+          "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/181",
           "full_task_completed": false
         }
       ],

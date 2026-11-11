@@ -1,6 +1,6 @@
 # 多对话任务分配与交付
 
-> 当前：W488隐私原消息确认/丢回执及实际租约到期恢复通过，CRM #179/DEV2准确生命周期已核销；Main DEV1协调采用/finish，原整卡和正式验收保持，12h继续。 [本任务](evidence/W488-01/DELIVERY.md)
+> 当前：W489配置预览真实修复/相关验证成功，CRM #181/Issue #180/DEV2准确生命周期已核销；Main DEV1协调采用/finish，后续核实际验收余项及下一可执行主线，12h继续。 [本任务](evidence/W489-01/DELIVERY.md)
 
 > 当前：W481已随#949采用并释放；COORD单人接[W482首条询盘链](evidence/W482-01/DELIVERY.md)，DEV-1为Main台账、DEV-2安全bind为CRM实施。两个开发席位属于同一任务，集成席位空闲。
 

@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-11 UTC · W489配置预览一致性
+
+先完成W489 Main正常采用和finish，再核本轮实际原验收余项及下一可执行主线。Main #844仍以GitHub为活动BUG真相；正式0.10.4包未交付，需明确发布权限与正式采用后再核Stock原失败，不能仅凭库源码合入关闭。11h后集中当前任务和12h结算，原正式余项保持。 [本任务](../development/evidence/W489-01/DELIVERY.md)
+
 ## 2026-11-11 UTC · W488隐私消息恢复
 
 先完成W488 Main正常采用和finish，再按剩余预算核配置预览与固定必填公开页面的一致性，实际缺口再修。11h后收拢当前任务和本轮结算；完整FX24 Inbox/poison、原23AC及四disposition/月度native和正式共同服务前置继续。 [本任务](../development/evidence/W488-01/DELIVERY.md)
