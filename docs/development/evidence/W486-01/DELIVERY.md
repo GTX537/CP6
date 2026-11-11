@@ -53,4 +53,4 @@ CRM [PR #176](https://github.com/GTX537/CP6.CRM/pull/176)正常合并，源`662f
 
 自有PG端口55570按原settings/Owner/数据目录核对后smart stop，数据/日志保留；HTTP、Next、Node和Chromium子进程已退出。验证生成的`.next`/`.test-dist`仅核边界后可逆移动至private `retained-generated`，原W485构建亦保留；固定缓存node_modules保留，无强删或新增工作树。工作流树与受保护main一致：CRM `0c2d74f9fdc63f5178f97baf33950fb3d4dad751`、Main `3355235636fd45116f5445fca32fc65e49f13003`，相关依赖未变、已复用触发分析，本次路径不触发生产tag；CRM任务Actions列表为空。无取消项、触发配置更改、远程运行或部署。
 
-Main本提交同步唯一报告、roadmap/生成入口和四状态及W485最终生命周期。Main自身PR/远端核对和官方finish尚待本PR核销，DEV-1当前由W486独占、席位尚未释放；不能提前声明两席释放。12h目标继续ACTIVE，后继须等本任务官方收尾后从最新基线status/start。
+Main [PR #954](https://github.com/GTX537/CP6/pull/954)已将源`6db248ee6e902fd17b45d31aa7c2fe5aca73dc93`正常合入远端main`d90c324b3a26bda3963297d32f3fa2cdcbd123b4`，fetch核对祖先及完整树`b08e87ca5b2f52d3e0d128f146902891f1ca9038`一致。官方finish成功，准确本地/远端任务分支删除，DEV-1干净detached、席位已释放；两仓证明为本任务private `main-finish.json` / `crm-finish.json`。两个主目录已安全快进，Main原14,932未跟踪路径完整保留，Main任务Actions列表为空。12h原生目标继续ACTIVE。

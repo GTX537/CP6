@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC · W487集合合同核验
+
+W487通过生成入口取得命名DTO列表快照，当前签名证据取消重复复制，原wire/schema/依赖/值域不变；真实RED和相关实际验证、CRM #178/Issue #177及DEV2准确生命周期已核销。Main协调和12h继续，无Actions/部署。 [本任务](../development/evidence/W487-01/DELIVERY.md)
+
 ## 2026-11-11 UTC · W486公开输入合法组合
 
 W486以原Schema/Owner合法政策域和固定公共DTO为边界，最小修复公开输入前后端同源错误；optional限制和原政策导出不扩大。相关39项成功、一次集中审查、CRM #176及Issue #175与DEV2准确生命周期已核销；Main协调和12h继续，无Actions/部署。 [本任务](../development/evidence/W486-01/DELIVERY.md)
