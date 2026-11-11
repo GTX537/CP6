@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC · 4h检查点与W483
+
+W483 CRM #170/Issue #169核销，原导出刷新与新登录恢复、明确新意图和原五分钟99页面真实通过；11项PG/HTTPS、6+14项Web/类型检查与一次集中审查。自有PG已smart停止，准确CRM分支清理和DEV2释放；Main协调按同轮远端采用及finish结算，未触发Actions/部署。 [本任务](../development/evidence/W483-01/DELIVERY.md)
+
 ## 2026-11-11 UTC · 首条询盘链W482
 
 W482 原生导出与 Main v2 独立服务当前权限已实现，真实 TLS/HTTPS/PG/React、原 202 恢复/并发/失权/回滚、五分钟清除及原 60 分钟保留/hold/故障共同回滚和联合清除通过；一次集中审查通过。CRM #168 已采用 f58688e0→8c78760e，准确任务分支清理、DEV-2 干净释放；Main 本提交正常采用/finish 继续。原卡/60AC/R1 与正式 PG 状态分别核销，12h 目标仍 ACTIVE。 [本任务](../development/evidence/W482-01/DELIVERY.md)
