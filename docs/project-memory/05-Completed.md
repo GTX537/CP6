@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-11 UTC 场景差量当前事务与重发布
+
+现存场景差量采用同Context当前space-floor:edit、签名会话、认证共同根和实际当前目标楼层；实际层级/WMS投影表锁，原差量、坐标、墓碑、重发布、LPB和集成事件参与同一父事务。原输入、既有版本冲突、投影版本判定及桥旁路策略保持，未知提交明确。 W460通过#922进入远端main，WP02-13采用核销，任务分支准确删除、DEV-2干净释放后复用。本窗采用、分支及席位以PR和finish为准。 [W461交付](../development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 操作日志降级保存隔离
 
 PostgreSQL操作日志降级使用独立DI作用域及新Context，传递原已确认请求租户，只保存日志。拒绝后未提交业务不被日志写入带入数据库，正常/日志故障及原字段、异常状态映射、Kafka路径和历史非PG保持。 W459通过#920进入远端main，WP02-03采用核销，任务分支准确删除，DEV-2干净释放后复用。本窗采用、分支及席位以PR和finish为准。 [W460交付](../development/evidence/BUG-921-OPERLOG-FALLBACK-ISOLATION/DELIVERY.md)

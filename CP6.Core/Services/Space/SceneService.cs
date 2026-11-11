@@ -31,11 +31,22 @@ public class SceneService : ISceneService
         => _geometryAuthority = geometryAuthority;
 
     /// <inheritdoc/>
-    public async Task<Dictionary<Guid, Guid>> SaveSceneAsync(Guid floorId, SceneSaveDto dto, string? user)
+    public Task<Dictionary<Guid, Guid>> SaveSceneAsync(Guid floorId, SceneSaveDto dto, string? user)
     {
-        // InMemory 安全事务守卫：真库开事务，InMemory 降级无事务
-        IDbContextTransaction? tx = _db.Database.IsRelational()
-            ? await _db.Database.BeginTransactionAsync()
+        if (!_db.Database.IsNpgsql()) return SaveSceneCoreAsync(floorId, dto, user, false, CancellationToken.None);
+        return (_geometryAuthority ?? throw new OrderPriceCorrectionException("SPACE_SCENE_AUTHORITY_UNAVAILABLE", 503))
+            .ExecuteSceneSaveAsync(_db, token => SaveSceneCoreAsync(floorId, dto, user, true, token));
+    }
+
+    private async Task<Dictionary<Guid, Guid>> SaveSceneCoreAsync(Guid floorId, SceneSaveDto dto, string? user,
+        bool withinParent, CancellationToken token)
+    {
+        if (withinParent && !await _db.Space_Floors.AnyAsync(f => f.Id == floorId, token))
+            throw new OrderPriceCorrectionException("SPACE_FLOOR_NOT_FOUND", 404);
+
+        // PostgreSQL joins the current authority transaction; retain historical provider behavior.
+        IDbContextTransaction? tx = !withinParent && _db.Database.IsRelational()
+            ? await _db.Database.BeginTransactionAsync(token)
             : null;
         try
         {
@@ -47,7 +58,7 @@ public class SceneService : ISceneService
             foreach (var zd in dto.Zones ?? new List<ZoneDto>())
             {
                 var existing = zd.Id.HasValue
-                    ? await _db.Space_Zones.FirstOrDefaultAsync(z => z.Id == zd.Id.Value)
+                    ? await _db.Space_Zones.FirstOrDefaultAsync(z => z.Id == zd.Id.Value, token)
                     : null;
                 if (existing != null)
                 {
@@ -82,7 +93,7 @@ public class SceneService : ISceneService
             foreach (var ad in dto.Aisles ?? new List<AisleDto>())
             {
                 var existing = ad.Id.HasValue
-                    ? await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == ad.Id.Value)
+                    ? await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == ad.Id.Value, token)
                     : null;
                 if (existing != null)
                 {
@@ -111,7 +122,7 @@ public class SceneService : ISceneService
             foreach (var rd in dto.Racks ?? new List<RackDto>())
             {
                 var existing = rd.Id.HasValue
-                    ? await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rd.Id.Value)
+                    ? await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rd.Id.Value, token)
                     : null;
                 if (existing != null)
                 {
@@ -128,7 +139,7 @@ public class SceneService : ISceneService
                         var outOfBounds = await _db.Space_Locations
                             .Where(l => l.RackId == existing.Id &&
                                         (l.Col > rd.Cols || l.Level > rd.Levels || l.Depth > rd.DepthCount))
-                            .ToListAsync();
+                            .ToListAsync(token);
                         if (outOfBounds.Any(l => l.Status == 1))
                             throw new BizException("E-SPACE-403");
                         if (outOfBounds.Count > 0)
@@ -198,7 +209,7 @@ public class SceneService : ISceneService
             foreach (var md in dto.Markers ?? new List<MarkerDto>())
             {
                 var existing = md.Id.HasValue
-                    ? await _db.Space_Markers.FirstOrDefaultAsync(m => m.Id == md.Id.Value)
+                    ? await _db.Space_Markers.FirstOrDefaultAsync(m => m.Id == md.Id.Value, token)
                     : null;
                 if (existing != null)
                 {
@@ -236,7 +247,7 @@ public class SceneService : ISceneService
                 Guid? incomingRack = ld.RackId == Guid.Empty ? null : ld.RackId;
 
                 var existing = ld.Id.HasValue
-                    ? await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == ld.Id.Value)
+                    ? await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == ld.Id.Value, token)
                     : null;
                 if (existing != null)
                 {
@@ -284,7 +295,7 @@ public class SceneService : ISceneService
             // ── Deletes ────────────────────────────────────────────
             foreach (var locId in dto.Deletes?.Locations ?? new List<Guid>())
             {
-                var e = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locId);
+                var e = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locId, token);
                 if (e == null) continue;
                 // 已发布不可删（须先停用）；草稿/停用可删（2026-07-06 拍板）。
                 // 波5 已清理：停用位删除后其 T_WmsBin 墓碑行（占 join 锚）在本事务末尾一并清除
@@ -298,36 +309,36 @@ public class SceneService : ISceneService
             foreach (var rackId in dto.Deletes?.Racks ?? new List<Guid>())
             {
                 // ch04 §7.1：有已发布库位 → Restrict；全草稿/停用 → 库位连带删（旧 E-003 全拦废止）
-                if (await _db.Space_Locations.AnyAsync(l => l.RackId == rackId && l.Status == 1))
+                if (await _db.Space_Locations.AnyAsync(l => l.RackId == rackId && l.Status == 1, token))
                     throw new BizException("E-SPACE-403");
-                var children = await _db.Space_Locations.Where(l => l.RackId == rackId).ToListAsync();
+                var children = await _db.Space_Locations.Where(l => l.RackId == rackId).ToListAsync(token);
                 if (children.Count > 0)
                 {
                     _db.Space_Locations.RemoveRange(children);
                     foreach (var l in children) deletedLocIds.Add(l.Id);   // 波5：级联删库位清其 T_WmsBin 墓碑锚
                 }
-                var e = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId);
+                var e = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId, token);
                 if (e != null) _db.Space_Racks.Remove(e);
             }
 
             foreach (var aisleId in dto.Deletes?.Aisles ?? new List<Guid>())
             {
                 // SetNull：保留货架但解除巷道关联
-                var racks = await _db.Space_Racks.Where(r => r.AisleId == aisleId).ToListAsync();
+                var racks = await _db.Space_Racks.Where(r => r.AisleId == aisleId).ToListAsync(token);
                 foreach (var r in racks) r.AisleId = null;
-                var e = await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == aisleId);
+                var e = await _db.Space_Aisles.FirstOrDefaultAsync(a => a.Id == aisleId, token);
                 if (e != null) _db.Space_Aisles.Remove(e);
             }
 
             foreach (var zoneId in dto.Deletes?.Zones ?? new List<Guid>())
             {
-                var e = await _db.Space_Zones.FirstOrDefaultAsync(z => z.Id == zoneId);
+                var e = await _db.Space_Zones.FirstOrDefaultAsync(z => z.Id == zoneId, token);
                 if (e != null) _db.Space_Zones.Remove(e);
             }
 
             foreach (var markerId in dto.Deletes?.Markers ?? new List<Guid>())
             {
-                var e = await _db.Space_Markers.FirstOrDefaultAsync(m => m.Id == markerId);
+                var e = await _db.Space_Markers.FirstOrDefaultAsync(m => m.Id == markerId, token);
                 if (e != null) _db.Space_Markers.Remove(e);
             }
 
@@ -338,7 +349,7 @@ public class SceneService : ISceneService
             // ── 保存（乐观并发冲突→E-SPACE-009）─────────────────────
             try
             {
-                await _db.SaveChangesAsync();
+                await _db.SaveChangesAsync(token);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -347,7 +358,7 @@ public class SceneService : ISceneService
 
             // ── 位姿变更货架→重算库位绝对坐标 ─────────────────────────
             foreach (var rid in changedRackIds)
-                await _geo.RecalcRackLocationsAsync(rid);
+                await _geo.RecalcRackLocationsAsync(rid, token);
 
             // ── H4：改挂货架下的已发布库位 re-publish（在本事务内，RepublishAsync 嵌套守卫自动加入）──
             if (pathChangedRackIds.Count > 0)
@@ -355,12 +366,12 @@ public class SceneService : ISceneService
                 var republishIds = await _db.Space_Locations
                     .Where(l => l.RackId != null && pathChangedRackIds.Contains(l.RackId.Value) && l.Status == 1)
                     .Select(l => l.Id)
-                    .ToListAsync();
+                    .ToListAsync(token);
                 if (republishIds.Count > 0)
                     await _publish.RepublishAsync(republishIds, user);
             }
 
-            if (tx != null) await tx.CommitAsync();
+            if (tx != null) await tx.CommitAsync(token);
         }
         catch
         {

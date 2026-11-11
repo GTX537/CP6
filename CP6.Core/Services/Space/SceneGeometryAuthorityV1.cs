@@ -10,7 +10,24 @@ namespace CP6.Core.Services.Space;
 public sealed class SceneGeometryAuthorityV1(CP6Context db, IamAdministrationV1? administration,
     TenantManagementSessionV1? session, CancellationToken requestCancellation = default)
 {
-    public async Task<T> ExecuteAsync<T>(CP6Context context, bool importing, Func<CancellationToken, Task<T>> body)
+    public Task<T> ExecuteAsync<T>(CP6Context context, bool importing, Func<CancellationToken, Task<T>> body)
+        => ExecuteWithLocksAsync(context, importing ? """
+            LOCK TABLE public."Space_Site" IN SHARE MODE;
+            LOCK TABLE public."Space_Floor", public."Space_Zone", public."Space_Aisle", public."Space_Rack",
+                public."Space_Location" IN SHARE ROW EXCLUSIVE MODE
+            """ : """
+            LOCK TABLE public."Space_Rack" IN SHARE MODE;
+            LOCK TABLE public."Space_Location" IN SHARE ROW EXCLUSIVE MODE
+            """, body);
+
+    internal Task<T> ExecuteSceneSaveAsync<T>(CP6Context context, Func<CancellationToken, Task<T>> body)
+        => ExecuteWithLocksAsync(context, """
+            LOCK TABLE public."Space_Site", public."Space_Floor" IN SHARE MODE;
+            LOCK TABLE public."Space_Zone", public."Space_Aisle", public."Space_Rack", public."Space_Marker",
+                public."Space_Location", public."T_WmsBin" IN SHARE ROW EXCLUSIVE MODE
+            """, body);
+
+    private async Task<T> ExecuteWithLocksAsync<T>(CP6Context context, string locks, Func<CancellationToken, Task<T>> body)
     {
         if (!ReferenceEquals(context, db) || administration?.Owns(db) != true || session == null)
             throw new OrderPriceCorrectionException("SPACE_SCENE_AUTHORITY_UNAVAILABLE", 503);
@@ -19,14 +36,7 @@ public sealed class SceneGeometryAuthorityV1(CP6Context db, IamAdministrationV1?
             return await administration.ExecuteCurrentAsync("space-floor:edit", session.CurrentActor,
                 async (actor, token) =>
                 {
-                    await db.Database.ExecuteSqlRawAsync(importing ? """
-                        LOCK TABLE public."Space_Site" IN SHARE MODE;
-                        LOCK TABLE public."Space_Floor", public."Space_Zone", public."Space_Aisle", public."Space_Rack",
-                            public."Space_Location" IN SHARE ROW EXCLUSIVE MODE
-                        """ : """
-                        LOCK TABLE public."Space_Rack" IN SHARE MODE;
-                        LOCK TABLE public."Space_Location" IN SHARE ROW EXCLUSIVE MODE
-                        """, token);
+                    await db.Database.ExecuteSqlRawAsync(locks, token);
                     var result = await body(token);
                     if (await session.CurrentActor(token) != actor.UserId)
                         throw new OrderPriceCorrectionException("REAUTH_REQUIRED", 401);
