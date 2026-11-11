@@ -298,7 +298,8 @@ def execute(args):
         driver = target_sql(plan, True) + receipt_sql()
     else:
         checked, metadata = stage.checked_bundle(args.bundle, output, tenant, digest, target, args.file_content_root,
-                                                 include_stock_outbox=True)
+                                                 include_stock_outbox=True,
+                                                 include_file_content_history=getattr(args, "include_file_content_history", False))
         schema = "t_" + tenant.hex
         emit_rows(pg_bin, checked, output, schema)
         counts = {name: metadata["counts"][name] for name in COPY_COLUMNS}
@@ -328,6 +329,9 @@ def main():
         if name.startswith("import"):
             command.add_argument("--bundle", type=Path, required=True)
             command.add_argument("--file-content-root", type=Path, help="original private asset root for applicable formats")
+        if name == "import":
+            command.add_argument("--include-file-content-history", action="store_true",
+                                 help="accept a complete v11 archive for this RMA import")
     try:
         sys.stdout.buffer.write(execute(parser.parse_args()) + b"\n")
     except (stage.StageError, archive.ArchiveError, OSError, ValueError, subprocess.SubprocessError) as error:

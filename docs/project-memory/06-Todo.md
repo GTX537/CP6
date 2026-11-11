@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-11 UTC 完整 v11 RMA 两表导入
+
+继续W429 v11实际ERP C03原图导入。RMA流水待同一有效v11中由真实RMA Owner生成的回执，正式PGT-021/022和切换各自验收。 RMA两表候选保持关闭。 [W472交付](../development/evidence/W472-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 关闭候选实际 FileContent Owner
 
 将完整v11的原RMA两表及独立RMA Owner流水接入现有关闭Core导入，沿用原始回执、租户及当前候选权限，正式PGT-021/022和切换各自验收。 FileContent候选保持关闭。 [W471交付](../development/evidence/W471-01/DELIVERY.md)
