@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-11 UTC 库位采纳并发跳过合同
+
+现存库位采纳使用原space-publish:adopt、同Context当前授权事务及实际库位写锁；先提交的同码按原合同跳过，后到批次其余行可导入。保留原顺序、历史占码、租户隔离和影子位置字段，无回发、通知、LPB或物理库存变化。 实际Main PostgreSQL18.6三新和四项受影响发布、29项既有服务通过。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，容量172800。 [W463交付](../development/evidence/BUG-927-SPACE-LOCATION-ADOPT-FENCE/DELIVERY.md)
+
 ## 2026-11-11 UTC 库位发布当前编码闸门
 
 现存整层/库区发布采用原space-publish:publish、签名会话和同Context授权事务；编码闸门在当前规则和拓扑内决定，真实库位、LPB、WMS投影及桥事件沿原合同提交。保留空批次、原409和旁路行为，确认提交后才发成功通知，未知结果明确。 实际Main PostgreSQL 18.6四项，既有发布、通知和观测链兼容按交付报告。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN；48h172800、40h144047及下一158400保持。 [W462交付](../development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md)

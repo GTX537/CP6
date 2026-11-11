@@ -11,21 +11,31 @@ public sealed class LocationPublishAuthorityV1(
     CP6Context db, IamAdministrationV1 administration, TenantManagementSessionV1? session,
     CancellationToken requestCancellation = default)
 {
-    internal async Task<T> ExecuteFloorAsync<T>(CP6Context context, Func<CancellationToken, Task<T>> body)
+    // Same acquisition order as code generation and geometry writes.
+    private const string FloorLocks = """
+        LOCK TABLE public."Space_CodeRule", public."Space_Site", public."Space_Floor",
+            public."Space_Zone", public."Space_Aisle", public."Space_Rack" IN SHARE MODE;
+        LOCK TABLE public."Space_Location", public."T_WmsBin" IN SHARE ROW EXCLUSIVE MODE
+        """;
+    private const string AdoptLocks = """LOCK TABLE public."Space_Location" IN SHARE ROW EXCLUSIVE MODE""";
+
+    internal Task<T> ExecuteFloorAsync<T>(CP6Context context, Func<CancellationToken, Task<T>> body)
+        => ExecuteAsync(context, "space-publish:publish", FloorLocks, "SPACE_PUBLISH", body);
+
+    internal Task<T> ExecuteAdoptAsync<T>(CP6Context context, Func<CancellationToken, Task<T>> body)
+        => ExecuteAsync(context, "space-publish:adopt", AdoptLocks, "SPACE_ADOPT", body);
+
+    private async Task<T> ExecuteAsync<T>(CP6Context context, string permission, string locks,
+        string outcomePrefix, Func<CancellationToken, Task<T>> body)
     {
         if (!ReferenceEquals(context, db) || !administration.Owns(db) || session is null)
-            throw new OrderPriceCorrectionException("SPACE_PUBLISH_AUTHORITY_UNAVAILABLE", 503);
+            throw new OrderPriceCorrectionException(outcomePrefix + "_AUTHORITY_UNAVAILABLE", 503);
         try
         {
-            return await administration.ExecuteCurrentAsync("space-publish:publish", session.CurrentActor,
+            return await administration.ExecuteCurrentAsync(permission, session.CurrentActor,
                 async (actor, token) =>
                 {
-                    // Same acquisition order as code generation and geometry writes.
-                    await db.Database.ExecuteSqlRawAsync("""
-                        LOCK TABLE public."Space_CodeRule", public."Space_Site", public."Space_Floor",
-                            public."Space_Zone", public."Space_Aisle", public."Space_Rack" IN SHARE MODE;
-                        LOCK TABLE public."Space_Location", public."T_WmsBin" IN SHARE ROW EXCLUSIVE MODE
-                        """, token);
+                    await db.Database.ExecuteSqlRawAsync(locks, token);
                     var result = await body(token);
                     if (await session.CurrentActor(token) != actor.UserId)
                         throw new OrderPriceCorrectionException("REAUTH_REQUIRED", 401);
@@ -35,11 +45,11 @@ public sealed class LocationPublishAuthorityV1(
         catch (IamAdministrationExceptionV1 error)
         {
             throw new OrderPriceCorrectionException(error.Message == "IAM_OPERATION_UNKNOWN"
-                ? "SPACE_PUBLISH_OUTCOME_UNKNOWN" : error.Message, error.Status, error);
+                ? outcomePrefix + "_OUTCOME_UNKNOWN" : error.Message, error.Status, error);
         }
         catch (Exception error) when ((error is DbException or DbUpdateException) && error is not DbUpdateConcurrencyException)
         {
-            throw new OrderPriceCorrectionException("SPACE_PUBLISH_AUTHORITY_UNAVAILABLE", 503, error);
+            throw new OrderPriceCorrectionException(outcomePrefix + "_AUTHORITY_UNAVAILABLE", 503, error);
         }
     }
 }
