@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC · W488隐私消息恢复
+
+W488新增privacy-export真实原消息、HTTP丢回执及原租约实际到期恢复；两项最终成功，原202/Job/H01和发送事实保持。CRM #179及DEV2准确生命周期已核销，Main协调和12h继续，无产品源码/依赖、Actions或部署变化。 [本任务](../development/evidence/W488-01/DELIVERY.md)
+
 ## 2026-11-11 UTC · W487集合合同核验
 
 W487通过生成入口取得命名DTO列表快照，当前签名证据取消重复复制，原wire/schema/依赖/值域不变；真实RED和相关实际验证、CRM #178/Issue #177及DEV2准确生命周期已核销。Main协调和12h继续，无Actions/部署。 [本任务](../development/evidence/W487-01/DELIVERY.md)
