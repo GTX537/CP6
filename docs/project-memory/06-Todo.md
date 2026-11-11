@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-11 UTC v11 FileContent 原历史导入
+
+沿完整v11对真实同源IAM、Identity Priority、ERP、Main Stock做只读原键对账，并保留宿主实际Owner读取、候选资格、正式PGT-021/022与切换各自边界。 W469关闭候选保持 recoveryReady=false。 [W469交付](../development/evidence/W469-01/DELIVERY.md)
+
 ## 2026-11-11 UTC v11 候选文件原字节落盘
 
 核对已备候选根与v11 FileContent业务Owner原图导入、当前Engineering父版本及候选资格；其余ERP、Stock、授权、消息对账和正式PGT-021/022另验，无批准切换。 文件候选回执不代表Owner或部署采用。 [W468交付](../development/evidence/W468-01/DELIVERY.md)

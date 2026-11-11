@@ -2,6 +2,7 @@
 """Exercise FileContent candidate import against a prepared isolated PostgreSQL fixture."""
 
 import argparse
+import csv
 from dataclasses import dataclass, replace
 import json
 import os
@@ -32,6 +33,7 @@ class Inputs:
     manifest_sha256: str
     bundle: Path
     file_content_root: Path
+    include_file_content_history: bool = False
 
 
 def require(value, message):
@@ -53,6 +55,8 @@ def invoke(f, label, args, rejection=None):
         command.extend(("--" + name.replace("_", "-"), str(getattr(args, name))))
     if args.action == "import":
         command.extend(("--bundle", str(args.bundle)))
+        if args.include_file_content_history:
+            command.append("--include-file-content-history")
     result = subprocess.run(command, env=f.env, capture_output=True, timeout=95, creationflags=archive.FLAGS)
     (f.output / (label + ".stdout")).write_bytes(result.stdout)
     (f.output / (label + ".stderr")).write_bytes(result.stderr)
@@ -245,6 +249,82 @@ def native(f, args, target, v2_raw, v2_heads):
     return dict(Receipt=receipt, ReceiptBytes=len(imported), ForeignTenant=foreign, ForeignSameKey=operation,
                 JournalSha256=archive.file_digest(out / "actual-operations.stdout")["sha256"],
                 ReceiptSha256=archive.file_digest(out / "import.stdout")["sha256"])
+
+
+def native_v11(f, args, old_bundle, old_pin, old_root):
+    import file_content_candidate as candidate
+
+    out, tenant = f.output, args.tenant
+    manifest = json.loads((args.bundle / history.MANIFEST).read_bytes())
+    counts = {key: manifest["fileContentHistory"]["members"][history.filename(key)]["rows"]
+              for key in history.MEMBERS}
+    with (args.bundle / history.filename("contents")).open(encoding="utf-8", newline="") as stream:
+        file_id = next(csv.DictReader(stream))["file_id"]
+    with (args.bundle / history.filename("operations")).open(encoding="utf-8", newline="") as stream:
+        operation = next(csv.DictReader(stream))["operation_id"]
+    before = protected(f, "protected-before", tenant)
+    state = json.loads(before)
+    foreign_files = state["foreignFileContent"][candidate.CONTENTS]
+    foreign_operations = [row for row in state["otherJournal"] if row["owner"] == candidate.OWNER
+                          and row["operation_id"] == operation and row["tenant_id"] != tenant]
+    require(state["admission"] == 0 and foreign_operations and any(
+        row["file_id"] == file_id and row["tenant_id"] == foreign_operations[0]["tenant_id"] for row in foreign_files),
+        "fixture requires B's original same-key FileContent and Owner operation")
+
+    invoke(f, "v11-without-option", replace(args, output=out / "v11-without-option", include_file_content_history=False),
+           "file-content-history-member-set-rejected")
+    invoke(f, "v10-with-option", replace(args, output=out / "v10-with-option", bundle=old_bundle,
+                                        manifest_sha256=old_pin, file_content_root=old_root),
+           "rma-stage-bundle-member-rejected")
+    invoke(f, "wrong-manifest-pin", replace(args, output=out / "wrong-manifest-pin", manifest_sha256="0" * 64),
+           "rma-stage-manifest-digest-mismatch")
+    require(all(not (out / name / "driver.sql").exists()
+                for name in ("v11-without-option", "v10-with-option", "wrong-manifest-pin")),
+            "rejected archive reached the database driver")
+
+    fault(f, replace(args, output=out / "wrong-parent"), lambda sql, _: insert_before(sql, "DO $file_candidate_adopt$",
+        "UPDATE pg_temp.file_import_parent_versions SET recorded_at=recorded_at+interval '1 second';\n"),
+        "rma-stage-file-candidate-parent-rejected")
+    late = fault(f, replace(args, output=out / "late-rollback"), lambda sql, _: sql + "\nSELECT 1 / 0;\n",
+                 "rma-stage-native-failed (see native logs)")
+    require(b"22012" in late and b'"IMPORTED"' in (out / "late-rollback/stage.stdout").read_bytes(),
+            "fixture did not fail after the native receipt")
+    for key in ("contents", "heads", "events", "operations"):
+        part = history.MEMBERS[key]
+        predicate = f"tenant_id={q(tenant)}" + (f" AND owner={q(candidate.OWNER)}" if key == "operations" else "")
+        raw = f.sql("after-rollback-" + key, f"SELECT count(*) FROM {part.relation} WHERE {predicate};")
+        require(raw.strip() == b"0", "late rollback left original rows")
+    recover = replace(args, action="recover")
+    invoke(f, "recover-rollback", replace(recover, output=out / "recover-rollback"),
+           "rma-stage-candidate-receipt-not-found")
+    require(protected(f, "protected-after-rollback", tenant) == before, "rollback changed another owner, parent or B")
+
+    imported = invoke(f, "import-v11", replace(args, output=out / "import-v11"))
+    require(imported == invoke(f, "repeat-v11", replace(args, output=out / "repeat-v11"))
+            == invoke(f, "recover-v11", replace(recover, output=out / "recover-v11")),
+            "replay or read-only recovery changed the original v11 receipt")
+    invoke(f, "recover-wrong-pin", replace(recover, output=out / "recover-wrong-pin", manifest_sha256=old_pin),
+           "rma-stage-candidate-receipt-key-rejected")
+    receipt = json.loads(imported)
+    require(receipt["outcome"] == "IMPORTED" and receipt["format"] == archive.FORMAT_WITH_FILE_CONTENT_HISTORY
+            and receipt["recoveryReady"] is False and receipt["counts"] == counts
+            and receipt["binding"] == dict(target=json.loads(args.target_file.read_bytes()),
+                candidateId=args.candidate_id, tenantId=tenant, manifestSha256=args.manifest_sha256,
+                fileContentRoot=args.file_content_root.as_posix()), "v11 receipt binding differs")
+
+    originals = {}
+    for key, query in history.rows_sql(tenant).items():
+        part = history.MEMBERS[key]
+        raw = f.sql("actual-" + key, f"BEGIN READ ONLY; {archive.JOURNAL_COPY_SETTINGS} "
+                    f"COPY ({query} ORDER BY {', '.join(part.key)}) TO STDOUT WITH (FORMAT csv,HEADER); COMMIT;")
+        path = args.bundle / history.filename(key)
+        require(raw == path.read_bytes(), f"native v11 original {key} differs")
+        originals[key] = archive.file_digest(path)
+    require(protected(f, "protected-after", tenant) == before, "parent, other Owner, B, or native gates changed")
+    return dict(Receipt=receipt, ReceiptBytes=len(imported),
+                ReceiptSha256=archive.file_digest(out / "import-v11.stdout")["sha256"],
+                VerifiedMembers=originals, ForeignTenant=foreign_operations[0]["tenant_id"],
+                ForeignSameFileAndOperation=True, LateRollback=True, ProtectedStateUnchanged=True)
 
 
 if __name__ == "__main__":

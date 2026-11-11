@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-11 UTC v11 FileContent 原历史导入
+
+沿W429 v11与W468候选原45字节，PostgreSQL 18.6关闭候选导入FileContent三表及原Owner流水，引用Engineering父版本，五原CSV与回执逐字节一致，B同键原记录不变，真实晚段故障全回滚。 W468经#936采用、分支准确清理且DEV-2干净释放；实测12.88–12.97分钟。 [W469交付](../development/evidence/W469-01/DELIVERY.md)
+
 ## 2026-11-11 UTC v11 候选文件原字节落盘
 
 消费W467真实v11暂存回执及原manifest pin，核对同一历史元数据，原LocalFileStore 45字节按原键写入独立私有候选，可原样恢复回执，旧41字节v10保留；recoveryReady=false。 W467经#935进入远端main，准确删除分支、DEV-2干净释放；实测16.71–16.80分钟。 [W468交付](../development/evidence/W468-01/DELIVERY.md)

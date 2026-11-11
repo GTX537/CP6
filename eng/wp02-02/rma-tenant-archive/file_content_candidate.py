@@ -132,7 +132,7 @@ def staged_sql():
     """ for key, part in history.MEMBERS.items())
 
 
-def adopt_sql():
+def adopt_sql(source_format=history.FORMAT):
     temp = {key: "pg_temp." + temporary(key) for key in history.MEMBERS}
     rows = {key: temporary_rows(key) for key in history.MEMBERS}
     scope_errors = " UNION ALL ".join(f"SELECT 1 FROM {table} WHERE tenant_id IS DISTINCT FROM tenant" for table in temp.values())
@@ -197,7 +197,7 @@ def adopt_sql():
     REVOKE ALL ON {RECEIPTS}.receipt FROM PUBLIC;
     INSERT INTO {RECEIPTS}.receipt
     SELECT true,p->'key',json_build_object('outcome','IMPORTED','recoveryReady',false,'profile','{PROFILE}',
-        'binding',p->'key','format','{history.FORMAT}','counts',p->'counts')::text
+        'binding',p->'key','format',{archive.literal(source_format)},'counts',p->'counts')::text
     FROM (SELECT current_setting('{PLAN}')::jsonb p) s;
     SELECT result_json FROM {RECEIPTS}.receipt;
     """
@@ -211,6 +211,7 @@ def execute(args):
     if not args.username or "\0" in args.username:
         raise stage.StageError("rma-stage-invalid-username")
     recover = args.action == "recover"
+    v11 = not recover and args.include_file_content_history
     root = args.file_content_root
     if not root.is_absolute() or ".." in root.parts:
         raise stage.StageError("rma-stage-file-candidate-root-rejected")
@@ -219,7 +220,11 @@ def execute(args):
     root = root.resolve(strict=not recover)
     output = history.checked_output(args.output.absolute(), root)
     if not recover:
-        bundle = history.checked_bundle_path(args.bundle.absolute())
+        bundle = args.bundle.absolute()
+        if v11:
+            bundle = history.assets.checked_root(bundle).resolve(strict=True)
+        else:
+            bundle = history.checked_bundle_path(bundle)
         history.checked_output(output, bundle)
         if root == bundle or root in bundle.parents or bundle in root.parents:
             raise stage.StageError("rma-stage-file-candidate-root-rejected")
@@ -230,15 +235,23 @@ def execute(args):
     if recover:
         driver = candidate.target_sql(plan, True) + receipt
     else:
-        checked = output / "bundle"
-        checked.mkdir(mode=0o700)
-        for name in (history.MANIFEST, *(history.filename(key) for key in history.MEMBERS)):
-            shutil.copyfile(bundle / name, checked / name, follow_symlinks=False)
-        manifest = history.verify_bundle(checked, tenant, pin, root)
-        source = archive.PhysicalTarget.from_mapping(manifest["source"])
-        if (source.system_identifier, source.database_oid) == (target.system_identifier, target.database_oid):
-            raise stage.StageError("rma-stage-target-is-source")
-        plan["counts"] = {key: manifest["members"][history.filename(key)]["rows"] for key in history.MEMBERS}
+        if v11:
+            _, verified = stage.checked_bundle(bundle, output, tenant, pin, target, root,
+                                               include_file_content_history=True)
+            members = verified["fileContentHistory"]["members"]
+            source_format = verified["format"]
+        else:
+            checked = output / "bundle"
+            checked.mkdir(mode=0o700)
+            for name in (history.MANIFEST, *(history.filename(key) for key in history.MEMBERS)):
+                shutil.copyfile(bundle / name, checked / name, follow_symlinks=False)
+            manifest = history.verify_bundle(checked, tenant, pin, root)
+            source = archive.PhysicalTarget.from_mapping(manifest["source"])
+            if (source.system_identifier, source.database_oid) == (target.system_identifier, target.database_oid):
+                raise stage.StageError("rma-stage-target-is-source")
+            members = manifest["members"]
+            source_format = manifest["format"]
+        plan["counts"] = {key: members[history.filename(key)]["rows"] for key in history.MEMBERS}
         driver = candidate.target_sql(plan, False) + f"""
         SELECT to_regnamespace('{RECEIPTS}') IS NOT NULL AS has_receipt \\gset
         \\if :has_receipt
@@ -246,7 +259,7 @@ def execute(args):
         \\else
         {ready_sql()}
         {staged_sql()}
-        {adopt_sql()}
+        {adopt_sql(source_format)}
         \\endif
         """
     (output / "driver.sql").write_text(driver, encoding="utf-8")
@@ -264,6 +277,8 @@ def main():
             command.add_argument("--" + field, required=True)
         if name == "import":
             command.add_argument("--bundle", type=Path, required=True)
+            command.add_argument("--include-file-content-history", action="store_true",
+                                 help="import the FileContent originals from a complete v11 RMA archive")
     try:
         sys.stdout.buffer.write(execute(parser.parse_args()) + b"\n")
     except (stage.StageError, archive.ArchiveError, OSError, ValueError, csv.Error, subprocess.SubprocessError) as error:
