@@ -164027,6 +164027,11 @@
       "at": "2026-11-11T01:53:38.778734+00:00",
       "change": "W466逐个停用7新、5受影响独立入口、47既有通过，核销W465实测18.33–18.39分钟。",
       "evidence": "docs/development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-11T02:12:45.097426+00:00",
+      "change": "W467完成实际v11五原成员隔离暂存与回读、旧v10、晚段回滚与原回执；核销W466及18.95–19.02分钟，保持48小时容量。",
+      "evidence": "docs/development/evidence/W467-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -166784,9 +166789,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
-        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。  W346 现有 Stock 首装提交后丢弃 stdout，从另一个真实进程在准确物理库取回原安装 ID，驱动原写栅栏及后续已交付安装。孤立回执、未绑定登录读策略及目录/权限漂移拒绝。 W348 实际验证共享消息 profile 的初始化中断、原键恢复及原结果重放。  W350 在 fresh-only PostgreSQL 真实把原 RMA heads/versions 迁入各自租户 schema，验证原子首版、实际进程竞争、中断与原结果、普通角色和原复合约束。 新隔离全 Core 物理 commissioning 以实际发布宿主和 PostgreSQL 验证，旧业务与旧 RMA journal 栅栏、其他 Owner 和原回执已证。 W355 实测 Stock 10/100 普通登录冷暖、缓存 churn、真实模型、原生后端及双进程有限峰值，原配置 129/1000 拒绝。 原 RMA 正常 HTTP 单条和历史读从真实登录经当前共享权威到新租户 EF，A/B 原件、ETag、授权和真实 SQL已验证。 W358 RMA 已 Ready 租户的真实非事务索引、原生无效对象中断及准确原键恢复已验证，B 和已采用普通读继续。 原 RMA 受权分页列表以真实 A/B Bearer 验证两页和当前权限，第二页实际跨128候选，版本按原键读取。 原生同快照 RMA tenant schema 和已引用的共享 Outbound 从真实 A/B 活动库准确导出并独立 staging，ACL/Owner、版本和原内容通过。 W361 对真实全 Core 的原 RMA 日志安装普通租户 RLS 和同事务最小追加，实测同键跨租、闭合回滚、原认证根、其他 Owner 及原回执。 W366 增加真实 RMA 原操作日志同快照 v2 切片，准确固定租户和原 Owner，原 bytes 与隔离 staging 已验，保留 v1。 W364 在真实宿主首次采用普通 RMA draft POST，原 head、version 和 W361 journal 同事务写回，现行授权、八位数量、原 ETag 及同键精确重放已证。 W370 将真实 RMA v1/v2 归档 staging 接可操作入口，验证同事务原 schema、共享片和回执，坏输入回滚及原结果恢复。 W372 实际采用普通 RMA 提交，原 If-Match、版本推进、原日志、权限、故障回滚与原结果实证。共享归档保持确切已采用 writer 权限。 W374 实际交付 v3 同切面来源归档及 v1/v2 兼容。 W375 真正接正常原操作查询与关闭，当前授权、迟到竞争及原结果实证。 W377 实际交付 v3 隔离 staging、来源精度和字符规则、后段回滚与同键恢复。 W379 实测原可见性 v4 同切面，保留直连和回退工单、软删、空键与原库位隔离。 W380 同快照实际身份优先四表、原 bytea、租约和全局消息键，旧格式兼容。 W382 实际 v4 原子落表、真实图失败回滚与原回执。 W385 实际 v5 四表中立 staging，原键、空成员、原回执及同 pin 回滚。 W384 实际对账当前终态/租约与原键冲突，保持 UNKNOWN，受限角色真失败闭合。 W387 实际历史 IAM 同快照归档，后续字段和策略漂移未影响原切面。 W389 同快照保留原 FileContent 资产和原工程父版本，真实原件按长度与摘要复核，异常缺件拒绝。 W391 原历史 IAM 原子落表，原参与者标志跨 heads/journal 精确核实，晚段失败后同键恢复。 W393 对账原 IAM 现行事实，原 3 项漂移和原缺失参与者按原值保留，精确 v6/v7 原源通过。 W394 实测 v7 文件引用中立落表、真实晚段故障全回滚及原回执恢复。 W395 实测 ERP 八表同切面归档及原 C 与 ICU 键域，保留报文/原结果/租约及 replay 审计。 W396 原 v6/v7 清单使用相同 Identity Priority 当前对账，实际发布原件和空键权限得到验证。 W398 原 ERP 八表在同一事务中立暂存，保留原键和字节，实测全回滚与精确原回执。 W399 已实测统一 v8 包的 ERP 原收件、发件和桥接当前键，未知或原绑定冲突保守停止，当前行无改写。 W400 已实测同一 v8 原包的 IAM 与 Identity Priority 现行对账，沿用原键与原报告。 W402 已实测 v9 的安全审计和主体保留历史与既有归档共享同一快照，原切面、来源环境和租户准确。 W403 已实测 Main Stock 发件箱、路由、companion 和关联原日志的同快照完整切片。 W404 已实测原 v9 历史证据在独立空目标中立落表，保留原行、版本和原回执。 W405 实测统一 v10 在同一 PostgreSQL 切面收齐 RMA 和 Main Stock 14 个原成员，保留两租户真实原结果及切面差异。 W407 实测统一 v10 和 14 个 Stock 原成员以原类型和键原子暂存，保留原切面与同键回执，分别验证独立 Published companion。 W408 实测同源 v10 的 Stock 原键在 PostgreSQL 当前快照保留原状态，异租全局键不披露、当前冲突/缺失闭合，并对回独立 W352 历史 Pending 与 W403 当前 Published 的原票据、回执及发送尝试。 W409 对同源原 v9/v10 实测三个只读入口，保留 IAM 17 项、Identity Published Outbox 1 项，原件无 ERP/Identity Inbox/资产样本。 W406 实测独立 Core 候选原两表导入、晚外键全回滚和原 COMMIT 回执恢复。W401 用同等隔离候选独立验证普通 HTTP 当前/历史读回、跨租户和现行撤权。 W411 实测 v10 原两表在独立 Core 导入、故障回滚及原回执恢复。 W410 实测 v2 批准开放与活跃 B。 W412 实测非空同源 v10 和中立暂存。 W413 PostgreSQL 18.6 实测 v2 两条真实草稿及提交原件 12 列逐字节相同，晚段 23514 全回滚，655 字节独立回执原样回读，A/B 同键隔离。 W414 Windows 实测同源 v10 原 41 字节按原租户键落盘，错文件零写入，并发只发布一次，回包丢失后原回执逐字节恢复，原 v8 空包和既有归档校验兼容。 W416 PostgreSQL 18.6 从真实 W383 源导出 3 文件、3 事件、3 原回执和 1 原父版本，原生内容逐项吻合，实际切点隔离和错误图拒绝通过。 W417 原 PGT-006、007、009 在真实关闭 RMA Core 候选范围通过。普通 A/B 登录、20 个原生 42501 及原序列、流水、ACL 前后状态均准确。 W418 实际 PostgreSQL 18.6 关闭候选五份原件逐字节一致，原 675 字节回执恢复，权限拒绝及晚段原生故障完整回滚。 W419 真实 ERP C03 Owner 在 A/B 写入独立终态与原消息。重复报文保持八表与序列，A 八份原生成员与正常 v10 切面逐字节一致。 W421 复用已执行的五项 PostgreSQL 18.6 实证，正式矩阵 8 PASS、19 NOT_RUN。 W420 同一 W372 库的 A/B 实际 Engineering、FileContent 原件和分别五份原生 COPY 一致，原 RMA 和四条原流水逐字节保持。 W424 采用 PGT-023 的受控容量及凭据轮换实证。 W426 采用 PGT-001 的真实普通 Stock V2 正向证据。 W427 实测共享表 DELETE RLS 和原密钥列拒绝并采用 PGT-008。 W430 实测同 schema 归属更新的原 ACL 与固定 CHECK、两次无半写和合法原版本提交。 W431 实测原共享消息键并发、两种 raw、失败全回滚及独立键域，结合原受控接收采用 PGT-015。 W422 原 W419 C03 在 PostgreSQL 关闭候选完整导入。已分配 token 拒绝、晚段全局键冲突全回滚、714 字节原回执恢复、A/B 原件保持与实际序列 11。 W432 真实 PostgreSQL 保存点、约束与语句超时的原事务恢复及 A/B 独立复用，合用 W344 的真实 HTTP 取消与坏连接替换，采用原 PGT-010。 W425 真实 A 后端交给 B 的事务入口，身份守卫拒绝，业务回调与 SQL 均为零，A/B 原行摘要一致。 W428 正常 PostgreSQL Core EF 224 到 225、用户复合外键、IAM 原事务与 HTTP 错属回滚。角色复合引用仍是原 PGT-027 余项。 W434 正常 Core EF 225 到 226、IAM Owner 与 HTTP，角色和用户普通 SCRAM COPY、原生无半写及合法 A。合用同 schema 验证覆盖原 PGT-027。 W433 实际 Main 创建 V1 到 Core commissioning 和 RMA。原键、无旧密码、非 Ready 拒绝、错误 Owner 保留、DDL 后中断全回滚及 CLI 原回执恢复。 W429 实际 PostgreSQL 18.6 在同一 holder 导出 A 的 v11，五个 FileContent 原成员独立 COPY 逐字节一致。B 的真实同键写入、独立归档及错租拒绝通过。 W423 W372 同源 A/B 真实 C03、重复投递及普通角色读回，A 的原 FileContent 资产和 ERP 八表纳入同一 v8 快照。原两租户业务字节核对。 W415 实测隔离 503、独立批准、普通 A 原 DRAFT/SUBMITTED、B UNKNOWN、同租错 actor 拒绝及同 Bearer 撤权后 403，原 12 列保持。",
+        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。  W346 现有 Stock 首装提交后丢弃 stdout，从另一个真实进程在准确物理库取回原安装 ID，驱动原写栅栏及后续已交付安装。孤立回执、未绑定登录读策略及目录/权限漂移拒绝。 W348 实际验证共享消息 profile 的初始化中断、原键恢复及原结果重放。  W350 在 fresh-only PostgreSQL 真实把原 RMA heads/versions 迁入各自租户 schema，验证原子首版、实际进程竞争、中断与原结果、普通角色和原复合约束。 新隔离全 Core 物理 commissioning 以实际发布宿主和 PostgreSQL 验证，旧业务与旧 RMA journal 栅栏、其他 Owner 和原回执已证。 W355 实测 Stock 10/100 普通登录冷暖、缓存 churn、真实模型、原生后端及双进程有限峰值，原配置 129/1000 拒绝。 原 RMA 正常 HTTP 单条和历史读从真实登录经当前共享权威到新租户 EF，A/B 原件、ETag、授权和真实 SQL已验证。 W358 RMA 已 Ready 租户的真实非事务索引、原生无效对象中断及准确原键恢复已验证，B 和已采用普通读继续。 原 RMA 受权分页列表以真实 A/B Bearer 验证两页和当前权限，第二页实际跨128候选，版本按原键读取。 原生同快照 RMA tenant schema 和已引用的共享 Outbound 从真实 A/B 活动库准确导出并独立 staging，ACL/Owner、版本和原内容通过。 W361 对真实全 Core 的原 RMA 日志安装普通租户 RLS 和同事务最小追加，实测同键跨租、闭合回滚、原认证根、其他 Owner 及原回执。 W366 增加真实 RMA 原操作日志同快照 v2 切片，准确固定租户和原 Owner，原 bytes 与隔离 staging 已验，保留 v1。 W364 在真实宿主首次采用普通 RMA draft POST，原 head、version 和 W361 journal 同事务写回，现行授权、八位数量、原 ETag 及同键精确重放已证。 W370 将真实 RMA v1/v2 归档 staging 接可操作入口，验证同事务原 schema、共享片和回执，坏输入回滚及原结果恢复。 W372 实际采用普通 RMA 提交，原 If-Match、版本推进、原日志、权限、故障回滚与原结果实证。共享归档保持确切已采用 writer 权限。 W374 实际交付 v3 同切面来源归档及 v1/v2 兼容。 W375 真正接正常原操作查询与关闭，当前授权、迟到竞争及原结果实证。 W377 实际交付 v3 隔离 staging、来源精度和字符规则、后段回滚与同键恢复。 W379 实测原可见性 v4 同切面，保留直连和回退工单、软删、空键与原库位隔离。 W380 同快照实际身份优先四表、原 bytea、租约和全局消息键，旧格式兼容。 W382 实际 v4 原子落表、真实图失败回滚与原回执。 W385 实际 v5 四表中立 staging，原键、空成员、原回执及同 pin 回滚。 W384 实际对账当前终态/租约与原键冲突，保持 UNKNOWN，受限角色真失败闭合。 W387 实际历史 IAM 同快照归档，后续字段和策略漂移未影响原切面。 W389 同快照保留原 FileContent 资产和原工程父版本，真实原件按长度与摘要复核，异常缺件拒绝。 W391 原历史 IAM 原子落表，原参与者标志跨 heads/journal 精确核实，晚段失败后同键恢复。 W393 对账原 IAM 现行事实，原 3 项漂移和原缺失参与者按原值保留，精确 v6/v7 原源通过。 W394 实测 v7 文件引用中立落表、真实晚段故障全回滚及原回执恢复。 W395 实测 ERP 八表同切面归档及原 C 与 ICU 键域，保留报文/原结果/租约及 replay 审计。 W396 原 v6/v7 清单使用相同 Identity Priority 当前对账，实际发布原件和空键权限得到验证。 W398 原 ERP 八表在同一事务中立暂存，保留原键和字节，实测全回滚与精确原回执。 W399 已实测统一 v8 包的 ERP 原收件、发件和桥接当前键，未知或原绑定冲突保守停止，当前行无改写。 W400 已实测同一 v8 原包的 IAM 与 Identity Priority 现行对账，沿用原键与原报告。 W402 已实测 v9 的安全审计和主体保留历史与既有归档共享同一快照，原切面、来源环境和租户准确。 W403 已实测 Main Stock 发件箱、路由、companion 和关联原日志的同快照完整切片。 W404 已实测原 v9 历史证据在独立空目标中立落表，保留原行、版本和原回执。 W405 实测统一 v10 在同一 PostgreSQL 切面收齐 RMA 和 Main Stock 14 个原成员，保留两租户真实原结果及切面差异。 W407 实测统一 v10 和 14 个 Stock 原成员以原类型和键原子暂存，保留原切面与同键回执，分别验证独立 Published companion。 W408 实测同源 v10 的 Stock 原键在 PostgreSQL 当前快照保留原状态，异租全局键不披露、当前冲突/缺失闭合，并对回独立 W352 历史 Pending 与 W403 当前 Published 的原票据、回执及发送尝试。 W409 对同源原 v9/v10 实测三个只读入口，保留 IAM 17 项、Identity Published Outbox 1 项，原件无 ERP/Identity Inbox/资产样本。 W406 实测独立 Core 候选原两表导入、晚外键全回滚和原 COMMIT 回执恢复。W401 用同等隔离候选独立验证普通 HTTP 当前/历史读回、跨租户和现行撤权。 W411 实测 v10 原两表在独立 Core 导入、故障回滚及原回执恢复。 W410 实测 v2 批准开放与活跃 B。 W412 实测非空同源 v10 和中立暂存。 W413 PostgreSQL 18.6 实测 v2 两条真实草稿及提交原件 12 列逐字节相同，晚段 23514 全回滚，655 字节独立回执原样回读，A/B 同键隔离。 W414 Windows 实测同源 v10 原 41 字节按原租户键落盘，错文件零写入，并发只发布一次，回包丢失后原回执逐字节恢复，原 v8 空包和既有归档校验兼容。 W416 PostgreSQL 18.6 从真实 W383 源导出 3 文件、3 事件、3 原回执和 1 原父版本，原生内容逐项吻合，实际切点隔离和错误图拒绝通过。 W417 原 PGT-006、007、009 在真实关闭 RMA Core 候选范围通过。普通 A/B 登录、20 个原生 42501 及原序列、流水、ACL 前后状态均准确。 W418 实际 PostgreSQL 18.6 关闭候选五份原件逐字节一致，原 675 字节回执恢复，权限拒绝及晚段原生故障完整回滚。 W419 真实 ERP C03 Owner 在 A/B 写入独立终态与原消息。重复报文保持八表与序列，A 八份原生成员与正常 v10 切面逐字节一致。 W421 复用已执行的五项 PostgreSQL 18.6 实证，正式矩阵 8 PASS、19 NOT_RUN。 W420 同一 W372 库的 A/B 实际 Engineering、FileContent 原件和分别五份原生 COPY 一致，原 RMA 和四条原流水逐字节保持。 W424 采用 PGT-023 的受控容量及凭据轮换实证。 W426 采用 PGT-001 的真实普通 Stock V2 正向证据。 W427 实测共享表 DELETE RLS 和原密钥列拒绝并采用 PGT-008。 W430 实测同 schema 归属更新的原 ACL 与固定 CHECK、两次无半写和合法原版本提交。 W431 实测原共享消息键并发、两种 raw、失败全回滚及独立键域，结合原受控接收采用 PGT-015。 W422 原 W419 C03 在 PostgreSQL 关闭候选完整导入。已分配 token 拒绝、晚段全局键冲突全回滚、714 字节原回执恢复、A/B 原件保持与实际序列 11。 W432 真实 PostgreSQL 保存点、约束与语句超时的原事务恢复及 A/B 独立复用，合用 W344 的真实 HTTP 取消与坏连接替换，采用原 PGT-010。 W425 真实 A 后端交给 B 的事务入口，身份守卫拒绝，业务回调与 SQL 均为零，A/B 原行摘要一致。 W428 正常 PostgreSQL Core EF 224 到 225、用户复合外键、IAM 原事务与 HTTP 错属回滚。角色复合引用仍是原 PGT-027 余项。 W434 正常 Core EF 225 到 226、IAM Owner 与 HTTP，角色和用户普通 SCRAM COPY、原生无半写及合法 A。合用同 schema 验证覆盖原 PGT-027。 W433 实际 Main 创建 V1 到 Core commissioning 和 RMA。原键、无旧密码、非 Ready 拒绝、错误 Owner 保留、DDL 后中断全回滚及 CLI 原回执恢复。 W429 实际 PostgreSQL 18.6 在同一 holder 导出 A 的 v11，五个 FileContent 原成员独立 COPY 逐字节一致。B 的真实同键写入、独立归档及错租拒绝通过。 W423 W372 同源 A/B 真实 C03、重复投递及普通角色读回，A 的原 FileContent 资产和 ERP 八表纳入同一 v8 快照。原两租户业务字节核对。 W415 实测隔离 503、独立批准、普通 A 原 DRAFT/SUBMITTED、B UNKNOWN、同租错 actor 拒绝及同 Bearer 撤权后 403，原 12 列保持。 W467 已采用W429实际v11原件显式写入隔离暂存，五个FileContent原历史成员按原类型、键和租户落库及COPY逐字节回读，旧v10、晚段真实回滚和暂存回执保持；recoveryReady=false。",
         "remaining": "v11 原文件历史恢复、ERP 其他原图和候选开放、W372 同源 Stock、现行权限、实际消息对账及批准切换、正式 PGT-021/022。",
-        "next_action": "继续 v11 原文件历史、ERP 与 Stock 原图候选恢复、现行权限、实际消息对账和批准切换。",
+        "next_action": "核对实际FileContent/父版本/原Owner操作在关闭候选的采用和资格，继续ERP与Stock原图、当前权限、消息对账；无已批准切换。PGT-021/022仍按完整原范围。",
         "evidence_refs": [
           "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
           "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
@@ -166873,11 +166878,12 @@
           "docs/development/evidence/W433-01/DELIVERY.md",
           "docs/development/evidence/W429-01/DELIVERY.md",
           "docs/development/evidence/W423-01/DELIVERY.md",
-          "D:/CP6-local-test/CP6-72H-20261109/W415-VERIFY/DELIVERY.md"
+          "D:/CP6-local-test/CP6-72H-20261109/W415-VERIFY/DELIVERY.md",
+          "docs/development/evidence/W467-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W415-VERIFY"
+        "latest_window": "W467-01"
       },
       "wave326_delivery": {
         "status": "CLOSED",
@@ -168456,6 +168462,16 @@
         "branch_disposition": "no-task-branch",
         "workspace_status": "fixed-seat-detached-for-reuse",
         "seat_released": true
+      },
+      "wave467_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W467-01/DELIVERY.md",
+        "validation": "已采用W429实际v11原件显式写入隔离暂存，五个FileContent原历史成员按原类型、键和租户落库及COPY逐字节回读，旧v10、晚段真实回滚和暂存回执保持；recoveryReady=false。",
+        "tested_baseline": "beb2f5f3d3ca6e3dd6fd769cddfef58fd263412b",
+        "actual_result_sha256": "b16df8c79aaf0fe62804f71e3753f5e6944f44c1a7d83fe3084e0defda0af493",
+        "formal_case": "PGT-021/022",
+        "formal_acceptance": "NOT_RUN",
+        "full_task_complete": false
       }
     },
     {
@@ -175122,7 +175138,7 @@
         "seat_released": true
       },
       "wave466_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md",
         "validation": "巷道/货架原逐个停用采用原space-floor:edit、当前授权及实际当前归属，每项独立按同步WMS库存和两侧提交确认后通知；保留先成功和后拒绝，最后默认删除在当前事务重查子级。",
         "tested_baseline": "c9c5e9c9fcd7a51ae5d81b3520fb54e56436b660",
@@ -175130,7 +175146,16 @@
         "actual_result_sha256": "66240bc612de9ee94a9ae5b2f601b72e79f5de231a5b060fa572a26c824d4021",
         "formal_case": "PGT-017",
         "formal_acceptance": "NOT_RUN",
-        "full_task_complete": false
+        "full_task_complete": false,
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/934",
+          "commit": "beb2f5f3d3ca6e3dd6fd769cddfef58fd263412b",
+          "target_head": "beb2f5f3d3ca6e3dd6fd769cddfef58fd263412b"
+        },
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse",
+        "seat_released": true
       }
     },
     {
@@ -209209,10 +209234,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W466",
-      "path": "docs/development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md",
-      "baseline_sha": "c9c5e9c9fcd7a51ae5d81b3520fb54e56436b660",
-      "registered_at": "2026-11-11T01:39:19.891064+00:00",
+      "id": "W467",
+      "path": "docs/development/evidence/W467-01/DELIVERY.md",
+      "baseline_sha": "beb2f5f3d3ca6e3dd6fd769cddfef58fd263412b",
+      "registered_at": "2026-11-11T01:59:19.301460+00:00",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "COORD"
@@ -209227,39 +209252,33 @@
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": false,
-      "next_action": "继续WP02-03尚未采用的实际空间写入和查询/导出，逐项按原权限和真实父关系；完整字段V1、跨仓、负载及正式PGT-017仍按原验收。",
+      "next_action": "核对实际FileContent/父版本/原Owner操作在关闭候选的采用和资格，继续ERP与Stock原图、当前权限、消息对账；无已批准切换。PGT-021/022仍按完整原范围。",
       "windows": [
         {
-          "id": "W466-01",
-          "workspace_task": "BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE",
+          "id": "W467-01",
+          "workspace_task": "W467-01",
           "related_tasks": [
-            "WP02-03"
+            "WP02-02"
           ],
-          "title": "巷道和货架逐个停用与最终重查",
+          "title": "v11文件原历史隔离暂存",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/bug-933-space-topology-deactivate-fence",
-          "planned_scope_ref": "docs/development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md",
+          "branch": "codex/w467-01",
+          "planned_scope_ref": "docs/development/evidence/W467-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "file:Main:CP6.Tests/Erp/TopologyDeactivatePostgreSqlTests.cs",
-            "file:Main:CP6.Tests/Erp/TopologyDeactivatePostgreSqlTests.Faults.cs",
-            "file:Main:CP6.Tests/Erp/TopologyDeactivatePostgreSqlTests.Publication.cs",
-            "file:Main:CP6.Core/Services/Space/SpaceMasterService.TopologyWrites.cs",
-            "file:Main:CP6.Core/Services/Space/SpaceMasterService.TopologyDeactivation.cs",
-            "file:Main:CP6.Core/Services/Space/LocationPublishService.cs",
-            "file:Main:CP6.Core/Services/Space/LocationPublishAuthorityV1.cs",
-            "file:Main:CP6.WebApi/Program.cs"
+            "file:Main:eng/wp02-02/rma-tenant-archive/verify_file_content_history_stage.py",
+            "file:Main:eng/wp02-02/rma-tenant-archive/stage.py"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/W467-01/DELIVERY.md"
         }
       ],
       "storage": {
@@ -255917,6 +255936,74 @@
           "reuse_worktree": "D:/CP6-worktrees/dev-2",
           "new_worktrees": 0
         }
+      },
+      {
+        "id": "W466",
+        "path": "docs/development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md",
+        "baseline_sha": "c9c5e9c9fcd7a51ae5d81b3520fb54e56436b660",
+        "registered_at": "2026-11-11T01:39:19.891064+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "next_action": "继续WP02-03尚未采用的实际空间写入和查询/导出，逐项按原权限和真实父关系；完整字段V1、跨仓、负载及正式PGT-017仍按原验收。",
+        "windows": [
+          {
+            "id": "W466-01",
+            "workspace_task": "BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE",
+            "related_tasks": [
+              "WP02-03"
+            ],
+            "title": "巷道和货架逐个停用与最终重查",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/bug-933-space-topology-deactivate-fence",
+            "planned_scope_ref": "docs/development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "file:Main:CP6.Tests/Erp/TopologyDeactivatePostgreSqlTests.cs",
+              "file:Main:CP6.Tests/Erp/TopologyDeactivatePostgreSqlTests.Faults.cs",
+              "file:Main:CP6.Tests/Erp/TopologyDeactivatePostgreSqlTests.Publication.cs",
+              "file:Main:CP6.Core/Services/Space/SpaceMasterService.TopologyWrites.cs",
+              "file:Main:CP6.Core/Services/Space/SpaceMasterService.TopologyDeactivation.cs",
+              "file:Main:CP6.Core/Services/Space/LocationPublishService.cs",
+              "file:Main:CP6.Core/Services/Space/LocationPublishAuthorityV1.cs",
+              "file:Main:CP6.WebApi/Program.cs"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md",
+            "adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6/pull/934",
+              "commit": "beb2f5f3d3ca6e3dd6fd769cddfef58fd263412b",
+              "target_head": "beb2f5f3d3ca6e3dd6fd769cddfef58fd263412b"
+            },
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/dev-2",
+          "new_worktrees": 0
+        }
       }
     ],
     "development_priority": {
@@ -259231,10 +259318,22 @@
             1099.502523,
             1103.502523
           ]
+        },
+        "w466_adopted": {
+          "native_elapsed_seconds": 161861,
+          "native_sample_utc": "2026-11-11T01:58:22+00:00",
+          "capacity_seconds": 172800,
+          "native_status": "active",
+          "raw": "D:/CP6-local-test/CP6-72H-20261109/after-w466-adoption-calibration.json",
+          "raw_sha256": "c8f50b8d85882b1240c57cc96b8c0f04835141ffea4ea285d0d6f3d535a3c30e",
+          "conservative_native_active_range_seconds": [
+            1137.2404720000002,
+            1141.2404720000002
+          ]
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "继续WP02-03尚未采用的实际空间写入和查询/导出，逐项按原权限和真实父关系；完整字段V1、跨仓、负载及正式PGT-017仍按原验收。",
+      "next_priority": "核对实际FileContent/父版本/原Owner操作在关闭候选的采用和资格，继续ERP与Stock原图、当前权限、消息对账；无已批准切换。PGT-021/022仍按完整原范围。",
       "windows": [
         {
           "id": "W327-01",
@@ -262849,7 +262948,7 @@
         {
           "id": "W466-01",
           "workspace_task": "BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-03"
           ],
@@ -262875,6 +262974,48 @@
             "summary_sha256": "66240bc612de9ee94a9ae5b2f601b72e79f5de231a5b060fa572a26c824d4021",
             "main12": "green-hosted-01/actual.json",
             "original7": "red-hosted-01/actual.json"
+          },
+          "formal_acceptance": "NOT_RUN",
+          "finished_at": "2026-11-11T01:58:19.131536+00:00",
+          "final_lease_seconds": 1139.240472,
+          "lease_includes_user_pauses": false,
+          "conservative_native_active_range_seconds": [
+            1137.2404720000002,
+            1141.2404720000002
+          ],
+          "pr": "https://github.com/GTX537/CP6/pull/934",
+          "adopted_main": "beb2f5f3d3ca6e3dd6fd769cddfef58fd263412b",
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "seat_released": true
+        },
+        {
+          "id": "W467-01",
+          "workspace_task": "W467-01",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-02"
+          ],
+          "started_at": "2026-11-11T01:59:19.301460+00:00",
+          "native_start_sample_seconds": 161865,
+          "native_post_start_sample_seconds": 161950,
+          "validation_ready_at": "2026-11-11T02:12:45.097426+00:00",
+          "estimate_minutes": [
+            18,
+            32
+          ],
+          "branch": "codex/w467-01",
+          "tested_baseline": "beb2f5f3d3ca6e3dd6fd769cddfef58fd263412b",
+          "scope": "已采用W429实际v11原件显式写入隔离暂存，五个FileContent原历史成员按原类型、键和租户落库及COPY逐字节回读，旧v10、晚段真实回滚和暂存回执保持；recoveryReady=false。",
+          "delivery": "docs/development/evidence/W467-01/DELIVERY.md",
+          "dispatch": "docs/development/evidence/W467-01/DELIVERY.md",
+          "native_stage_workflow": "PASS",
+          "verified_original_history_members": 5,
+          "validation_provenance": {
+            "summary": "D:/CP6-local-test/CP6-72H-20261109/W467-01/actual.json",
+            "summary_sha256": "b16df8c79aaf0fe62804f71e3753f5e6944f44c1a7d83fe3084e0defda0af493",
+            "original": "red-native-02/actual.json",
+            "final": "green-native-02/actual.json"
           },
           "formal_acceptance": "NOT_RUN"
         }

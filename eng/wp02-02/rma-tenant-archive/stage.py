@@ -14,6 +14,7 @@ sys.dont_write_bytecode = True
 import archive
 import erp_integration
 import file_content_assets
+import file_content_history
 import iam_v6
 import identity_priority
 import privacy_evidence
@@ -44,7 +45,8 @@ def read_counts(value, names):
     return value
 
 
-def checked_bundle(bundle, output, tenant, digest, target, file_content_root=None, *, include_stock_outbox=False):
+def checked_bundle(bundle, output, tenant, digest, target, file_content_root=None, *,
+                   include_stock_outbox=False, include_file_content_history=False):
     if bundle.is_symlink():
         raise StageError("rma-stage-bundle-member-rejected")
     files = list(bundle.iterdir())
@@ -60,8 +62,13 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
     privacy_names = erp_names | set(privacy_evidence.MEMBERS)
     if any(entry.is_symlink() or not entry.is_file() for entry in files):
         raise StageError("rma-stage-bundle-member-rejected")
-    if names not in (base_names, journal_names, source_names, visibility_names, identity_names, iam_names,
-                     asset_names, erp_names, privacy_names):
+    if include_file_content_history:
+        history_names = privacy_names | {stock_stage_v10.member(table) for table in archive.stock_outbox_module().TABLES}
+        history_names |= {file_content_history.filename(key) for key in file_content_history.MEMBERS}
+        if names != history_names:
+            raise StageError("rma-stage-bundle-member-rejected")
+    elif names not in (base_names, journal_names, source_names, visibility_names, identity_names, iam_names,
+                       asset_names, erp_names, privacy_names):
         if not include_stock_outbox or names != privacy_names | {
                 stock_stage_v10.member(table) for table in archive.stock_outbox_module().TABLES}:
             raise StageError("rma-stage-bundle-member-rejected")
@@ -74,7 +81,10 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
     if manifest_file.is_symlink() or archive.file_digest(manifest_file)["sha256"] != digest:
         raise StageError("rma-stage-manifest-digest-mismatch")
     header = json.loads(manifest_file.read_text(encoding="utf-8"))
-    formats = (*STAGE_FORMATS, archive.FORMAT_WITH_STOCK_OUTBOX) if include_stock_outbox else STAGE_FORMATS
+    if include_file_content_history:
+        formats = (archive.FORMAT_WITH_FILE_CONTENT_HISTORY,)
+    else:
+        formats = (*STAGE_FORMATS, archive.FORMAT_WITH_STOCK_OUTBOX) if include_stock_outbox else STAGE_FORMATS
     if not isinstance(header, dict) or header.get("format") not in formats:
         raise StageError("rma-stage-format-rejected")
     for entry in files:
@@ -86,7 +96,8 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
     if (source.system_identifier, source.database_oid) == (target.system_identifier, target.database_oid):
         raise StageError("rma-stage-target-is-source")
     projection = manifest.get("sharedProjection")
-    has_stock = manifest["format"] == archive.FORMAT_WITH_STOCK_OUTBOX
+    has_history = manifest["format"] == archive.FORMAT_WITH_FILE_CONTENT_HISTORY
+    has_stock = has_history or manifest["format"] == archive.FORMAT_WITH_STOCK_OUTBOX
     has_privacy = has_stock or manifest["format"] == privacy_evidence.FORMAT
     has_erp = has_privacy or manifest["format"] == erp_integration.FORMAT
     has_assets = has_erp or manifest["format"] == file_content_assets.FORMAT
@@ -131,6 +142,8 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
         plan["privacyEvidence"] = manifest["privacyEvidence"]
     if has_stock:
         plan["stockOutbox"] = manifest["stockOutbox"]
+    if has_history:
+        plan["fileContentHistory"] = manifest["fileContentHistory"]
     return checked, plan
 
 
@@ -545,6 +558,38 @@ def file_content_assets_sql(tenant):
     """
 
 
+def file_content_history_sql(tenant, section):
+    # verify_bundle has already checked the exact member graph, shape and original bytes.
+    tenant_id = archive.literal(str(tenant))
+    commands, row_checks = [], []
+    for key, part in file_content_history.MEMBERS.items():
+        name = file_content_history.filename(key)
+        table = "rma_archive_stage.file_content_history_" + key.replace("-", "_")
+        columns = ",\n            ".join(f'"{column}" {kind}' for column, kind in zip(part.columns, part.types))
+        primary = ", ".join(f'"{column}"' for column in part.key)
+        commands.append(f"""
+        CREATE TABLE {table} (
+            {columns},
+            PRIMARY KEY ({primary}),
+            CHECK (tenant_id={tenant_id}::uuid)
+        );
+        \\copy {table} FROM 'bundle/{name}' WITH (FORMAT csv, HEADER MATCH)
+        """)
+        rows = section["members"][name]["rows"]
+        row_checks.append(f"""
+        IF (SELECT count(*) FROM {table}) <> {rows} THEN
+            RAISE EXCEPTION 'rma-stage-file-content-history-count-rejected';
+        END IF;
+        """)
+    return "".join(commands) + """
+        DO $cp6_stage_history$
+        BEGIN
+        """ + "".join(row_checks) + """
+        END
+        $cp6_stage_history$;
+    """
+
+
 def erp_integration_sql(tenant):
     # Preserve the original ERP migration's nullability and collations in the private staging schema.
     nullable = {
@@ -720,11 +765,18 @@ def execute(args):
     if not args.username or "\0" in args.username:
         raise StageError("rma-stage-invalid-username")
     output = args.output.absolute()
+    include_history = getattr(args, "include_file_content_history", False)
+    file_root = getattr(args, "file_content_root", None)
+    if include_history:
+        if not file_root:
+            raise StageError("rma-stage-file-content-history-assets-required")
+        file_root = file_content_assets.checked_root(file_root).resolve(strict=True)
+        output = file_content_history.checked_output(output, file_root)
     archive.private_directory(output)
     plan = {"target": target.mapping(), "tenantId": str(tenant), "manifestSha256": digest}
     if args.action == "stage":
-        checked, metadata = checked_bundle(args.bundle, output, tenant, digest, target,
-                                           getattr(args, "file_content_root", None), include_stock_outbox=True)
+        checked, metadata = checked_bundle(args.bundle, output, tenant, digest, target, file_root,
+                                           include_stock_outbox=True, include_file_content_history=include_history)
         plan.update(metadata)
         schema = "t_" + tenant.hex
         has_journal = plan["journalCounts"] is not None
@@ -760,6 +812,9 @@ def execute(args):
         if "stockOutbox" in plan:
             driver += stock_stage_v10.stage_sql(archive.stock_outbox_module(), tenant, plan["stockOutbox"], TARGET_PLAN)
             source_field += ",'stockOutbox',p->'stockOutbox'"
+        if "fileContentHistory" in plan:
+            driver += file_content_history_sql(tenant, plan["fileContentHistory"])
+            source_field += ",'fileContentHistory',p->'fileContentHistory'"
         driver += WRITE_RECEIPT.format(source_field=source_field)
     else:
         driver = initial_sql(plan, read_only=True) + READ_RECEIPT
@@ -780,6 +835,8 @@ def main():
         if name == "stage":
             command.add_argument("--bundle", type=Path, required=True)
             command.add_argument("--file-content-root", type=Path, help="original private local asset root, required for v7 and later")
+            command.add_argument("--include-file-content-history", action="store_true",
+                                 help="stage the exact v11 history in the isolated database; never publish it")
     args = parser.parse_args()
     try:
         sys.stdout.buffer.write(execute(args) + b"\n")

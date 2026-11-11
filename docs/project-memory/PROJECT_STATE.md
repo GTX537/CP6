@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-11 UTC v11 文件原历史隔离暂存
+
+已采用W429实际v11原件显式写入隔离暂存，五个FileContent原历史成员按原类型、键和租户落库及COPY逐字节回读，旧v10、晚段真实回滚和暂存回执保持；recoveryReady=false。 原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN；容量172800，44h158458。 [W467交付](../development/evidence/W467-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 巷道和货架逐个停用与最终重查
 
 巷道/货架原逐个停用采用原space-floor:edit、当前授权及实际当前归属，每项独立按同步WMS库存和两侧提交确认后通知；保留先成功和后拒绝，最后默认删除在当前事务重查子级。 实际Main/PostgreSQL18.6 12项及47既有通过；原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN。44h158458和容量/下一172800保持。 [W466交付](../development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md)
