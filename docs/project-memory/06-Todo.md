@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-11 UTC v11 候选文件原字节落盘
+
+核对已备候选根与v11 FileContent业务Owner原图导入、当前Engineering父版本及候选资格；其余ERP、Stock、授权、消息对账和正式PGT-021/022另验，无批准切换。 文件候选回执不代表Owner或部署采用。 [W468交付](../development/evidence/W468-01/DELIVERY.md)
+
 ## 2026-11-11 UTC v11 文件原历史隔离暂存
 
 核对实际FileContent/父版本/原Owner操作在关闭候选的采用和资格，继续ERP与Stock原图、当前权限、消息对账；无已批准切换。PGT-021/022仍按完整原范围。 原源码及归档根保持，暂存回执不作业务恢复或生产采用凭据。 [W467交付](../development/evidence/W467-01/DELIVERY.md)
