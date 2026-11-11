@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC 巷道和货架默认删除及改挂
+
+W465原巷道200解挂、货架500但持久行保持；最终先发布则原限制400。改挂实际原码/几何/WMS投影及LPB保持原行为，延期提交最终明确503未知。 [W465交付](../development/evidence/BUG-931-SPACE-TOPOLOGY-DELETE-FENCE/DELIVERY.md)
+
 ## 2026-11-11 UTC 单库位停用库存与两侧原子决定
 
 W464同仓库存先提交原200停用，最终原400拒绝；两类故障原留下WMS半状态，最终读回两侧保持，确认恢复后才通知。44h后最近已收尾中位16.8分钟。 [W464交付](../development/evidence/BUG-929-SPACE-LOCATION-DEACTIVATE-FENCE/DELIVERY.md)

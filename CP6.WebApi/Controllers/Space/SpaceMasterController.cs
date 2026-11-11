@@ -138,6 +138,7 @@ public class SpaceMasterController : ControllerBase
 
     [HttpDelete("aisle/{id:guid}")]
     [RequirePermission("space-floor", "edit")]
+    [OrderOwnerResult]
     public async Task<IActionResult> DeleteAisle(Guid id, [FromQuery] string? mode = null, [FromQuery] Guid? targetAisleId = null)
     {
         await _svc.DeleteAisleAsync(id, mode, targetAisleId, CurrentUser); return Ok2();
@@ -167,6 +168,7 @@ public class SpaceMasterController : ControllerBase
 
     [HttpDelete("rack/{id:guid}")]
     [RequirePermission("space-floor", "edit")]
+    [OrderOwnerResult]
     public async Task<IActionResult> DeleteRack(Guid id, [FromQuery] string? mode = null, [FromQuery] Guid? targetRackId = null)
     {
         await _svc.DeleteRackAsync(id, mode, targetRackId, CurrentUser); return Ok2();

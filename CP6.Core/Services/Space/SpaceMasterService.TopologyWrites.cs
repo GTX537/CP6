@@ -25,6 +25,10 @@ public partial class SpaceMasterService
     private const string RackWrite = "LOCK TABLE public.\"Space_Rack\" IN SHARE ROW EXCLUSIVE MODE;";
     private const string LocationWrite = "LOCK TABLE public.\"Space_Location\" IN SHARE ROW EXCLUSIVE MODE;";
 
+    private const string BinWrite = "LOCK TABLE public.\"T_WmsBin\" IN SHARE ROW EXCLUSIVE MODE;";
+    private const string DeleteAisleLocks = SiteRead + FloorRead + ZoneRead + AisleWrite + RackWrite + LocationWrite + BinWrite;
+    private const string DeleteRackLocks = SiteRead + FloorRead + ZoneRead + AisleRead + RackWrite + LocationWrite + BinWrite;
+
     private readonly IamAdministrationV1? _topologyAdministration;
     private readonly TenantManagementSessionV1? _topologySession;
     private readonly CancellationToken _topologyRequestCancellation;
@@ -76,6 +80,18 @@ public partial class SpaceMasterService
 
     public Task UpdateRackAsync(Guid id, RackDto d, string? user)
         => ExecuteTopologyMutationAsync("space-floor:edit", AisleRead + RackWrite + LocationWrite, token => UpdateRackCoreAsync(id, d, user, token));
+
+    public Task DeleteAisleAsync(Guid id, string? mode = null, Guid? targetAisleId = null, string? user = null)
+        => _db.Database.IsNpgsql() && mode != "deactivate"
+            ? ExecuteTopologyMutationAsync("space-floor:edit", DeleteAisleLocks,
+                token => DeleteAisleCoreAsync(id, mode, targetAisleId, user, withinParent: true, token))
+            : DeleteAisleCoreAsync(id, mode, targetAisleId, user, withinParent: false, default);
+
+    public Task DeleteRackAsync(Guid id, string? mode = null, Guid? targetRackId = null, string? user = null)
+        => _db.Database.IsNpgsql() && mode != "deactivate"
+            ? ExecuteTopologyMutationAsync("space-floor:edit", DeleteRackLocks,
+                token => DeleteRackCoreAsync(id, mode, targetRackId, user, withinParent: true, token))
+            : DeleteRackCoreAsync(id, mode, targetRackId, user, withinParent: false, default);
 
     private async Task RequireCurrentRackAisleAsync(Guid zoneId, Guid? aisleId, CancellationToken token)
     {
