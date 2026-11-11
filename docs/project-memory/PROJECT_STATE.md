@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-11 UTC 同源 v11 原件暂存与文件落盘
+
+同源 v11 保留两条实际 RMA 原流水，含 A/B 原生 FileContent 与 ERP C03 验证数据。选定租户 14 份 PostgreSQL 暂存 CSV、45 字节原件和两份恢复回执精确一致。 原 375 项仍为 38 DONE、1 IN_PROGRESS、336 PLANNED，正式 PostgreSQL 16 PASS、11 NOT_RUN。 [W476交付](../development/evidence/W476-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 同源 v11 原 RMA Owner 流水导入
 
 同一真实W474 v11在关闭PostgreSQL候选导入RMA原1 head/2 version及2原COMMITTED，原3443字节、双回执、真实晚失败回滚及普通A/B隔离通过。 原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，容量172800。 [W475交付](../development/evidence/W475-01/DELIVERY.md)

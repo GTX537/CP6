@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-11 UTC 同源 v11 原件暂存与文件落盘
+
+在同一已验证源的隔离副本加入实际 Stock Owner 库存操作和原生 Outbox 记录，核对四域归档与 Stock 暂存原件。正式 PGT-021/022 及切换各自验收。 [W476交付](../development/evidence/W476-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 同源 v11 原 RMA Owner 流水导入
 
 在同一实际RMA源保留原业务回执并准备非空FileContent及ERP原件的同源v11，再验证整包暂存和原件隔离。正式PGT-021/022及切换各自验收。 候选保持关闭。 [W475交付](../development/evidence/W475-01/DELIVERY.md)
