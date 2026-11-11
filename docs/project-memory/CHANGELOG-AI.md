@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC · W484保留原图与原验收
+
+W484 CRM #172修复实际PG子行版本与Lead最终封存时序，Issue #171关闭/准确分支清理/DEV2释放；R1 POS/NEG完整运行义务首次采纳2PASS/245NOT_RUN。15项相关保留与R1/存储有效成功按真实来源记录，失败保留；Main协调收尾，未改生产Schema/合同、触发Actions或部署。 [本任务](../development/evidence/W484-01/DELIVERY.md)
+
 ## 2026-11-11 UTC · 4h检查点与W483
 
 W483 CRM #170/Issue #169核销，原导出刷新与新登录恢复、明确新意图和原五分钟99页面真实通过；11项PG/HTTPS、6+14项Web/类型检查与一次集中审查。自有PG已smart停止，准确CRM分支清理和DEV2释放；Main协调按同轮远端采用及finish结算，未触发Actions/部署。 [本任务](../development/evidence/W483-01/DELIVERY.md)

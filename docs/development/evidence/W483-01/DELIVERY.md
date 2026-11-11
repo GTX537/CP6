@@ -1,6 +1,6 @@
 # W483-01 · 询盘导出刷新及重新登录恢复
 
-状态：本任务本地相关验证及一次集中审查通过，正常远端采用/收尾待完成；完整原卡不提前关闭。用户接受的 [12h 执行](../../planning/20261111-codex-12h-business-chain.md)继续；单对话 COORD，无子代理。Main/CRM 各使用已有 DEV-1/DEV-2，一个跨仓任务、两个 `codex/w483-01` 分支；基线 Main `7a8cd529f255a762f33fca11488e1e93dd6762c6`、CRM `8c78760ef7ae746a55bdf34d81a17439f7307715`。两仓官方 status/start 已完成，未新增物理工作树。
+状态：本任务已正常远端采用并完成生命周期；完整原卡不提前关闭。用户接受的 [12h 执行](../../planning/20261111-codex-12h-business-chain.md)继续；单对话 COORD，无子代理。Main/CRM 各使用已有 DEV-1/DEV-2，一个跨仓任务、两个 `codex/w483-01` 分支；基线 Main `7a8cd529f255a762f33fca11488e1e93dd6762c6`、CRM `8c78760ef7ae746a55bdf34d81a17439f7307715`。两仓官方 status/start 已完成，未新增物理工作树。
 
 ## 前项及 4h 检查点
 
@@ -27,7 +27,7 @@ W482 已完成真实 PG/HTTP/TLS/HTTPS/React 导出链、一次性文件、原 2
 - [x] 当前主体/租户/资源与权限变化保持必要边界，旧 v1 严格形状保留；原结果/一次性凭证/实际文件不变。
 - [x] R1 终态页面按原合法五分钟 TTL 实际执行，内部/数据库时钟不改变；复用 W482 未受影响的 60 分钟保留证据。
 - [x] 受影响行为/必要共享页面回归，一次完整任务 SPEC/QUALITY 审查；仅相关修复回归。
-- [ ] 正常分仓 PR/远端 main 核对、官方 finish；停止自有进程，准确分支处置、工作区状态和席位释放分别报告。
+- [x] 正常分仓 PR/远端 main 核对、官方 finish；停止自有进程，准确分支处置、工作区状态和席位释放分别报告。
 
 实际日志/制品保存在 `D:/CP6-local-test/CP6-12H-20261111/W483-01`。业务/身份/政策及外部 IAM 输入明确模拟；真实 Node/HTTPS/BFF、原生应用、PostgreSQL 18、worker、React/Playwright、登录回调与文件下载实际执行。
 
@@ -52,4 +52,4 @@ CRM [PR #170](https://github.com/GTX537/CP6.CRM/pull/170) 已将源 `da9ed652e94
 
 本轮自有 PostgreSQL 经系统身份、目录、marker 与无其他客户端核验后 smart 停止，数据和失败日志保留；本轮 HTTP/.NET/Node/Chromium 进程已退出。Main/CRM workflow 树仍分别为 `3355235636fd45116f5445fca32fc65e49f13003` / `0c2d74f9fdc63f5178f97baf33950fb3d4dad751`；普通入口手动、未建版本 tag，CRM 本任务 Actions 列表为空。无运行取消、触发/保护修改、既有数据库安装迁移或部署。
 
-Main 本提交同步本报告、roadmap/生成入口及四状态，正常 PR/远端采用与官方 finish 待本轮最后步骤核销；不能提前声称 Main 席位释放。准确最终 Main 引用及分支/席位状态由本 Main PR 和本任务私有 `main-finish.json` 核销。12h 总目标继续 ACTIVE；本恢复出口不关闭原 WP03-04、原60AC/R1、PG16/11或生产资格。
+Main [PR #951](https://github.com/GTX537/CP6/pull/951) 已将协调源 `f92a220b5a40046a8a500cffa0c607942278db10` 正常合入远端 main `0a30d55436a5169174da95e905a8163abaf51b86`，已 fetch 核对祖先与完整源码树一致。官方 finish 成功，准确本地/远端任务分支删除，DEV-1 干净、detached 供复用，席位已释放；本轮一份 Python 再生缓存完整可逆保存后释放，未删除。最终证明为同任务私有 `main-finish.json` / `crm-finish.json`。两仓主目录随后安全快进，Main 既有14,932个未跟踪资料路径保留。12h 总目标继续 ACTIVE；本恢复出口不关闭原 WP03-04、原60AC/R1、PG16/11或生产资格。

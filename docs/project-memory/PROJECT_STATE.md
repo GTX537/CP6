@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-11 UTC · W484保留原图与原验收
+
+W484 CRM #172/Issue #171已核销并准确清理/DEV2释放，修复含子图Lead擦除后实际版本封存；正常持久清除、末段I/O整体回滚/重试及15项相关回归通过。R1 POS/NEG按全部原义务采纳PASS，正式修订2/247；原60AC、原375、PG16/11和完整月度范围不提升，Main协调采用/finish待核。 [本任务](../development/evidence/W484-01/DELIVERY.md)
+
 ## 2026-11-11 UTC · 4h检查点与W483
 
 W483 原导出刷新/实际新登录恢复、当前主体/租户/撤权、已消费后明确新意图及原五分钟R1终态共11项PG/HTTPS检查与6+14项Web行为、类型检查及一次集中审查通过。CRM #170 已合入远端 8edb41fee2a300a5177eb142ced397253aeeeb07，Issue #169关闭，准确分支清理/DEV2干净释放；Main本轮协调采用/finish待核，12h目标继续。 [本任务](../development/evidence/W483-01/DELIVERY.md)

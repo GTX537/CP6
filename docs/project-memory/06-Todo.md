@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-11 UTC · W484保留原图与原验收
+
+本轮Main协调正常采用/finish后，继续首条业务链原60AC完整义务、四disposition/Lead月度原生保留与共同服务真实适用。R1两条已完整采纳，不重跑未变输入；原整卡和未运行范围不以本组件未来投影替代。 [本任务](../development/evidence/W484-01/DELIVERY.md)
+
 ## 2026-11-11 UTC · 4h检查点与W483
 
 完成本轮Main协调正常采用/finish后继续首条业务链原60AC/R1的完整义务与真实缺口，优先四disposition/Lead月度保留及共同服务真实适用。W483修复和CRM席位已收尾，无需重做同输入成功验证；未运行范围保持真实状态。 [本任务](../development/evidence/W483-01/DELIVERY.md)
