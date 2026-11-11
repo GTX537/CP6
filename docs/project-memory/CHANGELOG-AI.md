@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC 库位发布当前编码闸门
+
+W462原4项3失败/1正常；最终4原生和既有兼容。规则先提交时原闸门拒绝；原500已回滚，最终明确503未知；实际SignalR只在恢复成功时收到成功通知。 [W462交付](../development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md)
+
 ## 2026-11-11 UTC 场景差量当前事务与重发布
 
 W461新原版六项和实际最终九项及16既有按报告记录，含真实LPB/WMS投影/集成事件、提交故障和实际数据、原日志回归。W460实测10.29–10.37低于12–24，单过滤器复用Core参考8–16；本窗实际嵌套链20–36按原生边界校准。 [W461交付](../development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md)
