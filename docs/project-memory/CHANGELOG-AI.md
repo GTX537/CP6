@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC · W485实际Rejected保留
+
+W485实际Next/HTTPS→原生PG业务整链、原Rejected60分钟和原政策换版/撤回均通过；CSP真实RED与静态头覆盖问题已按文档路由归属修正复验。CRM #174/Issue #173及DEV2准确生命周期已核销；原AC37/60、修订2/247，其余状态不越级，Main协调及12h继续，无Actions/部署。 [本任务](../development/evidence/W485-01/DELIVERY.md)
+
 ## 2026-11-11 UTC · W484保留原图与原验收
 
 W484 CRM #172修复实际PG子行版本与Lead最终封存时序，Issue #171关闭/准确分支清理/DEV2释放；R1 POS/NEG完整运行义务首次采纳2PASS/245NOT_RUN。15项相关保留与R1/存储有效成功按真实来源记录，失败保留；Main协调收尾，未改生产Schema/合同、触发Actions或部署。 [本任务](../development/evidence/W484-01/DELIVERY.md)

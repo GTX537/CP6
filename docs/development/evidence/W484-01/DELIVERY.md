@@ -1,6 +1,6 @@
 # W484-01 · 首条询盘保留原图与原验收采用
 
-状态：本地相关验证与一次集中审查通过，正常采用及收尾中。继续用户已接受的 [12h 执行](../../planning/20261111-codex-12h-business-chain.md)，原生上一读数 18,218 秒（5h03m38s），8h 检查点尚未到。COORD 单对话串行，无子代理。官方 status/start 已完成，复用 Main DEV-1 / CRM DEV-2；分支均 `codex/w484-01`，基线 Main `0a30d55436a5169174da95e905a8163abaf51b86`、CRM `8edb41fee2a300a5177eb142ced397253aeeeb07`，集成席位空闲。
+状态：本任务已正常远端采用并完成生命周期。继续用户已接受的 [12h 执行](../../planning/20261111-codex-12h-business-chain.md)，原生上一读数 18,218 秒（5h03m38s），8h 检查点尚未到。COORD 单对话串行，无子代理。官方 status/start 已完成，复用 Main DEV-1 / CRM DEV-2；分支均 `codex/w484-01`，基线 Main `0a30d55436a5169174da95e905a8163abaf51b86`、CRM `8edb41fee2a300a5177eb142ced397253aeeeb07`，集成席位空闲。
 
 ## 前项及准入
 
@@ -23,7 +23,7 @@
 - [x] 合法原图/真实调用与原 AC/R1 逐项对应，明确已有证据和实际未覆盖部分。
 - [x] 与当前选定缺口相称的持久 PostgreSQL 行为验证；真实失败修复后复测，原失败保留。
 - [x] 两条完整R1原义务准确记入原台账，未满足项不冒通过；相关文档/生成一致性。
-- [ ] 一次集中审查及必需验证通过；正常分仓采用、进程和分支/工作区/席位收尾。
+- [x] 一次集中审查及必需验证通过；正常分仓采用、进程和分支/工作区/席位收尾。
 
 ## 实际发现与修复
 
@@ -72,4 +72,4 @@ CRM [PR #172](https://github.com/GTX537/CP6.CRM/pull/172) 已将源 `94b21d24225
 
 自有PG经系统身份、目录、marker和无其他客户端核验后smart停止，数据与失败日志保留；本轮.NET/HTTP/worker进程已退出。CRM本任务Actions列表为空。两仓workflow/依赖内容未变化，普通入口仅手动，未建版本tag；没有Actions取消、触发/保护变更或部署。源修复不含生产DDL；测试PG的临时DDL故障注入已按准确自有引用移除，最终回滚验证使用保存边界I/O注入。
 
-Main本提交同步报告、原两条R1采用、台账/生成页、四状态和前项W483实际finish。其自身正常PR/远端核对及官方finish为本轮最后步骤，不能提前称Main席位释放；最终准确引用及分支/工作区/席位状态由本Main PR和本任务私有 `main-finish.json` 核销。12h目标继续ACTIVE。
+Main [PR #952](https://github.com/GTX537/CP6/pull/952) 已将协调源 `f485b1e185eaa6f0289a4f0da256e4fb027b6404` 正常合入远端main `4fa6d2713ddbe0bf2783dca589b425c6be336ccb`，已fetch核对祖先及完整源码树 `179ba0c5a11581e70a9dfae687be0f2ada629101` 一致。官方finish成功，准确本地/远端任务分支删除，DEV-1干净detached供复用，席位已释放；两仓最终证明为本任务私有 `main-finish.json` / `crm-finish.json`。主目录安全快进，Main原14,932个未跟踪资料路径完整保留。12h目标继续ACTIVE。

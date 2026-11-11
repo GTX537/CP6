@@ -938,8 +938,30 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-001",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-001",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4d1db6563bf6064214ab033d7ff67fbdf69f6a70",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave117/foundation/final-validation.json per-test exact logged successful subsets: complete native submit/H01, browser proof/receipt, stable replay/collision/lost ACK, all three rate buckets and rollback. Raw failed runs retained; scope and W118 UI evidence mapped in report.",
+                "environment": "Original actual isolated PostgreSQL/native .NET HTTP and actual Main TLS to CRM; explicit synthetic IAM/business input; unchanged relevant success reused, not W485 rerun.",
+                "observed_at": "2026-10-24T18:34:00.762230+00:00",
+                "scope": "原公共表单/持久Attempt/提交/浏览器绑定回执完整：W117原生Owner与负向输入，W118实际页面、当前Next完整SSR/路由/HTTPS和原生PG实际衔接；不冒其他完整目标。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "49fe4d6b13bc8bf0336e2bf24ca3b1eaf481c92f",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "d0183afd23a200f49f536a23fb31f1c853fcc8a0",
+                "command": "Actual W485 next-review-green-07/results.trx; exact run-tests.ps1 or run-next.ps1 with original PG test project and the fully qualified filter detailed in report. Final unique scenario PASS; intermediate failures retained.",
+                "environment": "Actual local Windows/PostgreSQL18/.NET8 and (Next scenario) real Next16.3.3 production mode/Node22/Chromium with owned HTTPS ingress; explicit synthetic IAM/business inputs. Real clocks and original deadlines preserved.",
+                "observed_at": "2026-11-11T21:44:23.069848+00:00",
+                "scope": "原公共表单/持久Attempt/提交/浏览器绑定回执完整：W117原生Owner与负向输入，W118实际页面、当前Next完整SSR/路由/HTTPS和原生PG实际衔接；不冒其他完整目标。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/0"
@@ -960,8 +982,19 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-003",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-003",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "5c8c7b2d96bbd0c642f5777aab9c40d539b92c48",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse exact executed argv in D:\\CP6-local-test\\wave121\\foundation\\final-schema-20261024T212334Z.json: [\"C:/Users/tt/.dotnet/dotnet.exe\", \"test\", \"tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj\", \"--no-restore\", \"--artifacts-path\", \"D:/CP6-local-test/wave51/artifacts\", \"--filter\", \"Native_decision_|Native_intake_decision_HTTP|Native_intake_HTTP_reads_actual|Native_intake_HTTP_field_permissions|Native_intake_rechecks_current|Public_submit_real_HTTP|Public_submit_lost_committed|Native_intake_actual_foreign\", \"--logger\", \"console;verbosity=normal\", \"--logger\", \"trx;LogFileName=final-schema-20261024T212334Z.trx\", \"--results-directory\", \"D:\\\\CP6-local-test\\\\wave121\\\\foundation\\\\results\", \"-v:q\"]",
+                "environment": "Actual isolated PostgreSQL/native HTTP/Node BFF, real H01/decision/UoW/replay; explicit synthetic IAM/business inputs. Exact final-schema run 24 PASS/0 FAIL/0 skipped; old mixed failed batches retained.",
+                "observed_at": "2026-10-24T21:26:39.419352+00:00",
+                "scope": "NeedsReview实际放行/拒绝、同/相反动作并发唯一终态和完整H01图；原完整审核采用与最终审核边界按W253/W310真实范围复用。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/2"
@@ -971,8 +1004,29 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-004",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-004",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "14ca04883e5aae7b856b13674d00b6777d1567d5",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave105/foundation/final-validation.json: actual dotnet Configuration_lifecycle / Configuration_browser filters, final layout, Main interop; wave102 actual Owner/hash successful subsets as detailed in linked report.",
+                "environment": "Actual isolated PostgreSQL, native .NET HTTP Owner, React/Chromium and Node BFF; explicit synthetic business/IAM inputs. Original runs reused, no W485 rerun.",
+                "observed_at": "2026-10-24T10:29:09.750985+00:00",
+                "scope": "完整配置草稿/预览/激活/相邻生效区间/后继回退，W102/W105真实Owner/浏览器及W247当前公共采用，按W255整卡原核销范围。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4c77cdd34d29811fad35f479e00e04ff076e607f",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave247/foundation/acceptance-corrected-20261101T191859Z.json: dotnet test tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj --filter FullyQualifiedName~Simulated_production_runtime_normalization; exact full command and original TRX linked in report.",
+                "environment": "Actual isolated PostgreSQL18/.NET8.0.30/Windows native HTTP; simulated policy/calendar/IAM/consumer inputs, current production code actually executed; original successful subsets reused.",
+                "observed_at": "2026-11-01T19:19:23.701248+00:00",
+                "scope": "当前共同事务采用下的配置/日历发布和原Attempt冻结/公共201，保留原件；完整配置草稿/预览/激活/相邻生效区间/后继回退，W102/W105真实Owner/浏览器及W247当前公共采用，按W255整卡原核销范围。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/3"
@@ -993,8 +1047,40 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-006",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-006",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4d1db6563bf6064214ab033d7ff67fbdf69f6a70",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave117/foundation/final-validation.json per-test exact logged successful subsets: complete native submit/H01, browser proof/receipt, stable replay/collision/lost ACK, all three rate buckets and rollback. Raw failed runs retained; scope and W118 UI evidence mapped in report.",
+                "environment": "Original actual isolated PostgreSQL/native .NET HTTP and actual Main TLS to CRM; explicit synthetic IAM/business input; unchanged relevant success reused, not W485 rerun.",
+                "observed_at": "2026-10-24T18:34:00.762230+00:00",
+                "scope": "原公开表单/回执FE状态与原正文/键重试、429、过期/更新显式重新打开/重新同意、失权/晚到清理；W118明示注入的UI错误只作UI行为，实际Owner与Next正常链另有真实执行。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "390fae2ad2238c3f14e7c142f6f0352eb5e3e7d1",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave118/foundation/final-validation.json exact Web/browser-native command sources: 48 unique effective checks, 38 Web and 10 actual browser/native HTTP/PG; explicit UI error injection scope retained.",
+                "environment": "Actual React, Node BFF and native HTTP/PostgreSQL; page delivery and IAM fixtures, selected UI expiry/update/denial errors modeled; no original Next SSR or production deployment claim.",
+                "observed_at": "2026-10-24T19:09:47.808859+00:00",
+                "scope": "原公开表单/回执FE状态与原正文/键重试、429、过期/更新显式重新打开/重新同意、失权/晚到清理；W118明示注入的UI错误只作UI行为，实际Owner与Next正常链另有真实执行。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "49fe4d6b13bc8bf0336e2bf24ca3b1eaf481c92f",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "d0183afd23a200f49f536a23fb31f1c853fcc8a0",
+                "command": "Actual W485 next-review-green-07/results.trx; exact run-tests.ps1 or run-next.ps1 with original PG test project and the fully qualified filter detailed in report. Final unique scenario PASS; intermediate failures retained.",
+                "environment": "Actual local Windows/PostgreSQL18/.NET8 and (Next scenario) real Next16.3.3 production mode/Node22/Chromium with owned HTTPS ingress; explicit synthetic IAM/business inputs. Real clocks and original deadlines preserved.",
+                "observed_at": "2026-11-11T21:44:23.069848+00:00",
+                "scope": "原公开表单/回执FE状态与原正文/键重试、429、过期/更新显式重新打开/重新同意、失权/晚到清理；W118明示注入的UI错误只作UI行为，实际Owner与Next正常链另有真实执行。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/5"
@@ -1004,8 +1090,19 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-007",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-007",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "f885ec55c7b57fe15a5ef8da41c73ad7d1c64675",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave122/foundation/final-validation.json per-test evidence and exact original browser/current-action/Main interop commands; 9 browser scenarios plus final display-clock and related effective successes.",
+                "environment": "Actual React/Chromium -> Node BFF -> native .NET/PostgreSQL, actual Main current read context; explicit synthetic IAM/business inputs; original runs reused, no original Next SSR claim.",
+                "observed_at": "2026-10-24T21:59:50.129674+00:00",
+                "scope": "原队列/详情/当前字段和动作、只读/陈旧/丢答/撤权/晚到9种实际浏览器；原期限及已匿名化终态按W259和当前相关回归范围结合。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/6"
@@ -1015,8 +1112,19 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-008",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-008",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "14ca04883e5aae7b856b13674d00b6777d1567d5",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave105/foundation/final-validation.json: actual dotnet Configuration_lifecycle / Configuration_browser filters, final layout, Main interop; wave102 actual Owner/hash successful subsets as detailed in linked report.",
+                "environment": "Actual isolated PostgreSQL, native .NET HTTP Owner, React/Chromium and Node BFF; explicit synthetic business/IAM inputs. Original runs reused, no W485 rerun.",
+                "observed_at": "2026-10-24T10:29:09.750985+00:00",
+                "scope": "配置实际页面保存、预览、激活、只读、陈旧、撤权、晚到和各阶段丢答/原操作恢复；不冒完整SSR/部署。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/7"
@@ -1026,8 +1134,30 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-009",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-009",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "912f6afa1d64cc0777721c03b5b39c0db91d60da",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse S01-08 executed-source.json exact logged C#186/Web142/importer6/typecheck commands and 49 original UI round trips; observed working bytes subsequently bound by source commit.",
+                "environment": "Original Node22.22/npm10.9.4, SDK10.0.302, Python3.14.4; actual contract library/validator execution, original business/HTTP/DB NOT_RUN. No W485 rerun claim.",
+                "observed_at": "2026-10-13T03:21:40.949057+00:00",
+                "scope": "原Canonical/OpenAPI/C#/TS/schema/fixture精确字段与生成采用；现有默认冻结DTO形状不变，明确内部v2/文件媒体扩展单列。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W484-01/DELIVERY.md",
+                "source_sha": "94b21d24225fc713766910c84cf09099a247f9cb",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "a992004e984252d94049e9bf17b458c2427118a6",
+                "command": "& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name r1-reference-02 -Filter 'FullyQualifiedName~R1_effective_production_schema'\n& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name r1-adoption-01 -Filter 'FullyQualifiedName~R1_effective_production_schema|FullyQualifiedName~Native_R1_actual_event_decoder' (only actual-event PASS reused; reference count assertion FAIL retained)\n& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name retention-persistence-red-01 -Filter 'FullyQualifiedName~Component_lead_erasure_persists|FullyQualifiedName~Native_R1_legal_key' (only Native_R1 PASS reused; component fixture FAIL retained)\nUnchanged S01-08 contract subassertions, W482 expiry-02 and W483 recovery-expiry-02 reused as scoped in the report.",
+                "environment": "Windows; actual .NET 8.0.424 / PostgreSQL 18 / HTTP and compiled production decoder; IAM, business/policy/external inputs explicitly simulated; reused actual Main TLS/HTTPS and original five-minute expiry as scoped; no deployment",
+                "observed_at": "2026-11-11T19:41:09.806784+00:00",
+                "result": "PASS",
+                "scope": "当前R1实际指针闭合/终态及合法key Unicode Owner补项，沿原报告准确成功子集；原Canonical/OpenAPI/C#/TS/schema/fixture精确字段与生成采用；现有默认冻结DTO形状不变，明确内部v2/文件媒体扩展单列。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/8"
@@ -1037,8 +1167,30 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-010",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-010",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4d1db6563bf6064214ab033d7ff67fbdf69f6a70",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave117/foundation/final-validation.json per-test exact logged successful subsets: complete native submit/H01, browser proof/receipt, stable replay/collision/lost ACK, all three rate buckets and rollback. Raw failed runs retained; scope and W118 UI evidence mapped in report.",
+                "environment": "Original actual isolated PostgreSQL/native .NET HTTP and actual Main TLS to CRM; explicit synthetic IAM/business input; unchanged relevant success reused, not W485 rerun.",
+                "observed_at": "2026-10-24T18:34:00.762230+00:00",
+                "scope": "公开回执独立于内部Submission/Lead权限：实际无内部字段/权限/凭证的五字段公开结果，原浏览器可读，内部已登录会话单独读同一回执404；原权限/跨租户/错误浏览器Owner证据复用。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "49fe4d6b13bc8bf0336e2bf24ca3b1eaf481c92f",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "d0183afd23a200f49f536a23fb31f1c853fcc8a0",
+                "command": "Actual W485 next-review-green-07/results.trx; exact run-tests.ps1 or run-next.ps1 with original PG test project and the fully qualified filter detailed in report. Final unique scenario PASS; intermediate failures retained.",
+                "environment": "Actual local Windows/PostgreSQL18/.NET8 and (Next scenario) real Next16.3.3 production mode/Node22/Chromium with owned HTTPS ingress; explicit synthetic IAM/business inputs. Real clocks and original deadlines preserved.",
+                "observed_at": "2026-11-11T21:44:23.069848+00:00",
+                "scope": "公开回执独立于内部Submission/Lead权限：实际无内部字段/权限/凭证的五字段公开结果，原浏览器可读，内部已登录会话单独读同一回执404；原权限/跨租户/错误浏览器Owner证据复用。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/9"
@@ -1048,8 +1200,19 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-011",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-011",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4d1db6563bf6064214ab033d7ff67fbdf69f6a70",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave117/foundation/final-validation.json per-test exact logged successful subsets: complete native submit/H01, browser proof/receipt, stable replay/collision/lost ACK, all three rate buckets and rollback. Raw failed runs retained; scope and W118 UI evidence mapped in report.",
+                "environment": "Original actual isolated PostgreSQL/native .NET HTTP and actual Main TLS to CRM; explicit synthetic IAM/business input; unchanged relevant success reused, not W485 rerun.",
+                "observed_at": "2026-10-24T18:34:00.762230+00:00",
+                "scope": "按原FX09同一Attempt/原请求键和NFC等价payload恢复原结果，实际无第二配额/H01/Submission；W117与W247真实原字节/码点场景，保持其确切输入范围。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/10"
@@ -1059,8 +1222,19 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-012",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-012",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4d1db6563bf6064214ab033d7ff67fbdf69f6a70",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave117/foundation/final-validation.json per-test exact logged successful subsets: complete native submit/H01, browser proof/receipt, stable replay/collision/lost ACK, all three rate buckets and rollback. Raw failed runs retained; scope and W118 UI evidence mapped in report.",
+                "environment": "Original actual isolated PostgreSQL/native .NET HTTP and actual Main TLS to CRM; explicit synthetic IAM/business input; unchanged relevant success reused, not W485 rerun.",
+                "observed_at": "2026-10-24T18:34:00.762230+00:00",
+                "scope": "原FX10同一key不同payload返回冲突，实际无第二Submission/Lead/配额或替代原结果；W117真实Owner及W118原命令页面恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/11"
@@ -1070,8 +1244,30 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-013",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-013",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4d1db6563bf6064214ab033d7ff67fbdf69f6a70",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave117/foundation/final-validation.json per-test exact logged successful subsets: complete native submit/H01, browser proof/receipt, stable replay/collision/lost ACK, all three rate buckets and rollback. Raw failed runs retained; scope and W118 UI evidence mapped in report.",
+                "environment": "Original actual isolated PostgreSQL/native .NET HTTP and actual Main TLS to CRM; explicit synthetic IAM/business input; unchanged relevant success reused, not W485 rerun.",
+                "observed_at": "2026-10-24T18:34:00.762230+00:00",
+                "scope": "真实自动H01完整原Submission/PublicAttempt/Consent/ReceiptProof/62列Lead/History/稳定槽/原结果/审计/正式Outbox共同事务，W117完整图/失败回滚；当前冻结政策场景再次实际自动建图。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "49fe4d6b13bc8bf0336e2bf24ca3b1eaf481c92f",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "d0183afd23a200f49f536a23fb31f1c853fcc8a0",
+                "command": "Actual W485 frozen-policy-03/results.trx; exact run-tests.ps1 or run-next.ps1 with original PG test project and the fully qualified filter detailed in report. Final unique scenario PASS; intermediate failures retained.",
+                "environment": "Actual local Windows/PostgreSQL18/.NET8 and (Next scenario) real Next16.3.3 production mode/Node22/Chromium with owned HTTPS ingress; explicit synthetic IAM/business inputs. Real clocks and original deadlines preserved.",
+                "observed_at": "2026-11-11T21:21:08.367742+00:00",
+                "scope": "真实自动H01完整原Submission/PublicAttempt/Consent/ReceiptProof/62列Lead/History/稳定槽/原结果/审计/正式Outbox共同事务，W117完整图/失败回滚；当前冻结政策场景再次实际自动建图。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/12"
@@ -1081,8 +1277,19 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-014",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-014",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "5c8c7b2d96bbd0c642f5777aab9c40d539b92c48",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse exact executed argv in D:\\CP6-local-test\\wave121\\foundation\\final-schema-20261024T212334Z.json: [\"C:/Users/tt/.dotnet/dotnet.exe\", \"test\", \"tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj\", \"--no-restore\", \"--artifacts-path\", \"D:/CP6-local-test/wave51/artifacts\", \"--filter\", \"Native_decision_|Native_intake_decision_HTTP|Native_intake_HTTP_reads_actual|Native_intake_HTTP_field_permissions|Native_intake_rechecks_current|Public_submit_real_HTTP|Public_submit_lost_committed|Native_intake_actual_foreign\", \"--logger\", \"console;verbosity=normal\", \"--logger\", \"trx;LogFileName=final-schema-20261024T212334Z.trx\", \"--results-directory\", \"D:\\\\CP6-local-test\\\\wave121\\\\foundation\\\\results\", \"-v:q\"]",
+                "environment": "Actual isolated PostgreSQL/native HTTP/Node BFF, real H01/decision/UoW/replay; explicit synthetic IAM/business inputs. Exact final-schema run 24 PASS/0 FAIL/0 skipped; old mixed failed batches retained.",
+                "observed_at": "2026-10-24T21:26:39.419352+00:00",
+                "scope": "实际放行完整H01 Lead/历史/原结果/审计/Outbox同一事务，真实并发唯一赢家及最终七天边界整组回滚。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/13"
@@ -1092,8 +1299,19 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-015",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-015",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "5c8c7b2d96bbd0c642f5777aab9c40d539b92c48",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse exact executed argv in D:\\CP6-local-test\\wave121\\foundation\\final-schema-20261024T212334Z.json: [\"C:/Users/tt/.dotnet/dotnet.exe\", \"test\", \"tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj\", \"--no-restore\", \"--artifacts-path\", \"D:/CP6-local-test/wave51/artifacts\", \"--filter\", \"Native_decision_|Native_intake_decision_HTTP|Native_intake_HTTP_reads_actual|Native_intake_HTTP_field_permissions|Native_intake_rechecks_current|Public_submit_real_HTTP|Public_submit_lost_committed|Native_intake_actual_foreign\", \"--logger\", \"console;verbosity=normal\", \"--logger\", \"trx;LogFileName=final-schema-20261024T212334Z.trx\", \"--results-directory\", \"D:\\\\CP6-local-test\\\\wave121\\\\foundation\\\\results\", \"-v:q\"]",
+                "environment": "Actual isolated PostgreSQL/native HTTP/Node BFF, real H01/decision/UoW/replay; explicit synthetic IAM/business inputs. Exact final-schema run 24 PASS/0 FAIL/0 skipped; old mixed failed batches retained.",
+                "observed_at": "2026-10-24T21:26:39.419352+00:00",
+                "scope": "真实拒绝及原原因/原结果/效果一次、重放同赢家，实际无Lead与反动作竞争。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/14"
@@ -1103,8 +1321,19 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-016",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-016",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "5c8c7b2d96bbd0c642f5777aab9c40d539b92c48",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse exact executed argv in D:\\CP6-local-test\\wave121\\foundation\\final-schema-20261024T212334Z.json: [\"C:/Users/tt/.dotnet/dotnet.exe\", \"test\", \"tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj\", \"--no-restore\", \"--artifacts-path\", \"D:/CP6-local-test/wave51/artifacts\", \"--filter\", \"Native_decision_|Native_intake_decision_HTTP|Native_intake_HTTP_reads_actual|Native_intake_HTTP_field_permissions|Native_intake_rechecks_current|Public_submit_real_HTTP|Public_submit_lost_committed|Native_intake_actual_foreign\", \"--logger\", \"console;verbosity=normal\", \"--logger\", \"trx;LogFileName=final-schema-20261024T212334Z.trx\", \"--results-directory\", \"D:\\\\CP6-local-test\\\\wave121\\\\foundation\\\\results\", \"-v:q\"]",
+                "environment": "Actual isolated PostgreSQL/native HTTP/Node BFF, real H01/decision/UoW/replay; explicit synthetic IAM/business inputs. Exact final-schema run 24 PASS/0 FAIL/0 skipped; old mixed failed batches retained.",
+                "observed_at": "2026-10-24T21:26:39.419352+00:00",
+                "scope": "可信tenant/主管/部门/精确Site/Form及当前动作和六字段的实际服务器边界；越界裁剪/不存在及零写拒绝，privacy新增字段按W482范围复用。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/15"
@@ -1114,8 +1343,19 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-017",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-017",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "5c8c7b2d96bbd0c642f5777aab9c40d539b92c48",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse exact executed argv in D:\\CP6-local-test\\wave121\\foundation\\final-schema-20261024T212334Z.json: [\"C:/Users/tt/.dotnet/dotnet.exe\", \"test\", \"tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj\", \"--no-restore\", \"--artifacts-path\", \"D:/CP6-local-test/wave51/artifacts\", \"--filter\", \"Native_decision_|Native_intake_decision_HTTP|Native_intake_HTTP_reads_actual|Native_intake_HTTP_field_permissions|Native_intake_rechecks_current|Public_submit_real_HTTP|Public_submit_lost_committed|Native_intake_actual_foreign\", \"--logger\", \"console;verbosity=normal\", \"--logger\", \"trx;LogFileName=final-schema-20261024T212334Z.trx\", \"--results-directory\", \"D:\\\\CP6-local-test\\\\wave121\\\\foundation\\\\results\", \"-v:q\"]",
+                "environment": "Actual isolated PostgreSQL/native HTTP/Node BFF, real H01/decision/UoW/replay; explicit synthetic IAM/business inputs. Exact final-schema run 24 PASS/0 FAIL/0 skipped; old mixed failed batches retained.",
+                "observed_at": "2026-10-24T21:26:39.419352+00:00",
+                "scope": "缺失/过期/撤权/畸形权限、签名/用途/当前源/会话/字段/资源在实际Owner边界拒绝无效果；新v2仅相应privacy用途补证，不倒灌v1。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/16"
@@ -1125,8 +1365,19 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-018",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-018",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "5c8c7b2d96bbd0c642f5777aab9c40d539b92c48",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse exact executed argv in D:\\CP6-local-test\\wave121\\foundation\\final-schema-20261024T212334Z.json: [\"C:/Users/tt/.dotnet/dotnet.exe\", \"test\", \"tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj\", \"--no-restore\", \"--artifacts-path\", \"D:/CP6-local-test/wave51/artifacts\", \"--filter\", \"Native_decision_|Native_intake_decision_HTTP|Native_intake_HTTP_reads_actual|Native_intake_HTTP_field_permissions|Native_intake_rechecks_current|Public_submit_real_HTTP|Public_submit_lost_committed|Native_intake_actual_foreign\", \"--logger\", \"console;verbosity=normal\", \"--logger\", \"trx;LogFileName=final-schema-20261024T212334Z.trx\", \"--results-directory\", \"D:\\\\CP6-local-test\\\\wave121\\\\foundation\\\\results\", \"-v:q\"]",
+                "environment": "Actual isolated PostgreSQL/native HTTP/Node BFF, real H01/decision/UoW/replay; explicit synthetic IAM/business inputs. Exact final-schema run 24 PASS/0 FAIL/0 skipped; old mixed failed batches retained.",
+                "observed_at": "2026-10-24T21:26:39.419352+00:00",
+                "scope": "真实并发同/相反动作及If-Match仅一赢家/一组效果，实际页面412先读当前后明确新命令。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/17"
@@ -1147,8 +1398,29 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-020",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-020",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "5c8c7b2d96bbd0c642f5777aab9c40d539b92c48",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse exact executed argv in D:\\CP6-local-test\\wave121\\foundation\\final-schema-20261024T212334Z.json: [\"C:/Users/tt/.dotnet/dotnet.exe\", \"test\", \"tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj\", \"--no-restore\", \"--artifacts-path\", \"D:/CP6-local-test/wave51/artifacts\", \"--filter\", \"Native_decision_|Native_intake_decision_HTTP|Native_intake_HTTP_reads_actual|Native_intake_HTTP_field_permissions|Native_intake_rechecks_current|Public_submit_real_HTTP|Public_submit_lost_committed|Native_intake_actual_foreign\", \"--logger\", \"console;verbosity=normal\", \"--logger\", \"trx;LogFileName=final-schema-20261024T212334Z.trx\", \"--results-directory\", \"D:\\\\CP6-local-test\\\\wave121\\\\foundation\\\\results\", \"-v:q\"]",
+                "environment": "Actual isolated PostgreSQL/native HTTP/Node BFF, real H01/decision/UoW/replay; explicit synthetic IAM/business inputs. Exact final-schema run 24 PASS/0 FAIL/0 skipped; old mixed failed batches retained.",
+                "observed_at": "2026-10-24T21:26:39.419352+00:00",
+                "scope": "原槽和资源/结果/版本绑定，缺/变原件不得重建；实际公开原提交只接受已证明决策版本转移，当前资格先于原结果披露。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4d1db6563bf6064214ab033d7ff67fbdf69f6a70",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave117/foundation/final-validation.json exact CRM/Main command sources and successful subsets: complete public graph, original binding/replay/collision/lost ACK and current source; failed runs retained.",
+                "environment": "Actual isolated PostgreSQL, native .NET/HTTP, real Main TLS service context to CRM; explicit synthetic business/IAM inputs, original effective successes reused.",
+                "observed_at": "2026-10-24T18:34:00.762230+00:00",
+                "scope": "原完整公开/H01及原结果绑定/稳定槽/故障；原槽和资源/结果/版本绑定，缺/变原件不得重建；实际公开原提交只接受已证明决策版本转移，当前资格先于原结果披露。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/19"
@@ -1158,8 +1430,20 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-021",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-021",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "49fe4d6b13bc8bf0336e2bf24ca3b1eaf481c92f",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "d0183afd23a200f49f536a23fb31f1c853fcc8a0",
+                "command": "Actual W485 rejected-elapsed-02/results.trx; exact run-tests.ps1 or run-next.ps1 with original PG test project and the fully qualified filter detailed in report. Final unique scenario PASS; intermediate failures retained.",
+                "environment": "Actual local Windows/PostgreSQL18/.NET8 and (Next scenario) real Next16.3.3 production mode/Node22/Chromium with owned HTTPS ingress; explicit synthetic IAM/business inputs. Real clocks and original deadlines preserved.",
+                "observed_at": "2026-11-11T21:36:26.245885+00:00",
+                "scope": "实际匿名化后公共原提交/决策/回执/导出旧proof不能复活PII，Rejected原小时完整HTTP/PG及NeedsReview/Expired既有有效证据；不据此冒四disposition/月度native清除全项。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/20"
@@ -1169,8 +1453,29 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-022",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-022",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "5c8c7b2d96bbd0c642f5777aab9c40d539b92c48",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse exact executed argv in D:\\CP6-local-test\\wave121\\foundation\\final-schema-20261024T212334Z.json: [\"C:/Users/tt/.dotnet/dotnet.exe\", \"test\", \"tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj\", \"--no-restore\", \"--artifacts-path\", \"D:/CP6-local-test/wave51/artifacts\", \"--filter\", \"Native_decision_|Native_intake_decision_HTTP|Native_intake_HTTP_reads_actual|Native_intake_HTTP_field_permissions|Native_intake_rechecks_current|Public_submit_real_HTTP|Public_submit_lost_committed|Native_intake_actual_foreign\", \"--logger\", \"console;verbosity=normal\", \"--logger\", \"trx;LogFileName=final-schema-20261024T212334Z.trx\", \"--results-directory\", \"D:\\\\CP6-local-test\\\\wave121\\\\foundation\\\\results\", \"-v:q\"]",
+                "environment": "Actual isolated PostgreSQL/native HTTP/Node BFF, real H01/decision/UoW/replay; explicit synthetic IAM/business inputs. Exact final-schema run 24 PASS/0 FAIL/0 skipped; old mixed failed batches retained.",
+                "observed_at": "2026-10-24T21:26:39.419352+00:00",
+                "scope": "真实提交/决策commit后HTTP丢答按原命令恢复；原页面key/body/If-Match/CSRF及privacy原202/Job恢复按各已执行来源结合。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4d1db6563bf6064214ab033d7ff67fbdf69f6a70",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave117/foundation/final-validation.json exact CRM/Main command sources and successful subsets: complete public graph, original binding/replay/collision/lost ACK and current source; failed runs retained.",
+                "environment": "Actual isolated PostgreSQL, native .NET/HTTP, real Main TLS service context to CRM; explicit synthetic business/IAM inputs, original effective successes reused.",
+                "observed_at": "2026-10-24T18:34:00.762230+00:00",
+                "scope": "原完整公开/H01及原结果绑定/稳定槽/故障；真实提交/决策commit后HTTP丢答按原命令恢复；原页面key/body/If-Match/CSRF及privacy原202/Job恢复按各已执行来源结合。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/21"
@@ -1191,8 +1496,29 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-024",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-024",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "14ca04883e5aae7b856b13674d00b6777d1567d5",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave105/foundation/final-validation.json: actual dotnet Configuration_lifecycle / Configuration_browser filters, final layout, Main interop; wave102 actual Owner/hash successful subsets as detailed in linked report.",
+                "environment": "Actual isolated PostgreSQL, native .NET HTTP Owner, React/Chromium and Node BFF; explicit synthetic business/IAM inputs. Original runs reused, no W485 rerun.",
+                "observed_at": "2026-10-24T10:29:09.750985+00:00",
+                "scope": "配置写入允许集合、预览同稿/原计数及Proof，不发行/消费公共Attempt；W247仅公共GET发行及旧原件继续有效。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4c77cdd34d29811fad35f479e00e04ff076e607f",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave247/foundation/acceptance-corrected-20261101T191859Z.json: dotnet test tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj --filter FullyQualifiedName~Simulated_production_runtime_normalization; exact full command and original TRX linked in report.",
+                "environment": "Actual isolated PostgreSQL18/.NET8.0.30/Windows native HTTP; simulated policy/calendar/IAM/consumer inputs, current production code actually executed; original successful subsets reused.",
+                "observed_at": "2026-11-01T19:19:23.701248+00:00",
+                "scope": "当前共同事务采用下的配置/日历发布和原Attempt冻结/公共201，保留原件；配置写入允许集合、预览同稿/原计数及Proof，不发行/消费公共Attempt；W247仅公共GET发行及旧原件继续有效。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/23"
@@ -1202,8 +1528,29 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-025",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-025",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "14ca04883e5aae7b856b13674d00b6777d1567d5",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave105/foundation/final-validation.json: actual dotnet Configuration_lifecycle / Configuration_browser filters, final layout, Main interop; wave102 actual Owner/hash successful subsets as detailed in linked report.",
+                "environment": "Actual isolated PostgreSQL, native .NET HTTP Owner, React/Chromium and Node BFF; explicit synthetic business/IAM inputs. Original runs reused, no W485 rerun.",
+                "observed_at": "2026-10-24T10:29:09.750985+00:00",
+                "scope": "真实DB时钟相邻生效与后继；先发Attempt再激活新Bundle，新GET切换而旧Attempt/期限/日历冻结并实际201。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4c77cdd34d29811fad35f479e00e04ff076e607f",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave247/foundation/acceptance-corrected-20261101T191859Z.json: dotnet test tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj --filter FullyQualifiedName~Simulated_production_runtime_normalization; exact full command and original TRX linked in report.",
+                "environment": "Actual isolated PostgreSQL18/.NET8.0.30/Windows native HTTP; simulated policy/calendar/IAM/consumer inputs, current production code actually executed; original successful subsets reused.",
+                "observed_at": "2026-11-01T19:19:23.701248+00:00",
+                "scope": "当前共同事务采用下的配置/日历发布和原Attempt冻结/公共201，保留原件；真实DB时钟相邻生效与后继；先发Attempt再激活新Bundle，新GET切换而旧Attempt/期限/日历冻结并实际201。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/24"
@@ -1213,8 +1560,29 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-026",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-026",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "14ca04883e5aae7b856b13674d00b6777d1567d5",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave105/foundation/final-validation.json: actual dotnet Configuration_lifecycle / Configuration_browser filters, final layout, Main interop; wave102 actual Owner/hash successful subsets as detailed in linked report.",
+                "environment": "Actual isolated PostgreSQL, native .NET HTTP Owner, React/Chromium and Node BFF; explicit synthetic business/IAM inputs. Original runs reused, no W485 rerun.",
+                "observed_at": "2026-10-24T10:29:09.750985+00:00",
+                "scope": "新后继版本/区间回退和禁用退休，真实跨原8秒边界，原命令/原Scheduled回执及旧Bundle/日历/Attempt保持。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4c77cdd34d29811fad35f479e00e04ff076e607f",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave247/foundation/acceptance-corrected-20261101T191859Z.json: dotnet test tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj --filter FullyQualifiedName~Simulated_production_runtime_normalization; exact full command and original TRX linked in report.",
+                "environment": "Actual isolated PostgreSQL18/.NET8.0.30/Windows native HTTP; simulated policy/calendar/IAM/consumer inputs, current production code actually executed; original successful subsets reused.",
+                "observed_at": "2026-11-01T19:19:23.701248+00:00",
+                "scope": "当前共同事务采用下的配置/日历发布和原Attempt冻结/公共201，保留原件；新后继版本/区间回退和禁用退休，真实跨原8秒边界，原命令/原Scheduled回执及旧Bundle/日历/Attempt保持。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/25"
@@ -1235,8 +1603,30 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-028",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-028",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4d1db6563bf6064214ab033d7ff67fbdf69f6a70",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave117/foundation/final-validation.json per-test exact logged successful subsets: complete native submit/H01, browser proof/receipt, stable replay/collision/lost ACK, all three rate buckets and rollback. Raw failed runs retained; scope and W118 UI evidence mapped in report.",
+                "environment": "Original actual isolated PostgreSQL/native .NET HTTP and actual Main TLS to CRM; explicit synthetic IAM/business input; unchanged relevant success reused, not W485 rerun.",
+                "observed_at": "2026-10-24T18:34:00.762230+00:00",
+                "scope": "隐私说明/同意/政策从原赢家行与冻结Bundle保存，W117实际原图/原回执事实；换版/撤回后导出仍采用原字段/TTL并反映真实撤回，后来的政策不替换原件。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "49fe4d6b13bc8bf0336e2bf24ca3b1eaf481c92f",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "d0183afd23a200f49f536a23fb31f1c853fcc8a0",
+                "command": "Actual W485 frozen-policy-03/results.trx; exact run-tests.ps1 or run-next.ps1 with original PG test project and the fully qualified filter detailed in report. Final unique scenario PASS; intermediate failures retained.",
+                "environment": "Actual local Windows/PostgreSQL18/.NET8 and (Next scenario) real Next16.3.3 production mode/Node22/Chromium with owned HTTPS ingress; explicit synthetic IAM/business inputs. Real clocks and original deadlines preserved.",
+                "observed_at": "2026-11-11T21:21:08.367742+00:00",
+                "scope": "隐私说明/同意/政策从原赢家行与冻结Bundle保存，W117实际原图/原回执事实；换版/撤回后导出仍采用原字段/TTL并反映真实撤回，后来的政策不替换原件。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/27"
@@ -1334,8 +1724,29 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-037",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-037",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "5c8c7b2d96bbd0c642f5777aab9c40d539b92c48",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse exact executed argv in D:\\CP6-local-test\\wave121\\foundation\\final-schema-20261024T212334Z.json: [\"C:/Users/tt/.dotnet/dotnet.exe\", \"test\", \"tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj\", \"--no-restore\", \"--artifacts-path\", \"D:/CP6-local-test/wave51/artifacts\", \"--filter\", \"Native_decision_|Native_intake_decision_HTTP|Native_intake_HTTP_reads_actual|Native_intake_HTTP_field_permissions|Native_intake_rechecks_current|Public_submit_real_HTTP|Public_submit_lost_committed|Native_intake_actual_foreign\", \"--logger\", \"console;verbosity=normal\", \"--logger\", \"trx;LogFileName=final-schema-20261024T212334Z.trx\", \"--results-directory\", \"D:\\\\CP6-local-test\\\\wave121\\\\foundation\\\\results\", \"-v:q\"]",
+                "environment": "Actual isolated PostgreSQL/native HTTP/Node BFF, real H01/decision/UoW/replay; explicit synthetic IAM/business inputs. Exact final-schema run 24 PASS/0 FAIL/0 skipped; old mixed failed batches retained.",
+                "observed_at": "2026-10-24T21:26:39.419352+00:00",
+                "scope": "稳定槽按可信tenant/actor/operation/resource/key定位，PayloadHash只比较；实际同键同/异载荷、原结果及零重复写集。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4d1db6563bf6064214ab033d7ff67fbdf69f6a70",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave117/foundation/final-validation.json exact CRM/Main command sources and successful subsets: complete public graph, original binding/replay/collision/lost ACK and current source; failed runs retained.",
+                "environment": "Actual isolated PostgreSQL, native .NET/HTTP, real Main TLS service context to CRM; explicit synthetic business/IAM inputs, original effective successes reused.",
+                "observed_at": "2026-10-24T18:34:00.762230+00:00",
+                "scope": "原完整公开/H01及原结果绑定/稳定槽/故障；稳定槽按可信tenant/actor/operation/resource/key定位，PayloadHash只比较；实际同键同/异载荷、原结果及零重复写集。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/36"
@@ -1345,8 +1756,29 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-038",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-038",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "5c8c7b2d96bbd0c642f5777aab9c40d539b92c48",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse exact executed argv in D:\\CP6-local-test\\wave121\\foundation\\final-schema-20261024T212334Z.json: [\"C:/Users/tt/.dotnet/dotnet.exe\", \"test\", \"tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj\", \"--no-restore\", \"--artifacts-path\", \"D:/CP6-local-test/wave51/artifacts\", \"--filter\", \"Native_decision_|Native_intake_decision_HTTP|Native_intake_HTTP_reads_actual|Native_intake_HTTP_field_permissions|Native_intake_rechecks_current|Public_submit_real_HTTP|Public_submit_lost_committed|Native_intake_actual_foreign\", \"--logger\", \"console;verbosity=normal\", \"--logger\", \"trx;LogFileName=final-schema-20261024T212334Z.trx\", \"--results-directory\", \"D:\\\\CP6-local-test\\\\wave121\\\\foundation\\\\results\", \"-v:q\"]",
+                "environment": "Actual isolated PostgreSQL/native HTTP/Node BFF, real H01/decision/UoW/replay; explicit synthetic IAM/business inputs. Exact final-schema run 24 PASS/0 FAIL/0 skipped; old mixed failed batches retained.",
+                "observed_at": "2026-10-24T21:26:39.419352+00:00",
+                "scope": "实际自动/人工H01完整62列Lead/LeadHistory和原来源、Unicode/原图保护；持久子图及未来投影范围按W484，不冒native月度清除。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4d1db6563bf6064214ab033d7ff67fbdf69f6a70",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave117/foundation/final-validation.json exact CRM/Main command sources and successful subsets: complete public graph, original binding/replay/collision/lost ACK and current source; failed runs retained.",
+                "environment": "Actual isolated PostgreSQL, native .NET/HTTP, real Main TLS service context to CRM; explicit synthetic business/IAM inputs, original effective successes reused.",
+                "observed_at": "2026-10-24T18:34:00.762230+00:00",
+                "scope": "原完整公开/H01及原结果绑定/稳定槽/故障；实际自动/人工H01完整62列Lead/LeadHistory和原来源、Unicode/原图保护；持久子图及未来投影范围按W484，不冒native月度清除。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/37"
@@ -1356,8 +1788,29 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-039",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-039",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "5c8c7b2d96bbd0c642f5777aab9c40d539b92c48",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse exact executed argv in D:\\CP6-local-test\\wave121\\foundation\\final-schema-20261024T212334Z.json: [\"C:/Users/tt/.dotnet/dotnet.exe\", \"test\", \"tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj\", \"--no-restore\", \"--artifacts-path\", \"D:/CP6-local-test/wave51/artifacts\", \"--filter\", \"Native_decision_|Native_intake_decision_HTTP|Native_intake_HTTP_reads_actual|Native_intake_HTTP_field_permissions|Native_intake_rechecks_current|Public_submit_real_HTTP|Public_submit_lost_committed|Native_intake_actual_foreign\", \"--logger\", \"console;verbosity=normal\", \"--logger\", \"trx;LogFileName=final-schema-20261024T212334Z.trx\", \"--results-directory\", \"D:\\\\CP6-local-test\\\\wave121\\\\foundation\\\\results\", \"-v:q\"]",
+                "environment": "Actual isolated PostgreSQL/native HTTP/Node BFF, real H01/decision/UoW/replay; explicit synthetic IAM/business inputs. Exact final-schema run 24 PASS/0 FAIL/0 skipped; old mixed failed batches retained.",
+                "observed_at": "2026-10-24T21:26:39.419352+00:00",
+                "scope": "实际赢家可信actor、原received/calendar/SLA/consent/H01一致，配置切换不重算原事实；W247/W253当前相关证据结合。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4d1db6563bf6064214ab033d7ff67fbdf69f6a70",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave117/foundation/final-validation.json exact CRM/Main command sources and successful subsets: complete public graph, original binding/replay/collision/lost ACK and current source; failed runs retained.",
+                "environment": "Actual isolated PostgreSQL, native .NET/HTTP, real Main TLS service context to CRM; explicit synthetic business/IAM inputs, original effective successes reused.",
+                "observed_at": "2026-10-24T18:34:00.762230+00:00",
+                "scope": "原完整公开/H01及原结果绑定/稳定槽/故障；实际赢家可信actor、原received/calendar/SLA/consent/H01一致，配置切换不重算原事实；W247/W253当前相关证据结合。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/38"
@@ -1389,8 +1842,29 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-042",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-042",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "14ca04883e5aae7b856b13674d00b6777d1567d5",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave105/foundation/final-validation.json: actual dotnet Configuration_lifecycle / Configuration_browser filters, final layout, Main interop; wave102 actual Owner/hash successful subsets as detailed in linked report.",
+                "environment": "Actual isolated PostgreSQL, native .NET HTTP Owner, React/Chromium and Node BFF; explicit synthetic business/IAM inputs. Original runs reused, no W485 rerun.",
+                "observed_at": "2026-10-24T10:29:09.750985+00:00",
+                "scope": "规范化/NFC哈希和原字节重放，内容/数组变化区分；同一Save/Preview/Activate ContentHash及Proof/事务绑定。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4c77cdd34d29811fad35f479e00e04ff076e607f",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave247/foundation/acceptance-corrected-20261101T191859Z.json: dotnet test tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj --filter FullyQualifiedName~Simulated_production_runtime_normalization; exact full command and original TRX linked in report.",
+                "environment": "Actual isolated PostgreSQL18/.NET8.0.30/Windows native HTTP; simulated policy/calendar/IAM/consumer inputs, current production code actually executed; original successful subsets reused.",
+                "observed_at": "2026-11-01T19:19:23.701248+00:00",
+                "scope": "当前共同事务采用下的配置/日历发布和原Attempt冻结/公共201，保留原件；规范化/NFC哈希和原字节重放，内容/数组变化区分；同一Save/Preview/Activate ContentHash及Proof/事务绑定。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/41"
@@ -1400,8 +1874,29 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-043",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-043",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "14ca04883e5aae7b856b13674d00b6777d1567d5",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave105/foundation/final-validation.json: actual dotnet Configuration_lifecycle / Configuration_browser filters, final layout, Main interop; wave102 actual Owner/hash successful subsets as detailed in linked report.",
+                "environment": "Actual isolated PostgreSQL, native .NET HTTP Owner, React/Chromium and Node BFF; explicit synthetic business/IAM inputs. Original runs reused, no W485 rerun.",
+                "observed_at": "2026-10-24T10:29:09.750985+00:00",
+                "scope": "实际公共响应渲染形状/Bundle和Attempt原期限源自有效行；换版后新旧明确绑定。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4c77cdd34d29811fad35f479e00e04ff076e607f",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave247/foundation/acceptance-corrected-20261101T191859Z.json: dotnet test tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj --filter FullyQualifiedName~Simulated_production_runtime_normalization; exact full command and original TRX linked in report.",
+                "environment": "Actual isolated PostgreSQL18/.NET8.0.30/Windows native HTTP; simulated policy/calendar/IAM/consumer inputs, current production code actually executed; original successful subsets reused.",
+                "observed_at": "2026-11-01T19:19:23.701248+00:00",
+                "scope": "当前共同事务采用下的配置/日历发布和原Attempt冻结/公共201，保留原件；实际公共响应渲染形状/Bundle和Attempt原期限源自有效行；换版后新旧明确绑定。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/42"
@@ -1411,8 +1906,30 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-044",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-044",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4d1db6563bf6064214ab033d7ff67fbdf69f6a70",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave117/foundation/final-validation.json per-test exact logged successful subsets: complete native submit/H01, browser proof/receipt, stable replay/collision/lost ACK, all three rate buckets and rollback. Raw failed runs retained; scope and W118 UI evidence mapped in report.",
+                "environment": "Original actual isolated PostgreSQL/native .NET HTTP and actual Main TLS to CRM; explicit synthetic IAM/business input; unchanged relevant success reused, not W485 rerun.",
+                "observed_at": "2026-10-24T18:34:00.762230+00:00",
+                "scope": "回执TTL从原政策11520分钟复制到实际行并用于原结果/剩余cookie期限，W117/W118真实行/HTTP及当前Next cookie传递；该条为row-bound期限，不冒实际等待八天。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "49fe4d6b13bc8bf0336e2bf24ca3b1eaf481c92f",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "d0183afd23a200f49f536a23fb31f1c853fcc8a0",
+                "command": "Actual W485 next-review-green-07/results.trx; exact run-tests.ps1 or run-next.ps1 with original PG test project and the fully qualified filter detailed in report. Final unique scenario PASS; intermediate failures retained.",
+                "environment": "Actual local Windows/PostgreSQL18/.NET8 and (Next scenario) real Next16.3.3 production mode/Node22/Chromium with owned HTTPS ingress; explicit synthetic IAM/business inputs. Real clocks and original deadlines preserved.",
+                "observed_at": "2026-11-11T21:44:23.069848+00:00",
+                "scope": "回执TTL从原政策11520分钟复制到实际行并用于原结果/剩余cookie期限，W117/W118真实行/HTTP及当前Next cookie传递；该条为row-bound期限，不冒实际等待八天。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/43"
@@ -1422,8 +1939,19 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-045",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-045",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4d1db6563bf6064214ab033d7ff67fbdf69f6a70",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave117/foundation/final-validation.json per-test exact logged successful subsets: complete native submit/H01, browser proof/receipt, stable replay/collision/lost ACK, all three rate buckets and rollback. Raw failed runs retained; scope and W118 UI evidence mapped in report.",
+                "environment": "Original actual isolated PostgreSQL/native .NET HTTP and actual Main TLS to CRM; explicit synthetic IAM/business input; unchanged relevant success reused, not W485 rerun.",
+                "observed_at": "2026-10-24T18:34:00.762230+00:00",
+                "scope": "原三维限流实际共同桶、并发/租户隔离/回滚、固定维度锁序与最大剩余Retry-After，W117原真实read/rate回归及原低层门禁，原键恢复不重复扣额。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/44"
@@ -1433,8 +1961,30 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-046",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-046",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4d1db6563bf6064214ab033d7ff67fbdf69f6a70",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave117/foundation/final-validation.json per-test exact logged successful subsets: complete native submit/H01, browser proof/receipt, stable replay/collision/lost ACK, all three rate buckets and rollback. Raw failed runs retained; scope and W118 UI evidence mapped in report.",
+                "environment": "Original actual isolated PostgreSQL/native .NET HTTP and actual Main TLS to CRM; explicit synthetic IAM/business input; unchanged relevant success reused, not W485 rerun.",
+                "observed_at": "2026-10-24T18:34:00.762230+00:00",
+                "scope": "receiptId/显示prefix仅非秘密定位；五字段响应不含内部ID/鉴权或proof，实际独立高熵HttpOnly/Secure/Strict凭证；无正确浏览器凭证即使内部登录也不能读取。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "49fe4d6b13bc8bf0336e2bf24ca3b1eaf481c92f",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "d0183afd23a200f49f536a23fb31f1c853fcc8a0",
+                "command": "Actual W485 next-review-green-07/results.trx; exact run-tests.ps1 or run-next.ps1 with original PG test project and the fully qualified filter detailed in report. Final unique scenario PASS; intermediate failures retained.",
+                "environment": "Actual local Windows/PostgreSQL18/.NET8 and (Next scenario) real Next16.3.3 production mode/Node22/Chromium with owned HTTPS ingress; explicit synthetic IAM/business inputs. Real clocks and original deadlines preserved.",
+                "observed_at": "2026-11-11T21:44:23.069848+00:00",
+                "scope": "receiptId/显示prefix仅非秘密定位；五字段响应不含内部ID/鉴权或proof，实际独立高熵HttpOnly/Secure/Strict凭证；无正确浏览器凭证即使内部登录也不能读取。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/45"
@@ -1477,8 +2027,19 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-050",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-050",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "5c8c7b2d96bbd0c642f5777aab9c40d539b92c48",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse exact executed argv in D:\\CP6-local-test\\wave121\\foundation\\final-schema-20261024T212334Z.json: [\"C:/Users/tt/.dotnet/dotnet.exe\", \"test\", \"tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj\", \"--no-restore\", \"--artifacts-path\", \"D:/CP6-local-test/wave51/artifacts\", \"--filter\", \"Native_decision_|Native_intake_decision_HTTP|Native_intake_HTTP_reads_actual|Native_intake_HTTP_field_permissions|Native_intake_rechecks_current|Public_submit_real_HTTP|Public_submit_lost_committed|Native_intake_actual_foreign\", \"--logger\", \"console;verbosity=normal\", \"--logger\", \"trx;LogFileName=final-schema-20261024T212334Z.trx\", \"--results-directory\", \"D:\\\\CP6-local-test\\\\wave121\\\\foundation\\\\results\", \"-v:q\"]",
+                "environment": "Actual isolated PostgreSQL/native HTTP/Node BFF, real H01/decision/UoW/replay; explicit synthetic IAM/business inputs. Exact final-schema run 24 PASS/0 FAIL/0 skipped; old mixed failed batches retained.",
+                "observed_at": "2026-10-24T21:26:39.419352+00:00",
+                "scope": "真实PII构造器按当前实际字段授权裁剪/拒绝，页面失权清除原快照且服务器最终门独立；privacy字段/制品资格按W482实际范围。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/49"
@@ -1499,8 +2060,30 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-052",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-052",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "912f6afa1d64cc0777721c03b5b39c0db91d60da",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse S01-08 executed-source.json exact logged C#186/Web142/importer6/typecheck commands and 49 original UI round trips; observed working bytes subsequently bound by source commit.",
+                "environment": "Original Node22.22/npm10.9.4, SDK10.0.302, Python3.14.4; actual contract library/validator execution, original business/HTTP/DB NOT_RUN. No W485 rerun claim.",
+                "observed_at": "2026-10-13T03:21:40.949057+00:00",
+                "scope": "原49个UI状态实际C#/TS接收/往返、必需/禁止键及条件类型；仅状态合同本身，不冒49次真实后端生命周期。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W484-01/DELIVERY.md",
+                "source_sha": "94b21d24225fc713766910c84cf09099a247f9cb",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "a992004e984252d94049e9bf17b458c2427118a6",
+                "command": "& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name r1-reference-02 -Filter 'FullyQualifiedName~R1_effective_production_schema'\n& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name r1-adoption-01 -Filter 'FullyQualifiedName~R1_effective_production_schema|FullyQualifiedName~Native_R1_actual_event_decoder' (only actual-event PASS reused; reference count assertion FAIL retained)\n& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name retention-persistence-red-01 -Filter 'FullyQualifiedName~Component_lead_erasure_persists|FullyQualifiedName~Native_R1_legal_key' (only Native_R1 PASS reused; component fixture FAIL retained)\nUnchanged S01-08 contract subassertions, W482 expiry-02 and W483 recovery-expiry-02 reused as scoped in the report.",
+                "environment": "Windows; actual .NET 8.0.424 / PostgreSQL 18 / HTTP and compiled production decoder; IAM, business/policy/external inputs explicitly simulated; reused actual Main TLS/HTTPS and original five-minute expiry as scoped; no deployment",
+                "observed_at": "2026-11-11T19:41:09.806784+00:00",
+                "result": "PASS",
+                "scope": "当前R1实际指针闭合/终态及合法key Unicode Owner补项，沿原报告准确成功子集；原49个UI状态实际C#/TS接收/往返、必需/禁止键及条件类型；仅状态合同本身，不冒49次真实后端生命周期。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/51"
@@ -1510,8 +2093,30 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-053",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-053",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "912f6afa1d64cc0777721c03b5b39c0db91d60da",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse S01-08 executed-source.json exact logged C#186/Web142/importer6/typecheck commands and 49 original UI round trips; observed working bytes subsequently bound by source commit.",
+                "environment": "Original Node22.22/npm10.9.4, SDK10.0.302, Python3.14.4; actual contract library/validator execution, original business/HTTP/DB NOT_RUN. No W485 rerun claim.",
+                "observed_at": "2026-10-13T03:21:40.949057+00:00",
+                "scope": "C#/TS/schema实际Unicode码点边界及严格原JSON；当前合法201/4001码点422与无损200/4000入库另有R1实际补证。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W484-01/DELIVERY.md",
+                "source_sha": "94b21d24225fc713766910c84cf09099a247f9cb",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "a992004e984252d94049e9bf17b458c2427118a6",
+                "command": "& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name r1-reference-02 -Filter 'FullyQualifiedName~R1_effective_production_schema'\n& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name r1-adoption-01 -Filter 'FullyQualifiedName~R1_effective_production_schema|FullyQualifiedName~Native_R1_actual_event_decoder' (only actual-event PASS reused; reference count assertion FAIL retained)\n& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name retention-persistence-red-01 -Filter 'FullyQualifiedName~Component_lead_erasure_persists|FullyQualifiedName~Native_R1_legal_key' (only Native_R1 PASS reused; component fixture FAIL retained)\nUnchanged S01-08 contract subassertions, W482 expiry-02 and W483 recovery-expiry-02 reused as scoped in the report.",
+                "environment": "Windows; actual .NET 8.0.424 / PostgreSQL 18 / HTTP and compiled production decoder; IAM, business/policy/external inputs explicitly simulated; reused actual Main TLS/HTTPS and original five-minute expiry as scoped; no deployment",
+                "observed_at": "2026-11-11T19:41:09.806784+00:00",
+                "result": "PASS",
+                "scope": "当前R1实际指针闭合/终态及合法key Unicode Owner补项，沿原报告准确成功子集；C#/TS/schema实际Unicode码点边界及严格原JSON；当前合法201/4001码点422与无损200/4000入库另有R1实际补证。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/52"
@@ -1532,8 +2137,30 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-055",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-055",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "912f6afa1d64cc0777721c03b5b39c0db91d60da",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse S01-08 executed-source.json exact logged C#186/Web142/importer6/typecheck commands and 49 original UI round trips; observed working bytes subsequently bound by source commit.",
+                "environment": "Original Node22.22/npm10.9.4, SDK10.0.302, Python3.14.4; actual contract library/validator execution, original business/HTTP/DB NOT_RUN. No W485 rerun claim.",
+                "observed_at": "2026-10-13T03:21:40.949057+00:00",
+                "scope": "TS实际递归validator执行refs/unions/arrays/嵌套对象及负变异；当前同一合同代码和R1指针闭合采用。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W484-01/DELIVERY.md",
+                "source_sha": "94b21d24225fc713766910c84cf09099a247f9cb",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "a992004e984252d94049e9bf17b458c2427118a6",
+                "command": "& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name r1-reference-02 -Filter 'FullyQualifiedName~R1_effective_production_schema'\n& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name r1-adoption-01 -Filter 'FullyQualifiedName~R1_effective_production_schema|FullyQualifiedName~Native_R1_actual_event_decoder' (only actual-event PASS reused; reference count assertion FAIL retained)\n& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name retention-persistence-red-01 -Filter 'FullyQualifiedName~Component_lead_erasure_persists|FullyQualifiedName~Native_R1_legal_key' (only Native_R1 PASS reused; component fixture FAIL retained)\nUnchanged S01-08 contract subassertions, W482 expiry-02 and W483 recovery-expiry-02 reused as scoped in the report.",
+                "environment": "Windows; actual .NET 8.0.424 / PostgreSQL 18 / HTTP and compiled production decoder; IAM, business/policy/external inputs explicitly simulated; reused actual Main TLS/HTTPS and original five-minute expiry as scoped; no deployment",
+                "observed_at": "2026-11-11T19:41:09.806784+00:00",
+                "result": "PASS",
+                "scope": "当前R1实际指针闭合/终态及合法key Unicode Owner补项，沿原报告准确成功子集；TS实际递归validator执行refs/unions/arrays/嵌套对象及负变异；当前同一合同代码和R1指针闭合采用。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/54"
@@ -1543,8 +2170,29 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-056",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-056",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "14ca04883e5aae7b856b13674d00b6777d1567d5",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave105/foundation/final-validation.json: actual dotnet Configuration_lifecycle / Configuration_browser filters, final layout, Main interop; wave102 actual Owner/hash successful subsets as detailed in linked report.",
+                "environment": "Actual isolated PostgreSQL, native .NET HTTP Owner, React/Chromium and Node BFF; explicit synthetic business/IAM inputs. Original runs reused, no W485 rerun.",
+                "observed_at": "2026-10-24T10:29:09.750985+00:00",
+                "scope": "配置明确写入集合，激活/回退保留已发行Attempt；旧原件仍可实际201及原键恢复，不重发替换。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4c77cdd34d29811fad35f479e00e04ff076e607f",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave247/foundation/acceptance-corrected-20261101T191859Z.json: dotnet test tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj --filter FullyQualifiedName~Simulated_production_runtime_normalization; exact full command and original TRX linked in report.",
+                "environment": "Actual isolated PostgreSQL18/.NET8.0.30/Windows native HTTP; simulated policy/calendar/IAM/consumer inputs, current production code actually executed; original successful subsets reused.",
+                "observed_at": "2026-11-01T19:19:23.701248+00:00",
+                "scope": "当前共同事务采用下的配置/日历发布和原Attempt冻结/公共201，保留原件；配置明确写入集合，激活/回退保留已发行Attempt；旧原件仍可实际201及原键恢复，不重发替换。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/55"
@@ -1576,8 +2224,30 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-059",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-059",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "4d1db6563bf6064214ab033d7ff67fbdf69f6a70",
+                "source_repository": "GTX537/CP6.CRM",
+                "command": "Reuse wave117/foundation/final-validation.json per-test exact logged successful subsets: complete native submit/H01, browser proof/receipt, stable replay/collision/lost ACK, all three rate buckets and rollback. Raw failed runs retained; scope and W118 UI evidence mapped in report.",
+                "environment": "Original actual isolated PostgreSQL/native .NET HTTP and actual Main TLS to CRM; explicit synthetic IAM/business input; unchanged relevant success reused, not W485 rerun.",
+                "observed_at": "2026-10-24T18:34:00.762230+00:00",
+                "scope": "原JSON成功/拒绝安全头、Secure/HttpOnly/Strict cookie和row-policy TTL；本轮实际Next HTML补禁止嵌入，同时实际API/登录保持自身完整CSP，原期限/回调Referrer规则保持。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/W485-01/DELIVERY.md",
+                "source_sha": "49fe4d6b13bc8bf0336e2bf24ca3b1eaf481c92f",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "d0183afd23a200f49f536a23fb31f1c853fcc8a0",
+                "command": "Actual W485 next-review-green-07/results.trx; exact run-tests.ps1 or run-next.ps1 with original PG test project and the fully qualified filter detailed in report. Final unique scenario PASS; intermediate failures retained.",
+                "environment": "Actual local Windows/PostgreSQL18/.NET8 and (Next scenario) real Next16.3.3 production mode/Node22/Chromium with owned HTTPS ingress; explicit synthetic IAM/business inputs. Real clocks and original deadlines preserved.",
+                "observed_at": "2026-11-11T21:44:23.069848+00:00",
+                "scope": "原JSON成功/拒绝安全头、Secure/HttpOnly/Strict cookie和row-policy TTL；本轮实际Next HTML补禁止嵌入，同时实际API/登录保持自身完整CSP，原期限/回调Referrer规则保持。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/58"
@@ -1597,7 +2267,55 @@
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "wave485_acceptance_adoption": {
+        "report": "docs/development/evidence/W485-01/DELIVERY.md",
+        "status": "CRM_MERGED_MAIN_CLOSEOUT_PENDING",
+        "original_cases_accepted": [
+          "AC-INQ-001",
+          "AC-INQ-003",
+          "AC-INQ-004",
+          "AC-INQ-006",
+          "AC-INQ-007",
+          "AC-INQ-008",
+          "AC-INQ-009",
+          "AC-INQ-010",
+          "AC-INQ-011",
+          "AC-INQ-012",
+          "AC-INQ-013",
+          "AC-INQ-014",
+          "AC-INQ-015",
+          "AC-INQ-016",
+          "AC-INQ-017",
+          "AC-INQ-018",
+          "AC-INQ-020",
+          "AC-INQ-021",
+          "AC-INQ-022",
+          "AC-INQ-024",
+          "AC-INQ-025",
+          "AC-INQ-026",
+          "AC-INQ-028",
+          "AC-INQ-037",
+          "AC-INQ-038",
+          "AC-INQ-039",
+          "AC-INQ-042",
+          "AC-INQ-043",
+          "AC-INQ-044",
+          "AC-INQ-045",
+          "AC-INQ-046",
+          "AC-INQ-050",
+          "AC-INQ-052",
+          "AC-INQ-053",
+          "AC-INQ-055",
+          "AC-INQ-056",
+          "AC-INQ-059"
+        ],
+        "revision_runtime_unchanged": true,
+        "full_target_complete": false,
+        "scope": "准确原配置/受理/合同义务采用；真实Next/Rejection保留及其后续原AC核销仍按本任务实际结果，不把全部合同测试视作所有AC通过。",
+        "original_pass": 37,
+        "original_not_run": 23
+      }
     },
     {
       "id": "CRM-LEAD-01",
@@ -164156,6 +164874,36 @@
       "at": "2026-11-11T20:03:19.151582+00:00",
       "change": "W484 CRM #172/Issue #171已采用/finish，原R1 POS/NEG完整运行义务采纳PASS（2/247）；原60AC、四disposition/月度完整原卡及PG16/11不越级。",
       "evidence": "docs/development/evidence/W484-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-11T20:22:04.988940+00:00",
+      "change": "W484两仓正常采用、准确分支清理和官方finish已核销；W485复用两席位实测Rejected原60分钟联合清除，审查原AC完整证据，原整卡/PG不越级。",
+      "evidence": "docs/development/evidence/W485-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-11T20:42:14.640930+00:00",
+      "change": "W485按原完整义务及当前未变输入准确采纳8条原配置AC；设计源历史NOT_RUN保持，修订2/247及原整卡/PG不越级；复用不冒新运行。",
+      "evidence": "docs/development/evidence/W485-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-11T20:46:11.027233+00:00",
+      "change": "COORD按当前调用链补充W485实际Next宿主验收范围：此前组件/BFF浏览器未覆盖整站路由/SSR，先本地构建和真实宿主，失败再最小修正；不更改整卡准入/依赖或部署权限。",
+      "evidence": "docs/development/evidence/W485-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-11T21:22:36.385011+00:00",
+      "change": "W485按原完整义务新增采用13项受理/原结果/PII字段及4项合同AC，结合既有8项为25/60；准确保留原环境/成功子集/失败及R1适用范围，054等未证实项不顺带采纳。",
+      "evidence": "docs/development/evidence/W485-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-11T21:56:49+00:00",
+      "change": "12h原生第二检查点28,869秒：实际Next整链/原Rejected小时保留/冻结政策通过，CRM #174已采用；Main协调收尾。后四小时滚动聚焦合法字段组合真实公开输入，再核集合原义务，保留最终一小时交付。",
+      "evidence": "docs/development/evidence/W485-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-11T22:03:58.058731+00:00",
+      "change": "W485 CRM #174正常采用/Issue173关闭/准确分支清理及DEV2释放；三项独立实际行为最终通过。结合旧有效证据按完整原义务采用37/60原AC，原23未采纳/R1/375/正式PG不越级；Main协调收尾。",
+      "evidence": "docs/development/evidence/W485-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -185092,19 +185840,19 @@
       "card_anchor": "wp03-04",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W484-01",
+        "chat_label": "COORD / W485-01",
         "repository": "CRM",
-        "branch": "codex/w484-01",
+        "branch": "codex/w485-01",
         "worktree": "D:/CP6-worktrees/dev-2",
-        "claimed_at": "2026-11-11T19:02:30.928746+00:00",
-        "baseline_sha": "8edb41fee2a300a5177eb142ced397253aeeeb07",
-        "entry_evidence": "docs/development/evidence/W484-01/DELIVERY.md",
+        "claimed_at": "2026-11-11T20:24:16.748007+00:00",
+        "baseline_sha": "a992004e984252d94049e9bf17b458c2427118a6",
+        "entry_evidence": "docs/development/evidence/W485-01/DELIVERY.md",
         "phase": "VERIFYING",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W484-01/DELIVERY.md",
-        "dispatch_scope": "原保留完整原图/持久子图与原60AC/R1准确采用，按真实失败最小修复，保持政策/时钟/全部合同及整卡前置。"
+        "delivery_report": "docs/development/evidence/W485-01/DELIVERY.md",
+        "dispatch_scope": "Rejected原60分钟保留的实际原生PG链：拒绝原结果、撤回、导出和回执联合清除及不复活；等待期间核原完整AC证据。原政策/业务时钟不缩改。 补实际Next整站构建/宿主及页面路由→原生公共/受理/隐私衔接，因既有浏览器只覆盖真实组件/BFF而未执行整站SSR/路由；明确模拟身份输入，实际应用/PG；真实失败最小修复。"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -185407,6 +186155,21 @@
           "worker_start_received": true,
           "delivery_report": "docs/development/evidence/W483-01/DELIVERY.md",
           "dispatch_scope": "原导出实际刷新/重新登录恢复及必要版本化呈现上下文，保持原授权、存储、业务合同与全卡前置。"
+        },
+        {
+          "chat_label": "COORD / W484-01",
+          "repository": "CRM",
+          "branch": "codex/w484-01",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "claimed_at": "2026-11-11T19:02:30.928746+00:00",
+          "baseline_sha": "8edb41fee2a300a5177eb142ced397253aeeeb07",
+          "entry_evidence": "docs/development/evidence/W484-01/DELIVERY.md",
+          "phase": "CLOSED",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "delivery_report": "docs/development/evidence/W484-01/DELIVERY.md",
+          "dispatch_scope": "原保留完整原图/持久子图与原60AC/R1准确采用，按真实失败最小修复，保持政策/时钟/全部合同及整卡前置。"
         }
       ],
       "wave126_delivery": {
@@ -185655,7 +186418,7 @@
         "main_seat_released": true
       },
       "wave484_delivery": {
-        "status": "CRM_MERGED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W484-01/DELIVERY.md",
         "full_task_complete": false,
         "crm_source_sha": "94b21d24225fc713766910c84cf09099a247f9cb",
@@ -185668,7 +186431,30 @@
         "accepted_revision_cases": [
           "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-POS",
           "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-NEG"
-        ]
+        ],
+        "main_adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/952",
+          "commit": "4fa6d2713ddbe0bf2783dca589b425c6be336ccb",
+          "target_head": "4fa6d2713ddbe0bf2783dca589b425c6be336ccb"
+        },
+        "main_branch_disposition": "deleted-local-and-remote",
+        "main_workspace_status": "fixed-seat-detached-for-reuse",
+        "main_seat_released": true
+      },
+      "wave485_delivery": {
+        "status": "CRM_MERGED_MAIN_CLOSEOUT_PENDING",
+        "report": "docs/development/evidence/W485-01/DELIVERY.md",
+        "full_task_complete": false,
+        "crm_source_sha": "49fe4d6b13bc8bf0336e2bf24ca3b1eaf481c92f",
+        "crm_remote_main_sha": "d0183afd23a200f49f536a23fb31f1c853fcc8a0",
+        "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/174",
+        "crm_branch_disposition": "deleted-local-and-remote",
+        "crm_workspace_status": "fixed-seat-detached-for-reuse",
+        "crm_seat_released": true,
+        "original_inquiry_cases_pass": 37,
+        "original_inquiry_cases_not_run": 23,
+        "scope": "实际Next完整正常链/原Rejected小时清除不复活/原政策换版撤回，页面CSP按真实归属修正；按完整义务采用37/60原AC，R1两项保持，原整卡与PG范围不越级。"
       }
     },
     {
@@ -209784,10 +210570,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W484",
-      "path": "docs/development/evidence/W484-01/DELIVERY.md",
-      "baseline_sha": "0a30d55436a5169174da95e905a8163abaf51b86",
-      "registered_at": "2026-11-11T19:02:04.349446+00:00",
+      "id": "W485",
+      "path": "docs/development/evidence/W485-01/DELIVERY.md",
+      "baseline_sha": "4fa6d2713ddbe0bf2783dca589b425c6be336ccb",
+      "registered_at": "2026-11-11T20:22:04.988940+00:00",
       "phase": "VERIFYING",
       "assigned_chats": [
         "COORD"
@@ -209803,13 +210589,14 @@
       ],
       "workers_started": true,
       "windows_closed": false,
-      "product_integrated": true,
-      "next_action": "CRM #172/Issue #171已核销并finish；两条完整R1运行义务采纳PASS，Main完成本轮协调采用/finish后继续原业务验收关键缺口。",
+      "product_integrated": false,
+      "next_action": "Main按准确报告/37条原AC及生成视图/四状态正常采用并finish；随后复用两席位从最新Main/CRM登记合法字段组合真实公开输入窗口。",
       "windows": [
         {
-          "id": "W484-01",
-          "workspace_task": "W484-01",
+          "id": "W485-01",
+          "workspace_task": "W485-01",
           "related_tasks": [
+            "WP03-02",
             "WP03-04"
           ],
           "chat": "COORD",
@@ -209818,26 +210605,27 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w484-01",
+          "branch": "codex/w485-01",
           "coordinator_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "coordinator_branch": "codex/w484-01",
-          "planned_scope_ref": "docs/development/evidence/W484-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W484-01/DELIVERY.md",
+          "coordinator_branch": "codex/w485-01",
+          "planned_scope_ref": "docs/development/evidence/W485-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W485-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "CRM:crm-inq-owner",
             "CRM:inquiry-privacy-retention",
-            "Main:development-ledger"
+            "Main:development-ledger",
+            "CRM:inquiry-web-host"
           ],
           "crm_adoption": {
             "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
-            "pr": "https://github.com/GTX537/CP6.CRM/pull/172",
-            "commit": "a992004e984252d94049e9bf17b458c2427118a6",
-            "target_head": "a992004e984252d94049e9bf17b458c2427118a6"
+            "pr": "https://github.com/GTX537/CP6.CRM/pull/174",
+            "commit": "d0183afd23a200f49f536a23fb31f1c853fcc8a0",
+            "target_head": "d0183afd23a200f49f536a23fb31f1c853fcc8a0"
           },
-          "crm_source_sha": "94b21d24225fc713766910c84cf09099a247f9cb",
+          "crm_source_sha": "49fe4d6b13bc8bf0336e2bf24ca3b1eaf481c92f",
           "crm_branch_disposition": "deleted-local-and-remote",
           "crm_workspace_status": "fixed-seat-detached-for-reuse",
           "crm_seat_released": true
@@ -257624,6 +258412,83 @@
           ],
           "new_worktrees": 0
         }
+      },
+      {
+        "id": "W484",
+        "path": "docs/development/evidence/W484-01/DELIVERY.md",
+        "baseline_sha": "0a30d55436a5169174da95e905a8163abaf51b86",
+        "registered_at": "2026-11-11T19:02:04.349446+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [
+          "COORD"
+        ],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "next_action": "CRM #172/Issue #171已核销并finish；两条完整R1运行义务采纳PASS，Main完成本轮协调采用/finish后继续原业务验收关键缺口。",
+        "windows": [
+          {
+            "id": "W484-01",
+            "workspace_task": "W484-01",
+            "related_tasks": [
+              "WP03-04"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w484-01",
+            "coordinator_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "coordinator_branch": "codex/w484-01",
+            "planned_scope_ref": "docs/development/evidence/W484-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W484-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CRM:crm-inq-owner",
+              "CRM:inquiry-privacy-retention",
+              "Main:development-ledger"
+            ],
+            "crm_adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6.CRM/pull/172",
+              "commit": "a992004e984252d94049e9bf17b458c2427118a6",
+              "target_head": "a992004e984252d94049e9bf17b458c2427118a6"
+            },
+            "crm_source_sha": "94b21d24225fc713766910c84cf09099a247f9cb",
+            "crm_branch_disposition": "deleted-local-and-remote",
+            "crm_workspace_status": "fixed-seat-detached-for-reuse",
+            "crm_seat_released": true,
+            "adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6/pull/952",
+              "commit": "4fa6d2713ddbe0bf2783dca589b425c6be336ccb",
+              "target_head": "4fa6d2713ddbe0bf2783dca589b425c6be336ccb"
+            },
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        }
       }
     ],
     "development_priority": {
@@ -264030,7 +264895,7 @@
         },
         {
           "id": "W484-01",
-          "state": "VERIFYING",
+          "state": "CLOSED",
           "related_tasks": [
             "WP03-04"
           ],
@@ -264050,7 +264915,47 @@
             "target_head": "a992004e984252d94049e9bf17b458c2427118a6"
           },
           "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/172",
-          "crm_seat_released": true
+          "crm_seat_released": true,
+          "adopted_main": "4fa6d2713ddbe0bf2783dca589b425c6be336ccb",
+          "crm_adopted_main": "a992004e984252d94049e9bf17b458c2427118a6",
+          "pr": "https://github.com/GTX537/CP6/pull/952",
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "seat_released": true
+        },
+        {
+          "id": "W485-01",
+          "state": "IN_PROGRESS",
+          "related_tasks": [
+            "WP03-04"
+          ],
+          "branch": "codex/w485-01",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "started_at": "2026-11-11T20:24:16.748007+00:00",
+          "delivery": "docs/development/evidence/W485-01/DELIVERY.md",
+          "scope": "Rejected原60分钟保留的实际原生PG链：拒绝原结果、撤回、导出和回执联合清除及不复活；等待期间核原完整AC证据。原政策/业务时钟不缩改。 补实际Next整站构建/宿主及页面路由→原生公共/受理/隐私衔接，因既有浏览器只覆盖真实组件/BFF而未执行整站SSR/路由；明确模拟身份输入，实际应用/PG；真实失败最小修复。",
+          "repositories": {
+            "Main": "4fa6d2713ddbe0bf2783dca589b425c6be336ccb",
+            "CRM": "a992004e984252d94049e9bf17b458c2427118a6"
+          }
+        }
+      ],
+      "checkpoints": [
+        {
+          "native_seconds": 28869,
+          "native_elapsed": "8h01m09s",
+          "state": "ACTIVE",
+          "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/174",
+          "crm_remote_main": "d0183afd23a200f49f536a23fb31f1c853fcc8a0",
+          "main_closeout": "W485 coordination adoption/official finish pending",
+          "original_inquiry_cases_accepted_locally": 25,
+          "original_inquiry_cases_total": 60,
+          "revision_runtime_pass": 2,
+          "revision_runtime_total": 247,
+          "full_tasks_done": 38,
+          "postgresql_pass": 16,
+          "postgresql_not_run": 11,
+          "next_scope": "先收妥W485；随后按原合法政策字段组合/必填输入兼容做实际公开链RED再最小修复，余量核AC-INQ-054集合合同实际范围；不改合同域、不全仓防御重构；最后一小时用于当前任务完整交付/收尾。"
         }
       ]
     },
