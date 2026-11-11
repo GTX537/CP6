@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-11 UTC 同源 v11 Stock 原件暂存与当前对账
+
+消费同一 v11 的 ERP Pending 原消息，在模拟发送器下验证原消息实际租约和已发送状态的只读对账，保留 A/B 边界和原回执。正式 PGT-021/022 及切换各自验收。 [W477交付](../development/evidence/W477-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 同源 v11 原件暂存与文件落盘
 
 在同一已验证源的隔离副本加入实际 Stock Owner 库存操作和原生 Outbox 记录，核对四域归档与 Stock 暂存原件。正式 PGT-021/022 及切换各自验收。 [W476交付](../development/evidence/W476-01/DELIVERY.md)

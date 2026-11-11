@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC 同源 v11 Stock 原件暂存与当前对账
+
+W477 在同源完整 v11 中验证真实库存调整、Stock 原消息、14 份原件和只读 Pending 对账。 [W477交付](../development/evidence/W477-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 同源 v11 原件暂存与文件落盘
 
 W476 使用同一实际源完整 v11 验证原流水、文件和 ERP 数据的中立库暂存与文件落盘，候选准入保持关闭。 [W476交付](../development/evidence/W476-01/DELIVERY.md)
