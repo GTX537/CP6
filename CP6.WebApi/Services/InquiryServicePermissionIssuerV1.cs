@@ -28,11 +28,22 @@ public sealed class InquiryServicePermissionIssuerV1(CP6Context db, ITenantConte
         if (!ContextEnabled) throw new InquiryPermissionExceptionV1(503, "inquiry_service_context_unavailable");
         return IssueCoreAsync(new(request.Purpose, request.SiteId, request.FormId), authorization, request.RequestNonce, ct);
     }
-    private async Task<string> IssueCoreAsync(InquiryPermissionRequestV1 request, StringValues authorization, string? nonce, CancellationToken ct)
+    // v2 adds the existing R3 export purpose for a real service principal. It never widens
+    // the v1 endpoint or reuses the retention grant, browser subject or signature domain.
+    public Task<string> IssueExportContextV2Async(InquiryServiceContextRequestV1 request,StringValues authorization,CancellationToken ct)
+    {
+        if(request is null||request.Purpose!="privacy:export"||!InquiryPermissionSigningKeyV1.ValidServiceNonce(request.RequestNonce))
+            throw new InquiryPermissionExceptionV1(400,"invalid_request");
+        if(!ContextEnabled)throw new InquiryPermissionExceptionV1(503,"inquiry_service_context_unavailable");
+        return IssueCoreAsync(new(request.Purpose,request.SiteId,request.FormId),authorization,request.RequestNonce,ct,InquiryPermissionSigningKeyV1.PrivacyExportServiceContextVersion);
+    }
+    private async Task<string> IssueCoreAsync(InquiryPermissionRequestV1 request, StringValues authorization, string? nonce, CancellationToken ct,
+        string contextVersion=InquiryPermissionSigningKeyV1.ServiceContextVersion)
     {
         if (request is null || request.SiteId == Guid.Empty || request.FormId == Guid.Empty)
             throw new InquiryPermissionExceptionV1(400, "invalid_request");
-        if (request.Purpose != "intake:release" && !(nonce is not null && request.Purpose is ("public:receive" or InquiryRetentionPermissionSourceV1.Purpose)))
+        if (contextVersion==InquiryPermissionSigningKeyV1.PrivacyExportServiceContextVersion ? request.Purpose!="privacy:export"
+            : request.Purpose != "intake:release" && !(nonce is not null && request.Purpose is ("public:receive" or InquiryRetentionPermissionSourceV1.Purpose)))
             throw new InquiryPermissionExceptionV1(400, "unsupported_projection_purpose");
         if (!Enabled || !db.Database.IsNpgsql() || db.Database.CurrentTransaction is not null
             || System.Transactions.Transaction.Current is not null || db.ChangeTracker.Entries().Any())
@@ -101,7 +112,7 @@ public sealed class InquiryServicePermissionIssuerV1(CP6Context db, ITenantConte
                     || x.PayloadSha256 != IdentityEventContracts.Hash(Encoding.UTF8.GetBytes(x.PayloadJson))
                     || x.EventType is not (IdentityEventContracts.PermissionChanged or IdentityEventContracts.PermissionChangedV2 or IdentityEventContracts.PermissionChangedV3)))
                     throw new InquiryPermissionExceptionV1(503, "inquiry_service_role_source_unavailable");
-                result = signing.SignServiceContext(result, nonce, registration, serviceSource!, roles, identityRuntime!.ContractBundleSha256, request, issued, expiry);
+                result = signing.SignServiceContext(result, nonce, registration, serviceSource!, roles, identityRuntime!.ContractBundleSha256, request, issued, expiry,contextVersion);
             }
             ct.ThrowIfCancellationRequested(); await tx.CommitAsync(ct);
             return result ?? throw new InquiryPermissionExceptionV1(503,"inquiry_authority_unavailable");
