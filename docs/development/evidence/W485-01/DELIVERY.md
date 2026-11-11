@@ -1,6 +1,6 @@
 # W485-01 · Rejected 原保留周期与首条询盘验收
 
-状态：实际本地三项独立验收及代码集中审查通过，台账/文档对照及正常采用收尾中。继续用户接受的 [12h 计划](../../planning/20261111-codex-12h-business-chain.md)，登记时原生读数23,310秒（6h28m30s）；8h检查点另按实际原生读数记录。COORD单对话串行，无子代理。官方status/start已核对，复用Main DEV-1和CRM DEV-2，两仓分支`codex/w485-01`；基线分别`4fa6d2713ddbe0bf2783dca589b425c6be336ccb`、`a992004e984252d94049e9bf17b458c2427118a6`，集成席位空闲。
+状态：本任务已正常远端采用并完成两仓生命周期。继续用户接受的 [12h 计划](../../planning/20261111-codex-12h-business-chain.md)，登记时原生读数23,310秒（6h28m30s）；8h检查点另按实际原生读数记录。COORD单对话串行，无子代理。官方status/start已核对，复用Main DEV-1和CRM DEV-2，两仓分支`codex/w485-01`；基线分别`4fa6d2713ddbe0bf2783dca589b425c6be336ccb`、`a992004e984252d94049e9bf17b458c2427118a6`，集成席位空闲。
 
 ## 准入和范围
 
@@ -20,9 +20,9 @@
 - [x] 最新基线、独占资源、前项交付及官方start。
 - [x] 原60分钟实际Rejected生命周期及准确结果。
 - [x] 原AC完整义务与有效复用/未覆盖范围核对，37/60 PASS、23 NOT_RUN。
-- [ ] 一次集中审查、正常两仓采用、进程停止及准确生命周期收尾。
+- [x] 一次集中审查、正常两仓采用、进程停止及准确生命周期收尾。
 
-当前分支处置：CRM任务分支已准确清理，DEV-2干净detached、席位已释放；Main任务分支执行中，DEV-1由W485-01独占、席位尚未释放。12h原生目标继续ACTIVE。
+最终分支处置：两仓准确任务分支均已清理，DEV-1/DEV-2干净detached供复用，官方finish成功、席位均已释放。12h原生目标继续ACTIVE。
 
 ## 原配置AC完整义务及既有实际证据
 
@@ -140,4 +140,4 @@ CRM [PR #174](https://github.com/GTX537/CP6.CRM/pull/174)已将源`49fe4d6b13bc8
 
 两个自有PG经身份/目录/marker及无其他客户端核对后smart停止，原数据/失败记录保留；所有本轮.NET/HTTP/Next/browser进程已退出。最终Next再生构建完整可逆保存在本任务private retained-generated，不删除或复制整仓。CRM本任务Actions列表为空；两仓工作流/相关依赖未改，复用同内容手动入口分析，没有Actions取消/触发变更、生产候选或部署。
 
-Main本提交同步本报告、原AC准确采用、roadmap/生成页、四状态、8h实际检查点及前项W484最终生命周期；Main自身PR/远端核对与官方finish是本轮最后步骤，不能提前称Main DEV-1释放。最终准确Main引用及分支/工作区/席位状态由本Main PR与本任务private `main-finish.json`核销。12h原生目标继续ACTIVE，后继按8h滚动安排执行。
+Main [PR #953](https://github.com/GTX537/CP6/pull/953)已将协调源`3e76ec2fbac4553cd6ee8a38200a1fffacb42ecb`正常合入远端main`2905582874aa520665b4b6e596e478f1c9c81d77`，fetch核对祖先及完整源码树`ccc60edb64ad5506a553b67a0792b9162ee72765`一致。官方finish成功，准确本地/远端任务分支删除，DEV-1干净detached、席位已释放；两仓最终证明为本任务private `main-finish.json` / `crm-finish.json`。两个主目录随后安全快进，Main原14,932个未跟踪资料路径保持。Main任务Actions列表为空。12h原生目标继续ACTIVE，后继按8h滚动安排执行。

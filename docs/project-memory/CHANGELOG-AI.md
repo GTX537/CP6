@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC · W486公开输入合法组合
+
+W486以原Schema/Owner合法政策域和固定公共DTO为边界，最小修复公开输入前后端同源错误；optional限制和原政策导出不扩大。相关39项成功、一次集中审查、CRM #176及Issue #175与DEV2准确生命周期已核销；Main协调和12h继续，无Actions/部署。 [本任务](../development/evidence/W486-01/DELIVERY.md)
+
 ## 2026-11-11 UTC · W485实际Rejected保留
 
 W485实际Next/HTTPS→原生PG业务整链、原Rejected60分钟和原政策换版/撤回均通过；CSP真实RED与静态头覆盖问题已按文档路由归属修正复验。CRM #174/Issue #173及DEV2准确生命周期已核销；原AC37/60、修订2/247，其余状态不越级，Main协调及12h继续，无Actions/部署。 [本任务](../development/evidence/W485-01/DELIVERY.md)
