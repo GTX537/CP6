@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC 完整 v11 RMA 两表导入
+
+W472实际旧版本拒绝，最终仅交付关闭Core两表导入及回执；原模拟流水拒绝保留，旧v10驱动逐字节一致。 [W472交付](../development/evidence/W472-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 关闭候选实际 FileContent Owner
 
 W471只编译新增验证驱动，复用W466应用输出，实际验证A/B同键、原件、真实拒绝及停机。 [W471交付](../development/evidence/W471-01/DELIVERY.md)

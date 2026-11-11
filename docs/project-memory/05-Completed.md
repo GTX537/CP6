@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-11 UTC 完整 v11 RMA 两表导入
+
+完整W429 v11的RMA head及version各一行在隔离PostgreSQL 18.6关闭Core候选逐字节导入，真实晚失败回滚，回执可原样恢复。W429的模拟RMA流水保持按原图校验拒绝。 W471经#939采用、准确清理分支、DEV-2干净释放；实际10.04–10.12分钟。 [W472交付](../development/evidence/W472-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 关闭候选实际 FileContent Owner
 
 实际.NET FileContent Owner在W469关闭候选读取A/B原快照、Engineering父版本和同键原流水，A原45字节真实下载、B错摘要拒绝，15关系及候选回执不变。 W470经#938采用、准确清理分支、DEV-2干净释放；实际12.45–12.50分钟。 [W471交付](../development/evidence/W471-01/DELIVERY.md)
