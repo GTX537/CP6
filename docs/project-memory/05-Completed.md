@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-11 UTC · W484保留原图与原验收
+
+W484持久完整Lead子图最终封存修复及回滚/重读认证已正常采用；两条R1正反例完整采纳，含原55引用、全部257闭合、实际事件decoder、长度/Unicode/ETag及未变过期proof/终态证据。组件未来投影范围独立，CRM准确分支清理与席位释放完成；Main同轮协调收尾。 [本任务](../development/evidence/W484-01/DELIVERY.md)
+
 ## 2026-11-11 UTC · 4h检查点与W483
 
 W483 的原任务恢复及终态行为已在真实HTTPS/BFF/PG完成，旧v1与当前授权保留，原缺陷2项RED和Coverage夹具42P01均保留、相关最终成功按实际范围复用。CRM已正常采用和释放，Main本轮协调收尾；完整原卡、60AC/R1与PG16/11不提前提升。 [本任务](../development/evidence/W483-01/DELIVERY.md)

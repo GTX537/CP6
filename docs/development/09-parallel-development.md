@@ -1,6 +1,6 @@
 # 多对话任务分配与交付
 
-> 当前：W483导出刷新/新会话恢复及原五分钟终态验证通过，CRM #170/Issue #169已核销，CRM DEV-2干净释放；COORD在Main DEV-1完成本轮协调采用/finish，集成席位空闲，12h继续。 [本任务](evidence/W483-01/DELIVERY.md)
+> 当前：W484 CRM #172/Issue #171已采用并清理释放；原R1 POS/NEG全部义务已核对采纳PASS（2/247），完整原卡/60AC/PG16/11不越级。COORD在Main DEV-1完成协调采用/finish，集成席位空闲，12h继续。 [本任务](evidence/W484-01/DELIVERY.md)
 
 > 当前：W481已随#949采用并释放；COORD单人接[W482首条询盘链](evidence/W482-01/DELIVERY.md)，DEV-1为Main台账、DEV-2安全bind为CRM实施。两个开发席位属于同一任务，集成席位空闲。
 

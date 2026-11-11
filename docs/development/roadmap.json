@@ -158028,9 +158028,21 @@
       ],
       "coordinator_package": "WP03",
       "kind": "RUNTIME",
-      "state": "NOT_RUN",
+      "state": "PASS",
       "source_result": "NOT_RUN",
-      "execution_evidence": []
+      "execution_evidence": [
+        {
+          "path": "docs/development/evidence/W484-01/DELIVERY.md",
+          "source_sha": "94b21d24225fc713766910c84cf09099a247f9cb",
+          "source_repository": "GTX537/CP6.CRM",
+          "adopted_main_sha": "a992004e984252d94049e9bf17b458c2427118a6",
+          "command": "& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name r1-reference-02 -Filter 'FullyQualifiedName~R1_effective_production_schema'\n& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name r1-adoption-01 -Filter 'FullyQualifiedName~R1_effective_production_schema|FullyQualifiedName~Native_R1_actual_event_decoder' (only actual-event PASS reused; reference count assertion FAIL retained)\n& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name retention-persistence-red-01 -Filter 'FullyQualifiedName~Component_lead_erasure_persists|FullyQualifiedName~Native_R1_legal_key' (only Native_R1 PASS reused; component fixture FAIL retained)\nUnchanged S01-08 contract subassertions, W482 expiry-02 and W483 recovery-expiry-02 reused as scoped in the report.",
+          "environment": "Windows; actual .NET 8.0.424 / PostgreSQL 18 / HTTP and compiled production decoder; IAM, business/policy/external inputs explicitly simulated; reused actual Main TLS/HTTPS and original five-minute expiry as scoped; no deployment",
+          "observed_at": "2026-11-11T19:41:09.806784+00:00",
+          "result": "PASS",
+          "scope": "原55错误引用逐原件位置在实际生产有效Schema正确迁移，同时全257引用可解析；实际原事件键序相等/uniqueItems；原R1 90/99 null合同证据加W482/W483实际HTTP/HTTPS99；合法key下201/4001字符422零效果和200/4000 Unicode随后201无损。准确资格/原写集采用W482实际Main TLS/PG/五route、W483原Job恢复及当前边界，不扩大为整卡/生产资格。"
+        }
+      ]
     },
     {
       "id": "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-NEG",
@@ -158043,9 +158055,21 @@
       ],
       "coordinator_package": "WP03",
       "kind": "RUNTIME",
-      "state": "NOT_RUN",
+      "state": "PASS",
       "source_result": "NOT_RUN",
-      "execution_evidence": []
+      "execution_evidence": [
+        {
+          "path": "docs/development/evidence/W484-01/DELIVERY.md",
+          "source_sha": "94b21d24225fc713766910c84cf09099a247f9cb",
+          "source_repository": "GTX537/CP6.CRM",
+          "adopted_main_sha": "a992004e984252d94049e9bf17b458c2427118a6",
+          "command": "& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name r1-reference-02 -Filter 'FullyQualifiedName~R1_effective_production_schema'\n& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name r1-adoption-01 -Filter 'FullyQualifiedName~R1_effective_production_schema|FullyQualifiedName~Native_R1_actual_event_decoder' (only actual-event PASS reused; reference count assertion FAIL retained)\n& D:/CP6-local-test/CP6-12H-20261111/W484-01/run-tests.ps1 -Name retention-persistence-red-01 -Filter 'FullyQualifiedName~Component_lead_erasure_persists|FullyQualifiedName~Native_R1_legal_key' (only Native_R1 PASS reused; component fixture FAIL retained)\nUnchanged S01-08 contract subassertions, W482 expiry-02 and W483 recovery-expiry-02 reused as scoped in the report.",
+          "environment": "Windows; actual .NET 8.0.424 / PostgreSQL 18 / HTTP and compiled production decoder; IAM, business/policy/external inputs explicitly simulated; reused actual Main TLS/HTTPS and original five-minute expiry as scoped; no deployment",
+          "observed_at": "2026-11-11T19:41:09.806784+00:00",
+          "result": "PASS",
+          "scope": "实际持久化原事件经当前生产decoder拒绝非boolean扩展、重复JSON键，业务计数不变；W482实际原五分钟过期proof410/一次性/错绑/当前权限及W483 HTTPS终态复用，本轮错误privacy ETag412且原Submission/版本/Job不变。GET仍按原session/独立proof，不新增If-Match；只声明原两条运行义务完整，不提升未运行整卡。"
+        }
+      ]
     },
     {
       "id": "DR-COM-LEAD-AC-ATOMIC-SUPERSESSION::COM-LEAD-AC-ATOMIC-SUPERSESSION-POS",
@@ -164122,6 +164146,16 @@
       "at": "2026-11-11T18:54:34.606674+00:00",
       "change": "W483 CRM #170/Issue #169 已核销，原任务恢复及原五分钟R1终态真实通过，准确分支清理和DEV2释放；Main同轮协调收尾，原375/正式PG/完整AC不越级。",
       "evidence": "docs/development/evidence/W483-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-11T19:02:04.349446+00:00",
+      "change": "W483两仓正常采用/准确分支清理及官方finish完成；W484复用两席位接原保留完整原图与原60AC/R1义务核销，原375及正式PG不越级。",
+      "evidence": "docs/development/evidence/W484-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-11T20:03:19.151582+00:00",
+      "change": "W484 CRM #172/Issue #171已采用/finish，原R1 POS/NEG完整运行义务采纳PASS（2/247）；原60AC、四disposition/月度完整原卡及PG16/11不越级。",
+      "evidence": "docs/development/evidence/W484-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -185058,19 +185092,19 @@
       "card_anchor": "wp03-04",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W483-01",
+        "chat_label": "COORD / W484-01",
         "repository": "CRM",
-        "branch": "codex/w483-01",
+        "branch": "codex/w484-01",
         "worktree": "D:/CP6-worktrees/dev-2",
-        "claimed_at": "2026-11-11T18:16:59.051154+00:00",
-        "baseline_sha": "8c78760ef7ae746a55bdf34d81a17439f7307715",
-        "entry_evidence": "docs/development/evidence/W483-01/DELIVERY.md",
+        "claimed_at": "2026-11-11T19:02:30.928746+00:00",
+        "baseline_sha": "8edb41fee2a300a5177eb142ced397253aeeeb07",
+        "entry_evidence": "docs/development/evidence/W484-01/DELIVERY.md",
         "phase": "VERIFYING",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W483-01/DELIVERY.md",
-        "dispatch_scope": "原导出实际刷新/重新登录恢复及必要版本化呈现上下文，保持原授权、存储、业务合同与全卡前置。"
+        "delivery_report": "docs/development/evidence/W484-01/DELIVERY.md",
+        "dispatch_scope": "原保留完整原图/持久子图与原60AC/R1准确采用，按真实失败最小修复，保持政策/时钟/全部合同及整卡前置。"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -185358,6 +185392,21 @@
           "worker_start_received": true,
           "delivery_report": "docs/development/evidence/W482-01/DELIVERY.md",
           "dispatch_scope": "首条询盘本地模拟完整链验证及按现有真实调用链补必要缺口；全部合同/整卡前置不因窗口领取解除。"
+        },
+        {
+          "chat_label": "COORD / W483-01",
+          "repository": "CRM",
+          "branch": "codex/w483-01",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "claimed_at": "2026-11-11T18:16:59.051154+00:00",
+          "baseline_sha": "8c78760ef7ae746a55bdf34d81a17439f7307715",
+          "entry_evidence": "docs/development/evidence/W483-01/DELIVERY.md",
+          "phase": "CLOSED",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "delivery_report": "docs/development/evidence/W483-01/DELIVERY.md",
+          "dispatch_scope": "原导出实际刷新/重新登录恢复及必要版本化呈现上下文，保持原授权、存储、业务合同与全卡前置。"
         }
       ],
       "wave126_delivery": {
@@ -185584,7 +185633,7 @@
         "main_seat_released": true
       },
       "wave483_delivery": {
-        "status": "CRM_MERGED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W483-01/DELIVERY.md",
         "full_task_complete": false,
         "crm_source_sha": "da9ed652e946e5ecec03dc9a1b7577453ee25376",
@@ -185594,7 +185643,32 @@
         "crm_workspace_status": "fixed-seat-detached-for-reuse",
         "crm_seat_released": true,
         "scope": "当前租户/主体/询盘的原导出恢复，v1/R3/R1、一次性凭证和原期限保持；真实刷新/新登录/消费后新意图/原五分钟终态及边界验证通过。",
-        "new_product_validation": true
+        "new_product_validation": true,
+        "main_adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/951",
+          "commit": "0a30d55436a5169174da95e905a8163abaf51b86",
+          "target_head": "0a30d55436a5169174da95e905a8163abaf51b86"
+        },
+        "main_branch_disposition": "deleted-local-and-remote",
+        "main_workspace_status": "fixed-seat-detached-for-reuse",
+        "main_seat_released": true
+      },
+      "wave484_delivery": {
+        "status": "CRM_MERGED_MAIN_CLOSEOUT_PENDING",
+        "report": "docs/development/evidence/W484-01/DELIVERY.md",
+        "full_task_complete": false,
+        "crm_source_sha": "94b21d24225fc713766910c84cf09099a247f9cb",
+        "crm_remote_main_sha": "a992004e984252d94049e9bf17b458c2427118a6",
+        "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/172",
+        "crm_branch_disposition": "deleted-local-and-remote",
+        "crm_workspace_status": "fixed-seat-detached-for-reuse",
+        "crm_seat_released": true,
+        "scope": "实际PG生成子行版本后最终封存、末段失败整体回滚与原图保持；未来组件范围明确；两条原R1完整运行义务准确采纳，不关闭完整原卡。",
+        "accepted_revision_cases": [
+          "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-POS",
+          "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-NEG"
+        ]
       }
     },
     {
@@ -209710,10 +209784,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W483",
-      "path": "docs/development/evidence/W483-01/DELIVERY.md",
-      "baseline_sha": "7a8cd529f255a762f33fca11488e1e93dd6762c6",
-      "registered_at": "2026-11-11T18:16:07.546371+00:00",
+      "id": "W484",
+      "path": "docs/development/evidence/W484-01/DELIVERY.md",
+      "baseline_sha": "0a30d55436a5169174da95e905a8163abaf51b86",
+      "registered_at": "2026-11-11T19:02:04.349446+00:00",
       "phase": "VERIFYING",
       "assigned_chats": [
         "COORD"
@@ -209730,11 +209804,11 @@
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": true,
-      "next_action": "CRM #170 已采用且官方finish；Main完成同轮协调报告/台账采用及finish后继续原AC/R1逐项验收，不提升完整原卡。",
+      "next_action": "CRM #172/Issue #171已核销并finish；两条完整R1运行义务采纳PASS，Main完成本轮协调采用/finish后继续原业务验收关键缺口。",
       "windows": [
         {
-          "id": "W483-01",
-          "workspace_task": "W483-01",
+          "id": "W484-01",
+          "workspace_task": "W484-01",
           "related_tasks": [
             "WP03-04"
           ],
@@ -209744,27 +209818,26 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w483-01",
+          "branch": "codex/w484-01",
           "coordinator_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "coordinator_branch": "codex/w483-01",
-          "planned_scope_ref": "docs/development/evidence/W483-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W483-01/DELIVERY.md",
+          "coordinator_branch": "codex/w484-01",
+          "planned_scope_ref": "docs/development/evidence/W484-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W484-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "CRM:crm-inq-owner",
-            "CRM:inquiry-web-ui",
-            "CRM:Web-BFF",
+            "CRM:inquiry-privacy-retention",
             "Main:development-ledger"
           ],
           "crm_adoption": {
             "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
-            "pr": "https://github.com/GTX537/CP6.CRM/pull/170",
-            "commit": "8edb41fee2a300a5177eb142ced397253aeeeb07",
-            "target_head": "8edb41fee2a300a5177eb142ced397253aeeeb07"
+            "pr": "https://github.com/GTX537/CP6.CRM/pull/172",
+            "commit": "a992004e984252d94049e9bf17b458c2427118a6",
+            "target_head": "a992004e984252d94049e9bf17b458c2427118a6"
           },
-          "crm_source_sha": "da9ed652e946e5ecec03dc9a1b7577453ee25376",
+          "crm_source_sha": "94b21d24225fc713766910c84cf09099a247f9cb",
           "crm_branch_disposition": "deleted-local-and-remote",
           "crm_workspace_status": "fixed-seat-detached-for-reuse",
           "crm_seat_released": true
@@ -257473,6 +257546,84 @@
           ],
           "new_worktrees": 0
         }
+      },
+      {
+        "id": "W483",
+        "path": "docs/development/evidence/W483-01/DELIVERY.md",
+        "baseline_sha": "7a8cd529f255a762f33fca11488e1e93dd6762c6",
+        "registered_at": "2026-11-11T18:16:07.546371+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [
+          "COORD"
+        ],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "next_action": "CRM #170 已采用且官方finish；Main完成同轮协调报告/台账采用及finish后继续原AC/R1逐项验收，不提升完整原卡。",
+        "windows": [
+          {
+            "id": "W483-01",
+            "workspace_task": "W483-01",
+            "related_tasks": [
+              "WP03-04"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w483-01",
+            "coordinator_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "coordinator_branch": "codex/w483-01",
+            "planned_scope_ref": "docs/development/evidence/W483-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W483-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CRM:crm-inq-owner",
+              "CRM:inquiry-web-ui",
+              "CRM:Web-BFF",
+              "Main:development-ledger"
+            ],
+            "crm_adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6.CRM/pull/170",
+              "commit": "8edb41fee2a300a5177eb142ced397253aeeeb07",
+              "target_head": "8edb41fee2a300a5177eb142ced397253aeeeb07"
+            },
+            "crm_source_sha": "da9ed652e946e5ecec03dc9a1b7577453ee25376",
+            "crm_branch_disposition": "deleted-local-and-remote",
+            "crm_workspace_status": "fixed-seat-detached-for-reuse",
+            "crm_seat_released": true,
+            "adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6/pull/951",
+              "commit": "0a30d55436a5169174da95e905a8163abaf51b86",
+              "target_head": "0a30d55436a5169174da95e905a8163abaf51b86"
+            },
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        }
       }
     ],
     "development_priority": {
@@ -263849,7 +264000,7 @@
         },
         {
           "id": "W483-01",
-          "state": "VERIFYING",
+          "state": "CLOSED",
           "related_tasks": [
             "WP03-04"
           ],
@@ -263869,6 +264020,36 @@
             "target_head": "8edb41fee2a300a5177eb142ced397253aeeeb07"
           },
           "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/170",
+          "crm_seat_released": true,
+          "adopted_main": "0a30d55436a5169174da95e905a8163abaf51b86",
+          "crm_adopted_main": "8edb41fee2a300a5177eb142ced397253aeeeb07",
+          "pr": "https://github.com/GTX537/CP6/pull/951",
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "seat_released": true
+        },
+        {
+          "id": "W484-01",
+          "state": "VERIFYING",
+          "related_tasks": [
+            "WP03-04"
+          ],
+          "branch": "codex/w484-01",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "started_at": "2026-11-11T19:02:30.928746+00:00",
+          "delivery": "docs/development/evidence/W484-01/DELIVERY.md",
+          "scope": "原四disposition/Lead日历月/持久完整子图与原60AC/R1准确采用，真实失败最小修正；不缩期/改时钟或冒完整前置。",
+          "repositories": {
+            "Main": "0a30d55436a5169174da95e905a8163abaf51b86",
+            "CRM": "8edb41fee2a300a5177eb142ced397253aeeeb07"
+          },
+          "crm_adoption": {
+            "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+            "pr": "https://github.com/GTX537/CP6.CRM/pull/172",
+            "commit": "a992004e984252d94049e9bf17b458c2427118a6",
+            "target_head": "a992004e984252d94049e9bf17b458c2427118a6"
+          },
+          "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/172",
           "crm_seat_released": true
         }
       ]
