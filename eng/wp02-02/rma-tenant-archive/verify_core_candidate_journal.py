@@ -41,6 +41,7 @@ class Inputs:
     manifest_sha256: str
     bundle: Path
     file_content_root: Optional[Path] = None
+    include_file_content_history: bool = False
 
 
 def cli_command(args):
@@ -52,6 +53,8 @@ def cli_command(args):
         command.extend(("--bundle", str(args.bundle)))
         if args.file_content_root is not None:
             command.extend(("--file-content-root", str(args.file_content_root)))
+        if args.include_file_content_history:
+            command.append("--include-file-content-history")
     return command
 
 
@@ -198,7 +201,9 @@ def native(f, args, ordinary, original_core, *, seeded_b=False, seeded_other=Fal
     core = native_cli(f, "core-recover-original", replace(recover, action="recover", output=f.output / "core-recover-original"))
     require(imported == recovered == replay and core == original_core, "same-key or original Core receipt bytes changed")
     receipt = json.loads(imported)
+    manifest = json.loads((args.bundle / "manifest.json").read_bytes())
     require(receipt["outcome"] == "IMPORTED" and receipt["recoveryReady"] is False
+            and receipt["format"] == manifest["format"]
             and receipt["binding"]["manifestSha256"] == args.manifest_sha256
             and receipt["journalCounts"] == {"rows": 2, "committed": 2, "closed": 0}, "journal receipt differs")
     native_cli(f, "recover-wrong-pin", replace(recover, manifest_sha256="0" * 64, output=f.output / "recover-wrong-pin"),
@@ -236,4 +241,5 @@ if __name__ == "__main__":
         parser.add_argument("--" + field, type=Path, required=field != "file-content-root")
     for field in ("username", "tenant", "candidate-id", "manifest-sha256"):
         parser.add_argument("--" + field, required=True)
+    parser.add_argument("--include-file-content-history", action="store_true")
     offline(parser.parse_args())

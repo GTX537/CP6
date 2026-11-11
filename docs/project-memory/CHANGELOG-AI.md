@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-11 UTC 同源 v11 原 RMA Owner 流水导入
+
+W475真实v11原RMA图、真实晚失败、普通A/B和原回执通过，旧v2驱动及原图保持。 [W475交付](../development/evidence/W475-01/DELIVERY.md)
+
 ## 2026-11-11 UTC 实际 RMA Owner 原流水的同源完整 v11
 
 W474真实v8基线和完整v11均保留，原模拟环境缺失证据、原流水前后及停机可复核。 [W474交付](../development/evidence/W474-01/DELIVERY.md)
