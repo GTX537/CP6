@@ -32,6 +32,7 @@ class Inputs:
     file_content_root: Path
     output: Path
     action: str = 'import'
+    include_file_content_history: bool = False
 
 
 def call(f, label, args, *, error=None, discard=False):
@@ -41,6 +42,8 @@ def call(f, label, args, *, error=None, discard=False):
         fields += ('bundle', 'file_content_root')
     for field in fields:
         command += ['--' + field.replace('_', '-'), str(getattr(args, field))]
+    if args.action == 'import' and args.include_file_content_history:
+        command.append('--include-file-content-history')
     result = subprocess.run(command, cwd=f.output, env=f.env, stdin=subprocess.DEVNULL,
                             stdout=subprocess.DEVNULL if discard else subprocess.PIPE, stderr=subprocess.PIPE,
                             creationflags=archive.FLAGS, timeout=90)
@@ -149,8 +152,11 @@ def exercise(f, args, old_bundle, old_pin, old_assets, b_original, source_file):
     call(f, 'source-target', attempt('source-target', target_file=source_file), error='rma-stage-target-is-source')
     call(f, 'wrong-marker', attempt('wrong-marker', candidate_id=str(uuid4())), error='rma-stage-candidate-marker-rejected')
     call(f, 'wrong-pin', attempt('wrong-pin', manifest_sha256='0' * 64), error='rma-stage-manifest-digest-mismatch')
+    if args.include_file_content_history:
+        call(f, 'v11-without-opt-in', attempt('v11-without-opt-in', include_file_content_history=False),
+             error='rma-stage-bundle-member-rejected')
     call(f, 'unsupported-v10', attempt('unsupported-v10', bundle=old_bundle, manifest_sha256=old_pin,
-         file_content_root=old_assets), error='rma-stage-erp-candidate-shape-rejected')
+         file_content_root=old_assets, include_file_content_history=False), error='rma-stage-erp-candidate-shape-rejected')
     inject(f, attempt('allocated-token-conflict'), f'ALTER SEQUENCE {importer.SEQUENCE} START WITH 1;',
            f'UPDATE {importer.temporary("Aggregate")} SET "RowVersion"=decode({Q(b_request["RowVersion"][2:])},\'hex\');\n',
            'rma-stage-erp-candidate-token-rejected')
@@ -179,7 +185,9 @@ def verify_committed(f, args, before, a_expected, b_expected):
     actual = bytes.fromhex(encoded.decode('ascii'))
     require(receipt == replay == actual, 'original durable receipt bytes differ')
     value = json.loads(receipt)
+    source_format = archive.FORMAT_WITH_FILE_CONTENT_HISTORY if args.include_file_content_history else archive.FORMAT_WITH_STOCK_OUTBOX
     require(value['profile'] == importer.PROFILE and value['outcome'] == 'IMPORTED' and value['recoveryReady'] is False
+            and value['format'] == source_format
             and value['binding']['target'] == f.target.mapping() and value['binding']['candidateId'] == args.candidate_id
             and value['binding']['tenantId'] == a and value['binding']['manifestSha256'] == args.manifest_sha256
             and value['counts'] == importer.COUNTS and value['rowVersionNext'] == 11, 'durable receipt binding differs')
@@ -204,6 +212,7 @@ def parser():
         cli.add_argument('--' + name, required=True)
     for name in ('tenant-a', 'tenant-b'):
         cli.add_argument('--' + name, type=archive.guid, required=True)
+    cli.add_argument('--include-file-content-history', action='store_true')
     return cli
 
 
@@ -212,7 +221,8 @@ def verify(options, committed_from=None):
     physical = archive.PhysicalTarget.from_mapping(json.loads(options.target_file.read_bytes()))
     f = Fixture(options, physical, options.output)
     args = Inputs(options.pg_bin, options.target_file, options.username, str(options.tenant_a), options.candidate_id,
-                  options.manifest_sha256, options.bundle, options.file_content_root, options.output/'import')
+                  options.manifest_sha256, options.bundle, options.file_content_root, options.output/'import',
+                  include_file_content_history=getattr(options, 'include_file_content_history', False))
     if committed_from is None:
         result = exercise(f, args, options.old_bundle, options.old_pin, options.old_assets, options.b_original, options.source_file)
     else:
