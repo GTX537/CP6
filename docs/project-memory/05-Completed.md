@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-11 UTC · 4h检查点与W483
+
+W483 的原任务恢复及终态行为已在真实HTTPS/BFF/PG完成，旧v1与当前授权保留，原缺陷2项RED和Coverage夹具42P01均保留、相关最终成功按实际范围复用。CRM已正常采用和释放，Main本轮协调收尾；完整原卡、60AC/R1与PG16/11不提前提升。 [本任务](../development/evidence/W483-01/DELIVERY.md)
+
 ## 2026-11-11 UTC · 首条询盘链W482
 
 W482 原生导出与 Main v2 独立服务当前权限已实现，真实 TLS/HTTPS/PG/React、原 202 恢复/并发/失权/回滚、五分钟清除及原 60 分钟保留/hold/故障共同回滚和联合清除通过；一次集中审查通过。CRM #168 已采用 f58688e0→8c78760e，准确任务分支清理、DEV-2 干净释放；Main 本提交正常采用/finish 继续。原卡/60AC/R1 与正式 PG 状态分别核销，12h 目标仍 ACTIVE。 [本任务](../development/evidence/W482-01/DELIVERY.md)
