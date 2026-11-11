@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-11 UTC · W487集合合同核验
+
+先完成W487 Main正常采用和官方finish；后继按剩余预算核直接业务消息恢复/不重复效果与既有真实证据，真实缺口才新任务修复，11h后只收拢当前任务。054事件初始化字典/非DTO集合生命周期、原23AC及四disposition/月度native和正式共同服务前置保持。 [本任务](../development/evidence/W487-01/DELIVERY.md)
+
 ## 2026-11-11 UTC · W486公开输入合法组合
 
 先收妥W486 Main正常采用、远端核对及官方finish，再按原8h滚动安排独立核AC-INQ-054实际集合义务/权威使用边界；真实缺口才开新任务改生成入口。原23条AC及四disposition/月度native、共同服务正式前置保留，最后一小时聚焦收尾。 [本任务](../development/evidence/W486-01/DELIVERY.md)
