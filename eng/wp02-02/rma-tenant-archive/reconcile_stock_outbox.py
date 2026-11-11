@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Observe current Main Stock delivery from a pinned v10 bundle on its exact PostgreSQL source."""
+"""Observe current Main Stock delivery from a pinned v10 or v11 bundle on its exact PostgreSQL source."""
 
 import argparse
 from contextlib import ExitStack, closing
@@ -20,6 +20,7 @@ from privacy_evidence import CSV_LIMIT_LOCK
 
 
 FORMAT = "cp6-main-stock-outbox-reconciliation-v1"
+ARCHIVE_FORMATS = (archive.FORMAT_WITH_STOCK_OUTBOX, archive.FORMAT_WITH_FILE_CONTENT_HISTORY)
 REPORT = "reconciliation.jsonl"
 BATCH_SIZE = 128
 STATES = {0: "Pending", 1: "Dispatching", 2: "Published", 3: "DeadLettered"}
@@ -40,7 +41,7 @@ def checked_bundle(stock, bundle, tenant, target, digest, inputs, file_content_r
     if hashlib.sha256(pinned).hexdigest() != digest:
         raise archive.ArchiveError("manifest-digest-mismatch")
     manifest = archive.verify_bundle(bundle, str(tenant), file_content_root=file_content_root)
-    if manifest != json.loads(pinned) or manifest["format"] != archive.FORMAT_WITH_STOCK_OUTBOX \
+    if manifest != json.loads(pinned) or manifest["format"] not in ARCHIVE_FORMATS \
             or manifest.get("profile") != archive.PROFILE:
         raise archive.ArchiveError("stock-v10-bundle-rejected")
     if archive.PhysicalTarget.from_mapping(manifest["source"]) != target:

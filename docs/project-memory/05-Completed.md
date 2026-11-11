@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-11 UTC 完整 v11 原源只读对账
+
+完整W429 v11在同一物理身份的私有副本通过四个只读入口，IAM 17、Identity Priority 1、ERP 2、Main Stock 2，49源关系及原件不变；recoveryReady=false。 W469经#937采用、准确清理分支、DEV-2干净释放；实际18.64–18.71分钟。 [W470交付](../development/evidence/W470-01/DELIVERY.md)
+
 ## 2026-11-11 UTC v11 FileContent 原历史导入
 
 沿W429 v11与W468候选原45字节，PostgreSQL 18.6关闭候选导入FileContent三表及原Owner流水，引用Engineering父版本，五原CSV与回执逐字节一致，B同键原记录不变，真实晚段故障全回滚。 W468经#936采用、分支准确清理且DEV-2干净释放；实测12.88–12.97分钟。 [W469交付](../development/evidence/W469-01/DELIVERY.md)

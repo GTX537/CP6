@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-11 UTC 完整 v11 原源只读对账
+
+沿W469关闭候选验证实际FileContent Owner、原操作、父版本和W468原文件读取，并保持候选资格、正式PGT-021/022及切换独立。 对账结果为 OBSERVED。 [W470交付](../development/evidence/W470-01/DELIVERY.md)
+
 ## 2026-11-11 UTC v11 FileContent 原历史导入
 
 沿完整v11对真实同源IAM、Identity Priority、ERP、Main Stock做只读原键对账，并保留宿主实际Owner读取、候选资格、正式PGT-021/022与切换各自边界。 W469关闭候选保持 recoveryReady=false。 [W469交付](../development/evidence/W469-01/DELIVERY.md)
