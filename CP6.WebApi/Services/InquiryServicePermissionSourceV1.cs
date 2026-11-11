@@ -19,11 +19,14 @@ internal static class InquiryServicePermissionSourceV1
         InquiryServicePrincipalRegistryV1.Registration registration, InquiryPermissionRequestV1 request,
         AuthorizationCatalogSnapshotV1 catalog, CancellationToken ct)
     {
+        var privacy=request.Purpose=="privacy:export";
         if (db.CurrentTenantId != registration.Tenant || db.Database.CurrentTransaction is null
             || !catalog.IsSealed || !catalog.Fields.TryGetValue(InquiryIntakePermissionSourceV1.Resource, out var definitions)
             || !definitions.Select(x => x.Name).Order(StringComparer.Ordinal)
                 .SequenceEqual(InquiryIntakePermissionSourceV1.Fields.Order(StringComparer.Ordinal)))
             throw new CurrentPermissionUnavailableException();
+        if(privacy&&(!catalog.Fields.TryGetValue(InquiryPrivacyFieldCatalogV1.Resource,out var privacyFields)
+            ||!InquiryPrivacyFieldCatalogV1.Matches(privacyFields.Select(x=>x.Name))))throw new CurrentPermissionUnavailableException();
         var identifiers = db.GetService<ISqlGenerationHelper>();
         string Table<T>()
         {
@@ -49,22 +52,22 @@ internal static class InquiryServicePermissionSourceV1
                     FROM {{Table<Sys_RoleAction>()}} a JOIN roles r ON r."RoleId"=a."RoleId"
                     JOIN {{Table<Sys_Menu>()}} m ON m."MenuId"=a."MenuId"
                     WHERE a."TenantId"=@tenant AND m."MenuKey" IS NOT NULL),'[]'::jsonb),
-                'Scopes',COALESCE((SELECT jsonb_agg(jsonb_build_object('ScopeType',s."ScopeType",'CustomDeptIds',s."CustomDeptIds"))
+                'Scopes',COALESCE((SELECT jsonb_agg(jsonb_build_object('Resource',s."ResourceKey",'ScopeType',s."ScopeType",'CustomDeptIds',s."CustomDeptIds"))
                     FROM {{Table<Sys_RoleDataScope>()}} s JOIN roles r ON r."RoleId"=s."RoleId"
-                    WHERE s."TenantId"=@tenant AND s."ResourceKey"='crm-lead'),'[]'::jsonb),
+                    WHERE s."TenantId"=@tenant AND (s."ResourceKey"='crm-lead' OR @privacy AND s."ResourceKey"='crm-privacy')),'[]'::jsonb),
                 'Fields',COALESCE((SELECT jsonb_agg(jsonb_build_object(
                     'Id',f."Id",'RoleId',f."RoleId",'RoleVersion',r.revision,'Resource',f."ResourceKey",
                     'Field',f."FieldName",'Access',f."Access") ORDER BY f."RoleId",f."Id")
                     FROM {{Table<Sys_RoleFieldPerm>()}} f JOIN roles r ON r."RoleId"=f."RoleId"
-                    WHERE f."TenantId"=@tenant AND f."ResourceKey"='crm-intake'),'[]'::jsonb)
+                    WHERE f."TenantId"=@tenant AND (f."ResourceKey"='crm-intake' OR @privacy AND f."ResourceKey"='crm-privacy')),'[]'::jsonb)
             )::text AS "Value"
             """;
-        var json = await db.Database.SqlQueryRaw<string>(sql, new NpgsqlParameter("tenant", registration.Tenant),
+        var json = await db.Database.SqlQueryRaw<string>(sql, new NpgsqlParameter("tenant", registration.Tenant),new NpgsqlParameter("privacy",privacy),
             new NpgsqlParameter("roles", NpgsqlDbType.Array | NpgsqlDbType.Integer) { Value = registration.Roles.ToArray() }).SingleAsync(ct);
         var snapshot = JsonSerializer.Deserialize<Snapshot>(json) ?? throw new CurrentPermissionUnavailableException();
         if (snapshot.Roles.Any(x => x.Revision is null || x.Revision == Guid.Empty) || snapshot.Scopes.Any(x => x.ScopeType is < 1 or > 5))
             throw new CurrentPermissionUnavailableException();
-        string[] required = ["crm-lead:query", "crm-lead:view-pii", "crm-lead:add"];
+        string[] required = privacy?["crm-lead:query","crm-lead:view-pii","crm-privacy:export"]:["crm-lead:query", "crm-lead:view-pii", "crm-lead:add"];
         if (snapshot.Roles.Length == 0 || required.Append("crm-lead:assign").Any(x => !snapshot.Actions.Contains(x, StringComparer.Ordinal)))
             throw new InquiryPermissionExceptionV1(403, "insufficient_scope");
         var permitted = false;
@@ -78,15 +81,37 @@ internal static class InquiryServicePermissionSourceV1
         var healthy = organization.Values.Where(x => IamUserAdministrationV1.DepartmentAvailable(x.Id, organization)).ToArray();
         var own = healthy.SingleOrDefault(x => x.Id == registration.Department);
         if (own is null) throw new InquiryPermissionExceptionV1(403, "insufficient_scope");
-        var scope = snapshot.Scopes.Select(x => x.ScopeType).DefaultIfEmpty(1).Max();
-        var custom = snapshot.Scopes.Where(x => x.ScopeType == 4).SelectMany(x => PermissionAggregator.ParseGuids(x.CustomDeptIds)).ToHashSet();
-        var departments = healthy.Where(x => scope switch
+        Guid[] Departments(string resource)
         {
-            2 => x.Id == own.Id, 3 => x.Path.StartsWith(own.Path, StringComparison.Ordinal),
-            4 => custom.Contains(x.Id), 5 => true, _ => false
-        }).Select(x => x.Id).Order().ToArray();
+            var scopes=snapshot.Scopes.Where(x=>x.Resource==resource).ToArray();
+            var scope=scopes.Select(x=>x.ScopeType).DefaultIfEmpty(1).Max();
+            var custom=scopes.Where(x=>x.ScopeType==4).SelectMany(x=>PermissionAggregator.ParseGuids(x.CustomDeptIds)).ToHashSet();
+            return healthy.Where(x=>scope switch{2=>x.Id==own.Id,3=>x.Path.StartsWith(own.Path,StringComparison.Ordinal),4=>custom.Contains(x.Id),5=>true,_=>false}).Select(x=>x.Id).Order().ToArray();
+        }
+        var departments=Departments("crm-lead");
+        if(privacy)departments=departments.Intersect(Departments("crm-privacy")).Order().ToArray();
         if (departments.Length == 0) throw new InquiryPermissionExceptionV1(403, "insufficient_scope");
         if (departments.Length > 256) throw new InquiryPermissionExceptionV1(422, "inquiry_projection_scope_not_representable");
+        if(privacy)
+        {
+            const string mapping="MainInquiryPrivacyServiceExportFieldsV2";const FieldPermissionUseV1 use=FieldPermissionUseV1.Export;
+            void RequireFields(string resource,IReadOnlyList<string> selected)
+            {
+                var registered=catalog.Fields[resource];
+                var source=new FieldPermissionSourceV1(registration.Tenant,registration.Subject,resource,
+                    AuthenticationPolicyServiceV1.Hash(registered),AuthenticationPolicyServiceV1.Hash(new{registration.Version,Snapshot=json}),registered.Select(x=>x.Name),
+                    snapshot.Roles.Select(x=>new FieldPermissionRoleV1(x.RoleId,x.Revision!.Value.ToString("D"),true)),snapshot.Fields.Where(x=>x.Resource==resource));
+                var facts=source.Evaluate(source.Versions(mapping),mapping,
+                    selected.Select(x=>new FieldPermissionMappingV1(x,use,"fieldPermissions/"+x,true,[])),
+                    selected.Select(x=>new FieldPermissionConstraintsV1(x,use,FieldPermissionCheckV1.Allowed,FieldPermissionCheckV1.Allowed,
+                        FieldPermissionCheckV1.Allowed,FieldPermissionCheckV1.NotApplicable,FieldPermissionCheckV1.NotApplicable,FieldPermissionCheckV1.Allowed,FieldPermissionCheckV1.NotApplicable)));
+                if(!facts.IsAvailable)throw new CurrentPermissionUnavailableException();
+                if(selected.Any(x=>!facts.Fields[x].Uses[use].Allowed))throw new InquiryPermissionExceptionV1(403,"insufficient_field_scope");
+            }
+            RequireFields(InquiryIntakePermissionSourceV1.Resource,InquiryIntakePermissionSourceV1.Fields);
+            RequireFields(InquiryPrivacyFieldCatalogV1.Resource,["exportArtifact"]);
+            return new(required,[..InquiryIntakePermissionSourceV1.Fields,"exportArtifact"],departments,true);
+        }
         var source = new FieldPermissionSourceV1(registration.Tenant, registration.Subject, InquiryIntakePermissionSourceV1.Resource,
             AuthenticationPolicyServiceV1.Hash(definitions), AuthenticationPolicyServiceV1.Hash(new { registration.Version, Snapshot = json }),
             definitions.Select(x => x.Name), snapshot.Roles.Select(x => new FieldPermissionRoleV1(x.RoleId, x.Revision!.Value.ToString("D"), true)),
@@ -98,6 +123,6 @@ internal static class InquiryServicePermissionSourceV1
         return new(required, InquiryIntakePermissionSourceV1.Fields.ToArray(), departments, true);
     }
     private sealed record Role(int RoleId, Guid? Revision);
-    private sealed record Scope(int ScopeType, string? CustomDeptIds);
+    private sealed record Scope(string Resource,int ScopeType, string? CustomDeptIds);
     private sealed record Snapshot(Role[] Roles, string[] Actions, Scope[] Scopes, FieldPermissionRowV1[] Fields);
 }

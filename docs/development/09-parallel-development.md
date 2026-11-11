@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：W481已随#949采用并释放；COORD单人接[W482首条询盘链](evidence/W482-01/DELIVERY.md)，DEV-1为Main台账、DEV-2安全bind为CRM实施。两个开发席位属于同一任务，集成席位空闲。
+
 > 当前：用户接受首条询盘业务链优先，COORD单人执行[12h计划](planning/20261111-codex-12h-business-chain.md)。W481-01在DEV-2完成关闭候选组合及当前差异实测，集中审查通过，待正常采用。其他席位空闲，以下旧窗口均为历史。 [本任务](evidence/W481-01/DELIVERY.md)
 
 > W425 随 #866 采用并释放 DEV-2。W428 已实测正常 Core EF 升级、IAM 及模拟登录 HTTP，完成用户复合引用。原 PGT-027 的角色引用余项单列。 [W428](./evidence/W428-01/DELIVERY.md)
