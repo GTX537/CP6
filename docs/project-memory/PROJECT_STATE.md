@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W516 正式 PGT-026 认证与公共路由
+
+Main 认证、普通角色目录限制、实际租户 schema 启用及 CRM 共享公开路由已采用。正式 PostgreSQL 21 PASS / 6 NOT_RUN。 [本任务](../development/evidence/W516-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W514 正式 PGT-004 可信入口
 
 Main 的缺失/伪造身份与存活探针、CRM 的地区、正文、查询及外部请求头均按真实证据采用。正式 PostgreSQL 20 PASS / 7 NOT_RUN。 [本任务](../development/evidence/W514-01/DELIVERY.md)
