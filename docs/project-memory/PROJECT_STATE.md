@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W502 审核赢家事件
+
+CRM #191 已采用。导出后放行及拒绝的原生 Outbox 版本为 1、2、3，显式旧守卫升级和原结果恢复通过。采纳 AC-INQ-040，原询盘 52 PASS / 8 NOT_RUN。 [本任务](../development/evidence/W502-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W501 合成夹具完整性
 
 具名派生修订的 28 个夹具家族、136 步通过静态验证，两条负例实际失败并更新回执。采纳 AC-INQ-035/060，原询盘 51 PASS / 9 NOT_RUN。 [本任务](../development/evidence/W501-01/DELIVERY.md)

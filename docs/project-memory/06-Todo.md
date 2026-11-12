@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-12 UTC · W502 后续验收
+
+剩余八项。继续 W503 当前授权和 H01 下游效果，之后补三维限流／重放、原政策、PostgreSQL 图与事务，以及锁和错误合同。 [本任务](../development/evidence/W502-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W501 后续验收
 
 继续 W502 核销审核赢家持久事件。W503 验证 H01 下游效果与当前权限边界。AC-INQ-047/057 的实际 PostgreSQL 图与同一事务义务仍待验证。 [本任务](../development/evidence/W501-01/DELIVERY.md)
