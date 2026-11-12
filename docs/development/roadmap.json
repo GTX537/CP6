@@ -1762,8 +1762,20 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-035",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-035",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W501-01/DELIVERY.md",
+                "source_sha": "9177169b32b7adf8f992d9cdc58f882aad45cbe9",
+                "source_repository": "GTX537/CP6",
+                "adopted_main_sha": "9177169b32b7adf8f992d9cdc58f882aad45cbe9",
+                "command": "Python 3.13 -B verify_fixture.py --parent <W82 fixture> --report <receipt>; two --fixture stale metadata negatives and original-path guard. Exact argv in D:/CP6-test-artifacts/W501-01/final-validation-runs.jsonl.",
+                "environment": "Actual local Python 3.13.13 on exact W82 derived synthetic fixture with prior approved scope. Product and CRM adoption statuses remain NOT_RUN.",
+                "observed_at": "2026-11-12T11:44:17.866542+00:00",
+                "scope": "Verified complete typed and synthetic fixture corpus, 28 families and 136 steps, metadata consistency and traceability while all fixtures retain NOT_RUN.",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/34"
@@ -2401,8 +2413,20 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-060",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-060",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W501-01/DELIVERY.md",
+                "source_sha": "9177169b32b7adf8f992d9cdc58f882aad45cbe9",
+                "source_repository": "GTX537/CP6",
+                "adopted_main_sha": "9177169b32b7adf8f992d9cdc58f882aad45cbe9",
+                "command": "Python 3.13 -B verify_fixture.py --parent <W82 fixture> --report <receipt>; two --fixture stale metadata negatives and original-path guard. Exact argv in D:/CP6-test-artifacts/W501-01/final-validation-runs.jsonl.",
+                "environment": "Actual local Python 3.13.13 on exact W82 derived synthetic fixture with prior approved scope. Product and CRM adoption statuses remain NOT_RUN.",
+                "observed_at": "2026-11-12T11:44:17.866542+00:00",
+                "scope": "Observed static PASS and two intentional FAIL runs replacing the same receipt, with separate business and CRM adoption NOT_RUN.",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/59"
@@ -2562,6 +2586,18 @@
         ],
         "original_pass": 49,
         "original_not_run": 11,
+        "associated_runtime_pass": 2,
+        "associated_runtime_total": 2,
+        "full_target_complete": false
+      },
+      "w501_acceptance_adoption": {
+        "report": "docs/development/evidence/W501-01/DELIVERY.md",
+        "adopted_cases": [
+          "AC-INQ-035",
+          "AC-INQ-060"
+        ],
+        "original_pass": 51,
+        "original_not_run": 9,
         "associated_runtime_pass": 2,
         "associated_runtime_total": 2,
         "full_target_complete": false
@@ -165264,6 +165300,11 @@
       "at": "2026-11-12T11:29:13.612312+00:00",
       "change": "W500 实测范围内读取、三类同形404及两租户零重复效果。CRM #189 已采用，AC-INQ-029 采纳，原询盘 49 PASS / 11 NOT_RUN。",
       "evidence": "docs/development/evidence/W500-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-12T11:49:43.824583+00:00",
+      "change": "W501 校正合成夹具七个写入计数及七个正文摘要，静态 PASS/FAIL 实测，采纳 AC-INQ-035/060，原询盘 51 PASS / 9 NOT_RUN。",
+      "evidence": "docs/development/evidence/W501-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211150,10 +211191,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W500",
-      "path": "docs/development/evidence/W500-01/DELIVERY.md",
-      "baseline_sha": "e250b9d7bb1877fa90f9c235105d15b9fceb2e47",
-      "registered_at": "2026-11-12T11:26:57.541546+00:00",
+      "id": "W501",
+      "path": "docs/development/evidence/W501-01/DELIVERY.md",
+      "baseline_sha": "9177169b32b7adf8f992d9cdc58f882aad45cbe9",
+      "registered_at": "2026-11-12T11:32:34.024617+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211167,55 +211208,43 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续 AC-INQ-035/060 夹具一致性和 AC-INQ-040 原赢家事件事实。",
+      "next_action": "同步 W502 审核赢家事件，再验 W503 H01 效果与授权边界，继续其余原条款。",
       "windows": [
         {
-          "id": "W500-01",
-          "workspace_task": "W500-01",
+          "id": "W501-01",
+          "workspace_task": "W501-01",
           "related_tasks": [
-            "WP03-02",
-            "WP03-03"
+            "S01-08"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+          "mode": "SINGLE_CHAT",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w500-01",
-          "planned_scope_ref": "docs/development/evidence/W500-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W500-01/DELIVERY.md",
+          "branch": "codex/w501-01",
+          "planned_scope_ref": "docs/development/evidence/W501-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W501-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "CRM:inquiry-intake-read-tests"
+            "Main:inquiry-fixture-revision"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "One current PostgreSQL/HTTP anti-enumeration case passed without skip; exact prior public receipt denial, expiry and job-binding runs retained.",
-          "remaining_scope": "11 original cases remain. Fixture integrity and winner history verification are next.",
-          "product_repository": "CP6.CRM",
-          "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "42fea57e387aa0b4dfc99ae4fc85afb8b29f786d",
-          "product_branch": "codex/w500-01",
-          "product_source_sha": "96297d5162b9f912a4b97e75613d9b9ce18eed30",
-          "product_remote_main_sha": "58ececc839ea9eb37598c6a37bdbf98813ff4e1b",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/189",
-          "product_branch_disposition": "deleted-local-and-remote",
-          "product_workspace_status": "fixed-seat-detached-for-reuse",
-          "product_seat_released": true
+          "validation_summary": "Named static fixture revision verified 28 families, 136 steps, 30 stages, 11 digests and exact inverse. Actual failure overwrites old PASS and business remains NOT_RUN.",
+          "remaining_scope": "9 original cases; W502 product event repair adopted in CRM, W503 scoped H01 fence verification active."
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
-      "product_integrated": true
+      "product_integrated": false
     },
     "wave_history": [
       {
@@ -259984,6 +260013,76 @@
           "new_worktrees": 0
         },
         "product_integrated": false
+      },
+      {
+        "id": "W500",
+        "path": "docs/development/evidence/W500-01/DELIVERY.md",
+        "baseline_sha": "e250b9d7bb1877fa90f9c235105d15b9fceb2e47",
+        "registered_at": "2026-11-12T11:26:57.541546+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续 AC-INQ-035/060 夹具一致性和 AC-INQ-040 原赢家事件事实。",
+        "windows": [
+          {
+            "id": "W500-01",
+            "workspace_task": "W500-01",
+            "related_tasks": [
+              "WP03-02",
+              "WP03-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w500-01",
+            "planned_scope_ref": "docs/development/evidence/W500-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W500-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "CRM:inquiry-intake-read-tests"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "One current PostgreSQL/HTTP anti-enumeration case passed without skip; exact prior public receipt denial, expiry and job-binding runs retained.",
+            "remaining_scope": "11 original cases remain. Fixture integrity and winner history verification are next.",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "42fea57e387aa0b4dfc99ae4fc85afb8b29f786d",
+            "product_branch": "codex/w500-01",
+            "product_source_sha": "96297d5162b9f912a4b97e75613d9b9ce18eed30",
+            "product_remote_main_sha": "58ececc839ea9eb37598c6a37bdbf98813ff4e1b",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/189",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/966",
+            "main_remote_main_sha": "9177169b32b7adf8f992d9cdc58f882aad45cbe9"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
       }
     ],
     "development_priority": {

@@ -1,0 +1,114 @@
+{
+  "profile_id": "CRM-INQ-FIXTURE-INTEGRITY/20261112-R1",
+  "scope": "FIXTURE_DERIVED_METADATA_ONLY",
+  "parent_fixture": {
+    "revision": "CRM-INQ-NOTICE-HASH/20261023-R1",
+    "schema": "CRM-INQ-TYPED-FIXTURES-RECOVERY-R3-V15-1",
+    "crm_source_commit": "350d4d4261144607985cfb33770f630d09859b0f",
+    "sha256": "8255b4dd3f07481082a3d2b9fe1f4b85582cce8b8e3682b846769cc7e00d45ce"
+  },
+  "effective_fixture": {
+    "name": "crm-inq.fixture-integrity.json",
+    "sha256": "addf7f1d62bff189adcd8c526657210e2420f93ae7537d27e0da132467ed0dc4"
+  },
+  "operations": [
+    {
+      "op": "replace_json",
+      "case_id": "FX25-S06",
+      "path": "/families/24/steps/5/transaction/writes",
+      "before": 1,
+      "after": 2
+    },
+    {
+      "op": "replace_json",
+      "case_id": "FX25-S12",
+      "path": "/families/24/steps/11/transaction/writes",
+      "before": 14,
+      "after": 15
+    },
+    {
+      "op": "replace_json",
+      "case_id": "FX25-S14",
+      "path": "/families/24/steps/13/transaction/writes",
+      "before": 16,
+      "after": 17
+    },
+    {
+      "op": "replace_json",
+      "case_id": "FX25-S16",
+      "path": "/families/24/steps/15/transaction/writes",
+      "before": 13,
+      "after": 14
+    },
+    {
+      "op": "replace_json",
+      "case_id": "FX25-S18",
+      "path": "/families/24/steps/17/transaction/writes",
+      "before": 13,
+      "after": 14
+    },
+    {
+      "op": "replace_json",
+      "case_id": "FX26-S01",
+      "path": "/families/25/steps/0/expectedHttp/bodyDigest",
+      "before": "4150e2ace5c0087d27dad895dc39b254abe97af919ebc3d4027dae3eb3be32f4",
+      "after": "33333dfed0c21a04f5976dbda7b251c31b2cf2733d6bbc18835a2504728796f5"
+    },
+    {
+      "op": "replace_json",
+      "case_id": "FX26-S02",
+      "path": "/families/25/steps/1/expectedHttp/bodyDigest",
+      "before": "c5f131f7259dcd3cb9ae27c2bb894c333562e8676a87c5ebc39b23cd26c8d187",
+      "after": "aea82b76e477633671d0d9bd6e6c7cd1845c3e89786929e7366697659f51b1c9"
+    },
+    {
+      "op": "replace_json",
+      "case_id": "FX26-S03",
+      "path": "/families/25/steps/2/expectedHttp/bodyDigest",
+      "before": "940825051ab636e3f72c743bac0d3e8007b1f91aaa1bfa8e24fbde6ffc35621f",
+      "after": "25c1f0e27f6ce880332f32d328529df7ce9e30d1103e422b374cbedd1fbbeb46"
+    },
+    {
+      "op": "replace_json",
+      "case_id": "FX26-S04",
+      "path": "/families/25/steps/3/expectedHttp/bodyDigest",
+      "before": "6e7d87a07875e0b723d9d49efd0a25c9364881bab865850006f4303d0bc31109",
+      "after": "279d8539890a70cafe0be00196a90a13e25a6592c859b96d955d123dfe4dc3c3"
+    },
+    {
+      "op": "replace_json",
+      "case_id": "FX26-S05",
+      "path": "/families/25/steps/4/expectedHttp/bodyDigest",
+      "before": "6216803b8f2564c595839afab8e01056c58ed63280d9d365bdbd24766082e27b",
+      "after": "4c7600c9a98f5333a9ae285773ff970cce8cef0467463a2417463aed389238f9"
+    },
+    {
+      "op": "replace_json",
+      "case_id": "FX26-S06",
+      "path": "/families/25/steps/5/expectedHttp/bodyDigest",
+      "before": "179c564b0ee04e942dd5d618da2dd8981e0edac3af8fe89d9947ee137564743f",
+      "after": "b586280f88e980324ebd103c2550107e9679d252d71110740e3e25cff9c73306"
+    },
+    {
+      "op": "replace_json",
+      "case_id": "FX26-S23",
+      "path": "/families/25/steps/22/transaction/writes",
+      "before": 7,
+      "after": 0
+    },
+    {
+      "op": "replace_json",
+      "case_id": "FX26-S23",
+      "path": "/families/25/steps/22/expectedHttp/bodyDigest",
+      "before": "4150e2ace5c0087d27dad895dc39b254abe97af919ebc3d4027dae3eb3be32f4",
+      "after": "33333dfed0c21a04f5976dbda7b251c31b2cf2733d6bbc18835a2504728796f5"
+    },
+    {
+      "op": "replace_json",
+      "case_id": "FX26-S24",
+      "path": "/families/25/steps/23/transaction/writes",
+      "before": 7,
+      "after": 0
+    }
+  ]
+}
