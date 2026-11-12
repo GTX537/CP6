@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W509 正式 PGT-014 CRM 身份接收
+
+采用 PGT-014。实际普通角色的身份接收、锁序、Published/DRIFT 和 ACK 通过，正式 PostgreSQL 17 PASS / 10 NOT_RUN。 [本任务](../development/evidence/W509-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W508 询盘正式 PostgreSQL 盘点与 Main 可信入口
 
 原询盘 60/60。正式 PostgreSQL 16 PASS / 11 NOT_RUN。Main liveness 零业务库连接及可信入口四类拒绝实测，PGT-004 收录定向证据。 [本任务](../development/evidence/W508-01/DELIVERY.md)

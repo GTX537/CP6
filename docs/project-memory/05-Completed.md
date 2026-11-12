@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-12 UTC · W509 正式 PGT-014 CRM 身份接收
+
+实测 CRM 同租锁竞争及跨租全局唯一键竞争，服务端中止后重投在新事务读取原件。原 PGT-014 已采用。 [本任务](../development/evidence/W509-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W508 询盘正式 PostgreSQL 盘点与 Main 可信入口
 
 修复 Main 存活探针读取恢复标记的问题。实际 Kestrel 和 PostgreSQL 复测匿名探针及原生 Stock 可信租户入口。 [本任务](../development/evidence/W508-01/DELIVERY.md)
