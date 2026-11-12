@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W491 四处置原生保留
+
+W491 使用用户确认的隔离历史装载，实际完成四处置五样本、hold、回滚和原任务恢复。CRM #182 已合入 e9e209797，DEV-2 已释放。询盘原验收 39/60，关联修订 2/2，正式 PostgreSQL 16/27。375 项中 38 DONE、1 IN_PROGRESS、336 PLANNED。 [本任务](../development/evidence/W491-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W490本轮结算与下一业务出口
 
 本轮真实Next/.NET/PG询盘→H01/审核→Lead→隐私导出/一次下载及原结果恢复工作；六个CRM BUG已修并采用。原AC39 PASS/21 NOT_RUN，CRM关联运行修订2/2 PASS；全项目运行修订2/247不是询盘的245个前置。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16/11保持。 [本任务](../development/evidence/W490-01/DELIVERY.md) 原生12h00m10s已达到12h预算，执行计划结算；Main最终采用/官方finish及含收尾读数见PR #958，完整业务目标未关闭。
