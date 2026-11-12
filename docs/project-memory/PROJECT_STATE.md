@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W496 询盘四处置隐私链
+
+CRM #185 已合入 `ae09fcd3`，四种处置的活体回执重放、签名撤回和实际导出通过。结合前序到期实测，AC-INQ-041 已采纳。原询盘 43 PASS / 17 NOT_RUN，关联修订 2/2，正式 PostgreSQL 16/27。375 项中 38 DONE、1 IN_PROGRESS、336 PLANNED。 [本任务](../development/evidence/W496-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W495 询盘 FX25 期限
 
 CRM #184 已合入 `ed637f1b`。PostgreSQL 物理缓存索引与限流桶按各自行期限清理，现行保留单元仍负责权限、hold 和事务恢复。AC-INQ-030/058 已采纳，原询盘 42 PASS / 18 NOT_RUN，关联修订 2/2，正式 PostgreSQL 16/27。375 项中 38 DONE、1 IN_PROGRESS、336 PLANNED。 [本任务](../development/evidence/W495-01/DELIVERY.md)

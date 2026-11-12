@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W496 询盘四处置隐私链
+
+新增四种处置的原生 HTTP/PostgreSQL 验收。过期样本复用隔离历史装载，由真实时钟驱动审核到期，再验证活体回执、撤回和新制品。CRM #185 正常采用，Actions 运行与取消均为 0。 [本任务](../development/evidence/W496-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W495 询盘 FX25 期限
 
 新增 PostgreSQL Submission 版本缓存索引，并在现行保留任务中按行期限清理缓存索引和限流桶。租户复合引用连接提交原件，保护 v4 目录。CRM #184 正常采用，Actions 运行和取消均为 0。 [本任务](../development/evidence/W495-01/DELIVERY.md)
