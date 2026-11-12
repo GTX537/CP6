@@ -164995,6 +164995,11 @@
       "at": "2026-11-12T00:57:23.465634+00:00",
       "change": "W490 Platform #83实际采用/finish；原AC048/049复用真实W487证据采纳，询盘39/60且关联运行修订2/2；全项目247的245未运行不作询盘前置。三项后继计划未开工，正式发包仍等明确授权，375与PG正式状态保持。",
       "evidence": "docs/development/evidence/W490-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-12T01:56:26.493661+00:00",
+      "change": "原生43210秒（12h00m10s）已达到43200秒执行预算，按实际范围结算；原询盘39/60、关联修订2/2、原375余337与PG16/11保持。Main最终采用/finish和含收尾计时在PR #958补记，完整业务目标未完成。",
+      "evidence": "docs/development/evidence/W490-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -210826,7 +210831,7 @@
       "path": "docs/development/evidence/W490-01/DELIVERY.md",
       "baseline_sha": "f196c8092231b720b6a13861267238645ad4f197",
       "registered_at": "2026-11-12T00:00:14.571688+00:00",
-      "phase": "EVIDENCE_AUDIT_AND_FINAL_CLOSEOUT",
+      "phase": "FINAL_ADOPTION_PENDING",
       "assigned_chats": [
         "COORD"
       ],
@@ -210842,7 +210847,7 @@
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": true,
-      "next_action": "本轮结算/原39AC与CRM关联修订2/2核对；Main正常PR与官方finish收尾。下一业务优先四处置原生保留，正式发包等待明确授权。",
+      "next_action": "12h预算已达到，完成本结算PR #958正常采用及官方finish；最终生命周期见同一PR。下一业务优先W491，三项后继均未开工。",
       "windows": [
         {
           "id": "W490-01",
@@ -210878,7 +210883,8 @@
           "product_pull_request": "https://github.com/GTX537/CP6.Platform/pull/83",
           "product_branch_disposition": "deleted-local-and-remote",
           "product_workspace_status": "fixed-seat-detached-for-reuse",
-          "product_seat_released": true
+          "product_seat_released": true,
+          "final_lifecycle_evidence": "https://github.com/GTX537/CP6/pull/958"
         }
       ],
       "storage": {
@@ -265423,7 +265429,7 @@
     "next_execution_plan": {
       "id": "CP6-12H-20261111",
       "path": "docs/development/planning/20261111-codex-12h-business-chain.md",
-      "state": "ACTIVE",
+      "state": "SETTLED",
       "execution_owner": "COORD_SINGLE_CHAT_SERIAL",
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_SECONDS",
       "capacity_hours": 12,
@@ -265715,6 +265721,25 @@
           "postgresql_not_run": 11,
           "platform_remote_main": "f3fbe4be67d40641f7a8a969d74be65a95541819",
           "scope": "11h后不再开启新产品实现；完成本轮证据适用/计划/台账/正常Main采用与官方生命周期。正式发布仅在收到本次明确授权且准入条件满足后按精确请求处理。"
+        },
+        {
+          "native_seconds": 43210,
+          "native_elapsed": "12h00m10s",
+          "recorded_at": "2026-11-12T01:56:26.493661+00:00",
+          "budget_seconds": 43200,
+          "state": "EXECUTION_BUDGET_MET",
+          "full_business_target_complete": false,
+          "original_inquiry_pass": 39,
+          "original_inquiry_total": 60,
+          "inquiry_runtime_revision_pass": 2,
+          "inquiry_runtime_revision_total": 2,
+          "original_tasks_done": 38,
+          "original_tasks_remaining": 337,
+          "postgresql_pass": 16,
+          "postgresql_not_run": 11,
+          "main_adoption_at_snapshot": "PENDING_FINAL_PR_AND_OFFICIAL_FINISH",
+          "final_lifecycle_evidence": "https://github.com/GTX537/CP6/pull/958",
+          "scope": "12h执行预算结算；含收尾最终读数及准确Main源/合并SHA、分支/工作区/席位结果在同一PR最终补记。完整询盘/原卡/正式PG余项不提前关闭。"
         }
       ],
       "recommended_follow_up": [
@@ -265752,7 +265777,26 @@
           ],
           "formal_publication_requires_new_authorization": true
         }
-      ]
+      ],
+      "settlement": {
+        "native_seconds": 43210,
+        "native_elapsed": "12h00m10s",
+        "recorded_at": "2026-11-12T01:56:26.493661+00:00",
+        "budget_seconds": 43200,
+        "state": "EXECUTION_BUDGET_MET",
+        "full_business_target_complete": false,
+        "original_inquiry_pass": 39,
+        "original_inquiry_total": 60,
+        "inquiry_runtime_revision_pass": 2,
+        "inquiry_runtime_revision_total": 2,
+        "original_tasks_done": 38,
+        "original_tasks_remaining": 337,
+        "postgresql_pass": 16,
+        "postgresql_not_run": 11,
+        "main_adoption_at_snapshot": "PENDING_FINAL_PR_AND_OFFICIAL_FINISH",
+        "final_lifecycle_evidence": "https://github.com/GTX537/CP6/pull/958",
+        "scope": "12h执行预算结算；含收尾最终读数及准确Main源/合并SHA、分支/工作区/席位结果在同一PR最终补记。完整询盘/原卡/正式PG余项不提前关闭。"
+      }
     },
     "execution_plan_history": [
       {

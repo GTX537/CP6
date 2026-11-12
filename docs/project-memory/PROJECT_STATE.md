@@ -2,7 +2,7 @@
 
 ## 2026-11-12 UTC · W490本轮结算与下一业务出口
 
-本轮真实Next/.NET/PG询盘→H01/审核→Lead→隐私导出/一次下载及原结果恢复工作；六个CRM BUG已修并采用。原AC39 PASS/21 NOT_RUN，CRM关联运行修订2/2 PASS；全项目运行修订2/247不是询盘的245个前置。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16/11保持。 [本任务](../development/evidence/W490-01/DELIVERY.md)
+本轮真实Next/.NET/PG询盘→H01/审核→Lead→隐私导出/一次下载及原结果恢复工作；六个CRM BUG已修并采用。原AC39 PASS/21 NOT_RUN，CRM关联运行修订2/2 PASS；全项目运行修订2/247不是询盘的245个前置。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16/11保持。 [本任务](../development/evidence/W490-01/DELIVERY.md) 原生12h00m10s已达到12h预算，执行计划结算；Main最终采用/官方finish及含收尾读数见PR #958，完整业务目标未关闭。
 
 ## 2026-11-11 UTC · W489配置预览一致性
 
