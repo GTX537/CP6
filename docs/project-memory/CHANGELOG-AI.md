@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W501 合成夹具完整性
+
+新增独立夹具元数据修订和本地验证入口，保留实际静态结果及原业务 NOT_RUN。采纳 AC-INQ-035/060。 [本任务](../development/evidence/W501-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W500 询盘读取防枚举
 
 扩充已采用的原生 HTTP/PG 回归，核对范围内读取、三类同形拒绝及持久效果，采纳 AC-INQ-029。 [本任务](../development/evidence/W500-01/DELIVERY.md)

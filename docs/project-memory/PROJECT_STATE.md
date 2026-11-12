@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W501 合成夹具完整性
+
+具名派生修订的 28 个夹具家族、136 步通过静态验证，两条负例实际失败并更新回执。采纳 AC-INQ-035/060，原询盘 51 PASS / 9 NOT_RUN。 [本任务](../development/evidence/W501-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W500 询盘读取防枚举
 
 CRM #189 已合入 `58ececc8`。真实 HTTP/PostgreSQL 同形 404 及零业务写验证通过，结合既有公开回执证据采纳 AC-INQ-029。原询盘 49 PASS / 11 NOT_RUN。 [本任务](../development/evidence/W500-01/DELIVERY.md)
