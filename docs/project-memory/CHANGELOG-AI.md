@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W516 正式 PGT-026 认证与公共路由
+
+新增同宿主真实公开路由验收，RMA 原读取与 schema 启用使用独立夹具入口。正式 PGT-026 已采用。 [本任务](../development/evidence/W516-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W514 正式 PGT-004 可信入口
 
 新配置入口和 Node 代理显式拒绝四个外部存储选择头。复用当前错误合同和普通角色实测，正式 PGT-004 已采用。 [本任务](../development/evidence/W514-01/DELIVERY.md)

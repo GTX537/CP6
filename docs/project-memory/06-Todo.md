@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-12 UTC · W516 正式 PostgreSQL 剩余 6 项
+
+PGT-021、022、024 共用 WP02-02 的恢复及版本前置。PGT-017 后接 PGT-011。PGT-025 按实际物理租户 schema 与共享原回执组合继续。 [本任务](../development/evidence/W516-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W514 正式 PostgreSQL 剩余 7 项
 
 继续 PGT-026 的共享 PublicRoute 和实际存储绑定。后台、撤权、恢复、版本与原生精度按各自直接前置推进。 [本任务](../development/evidence/W514-01/DELIVERY.md)

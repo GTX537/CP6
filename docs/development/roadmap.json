@@ -165552,6 +165552,11 @@
       "at": "2026-11-12T14:47:54.670443+00:00",
       "change": "W514 采用 PGT-004。配置入口的外部选择器在业务连接前拒绝，复用 Main 存活探针和 CRM 可信地区等已实测结果。正式 PostgreSQL 20 PASS / 7 NOT_RUN。",
       "evidence": "docs/development/evidence/W514-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-12T15:01:26.493668+00:00",
+      "change": "W516 采用 PGT-026。同宿主两真实公开映射、未发布及混合路径安全拒绝。Main 旧令牌撤销经过实际租户 schema 启用，普通角色目录和密钥权限沿已验证边界。正式 PostgreSQL 21 PASS / 6 NOT_RUN。",
+      "evidence": "docs/development/evidence/W516-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211438,10 +211443,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W514",
-      "path": "docs/development/evidence/W514-01/DELIVERY.md",
-      "baseline_sha": "88e23ba8033ca573b17f7ea0f014b027b9075a36",
-      "registered_at": "2026-11-12T14:47:34.087784+00:00",
+      "id": "W516",
+      "path": "docs/development/evidence/W516-01/DELIVERY.md",
+      "baseline_sha": "075d665a03ba511738769589b43bff6aaddd958c",
+      "registered_at": "2026-11-12T14:52:29.484695+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211455,13 +211460,14 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "按实际范围接续 PGT-026 的共享公共路由和存储绑定。PGT-011、017、021、022、024、025 按共用存储、写者关口及权限前置推进。",
+      "next_action": "按 WP02-02 推进实际 Stock/ERP 同源恢复与混合版本，共用 PGT-021、022、024 的直接前置。PGT-017、011 和 PGT-025 按对应写者/权限和存储准备。",
       "windows": [
         {
-          "id": "W514-01",
-          "workspace_task": "W514-01",
+          "id": "W516-01",
+          "workspace_task": "W516-01",
           "related_tasks": [
-            "WP02-01"
+            "WP02-02",
+            "WP02-06"
           ],
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
@@ -211469,27 +211475,29 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w514-01",
-          "planned_scope_ref": "docs/development/evidence/W514-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W514-01/DELIVERY.md",
+          "branch": "codex/w516-01",
+          "planned_scope_ref": "docs/development/evidence/W516-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W516-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "CRM:inquiry-configuration-external-selectors"
+            "Main:rma-authentication-activation-fixture",
+            "CRM:shared-public-route-verification"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Actual PostgreSQL 18.6/Kestrel and real Node proxy tests cover each external selector, valid controls and affected configuration paths. Reuse W508 and W513 exact existing evidence.",
-          "remaining_scope": "PGT-004 adopted for the new trusted entry and liveness profile. Seven formal cases remain, including shared public route and binding verification.",
+          "validation_summary": "CRM signed Kestrel PostgreSQL 18.6: 3 PASS, no skips, actual A/B current and four zero-effect denials. Main original RMA HTTP/model: 2 PASS, schema activation: 1 PASS, no skips and both native SQL oracles. Reuse Main W511/W427 directory and role results.",
+          "remaining_scope": "PGT-026 adopted for current Main controlled auth and CRM shared host public route profile. Six cases remain. Full shared storage/identity adoption and real historical migration remain in their own tasks.",
+          "main_tested_source_sha": "45f79d41a57c5f44f94c9da64a4ff0d1019741b2",
           "product_repository": "CP6.CRM",
           "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "a23adc2000c2f3dc30c84e101272ea08b9ab63cd",
-          "product_branch": "codex/w514-01",
-          "product_source_sha": "4ed917fdadf4f5303fda9ce786b9604178b20193",
-          "product_remote_main_sha": "3752ec0648f624432428210e5930a1951df4df93",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/205",
+          "product_baseline": "3752ec0648f624432428210e5930a1951df4df93",
+          "product_branch": "codex/w516-01",
+          "product_source_sha": "615744ebf71184885ff9649563722c521a1cacb1",
+          "product_remote_main_sha": "eb35232c1ae819efaacac318781c78e4cf9d0d2b",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/206",
           "product_branch_disposition": "deleted-local-and-remote",
           "product_workspace_status": "fixed-seat-detached-for-reuse",
           "product_seat_released": true
@@ -261275,6 +261283,75 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W514",
+        "path": "docs/development/evidence/W514-01/DELIVERY.md",
+        "baseline_sha": "88e23ba8033ca573b17f7ea0f014b027b9075a36",
+        "registered_at": "2026-11-12T14:47:34.087784+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "按实际范围接续 PGT-026 的共享公共路由和存储绑定。PGT-011、017、021、022、024、025 按共用存储、写者关口及权限前置推进。",
+        "windows": [
+          {
+            "id": "W514-01",
+            "workspace_task": "W514-01",
+            "related_tasks": [
+              "WP02-01"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w514-01",
+            "planned_scope_ref": "docs/development/evidence/W514-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W514-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "CRM:inquiry-configuration-external-selectors"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Actual PostgreSQL 18.6/Kestrel and real Node proxy tests cover each external selector, valid controls and affected configuration paths. Reuse W508 and W513 exact existing evidence.",
+            "remaining_scope": "PGT-004 adopted for the new trusted entry and liveness profile. Seven formal cases remain, including shared public route and binding verification.",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "a23adc2000c2f3dc30c84e101272ea08b9ab63cd",
+            "product_branch": "codex/w514-01",
+            "product_source_sha": "4ed917fdadf4f5303fda9ce786b9604178b20193",
+            "product_remote_main_sha": "3752ec0648f624432428210e5930a1951df4df93",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/205",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/982",
+            "main_remote_main_sha": "075d665a03ba511738769589b43bff6aaddd958c"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },

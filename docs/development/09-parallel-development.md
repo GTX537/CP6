@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W516 实测 CRM 同宿主共享公开目录的 A/B 映射与未登记拒绝，合用 Main 认证、普通角色和 schema 启用证据。PGT-026 已采用，正式 PostgreSQL 21/27。 [本任务](evidence/W516-01/DELIVERY.md)
+
 > W514 实测新配置入口拒绝外部租户、组织、schema 和地区头，业务库零连接。PGT-004 已采用，正式 PostgreSQL 20/27。 [本任务](evidence/W514-01/DELIVERY.md)
 
 > W515 实测 Main RMA 同数据库启用租户 schema 后，原已撤销令牌仍拒绝，另一当前令牌通过普通角色读取。 [本任务](evidence/W515-01/DELIVERY.md)
