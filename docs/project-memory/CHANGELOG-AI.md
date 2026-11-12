@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W499 询盘原接口与采用边界
+
+采纳 AC-INQ-005/033/036 的可追溯接口与采用证据，复用原已验证运行，当前生产采用状态留在对应记录。 [本任务](../development/evidence/W499-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W498 询盘 C# 集合所有权
 
 CRM #188 通过 S01 生成入口修正源事件扩展集合别名和空项问题，关联 Issue #187，Actions 运行与取消均为 0。 [本任务](../development/evidence/W498-01/DELIVERY.md)

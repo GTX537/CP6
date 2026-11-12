@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-12 UTC · W499 后续验收
+
+继续 W500 防枚举真实 HTTP 核验。其余优先补赢家事务事实、三维限流和重放，再核政策、锁序、跨 Owner 权限、错误及夹具全图。 [本任务](../development/evidence/W499-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W498 后续验收
 
 AC-INQ-054 已采纳。继续推进其余 15 项，先核接口映射、CRM-ACT 采用边界和生产采用证据状态。 [本任务](../development/evidence/W498-01/DELIVERY.md)
