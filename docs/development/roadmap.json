@@ -1485,8 +1485,20 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-023",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-023",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W494-01/DELIVERY.md",
+                "source_sha": "b7dfbcee0b2d45892ee358fd9191a29c42576860",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "b682af7234b44873ed8d04e451ec88c97525ca5b",
+                "command": "D:/CP6-test-artifacts/W494-01/run-projection.ps1 -Run projection-final with affected scenario filter and projection-green-02 fifth definitive failure result reused; full filters and TRX retained with the runs.",
+                "environment": "Actual .NET 8/Kestrel and isolated PostgreSQL 18, simulated tenant/IAM/business inputs and local sidecar. Current CRM sender and receiver executed.",
+                "observed_at": "2026-11-12T03:06:09.3556037-05:00",
+                "scope": "FX24 S01/S02/S03 via the real inquiry projection owner. Tenant+consumer+event dedupe, atomic inbox, five confirmed schema failures and source-business/H01 zero repetition. W488 sender UNKNOWN/lease result reused for its original scope.",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/22"
@@ -2362,6 +2374,17 @@
         ],
         "original_pass": 39,
         "original_not_run": 21,
+        "associated_runtime_pass": 2,
+        "associated_runtime_total": 2,
+        "full_target_complete": false
+      },
+      "wave494_acceptance_adoption": {
+        "report": "docs/development/evidence/W494-01/DELIVERY.md",
+        "adopted_cases": [
+          "AC-INQ-023"
+        ],
+        "original_pass": 40,
+        "original_not_run": 20,
         "associated_runtime_pass": 2,
         "associated_runtime_total": 2,
         "full_target_complete": false
@@ -165029,6 +165052,11 @@
       "at": "2026-11-12T07:33:09.593245+00:00",
       "change": "用户确认隔离历史装载后恢复W491。五个真实PG到期样本、hold与原恢复及相关验证已交付CRM #182。四处置原验收余项继续登记。",
       "evidence": "docs/development/evidence/W491-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-12T08:12:26.035685+00:00",
+      "change": "W494 原生接收器通过 FX24 首投、重复零写、第五次确定拒绝隔离和同次事务恢复。CRM #183 正常采用，DEV-2 定向清理释放。采纳 AC-INQ-023，原询盘 40 PASS / 20 NOT_RUN。",
+      "evidence": "docs/development/evidence/W494-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -184333,19 +184361,21 @@
       "card_anchor": "wp03-02",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W486-01",
+        "chat_label": "COORD / W494-01",
         "repository": "CRM",
-        "branch": "codex/w486-01",
+        "branch": "codex/w494-01",
         "worktree": "D:/CP6-worktrees/dev-2",
-        "claimed_at": "2026-11-11T22:14:35.790336+00:00",
-        "baseline_sha": "d0183afd23a200f49f536a23fb31f1c853fcc8a0",
-        "entry_evidence": "docs/development/evidence/W486-01/DELIVERY.md",
+        "claimed_at": "2026-11-12T07:51:31.727488+00:00",
+        "baseline_sha": "e9e2097979580a53847f75525a381ea9b0b9cf1d",
+        "entry_evidence": "docs/development/evidence/W494-01/DELIVERY.md",
         "phase": "CLOSED",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W486-01/DELIVERY.md",
-        "dispatch_scope": "原Schema/Owner接受的合法政策字段组合与固定必填公开输入兼容：真实配置激活/公共请求先重现，按原合同最小修正；可选字段策略和导出字段不扩张，原键/事务/权限/合法域保持。"
+        "delivery_report": "docs/development/evidence/W494-01/DELIVERY.md",
+        "dispatch_scope": "FX24 actual inquiry projection receipt, tenant-scoped inbox deduplication, definitive failure retry and quarantine.",
+        "source_sha": "b7dfbcee0b2d45892ee358fd9191a29c42576860",
+        "product_seat_released": true
       },
       "blockers": [],
       "validation_evidence": [],
@@ -185276,6 +185306,14 @@
         "main_branch_disposition": "deleted-local-and-remote",
         "main_workspace_status": "fixed-seat-detached-for-reuse",
         "main_seat_released": true
+      },
+      "wave494_delivery": {
+        "report": "docs/development/evidence/W494-01/DELIVERY.md",
+        "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/183",
+        "crm_source_sha": "b7dfbcee0b2d45892ee358fd9191a29c42576860",
+        "crm_remote_main_sha": "b682af7234b44873ed8d04e451ec88c97525ca5b",
+        "observed": "实际原生投递首投、并发重复零写、5 次 Schema 拒绝隔离、独立发送回执、事务回滚和原序号恢复。",
+        "full_task_complete": false
       }
     },
     {
@@ -210881,10 +210919,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W491",
-      "path": "docs/development/evidence/W491-01/DELIVERY.md",
-      "baseline_sha": "fef657c53dcde89546fb54cb86a298e1c130a1c0",
-      "registered_at": "2026-11-12T06:05:28.847167+00:00",
+      "id": "W494",
+      "path": "docs/development/evidence/W494-01/DELIVERY.md",
+      "baseline_sha": "ae116743bb1a95a0debc7967c6f64eca7a01d95d",
+      "registered_at": "2026-11-12T07:51:31.727488+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -210898,13 +210936,13 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "W491四处置原生保留窗口交付。继续核FX24实际消费者与完整询盘验收余项。W492可独立推进，W493按正式包和构建前置。",
+      "next_action": "FX24 和 AC-INQ-023 已实测。继续询盘原验收余项，含 FX25 缓存/限流期限与四处置活体回执组合。W492 可独立推进，W493 依赖 W492 和正式包。",
       "windows": [
         {
-          "id": "W491-01",
-          "workspace_task": "W491-01",
+          "id": "W494-01",
+          "workspace_task": "W494-01",
           "related_tasks": [
-            "WP03-04"
+            "WP03-02"
           ],
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
@@ -210912,31 +210950,31 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w491-01",
-          "planned_scope_ref": "docs/superpowers/plans/2026-11-11-inquiry-native-retention.md",
-          "delivery_report": "docs/development/evidence/W491-01/DELIVERY.md",
+          "branch": "codex/w494-01",
+          "planned_scope_ref": "docs/development/evidence/W494-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W494-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
             "CRM:crm-inq-owner",
-            "CRM:inquiry-retention-tests"
+            "CRM:inquiry-projection-receiver"
           ],
           "product_repository": "CP6.CRM",
           "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "21239ca957b54f41b7cc988164e99a92b7c1bfe0",
-          "product_branch": "codex/w491-01",
-          "product_source_sha": "18ef30d0de5b49c245b925ab3b88dd46b3a311ec",
+          "product_baseline": "e9e2097979580a53847f75525a381ea9b0b9cf1d",
+          "product_branch": "codex/w494-01",
+          "product_source_sha": "b7dfbcee0b2d45892ee358fd9191a29c42576860",
+          "product_remote_main_sha": "b682af7234b44873ed8d04e451ec88c97525ca5b",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/183",
           "product_branch_disposition": "deleted-local-and-remote",
+          "product_workspace_status": "fixed-seat-detached-for-reuse",
           "product_seat_released": true,
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "PostgreSQL18: 5 historical due cases, 1 standalone hold/atomic recovery, 5 related passing checks. CRM main matches tested tree.",
-          "remaining_scope": "原030/041/058仍余物理缓存索引、限流桶期限及四处置活体重放/撤回/导出组合，完整WP03-04及SYS-PRIV/SYS-FILE采用待续。",
-          "product_remote_main_sha": "e9e2097979580a53847f75525a381ea9b0b9cf1d",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/182",
-          "product_workspace_status": "fixed-seat-detached-for-reuse"
+          "validation_summary": "8 distinct local PostgreSQL 18 / HTTP scenarios passed, zero skipped. FX24 first delivery, repeat, fifth definitive failure, and rollback/retry.",
+          "remaining_scope": "实际 Kafka 投递与生产告警配置留待环境采用，WP03-02 整卡和其他原验收按各自证据推进。"
         }
       ],
       "storage": {
@@ -259241,6 +259279,76 @@
           "new_worktrees": 0
         },
         "remote_main_sha": "fef657c53dcde89546fb54cb86a298e1c130a1c0"
+      },
+      {
+        "id": "W491",
+        "path": "docs/development/evidence/W491-01/DELIVERY.md",
+        "baseline_sha": "fef657c53dcde89546fb54cb86a298e1c130a1c0",
+        "registered_at": "2026-11-12T06:05:28.847167+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "W491四处置原生保留窗口交付。继续核FX24实际消费者与完整询盘验收余项。W492可独立推进，W493按正式包和构建前置。",
+        "windows": [
+          {
+            "id": "W491-01",
+            "workspace_task": "W491-01",
+            "related_tasks": [
+              "WP03-04"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w491-01",
+            "planned_scope_ref": "docs/superpowers/plans/2026-11-11-inquiry-native-retention.md",
+            "delivery_report": "docs/development/evidence/W491-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "CRM:crm-inq-owner",
+              "CRM:inquiry-retention-tests"
+            ],
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "21239ca957b54f41b7cc988164e99a92b7c1bfe0",
+            "product_branch": "codex/w491-01",
+            "product_source_sha": "18ef30d0de5b49c245b925ab3b88dd46b3a311ec",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_seat_released": true,
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "PostgreSQL18: 5 historical due cases, 1 standalone hold/atomic recovery, 5 related passing checks. CRM main matches tested tree.",
+            "remaining_scope": "原030/041/058仍余物理缓存索引、限流桶期限及四处置活体重放/撤回/导出组合，完整WP03-04及SYS-PRIV/SYS-FILE采用待续。",
+            "product_remote_main_sha": "e9e2097979580a53847f75525a381ea9b0b9cf1d",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/182",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/959",
+            "main_remote_main_sha": "ae116743bb1a95a0debc7967c6f64eca7a01d95d"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
       }
     ],
     "development_priority": {

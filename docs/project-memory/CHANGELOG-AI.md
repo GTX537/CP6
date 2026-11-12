@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W494 询盘 FX24 投递
+
+新增原生接收 API、PostgreSQL 投递状态和 ConsumerInbox，以及独立租户服务认证。按原尝试恢复并以第五次确定拒绝隔离，测试复用现行发送器和 Owner。CRM #183 正常采用，Actions 运行 0。 [本任务](../development/evidence/W494-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W491 四处置原生保留
 
 W491 新增历史配置、原件和制品夹具及 PostgreSQL 验收。初始装载按历史发生时间校验，恢复原触发函数后提交。实际 Owner 使用当前数据库时间和授权。CRM #182 采用测试，主仓登记本窗结果。 [本任务](../development/evidence/W491-01/DELIVERY.md)
