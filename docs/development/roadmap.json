@@ -2005,8 +2005,20 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-048",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-048",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W490-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "dab48e5025c656c83fcb7fa3b982686ca243f289",
+                "adopted_main_sha": "526817f7a9fa05ea4391b683f35466f360348927",
+                "command": "Reuse W487 collection-green-02/results.trx, filter InquiryCollectionOwnershipTests|InquiryContractAdoptionTests|InquiryProjectionTrustTests: 258 PASS, 0 skipped; current relevant source inputs unchanged, git diff source..CRM origin/main -- Application/Contracts Infrastructure/Identity/Inquiry UnitTests/Contracts web/src/contracts is empty. No W490 rerun claim.",
+                "environment": "Windows; .NET SDK8.0.424; actual compiled CRM strict decoder and NSec Ed25519; explicit synthetic keys/clock at library boundary; business HTTP/PG not inferred from this unit result.",
+                "observed_at": "2026-11-11T22:51:40.2022963Z",
+                "scope": "原§8/§12权限投影严格wire入口：真实生产Verifier先经StrictContractDecoder的StrictJson/Schema后绑定，重复键在目标converter之前失败，额外JWK/错误枚举及歧义投影实际拒绝；仅采纳该库边界断言，不声称FX21/FX27全部HTTP业务场景完成。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/47"
@@ -2016,8 +2028,20 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-049",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-049",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W490-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "dab48e5025c656c83fcb7fa3b982686ca243f289",
+                "adopted_main_sha": "526817f7a9fa05ea4391b683f35466f360348927",
+                "command": "Reuse W487 collection-green-02/results.trx, filter InquiryCollectionOwnershipTests|InquiryContractAdoptionTests|InquiryProjectionTrustTests: 258 PASS, 0 skipped; current relevant source inputs unchanged, git diff source..CRM origin/main -- Application/Contracts Infrastructure/Identity/Inquiry UnitTests/Contracts web/src/contracts is empty. No W490 rerun claim.",
+                "environment": "Windows; .NET SDK8.0.424; actual compiled CRM strict decoder and NSec Ed25519; explicit synthetic keys/clock at library boundary; business HTTP/PG not inferred from this unit result.",
+                "observed_at": "2026-11-11T22:51:40.2022963Z",
+                "scope": "真实NSec Ed25519验证：issuer/key/catalog/tenant/subject/purpose/time/生命周期/撤销各失败，修改grants、错误签名和Deny失败；轮换/撤销/ABA/旧CAS及并发信任更新实际失败关闭。固定单元时钟是显式密码协议输入，不冒生产IAM采用或数据库业务期限经过。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/48"
@@ -2315,6 +2339,18 @@
         "scope": "准确原配置/受理/合同义务采用；真实Next/Rejection保留及其后续原AC核销仍按本任务实际结果，不把全部合同测试视作所有AC通过。",
         "original_pass": 37,
         "original_not_run": 23
+      },
+      "wave490_acceptance_adoption": {
+        "report": "docs/development/evidence/W490-01/DELIVERY.md",
+        "adopted_cases": [
+          "AC-INQ-048",
+          "AC-INQ-049"
+        ],
+        "original_pass": 39,
+        "original_not_run": 21,
+        "associated_runtime_pass": 2,
+        "associated_runtime_total": 2,
+        "full_target_complete": false
       }
     },
     {
@@ -164944,6 +164980,26 @@
       "at": "2026-11-11T23:45:45.681981+00:00",
       "change": "W489真实浏览器RED后修配置预览，原四字段政策不扩展，相关三种实际生命周期及Next构建通过；CRM #181正常采用21239ca95，Issue #180关闭、DEV2准确分支清理/干净/官方释放。完整原卡/验收保持，Main协调收尾。",
       "evidence": "docs/development/evidence/W489-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-12T00:00:14.571688+00:00",
+      "change": "W489两仓已核远端并官方清理释放；W490仅占Main DEV-1，审计验收证据及正式发布直接前置，编排下一实现并结算本轮12h，未运行项和整卡不提前核销。",
+      "evidence": "docs/development/evidence/W490-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-12T00:05:31.611760+00:00",
+      "change": "W490直接前置实际发现Platform #82现行Contract测试仍按旧版本执行，COORD登记同任务跨仓最小测试修复；DEV-2先完整保留CRM依赖缓存再官方bind替换Platform，没有增加工作树或签名发布授权。",
+      "evidence": "docs/development/evidence/W490-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-12T00:57:23.465634+00:00",
+      "change": "W490 Platform #83实际采用/finish；原AC048/049复用真实W487证据采纳，询盘39/60且关联运行修订2/2；全项目247的245未运行不作询盘前置。三项后继计划未开工，正式发包仍等明确授权，375与PG正式状态保持。",
+      "evidence": "docs/development/evidence/W490-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-12T01:56:26.493661+00:00",
+      "change": "原生43210秒（12h00m10s）已达到43200秒执行预算，按实际范围结算；原询盘39/60、关联修订2/2、原375余337与PG16/11保持。Main最终采用/finish和含收尾计时在PR #958补记，完整业务目标未完成。",
+      "evidence": "docs/development/evidence/W490-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -169700,6 +169756,21 @@
         "branch_disposition": "deleted-local-and-remote",
         "workspace_status": "fixed-seat-detached-for-reuse",
         "seat_released": true
+      },
+      "wave490_delivery": {
+        "status": "PRODUCT_INTEGRATED_COORDINATOR_PENDING",
+        "scope": "Platform当前formal脚本测试版本修复、准确证据/直接前置与下一计划；不冒正式发包、Main包消费或原卡完成。",
+        "report": "docs/development/evidence/W490-01/DELIVERY.md",
+        "platform_adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6.Platform/pull/83",
+          "commit": "f3fbe4be67d40641f7a8a969d74be65a95541819",
+          "target_head": "f3fbe4be67d40641f7a8a969d74be65a95541819"
+        },
+        "platform_source": "95c73440e402ce519d1e75c3dfec2f0cdcee0247",
+        "platform_branch_disposition": "deleted-local-and-remote",
+        "platform_seat_released": true,
+        "full_task_completed": false
       }
     },
     {
@@ -210756,11 +210827,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W489",
-      "path": "docs/development/evidence/W489-01/DELIVERY.md",
-      "baseline_sha": "66ba654e79b4c21fcf1f37125e5522465147ecfe",
-      "registered_at": "2026-11-11T23:29:47.662338+00:00",
-      "phase": "PRODUCT_INTEGRATED_COORDINATOR_PENDING",
+      "id": "W490",
+      "path": "docs/development/evidence/W490-01/DELIVERY.md",
+      "baseline_sha": "f196c8092231b720b6a13861267238645ad4f197",
+      "registered_at": "2026-11-12T00:00:14.571688+00:00",
+      "phase": "FINAL_ADOPTION_PENDING",
       "assigned_chats": [
         "COORD"
       ],
@@ -210776,45 +210847,50 @@
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": true,
-      "next_action": "Main正常采用/finish后核本轮完整验收余项、实际活动BUG/正式包前置和下一轮可执行顺序；11h后集中收尾与12h结算，不新增宽产品范围。",
+      "next_action": "12h预算已达到，完成本结算PR #958正常采用及官方finish；最终生命周期见同一PR。下一业务优先W491，三项后继均未开工。",
       "windows": [
         {
-          "id": "W489-01",
-          "workspace_task": "W489-01",
+          "id": "W490-01",
+          "workspace_task": "W490-01",
           "related_tasks": [
-            "WP03-01",
-            "WP03-02"
+            "WP02-02",
+            "WP03-04"
           ],
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
           "phase": "PRODUCT_INTEGRATED_COORDINATOR_PENDING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w489-01",
-          "coordinator_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "coordinator_branch": "codex/w489-01",
-          "planned_scope_ref": "docs/development/evidence/W489-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W489-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w490-01",
+          "planned_scope_ref": "docs/development/evidence/W490-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W490-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "CRM:configuration-preview-web",
-            "Main:development-ledger"
+            "Main:development-ledger",
+            "Main:next-implementation-plan",
+            "Platform:formal-package-script-test"
           ],
-          "product_source_sha": "411fa365ba6ab2eb1ccebd65f2d57c7c3ffa5014",
-          "product_remote_main_sha": "21239ca957b54f41b7cc988164e99a92b7c1bfe0",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/181",
+          "product_repository": "CP6.Platform",
+          "product_worktree": "D:\\CP6-worktrees\\dev-2",
+          "product_baseline": "1691424397cb5f7f52c9aec1ee84dcf98190c773",
+          "product_branch": "codex/w490-01",
+          "product_issue": "https://github.com/GTX537/CP6.Platform/issues/82",
+          "product_source_sha": "95c73440e402ce519d1e75c3dfec2f0cdcee0247",
+          "product_remote_main_sha": "f3fbe4be67d40641f7a8a969d74be65a95541819",
+          "product_pull_request": "https://github.com/GTX537/CP6.Platform/pull/83",
           "product_branch_disposition": "deleted-local-and-remote",
           "product_workspace_status": "fixed-seat-detached-for-reuse",
-          "product_seat_released": true
+          "product_seat_released": true,
+          "final_lifecycle_evidence": "https://github.com/GTX537/CP6/pull/958"
         }
       ],
       "storage": {
         "reuse_worktrees": [
           "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "D:/CP6-worktrees/dev-2"
+          "D:\\CP6-worktrees\\dev-2"
         ],
         "new_worktrees": 0
       }
@@ -258968,6 +259044,79 @@
           ],
           "new_worktrees": 0
         }
+      },
+      {
+        "id": "W489",
+        "path": "docs/development/evidence/W489-01/DELIVERY.md",
+        "baseline_sha": "66ba654e79b4c21fcf1f37125e5522465147ecfe",
+        "registered_at": "2026-11-11T23:29:47.662338+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [
+          "COORD"
+        ],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "next_action": "Main正常采用/finish后核本轮完整验收余项、实际活动BUG/正式包前置和下一轮可执行顺序；11h后集中收尾与12h结算，不新增宽产品范围。",
+        "windows": [
+          {
+            "id": "W489-01",
+            "workspace_task": "W489-01",
+            "related_tasks": [
+              "WP03-01",
+              "WP03-02"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w489-01",
+            "coordinator_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "coordinator_branch": "codex/w489-01",
+            "planned_scope_ref": "docs/development/evidence/W489-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W489-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CRM:configuration-preview-web",
+              "Main:development-ledger"
+            ],
+            "product_source_sha": "411fa365ba6ab2eb1ccebd65f2d57c7c3ffa5014",
+            "product_remote_main_sha": "21239ca957b54f41b7cc988164e99a92b7c1bfe0",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/181",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6/pull/957",
+              "commit": "f196c8092231b720b6a13861267238645ad4f197",
+              "target_head": "f196c8092231b720b6a13861267238645ad4f197"
+            },
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        }
       }
     ],
     "development_priority": {
@@ -265280,7 +265429,7 @@
     "next_execution_plan": {
       "id": "CP6-12H-20261111",
       "path": "docs/development/planning/20261111-codex-12h-business-chain.md",
-      "state": "ACTIVE",
+      "state": "SETTLED",
       "execution_owner": "COORD_SINGLE_CHAT_SERIAL",
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_SECONDS",
       "capacity_hours": 12,
@@ -265498,7 +265647,7 @@
         },
         {
           "id": "W489-01",
-          "state": "IN_PROGRESS",
+          "state": "CLOSED",
           "related_tasks": [
             "WP03-01",
             "WP03-02"
@@ -265515,6 +265664,28 @@
           "product_integrated": true,
           "crm_adopted_main": "21239ca957b54f41b7cc988164e99a92b7c1bfe0",
           "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/181",
+          "full_task_completed": false,
+          "adopted_main": "f196c8092231b720b6a13861267238645ad4f197",
+          "pr": "https://github.com/GTX537/CP6/pull/957",
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "seat_released": true
+        },
+        {
+          "id": "W490-01",
+          "state": "IN_PROGRESS",
+          "related_tasks": [
+            "WP02-02",
+            "WP03-04"
+          ],
+          "branch": "codex/w490-01",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "started_at": "2026-11-12T00:00:14.571688+00:00",
+          "delivery": "docs/development/evidence/W490-01/DELIVERY.md",
+          "scope": "核对本轮业务链的原验收与实际证据、正式包及活动BUG直接前置，形成下一项Stock 0.10.4采用计划；汇总12小时真实结果，正常合入并释放席位。",
+          "repositories": {
+            "Main": "f196c8092231b720b6a13861267238645ad4f197"
+          },
           "full_task_completed": false
         }
       ],
@@ -265534,8 +265705,98 @@
           "postgresql_pass": 16,
           "postgresql_not_run": 11,
           "next_scope": "先收妥W485；随后按原合法政策字段组合/必填输入兼容做实际公开链RED再最小修复，余量核AC-INQ-054集合合同实际范围；不改合同域、不全仓防御重构；最后一小时用于当前任务完整交付/收尾。"
+        },
+        {
+          "native_seconds": 39678,
+          "native_elapsed": "11h01m18s",
+          "state": "ACTIVE_CLOSEOUT",
+          "original_inquiry_pass": 39,
+          "original_inquiry_total": 60,
+          "inquiry_runtime_revision_pass": 2,
+          "inquiry_runtime_revision_total": 2,
+          "global_runtime_pass": 2,
+          "global_runtime_total": 247,
+          "full_tasks_done": 38,
+          "postgresql_pass": 16,
+          "postgresql_not_run": 11,
+          "platform_remote_main": "f3fbe4be67d40641f7a8a969d74be65a95541819",
+          "scope": "11h后不再开启新产品实现；完成本轮证据适用/计划/台账/正常Main采用与官方生命周期。正式发布仅在收到本次明确授权且准入条件满足后按精确请求处理。"
+        },
+        {
+          "native_seconds": 43210,
+          "native_elapsed": "12h00m10s",
+          "recorded_at": "2026-11-12T01:56:26.493661+00:00",
+          "budget_seconds": 43200,
+          "state": "EXECUTION_BUDGET_MET",
+          "full_business_target_complete": false,
+          "original_inquiry_pass": 39,
+          "original_inquiry_total": 60,
+          "inquiry_runtime_revision_pass": 2,
+          "inquiry_runtime_revision_total": 2,
+          "original_tasks_done": 38,
+          "original_tasks_remaining": 337,
+          "postgresql_pass": 16,
+          "postgresql_not_run": 11,
+          "main_adoption_at_snapshot": "PENDING_FINAL_PR_AND_OFFICIAL_FINISH",
+          "final_lifecycle_evidence": "https://github.com/GTX537/CP6/pull/958",
+          "scope": "12h执行预算结算；含收尾最终读数及准确Main源/合并SHA、分支/工作区/席位结果在同一PR最终补记。完整询盘/原卡/正式PG余项不提前关闭。"
         }
-      ]
+      ],
+      "recommended_follow_up": [
+        {
+          "id": "W491-01",
+          "state": "NOT_STARTED",
+          "original_task": "WP03-04",
+          "scope": "询盘四处置原生保留及合法模拟历史初始图",
+          "plan": "docs/superpowers/plans/2026-11-11-inquiry-native-retention.md",
+          "estimated_hours": [
+            3,
+            5
+          ]
+        },
+        {
+          "id": "W492-01",
+          "state": "NOT_STARTED",
+          "original_task": "WP02-02",
+          "scope": "独立Main PostgreSQL本地构建入口",
+          "plan": "docs/superpowers/plans/2026-11-11-postgresql-local-build.md",
+          "estimated_hours": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "W493-01",
+          "state": "NOT_STARTED",
+          "original_task": "WP02-02",
+          "scope": "正式0.10.4消费及Main Stock #844回归",
+          "plan": "docs/superpowers/plans/2026-11-11-stock-outbox-0.10.4-adoption.md",
+          "estimated_hours": [
+            2,
+            4
+          ],
+          "formal_publication_requires_new_authorization": true
+        }
+      ],
+      "settlement": {
+        "native_seconds": 43210,
+        "native_elapsed": "12h00m10s",
+        "recorded_at": "2026-11-12T01:56:26.493661+00:00",
+        "budget_seconds": 43200,
+        "state": "EXECUTION_BUDGET_MET",
+        "full_business_target_complete": false,
+        "original_inquiry_pass": 39,
+        "original_inquiry_total": 60,
+        "inquiry_runtime_revision_pass": 2,
+        "inquiry_runtime_revision_total": 2,
+        "original_tasks_done": 38,
+        "original_tasks_remaining": 337,
+        "postgresql_pass": 16,
+        "postgresql_not_run": 11,
+        "main_adoption_at_snapshot": "PENDING_FINAL_PR_AND_OFFICIAL_FINISH",
+        "final_lifecycle_evidence": "https://github.com/GTX537/CP6/pull/958",
+        "scope": "12h执行预算结算；含收尾最终读数及准确Main源/合并SHA、分支/工作区/席位结果在同一PR最终补记。完整询盘/原卡/正式PG余项不提前关闭。"
+      }
     },
     "execution_plan_history": [
       {

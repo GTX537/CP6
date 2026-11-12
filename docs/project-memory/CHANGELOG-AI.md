@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W490本轮结算与下一业务出口
+
+本轮实现原生隐私导出、原Job刷新/丢确认恢复，修持久子图最终封存、真实HTML CSP、合法政策必填、集合所有权及配置预览；W490仅修Platform现行测试版本驱动并审计原验收。当前无Actions/部署，正式发布请求等明确授权，12h原生预算仍在最后收尾。 [本任务](../development/evidence/W490-01/DELIVERY.md) 原生12h00m10s已达到12h预算，执行计划结算；Main最终采用/官方finish及含收尾读数见PR #958，完整业务目标未关闭。
+
 ## 2026-11-11 UTC · W489配置预览一致性
 
 W489真实RED后修配置预览必填/optional与政策说明，原保存输入/权限/proof不改；三种相关实际浏览器流程及Next构建成功。CRM #181/Issue #180及DEV2准确生命周期已核销，Main协调和12h继续，无Actions/部署。 [本任务](../development/evidence/W489-01/DELIVERY.md)

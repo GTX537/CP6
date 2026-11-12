@@ -1,6 +1,6 @@
 # 多对话任务分配与交付
 
-> 当前：W489配置预览真实修复/相关验证成功，CRM #181/Issue #180/DEV2准确生命周期已核销；Main DEV1协调采用/finish，后续核实际验收余项及下一可执行主线，12h继续。 [本任务](evidence/W489-01/DELIVERY.md)
+> 当前：W490已按原生12h00m10s达到12h执行预算，原询盘39/60、关联修订2/2；Platform #83已正常采用/finish，DEV-2恢复CRM及缓存并空闲。Main PR #958最终采用/官方finish待核销，结果由同一PR补记；完整业务目标未关闭，三项后继未开工。 [本任务](evidence/W490-01/DELIVERY.md)
 
 > 当前：W481已随#949采用并释放；COORD单人接[W482首条询盘链](evidence/W482-01/DELIVERY.md)，DEV-1为Main台账、DEV-2安全bind为CRM实施。两个开发席位属于同一任务，集成席位空闲。
 
