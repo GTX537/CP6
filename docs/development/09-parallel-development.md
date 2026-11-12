@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W513 实测 CRM 已登记地区拒绝提前到业务连接之前，外部正文/查询选择器零连接。PGT-004 继续头部口径，正式 PostgreSQL 19/27。 [本任务](evidence/W513-01/DELIVERY.md)
+
 > W512 真实 CRM 配置 Owner 四阶段同一 PostgreSQL 事务。CRM #202 修复错配事务先写问题，正式 PostgreSQL 19/27。 [本任务](evidence/W512-01/DELIVERY.md)
 
 > W510 复用 W505 的原生锁冲突，CRM #200 实测 PostgreSQL 已发 COMMIT 的回包中断、当前授权与原键恢复。正式 PostgreSQL 18/27。 [本任务](evidence/W510-01/DELIVERY.md)

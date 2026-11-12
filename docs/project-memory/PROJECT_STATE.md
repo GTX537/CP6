@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W513 PGT-004 CRM 可信入口
+
+未登记地区实测 403、零业务连接、零权限请求。正式 PostgreSQL 19 PASS / 8 NOT_RUN。 [本任务](../development/evidence/W513-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W512 正式 PGT-013 Owner 原子性
 
 真实询盘配置 Owner 正向同事务、四阶段 42501 回滚及异连接拒绝已采用。正式 PostgreSQL 19 PASS / 8 NOT_RUN。 [本任务](../development/evidence/W512-01/DELIVERY.md)
