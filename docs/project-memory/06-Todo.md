@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-12 UTC · W509 正式 PGT-014 CRM 身份接收
+
+继续 W510 的 PostgreSQL COMMIT 断连及客户端取消。PGT-004 保留 Main 可信入口定向证据，其余正式项按盘点的实际前置推进。 [本任务](../development/evidence/W509-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W508 询盘正式 PostgreSQL 盘点与 Main 可信入口
 
 PGT-004 的完整外部租户选择输入和实际地区登记仍需核对。PGT-014 另窗同步，PGT-016 继续实际 CRM COMMIT 断连验证。 [本任务](../development/evidence/W508-01/DELIVERY.md)
