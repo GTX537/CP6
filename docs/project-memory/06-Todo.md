@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-12 UTC · W511 Main 认证目录
+
+PGT-026 继续 CRM 共享 PublicRoute 权威、实际绑定 revision 切换后的旧令牌与当前映射。W510 同步真实 COMMIT 断连证据。 [本任务](../development/evidence/W511-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W509 正式 PGT-014 CRM 身份接收
 
 继续 W510 的 PostgreSQL COMMIT 断连及客户端取消。PGT-004 保留 Main 可信入口定向证据，其余正式项按盘点的实际前置推进。 [本任务](../development/evidence/W509-01/DELIVERY.md)

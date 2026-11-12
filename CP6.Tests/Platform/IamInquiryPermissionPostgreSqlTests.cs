@@ -1,8 +1,10 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using CP6.Core.Persistence;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
@@ -10,6 +12,7 @@ using CP6.WebApi.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 
 namespace CP6.Tests.Platform;
@@ -129,6 +132,167 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     [CurrentPermissionPostgresFact]
     public async Task Inquiry_intake_actual_HTTP_login_OIDC_signing_rejects_spoofing_and_current_revocation()
         => await InquiryProducerHttp("intake:release");
+
+    [CurrentPermissionPostgresFact]
+    public async Task Actual_Main_OIDC_resolves_same_name_tenants_and_binds_each_current_session_to_its_own_directory()
+    {
+        await using var a = await Seed();
+        await using var b = await Seed();
+        await GrantInquiry(a);
+        const string secondPassword = "Iam2!SeparatePassword";
+        var secondUser = await b.Db.Sys_Users.SingleAsync(x => x.Id == b.ActorId);
+        secondUser.Password = new BCryptPasswordHasher(4).Hash(secondPassword);
+        await b.Db.SaveChangesAsync();
+
+        const string client = "CP6.Web", clientSecret = "owned-local-directory-client", redirect = "https://crm.cp6.test/callback";
+        const string firstSlug = "iam-directory-a", secondSlug = "iam-directory-b", region = "us";
+        var environment = IdentityEnvironment(a.Tenant);
+        environment["CrmOidc__Clients__0__SecretSha256"] = CrmOidcCrypto.Hash(clientSecret);
+        environment["CrmOidc__Clients__0__RedirectUris__0"] = redirect;
+        environment["CrmOidc__Organizations__0__Slug"] = firstSlug;
+        environment["CrmOidc__Organizations__1__TenantId"] = b.Tenant.ToString("D");
+        environment["CrmOidc__Organizations__1__Slug"] = secondSlug;
+        environment["CrmOidc__Organizations__1__Region"] = region;
+        environment["CrmOidc__Organizations__1__CrmEnabled"] = "true";
+        environment["CrmIdentity__Tenants__" + b.Tenant.ToString("D")] = region;
+        var issuer = environment["CrmOidc__Issuer"];
+        var connection = a.Db.Database.GetConnectionString()!;
+        await using var host = await AuthenticationApiProcess.Start(connection, environment, allowAutoRedirect: false);
+
+        foreach (var (h, slug) in new[] { (a, firstSlug), (b, secondSlug) })
+        {
+            using var response = await host.Send(new(HttpMethod.Get, $"connect/organizations/{slug}?client_id={client}"));
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            var organization = body.RootElement;
+            Assert.Equal(new[] { "crmEnabled", "organizationId", "organizationSlug", "region" },
+                organization.EnumerateObject().Select(x => x.Name).Order(StringComparer.Ordinal));
+            Assert.Equal(h.Tenant, organization.GetProperty("organizationId").GetGuid());
+            Assert.Equal(slug, organization.GetProperty("organizationSlug").GetString());
+            Assert.Equal(region, organization.GetProperty("region").GetString());
+            Assert.True(organization.GetProperty("crmEnabled").GetBoolean());
+        }
+        foreach (var path in new[] { $"connect/organizations/unregistered?client_id={client}", $"connect/organizations/{firstSlug}?client_id=unregistered" })
+        {
+            using var response = await host.Send(new(HttpMethod.Get, path));
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            var body = await response.Content.ReadAsStringAsync();
+            foreach (var directoryValue in new[] { "organizationId", "organizationSlug", "iam-admin", firstSlug, secondSlug, a.Tenant.ToString("D"), b.Tenant.ToString("D") })
+                Assert.DoesNotContain(directoryValue, body, StringComparison.OrdinalIgnoreCase);
+        }
+
+        var aCookies = await Login(host, a);
+        var bCookies = await Login(host, b, secondPassword);
+        var deniedState = CrmOidcCrypto.RandomToken();
+        using var denied = await host.Send(Request(HttpMethod.Get,
+            Authorize(b.Tenant, CrmOidcCrypto.RandomToken(), deniedState, CrmOidcCrypto.RandomToken()), aCookies));
+        Assert.Equal(HttpStatusCode.Redirect, denied.StatusCode);
+        var denial = denied.Headers.Location!;
+        Assert.Equal(redirect, denial.GetLeftPart(UriPartial.Path));
+        var denialQuery = QueryHelpers.ParseQuery(denial.Query);
+        Assert.Equal(new[] { "error", "state" }, denialQuery.Keys.Order(StringComparer.Ordinal));
+        Assert.Equal("access_denied", denialQuery["error"].ToString());
+        Assert.Equal(deniedState, denialQuery["state"].ToString());
+        Assert.Equal(0, await a.Db.Database.SqlQuery<int>($"""
+            SELECT count(*)::integer AS "Value" FROM public."CrmOidcGrant"
+            WHERE "SubjectId" IN ({a.ActorId}, {b.ActorId})
+            """).SingleAsync());
+
+        using var keysResponse = await host.Send(new(HttpMethod.Get, ".well-known/jwks.json"));
+        Assert.Equal(HttpStatusCode.OK, keysResponse.StatusCode);
+        var keys = new JsonWebKeySet(await keysResponse.Content.ReadAsStringAsync()).GetSigningKeys();
+        var store = new SqlCrmOidcGrantStore(new DatabaseOptions(DatabaseProvider.PostgreSql), connection);
+        var aToken = await Issue(a, aCookies);
+        var bToken = await Issue(b, bCookies);
+        Assert.NotEqual(aToken.SourceJti, bToken.SourceJti);
+        Assert.NotEqual(aToken.SourceRefreshHash, bToken.SourceRefreshHash);
+        await AssertContext(a, firstSlug, aToken.Raw, ["crm-site:configure", "crm-site:query"]);
+        await AssertContext(b, secondSlug, bToken.Raw, []);
+        Assert.Equal(1, await a.Db.Sys_Roles.Where(x => x.RoleId == 71).ExecuteUpdateAsync(x => x.SetProperty(role => role.Enable, false)));
+        await AssertContext(a, firstSlug, aToken.Raw, []);
+
+        static string Authorize(Guid tenant, string verifier, string state, string nonce) => QueryHelpers.AddQueryString("connect/authorize",
+            new Dictionary<string, string?> { ["client_id"] = client, ["redirect_uri"] = redirect, ["response_type"] = "code",
+                ["code_challenge_method"] = "S256", ["code_challenge"] = CrmOidcCrypto.Challenge(verifier), ["scope"] = "openid profile crm",
+                ["state"] = state, ["nonce"] = nonce, ["organization_id"] = tenant.ToString("D") });
+
+        async Task<(string Raw, string SourceJti, string SourceRefreshHash)> Issue(Harness h, Dictionary<string, string> cookies)
+        {
+            var handler = new JwtSecurityTokenHandler { MapInboundClaims = false };
+            var source = handler.ReadJwtToken(cookies["cp6_at"]);
+            Assert.Equal("auth-state-component", source.Issuer);
+            var verifier = CrmOidcCrypto.RandomToken();
+            var state = CrmOidcCrypto.RandomToken();
+            var nonce = CrmOidcCrypto.RandomToken();
+            using var start = await host.Send(Request(HttpMethod.Get, Authorize(h.Tenant, verifier, state, nonce), cookies));
+            Assert.Equal(HttpStatusCode.Redirect, start.StatusCode);
+            var bridge = start.Headers.Location!;
+            Assert.Equal(issuer + "/api/auth/crm-authorize", bridge.GetLeftPart(UriPartial.Path));
+            using var callback = await host.Send(Request(HttpMethod.Get, bridge.PathAndQuery, cookies));
+            Assert.Equal(HttpStatusCode.Redirect, callback.StatusCode);
+            Assert.Equal(redirect, callback.Headers.Location!.GetLeftPart(UriPartial.Path));
+            var query = QueryHelpers.ParseQuery(callback.Headers.Location.Query);
+            Assert.Equal(state, query["state"].ToString());
+            Assert.Equal(issuer, query["iss"].ToString());
+            var code = query["code"].ToString();
+            Assert.NotEmpty(code);
+            using var exchange = new HttpRequestMessage(HttpMethod.Post, "connect/token") { Content = new FormUrlEncodedContent(
+                new Dictionary<string, string> { ["grant_type"] = "authorization_code", ["code"] = code, ["redirect_uri"] = redirect, ["code_verifier"] = verifier }) };
+            exchange.Headers.Authorization = new("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(client + ":" + clientSecret)));
+            using var response = await host.Send(exchange);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            var access = body.RootElement.GetProperty("access_token").GetString()!;
+            var accessClaims = Validate(access, "at+jwt");
+            var identityClaims = Validate(body.RootElement.GetProperty("id_token").GetString()!, "JWT");
+            Assert.Equal(nonce, identityClaims.FindFirst("nonce")?.Value);
+            var grantId = Guid.Parse(accessClaims.FindFirst("jti")!.Value);
+            Assert.Equal(grantId.ToString("D"), accessClaims.FindFirst("sid")?.Value);
+            Assert.Equal(grantId.ToString("D"), identityClaims.FindFirst("sid")?.Value);
+            var grant = await store.FindSessionAsync(grantId);
+            Assert.NotNull(grant);
+            Assert.Equal(h.Tenant, grant.OrganizationId);
+            Assert.Equal(h.ActorId, grant.SubjectId);
+            Assert.Equal(source.Id, grant.SourceJti);
+            Assert.Equal(source.Claims.Single(x => x.Type == "cp6_session").Value, grant.SourceRefreshHash);
+            Assert.Equal(grant.SourceRefreshHash, await h.Db.Database.SqlQuery<string>($"""
+                SELECT refresh_hash AS "Value" FROM cp6_authentication_v1.access_sessions WHERE access_jti={source.Id}
+                """).SingleAsync());
+            Assert.True(await h.Db.Sys_RefreshTokens.AnyAsync(x => x.TokenHash == grant.SourceRefreshHash
+                && x.TenantId == h.Tenant && x.UserId == h.ActorId && x.RevokedAt == null));
+            return (access, grant.SourceJti, grant.SourceRefreshHash);
+
+            System.Security.Claims.ClaimsPrincipal Validate(string raw, string type)
+            {
+                var claims = handler.ValidateToken(raw, new TokenValidationParameters
+                {
+                    ValidIssuer = issuer, ValidAudience = client, IssuerSigningKeys = keys, ValidateIssuerSigningKey = true,
+                    ValidAlgorithms = [SecurityAlgorithms.RsaSha256], ValidTypes = [type], ClockSkew = TimeSpan.Zero
+                }, out _);
+                Assert.Equal(h.ActorId.ToString("D"), claims.FindFirst("sub")?.Value);
+                Assert.Equal(h.Tenant.ToString("D"), claims.FindFirst("org_id")?.Value);
+                Assert.Equal(h.Tenant.ToString("D"), claims.FindFirst("tenant_id")?.Value);
+                return claims;
+            }
+        }
+
+        async Task AssertContext(Harness h, string slug, string token, string[] actions)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, "connect/crm-context");
+            request.Headers.Authorization = new("Bearer", token);
+            using var response = await host.Send(request);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var context = await response.Content.ReadFromJsonAsync<CrmContextDto>();
+            Assert.NotNull(context);
+            Assert.Equal(h.Tenant, context.OrganizationId);
+            Assert.Equal(slug, context.OrganizationSlug);
+            Assert.Equal("IAM", context.OrganizationName);
+            Assert.Equal(region, context.Region);
+            Assert.Equal(h.ActorId, context.SubjectId);
+            Assert.Equal("iam-admin", context.DisplayName);
+            Assert.Equal(actions, context.AllowedActions);
+        }
+    }
 
     private async Task InquiryProducerHttp(string purpose, bool humanContext=false)
     {

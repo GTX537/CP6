@@ -165522,6 +165522,11 @@
       "at": "2026-11-12T13:46:35.358299+00:00",
       "change": "W509 采用正式 PGT-014。原生 CRM 身份接收的前置内容、真实唯一竞争与原件重读、Published/DRIFT 同事务及提交确认已实测。正式 PostgreSQL 17 PASS / 10 NOT_RUN。",
       "evidence": "docs/development/evidence/W509-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-12T14:00:51.170524+00:00",
+      "change": "W511 实测 Main 同名租户/用户、全局刷新绑定和跨租授权拒绝。PGT-026 收录认证目录证据，正式 PostgreSQL 保持 17 PASS / 10 NOT_RUN。",
+      "evidence": "docs/development/evidence/W511-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211408,10 +211413,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W509",
-      "path": "docs/development/evidence/W509-01/DELIVERY.md",
-      "baseline_sha": "2b8575a696bb777a590c140d5ce1b3b2012c611c",
-      "registered_at": "2026-11-12T13:45:40.985140+00:00",
+      "id": "W511",
+      "path": "docs/development/evidence/W511-01/DELIVERY.md",
+      "baseline_sha": "3d6d95dbda2645acabf9c5d105ec4767debd00f2",
+      "registered_at": "2026-11-12T13:48:29.243224+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211425,51 +211430,40 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "W510 独立补齐 PGT-016 已发 COMMIT 断连、客户端取消和同键恢复。其余场景继续按各自直接前置核对。",
+      "next_action": "W510 同步实际询盘 Owner 的 COMMIT 回包截断和原键恢复。CRM 独立推进 PGT-013。",
       "windows": [
         {
-          "id": "W509-01",
-          "workspace_task": "W509-01",
+          "id": "W511-01",
+          "workspace_task": "W511-01",
           "related_tasks": [
-            "WP02-06",
-            "WP02-07"
+            "WP02-06"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+          "mode": "SINGLE_CHAT",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w509-01",
-          "planned_scope_ref": "docs/development/evidence/W509-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W509-01/DELIVERY.md",
+          "branch": "codex/w511-01",
+          "planned_scope_ref": "docs/development/evidence/W511-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W511-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "CRM:identity-ingress-precheckpoint-verification"
+            "Main:identity-directory-postgresql-test"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Eleven exact current PostgreSQL 18.6 native CRM Inbox tests pass, zero skips. Actual lock/unique-key conflict and fresh transaction reread, atomic DRIFT/Published and response gating.",
-          "remaining_scope": "PGT-014 complete. Ten formal cases remain; PGT-004 has bounded Main evidence and PGT-016 wire disconnect is running.",
-          "product_repository": "CP6.CRM",
-          "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "09d316a7c25a1f0148d98e90fbfff06cd5f4beb3",
-          "product_branch": "codex/w509-01",
-          "product_source_sha": "019263b6d0e0effb4b7734c5a545b7143813b97f",
-          "product_remote_main_sha": "8347e875d0cec71cd8dd119f0e323cd4706a849f",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/199",
-          "product_branch_disposition": "deleted-local-and-remote",
-          "product_workspace_status": "fixed-seat-detached-for-reuse",
-          "product_seat_released": true
+          "validation_summary": "Main actual Kestrel login and OIDC on PostgreSQL 18.6: one focused test passes, zero skips; distinct credentials, scoped organizations and global refresh, no cross-tenant grant, current role removal.",
+          "remaining_scope": "Main directory slice of PGT-026 is covered. CRM shared PublicRoute authority and actual storage binding revision switch remain open. Full formal matrix stays 17/27 pending the W510 ledger adoption.",
+          "main_tested_source_sha": "3009e3179ad13cba706d65314dea7c5bec221636"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -260850,6 +260844,76 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W509",
+        "path": "docs/development/evidence/W509-01/DELIVERY.md",
+        "baseline_sha": "2b8575a696bb777a590c140d5ce1b3b2012c611c",
+        "registered_at": "2026-11-12T13:45:40.985140+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "W510 独立补齐 PGT-016 已发 COMMIT 断连、客户端取消和同键恢复。其余场景继续按各自直接前置核对。",
+        "windows": [
+          {
+            "id": "W509-01",
+            "workspace_task": "W509-01",
+            "related_tasks": [
+              "WP02-06",
+              "WP02-07"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w509-01",
+            "planned_scope_ref": "docs/development/evidence/W509-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W509-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "CRM:identity-ingress-precheckpoint-verification"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Eleven exact current PostgreSQL 18.6 native CRM Inbox tests pass, zero skips. Actual lock/unique-key conflict and fresh transaction reread, atomic DRIFT/Published and response gating.",
+            "remaining_scope": "PGT-014 complete. Ten formal cases remain; PGT-004 has bounded Main evidence and PGT-016 wire disconnect is running.",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "09d316a7c25a1f0148d98e90fbfff06cd5f4beb3",
+            "product_branch": "codex/w509-01",
+            "product_source_sha": "019263b6d0e0effb4b7734c5a545b7143813b97f",
+            "product_remote_main_sha": "8347e875d0cec71cd8dd119f0e323cd4706a849f",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/199",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/976",
+            "main_remote_main_sha": "3d6d95dbda2645acabf9c5d105ec4767debd00f2"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },

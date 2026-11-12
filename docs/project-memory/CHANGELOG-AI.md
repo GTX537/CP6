@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W511 Main 认证目录
+
+新增真实 Main OIDC 的同名租户/用户和持久凭据来源验证。复用当前目录、身份、会话与权限实现。 [本任务](../development/evidence/W511-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W509 正式 PGT-014 CRM 身份接收
 
 新增当前 CRM 签名接收的真实 PostgreSQL 竞争验证，复用现行前置内容、提交守卫与授权。采纳 PGT-014。 [本任务](../development/evidence/W509-01/DELIVERY.md)

@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-12 UTC · W511 Main 认证目录
+
+Main 认证目录的同名 A/B、未知入口、跨租凭据拒绝及当前角色更新实测通过。 [本任务](../development/evidence/W511-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W509 正式 PGT-014 CRM 身份接收
 
 实测 CRM 同租锁竞争及跨租全局唯一键竞争，服务端中止后重投在新事务读取原件。原 PGT-014 已采用。 [本任务](../development/evidence/W509-01/DELIVERY.md)
