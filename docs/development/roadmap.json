@@ -2162,8 +2162,20 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-047",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-047",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W506-01/DELIVERY.md",
+                "source_sha": "77491be21c24ac6da6bb524f9239e37870053923",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "35c8860e5c47446bd79f5014afe4a28a78760374",
+                "command": "D:/CP6-test-artifacts/W506-01/run-inquiry-storage.ps1; inquiry-storage-01 and focused inquiry-storage-02 TRX.",
+                "environment": "Actual local .NET 8, Kestrel and isolated PostgreSQL 18.6. Ordinary runtime role, simulated tenants, business and IAM.",
+                "observed_at": "2026-11-12T07:45:37.7349683-05:00",
+                "scope": "Installed ordered PostgreSQL FK tuples, type/typmod/collation and live unique targets. Two mandatory storage-qualified Activity edges enforce the shorter manifest relationships. Exact ordinary-role wrong tenant/receipt and NOT NULL rejections with unchanged rows.",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/46"
@@ -2418,8 +2430,20 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-057",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-057",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W506-01/DELIVERY.md",
+                "source_sha": "77491be21c24ac6da6bb524f9239e37870053923",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "35c8860e5c47446bd79f5014afe4a28a78760374",
+                "command": "D:/CP6-test-artifacts/W506-01/run-inquiry-storage.ps1; inquiry-storage-01 and focused inquiry-storage-02 TRX.",
+                "environment": "Actual local .NET 8, Kestrel and isolated PostgreSQL 18.6. Ordinary runtime role, simulated tenants, business and IAM.",
+                "observed_at": "2026-11-12T07:45:37.7349683-05:00",
+                "scope": "Actual current persistent rows and rollback in FX03/16/17/25/26: reused native original graphs and transitions, plus exact one-time download consumption/audit and invalid stored-policy zero-delta under current enabled guards. Wire error status remains separately tracked in AC034.",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/56"
@@ -2716,6 +2740,18 @@
         ],
         "original_pass": 57,
         "original_not_run": 3,
+        "associated_runtime_pass": 2,
+        "associated_runtime_total": 2,
+        "full_target_complete": false
+      },
+      "w506_acceptance_adoption": {
+        "report": "docs/development/evidence/W506-01/DELIVERY.md",
+        "adopted_cases": [
+          "AC-INQ-047",
+          "AC-INQ-057"
+        ],
+        "original_pass": 59,
+        "original_not_run": 1,
         "associated_runtime_pass": 2,
         "associated_runtime_total": 2,
         "full_target_complete": false
@@ -165443,6 +165479,11 @@
       "at": "2026-11-12T12:36:19.603429+00:00",
       "change": "W505 修复配置 Owner 对 PostgreSQL 已确认回滚的有界恢复。CRM #195 已采用，AC-INQ-019 采纳，原询盘 57 PASS / 3 NOT_RUN。",
       "evidence": "docs/development/evidence/W505-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-12T12:49:44.944769+00:00",
+      "change": "W506 核对现行 PostgreSQL 租户复合外键、非空列和原询盘事务行。CRM #197 已采用，AC-INQ-047/057 采纳，原询盘 59 PASS / 1 NOT_RUN。",
+      "evidence": "docs/development/evidence/W506-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211329,10 +211370,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W505",
-      "path": "docs/development/evidence/W505-01/DELIVERY.md",
-      "baseline_sha": "3fed130a8a00968a01509dc0e6480aba33fa83a6",
-      "registered_at": "2026-11-12T12:34:36.877968+00:00",
+      "id": "W506",
+      "path": "docs/development/evidence/W506-01/DELIVERY.md",
+      "baseline_sha": "0db4c2c7d75c0779922e81f3f32c72e201766b5c",
+      "registered_at": "2026-11-12T12:48:43.696384+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211346,14 +211387,16 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续 AC-INQ-047/057 的租户复合外键和当前非空及同事务行验证，再核 AC-INQ-034 的错误映射。",
+      "next_action": "完成 AC-INQ-034 原生错误响应与页面恢复。当前错误码差异由 CRM Issue #196 跟踪。",
       "windows": [
         {
-          "id": "W505-01",
-          "workspace_task": "W505-01",
+          "id": "W506-01",
+          "workspace_task": "W506-01",
           "related_tasks": [
+            "WP03-01",
             "WP03-02",
-            "WP03-03"
+            "WP03-03",
+            "WP03-04"
           ],
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
@@ -211361,27 +211404,27 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w505-01",
-          "planned_scope_ref": "docs/development/evidence/W505-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W505-01/DELIVERY.md",
+          "branch": "codex/w506-01",
+          "planned_scope_ref": "docs/development/evidence/W506-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W506-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "CRM:inquiry-configuration-and-review-transaction-recovery"
+            "CRM:inquiry-native-storage-contract-tests"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Final focused seven PostgreSQL HTTP checks passed. Six unaffected lifecycle, competing decision and lost acknowledgment checks reused. Earlier baseline RED one failure.",
-          "remaining_scope": "AC-INQ-034, 047, 057 remain. W506 native PostgreSQL graph and atomic row coverage is underway.",
+          "validation_summary": "Three distinct PostgreSQL 18 cases passed. Initial literal manifest mismatch retained. Actual tenant FK and NOT NULL failures, signed stored-policy activation with no delta, and one-time download audit.",
+          "remaining_scope": "AC-INQ-034 remains. W507 is verifying and correcting exact native Problem and browser recovery behavior.",
           "product_repository": "CP6.CRM",
           "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "75a363afbc4384fbf9bc0893c2101bb838959f67",
-          "product_branch": "codex/w505-01",
-          "product_source_sha": "32b16bc08239673a027cd81be538ef22ad30e089",
-          "product_remote_main_sha": "77f56582db17b2b42a41ff8c1ffe453a33831c2d",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/195",
+          "product_baseline": "77f56582db17b2b42a41ff8c1ffe453a33831c2d",
+          "product_branch": "codex/w506-01",
+          "product_source_sha": "77491be21c24ac6da6bb524f9239e37870053923",
+          "product_remote_main_sha": "35c8860e5c47446bd79f5014afe4a28a78760374",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/197",
           "product_branch_disposition": "deleted-local-and-remote",
           "product_workspace_status": "fixed-seat-detached-for-reuse",
           "product_seat_released": true
@@ -260492,6 +260535,76 @@
             "product_seat_released": true,
             "main_pull_request": "https://github.com/GTX537/CP6/pull/970",
             "main_remote_main_sha": "3fed130a8a00968a01509dc0e6480aba33fa83a6"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W505",
+        "path": "docs/development/evidence/W505-01/DELIVERY.md",
+        "baseline_sha": "3fed130a8a00968a01509dc0e6480aba33fa83a6",
+        "registered_at": "2026-11-12T12:34:36.877968+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续 AC-INQ-047/057 的租户复合外键和当前非空及同事务行验证，再核 AC-INQ-034 的错误映射。",
+        "windows": [
+          {
+            "id": "W505-01",
+            "workspace_task": "W505-01",
+            "related_tasks": [
+              "WP03-02",
+              "WP03-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w505-01",
+            "planned_scope_ref": "docs/development/evidence/W505-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W505-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "CRM:inquiry-configuration-and-review-transaction-recovery"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Final focused seven PostgreSQL HTTP checks passed. Six unaffected lifecycle, competing decision and lost acknowledgment checks reused. Earlier baseline RED one failure.",
+            "remaining_scope": "AC-INQ-034, 047, 057 remain. W506 native PostgreSQL graph and atomic row coverage is underway.",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "75a363afbc4384fbf9bc0893c2101bb838959f67",
+            "product_branch": "codex/w505-01",
+            "product_source_sha": "32b16bc08239673a027cd81be538ef22ad30e089",
+            "product_remote_main_sha": "77f56582db17b2b42a41ff8c1ffe453a33831c2d",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/195",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/971",
+            "main_remote_main_sha": "0db4c2c7d75c0779922e81f3f32c72e201766b5c"
           }
         ],
         "storage": {
