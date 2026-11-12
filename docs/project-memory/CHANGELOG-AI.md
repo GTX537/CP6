@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W498 询盘 C# 集合所有权
+
+CRM #188 通过 S01 生成入口修正源事件扩展集合别名和空项问题，关联 Issue #187，Actions 运行与取消均为 0。 [本任务](../development/evidence/W498-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W497 询盘隐私导出拒绝终态
 
 新增真实 HTTP/PostgreSQL 的导出拒绝与重放用例。内部测试入口使用 1024 字节上限，生产 Worker 使用固定 10 MiB。CRM #186 正常采用，Actions 运行与取消均为 0。 [本任务](../development/evidence/W497-01/DELIVERY.md)

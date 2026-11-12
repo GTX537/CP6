@@ -2198,8 +2198,20 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-054",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-054",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W498-01/DELIVERY.md",
+                "source_sha": "4e28f52b6b091ffaab077142919b33fb6c75624e",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "42fea57e387aa0b4dfc99ae4fc85afb8b29f786d",
+                "command": "D:/CP6-test-artifacts/W498-01/run-collections.ps1; collections-green-02.trx and collections-wire-03.trx; scripts/import-s01-contracts.py --check.",
+                "environment": "Local .NET 8 compiled CRM native C# contract, strict wire and actual Ed25519 verification on test keys.",
+                "observed_at": "2026-11-12T06:07:58.9954482-05:00",
+                "scope": "All canonical named list and UI ownership, current trust snapshots, H01 Calendar/LeadCreationReceipt, source-exact envelope/data extension alias, document lifetime, null items and strict Boolean round trip.",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/53"
@@ -2467,6 +2479,17 @@
         ],
         "original_pass": 44,
         "original_not_run": 16,
+        "associated_runtime_pass": 2,
+        "associated_runtime_total": 2,
+        "full_target_complete": false
+      },
+      "w498_acceptance_adoption": {
+        "report": "docs/development/evidence/W498-01/DELIVERY.md",
+        "adopted_cases": [
+          "AC-INQ-054"
+        ],
+        "original_pass": 45,
+        "original_not_run": 15,
         "associated_runtime_pass": 2,
         "associated_runtime_total": 2,
         "full_target_complete": false
@@ -165154,6 +165177,11 @@
       "at": "2026-11-12T10:43:50.091407+00:00",
       "change": "W497 隐私导出 20→90、终态审计与同键原响应实测。CRM #186 已采用并释放 DEV-2。采纳 AC-INQ-051，原询盘 44 PASS / 16 NOT_RUN。",
       "evidence": "docs/development/evidence/W497-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-12T11:12:45.705164+00:00",
+      "change": "W498 补齐 C# 事件扩展集合的所有权、空项与合法 wire 往返。CRM #188 已采用并释放 DEV-2。AC-INQ-054 采纳，原询盘 45 PASS / 15 NOT_RUN。",
+      "evidence": "docs/development/evidence/W498-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211040,10 +211068,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W497",
-      "path": "docs/development/evidence/W497-01/DELIVERY.md",
-      "baseline_sha": "c719e843fde34fc0b09b8e97f1a8020fcb7c4bcb",
-      "registered_at": "2026-11-12T10:33:45.734473+00:00",
+      "id": "W498",
+      "path": "docs/development/evidence/W498-01/DELIVERY.md",
+      "baseline_sha": "247c86a8029d2d83afedb4a7a6f7361294a80030",
+      "registered_at": "2026-11-12T10:59:56.666598+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211057,13 +211085,13 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "AC-INQ-051 已采纳。接续原计划核 AC-INQ-054 C# 集合权威类型的防御性复制与 null 元素拒绝。W492 可独立推进，W493 依赖 W492 和正式包。",
+      "next_action": "继续 AC-INQ-005、033、036 原接口和采用证据，然后补实测缺口。",
       "windows": [
         {
-          "id": "W497-01",
-          "workspace_task": "W497-01",
+          "id": "W498-01",
+          "workspace_task": "W498-01",
           "related_tasks": [
-            "WP03-04"
+            "S01-08"
           ],
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
@@ -211071,31 +211099,30 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w497-01",
-          "planned_scope_ref": "docs/development/evidence/W497-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W497-01/DELIVERY.md",
+          "branch": "codex/w498-01",
+          "planned_scope_ref": "docs/development/evidence/W498-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W498-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "CRM:crm-inq-owner",
-            "CRM:inquiry-privacy-export-tests"
+            "CRM:generated-inquiry-contracts"
           ],
-          "product_repository": "CP6.CRM",
-          "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "ae09fcd368f6aa3d5ff182537b9524f6f7c46933",
-          "product_branch": "codex/w497-01",
-          "product_source_sha": "a6ca763620105777dd9faf25d853937b6f94ea24",
-          "product_remote_main_sha": "8ff5820e9af96315e2c0c54e69774970c65847af",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/186",
-          "product_branch_disposition": "deleted-local-and-remote",
-          "product_workspace_status": "fixed-seat-detached-for-reuse",
-          "product_seat_released": true,
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Four passing local .NET/HTTP/PostgreSQL 18 cases after the focused fixture correction, zero skipped. Reused W482 elapsed 99 evidence.",
-          "remaining_scope": "剩余原询盘验收和 WP03-04 共同服务采用。"
+          "validation_summary": "263 distinct passing local .NET contract cases, zero skips, S01 generation check and unchanged pinned source.",
+          "remaining_scope": "其余15项原询盘验收。",
+          "product_repository": "CP6.CRM",
+          "product_worktree": "D:/CP6-worktrees/dev-2",
+          "product_baseline": "8ff5820e9af96315e2c0c54e69774970c65847af",
+          "product_branch": "codex/w498-01",
+          "product_source_sha": "4e28f52b6b091ffaab077142919b33fb6c75624e",
+          "product_remote_main_sha": "42fea57e387aa0b4dfc99ae4fc85afb8b29f786d",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/188",
+          "product_branch_disposition": "deleted-local-and-remote",
+          "product_workspace_status": "fixed-seat-detached-for-reuse",
+          "product_seat_released": true
         }
       ],
       "storage": {
@@ -259670,6 +259697,76 @@
             "remaining_scope": "AC-INQ-051 导出拒绝 90 和剩余原询盘验收。WP03-04 的共同服务采用独立核验。",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/962",
             "main_remote_main_sha": "c719e843fde34fc0b09b8e97f1a8020fcb7c4bcb"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W497",
+        "path": "docs/development/evidence/W497-01/DELIVERY.md",
+        "baseline_sha": "c719e843fde34fc0b09b8e97f1a8020fcb7c4bcb",
+        "registered_at": "2026-11-12T10:33:45.734473+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "AC-INQ-051 已采纳。接续原计划核 AC-INQ-054 C# 集合权威类型的防御性复制与 null 元素拒绝。W492 可独立推进，W493 依赖 W492 和正式包。",
+        "windows": [
+          {
+            "id": "W497-01",
+            "workspace_task": "W497-01",
+            "related_tasks": [
+              "WP03-04"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w497-01",
+            "planned_scope_ref": "docs/development/evidence/W497-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W497-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "CRM:crm-inq-owner",
+              "CRM:inquiry-privacy-export-tests"
+            ],
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "ae09fcd368f6aa3d5ff182537b9524f6f7c46933",
+            "product_branch": "codex/w497-01",
+            "product_source_sha": "a6ca763620105777dd9faf25d853937b6f94ea24",
+            "product_remote_main_sha": "8ff5820e9af96315e2c0c54e69774970c65847af",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/186",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Four passing local .NET/HTTP/PostgreSQL 18 cases after the focused fixture correction, zero skipped. Reused W482 elapsed 99 evidence.",
+            "remaining_scope": "剩余原询盘验收和 WP03-04 共同服务采用。",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/963",
+            "main_remote_main_sha": "247c86a8029d2d83afedb4a7a6f7361294a80030"
           }
         ],
         "storage": {
