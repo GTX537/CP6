@@ -43,4 +43,4 @@ CRM [PR #181](https://github.com/GTX537/CP6.CRM/pull/181)已将源`411fa365ba6ab
 
 两仓工作流树与受保护main一致、相关依赖未变：CRM `0c2d74f9fdc63f5178f97baf33950fb3d4dad751`、Main `3355235636fd45116f5445fca32fc65e49f13003`，复用已审手动入口/生产tag过滤；本次普通分支路径不命中生产触发。CRM任务Actions列表为空，无取消项、触发配置更改、远程运行或部署。
 
-Main本提交同步唯一报告、roadmap/生成入口、四状态及W488最终采用/生命周期；Main自身PR/远端核对和官方finish待本PR最后核销，DEV-1由W489独占、当前尚未释放，不提前声称两席释放。12h原生目标继续ACTIVE，后续聚焦实际验收余项与下一可执行主线，11h后只收拢当前任务及本轮结算。
+Main [PR #957](https://github.com/GTX537/CP6/pull/957)已将源`9b8b3e63ce5dd2fa3da088af87ea61470be70f5d`正常合入远端main`f196c8092231b720b6a13861267238645ad4f197`，fetch核祖先及完整树`aed1205a85b91c1f91c3df31e8787a5deec19b65`一致。官方finish及private `main-finish.json`、实时登记均确认准确本地/远端任务分支删除，DEV-1干净detached供复用、席位已释放。两主目录安全快进，Main原14,932未跟踪资料路径完整保留；任务Actions列表为空。12h原生目标继续ACTIVE，由W490集中本轮结算及下一实现编排。
