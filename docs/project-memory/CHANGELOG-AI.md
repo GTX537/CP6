@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W510 正式 PGT-016 真实提交不明
+
+增加真实 COMMIT 回包截断和当前授权后同键恢复验证。原 PGT-016 已采用。 [本任务](../development/evidence/W510-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W511 Main 认证目录
 
 新增真实 Main OIDC 的同名租户/用户和持久凭据来源验证。复用当前目录、身份、会话与权限实现。 [本任务](../development/evidence/W511-01/DELIVERY.md)

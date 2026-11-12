@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-12 UTC · W510 正式 PostgreSQL 后续
+
+推进 PGT-013 的真实阶段、错连接和网络时序。PGT-025 复用负零与词法精度证据，仍待物理租户 schema 和共享原回执组合。 [本任务](../development/evidence/W510-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W511 Main 认证目录
 
 PGT-026 继续 CRM 共享 PublicRoute 权威、实际绑定 revision 切换后的旧令牌与当前映射。W510 同步真实 COMMIT 断连证据。 [本任务](../development/evidence/W511-01/DELIVERY.md)

@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W510 正式 PGT-016 真实提交不明
+
+实际询盘 Owner 提交回包中断、客户端取消、锁冲突和原结果恢复已采用。正式 PostgreSQL 18 PASS / 9 NOT_RUN。 [本任务](../development/evidence/W510-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W511 Main 认证目录
 
 实际 Main Kestrel、OIDC 和 PostgreSQL 验证同名租户/用户、未知 slug、跨租拒绝及全局刷新源绑定。PGT-026 仍有共享路由和存储绑定切换。 [本任务](../development/evidence/W511-01/DELIVERY.md)

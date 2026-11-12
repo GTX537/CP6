@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W510 复用 W505 的原生锁冲突，CRM #200 实测 PostgreSQL 已发 COMMIT 的回包中断、当前授权与原键恢复。正式 PostgreSQL 18/27。 [本任务](evidence/W510-01/DELIVERY.md)
+
 > W511 实测 Main 同名组织和用户经原登录、OIDC 与当前权限解析。PGT-026 主目录范围已有实际证据，CRM 共享路由和绑定切换另有余项。 [本任务](evidence/W511-01/DELIVERY.md)
 
 > W509 实测 CRM 身份接收前置内容、真实唯一键竞争和已提交原件重读，CRM #199 已采用。正式 PostgreSQL 17/27。 [本任务](evidence/W509-01/DELIVERY.md)
