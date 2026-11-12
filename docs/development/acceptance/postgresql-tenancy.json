@@ -607,8 +607,16 @@
       ],
       "implementation_task": "WP02-10",
       "source_scope": "DEL01-A8;DEL02-A6",
-      "status": "NOT_RUN",
-      "execution_evidence": []
+      "status": "PASS",
+      "execution_evidence": [
+        {
+          "report": "docs/development/evidence/W510-01/DELIVERY.md",
+          "profile": "crm-native-inquiry-owner-postgres-commit-unknown",
+          "tested_source": "e3f5ae5db7cd989571ac3759f6c26202ee31929a",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "真实签名 Kestrel 与普通 Owner 登录。W505 的实际 40001/40P01 有界重试、W510 客户端取消及已送出 COMMIT 的回包截断、独立连接原件回读、当前权限及同键原结果，复用 Main W333/W338/W344 对应实际 Stock 场景。"
+        }
+      ]
     },
     {
       "id": "PGT-017",
