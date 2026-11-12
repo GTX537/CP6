@@ -971,8 +971,20 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-002",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-002",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W504-01/DELIVERY.md",
+                "source_sha": "d6c20a8438fb334c5083893e4a3c0bf7bcc58850",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "75a363afbc4384fbf9bc0893c2101bb838959f67",
+                "command": "D:/CP6-test-artifacts/W504-01/run-public-policy.ps1; public-policy-01 and focused public-policy-02 TRX.",
+                "environment": "Actual local .NET 8, Kestrel, isolated PostgreSQL 18 and signed simulated business/IAM.",
+                "observed_at": "2026-11-12T07:15:21.0998484-05:00",
+                "scope": "Native three-dimensional limit and maximum HTTP retry, exact replay and collision zero effects, prior actual rollover, pending/redacted and current receipt gates.",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/1"
@@ -1616,8 +1628,20 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-027",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-027",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W504-01/DELIVERY.md",
+                "source_sha": "d6c20a8438fb334c5083893e4a3c0bf7bcc58850",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "75a363afbc4384fbf9bc0893c2101bb838959f67",
+                "command": "D:/CP6-test-artifacts/W504-01/run-public-policy.ps1; public-policy-01 and focused public-policy-02 TRX.",
+                "environment": "Actual local .NET 8, Kestrel, isolated PostgreSQL 18 and signed simulated business/IAM.",
+                "observed_at": "2026-11-12T07:15:21.0998484-05:00",
+                "scope": "Actual published current and frozen policy identities, 5/60 minute issue clocks, 0/100 risk thresholds and independently derived receipt/review/retention. Prior exact policy lifecycle and export evidence reused.",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/26"
@@ -2657,6 +2681,18 @@
         ],
         "original_pass": 54,
         "original_not_run": 6,
+        "associated_runtime_pass": 2,
+        "associated_runtime_total": 2,
+        "full_target_complete": false
+      },
+      "w504_acceptance_adoption": {
+        "report": "docs/development/evidence/W504-01/DELIVERY.md",
+        "adopted_cases": [
+          "AC-INQ-002",
+          "AC-INQ-027"
+        ],
+        "original_pass": 56,
+        "original_not_run": 4,
         "associated_runtime_pass": 2,
         "associated_runtime_total": 2,
         "full_target_complete": false
@@ -165374,6 +165410,11 @@
       "at": "2026-11-12T12:11:41.576103+00:00",
       "change": "W503 实测 H01 无商务效果及七种签名权限拒绝，CRM #192 已采用。AC-INQ-031/032 采纳，原询盘 54 PASS / 6 NOT_RUN。",
       "evidence": "docs/development/evidence/W503-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-12T12:20:29.095351+00:00",
+      "change": "W504 实测三维限流、原键重放和原政策参数。CRM #193 已采用，AC-INQ-002/027 采纳，原询盘 56 PASS / 4 NOT_RUN。",
+      "evidence": "docs/development/evidence/W504-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211260,10 +211301,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W503",
-      "path": "docs/development/evidence/W503-01/DELIVERY.md",
-      "baseline_sha": "f83c5887b18bb57196dbd39350ba7c212c22c573",
-      "registered_at": "2026-11-12T12:01:37.043355+00:00",
+      "id": "W504",
+      "path": "docs/development/evidence/W504-01/DELIVERY.md",
+      "baseline_sha": "5f5b99fa62b0ef236ecb4f4739efdfd497898461",
+      "registered_at": "2026-11-12T12:18:48.531479+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211277,15 +211318,14 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续 AC-INQ-002/027 限流、重放及政策，再核锁序、PG物理图和公开错误。",
+      "next_action": "继续 AC-INQ-019 原生 PostgreSQL 锁和恢复，再核 AC-INQ-047/057 实体图及 AC-INQ-034 错误。",
       "windows": [
         {
-          "id": "W503-01",
-          "workspace_task": "W503-01",
+          "id": "W504-01",
+          "workspace_task": "W504-01",
           "related_tasks": [
-            "WP03-02",
-            "WP03-03",
-            "WP03-04"
+            "WP03-01",
+            "WP03-02"
           ],
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
@@ -211293,27 +211333,27 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w503-01",
-          "planned_scope_ref": "docs/development/evidence/W503-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W503-01/DELIVERY.md",
+          "branch": "codex/w504-01",
+          "planned_scope_ref": "docs/development/evidence/W504-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W504-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "CRM:inquiry-intake-and-public-tests"
+            "CRM:inquiry-public-policy-and-rate-tests"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "13 actual local signed HTTP/PostgreSQL cases passed including exact allowed ERP handoff topics and seven public authorization denies.",
-          "remaining_scope": "6 original cases remain. W504 rate/replay and versioned policy tests active.",
+          "validation_summary": "Two targeted actual HTTP and PostgreSQL passing cases after correcting the policy fixture parameter. Reused actual rollover and existing configuration lifecycle.",
+          "remaining_scope": "AC-INQ-019, 034, 047, 057 remain. W505 native lock retry underway.",
           "product_repository": "CP6.CRM",
           "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "52a914c9b8b5332dd1ae0c77dd2307ef25915f1c",
-          "product_branch": "codex/w503-01",
-          "product_source_sha": "b74540b9dee324a33b42b6a5ce9b0ea497f5c26f",
-          "product_remote_main_sha": "2419f61303a3261f77bcf7724757143cb04c173b",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/192",
+          "product_baseline": "2419f61303a3261f77bcf7724757143cb04c173b",
+          "product_branch": "codex/w504-01",
+          "product_source_sha": "d6c20a8438fb334c5083893e4a3c0bf7bcc58850",
+          "product_remote_main_sha": "75a363afbc4384fbf9bc0893c2101bb838959f67",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/193",
           "product_branch_disposition": "deleted-local-and-remote",
           "product_workspace_status": "fixed-seat-detached-for-reuse",
           "product_seat_released": true
@@ -260283,6 +260323,77 @@
             "product_seat_released": true,
             "main_pull_request": "https://github.com/GTX537/CP6/pull/968",
             "main_remote_main_sha": "f83c5887b18bb57196dbd39350ba7c212c22c573"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W503",
+        "path": "docs/development/evidence/W503-01/DELIVERY.md",
+        "baseline_sha": "f83c5887b18bb57196dbd39350ba7c212c22c573",
+        "registered_at": "2026-11-12T12:01:37.043355+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续 AC-INQ-002/027 限流、重放及政策，再核锁序、PG物理图和公开错误。",
+        "windows": [
+          {
+            "id": "W503-01",
+            "workspace_task": "W503-01",
+            "related_tasks": [
+              "WP03-02",
+              "WP03-03",
+              "WP03-04"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w503-01",
+            "planned_scope_ref": "docs/development/evidence/W503-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W503-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "CRM:inquiry-intake-and-public-tests"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "13 actual local signed HTTP/PostgreSQL cases passed including exact allowed ERP handoff topics and seven public authorization denies.",
+            "remaining_scope": "6 original cases remain. W504 rate/replay and versioned policy tests active.",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "52a914c9b8b5332dd1ae0c77dd2307ef25915f1c",
+            "product_branch": "codex/w503-01",
+            "product_source_sha": "b74540b9dee324a33b42b6a5ce9b0ea497f5c26f",
+            "product_remote_main_sha": "2419f61303a3261f77bcf7724757143cb04c173b",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/192",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/969",
+            "main_remote_main_sha": "5f5b99fa62b0ef236ecb4f4739efdfd497898461"
           }
         ],
         "storage": {
