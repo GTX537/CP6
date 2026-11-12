@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W514 实测新配置入口拒绝外部租户、组织、schema 和地区头，业务库零连接。PGT-004 已采用，正式 PostgreSQL 20/27。 [本任务](evidence/W514-01/DELIVERY.md)
+
 > W515 实测 Main RMA 同数据库启用租户 schema 后，原已撤销令牌仍拒绝，另一当前令牌通过普通角色读取。 [本任务](evidence/W515-01/DELIVERY.md)
 
 > W513 实测 CRM 已登记地区拒绝提前到业务连接之前，外部正文/查询选择器零连接。PGT-004 继续头部口径，正式 PostgreSQL 19/27。 [本任务](evidence/W513-01/DELIVERY.md)

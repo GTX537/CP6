@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-12 UTC · W514 正式 PostgreSQL 剩余 7 项
+
+继续 PGT-026 的共享 PublicRoute 和实际存储绑定。后台、撤权、恢复、版本与原生精度按各自直接前置推进。 [本任务](../development/evidence/W514-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W515 PGT-026 后续
 
 结合 W516 的实际 CRM 共享公共路由和既有普通角色限制核定正式项。先同步 W514 的 PGT-004。 [本任务](../development/evidence/W515-01/DELIVERY.md)
