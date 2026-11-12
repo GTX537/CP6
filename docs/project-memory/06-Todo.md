@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-12 UTC · W507 询盘错误合同与恢复
+
+CRM-INQ-01 原始验收清单已核销。WP03-04 共用服务采用、正式 PostgreSQL 门禁及生产发布按各自范围推进。 [本任务](../development/evidence/W507-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W506 询盘租户外键与事务行
 
 剩余 AC-INQ-034。W507 核对和修正原生 Problem 码、字段明细、权限拒绝及浏览器恢复。 [本任务](../development/evidence/W506-01/DELIVERY.md)

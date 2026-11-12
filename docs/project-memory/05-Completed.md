@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-12 UTC · W507 询盘错误合同与恢复
+
+完成 AC-INQ-034 的签名 HTTP、原生 PostgreSQL 和浏览器验收。原询盘从 44/60 达到 60/60，本轮核销 16 项。 [本任务](../development/evidence/W507-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W506 询盘租户外键与事务行
 
 核对实际 PostgreSQL 有序外键、非空列与当前事务行。隔离库的历史无效配置拒绝激活，错配和重复下载零写，合法下载消费制品并写一条审计。 [本任务](../development/evidence/W506-01/DELIVERY.md)

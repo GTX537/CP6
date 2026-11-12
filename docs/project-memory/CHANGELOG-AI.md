@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W507 询盘错误合同与恢复
+
+关联 CRM Issue #196。原生错误映射和显式恢复通过定向回归，采纳最后一项 AC-INQ-034。 [本任务](../development/evidence/W507-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W506 询盘租户外键与事务行
 
 补充普通角色的实际目录、约束拒绝、历史配置零写和隐私下载同事务验收，采纳 AC-INQ-047/057。 [本任务](../development/evidence/W506-01/DELIVERY.md)
