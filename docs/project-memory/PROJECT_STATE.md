@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W499 询盘原接口与采用边界
+
+已核对 P01、H01、SC01、DP08/10、固定入口、ACT 已接受对象及生产采用证据，采纳 AC-INQ-005/033/036。原询盘 48 PASS / 12 NOT_RUN。 [本任务](../development/evidence/W499-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W498 询盘 C# 集合所有权
 
 CRM #188 已合入 `42fea57e`。补齐源事件扩展集合的快照、空项拒绝及合法扩展往返，采纳 AC-INQ-054。原询盘 45 PASS / 15 NOT_RUN，关联修订 2/2，正式 PostgreSQL 16/27。 [本任务](../development/evidence/W498-01/DELIVERY.md)

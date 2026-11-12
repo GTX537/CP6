@@ -1036,8 +1036,20 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-005",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-005",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W499-01/DELIVERY.md",
+                "source_sha": "a9140849a354baa2c8081873d263313ed50a3a13",
+                "source_repository": "GTX537/CP6",
+                "adopted_main_sha": "a9140849a354baa2c8081873d263313ed50a3a13",
+                "command": "Get-FileHash of original V15 main/SOURCE-MAP/ACCEPTANCE and ACT v1.1.1; current route review; parsed exact W103 CRM TRX and W247 actual owner results.",
+                "environment": "Documentary acceptance review of checked-out repository baselines, accepted archive and already executed isolated Main/CRM HTTP and PostgreSQL traces.",
+                "observed_at": "2026-11-12T11:21:17.455590+00:00",
+                "scope": "DG01/ADJUST, P01, H01, SC01, DP08/DP10, fixed CUR slices and interfaces traced to current routes, actual owners and verified adoption scope.",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/4"
@@ -1704,8 +1716,20 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-033",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-033",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W499-01/DELIVERY.md",
+                "source_sha": "a9140849a354baa2c8081873d263313ed50a3a13",
+                "source_repository": "GTX537/CP6",
+                "adopted_main_sha": "a9140849a354baa2c8081873d263313ed50a3a13",
+                "command": "Get-FileHash of original V15 main/SOURCE-MAP/ACCEPTANCE and ACT v1.1.1; current route review; parsed exact W103 CRM TRX and W247 actual owner results.",
+                "environment": "Documentary acceptance review of checked-out repository baselines, accepted archive and already executed isolated Main/CRM HTTP and PostgreSQL traces.",
+                "observed_at": "2026-11-12T11:21:17.455590+00:00",
+                "scope": "Exact accepted ACT v1.1.1 and UA digest checked. Account/Contact activity anchor, original Lead responsibility and inquiry-local audit/outbox bounded without claiming ACT runtime reuse.",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/32"
@@ -1737,8 +1761,20 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-036",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-036",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W499-01/DELIVERY.md",
+                "source_sha": "a9140849a354baa2c8081873d263313ed50a3a13",
+                "source_repository": "GTX537/CP6",
+                "adopted_main_sha": "a9140849a354baa2c8081873d263313ed50a3a13",
+                "command": "Get-FileHash of original V15 main/SOURCE-MAP/ACCEPTANCE and ACT v1.1.1; current route review; parsed exact W103 CRM TRX and W247 actual owner results.",
+                "environment": "Documentary acceptance review of checked-out repository baselines, accepted archive and already executed isolated Main/CRM HTTP and PostgreSQL traces.",
+                "observed_at": "2026-11-12T11:21:17.455590+00:00",
+                "scope": "Original production UNPROVEN classification confirmed. Exact earlier simulated approval/schedule/current IAM tests verified separately from production adoption.",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/35"
@@ -2490,6 +2526,19 @@
         ],
         "original_pass": 45,
         "original_not_run": 15,
+        "associated_runtime_pass": 2,
+        "associated_runtime_total": 2,
+        "full_target_complete": false
+      },
+      "w499_acceptance_adoption": {
+        "report": "docs/development/evidence/W499-01/DELIVERY.md",
+        "adopted_cases": [
+          "AC-INQ-005",
+          "AC-INQ-033",
+          "AC-INQ-036"
+        ],
+        "original_pass": 48,
+        "original_not_run": 12,
         "associated_runtime_pass": 2,
         "associated_runtime_total": 2,
         "full_target_complete": false
@@ -165182,6 +165231,11 @@
       "at": "2026-11-12T11:12:45.705164+00:00",
       "change": "W498 补齐 C# 事件扩展集合的所有权、空项与合法 wire 往返。CRM #188 已采用并释放 DEV-2。AC-INQ-054 采纳，原询盘 45 PASS / 15 NOT_RUN。",
       "evidence": "docs/development/evidence/W498-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-12T11:21:17.686269+00:00",
+      "change": "W499 核对原接口、ACT采用边界及生产采用证据，采纳 AC-INQ-005/033/036，原询盘 48 PASS / 12 NOT_RUN。",
+      "evidence": "docs/development/evidence/W499-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211068,10 +211122,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W498",
-      "path": "docs/development/evidence/W498-01/DELIVERY.md",
-      "baseline_sha": "247c86a8029d2d83afedb4a7a6f7361294a80030",
-      "registered_at": "2026-11-12T10:59:56.666598+00:00",
+      "id": "W499",
+      "path": "docs/development/evidence/W499-01/DELIVERY.md",
+      "baseline_sha": "a9140849a354baa2c8081873d263313ed50a3a13",
+      "registered_at": "2026-11-12T11:16:06.482525+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211085,54 +211139,40 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续 AC-INQ-005、033、036 原接口和采用证据，然后补实测缺口。",
+      "next_action": "继续 W500 防枚举实测，再核赢家事实和 H01 业务边界。",
       "windows": [
         {
-          "id": "W498-01",
-          "workspace_task": "W498-01",
-          "related_tasks": [
-            "S01-08"
-          ],
+          "id": "W499-01",
+          "workspace_task": "W499-01",
+          "related_tasks": [],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+          "mode": "SINGLE_CHAT",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w498-01",
-          "planned_scope_ref": "docs/development/evidence/W498-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W498-01/DELIVERY.md",
+          "branch": "codex/w499-01",
+          "planned_scope_ref": "docs/development/evidence/W499-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W499-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:development-ledger",
-            "CRM:generated-inquiry-contracts"
+            "Main:development-ledger"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "263 distinct passing local .NET contract cases, zero skips, S01 generation check and unchanged pinned source.",
-          "remaining_scope": "其余15项原询盘验收。",
-          "product_repository": "CP6.CRM",
-          "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "8ff5820e9af96315e2c0c54e69774970c65847af",
-          "product_branch": "codex/w498-01",
-          "product_source_sha": "4e28f52b6b091ffaab077142919b33fb6c75624e",
-          "product_remote_main_sha": "42fea57e387aa0b4dfc99ae4fc85afb8b29f786d",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/188",
-          "product_branch_disposition": "deleted-local-and-remote",
-          "product_workspace_status": "fixed-seat-detached-for-reuse",
-          "product_seat_released": true
+          "validation_summary": "Verified accepted V15/ACT source digests, current Owner and route mappings, and exact W103/W247 original results.",
+          "remaining_scope": "12 original cases remain. W500-01 AC-INQ-029 active in DEV-2."
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
-      "product_integrated": true
+      "product_integrated": false
     },
     "wave_history": [
       {
@@ -259767,6 +259807,75 @@
             "remaining_scope": "剩余原询盘验收和 WP03-04 共同服务采用。",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/963",
             "main_remote_main_sha": "247c86a8029d2d83afedb4a7a6f7361294a80030"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W498",
+        "path": "docs/development/evidence/W498-01/DELIVERY.md",
+        "baseline_sha": "247c86a8029d2d83afedb4a7a6f7361294a80030",
+        "registered_at": "2026-11-12T10:59:56.666598+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续 AC-INQ-005、033、036 原接口和采用证据，然后补实测缺口。",
+        "windows": [
+          {
+            "id": "W498-01",
+            "workspace_task": "W498-01",
+            "related_tasks": [
+              "S01-08"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w498-01",
+            "planned_scope_ref": "docs/development/evidence/W498-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W498-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "CRM:generated-inquiry-contracts"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "263 distinct passing local .NET contract cases, zero skips, S01 generation check and unchanged pinned source.",
+            "remaining_scope": "其余15项原询盘验收。",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "8ff5820e9af96315e2c0c54e69774970c65847af",
+            "product_branch": "codex/w498-01",
+            "product_source_sha": "4e28f52b6b091ffaab077142919b33fb6c75624e",
+            "product_remote_main_sha": "42fea57e387aa0b4dfc99ae4fc85afb8b29f786d",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/188",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/964",
+            "main_remote_main_sha": "a9140849a354baa2c8081873d263313ed50a3a13"
           }
         ],
         "storage": {
