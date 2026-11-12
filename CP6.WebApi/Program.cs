@@ -3624,6 +3624,15 @@ app.UseCors("AllowAll");
 // UseRouting 後・エンドポイント前に挿入。
 app.UseHttpMetrics();
 
+// Process liveness remains available before database admission and tenant authentication.
+app.UseHealthChecks(
+    "/health/live",
+    new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+    {
+        Predicate = registration => registration.Tags.Contains("live"),
+        ResponseWriter = CP6.WebApi.Health.HealthResponseWriter.WriteAsync
+    });
+
 app.UseMiddleware<CP6.WebApi.Middleware.PrivacyRestoreAdmissionMiddlewareV1>();
 app.UseAuthentication();
 
@@ -3662,14 +3671,6 @@ app.UseMiddleware<CP6.WebApi.Middleware.MustChangePasswordMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 CP6.WebApi.Configuration.ErpIntegrationConfiguration.MapErpIntegrationEvents(app);
-app.MapHealthChecks(
-        "/health/live",
-        new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
-        {
-            Predicate = registration => registration.Tags.Contains("live"),
-            ResponseWriter = CP6.WebApi.Health.HealthResponseWriter.WriteAsync
-        })
-    .AllowAnonymous();
 app.MapHealthChecks(
         "/health/ready",
         new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
