@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W504 三维限流与政策
+
+扩充真实限流／原结果回归，并验收发布后每个 Attempt 的原参数。采纳 AC-INQ-002/027。 [本任务](../development/evidence/W504-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W503 H01 下游与授权边界
 
 扩充真实公开和审核 Owner 的签名、下游效果、零写与原键回归，采纳 AC-INQ-031/032。 [本任务](../development/evidence/W503-01/DELIVERY.md)

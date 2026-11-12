@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W504 三维限流与政策
+
+CRM #193 已采用。三维 429、原键恢复和同键冲突实测，旧新政策各驱动实际状态及期限。采纳 AC-INQ-002/027，原询盘 56 PASS / 4 NOT_RUN。 [本任务](../development/evidence/W504-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W503 H01 下游与授权边界
 
 CRM #192 已采用。H01 生成 New Lead，实际无商务交接或额外效果。七种签名和字段拒绝均为 403，持久零写。采纳 AC-INQ-031/032，原询盘 54 PASS / 6 NOT_RUN。 [本任务](../development/evidence/W503-01/DELIVERY.md)

@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-12 UTC · W504 三维限流与政策
+
+实际 429 取三个桶的最长等待，原 201 可同键恢复且无额外效果。新旧配置的签发时钟、风险分流和保留时长均经 HTTP/PG 验证。 [本任务](../development/evidence/W504-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W503 H01 下游与授权边界
 
 13 项真实 HTTP/PostgreSQL 回归通过，核对实际 Lead、原 Outbox、重放、冲突和签名授权拒绝。 [本任务](../development/evidence/W503-01/DELIVERY.md)
