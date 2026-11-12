@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-12 UTC · W505 询盘锁序与有界恢复
+
+剩余 AC-INQ-034、047、057。W506 从已采用的 CRM 基线验证 PostgreSQL 复合外键和实际同事务图，再核原生错误映射。 [本任务](../development/evidence/W505-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W504 后续验收
 
 剩余 AC-INQ-019、034、047、057。W505 继续验证真实 PostgreSQL 锁序、已知回滚后的整事务重试及恢复。 [本任务](../development/evidence/W504-01/DELIVERY.md)
