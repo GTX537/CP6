@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W512 正式 PGT-013 Owner 原子性
+
+真实询盘配置 Owner 正向同事务、四阶段 42501 回滚及异连接拒绝已采用。正式 PostgreSQL 19 PASS / 8 NOT_RUN。 [本任务](../development/evidence/W512-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W510 正式 PGT-016 真实提交不明
 
 实际询盘 Owner 提交回包中断、客户端取消、锁冲突和原结果恢复已采用。正式 PostgreSQL 18 PASS / 9 NOT_RUN。 [本任务](../development/evidence/W510-01/DELIVERY.md)

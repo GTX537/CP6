@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-12 UTC · W512 正式 PGT-013 Owner 原子性
+
+业务、Platform Outbox、必要审计和原回执同一普通 PG 事务，逐阶段失败后无写差异，原键可恢复。CRM #201 已修复。 [本任务](../development/evidence/W512-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W510 正式 PGT-016 真实提交不明
 
 原生 PostgreSQL 40001/40P01 有界恢复和提交不明验证通过。CRM #200 同键恢复保持原 201、UTF-8 正文和 ETag。 [本任务](../development/evidence/W510-01/DELIVERY.md)

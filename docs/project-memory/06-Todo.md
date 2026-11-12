@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-12 UTC · W512 正式 PostgreSQL 后续
+
+核对 PGT-004 的 CRM 现行登记地区与外部选择器。PGT-011、017、021、022、024、025、026 按后台、writer fence、恢复、版本、精度和目录各自前置。 [本任务](../development/evidence/W512-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W510 正式 PostgreSQL 后续
 
 推进 PGT-013 的真实阶段、错连接和网络时序。PGT-025 复用负零与词法精度证据，仍待物理租户 schema 和共享原回执组合。 [本任务](../development/evidence/W510-01/DELIVERY.md)
