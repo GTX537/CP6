@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-12 UTC · W513 PGT-004 CRM 可信入口
+
+CRM #203 修复。现行配置入口按可信登记在首次 Owner checkout 前拒绝未登记地区。正文和查询六项伪造输入实测 400。 [本任务](../development/evidence/W513-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W512 正式 PGT-013 Owner 原子性
 
 业务、Platform Outbox、必要审计和原回执同一普通 PG 事务，逐阶段失败后无写差异，原键可恢复。CRM #201 已修复。 [本任务](../development/evidence/W512-01/DELIVERY.md)

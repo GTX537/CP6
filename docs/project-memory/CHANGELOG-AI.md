@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W513 PGT-004 CRM 可信入口
+
+配置保存、读取、编辑上下文和生命周期共用当前地区前置检查。原 403 和事务内身份权威继续生效。 [本任务](../development/evidence/W513-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W512 正式 PGT-013 Owner 原子性
 
 配置 Outbox 在首条 SQL 前检查连接与事务。新增真实事务顺序、逐阶段回滚、原键恢复和提交后投递实测。 [本任务](../development/evidence/W512-01/DELIVERY.md)

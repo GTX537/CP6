@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-12 UTC · W513 正式 PostgreSQL 剩余 8 项
+
+PGT-004 余伪造外部头部的正式拒绝口径。PGT-026 余共享 PublicRoute 和实际绑定切换；PGT-011、017、021、022、024、025 按各自直接前置推进。 [本任务](../development/evidence/W513-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W512 正式 PostgreSQL 后续
 
 核对 PGT-004 的 CRM 现行登记地区与外部选择器。PGT-011、017、021、022、024、025、026 按后台、writer fence、恢复、版本、精度和目录各自前置。 [本任务](../development/evidence/W512-01/DELIVERY.md)
