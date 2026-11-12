@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W511 实测 Main 同名组织和用户经原登录、OIDC 与当前权限解析。PGT-026 主目录范围已有实际证据，CRM 共享路由和绑定切换另有余项。 [本任务](evidence/W511-01/DELIVERY.md)
+
 > W509 实测 CRM 身份接收前置内容、真实唯一键竞争和已提交原件重读，CRM #199 已采用。正式 PostgreSQL 17/27。 [本任务](evidence/W509-01/DELIVERY.md)
 
 > W508 盘点正式 PostgreSQL 11 项剩余场景并修复 Main liveness 打开业务库连接。W509 在 CRM 独立实测 PGT-014。 [本任务](evidence/W508-01/DELIVERY.md)

@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W511 Main 认证目录
+
+实际 Main Kestrel、OIDC 和 PostgreSQL 验证同名租户/用户、未知 slug、跨租拒绝及全局刷新源绑定。PGT-026 仍有共享路由和存储绑定切换。 [本任务](../development/evidence/W511-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W509 正式 PGT-014 CRM 身份接收
 
 采用 PGT-014。实际普通角色的身份接收、锁序、Published/DRIFT 和 ACK 通过，正式 PostgreSQL 17 PASS / 10 NOT_RUN。 [本任务](../development/evidence/W509-01/DELIVERY.md)
