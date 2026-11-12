@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W497 询盘隐私导出拒绝终态
+
+CRM #186 已合入 `8ff5820e`。合法模拟询盘在隔离 PostgreSQL 上验证导出 20→90、审计和原 202 恢复，AC-INQ-051 已采纳。原询盘 44 PASS / 16 NOT_RUN，关联修订 2/2，正式 PostgreSQL 16/27。375 项中 38 DONE、1 IN_PROGRESS、336 PLANNED。 [本任务](../development/evidence/W497-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W496 询盘四处置隐私链
 
 CRM #185 已合入 `ae09fcd3`，四种处置的活体回执重放、签名撤回和实际导出通过。结合前序到期实测，AC-INQ-041 已采纳。原询盘 43 PASS / 17 NOT_RUN，关联修订 2/2，正式 PostgreSQL 16/27。375 项中 38 DONE、1 IN_PROGRESS、336 PLANNED。 [本任务](../development/evidence/W496-01/DELIVERY.md)
