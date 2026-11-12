@@ -117,10 +117,10 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             ["CrmOidc__ServiceClients__0__SecretSha256"]=hash,["CrmOidc__ServiceClients__0__AllowedScopes__0"]="cp6.services",
             ["CrmIdentity__Enabled"]="true",["CrmIdentity__Tenants__"+tenant.ToString("D")]="us",["CrmIdentity__ProjectionReaderClientIds__0"]="fixture-reader"};
     }
-    private static async Task<Dictionary<string,string>> Login(AuthenticationApiProcess host,Harness h)
+    private static async Task<Dictionary<string,string>> Login(AuthenticationApiProcess host,Harness h,string password="Iam1!Password")
     {
         using var response=await host.Send(new HttpRequestMessage(HttpMethod.Post,"api/auth/login")
-            {Content=JsonContent.Create(new{UserName="iam-admin",Password="Iam1!Password",TenantCode="iam_"+h.Tenant.ToString("N")})});
+            {Content=JsonContent.Create(new{UserName="iam-admin",Password=password,TenantCode="iam_"+h.Tenant.ToString("N")})});
         Assert.True(response.StatusCode==HttpStatusCode.OK,await response.Content.ReadAsStringAsync());
         return response.Headers.GetValues("Set-Cookie").Select(x=>x.Split(';')[0].Split('=',2)).Where(x=>x[1].Length>0).ToDictionary(x=>x[0],x=>x[1]);
     }
