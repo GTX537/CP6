@@ -1,8 +1,8 @@
 # AI 可读变更日志
 
-## 2026-11-12 UTC · W491接续与历史装载准入
+## 2026-11-12 UTC · W491 四处置原生保留
 
-W491新增两项测试并实测PG18：历史过期Attempt首次提交拒绝、当前24月NotDue控制；修订旧实施计划状态并保留完整业务余项。产品代码/schema未改，未触发Actions或部署。CRM源727ff141远端保存，官方deferred并释放DEV2；Main协调分支保存/释放以本窗最终工具记录为准。 [本任务](../development/evidence/W491-01/DELIVERY.md)
+W491 新增历史配置、原件和制品夹具及 PostgreSQL 验收。初始装载按历史发生时间校验，恢复原触发函数后提交。实际 Owner 使用当前数据库时间和授权。CRM #182 采用测试，主仓登记本窗结果。 [本任务](../development/evidence/W491-01/DELIVERY.md)
 
 ## 2026-11-12 UTC · W490本轮结算与下一业务出口
 

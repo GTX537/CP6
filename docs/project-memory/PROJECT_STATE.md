@@ -1,8 +1,8 @@
 # 项目当前状态
 
-## 2026-11-12 UTC · W491接续与历史装载准入
+## 2026-11-12 UTC · W491 四处置原生保留
 
-最新开发对话已定位为01a1cada-68af-79f0-be6f-ff20d71129e1（W490已随PR958采用并finish），本窗接续W491。真实PG核验历史首次INSERT被CRM_PUBLIC_ISSUANCE_EXPIRED拒绝；当前24月策略NotDue控制通过，共2 passed/0 failed/0 skipped。四处置原生保留尚未完成，隔离测试初始装载边界待用户决定。CRM源727ff141已远端保存，未合main；DEV2已官方finish暂缓/释放。原375=38 DONE/1 IN_PROGRESS/336 PLANNED，询盘39/60、关联修订2/2、正式PG16/27保持。 [本任务](../development/evidence/W491-01/DELIVERY.md)
+W491 使用用户确认的隔离历史装载，实际完成四处置五样本、hold、回滚和原任务恢复。CRM #182 已合入 e9e209797，DEV-2 已释放。询盘原验收 39/60，关联修订 2/2，正式 PostgreSQL 16/27。375 项中 38 DONE、1 IN_PROGRESS、336 PLANNED。 [本任务](../development/evidence/W491-01/DELIVERY.md)
 
 ## 2026-11-12 UTC · W490本轮结算与下一业务出口
 

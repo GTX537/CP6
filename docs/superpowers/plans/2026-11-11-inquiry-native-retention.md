@@ -10,7 +10,9 @@
 
 ---
 
-计划状态：**W491 已核验准入，原历史首次写入方案不成立；四处置未完成。** [W491实际验证及待决定修订](../../development/evidence/W491-01/DELIVERY.md)证实现行 PostgreSQL 首次 INSERT 的过期 Attempt 在提交时被 `CRM_PUBLIC_ISSUANCE_EXPIRED` 拒绝；当前真实 24 月未到期控制通过。下列完整历史图计划暂不能按原写入口实施，初始状态装载边界需要明确后接续。本计划在W490根据当前源码、原验收与[W484未来组件投影](../../development/evidence/W484-01/DELIVERY.md)、[W482实际60分钟](../../development/evidence/W482-01/DELIVERY.md)、[W485实际Rejected保留](../../development/evidence/W485-01/DELIVERY.md)编排。后两项真实经过的证据不重跑；未来组件投影不冒原生月度验收。
+W491 的准入测试证实现行 PostgreSQL 拒绝首次插入已过期的 Attempt。2026-11-12 用户确认允许在独占测试库初始装载模拟历史。装载事务用模拟原件的发生时间核对相应写入时效，保留外键、静态约束和关联检查，每段恢复原触发函数定义后才进入下一段。现行 Owner 在装载提交后采用实际 PostgreSQL 时间和当前授权。验证结果见 [W491 交付报告](../../development/evidence/W491-01/DELIVERY.md)。
+
+本计划沿用 [W484 未来组件投影](../../development/evidence/W484-01/DELIVERY.md)、[W482 实际 60 分钟](../../development/evidence/W482-01/DELIVERY.md) 和 [W485 实际 Rejected 保留](../../development/evidence/W485-01/DELIVERY.md) 的对应证据。
 
 ## 准入与限定范围
 
@@ -50,13 +52,13 @@
 
 这些是生产Owner已经拥有的不变量，夹具采用其原合同；下游不增加重复校验/资格回执层。现有`AuthenticateOriginals`、`RequireSubmission/RequireLead`及真正Owner执行会验证输入，缺件立即失败。
 
-可直接使用以下模拟输入骨架。它沿原固定fixture的示例政策：审核10080分钟、NeedsReview11520分钟、Rejected/Expired各1440分钟、Converted24日历月；不设置企业默认。下列日期运算已独立核对，**Owner/PG场景仍NOT_RUN**，实际执行时以真实DB日期确认到期：
+以下模拟输入使用审核 10080 分钟、NeedsReview 12960 分钟、Rejected 和 Expired 各 1440 分钟、Converted 24 日历月。NeedsReview 和 Expired 的截止日不同，可以检出对错误状态保留期的使用。实际执行时从 PostgreSQL 读取当前时间并确认到期。
 
 | 场景 | 原模拟时间 | 应保留的截止/控制 |
 |---|---|---|
 | 自动Converted | 收到/转换2024-02-29T08:00Z | 2026-02-28T08:00Z，验证闰日月末 |
 | 人工Converted | 收到2023-12-31T08:00Z，原人工放行2024-01-02T08:00Z | 2026-01-02T08:00Z；原SLA仍由收到时间和日历决定，不能按建Lead时间重算 |
-| NeedsReview | 收到2026-10-01T08:00Z，审核due为10-08T08:00Z，声明过期worker尚未处理 | 保留截止10-09T08:00Z；本例直接核该处置自己的保留，不先改状态 |
+| NeedsReview | 收到2026-10-01T08:00Z，审核截止10-08T08:00Z，过期Worker尚未处理 | 保留截止10-10T08:00Z，直接验证NeedsReview保留 |
 | Rejected | 收到2026-10-01T08:00Z，原拒绝2026-10-02T08:00Z | 10-03T08:00Z |
 | Expired | 原收到2026-10-01T08:00Z，review due为10-08T08:00Z | 真实当前过期Owner晚执行，保留仍到10-09T08:00Z，随后真实Retention处理 |
 | 未到期控制 | 当前真实公开提交/当前H01及政策24个月 | 真实当前时间尚未到期，Owner返回NotDue，原PII/版本保持 |
