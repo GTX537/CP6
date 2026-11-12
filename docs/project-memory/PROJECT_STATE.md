@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W503 H01 下游与授权边界
+
+CRM #192 已采用。H01 生成 New Lead，实际无商务交接或额外效果。七种签名和字段拒绝均为 403，持久零写。采纳 AC-INQ-031/032，原询盘 54 PASS / 6 NOT_RUN。 [本任务](../development/evidence/W503-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W502 审核赢家事件
 
 CRM #191 已采用。导出后放行及拒绝的原生 Outbox 版本为 1、2、3，显式旧守卫升级和原结果恢复通过。采纳 AC-INQ-040，原询盘 52 PASS / 8 NOT_RUN。 [本任务](../development/evidence/W502-01/DELIVERY.md)

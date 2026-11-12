@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-12 UTC · W503 H01 下游与授权边界
+
+13 项真实 HTTP/PostgreSQL 回归通过，核对实际 Lead、原 Outbox、重放、冲突和签名授权拒绝。 [本任务](../development/evidence/W503-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W502 审核赢家事件
 
 审核事件和 PostgreSQL 提交守卫依据持久历史确定版本。真实两个分支、原结果恢复及显式旧守卫升级均通过，相关验证 13 项通过。 [本任务](../development/evidence/W502-01/DELIVERY.md)

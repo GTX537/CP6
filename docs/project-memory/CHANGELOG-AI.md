@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W503 H01 下游与授权边界
+
+扩充真实公开和审核 Owner 的签名、下游效果、零写与原键回归，采纳 AC-INQ-031/032。 [本任务](../development/evidence/W503-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W502 审核赢家事件
 
 关联 Issue #190。CRM #191 新增显式 v2 PostgreSQL 守卫，依据赢家历史修正导出后审核的事件版本。 [本任务](../development/evidence/W502-01/DELIVERY.md)

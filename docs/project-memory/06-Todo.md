@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-12 UTC · W503 后续验收
+
+继续 AC-INQ-002/027 三维限流、原键恢复和版本化政策参数，随后核锁序、实际 PostgreSQL 图及错误映射。 [本任务](../development/evidence/W503-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W502 后续验收
 
 剩余八项。继续 W503 当前授权和 H01 下游效果，之后补三维限流／重放、原政策、PostgreSQL 图与事务，以及锁和错误合同。 [本任务](../development/evidence/W502-01/DELIVERY.md)
