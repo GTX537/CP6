@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W508 询盘正式 PostgreSQL 盘点与 Main 可信入口
+
+关联 CP6 Issue #974。进程存活探针移到业务恢复准入和认证前，现行租户入口增加定向连接回归。 [本任务](../development/evidence/W508-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W507 询盘错误合同与恢复
 
 关联 CRM Issue #196。原生错误映射和显式恢复通过定向回归，采纳最后一项 AC-INQ-034。 [本任务](../development/evidence/W507-01/DELIVERY.md)

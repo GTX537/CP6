@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-12 UTC · W508 询盘正式 PostgreSQL 盘点与 Main 可信入口
+
+修复 Main 存活探针读取恢复标记的问题。实际 Kestrel 和 PostgreSQL 复测匿名探针及原生 Stock 可信租户入口。 [本任务](../development/evidence/W508-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W507 询盘错误合同与恢复
 
 完成 AC-INQ-034 的签名 HTTP、原生 PostgreSQL 和浏览器验收。原询盘从 44/60 达到 60/60，本轮核销 16 项。 [本任务](../development/evidence/W507-01/DELIVERY.md)
