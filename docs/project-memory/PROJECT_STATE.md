@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W507 询盘错误合同与恢复
+
+CRM #198 已采用。精确 Problem、零写及显式浏览器恢复通过。采纳 AC-INQ-034，原询盘 60 PASS / 0 NOT_RUN。 [本任务](../development/evidence/W507-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W506 询盘租户外键与事务行
 
 CRM #197 已采用。目录、普通角色负例、历史政策激活零写和真实下载事务通过。采纳 AC-INQ-047/057，原询盘 59 PASS / 1 NOT_RUN。 [本任务](../development/evidence/W506-01/DELIVERY.md)

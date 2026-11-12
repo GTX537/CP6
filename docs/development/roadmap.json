@@ -1811,8 +1811,20 @@
             "id": "CRM-INQ-01/fa7d0f3388911b30/AC-INQ-034",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-INQ-034",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W507-01/DELIVERY.md",
+                "source_sha": "b2e4224aa87ca147756f386eece15867bb2d77cf",
+                "source_repository": "GTX537/CP6.CRM",
+                "adopted_main_sha": "09d316a7c25a1f0148d98e90fbfff06cd5f4beb3",
+                "command": "D:/CP6-test-artifacts/W507-01/run-contract.ps1; contract-green-01, browser-and-lifecycle-green-01, intake-privacy-browser-green-01 TRX and scoped Node logs.",
+                "environment": "Actual local .NET 8, Kestrel, isolated PostgreSQL 18.6, Node BFF and Chromium. Simulated business and IAM. Specific UI error responses injected separately from native HTTP verification.",
+                "observed_at": "2026-11-12T08:09:16.7215422-05:00",
+                "scope": "Current exact native HTTP status, Problem code, retry and field details, guarded policy and proof errors, stale browser reread and explicit resubmit, public explicit reopen, and durable zero-effect assertions. Applicable prior receipt, H01 authority, collision and proof-expiry evidence reused.",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/0/cases/33"
@@ -2752,6 +2764,17 @@
         ],
         "original_pass": 59,
         "original_not_run": 1,
+        "associated_runtime_pass": 2,
+        "associated_runtime_total": 2,
+        "full_target_complete": false
+      },
+      "w507_acceptance_adoption": {
+        "report": "docs/development/evidence/W507-01/DELIVERY.md",
+        "adopted_cases": [
+          "AC-INQ-034"
+        ],
+        "original_pass": 60,
+        "original_not_run": 0,
         "associated_runtime_pass": 2,
         "associated_runtime_total": 2,
         "full_target_complete": false
@@ -165484,6 +165507,11 @@
       "at": "2026-11-12T12:49:44.944769+00:00",
       "change": "W506 核对现行 PostgreSQL 租户复合外键、非空列和原询盘事务行。CRM #197 已采用，AC-INQ-047/057 采纳，原询盘 59 PASS / 1 NOT_RUN。",
       "evidence": "docs/development/evidence/W506-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-12T13:13:08.962337+00:00",
+      "change": "W507 修正询盘原生错误映射和浏览器恢复。CRM #198 已采用，AC-INQ-034 采纳。原询盘 60 PASS / 0 NOT_RUN，本轮补齐原剩余 16 项。",
+      "evidence": "docs/development/evidence/W507-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211370,10 +211398,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W506",
-      "path": "docs/development/evidence/W506-01/DELIVERY.md",
-      "baseline_sha": "0db4c2c7d75c0779922e81f3f32c72e201766b5c",
-      "registered_at": "2026-11-12T12:48:43.696384+00:00",
+      "id": "W507",
+      "path": "docs/development/evidence/W507-01/DELIVERY.md",
+      "baseline_sha": "7aa24603474e37e73f7d7f4f14045ff44d8f1d71",
+      "registered_at": "2026-11-12T13:11:57.096739+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211387,11 +211415,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "完成 AC-INQ-034 原生错误响应与页面恢复。当前错误码差异由 CRM Issue #196 跟踪。",
+      "next_action": "CRM-INQ-01 原始 60 项验收已完成。WP03-04 共用服务采用、正式 PostgreSQL 门禁及发布按各自范围核对。",
       "windows": [
         {
-          "id": "W506-01",
-          "workspace_task": "W506-01",
+          "id": "W507-01",
+          "workspace_task": "W507-01",
           "related_tasks": [
             "WP03-01",
             "WP03-02",
@@ -211404,27 +211432,27 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w506-01",
-          "planned_scope_ref": "docs/development/evidence/W506-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W506-01/DELIVERY.md",
+          "branch": "codex/w507-01",
+          "planned_scope_ref": "docs/development/evidence/W507-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W507-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "CRM:inquiry-native-storage-contract-tests"
+            "CRM:inquiry-native-problem-and-browser-recovery"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Three distinct PostgreSQL 18 cases passed. Initial literal manifest mismatch retained. Actual tenant FK and NOT NULL failures, signed stored-policy activation with no delta, and one-time download audit.",
-          "remaining_scope": "AC-INQ-034 remains. W507 is verifying and correcting exact native Problem and browser recovery behavior.",
+          "validation_summary": "47 distinct targeted PostgreSQL/signed HTTP/BFF/browser checks and 53 scoped Node checks passed with zero skips. Initial RED and pre-POST browser failure preserved. Affected final browser checks rerun.",
+          "remaining_scope": "All 60 original inquiry acceptance cases adopted. Shared-service adoption, formal PostgreSQL gates and release qualification are tracked in their own scopes.",
           "product_repository": "CP6.CRM",
           "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "77f56582db17b2b42a41ff8c1ffe453a33831c2d",
-          "product_branch": "codex/w506-01",
-          "product_source_sha": "77491be21c24ac6da6bb524f9239e37870053923",
-          "product_remote_main_sha": "35c8860e5c47446bd79f5014afe4a28a78760374",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/197",
+          "product_baseline": "35c8860e5c47446bd79f5014afe4a28a78760374",
+          "product_branch": "codex/w507-01",
+          "product_source_sha": "b2e4224aa87ca147756f386eece15867bb2d77cf",
+          "product_remote_main_sha": "09d316a7c25a1f0148d98e90fbfff06cd5f4beb3",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/198",
           "product_branch_disposition": "deleted-local-and-remote",
           "product_workspace_status": "fixed-seat-detached-for-reuse",
           "product_seat_released": true
@@ -260605,6 +260633,78 @@
             "product_seat_released": true,
             "main_pull_request": "https://github.com/GTX537/CP6/pull/971",
             "main_remote_main_sha": "0db4c2c7d75c0779922e81f3f32c72e201766b5c"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W506",
+        "path": "docs/development/evidence/W506-01/DELIVERY.md",
+        "baseline_sha": "0db4c2c7d75c0779922e81f3f32c72e201766b5c",
+        "registered_at": "2026-11-12T12:48:43.696384+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "完成 AC-INQ-034 原生错误响应与页面恢复。当前错误码差异由 CRM Issue #196 跟踪。",
+        "windows": [
+          {
+            "id": "W506-01",
+            "workspace_task": "W506-01",
+            "related_tasks": [
+              "WP03-01",
+              "WP03-02",
+              "WP03-03",
+              "WP03-04"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w506-01",
+            "planned_scope_ref": "docs/development/evidence/W506-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W506-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "CRM:inquiry-native-storage-contract-tests"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Three distinct PostgreSQL 18 cases passed. Initial literal manifest mismatch retained. Actual tenant FK and NOT NULL failures, signed stored-policy activation with no delta, and one-time download audit.",
+            "remaining_scope": "AC-INQ-034 remains. W507 is verifying and correcting exact native Problem and browser recovery behavior.",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "77f56582db17b2b42a41ff8c1ffe453a33831c2d",
+            "product_branch": "codex/w506-01",
+            "product_source_sha": "77491be21c24ac6da6bb524f9239e37870053923",
+            "product_remote_main_sha": "35c8860e5c47446bd79f5014afe4a28a78760374",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/197",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/972",
+            "main_remote_main_sha": "7aa24603474e37e73f7d7f4f14045ff44d8f1d71"
           }
         ],
         "storage": {
