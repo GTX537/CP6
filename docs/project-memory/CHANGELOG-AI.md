@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W512 正式 PGT-013 Owner 原子性
+
+配置 Outbox 在首条 SQL 前检查连接与事务。新增真实事务顺序、逐阶段回滚、原键恢复和提交后投递实测。 [本任务](../development/evidence/W512-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W510 正式 PGT-016 真实提交不明
 
 增加真实 COMMIT 回包截断和当前授权后同键恢复验证。原 PGT-016 已采用。 [本任务](../development/evidence/W510-01/DELIVERY.md)

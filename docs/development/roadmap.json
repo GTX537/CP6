@@ -165532,6 +165532,11 @@
       "at": "2026-11-12T14:07:40.492207+00:00",
       "change": "W510 采用 PGT-016。真实询盘 Owner 断连不判断未执行，取得当前授权后按原键查 journal，返回原响应且无重复效果。正式 PostgreSQL 18 PASS / 9 NOT_RUN。",
       "evidence": "docs/development/evidence/W510-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-12T14:11:31.956646+00:00",
+      "change": "W512 采用 PGT-013，修复 CRM #201。实际普通角色的业务、Outbox、审计、回执同物理事务，四阶段真实拒绝整体回滚。正式 PostgreSQL 19 PASS / 8 NOT_RUN。",
+      "evidence": "docs/development/evidence/W512-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211418,10 +211423,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W510",
-      "path": "docs/development/evidence/W510-01/DELIVERY.md",
-      "baseline_sha": "113438d6f6d0640fd7a42cce6b7daaf6bc009d75",
-      "registered_at": "2026-11-12T14:07:18.998931+00:00",
+      "id": "W512",
+      "path": "docs/development/evidence/W512-01/DELIVERY.md",
+      "baseline_sha": "3b9ceb5c0acd7105dd9812fa6ad28d0e3418742c",
+      "registered_at": "2026-11-12T14:11:21.835965+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211435,11 +211440,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续 PGT-013 原子性窗口及 PGT-004 可信入口核对。其他项按共享 writer、存储和登记的实际前置推进。",
+      "next_action": "继续 CRM 可信入口 PGT-004 的当前登记地区与外部选择器范围。共享后台、writer fence、恢复、版本和目录分别按直接前置推进。",
       "windows": [
         {
-          "id": "W510-01",
-          "workspace_task": "W510-01",
+          "id": "W512-01",
+          "workspace_task": "W512-01",
           "related_tasks": [
             "WP02-10"
           ],
@@ -211449,27 +211454,27 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w510-01",
-          "planned_scope_ref": "docs/development/evidence/W510-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W510-01/DELIVERY.md",
+          "branch": "codex/w512-01",
+          "planned_scope_ref": "docs/development/evidence/W512-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W512-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "CRM:inquiry-owner-postgres-commit-recovery"
+            "CRM:inquiry-configuration-owner-transaction"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Native CRM W510: three distinct PostgreSQL 18.6 Kestrel tests pass, no skips. Reused native SQLSTATE 40001/40P01 from W505 and Main Stock wire COMMIT/cancel/receipt evidence from W333/W338/W344.",
-          "remaining_scope": "PGT-016 is adopted for the representative current Owner acceptance profile. PGT-025 still requires an actual physical tenant schema and shared receipt. Full WP02-10 and deployment remain separate.",
+          "validation_summary": "Six actual PostgreSQL 18.6 signed Kestrel cases pass, zero skips. One native same-PID/xid proof, four 42501 whole-graph rollback and same-key replays, one wrong connection without effects. Reuse Main W336/W337/W426.",
+          "remaining_scope": "PGT-013 representative current CRM Owner and Main Stock scope adopted. Other WP02-10 consumers and physical tenant schema/shared receipt remain in their original windows.",
           "product_repository": "CP6.CRM",
           "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "8347e875d0cec71cd8dd119f0e323cd4706a849f",
-          "product_branch": "codex/w510-01",
-          "product_source_sha": "e3f5ae5db7cd989571ac3759f6c26202ee31929a",
-          "product_remote_main_sha": "08ce0e29b5943eb54a9d7912c5c98d1e5931b615",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/200",
+          "product_baseline": "08ce0e29b5943eb54a9d7912c5c98d1e5931b615",
+          "product_branch": "codex/w512-01",
+          "product_source_sha": "f97f28ffaada4d718ef372039b7e27eaef362131",
+          "product_remote_main_sha": "e71bb41514cb89c560d4d3d17f114065f74a8cf2",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/202",
           "product_branch_disposition": "deleted-local-and-remote",
           "product_workspace_status": "fixed-seat-detached-for-reuse",
           "product_seat_released": true
@@ -260988,6 +260993,75 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W510",
+        "path": "docs/development/evidence/W510-01/DELIVERY.md",
+        "baseline_sha": "113438d6f6d0640fd7a42cce6b7daaf6bc009d75",
+        "registered_at": "2026-11-12T14:07:18.998931+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续 PGT-013 原子性窗口及 PGT-004 可信入口核对。其他项按共享 writer、存储和登记的实际前置推进。",
+        "windows": [
+          {
+            "id": "W510-01",
+            "workspace_task": "W510-01",
+            "related_tasks": [
+              "WP02-10"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w510-01",
+            "planned_scope_ref": "docs/development/evidence/W510-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W510-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "CRM:inquiry-owner-postgres-commit-recovery"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Native CRM W510: three distinct PostgreSQL 18.6 Kestrel tests pass, no skips. Reused native SQLSTATE 40001/40P01 from W505 and Main Stock wire COMMIT/cancel/receipt evidence from W333/W338/W344.",
+            "remaining_scope": "PGT-016 is adopted for the representative current Owner acceptance profile. PGT-025 still requires an actual physical tenant schema and shared receipt. Full WP02-10 and deployment remain separate.",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "8347e875d0cec71cd8dd119f0e323cd4706a849f",
+            "product_branch": "codex/w510-01",
+            "product_source_sha": "e3f5ae5db7cd989571ac3759f6c26202ee31929a",
+            "product_remote_main_sha": "08ce0e29b5943eb54a9d7912c5c98d1e5931b615",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/200",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/978",
+            "main_remote_main_sha": "3b9ceb5c0acd7105dd9812fa6ad28d0e3418742c"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },

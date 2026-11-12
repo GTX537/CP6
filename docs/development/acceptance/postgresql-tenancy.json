@@ -490,8 +490,16 @@
       ],
       "implementation_task": "WP02-10",
       "source_scope": "DEL01-A1;DEL01-A2;DEL01-A5",
-      "status": "NOT_RUN",
-      "execution_evidence": []
+      "status": "PASS",
+      "execution_evidence": [
+        {
+          "report": "docs/development/evidence/W512-01/DELIVERY.md",
+          "profile": "crm-native-configuration-owner-single-physical-postgres-transaction",
+          "tested_source": "f97f28ffaada4d718ef372039b7e27eaef362131",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "真实签名 Kestrel 和普通 CRM Owner，四实际写入点同 PID/xid、逐阶段 42501 零写差异、错连接零门和 Outbox 变化、权限在事务前且 Dapr 投递在提交后。复用 Main Stock 原共同事务和权限回滚。"
+        }
+      ]
     },
     {
       "id": "PGT-014",
