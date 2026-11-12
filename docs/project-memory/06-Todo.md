@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-12 UTC · W515 PGT-026 后续
+
+结合 W516 的实际 CRM 共享公共路由和既有普通角色限制核定正式项。先同步 W514 的 PGT-004。 [本任务](../development/evidence/W515-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W513 正式 PostgreSQL 剩余 8 项
 
 PGT-004 余伪造外部头部的正式拒绝口径。PGT-026 余共享 PublicRoute 和实际绑定切换；PGT-011、017、021、022、024、025 按各自直接前置推进。 [本任务](../development/evidence/W513-01/DELIVERY.md)

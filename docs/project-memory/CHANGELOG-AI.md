@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W515 PGT-026 Main 存储切换
+
+增加实际 RMA 共享到租户 schema 切换后旧令牌拒绝的本地验收。 [本任务](../development/evidence/W515-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W513 PGT-004 CRM 可信入口
 
 配置保存、读取、编辑上下文和生命周期共用当前地区前置检查。原 403 和事务内身份权威继续生效。 [本任务](../development/evidence/W513-01/DELIVERY.md)

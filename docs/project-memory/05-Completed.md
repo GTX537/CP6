@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-12 UTC · W515 PGT-026 Main 存储切换
+
+真实 Main 登出、持久撤销、同库 schema 激活和普通角色正向读取实测通过。 [本任务](../development/evidence/W515-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W513 PGT-004 CRM 可信入口
 
 CRM #203 修复。现行配置入口按可信登记在首次 Owner checkout 前拒绝未登记地区。正文和查询六项伪造输入实测 400。 [本任务](../development/evidence/W513-01/DELIVERY.md)

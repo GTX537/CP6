@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W515 PGT-026 Main 存储切换
+
+已实测实际 PostgreSQL 共享空布局到已启用租户 schema 的启动切换。旧令牌原撤销继续生效，正常身份可读取。 [本任务](../development/evidence/W515-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W513 PGT-004 CRM 可信入口
 
 未登记地区实测 403、零业务连接、零权限请求。正式 PostgreSQL 19 PASS / 8 NOT_RUN。 [本任务](../development/evidence/W513-01/DELIVERY.md)

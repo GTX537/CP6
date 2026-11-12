@@ -1,6 +1,9 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Persistence;
@@ -10,6 +13,7 @@ using CP6.Entity.DomainModels.Sys;
 using CP6.Entity.DomainModels.Wms;
 using CP6.Tests.Platform;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using Xunit.Abstractions;
 
@@ -113,6 +117,106 @@ public sealed partial class RmaTenantReadHttpPostgresTests(ITestOutputHelper out
         await AssertList(legacy, sharedToken, 1, [shared.Current]);
     }
 
+    [RmaReadHttpFact]
+    public async Task Revoked_bearer_remains_denied_when_real_RMA_activates_the_commissioned_tenant_schema()
+    {
+        var fixture = JsonSerializer.Deserialize<Fixture>(Environment.GetEnvironmentVariable(RmaReadHttpFactAttribute.Variable)!)!;
+        var a = await Seed(fixture.Connection, fixture.A.TenantId, Guid.NewGuid(), "activation", shared: false);
+        var schema = new NpgsqlCommandBuilder().QuoteIdentifier("t_" + a.Tenant.ToString("N"));
+        const string revision = "rma-schema-activation-v2";
+        var signingSecret = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+        var legacySettings = new Dictionary<string, string> { ["JWT__Secret"] = signingSecret };
+        var nativeSettings = Configuration(fixture);
+        nativeSettings["JWT__Secret"] = signingSecret;
+        nativeSettings["RmaReadTenancy__Revision"] = revision;
+        var handler = new JwtSecurityTokenHandler { MapInboundClaims = false };
+
+        await using var observer = new NpgsqlConnection(fixture.Connection);
+        await observer.OpenAsync();
+        var identity = await Scalar($"""
+            SELECT current_database() || ':' || oid::text || ' legacy=' || 'cp6_rma_application_v1.heads'::regclass::oid::text
+                || ' tenant=' || '{schema}.heads'::regclass::oid::text
+            FROM pg_database WHERE datname=current_database()
+            """);
+        output.WriteLine($"Database and table OIDs {identity}, tenant {a.Tenant:D}, native revision {revision}, ordinary login {fixture.A.Login}");
+        await using var authority = Context(fixture.Connection, a.Tenant);
+        var sessions = new AuthenticationInteractionStoreV1(authority);
+        var before = await BusinessRows();
+        string revoked, current, revokedJti, currentJti;
+        await using (var legacy = await Start(fixture.Connection, legacySettings))
+        {
+            var cookies = await LoginCookies(legacy, a);
+            revoked = cookies["cp6_at"];
+            current = await Login(legacy, a);
+            var original = handler.ReadJwtToken(revoked);
+            revokedJti = original.Id;
+            currentJti = handler.ReadJwtToken(current).Id;
+            Assert.Equal("auth-state-component", original.Issuer);
+            Assert.Equal(a.Tenant.ToString("D"), original.Claims.Single(c => c.Type == "tenant_id").Value);
+            Assert.NotEqual(revokedJti, currentJti);
+            Assert.False((await sessions.ReadSessionAsync(revokedJti))!.Rejected);
+            await Scalar("SELECT 'rma_shared_get_begin'");
+            await AssertList(legacy, revoked, 1, []);
+            await Scalar("SELECT 'rma_shared_get_end'");
+
+            using var logout = new HttpRequestMessage(HttpMethod.Post, "api/auth/logout") { Content = JsonContent.Create(new { }) };
+            logout.Headers.Add("Cookie", string.Join("; ", cookies.Select(x => x.Key + "=" + x.Value)));
+            logout.Headers.Add("X-CSRF-Token", cookies["cp6_csrf"]);
+            using var reply = await legacy.Send(logout);
+            Assert.Equal(HttpStatusCode.OK, reply.StatusCode);
+            Assert.True((await sessions.ReadSessionAsync(revokedJti))!.Rejected);
+            Assert.False((await sessions.ReadSessionAsync(currentJti))!.Rejected);
+        }
+
+        await using var native = await Start(fixture.Connection, nativeSettings);
+        handler.ValidateToken(revoked, new TokenValidationParameters
+        {
+            ValidIssuer = "auth-state-component", ValidAudience = "auth-state-component",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingSecret)), ValidateIssuerSigningKey = true,
+            ValidAlgorithms = [SecurityAlgorithms.HmacSha256], ClockSkew = TimeSpan.Zero
+        }, out var stillSigned);
+        Assert.Equal(revokedJti, stillSigned.Id);
+        Assert.Equal(0L, await OrdinaryConnections());
+        await Scalar("SELECT 'rma_revoked_bearer_begin'");
+        await Expect(native, revoked, HttpMethod.Get, $"{Path}?page=1", HttpStatusCode.Unauthorized);
+        await Scalar("SELECT 'rma_revoked_bearer_end'");
+        Assert.Equal(0L, await OrdinaryConnections());
+        Assert.Equal(before, await BusinessRows());
+        Assert.True((await sessions.ReadSessionAsync(revokedJti))!.Rejected);
+
+        await Scalar("SELECT 'rma_tenant_get_begin'");
+        await AssertList(native, current, 1, [a.Current]);
+        await Scalar("SELECT 'rma_tenant_get_end'");
+        Assert.True(await OrdinaryConnections() > 0);
+        Assert.False((await sessions.ReadSessionAsync(currentJti))!.Rejected);
+        Assert.Equal(before, await BusinessRows());
+        output.WriteLine($"Stable issuer and signed old bearer remained unexpired; revoked jti {revokedJti} rejected; current jti {currentJti} read the native layout.");
+
+        async Task<object?> Scalar(string sql)
+        {
+            await using var command = new NpgsqlCommand(sql, observer);
+            return await command.ExecuteScalarAsync();
+        }
+
+        async Task<long> OrdinaryConnections()
+        {
+            await using var command = new NpgsqlCommand("""
+                SELECT count(*) FROM pg_stat_activity WHERE datname=current_database()
+                    AND usename=@login AND application_name='cp6-tenant-storage-v1'
+                """, observer);
+            command.Parameters.AddWithValue("login", fixture.A.Login);
+            return (long)(await command.ExecuteScalarAsync())!;
+        }
+
+        Task<object?> BusinessRows() => Scalar($"""
+            SELECT jsonb_build_array(
+                (SELECT jsonb_agg(to_jsonb(h) ORDER BY h.tenant_id,h.id) FROM cp6_rma_application_v1.heads h),
+                (SELECT jsonb_agg(to_jsonb(v) ORDER BY v.tenant_id,v.id,v.version) FROM cp6_rma_application_v1.versions v),
+                (SELECT jsonb_agg(to_jsonb(h) ORDER BY h.tenant_id,h.id) FROM {schema}.heads h),
+                (SELECT jsonb_agg(to_jsonb(v) ORDER BY v.tenant_id,v.id,v.version) FROM {schema}.versions v))::text
+            """);
+    }
+
     private async Task<AuthenticationApiProcess> Start(string connection, Dictionary<string, string>? config)
     {
         var host = await AuthenticationApiProcess.Start(connection, config);
@@ -147,14 +251,17 @@ public sealed partial class RmaTenantReadHttpPostgresTests(ITestOutputHelper out
     }
 
     private static async Task<string> Login(AuthenticationApiProcess host, Example example)
+        => (await LoginCookies(host, example))["cp6_at"];
+
+    private static async Task<Dictionary<string, string>> LoginCookies(AuthenticationApiProcess host, Example example)
     {
         using var response = await host.Send(new HttpRequestMessage(HttpMethod.Post, "api/auth/login")
         {
             Content = JsonContent.Create(new { example.UserName, example.Password, TenantCode = example.Tenant.ToString("N") })
         });
         Assert.True(response.StatusCode == HttpStatusCode.OK, $"Real RMA fixture login returned {(int)response.StatusCode}.");
-        return response.Headers.GetValues("Set-Cookie").Single(x => x.StartsWith("cp6_at=", StringComparison.Ordinal))
-            .Split(';', 2)[0][7..];
+        return response.Headers.GetValues("Set-Cookie").Select(x => x.Split(';', 2)[0].Split('=', 2))
+            .Where(x => x[1].Length > 0).ToDictionary(x => x[0], x => x[1]);
     }
 
     private static async Task<HttpResponseMessage> Request(AuthenticationApiProcess host, string token, HttpMethod method,
