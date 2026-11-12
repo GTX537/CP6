@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-12 UTC · W506 询盘租户外键与事务行
+
+剩余 AC-INQ-034。W507 核对和修正原生 Problem 码、字段明细、权限拒绝及浏览器恢复。 [本任务](../development/evidence/W506-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W505 询盘锁序与有界恢复
 
 剩余 AC-INQ-034、047、057。W506 从已采用的 CRM 基线验证 PostgreSQL 复合外键和实际同事务图，再核原生错误映射。 [本任务](../development/evidence/W505-01/DELIVERY.md)

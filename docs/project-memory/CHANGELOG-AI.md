@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W506 询盘租户外键与事务行
+
+补充普通角色的实际目录、约束拒绝、历史配置零写和隐私下载同事务验收，采纳 AC-INQ-047/057。 [本任务](../development/evidence/W506-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W505 询盘锁序与有界恢复
 
 关联 CRM Issue #194。配置保存、预览、激活与审核复用有界整事务恢复。采纳 AC-INQ-019。 [本任务](../development/evidence/W505-01/DELIVERY.md)

@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W506 询盘租户外键与事务行
+
+CRM #197 已采用。目录、普通角色负例、历史政策激活零写和真实下载事务通过。采纳 AC-INQ-047/057，原询盘 59 PASS / 1 NOT_RUN。 [本任务](../development/evidence/W506-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W505 询盘锁序与有界恢复
 
 CRM #195 已采用。真实 PostgreSQL 三类已确认回滚重新获取当前权限并完整重试，耗尽零写，原键可恢复。采纳 AC-INQ-019，原询盘 57 PASS / 3 NOT_RUN。 [本任务](../development/evidence/W505-01/DELIVERY.md)
