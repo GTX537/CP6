@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W498 询盘 C# 集合所有权
+
+CRM #188 已合入 `42fea57e`。补齐源事件扩展集合的快照、空项拒绝及合法扩展往返，采纳 AC-INQ-054。原询盘 45 PASS / 15 NOT_RUN，关联修订 2/2，正式 PostgreSQL 16/27。 [本任务](../development/evidence/W498-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W497 询盘隐私导出拒绝终态
 
 CRM #186 已合入 `8ff5820e`。合法模拟询盘在隔离 PostgreSQL 上验证导出 20→90、审计和原 202 恢复，AC-INQ-051 已采纳。原询盘 44 PASS / 16 NOT_RUN，关联修订 2/2，正式 PostgreSQL 16/27。375 项中 38 DONE、1 IN_PROGRESS、336 PLANNED。 [本任务](../development/evidence/W497-01/DELIVERY.md)
