@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W500 询盘读取防枚举
+
+CRM #189 已合入 `58ececc8`。真实 HTTP/PostgreSQL 同形 404 及零业务写验证通过，结合既有公开回执证据采纳 AC-INQ-029。原询盘 49 PASS / 11 NOT_RUN。 [本任务](../development/evidence/W500-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W499 询盘原接口与采用边界
 
 已核对 P01、H01、SC01、DP08/10、固定入口、ACT 已接受对象及生产采用证据，采纳 AC-INQ-005/033/036。原询盘 48 PASS / 12 NOT_RUN。 [本任务](../development/evidence/W499-01/DELIVERY.md)
