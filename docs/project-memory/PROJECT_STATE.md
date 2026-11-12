@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W491接续与历史装载准入
+
+最新开发对话已定位为01a1cada-68af-79f0-be6f-ff20d71129e1（W490已随PR958采用并finish），本窗接续W491。真实PG核验历史首次INSERT被CRM_PUBLIC_ISSUANCE_EXPIRED拒绝；当前24月策略NotDue控制通过，共2 passed/0 failed/0 skipped。四处置原生保留尚未完成，隔离测试初始装载边界待用户决定。CRM源727ff141已远端保存，未合main；DEV2已官方finish暂缓/释放。原375=38 DONE/1 IN_PROGRESS/336 PLANNED，询盘39/60、关联修订2/2、正式PG16/27保持。 [本任务](../development/evidence/W491-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W490本轮结算与下一业务出口
 
 本轮真实Next/.NET/PG询盘→H01/审核→Lead→隐私导出/一次下载及原结果恢复工作；六个CRM BUG已修并采用。原AC39 PASS/21 NOT_RUN，CRM关联运行修订2/2 PASS；全项目运行修订2/247不是询盘的245个前置。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16/11保持。 [本任务](../development/evidence/W490-01/DELIVERY.md) 原生12h00m10s已达到12h预算，执行计划结算；Main最终采用/官方finish及含收尾读数见PR #958，完整业务目标未关闭。

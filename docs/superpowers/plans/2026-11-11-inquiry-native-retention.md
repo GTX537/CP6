@@ -10,7 +10,7 @@
 
 ---
 
-计划状态：**未实施**。本计划在W490根据当前源码、原验收与[W484未来组件投影](../../development/evidence/W484-01/DELIVERY.md)、[W482实际60分钟](../../development/evidence/W482-01/DELIVERY.md)、[W485实际Rejected保留](../../development/evidence/W485-01/DELIVERY.md)编排。后两项真实经过的证据不重跑；未来组件投影不冒原生月度验收。
+计划状态：**W491 已核验准入，原历史首次写入方案不成立；四处置未完成。** [W491实际验证及待决定修订](../../development/evidence/W491-01/DELIVERY.md)证实现行 PostgreSQL 首次 INSERT 的过期 Attempt 在提交时被 `CRM_PUBLIC_ISSUANCE_EXPIRED` 拒绝；当前真实 24 月未到期控制通过。下列完整历史图计划暂不能按原写入口实施，初始状态装载边界需要明确后接续。本计划在W490根据当前源码、原验收与[W484未来组件投影](../../development/evidence/W484-01/DELIVERY.md)、[W482实际60分钟](../../development/evidence/W482-01/DELIVERY.md)、[W485实际Rejected保留](../../development/evidence/W485-01/DELIVERY.md)编排。后两项真实经过的证据不重跑；未来组件投影不冒原生月度验收。
 
 ## 准入与限定范围
 

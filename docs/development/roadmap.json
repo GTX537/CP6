@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "baseline_id": "CP6-DEV-ROADMAP-20261011/R1",
-  "as_of": "2026-11-11",
+  "as_of": "2026-11-12",
   "scope": "125已接受设计目标的全量大任务计划与进度登记。247仅为修订运行场景；原模块验收需继续盘点。不是125目标实现已完成的证明。",
   "main_baseline_sha": "90ea752e9029d171e6a0307fcda06c66c3e04a69",
   "sources": [
@@ -165000,6 +165000,16 @@
       "at": "2026-11-12T01:56:26.493661+00:00",
       "change": "原生43210秒（12h00m10s）已达到43200秒执行预算，按实际范围结算；原询盘39/60、关联修订2/2、原375余337与PG16/11保持。Main最终采用/finish和含收尾计时在PR #958补记，完整业务目标未完成。",
       "evidence": "docs/development/evidence/W490-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-12",
+      "change": "登记W491四处置原生保留续接窗口；W490终态按PR958及官方finish归档。",
+      "reason": "用户要求找到最新开发对话并在其实际交付基础上继续；原375及验收状态不预先提升。"
+    },
+    {
+      "date": "2026-11-12",
+      "change": "W491实际PG核验2项：历史首次写入拒绝、当前24月NotDue控制；原计划需明确测试初始装载边界，产品分支已远端保存并释放DEV2。",
+      "reason": "原60AC仍39/21、正式PG16/11及375状态不提升；保存接续位置，不以负例通过冒四处置验收。"
     }
   ],
   "implementation_assessment": {
@@ -186047,19 +186057,23 @@
       "card_anchor": "wp03-04",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W488-01",
+        "chat_label": "COORD / W491-01",
         "repository": "CRM",
-        "branch": "codex/w488-01",
+        "branch": "codex/w491-01",
         "worktree": "D:/CP6-worktrees/dev-2",
-        "claimed_at": "2026-11-11T23:07:20.737734+00:00",
-        "baseline_sha": "526817f7a9fa05ea4391b683f35466f360348927",
-        "entry_evidence": "docs/development/evidence/W488-01/DELIVERY.md",
-        "phase": "CLOSED",
-        "bounded_window_gate": "CONFIRMED",
+        "claimed_at": "2026-11-12T06:05:28.847167+00:00",
+        "baseline_sha": "21239ca957b54f41b7cc988164e99a92b7c1bfe0",
+        "entry_evidence": "docs/development/evidence/W491-01/DELIVERY.md",
+        "phase": "DEFERRED",
+        "bounded_window_gate": "SCOPE_DECISION_REQUIRED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W488-01/DELIVERY.md",
-        "dispatch_scope": "新增privacy-export路由真实Owner原事件到HTTP sidecar确认/丢回执恢复；原一分钟租约实际到期前后保持原Request和已发送事实，不重复Job/H01/业务事务。已有其他路由成功按原范围复用。"
+        "delivery_report": "docs/development/evidence/W491-01/DELIVERY.md",
+        "dispatch_scope": "四处置原生保留：合法模拟历史初始图、实际PG时钟/Owner、完整PII、hold、失败回滚及原结果恢复。",
+        "source_sha": "727ff14152bc40d0d609c11232cab07aba8bd918",
+        "product_seat_released": true,
+        "resume_from": "origin/codex/w491-01",
+        "deferred_reason": "实际PG拒绝历史过期Attempt首次INSERT；隔离初始装载例外尚待用户决定。"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -186392,6 +186406,21 @@
           "worker_start_received": true,
           "delivery_report": "docs/development/evidence/W485-01/DELIVERY.md",
           "dispatch_scope": "Rejected原60分钟保留的实际原生PG链：拒绝原结果、撤回、导出和回执联合清除及不复活；等待期间核原完整AC证据。原政策/业务时钟不缩改。 补实际Next整站构建/宿主及页面路由→原生公共/受理/隐私衔接，因既有浏览器只覆盖真实组件/BFF而未执行整站SSR/路由；明确模拟身份输入，实际应用/PG；真实失败最小修复。"
+        },
+        {
+          "chat_label": "COORD / W488-01",
+          "repository": "CRM",
+          "branch": "codex/w488-01",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "claimed_at": "2026-11-11T23:07:20.737734+00:00",
+          "baseline_sha": "526817f7a9fa05ea4391b683f35466f360348927",
+          "entry_evidence": "docs/development/evidence/W488-01/DELIVERY.md",
+          "phase": "CLOSED",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "delivery_report": "docs/development/evidence/W488-01/DELIVERY.md",
+          "dispatch_scope": "新增privacy-export路由真实Owner原事件到HTTP sidecar确认/丢回执恢复；原一分钟租约实际到期前后保持原Request和已发送事实，不重复Job/H01/业务事务。已有其他路由成功按原范围复用。"
         }
       ],
       "wave126_delivery": {
@@ -210827,11 +210856,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W490",
-      "path": "docs/development/evidence/W490-01/DELIVERY.md",
-      "baseline_sha": "f196c8092231b720b6a13861267238645ad4f197",
-      "registered_at": "2026-11-12T00:00:14.571688+00:00",
-      "phase": "FINAL_ADOPTION_PENDING",
+      "id": "W491",
+      "path": "docs/development/evidence/W491-01/DELIVERY.md",
+      "baseline_sha": "fef657c53dcde89546fb54cb86a298e1c130a1c0",
+      "registered_at": "2026-11-12T06:05:28.847167+00:00",
+      "phase": "DEFERRED_PENDING_TEST_INITIALIZATION_DECISION",
       "assigned_chats": [
         "COORD"
       ],
@@ -210841,56 +210870,51 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": true,
-      "next_action": "12h预算已达到，完成本结算PR #958正常采用及官方finish；最终生命周期见同一PR。下一业务优先W491，三项后继均未开工。",
+      "windows_closed": true,
+      "next_action": "W491两项真实PG准入/24月未到期控制通过；历史初始写入被原时效门拒绝。等待隔离测试初始装载边界决定，再resume原任务；W492可独立推进，原完整业务验收保持。",
       "windows": [
         {
-          "id": "W490-01",
-          "workspace_task": "W490-01",
+          "id": "W491-01",
+          "workspace_task": "W491-01",
           "related_tasks": [
-            "WP02-02",
             "WP03-04"
           ],
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
-          "phase": "PRODUCT_INTEGRATED_COORDINATOR_PENDING",
-          "gate": "CONFIRMED",
+          "phase": "DEFERRED",
+          "gate": "SCOPE_DECISION_REQUIRED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w490-01",
-          "planned_scope_ref": "docs/development/evidence/W490-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W490-01/DELIVERY.md",
+          "branch": "codex/w491-01",
+          "planned_scope_ref": "docs/superpowers/plans/2026-11-11-inquiry-native-retention.md",
+          "delivery_report": "docs/development/evidence/W491-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "Main:next-implementation-plan",
-            "Platform:formal-package-script-test"
+            "CRM:crm-inq-owner",
+            "CRM:inquiry-retention-tests"
           ],
-          "product_repository": "CP6.Platform",
-          "product_worktree": "D:\\CP6-worktrees\\dev-2",
-          "product_baseline": "1691424397cb5f7f52c9aec1ee84dcf98190c773",
-          "product_branch": "codex/w490-01",
-          "product_issue": "https://github.com/GTX537/CP6.Platform/issues/82",
-          "product_source_sha": "95c73440e402ce519d1e75c3dfec2f0cdcee0247",
-          "product_remote_main_sha": "f3fbe4be67d40641f7a8a969d74be65a95541819",
-          "product_pull_request": "https://github.com/GTX537/CP6.Platform/pull/83",
-          "product_branch_disposition": "deleted-local-and-remote",
-          "product_workspace_status": "fixed-seat-detached-for-reuse",
+          "product_repository": "CP6.CRM",
+          "product_worktree": "D:/CP6-worktrees/dev-2",
+          "product_baseline": "21239ca957b54f41b7cc988164e99a92b7c1bfe0",
+          "product_branch": "codex/w491-01",
+          "product_source_sha": "727ff14152bc40d0d609c11232cab07aba8bd918",
+          "product_branch_disposition": "retained-remote",
           "product_seat_released": true,
-          "final_lifecycle_evidence": "https://github.com/GTX537/CP6/pull/958"
+          "main_branch_disposition": "save-and-retain-pending",
+          "main_seat_released": false,
+          "validation_summary": "PostgreSQL18: 2 passed, 0 failed, 0 skipped; only live-INSERT rejection and current 24-month NotDue control. No four-disposition acceptance.",
+          "remaining_scope": "合法历史初始装载、四处置完整PII/hold/末段故障与恢复；未经明确决定不绕过现行写入口时效门。"
         }
       ],
       "storage": {
         "reuse_worktrees": [
           "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "D:\\CP6-worktrees\\dev-2"
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       }
@@ -259117,6 +259141,77 @@
           ],
           "new_worktrees": 0
         }
+      },
+      {
+        "id": "W490",
+        "path": "docs/development/evidence/W490-01/DELIVERY.md",
+        "baseline_sha": "f196c8092231b720b6a13861267238645ad4f197",
+        "registered_at": "2026-11-12T00:00:14.571688+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "next_action": "W490已由PR #958及官方finish收妥；W491按最新用户续接指令登记。",
+        "windows": [
+          {
+            "id": "W490-01",
+            "workspace_task": "W490-01",
+            "related_tasks": [
+              "WP02-02",
+              "WP03-04"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w490-01",
+            "planned_scope_ref": "docs/development/evidence/W490-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W490-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "Main:next-implementation-plan",
+              "Platform:formal-package-script-test"
+            ],
+            "product_repository": "CP6.Platform",
+            "product_worktree": "D:\\CP6-worktrees\\dev-2",
+            "product_baseline": "1691424397cb5f7f52c9aec1ee84dcf98190c773",
+            "product_branch": "codex/w490-01",
+            "product_issue": "https://github.com/GTX537/CP6.Platform/issues/82",
+            "product_source_sha": "95c73440e402ce519d1e75c3dfec2f0cdcee0247",
+            "product_remote_main_sha": "f3fbe4be67d40641f7a8a969d74be65a95541819",
+            "product_pull_request": "https://github.com/GTX537/CP6.Platform/pull/83",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "final_lifecycle_evidence": "https://github.com/GTX537/CP6/pull/958",
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_workspace_status": "fixed-seat-detached-for-reuse",
+            "main_seat_released": true
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:\\CP6-worktrees\\dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "remote_main_sha": "fef657c53dcde89546fb54cb86a298e1c130a1c0"
       }
     ],
     "development_priority": {
