@@ -29,6 +29,16 @@ internal sealed class RmaReadHttpFactAttribute : FactAttribute
     }
 }
 
+internal sealed class RmaSchemaActivationHttpFactAttribute : FactAttribute
+{
+    internal const string Variable = "CP6_RMA_SCHEMA_ACTIVATION_FIXTURE";
+    public RmaSchemaActivationHttpFactAttribute()
+    {
+        if (Environment.GetEnvironmentVariable(Variable) is null)
+            Skip = "Run the owned PostgreSQL RMA schema activation fixture.";
+    }
+}
+
 public sealed partial class RmaTenantReadHttpPostgresTests(ITestOutputHelper output)
 {
     private const string Path = "api/wms/rma/native-applications-v1";
@@ -117,10 +127,10 @@ public sealed partial class RmaTenantReadHttpPostgresTests(ITestOutputHelper out
         await AssertList(legacy, sharedToken, 1, [shared.Current]);
     }
 
-    [RmaReadHttpFact]
+    [RmaSchemaActivationHttpFact]
     public async Task Revoked_bearer_remains_denied_when_real_RMA_activates_the_commissioned_tenant_schema()
     {
-        var fixture = JsonSerializer.Deserialize<Fixture>(Environment.GetEnvironmentVariable(RmaReadHttpFactAttribute.Variable)!)!;
+        var fixture = JsonSerializer.Deserialize<Fixture>(Environment.GetEnvironmentVariable(RmaSchemaActivationHttpFactAttribute.Variable)!)!;
         var a = await Seed(fixture.Connection, fixture.A.TenantId, Guid.NewGuid(), "activation", shared: false);
         var schema = new NpgsqlCommandBuilder().QuoteIdentifier("t_" + a.Tenant.ToString("N"));
         const string revision = "rma-schema-activation-v2";
