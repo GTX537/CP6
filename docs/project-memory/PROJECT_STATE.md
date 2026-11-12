@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W494 询盘 FX24 投递
+
+CRM #183 已合入 `b682af723`，DEV-2 已释放。原生接收器在本地 HTTP 和 PostgreSQL 完成租户去重、确定拒绝隔离及恢复。原询盘 40 PASS / 20 NOT_RUN，关联修订 2/2，正式 PostgreSQL 16/27。375 项中 38 DONE、1 IN_PROGRESS、336 PLANNED。 [本任务](../development/evidence/W494-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W491 四处置原生保留
 
 W491 使用用户确认的隔离历史装载，实际完成四处置五样本、hold、回滚和原任务恢复。CRM #182 已合入 e9e209797，DEV-2 已释放。询盘原验收 39/60，关联修订 2/2，正式 PostgreSQL 16/27。375 项中 38 DONE、1 IN_PROGRESS、336 PLANNED。 [本任务](../development/evidence/W491-01/DELIVERY.md)
