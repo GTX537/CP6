@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W505 询盘锁序与有界恢复
+
+CRM #195 已采用。真实 PostgreSQL 三类已确认回滚重新获取当前权限并完整重试，耗尽零写，原键可恢复。采纳 AC-INQ-019，原询盘 57 PASS / 3 NOT_RUN。 [本任务](../development/evidence/W505-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W504 三维限流与政策
 
 CRM #193 已采用。三维 429、原键恢复和同键冲突实测，旧新政策各驱动实际状态及期限。采纳 AC-INQ-002/027，原询盘 56 PASS / 4 NOT_RUN。 [本任务](../development/evidence/W504-01/DELIVERY.md)
