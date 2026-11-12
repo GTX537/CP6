@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W495 询盘 FX25 期限
+
+新增 PostgreSQL Submission 版本缓存索引，并在现行保留任务中按行期限清理缓存索引和限流桶。租户复合引用连接提交原件，保护 v4 目录。CRM #184 正常采用，Actions 运行和取消均为 0。 [本任务](../development/evidence/W495-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W494 询盘 FX24 投递
 
 新增原生接收 API、PostgreSQL 投递状态和 ConsumerInbox，以及独立租户服务认证。按原尝试恢复并以第五次确定拒绝隔离，测试复用现行发送器和 Owner。CRM #183 正常采用，Actions 运行 0。 [本任务](../development/evidence/W494-01/DELIVERY.md)
