@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text.Json;
 using CP6.Core.Persistence.Tenancy;
@@ -38,6 +39,113 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var cookies = await Login(host, h);
         using var response = await host.Send(OperationsRequest(cookies, HttpMethod.Get, "api/wms/stock"));
         Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task Main_trusted_tenant_route_rejects_missing_empty_and_foreign_identity_before_business_connection()
+    {
+        await using var a = await Seed();
+        await using var b = await Seed();
+        await GrantStocktakeDashboard(a);
+        await SeedInventory(a);
+        var before = await a.Db.Stocks.AsNoTracking().OrderBy(row => row.Id)
+            .Select(row => new { row.Id, row.PhysicalQty, row.AvailableQty }).ToArrayAsync();
+
+        var ownerConnection = a.Db.Database.GetConnectionString()!;
+        await using var control = new NpgsqlConnection(ownerConnection);
+        await control.OpenAsync();
+        const string loginA = "pgt004_runtime_a", loginB = "pgt004_runtime_b";
+        var passwordA = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+        var passwordB = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+        await CurrentPermissionPostgresFixture.Sql(control, $"""
+            CREATE ROLE {loginA} LOGIN PASSWORD '{passwordA}';
+            CREATE ROLE {loginB} LOGIN PASSWORD '{passwordB}';
+            """);
+        await using (var install = await control.BeginTransactionAsync())
+        {
+            await StockReadStorageV1.InstallAsync(control, install, [new(a.Tenant, loginA), new(b.Tenant, loginB)]);
+            await install.CommitAsync();
+        }
+
+        // The cluster is owned by this test fixture. PostgreSQL 18 authorization logs
+        // include the successful login and application name even after a socket closes.
+        await CurrentPermissionPostgresFixture.Sql(control, "ALTER SYSTEM SET log_connections = 'authorization'");
+        try
+        {
+            Assert.Equal(true, await CurrentPermissionPostgresFixture.Scalar(control, "SELECT pg_reload_conf()"));
+            var probeConnection = new NpgsqlConnectionStringBuilder(ownerConnection) { Pooling = false };
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            while (true)
+            {
+                await using var probe = new NpgsqlConnection(probeConnection.ConnectionString);
+                await probe.OpenAsync();
+                // PostgreSQL applies this backend setting to new sessions.
+                if (Equals("authorization", await CurrentPermissionPostgresFixture.Scalar(probe, "SHOW log_connections"))) break;
+                Assert.True(stopwatch.Elapsed < TimeSpan.FromSeconds(5), "The owned server did not reload log_connections.");
+                await Task.Delay(30);
+            }
+
+            var application = "pgt004-main-" + Guid.NewGuid().ToString("N");
+            var connection = new NpgsqlConnectionStringBuilder(ownerConnection) { ApplicationName = application, Pooling = false };
+            var settings = StockReadSettings();
+            ConfigureStockReader(settings, 0, a, loginA, passwordA);
+            ConfigureStockReader(settings, 1, b, loginB, passwordB);
+            await using var host = await AuthenticationApiProcess.Start(connection.ConnectionString, settings);
+
+            int AuthorizedConnections(string marker)
+            {
+                var log = Path.Combine(Environment.GetEnvironmentVariable(CurrentPermissionPostgresFactAttribute.RootVariable)!, "postgres.log");
+                using var file = new FileStream(log, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+                using var reader = new StreamReader(file);
+                var count = 0;
+                while (reader.ReadLine() is { } line)
+                    if (line.Contains("connection authorized:", StringComparison.Ordinal) && line.Contains(marker, StringComparison.Ordinal))
+                        count++;
+                return count;
+            }
+
+            var hostConnections = AuthorizedConnections("application_name=" + application);
+            using (var live = await host.Send(new HttpRequestMessage(HttpMethod.Get, "health/live")))
+                Assert.Equal(HttpStatusCode.OK, live.StatusCode);
+            Assert.Equal(hostConnections, AuthorizedConnections("application_name=" + application));
+
+            var cookies = await Login(host, a);
+            var original = cookies["cp6_at"];
+            var rejected = new[]
+            {
+                host.TokenWithTestTenant(original, tenant: null),
+                host.TokenWithTestTenant(original, Guid.Empty.ToString("D")),
+                host.TokenWithTestTenant(original, a.Tenant.ToString("D"), issuer: "https://unregistered.invalid"),
+                host.TokenWithTestTenant(original, b.Tenant.ToString("D"))
+            };
+            foreach (var token in rejected)
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Get, "api/wms/stock");
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                using var response = await host.Send(request);
+                Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+                var body = await response.Content.ReadAsStringAsync();
+                Assert.DoesNotContain(a.Tenant.ToString("D"), body);
+                Assert.DoesNotContain(b.Tenant.ToString("D"), body);
+                Assert.DoesNotContain(loginA, body);
+                Assert.DoesNotContain(loginB, body);
+            }
+            Assert.Equal(0, AuthorizedConnections("user=" + loginA));
+            Assert.Equal(0, AuthorizedConnections("user=" + loginB));
+            Assert.Equal(before, await a.Db.Stocks.AsNoTracking().OrderBy(row => row.Id)
+                .Select(row => new { row.Id, row.PhysicalQty, row.AvailableQty }).ToArrayAsync());
+
+            using var accepted = await host.Send(OperationsRequest(cookies, HttpMethod.Get, "api/wms/stock"));
+            Assert.True(accepted.StatusCode == HttpStatusCode.OK, await OperationsFailure(accepted));
+            Assert.Equal(1, AuthorizedConnections("user=" + loginA));
+            Assert.Equal(0, AuthorizedConnections("user=" + loginB));
+            Assert.True(AuthorizedConnections("application_name=" + application) > hostConnections);
+        }
+        finally
+        {
+            await CurrentPermissionPostgresFixture.Sql(control, "ALTER SYSTEM RESET log_connections");
+            await CurrentPermissionPostgresFixture.Scalar(control, "SELECT pg_reload_conf()");
+        }
     }
 
     [CurrentPermissionPostgresFact]

@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-12 UTC · W508 询盘正式 PostgreSQL 盘点与 Main 可信入口
+
+原询盘 60/60。正式 PostgreSQL 16 PASS / 11 NOT_RUN。Main liveness 零业务库连接及可信入口四类拒绝实测，PGT-004 收录定向证据。 [本任务](../development/evidence/W508-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W507 询盘错误合同与恢复
 
 CRM #198 已采用。精确 Problem、零写及显式浏览器恢复通过。采纳 AC-INQ-034，原询盘 60 PASS / 0 NOT_RUN。 [本任务](../development/evidence/W507-01/DELIVERY.md)

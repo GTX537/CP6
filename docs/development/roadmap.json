@@ -165512,6 +165512,11 @@
       "at": "2026-11-12T13:13:08.962337+00:00",
       "change": "W507 修正询盘原生错误映射和浏览器恢复。CRM #198 已采用，AC-INQ-034 采纳。原询盘 60 PASS / 0 NOT_RUN，本轮补齐原剩余 16 项。",
       "evidence": "docs/development/evidence/W507-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-12T13:43:42.465180+00:00",
+      "change": "W508 盘点正式 PostgreSQL 余 11 项，修复 Main 存活探针连接业务库的问题。PGT-004 已获定向证据，正式矩阵 16 PASS / 11 NOT_RUN。",
+      "evidence": "docs/development/evidence/W508-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211398,10 +211403,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W507",
-      "path": "docs/development/evidence/W507-01/DELIVERY.md",
-      "baseline_sha": "7aa24603474e37e73f7d7f4f14045ff44d8f1d71",
-      "registered_at": "2026-11-12T13:11:57.096739+00:00",
+      "id": "W508",
+      "path": "docs/development/evidence/W508-01/DELIVERY.md",
+      "baseline_sha": "e544cd8150ffcf4ab6263efd1e9c3733ea78ab08",
+      "registered_at": "2026-11-12T13:26:16.424589+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211415,53 +211420,40 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "CRM-INQ-01 原始 60 项验收已完成。WP03-04 共用服务采用、正式 PostgreSQL 门禁及发布按各自范围核对。",
+      "next_action": "同步已验证的 PGT-014。W510 在独立 CRM 库推进 PGT-016 的真实 COMMIT 断连与原键恢复。",
       "windows": [
         {
-          "id": "W507-01",
-          "workspace_task": "W507-01",
+          "id": "W508-01",
+          "workspace_task": "W508-01",
           "related_tasks": [
-            "WP03-01",
-            "WP03-02",
-            "WP03-03",
-            "WP03-04"
+            "WP02-01"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+          "mode": "SINGLE_CHAT",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w507-01",
-          "planned_scope_ref": "docs/development/evidence/W507-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W507-01/DELIVERY.md",
+          "branch": "codex/w508-01",
+          "planned_scope_ref": "docs/development/evidence/W508-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W508-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "CRM:inquiry-native-problem-and-browser-recovery"
+            "Main:tenantless-liveness-and-trusted-entry"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "47 distinct targeted PostgreSQL/signed HTTP/BFF/browser checks and 53 scoped Node checks passed with zero skips. Initial RED and pre-POST browser failure preserved. Affected final browser checks rerun.",
-          "remaining_scope": "All 60 original inquiry acceptance cases adopted. Shared-service adoption, formal PostgreSQL gates and release qualification are tracked in their own scopes.",
-          "product_repository": "CP6.CRM",
-          "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "35c8860e5c47446bd79f5014afe4a28a78760374",
-          "product_branch": "codex/w507-01",
-          "product_source_sha": "b2e4224aa87ca147756f386eece15867bb2d77cf",
-          "product_remote_main_sha": "09d316a7c25a1f0148d98e90fbfff06cd5f4beb3",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/198",
-          "product_branch_disposition": "deleted-local-and-remote",
-          "product_workspace_status": "fixed-seat-detached-for-reuse",
-          "product_seat_released": true
+          "validation_summary": "One focused real Kestrel/PostgreSQL 18.6 test passed, zero skipped. Retained separate setup and actual liveness RED runs. No checkout under invalid identity; authorized control opens one ordinary role connection.",
+          "remaining_scope": "PGT-004 limited Main evidence; complete valid-credential tenant/schema input and registered region path remain. PGT-014 is separately tested and adopted in CRM. W510 tests database COMMIT transport.",
+          "main_tested_source_sha": "93b4e5eb6f8056a0c2714167abe3e7167e7c8b1d"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -260705,6 +260697,78 @@
             "product_seat_released": true,
             "main_pull_request": "https://github.com/GTX537/CP6/pull/972",
             "main_remote_main_sha": "7aa24603474e37e73f7d7f4f14045ff44d8f1d71"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W507",
+        "path": "docs/development/evidence/W507-01/DELIVERY.md",
+        "baseline_sha": "7aa24603474e37e73f7d7f4f14045ff44d8f1d71",
+        "registered_at": "2026-11-12T13:11:57.096739+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "CRM-INQ-01 原始 60 项验收已完成。WP03-04 共用服务采用、正式 PostgreSQL 门禁及发布按各自范围核对。",
+        "windows": [
+          {
+            "id": "W507-01",
+            "workspace_task": "W507-01",
+            "related_tasks": [
+              "WP03-01",
+              "WP03-02",
+              "WP03-03",
+              "WP03-04"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w507-01",
+            "planned_scope_ref": "docs/development/evidence/W507-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W507-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "CRM:inquiry-native-problem-and-browser-recovery"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "47 distinct targeted PostgreSQL/signed HTTP/BFF/browser checks and 53 scoped Node checks passed with zero skips. Initial RED and pre-POST browser failure preserved. Affected final browser checks rerun.",
+            "remaining_scope": "All 60 original inquiry acceptance cases adopted. Shared-service adoption, formal PostgreSQL gates and release qualification are tracked in their own scopes.",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "35c8860e5c47446bd79f5014afe4a28a78760374",
+            "product_branch": "codex/w507-01",
+            "product_source_sha": "b2e4224aa87ca147756f386eece15867bb2d77cf",
+            "product_remote_main_sha": "09d316a7c25a1f0148d98e90fbfff06cd5f4beb3",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/198",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/973",
+            "main_remote_main_sha": "e544cd8150ffcf4ab6263efd1e9c3733ea78ab08"
           }
         ],
         "storage": {

@@ -5,8 +5,10 @@ using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using CP6.Core.Utilities;
@@ -17,6 +19,7 @@ using System.Data.Common;
 using System.Net.Http.Json;
 using System.Text.Json;
 using CP6.Entity.DTOs.Client;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CP6.Tests.Platform;
 
@@ -237,6 +240,16 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
     internal string Token(Sys_User user, string? version = null) => JwtHelper.GenerateToken(user.Id.ToString(), user.UserName,
         secret, "auth-state-component", "auth-state-component", 5, user.TenantId,
         mustChangePassword: user.MustChangePassword, isPlatformAdmin: user.IsPlatformAdmin, authenticationVersion: version ?? AuthSessionVersion.For(user));
+    internal string TokenWithTestTenant(string token, string? tenant, string? issuer = null)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var original = handler.ReadJwtToken(token);
+        var claims = original.Claims.Where(claim => claim.Type is not ("tenant_id" or "iss" or "aud" or "nbf" or "exp")).ToList();
+        if (tenant is not null) claims.Add(new Claim("tenant_id", tenant));
+        var signing = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)), SecurityAlgorithms.HmacSha256);
+        return handler.WriteToken(new JwtSecurityToken(issuer ?? original.Issuer, original.Audiences.Single(), claims,
+            expires: original.ValidTo, signingCredentials: signing));
+    }
     internal async Task<string> LoginToken(Sys_User user)
     {
         using var response = await client.PostAsJsonAsync("api/auth/login", new { user.UserName,

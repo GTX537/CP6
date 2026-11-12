@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W508 盘点正式 PostgreSQL 11 项剩余场景并修复 Main liveness 打开业务库连接。W509 在 CRM 独立实测 PGT-014。 [本任务](evidence/W508-01/DELIVERY.md)
+
 > W507 修正原生错误映射和浏览器恢复，CRM #198 已采用，采纳 AC-INQ-034。原询盘验收 60/60，本轮补齐 16 项。 [本任务](evidence/W507-01/DELIVERY.md)
 
 > W506 实测 PostgreSQL 复合外键、非空列、配置激活零写与下载一次消费，CRM #197 已采用。原询盘验收 59/60，最后核 AC-INQ-034。 [本任务](evidence/W506-01/DELIVERY.md)

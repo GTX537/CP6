@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-12 UTC · W508 询盘正式 PostgreSQL 盘点与 Main 可信入口
+
+PGT-004 的完整外部租户选择输入和实际地区登记仍需核对。PGT-014 另窗同步，PGT-016 继续实际 CRM COMMIT 断连验证。 [本任务](../development/evidence/W508-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W507 询盘错误合同与恢复
 
 CRM-INQ-01 原始验收清单已核销。WP03-04 共用服务采用、正式 PostgreSQL 门禁及生产发布按各自范围推进。 [本任务](../development/evidence/W507-01/DELIVERY.md)
