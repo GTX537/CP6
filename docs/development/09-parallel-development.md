@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W515 实测 Main RMA 同数据库启用租户 schema 后，原已撤销令牌仍拒绝，另一当前令牌通过普通角色读取。 [本任务](evidence/W515-01/DELIVERY.md)
+
 > W513 实测 CRM 已登记地区拒绝提前到业务连接之前，外部正文/查询选择器零连接。PGT-004 继续头部口径，正式 PostgreSQL 19/27。 [本任务](evidence/W513-01/DELIVERY.md)
 
 > W512 真实 CRM 配置 Owner 四阶段同一 PostgreSQL 事务。CRM #202 修复错配事务先写问题，正式 PostgreSQL 19/27。 [本任务](evidence/W512-01/DELIVERY.md)
