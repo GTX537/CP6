@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-12 UTC · W514 正式 PGT-004 可信入口
+
+外部租户、组织、schema 和地区头实测 400。版本化 CRM 配置入口取得零业务库连接，Node 入口零转发，合法请求沿当前租户解析。 [本任务](../development/evidence/W514-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W515 PGT-026 Main 存储切换
 
 真实 Main 登出、持久撤销、同库 schema 激活和普通角色正向读取实测通过。 [本任务](../development/evidence/W515-01/DELIVERY.md)

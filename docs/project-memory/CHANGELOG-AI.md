@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-12 UTC · W514 正式 PGT-004 可信入口
+
+新配置入口和 Node 代理显式拒绝四个外部存储选择头。复用当前错误合同和普通角色实测，正式 PGT-004 已采用。 [本任务](../development/evidence/W514-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W515 PGT-026 Main 存储切换
 
 增加实际 RMA 共享到租户 schema 切换后旧令牌拒绝的本地验收。 [本任务](../development/evidence/W515-01/DELIVERY.md)

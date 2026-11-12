@@ -165547,6 +165547,11 @@
       "at": "2026-11-12T14:45:29.370682+00:00",
       "change": "W515 补 PGT-026 的 Main 存储切换。实际同库从共享 RMA 读取启用租户 schema，原已撤销令牌仍拒绝。正式矩阵 19 PASS / 8 NOT_RUN。",
       "evidence": "docs/development/evidence/W515-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-12T14:47:54.670443+00:00",
+      "change": "W514 采用 PGT-004。配置入口的外部选择器在业务连接前拒绝，复用 Main 存活探针和 CRM 可信地区等已实测结果。正式 PostgreSQL 20 PASS / 7 NOT_RUN。",
+      "evidence": "docs/development/evidence/W514-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211433,10 +211438,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W515",
-      "path": "docs/development/evidence/W515-01/DELIVERY.md",
-      "baseline_sha": "2d4c23d36c117a71e001eb5ed0da5726ca7ea225",
-      "registered_at": "2026-11-12T14:35:05.354577+00:00",
+      "id": "W514",
+      "path": "docs/development/evidence/W514-01/DELIVERY.md",
+      "baseline_sha": "88e23ba8033ca573b17f7ea0f014b027b9075a36",
+      "registered_at": "2026-11-12T14:47:34.087784+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211450,41 +211455,50 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "同步 W514 PGT-004，然后采用 W516 实际 CRM 共享公共路由证据。PGT-026 按原条件核对。",
+      "next_action": "按实际范围接续 PGT-026 的共享公共路由和存储绑定。PGT-011、017、021、022、024、025 按共用存储、写者关口及权限前置推进。",
       "windows": [
         {
-          "id": "W515-01",
-          "workspace_task": "W515-01",
+          "id": "W514-01",
+          "workspace_task": "W514-01",
           "related_tasks": [
-            "WP02-02",
-            "WP02-06"
+            "WP02-01"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT",
+          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w515-01",
-          "planned_scope_ref": "docs/development/evidence/W515-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W515-01/DELIVERY.md",
+          "branch": "codex/w514-01",
+          "planned_scope_ref": "docs/development/evidence/W514-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W514-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "Main:rma-schema-activation-authentication-verification"
+            "CRM:inquiry-configuration-external-selectors"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "One actual Main Kestrel + PostgreSQL 18.6 RMA startup activation case passes, zero skips. Real native SQL and old revoked session persist across the same database and signer; actual positive tenant SELECT under ordinary role.",
-          "remaining_scope": "PGT-026 Main physical startup activation and prior directory are covered. CRM shared public route evidence is handled in W516. Scope is existing fresh/empty-shared commissioning and startup, independent of legacy data migration.",
-          "main_tested_source_sha": "5c4c58f53ec8973508fd60e8cd355749241cd116"
+          "validation_summary": "Actual PostgreSQL 18.6/Kestrel and real Node proxy tests cover each external selector, valid controls and affected configuration paths. Reuse W508 and W513 exact existing evidence.",
+          "remaining_scope": "PGT-004 adopted for the new trusted entry and liveness profile. Seven formal cases remain, including shared public route and binding verification.",
+          "product_repository": "CP6.CRM",
+          "product_worktree": "D:/CP6-worktrees/dev-2",
+          "product_baseline": "a23adc2000c2f3dc30c84e101272ea08b9ab63cd",
+          "product_branch": "codex/w514-01",
+          "product_source_sha": "4ed917fdadf4f5303fda9ce786b9604178b20193",
+          "product_remote_main_sha": "3752ec0648f624432428210e5930a1951df4df93",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/205",
+          "product_branch_disposition": "deleted-local-and-remote",
+          "product_workspace_status": "fixed-seat-detached-for-reuse",
+          "product_seat_released": true
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -261201,6 +261215,66 @@
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018",
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W515",
+        "path": "docs/development/evidence/W515-01/DELIVERY.md",
+        "baseline_sha": "2d4c23d36c117a71e001eb5ed0da5726ca7ea225",
+        "registered_at": "2026-11-12T14:35:05.354577+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "同步 W514 PGT-004，然后采用 W516 实际 CRM 共享公共路由证据。PGT-026 按原条件核对。",
+        "windows": [
+          {
+            "id": "W515-01",
+            "workspace_task": "W515-01",
+            "related_tasks": [
+              "WP02-02",
+              "WP02-06"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w515-01",
+            "planned_scope_ref": "docs/development/evidence/W515-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W515-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "Main:rma-schema-activation-authentication-verification"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "One actual Main Kestrel + PostgreSQL 18.6 RMA startup activation case passes, zero skips. Real native SQL and old revoked session persist across the same database and signer; actual positive tenant SELECT under ordinary role.",
+            "remaining_scope": "PGT-026 Main physical startup activation and prior directory are covered. CRM shared public route evidence is handled in W516. Scope is existing fresh/empty-shared commissioning and startup, independent of legacy data migration.",
+            "main_tested_source_sha": "5c4c58f53ec8973508fd60e8cd355749241cd116",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/981",
+            "main_remote_main_sha": "88e23ba8033ca573b17f7ea0f014b027b9075a36"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },
