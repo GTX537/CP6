@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W546 Main 用户和 OIDC 会话撤权
+
+用户禁用和 OIDC 会话撤销与 CRM 人工受理通过两种提交顺序。正式 PostgreSQL 26/27。 [本任务](../development/evidence/W546-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W545 Main 角色撤权与 CRM 导出
 
 已登记 CRM 在原事务核对角色最低版本。实际角色撤权与导出的两种顺序通过。正式 PostgreSQL 26/27。 [本任务](../development/evidence/W545-01/DELIVERY.md)

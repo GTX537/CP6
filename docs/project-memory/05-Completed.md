@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-13 UTC · W546 用户和会话栅栏
+
+实测 Main 用户禁用、OIDC end-session 与 CRM 拒绝受理的四组并发，核对原业务、身份快照、Outbox、会话及 IAM 回执。 [本任务](../development/evidence/W546-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W545 角色源版本
 
 实际 IAM 撤权与 CRM 导出通过两库联验。核对旧授权、无关角色、已提交制品、角色快照、代次、Outbox 和审计。 [本任务](../development/evidence/W545-01/DELIVERY.md)
