@@ -996,8 +996,18 @@
       ],
       "implementation_task": "WP02-10",
       "source_scope": "S02-00 contract preservation",
-      "status": "NOT_RUN",
-      "execution_evidence": []
+      "status": "PASS",
+      "execution_evidence": [
+        {
+          "report": "docs/development/evidence/W530-01/DELIVERY.md",
+          "profile": "crm-inq-r3-v15",
+          "tested_source": "e2e8a23a32345fedde6b44cb2ab72b533c25e0f7",
+          "crm_remote_main": "a4890974b3dce2fa9e978a62d3cbcfeb1958bf91",
+          "actual_database": "PostgreSQL 18.6",
+          "evidence": "D:/CP6-test-artifacts/W530-01/pg/57368780aa3788e88da9acc1193dbf59/pgt025-owner-recovery.json",
+          "fixture": "真实 CRM 配置 Owner 经专用普通 LOGIN 写入物理租户草稿分区与共享回执。80 位版本、19 位小数秒、年 0000、Unicode/NUL 和 -0 原文。实际后段故障回滚，COMMIT 回包中断后新连接同键原 201、正文、ETag。12 通过，0 跳过。"
+        }
+      ]
     },
     {
       "id": "PGT-026",

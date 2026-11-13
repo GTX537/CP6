@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W530 剩余 1 项正式 PostgreSQL 验收
+
+PGT-017 核对全部相关写者与共同 fence，按原卡补齐暂停、撤权和新写入的两种提交顺序。CRM 既有库迁移和生产启用另行推进。 [本任务](../development/evidence/W530-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W529 剩余 2 项正式 PostgreSQL 验收
 
 PGT-025 需现行 Owner 的租户 schema、共享回执、原字节/负零与重连恢复。PGT-017 需登记全 writer 并实测同一 fence 的两个竞争顺序，复用已有普通 Stock 时序。WP02-04 整卡仍按原范围推进。 [本任务](../development/evidence/W529-01/DELIVERY.md)
