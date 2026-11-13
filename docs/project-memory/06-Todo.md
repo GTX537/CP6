@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W541 PGT-017 余项
+
+空间独立 Design 事务和定时 ABC、旧 OA、财务、采购和 Stock 普通角色仍待核对。Main 与 CRM 其余撤权和业务写者继续按 W540 推进。 [本任务](../development/evidence/W541-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W540 PGT-017 余项
 
 继续核对 Main 空间、OA/工作流、财务、采购与 Stock 普通角色，补齐 CRM 公开提交、受理、导出和维护等写者及 Main 角色、用户、会话、服务授权的跨库撤销。 [本任务](../development/evidence/W540-01/DELIVERY.md)

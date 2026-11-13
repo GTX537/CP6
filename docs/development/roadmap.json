@@ -165677,6 +165677,11 @@
       "at": "2026-11-13T18:03:10.654005+00:00",
       "change": "W540 Main 租户暂停与 CRM 询盘配置的两种提交顺序及封存后恢复在两套 PostgreSQL 18.6 上通过。PGT-017 仍待其他写者，正式 26/27。",
       "evidence": "docs/development/evidence/W540-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T18:18:39.947055+00:00",
+      "change": "W541 连接体、停靠点、模板和手动分析共 11 个空间写入口采用 Main 共同根，14 项 PostgreSQL 并发回归通过，正式 26/27。",
+      "evidence": "docs/development/evidence/W541-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211683,10 +211688,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W540",
-      "path": "docs/development/evidence/W540-01/DELIVERY.md",
-      "baseline_sha": "5b7174b4b5f83e105b3a8360ab499995919fce83",
-      "registered_at": "2026-11-13T16:35:53.997340+00:00",
+      "id": "W541",
+      "path": "docs/development/evidence/W541-01/DELIVERY.md",
+      "baseline_sha": "642c3cf4d599401a599e56abadb3e23b4253a184",
+      "registered_at": "2026-11-13T18:07:44.415106+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211700,53 +211705,41 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Continue PGT-017 with remaining native Main writers and extend the shared CRM commit fence to inquiry submission, intake, export and Main revocation authorities.",
+      "next_action": "Continue PGT-017 in the remaining transaction owners and the cross-database authorization scope from #1012.",
       "windows": [
         {
-          "id": "W540-01",
-          "workspace_task": "W540-01",
+          "id": "W541-01",
+          "workspace_task": "W541-01",
           "related_tasks": [
             "WP02-03",
             "PGT-017"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+          "mode": "SINGLE_CHAT",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w540-01",
-          "planned_scope_ref": "docs/development/evidence/W540-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W540-01/DELIVERY.md",
+          "branch": "codex/w541-01",
+          "planned_scope_ref": "docs/development/evidence/W541-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W541-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main tenant enablement and current CRM inquiry configuration permission",
-            "CRM native inquiry configuration Owner and identity lock profile",
+            "Main Space Connector, Template and manual Analytics HTTP writes",
             "Main PostgreSQL acceptance and roadmap"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Independent PostgreSQL 18.6 on Main and CRM: 6 paired tests, Main 27 and CRM 49 related regressions. Isolated Main and CRM published HTTP smoke and matching file hashes.",
-          "remaining_scope": "Main remaining business writers and native roles. Other CRM effect writers and Main role/user/session/service revocation. Cross-store failover and recovery qualification. PGT-017 NOT_RUN.",
-          "main_tested_source_sha": "f4abf8cbc860c90d08a8f403d943cf325ed09d97",
-          "product_repository": "CP6.CRM",
-          "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "a4890974b3dce2fa9e978a62d3cbcfeb1958bf91",
-          "product_branch": "codex/w540-01",
-          "product_source_sha": "01e96d07c659dda7b203f2ffb2b128032f9fd9d0",
-          "product_remote_main_sha": "974cb61b2ed630b9ef39eb363f27d1b76d1dc708",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/208",
-          "product_branch_disposition": "deleted-local-and-remote",
-          "product_workspace_status": "fixed-seat-detached-for-reuse",
-          "product_seat_released": true
+          "validation_summary": "14 real PostgreSQL authorization races; 34 related component checks; local published WebApi hash, startup and HTTP checks.",
+          "remaining_scope": "Separate Space Design context and scheduled ABC; legacy OA, finance, PUR and Stock database roles; remaining CRM Owner and Main revocation, cross-database recovery.",
+          "main_tested_source_sha": "d75cf1c6a20233109572e65e648023e31fe30fe7"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -263065,6 +263058,78 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W540",
+        "path": "docs/development/evidence/W540-01/DELIVERY.md",
+        "baseline_sha": "5b7174b4b5f83e105b3a8360ab499995919fce83",
+        "registered_at": "2026-11-13T16:35:53.997340+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Continue PGT-017 with remaining native Main writers and extend the shared CRM commit fence to inquiry submission, intake, export and Main revocation authorities.",
+        "windows": [
+          {
+            "id": "W540-01",
+            "workspace_task": "W540-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w540-01",
+            "planned_scope_ref": "docs/development/evidence/W540-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W540-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main tenant enablement and current CRM inquiry configuration permission",
+              "CRM native inquiry configuration Owner and identity lock profile",
+              "Main PostgreSQL acceptance and roadmap"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Independent PostgreSQL 18.6 on Main and CRM: 6 paired tests, Main 27 and CRM 49 related regressions. Isolated Main and CRM published HTTP smoke and matching file hashes.",
+            "remaining_scope": "Main remaining business writers and native roles. Other CRM effect writers and Main role/user/session/service revocation. Cross-store failover and recovery qualification. PGT-017 NOT_RUN.",
+            "main_tested_source_sha": "f4abf8cbc860c90d08a8f403d943cf325ed09d97",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "a4890974b3dce2fa9e978a62d3cbcfeb1958bf91",
+            "product_branch": "codex/w540-01",
+            "product_source_sha": "01e96d07c659dda7b203f2ffb2b128032f9fd9d0",
+            "product_remote_main_sha": "974cb61b2ed630b9ef39eb363f27d1b76d1dc708",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/208",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1020",
+            "main_remote_main_sha": "642c3cf4d599401a599e56abadb3e23b4253a184"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },

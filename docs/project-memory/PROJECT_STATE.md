@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W541 空间 HTTP 写入
+
+空间 11 个写入口共用 Main 事务栅栏。两种提交顺序相关用例通过，正式 PostgreSQL 26/27。 [本任务](../development/evidence/W541-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W540 Main 暂停与 CRM 配置
 
 两套 PostgreSQL 18.6 已通过配置写先提交、暂停先提交以及 Main 中断后的原操作恢复。正式 PostgreSQL 26/27，原询盘 60/60。 [本任务](../development/evidence/W540-01/DELIVERY.md)
