@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W529 后台重试与平台管理权限
+
+PGT-011 PASS，正式 PostgreSQL 25 PASS / 2 NOT_RUN，原询盘 60/60。Main 在本机 PostgreSQL 18.6 实测 A/B 的已认领原任务、当前服务与原申请人、暂停后原回执、管理员和模拟会话权限、Stock 技术派送。 [本任务](../development/evidence/W529-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W528 混合租户模型与回退
 
 PGT-024 PASS，正式 PostgreSQL 24 PASS / 3 NOT_RUN，原询盘 60/60。Main 同库 A v2、B v1 实测，缺共享版本和旧写者拒绝。回退后 A 可读、B 可读写，数据库保留前向迁移。 [本任务](../development/evidence/W528-01/DELIVERY.md)

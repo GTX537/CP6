@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "baseline_id": "CP6-DEV-ROADMAP-20261011/R1",
-  "as_of": "2026-11-12",
+  "as_of": "2026-11-13",
   "scope": "125已接受设计目标的全量大任务计划与进度登记。247仅为修订运行场景；原模块验收需继续盘点。不是125目标实现已完成的证明。",
   "main_baseline_sha": "90ea752e9029d171e6a0307fcda06c66c3e04a69",
   "sources": [
@@ -165617,6 +165617,11 @@
       "at": "2026-11-13T09:18:05.086923+00:00",
       "change": "W528 完成 PGT-024 的同库 A v2/B v1、共享最低版本与应用回退。正式 PostgreSQL 24 PASS、3 NOT_RUN，原询盘 60/60，WP02-02 原任务状态保留。",
       "evidence": "docs/development/evidence/W528-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T09:51:37.087288+00:00",
+      "change": "W529 在本机 PostgreSQL 完成 PGT-011。原任务重试、服务与原申请人区分、模拟会话及跨租户未获准批量写、独立技术派送和原回执。正式 PostgreSQL 25 PASS / 2 NOT_RUN。",
+      "evidence": "docs/development/evidence/W529-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -177394,6 +177399,16 @@
             "workspace_clean": true
           }
         ]
+      },
+      "wave529_delivery": {
+        "report": "docs/development/evidence/W529-01/DELIVERY.md",
+        "scope": "PGT-011 Main background retry and platform authority",
+        "status": "LOCALLY_VERIFIED",
+        "formal_case": "PGT-011",
+        "formal_acceptance": "PASS",
+        "full_task_completed": false,
+        "tested_source_sha": "23db035bd78e6e8f4698b34918139958b87edfea",
+        "actual_evidence": "D:/CP6-test-artifacts/W529-01/results/pgt011-final.trx"
       }
     },
     {
@@ -211558,10 +211573,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W528",
-      "path": "docs/development/evidence/W528-01/DELIVERY.md",
-      "baseline_sha": "0d54024d146b1dbc445f9af2eaea2ddf6d7de5d6",
-      "registered_at": "2026-11-13T08:49:41.463128+00:00",
+      "id": "W529",
+      "path": "docs/development/evidence/W529-01/DELIVERY.md",
+      "baseline_sha": "1dd538e4a48f5d0f5f5e33b4fe0b7765a054709c",
+      "registered_at": "2026-11-13T09:29:42.196714+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211575,13 +211590,14 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续 PGT-011、PGT-017、PGT-025 的原卡验收。优先核对 WP02-04 后台服务 A/B 独立 scope、当前授权与管理员边界；并发撤权和合同精度保留各自真实 Owner 前置。",
+      "next_action": "推进 PGT-025 的现行 Owner 物理租户 schema、共享回执、原字节/负零和重连恢复。PGT-017 核对全 writer 与共同 fence 后执行剩余时序。",
       "windows": [
         {
-          "id": "W528-01",
-          "workspace_task": "W528-01",
+          "id": "W529-01",
+          "workspace_task": "W529-01",
           "related_tasks": [
-            "WP02-02"
+            "WP02-04",
+            "PGT-011"
           ],
           "chat": "COORD",
           "mode": "SINGLE_CHAT",
@@ -211589,23 +211605,21 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w528-01",
-          "planned_scope_ref": "docs/development/evidence/W528-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W528-01/DELIVERY.md",
+          "branch": "codex/w529-01",
+          "planned_scope_ref": "docs/development/evidence/W529-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W529-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:development-ledger",
-            "Main:tenant-storage",
-            "Main:ef-model",
-            "Main:rma-core-writers"
+            "Main:formal-postgresql-acceptance-ledger",
+            "Main:owned-PostgreSQL-55590"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "21 selected tests PASS, including actual EF shared expand. Native PostgreSQL 18.6 and two independent Main processes exercise actual v2 EF views and writers for A, v1 tables and writers for B, missing shared/tenant version and unknown model refusals, native v1 draft/submit/close rejection on A, exact migration replay, application-only rollback and unchanged forward history. Local WebApi publish contains the pinned compatibility matrix.",
-          "remaining_scope": "PGT-011/017/025 remain open under their original cards. Existing RMA v11 export/restore supports v1; v2 requires compatible recovery and is refused by the v1 tools. During app rollback A remains readable and requires a v2-capable host to write. Existing production tenant migration remains separate.",
-          "main_tested_source_sha": "01c7640e540cef40a7661e1c3ddb74f5af9fd6a0"
+          "validation_summary": "本机隔离 PostgreSQL 18.6 上两个 PGT-011 场景与四个定向回归共 6 PASS、0 跳过。实际 NativeTimeout 扫描和 Main 登录/API、Stock 技术派送、当前身份与原回执均已验证。",
+          "remaining_scope": "PGT-017 全 writer 登记和竞争验收、PGT-025 原生合同与精度。WP02-04 整卡保持原状态。",
+          "main_tested_source_sha": "23db035bd78e6e8f4698b34918139958b87edfea"
         }
       ],
       "storage": {
@@ -262192,6 +262206,67 @@
             "main_tested_source_sha": "7028b48ecedd1f5219f4559046e0646449d3b52d",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/996",
             "main_remote_main_sha": "0d54024d146b1dbc445f9af2eaea2ddf6d7de5d6"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W528",
+        "path": "docs/development/evidence/W528-01/DELIVERY.md",
+        "baseline_sha": "0d54024d146b1dbc445f9af2eaea2ddf6d7de5d6",
+        "registered_at": "2026-11-13T08:49:41.463128+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续 PGT-011、PGT-017、PGT-025 的原卡验收。优先核对 WP02-04 后台服务 A/B 独立 scope、当前授权与管理员边界；并发撤权和合同精度保留各自真实 Owner 前置。",
+        "windows": [
+          {
+            "id": "W528-01",
+            "workspace_task": "W528-01",
+            "related_tasks": [
+              "WP02-02"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w528-01",
+            "planned_scope_ref": "docs/development/evidence/W528-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W528-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "Main:tenant-storage",
+              "Main:ef-model",
+              "Main:rma-core-writers"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "21 selected tests PASS, including actual EF shared expand. Native PostgreSQL 18.6 and two independent Main processes exercise actual v2 EF views and writers for A, v1 tables and writers for B, missing shared/tenant version and unknown model refusals, native v1 draft/submit/close rejection on A, exact migration replay, application-only rollback and unchanged forward history. Local WebApi publish contains the pinned compatibility matrix.",
+            "remaining_scope": "PGT-011/017/025 remain open under their original cards. Existing RMA v11 export/restore supports v1; v2 requires compatible recovery and is refused by the v1 tools. During app rollback A remains readable and requires a v2-capable host to write. Existing production tenant migration remains separate.",
+            "main_tested_source_sha": "01c7640e540cef40a7661e1c3ddb74f5af9fd6a0",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/997",
+            "main_remote_main_sha": "1dd538e4a48f5d0f5f5e33b4fe0b7765a054709c"
           }
         ],
         "storage": {

@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W529 完成 PGT-011。A/B 独立后台 scope、原申请人撤权、平台管理与业务写分权、Stock 技术投递及原回执已实测。正式 PostgreSQL 25 PASS / 2 NOT_RUN。 [本任务](evidence/W529-01/DELIVERY.md)
+
 > W528 完成 PGT-024。A 使用新 RMA 模型，B 保持旧模型，实测共享版本拒绝、旧写者隔离及应用回退。正式 PostgreSQL 24 PASS / 3 NOT_RUN。 [本任务](evidence/W528-01/DELIVERY.md)
 
 > W527 完成 PGT-022。同源旧 v11 保留原 Published 回执，过期纪元与 UNKNOWN 恢复均拒绝。正式 PostgreSQL 23 PASS / 4 NOT_RUN。 [本任务](evidence/W527-01/DELIVERY.md)

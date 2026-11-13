@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W529 正式 PostgreSQL PGT-011
+
+新增两项 PostgreSQL 验收回归，验证后台重试与平台管理权限。6 项定向通过，正式 PostgreSQL 25/27。测试使用隔离数据、实际 Main HTTP 和模拟 Stock 外部传输。 [本任务](../development/evidence/W529-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W528 RMA v2 与回退兼容
 
 接入逐租户 v2 模型、共享最低版本和数据库写者限制，兼容矩阵随 WebApi 构建与本地发布产物交付。PGT-024 升为 PASS，21 项相关测试通过。 [本任务](../development/evidence/W528-01/DELIVERY.md)

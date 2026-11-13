@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W529 剩余 2 项正式 PostgreSQL 验收
+
+PGT-025 需现行 Owner 的租户 schema、共享回执、原字节/负零与重连恢复。PGT-017 需登记全 writer 并实测同一 fence 的两个竞争顺序，复用已有普通 Stock 时序。WP02-04 整卡仍按原范围推进。 [本任务](../development/evidence/W529-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W528 剩余 3 项正式 PostgreSQL 验收
 
 PGT-011 后台重试与管理员范围、PGT-017 并发暂停与撤权、PGT-025 原生合同与精度。各按原卡和真实 Owner 范围推进。RMA v2 归档恢复需独立兼容路径。 [本任务](../development/evidence/W528-01/DELIVERY.md)
