@@ -165587,6 +165587,11 @@
       "at": "2026-11-13T02:41:39.873309+00:00",
       "change": "W522 验证非空组合候选的源端独立批准、普通读回和现行隐私纪元失效。正式 PostgreSQL 21 PASS / 6 NOT_RUN。",
       "evidence": "docs/development/evidence/W522-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T03:41:21.698586+00:00",
+      "change": "W523 实测源 IAM 撤销、ERP 旧 Pending 与当前 Published 对账、Stock guard #844 与候选零派送。正式 PostgreSQL 21 PASS / 6 NOT_RUN。",
+      "evidence": "docs/development/evidence/W523-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211473,10 +211478,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W522",
-      "path": "docs/development/evidence/W522-01/DELIVERY.md",
-      "baseline_sha": "1ec0dd87b46a7b389ed6ca43c9a1cd791e88853a",
-      "registered_at": "2026-11-13T02:20:29.468257+00:00",
+      "id": "W523",
+      "path": "docs/development/evidence/W523-01/DELIVERY.md",
+      "baseline_sha": "55a80b62683b11216d4f6591a353964c8a62eeff",
+      "registered_at": "2026-11-13T03:09:07.577132+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211490,11 +211495,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "以现有本地批准准入证据继续验证当前 IAM、凭据撤销与投递对账，明确目标只接管授权租户的路由。PGT-022 的当前纪元恢复及 PGT-024 双模型按各自前置推进。",
+      "next_action": "继续 PGT-021 的单租户路由与现行 IAM 准入边界，并核对更广原件和共享依赖。Stock #844 的正式 0.10.4 采用及同键 Published 重测走独立窗口。PGT-022 现行路由纪元和 PGT-024 双模型继续各自验收。",
       "windows": [
         {
-          "id": "W522-01",
-          "workspace_task": "W522-01",
+          "id": "W523-01",
+          "workspace_task": "W523-01",
           "related_tasks": [
             "WP02-02"
           ],
@@ -211504,20 +211509,20 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w522-01",
-          "planned_scope_ref": "docs/development/evidence/W522-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W522-01/DELIVERY.md",
+          "branch": "codex/w523-01",
+          "planned_scope_ref": "docs/development/evidence/W523-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W523-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "Main:combined-candidate-controlled-admission"
+            "Main:combined-candidate-current-iam-delivery"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "PostgreSQL 18.6 与封存 W466 WebApi，native-03 实际退出 0。独立审批 200，RMA/FileContent 读回通过，源端 B 并发合法写入提交，跨租拒绝，源隐私纪元更新后既有会话 503。五份回执及 116 份原生读回前后一致。",
-          "remaining_scope": "Full PGT-021 still requires broader native restore coverage, current source IAM and token state across the target authority boundary, current queue reconciliation, and a tenant-directed cutover. PGT-022 and PGT-024 remain open."
+          "validation_summary": "PostgreSQL 18.6 native-08 exit 0. Current IAM disable/reset and original receipt, access 401 and refresh 400, B 200. Same-pin ERP Pending to Published via local mock and read-only reconciliation, candidate Stock deny, source Stock guard #844 and zero effects.",
+          "remaining_scope": "PGT-021 still requires current IAM authority for candidate-local identities, broader originals and shared dependencies, eligible Stock source dispatch and tenant-directed cutover. PGT-022 authorized current route epoch and PGT-024 dual model remain open."
         }
       ],
       "storage": {
@@ -261747,6 +261752,64 @@
           "new_worktrees": 0
         },
         "product_integrated": true
+      },
+      {
+        "id": "W522",
+        "path": "docs/development/evidence/W522-01/DELIVERY.md",
+        "baseline_sha": "1ec0dd87b46a7b389ed6ca43c9a1cd791e88853a",
+        "registered_at": "2026-11-13T02:20:29.468257+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "以现有本地批准准入证据继续验证当前 IAM、凭据撤销与投递对账，明确目标只接管授权租户的路由。PGT-022 的当前纪元恢复及 PGT-024 双模型按各自前置推进。",
+        "windows": [
+          {
+            "id": "W522-01",
+            "workspace_task": "W522-01",
+            "related_tasks": [
+              "WP02-02"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w522-01",
+            "planned_scope_ref": "docs/development/evidence/W522-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W522-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "Main:combined-candidate-controlled-admission"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "PostgreSQL 18.6 与封存 W466 WebApi，native-03 实际退出 0。独立审批 200，RMA/FileContent 读回通过，源端 B 并发合法写入提交，跨租拒绝，源隐私纪元更新后既有会话 503。五份回执及 116 份原生读回前后一致。",
+            "remaining_scope": "Full PGT-021 still requires broader native restore coverage, current source IAM and token state across the target authority boundary, current queue reconciliation, and a tenant-directed cutover. PGT-022 and PGT-024 remain open.",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/990",
+            "main_remote_main_sha": "55a80b62683b11216d4f6591a353964c8a62eeff"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": false
       }
     ],
     "development_priority": {

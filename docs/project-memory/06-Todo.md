@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W523 PGT-021 后续验收
+
+完成候选本地身份的现行 IAM 准入、租户定向路由、更广原件和共享依赖。Stock #844 正式包采用后补同源 Published 对账。PGT-022、024 按原合同。 [本任务](../development/evidence/W523-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W522 PGT-021 切换余项
 
 继续当前普通 IAM 与撤销、Stock/ERP 投递对账、经批准的租户定向切换和更广原件。PGT-022、024 仍按原验收。 [本任务](../development/evidence/W522-01/DELIVERY.md)

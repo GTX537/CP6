@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-13 UTC · W523 源 IAM 与 ERP 原键验证
+
+同 v11 在隔离 PostgreSQL 验证真实源 IAM 停用和重置、ERP 模拟传输确认及只读对账，并保存两侧 Stock 实际拒绝。 [本任务](../development/evidence/W523-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W522 组合候选真实审批
 
 完成非空四域候选的实际申请、独立审批、普通角色读回和源隐私纪元失效验证。 [本任务](../development/evidence/W522-01/DELIVERY.md)

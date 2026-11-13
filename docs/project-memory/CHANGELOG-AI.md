@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W523 源端撤销和旧消息验证
+
+复用封存宿主和现有原键工具，保留源 IAM 提交、ERP 原消息 Published 对账与 Stock guard 证据。 [本任务](../development/evidence/W523-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W522 本地恢复准入验证
 
 在 W521 停机副本使用现有审批、HTTP 和 PostgreSQL 入口验证受控读取，保留五份原回执与非空队列。 [本任务](../development/evidence/W522-01/DELIVERY.md)
