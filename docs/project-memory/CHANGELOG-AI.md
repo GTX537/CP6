@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W552 CRM 回执丢失联验
+
+实际 CRM COMMIT 回包丢失后复测 Main 撤权与旧服务授权，原命令安全重试。 [本任务](../development/evidence/W552-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W551 角色撤权恢复联验
 
 通过原 IAM 入口补齐 Main 提交取消、CRM 持久封存、原操作查询与重试的实测。 [本任务](../development/evidence/W551-01/DELIVERY.md)

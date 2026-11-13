@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W552 CRM 提交回执丢失
+
+CRM 已持久封存后失去提交回包，Main 原命令重试恢复，旧授权无新增效果。正式 PostgreSQL 26/27。 [本任务](../development/evidence/W552-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W551 角色撤权中断恢复
 
 CRM 封存后 Main 取消提交，旧授权仍拒绝，同一 IAM 命令重试恢复。正式 PostgreSQL 26/27。 [本任务](../development/evidence/W551-01/DELIVERY.md)
