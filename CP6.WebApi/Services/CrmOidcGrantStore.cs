@@ -154,8 +154,7 @@ public sealed class SqlCrmOidcGrantStore(DatabaseOptions database, string connec
     {
         await using var db = _connections.Create(connectionString);
         await db.OpenAsync();
-        // The token-to-family association is immutable. Resolve it before taking the family lock, so
-        // rotation and logout always lock the family before locking any refresh-token rows.
+        // The token-to-family association is immutable. Resolve it without locking a refresh row.
         var familyId = await db.QuerySingleOrDefaultAsync<Guid?>(IsPostgreSql ? """
             SELECT "BrowserSessionId" FROM public."Sys_RefreshTokens"
             WHERE "TokenHash"=CAST(@SourceRefreshHash AS bpchar) AND "UserId"=@SubjectId
@@ -168,6 +167,9 @@ public sealed class SqlCrmOidcGrantStore(DatabaseOptions database, string connec
         await using var transaction = await db.BeginTransactionAsync(IsolationLevel.Serializable);
         try
         {
+            // Match refresh: authentication root, then family row, then refresh rows.
+            if (IsPostgreSql)
+                await db.ExecuteScalarAsync<long>("SELECT cp6_authentication_v1.acquire()", transaction: transaction);
             var boundFamily = await db.QuerySingleOrDefaultAsync<Guid?>(IsPostgreSql ? """
                 SELECT "Id" FROM public."Sys_BrowserSessions"
                 WHERE "Id"=@familyId AND "UserId"=@SubjectId AND "TenantId"=@OrganizationId
@@ -202,7 +204,7 @@ public sealed class SqlCrmOidcGrantStore(DatabaseOptions database, string connec
                 """, new { familyId, grant.SubjectId, grant.OrganizationId }, transaction);
             await AppendRevocationsAsync(db, transaction, revoked);
             await transaction.CommitAsync();
-            }
+        }
         catch when (IsPostgreSql)
         {
             await transaction.RollbackAsync();

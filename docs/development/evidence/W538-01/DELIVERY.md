@@ -10,4 +10,6 @@
 
 重新授权后各原动作成功，金额 `17.23`、汇率 `1.123456` 及原红冲方向实测保持。草稿遇到重复 ID 时，已暂存的新会计期间和新月份计数也全部回滚。最终 **32 通过、0 失败、0 跳过**，含 15 项实际 PostgreSQL 与 17 项凭证组件验证。构建零错误，原警告保留。实际测试宿主与本地发布的 WebApi SHA-256 均为 `7da135c9388bc2c6998595a79138f455ca35a9f0f574cc59057f275d0d8ed8b7`，完整清单及原始证据在 `D:/CP6-test-artifacts/W538-01`。本地隔离发布存活 200，匿名访问凭证入口 401。宿主和 PostgreSQL 已停止。
 
-OA 回调、自动过账、银行按行提交、会计期间状态与预算写者仍需按其实际业务事务核对。主线还需其他写者及 Main 到 CRM 的跨库协议，PGT-017 保持 NOT_RUN。OIDC 会话族 W537 独立已测试，PR 暂缓，源码保存在该任务远端分支。Actions 启动与取消为零。实际采用、分支及席位见本任务 PR 与 `D:/CP6-test-artifacts/W538-01/main-finish.json`。 [OA 财务回调](../../../../CP6.Core/Services/Fin/JournalApprovalCallback.cs) · [W537 独立 PR](https://github.com/GTX537/CP6/pull/1014) · [跨库 #1012](https://github.com/GTX537/CP6/issues/1012)
+OA 回调、自动过账、银行按行提交、会计期间状态与预算写者仍需按其实际业务事务核对。主线还需其他写者及 Main 到 CRM 的跨库协议，PGT-017 保持 NOT_RUN。OIDC 会话族 W537 已独立验证并合入当前集成基线。Actions 启动与取消为零。实际采用、分支及席位见本任务 PR 与 `D:/CP6-test-artifacts/W538-01/main-finish.json`。 [OA 财务回调](../../../../CP6.Core/Services/Fin/JournalApprovalCallback.cs) · [W537 独立 PR](https://github.com/GTX537/CP6/pull/1014) · [跨库 #1012](https://github.com/GTX537/CP6/issues/1012)
+
+本次集成基线 `829bdeaafbca78fe0329acd2b02738373659b142`。原任务产品与测试文件均逐文件核对，复用前述验证。新的集成冒烟结果随 PR 记录。
