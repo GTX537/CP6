@@ -1019,6 +1019,24 @@ Main、CRM和Platform任务分开提交/PR。生产者先交付准确Schema/包/
 
 合并前核对当前主线差异、新冲突和旧验证可复用范围；只重跑受影响检查。必须在每次push/PR/merge前检查自动工作流触发，未经新授权不启动Actions。普通任务不改发布权威、生产门禁或既有环境，后续数据库目标统一PostgreSQL。模型迁移/真实数据切换/部署须按各自独立任务和授权办理。
 
+自动化合并优先使用 GitHub 异步 PR 合并接口。通过现有合并前检查后，使用已审查的 PR HEAD SHA 提交请求。`merge_action=default` 沿用目标分支的正常合并或队列行为，`bypass_rules=false` 保留规则检查。 [接口文档](https://docs.github.com/en/rest/pulls/pulls#merge-a-pull-request-asynchronously)
+
+```powershell
+# $repo 为 owner/repo，$pr 为 PR 编号，$expectedHead 为已审查的完整 HEAD SHA。
+gh api --include --method PUT "repos/$repo/pulls/$pr/merge-async" `
+  -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2026-03-10' `
+  -f "sha=$expectedHead" `
+  -f 'merge_method=merge' -f 'merge_action=default' -F 'bypass_rules=false'
+
+# 将响应中的 details.uuid 赋给 $uuid，再读取后台结果。
+gh api "repos/$repo/pulls/$pr/merge-async/$uuid" `
+  -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2026-03-10'
+```
+
+收到 `202` 后用返回的 UUID 轮询，`pending` 时继续等待。收到 `409` 时核对已有请求的 HEAD 与选项，匹配后沿用其 UUID。收到 `enqueued` 时继续跟踪 PR 队列。连接超时或收到 `502` 时，先回读 PR、远端 `main` 和已知 UUID 的状态，再决定是否提交新请求。后台返回 `failed` 时保留失败原因及 `X-GitHub-Request-Id`，按原因处理。
+
+2026-11-13 UTC，CP6 三个已就绪的 PR 在同步合并时收到 `502`。异步请求约 1 秒受理，轮询在约 9 至 25 秒读到 `merged`，三个合并提交均已在远端 `main` 核对。 [GitHub 超时说明](https://docs.github.com/en/rest/using-the-rest-api/troubleshooting-the-rest-api#timeouts) · [OIDC #1014](https://github.com/GTX537/CP6/pull/1014) · [手工凭证 #1016](https://github.com/GTX537/CP6/pull/1016) · [WMS 油墨 #1018](https://github.com/GTX537/CP6/pull/1018)
+
 合并后核对所属仓库远端main包含任务提交，必要冒烟完成后执行 `manage.ps1 finish`，定向处置任务分支/PR、固定席位留作复用并释放；临时树正常回收。登记DONE和交付必须含分支处置结果、工作区状态、席位是否释放；保留其他对话工作区。只完成一张任务卡不自动关闭目标；目标需其主体任务、原验收、修订场景和远端交付证据均满足。
 
 ## 可复制的交接消息
