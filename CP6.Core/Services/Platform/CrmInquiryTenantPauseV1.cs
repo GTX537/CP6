@@ -87,9 +87,8 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
         return FormattableString.Invariant($"{binding.StoreId:D}/{version}");
     }
 
-    // The caller holds the Main transaction for this C02 role source. CRM closes the old
-    // source under the same local locks as inquiry effects, before Main publishes the change.
-    internal async Task AdvanceRoleAsync(Guid tenant, string aggregate, int version, CancellationToken ct)
+    // CRM records the authority boundary while the Main source transaction is still open.
+    internal async Task AdvanceIdentityAsync(Guid tenant, string aggregate, int version, bool role, CancellationToken ct)
     {
         if (!bindings.TryGetValue(tenant, out var binding)) return;
         try
@@ -98,8 +97,10 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
             await using var tx = await db.BeginTransactionAsync(ct);
             await using var durability = new NpgsqlCommand("SET LOCAL synchronous_commit='on'", db, tx);
             await durability.ExecuteNonQueryAsync(ct);
-            await using var command = new NpgsqlCommand(
-                "SELECT crm_inquiry_tenant_pause_v1.advance_role_v1(@tenant,@store,@aggregate,@version)", db, tx);
+            var sql = role
+                ? "SELECT crm_inquiry_tenant_pause_v1.advance_role_v1(@tenant,@store,@aggregate,@version)"
+                : "SELECT crm_inquiry_tenant_pause_v1.advance_identity_v1(@tenant,@store,@aggregate,@version)";
+            await using var command = new NpgsqlCommand(sql, db, tx);
             command.Parameters.AddWithValue("tenant", tenant);
             command.Parameters.AddWithValue("store", binding.StoreId);
             command.Parameters.AddWithValue("aggregate", aggregate);

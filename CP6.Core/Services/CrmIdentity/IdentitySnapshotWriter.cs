@@ -180,8 +180,15 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
         var envelope = IdentityEventContracts.Create(tenant, aggregate, version, type, data,
             runtime.Options.Tenants[tenant], command, command, runtime.Clock);
         if (!runtime.Validator.Validate(envelope).IsValid) throw new InvalidOperationException("C02_IDENTITY_CONTRACT_INVALID");
-        if (previous is not null && runtime.InquiryFence is { } fence && aggregate.StartsWith("permission:role:", StringComparison.Ordinal))
-            await fence.AdvanceRoleAsync(tenant, aggregate, version, cancellationToken).ConfigureAwait(false);
+        if (db.Database.IsNpgsql() && runtime.InquiryFence is { } fence)
+        {
+            var role = IdentityEventContracts.IsPermissionChanged(type);
+            var versionedSource = role || IdentityEventContracts.IsUserChanged(type) || type == IdentityEventContracts.ServicePrincipalChanged;
+            var browserRevocation = IdentityEventContracts.IsTokenRevoked(type) &&
+                data["subjectId"]!.GetValue<string>().StartsWith("user:", StringComparison.Ordinal);
+            if (browserRevocation || previous is not null && versionedSource)
+                await fence.AdvanceIdentityAsync(tenant, aggregate, version, role, cancellationToken).ConfigureAwait(false);
+        }
         var snapshot = previous ?? new CrmIdentitySnapshot { TenantId = tenant, AggregateId = aggregate };
         snapshot.Version = version;
         snapshot.EventType = type;
