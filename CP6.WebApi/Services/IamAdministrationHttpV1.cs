@@ -14,14 +14,15 @@ public static class IamAdministrationHttpV1
 
     // Independent Owners supply their own DI scope so authentication reads use the same
     // fresh context and transaction as the business decision, including the final recheck.
-    internal static async Task<Guid> CurrentActor(HttpContext context,IServiceProvider services,CancellationToken ct)
+    internal static async Task<Guid> CurrentActor(HttpContext context,IServiceProvider services,CancellationToken ct,
+        bool allowImpersonation = false)
     {
         bool current;
         try { current=await AccessTokenAuthentication.IsCurrentAsync(services,context.User,ct); }
         catch(InvalidOperationException e) when(e.Message is "REAUTH_REQUIRED" or "AUTHENTICATION_DENIED" or "SSO_REQUIRED")
         { throw new IamAdministrationExceptionV1(401,"REAUTH_REQUIRED"); }
         var user=context.User;
-        if(!current || user.HasClaim(x=>x.Type=="impersonator_id") || user.FindFirstValue("must_change_password")!="false"
+        if(!current || (!allowImpersonation && user.HasClaim(x=>x.Type=="impersonator_id")) || user.FindFirstValue("must_change_password")!="false"
             || !long.TryParse(user.FindFirstValue("exp"),out var expires) || expires<=DateTimeOffset.UtcNow.ToUnixTimeSeconds()
             || !Guid.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier)??user.FindFirstValue("sub"),out var actor))
             throw new IamAdministrationExceptionV1(401,"REAUTH_REQUIRED");

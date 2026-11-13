@@ -1,6 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -52,6 +53,7 @@ public class DelegateController : LocalizedControllerBase
 
     [HttpPost("add")]
     [RequirePermission("oa-settings", "delegate")]
+    [WorkflowWriteAuthority]
     public async Task<IActionResult> Add([FromBody] AddDelegateReq r)
     {
         try
@@ -69,6 +71,7 @@ public class DelegateController : LocalizedControllerBase
 
     [HttpPost("remove")]
     [RequirePermission("oa-settings", "delegate")]
+    [WorkflowWriteAuthority]
     public async Task<IActionResult> Remove([FromBody] RemoveDelegateReq r)
     {
         try
