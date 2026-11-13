@@ -10,11 +10,12 @@ using CP6.Tests.Platform;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Xunit.Abstractions;
 
 namespace CP6.Tests.Erp;
 
 [Collection("TenantManagementPostgres")]
-public sealed partial class OrderPriceCorrectionPostgreSqlTests(TenantManagementPostgresFixture server)
+public sealed partial class OrderPriceCorrectionPostgreSqlTests(TenantManagementPostgresFixture server, ITestOutputHelper output)
 {
     private sealed class Workflow : IPowerEggWorkflowService
     {
