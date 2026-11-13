@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W520 Stock 原调整关闭恢复
+
+单笔 Stock ADJ 四张原生表和原队列同源导出，并在 PostgreSQL 一个事务导入。保留原流水、回执和 B 数据，关闭候选 worker 拒绝派送。正式 PostgreSQL 21 PASS / 6 NOT_RUN，原询盘 60/60。 [本任务](../development/evidence/W520-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W519 ERP 订单失败原件恢复
 
 真实 ERP Owner 原图在 PostgreSQL 关闭候选中按原键和原字节回读，B 保持。正式 PostgreSQL 21 PASS / 6 NOT_RUN，原询盘验收 60/60。 [本任务](../development/evidence/W519-01/DELIVERY.md)

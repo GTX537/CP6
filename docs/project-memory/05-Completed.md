@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-13 UTC · W520 单笔 Stock ADJ 原件
+
+新增 v11 同快照导出和关闭恢复。实际分事务拒绝、后段原生约束回滚、两套分配器与同键回执验证通过。 [本任务](../development/evidence/W520-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W519 ERP Order 关闭候选
 
 新增受控 Order 失败原件恢复配置，复用 ERP Owner 的原合同和请求摘要，保留现有 Partner 恢复配置。 [本任务](../development/evidence/W519-01/DELIVERY.md)
