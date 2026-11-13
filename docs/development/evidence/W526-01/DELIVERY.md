@@ -39,6 +39,7 @@ Main 四条直接引用及六份受影响锁文件升至0.10.4；还原保留 `N
 | 缺件/故障/未知提交 | 缺journal、缺外部资产拒绝；回执INSERT处注入数据库故障，A写入全部回滚且无成功回执；真实COMMIT后客户端丢答，recover及apply同键返回同一原字节 |
 | 同键并发与源较新 | 首次创建回执表的两次并发恢复只产生1条原回执；已新增业务的源明确拒绝，全部原行不变 |
 | ERP现行锁序 | 恢复在CommandInbox等待时未占Aggregate锁；持有者随后成功取得Aggregate FOR UPDATE NOWAIT，释放后恢复正常完成，A/B业务及全部ERP原件一致 |
+| 原消息大字段边界 | 恢复入口沿用既有对账CSV上限并在结束后恢复设置；2项解析边界回归通过。真实CommandInbox原Payload增加合法JSON空白后仍小于1MiB，默认CSV上限复现拒绝，修复后原字节哈希正确消费；此项为解析验证，不冒数据库/Owner业务执行 |
 
 本轮原始日志与自动驱动保存在 `D:/CP6-test-artifacts/W526-01/`：
 `build-tests-2g.log`、`probe-build.log`、`compile-scope.json`、`results/stock-and-auth.trx`、
@@ -61,6 +62,8 @@ effects pin `778bb5f72a0ebb016a288a4ff5265477a6c8f460fd34378b8c6381470158d764`�
 ## 审查、集成和剩余范围
 
 执行一次任务级SPEC/QUALITY集中审查，采用相关原生行为及差异检查。成功结果按相同代码/依赖输入复用，提交/合并SHA改变不重新冒称执行。源恢复入口的ERP锁序按现有C03入口校正；`erp-lock-order-01/actual.json`、`terminal.json`及`verify_erp_lock_order.py`保存定向原生验证，9.484秒、exit0、自有进程为空。没有因此重跑未受影响的Stock/HTTP全套。
+
+审查发现默认CSV字段上限缩小合法原消息输入（P2），已在负责入口复用原2,147,483,647上限，并显式转换CSV解析错误。`verify_live_recovery_csv.py`、`recovery-csv-regression-02.log`和`csv-real-original-boundary.json`保存定向回归；首轮漏import的实际失败保留在`recovery-csv-regression.log`。本地PowerShell入口另读取实际TRX，防止0用例或跳过被误报通过；使用本轮18项真实TRX核过解析和计数。
 
 按正常PR合并后核远端main包含全部任务提交，再关闭 [Main #844](https://github.com/GTX537/CP6/issues/844)。除用户这一次正式Platform发布，Main普通编译/测试均本地；工作流触发配置未改，不主动启动其他Actions。
 

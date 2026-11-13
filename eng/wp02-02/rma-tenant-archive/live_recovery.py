@@ -8,6 +8,7 @@ is a closed recovery, not permission to manufacture another Owner's effects.
 """
 
 import argparse
+import csv
 import json
 import os
 from pathlib import Path
@@ -399,7 +400,7 @@ def prepare_rows(args, output, tenant):
     (output / "rma-rows.sql").write_bytes(content)
 
 
-def execute(args):
+def _execute(args):
     args.pg_bin = args.pg_bin.resolve(strict=True)
     target = archive.PhysicalTarget.from_mapping(json.loads(args.target_file.read_text(encoding="utf-8-sig")))
     tenant, operation = archive.guid(args.tenant), archive.guid(args.operation)
@@ -475,6 +476,16 @@ def execute(args):
     return result
 
 
+def execute(args):
+    # Native bytea is hex in CSV. Keep the same accepted field size as the
+    # existing ERP/Stock reconciliation tools, including after bundle validation.
+    previous = csv.field_size_limit(2_147_483_647)
+    try:
+        return _execute(args)
+    finally:
+        csv.field_size_limit(previous)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     actions = parser.add_subparsers(dest="action", required=True)
@@ -494,7 +505,7 @@ def main():
     try:
         print(execute(args))
         return 0
-    except (RecoveryError, archive.ArchiveError, stage.StageError, OSError, ValueError, subprocess.SubprocessError) as error:
+    except (RecoveryError, archive.ArchiveError, stage.StageError, OSError, ValueError, csv.Error, subprocess.SubprocessError) as error:
         print(str(error), file=sys.stderr)
         if args.action == "apply":
             print("No success is claimed. Use recover with the original tenant and operation if the COMMIT reply is unknown.", file=sys.stderr)
