@@ -165672,6 +165672,11 @@
       "at": "2026-11-13T15:58:02.341015+00:00",
       "change": "W539 油墨 4 个现行写者采用 PostgreSQL 共同事务，混合及撤权两种顺序和部分写回滚实测通过。正式 PostgreSQL 26/27，原询盘 60/60。",
       "evidence": "docs/development/evidence/W539-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T18:03:10.654005+00:00",
+      "change": "W540 Main 租户暂停与 CRM 询盘配置的两种提交顺序及封存后恢复在两套 PostgreSQL 18.6 上通过。PGT-017 仍待其他写者，正式 26/27。",
+      "evidence": "docs/development/evidence/W540-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211678,10 +211683,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W539",
-      "path": "docs/development/evidence/W539-01/DELIVERY.md",
-      "baseline_sha": "4004fe606cae47c2bbdb0ded3882b63d9e0e52f9",
-      "registered_at": "2026-11-13T15:01:27.957650+00:00",
+      "id": "W540",
+      "path": "docs/development/evidence/W540-01/DELIVERY.md",
+      "baseline_sha": "5b7174b4b5f83e105b3a8360ab499995919fce83",
+      "registered_at": "2026-11-13T16:35:53.997340+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211695,41 +211700,53 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续核对其余 Main 写者与普通数据库角色，验证 Main/CRM 跨库协议。",
+      "next_action": "Continue PGT-017 with remaining native Main writers and extend the shared CRM commit fence to inquiry submission, intake, export and Main revocation authorities.",
       "windows": [
         {
-          "id": "W539-01",
-          "workspace_task": "W539-01",
+          "id": "W540-01",
+          "workspace_task": "W540-01",
           "related_tasks": [
             "WP02-03",
             "PGT-017"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT",
+          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w539-01",
-          "planned_scope_ref": "docs/development/evidence/W539-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W539-01/DELIVERY.md",
+          "branch": "codex/w540-01",
+          "planned_scope_ref": "docs/development/evidence/W540-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W540-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main WMS ink and matching HTTP writers",
-            "Main formal PostgreSQL acceptance and roadmap"
+            "Main tenant enablement and current CRM inquiry configuration permission",
+            "CRM native inquiry configuration Owner and identity lock profile",
+            "Main PostgreSQL acceptance and roadmap"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "5 项油墨并发用例，27 项 PostgreSQL、3 项油墨组件测试通过，撤权及混合失败回滚实测；本地发布 200/403/401。",
-          "remaining_scope": "PGT-017 全写者登记、其他 Main Owner 事务和数据库角色、Main/CRM 跨库提交协议仍待完成。",
-          "main_tested_source_sha": "61b7ec49b80e49a12e64c0fcaa0de82f2b925d51"
+          "validation_summary": "Independent PostgreSQL 18.6 on Main and CRM: 6 paired tests, Main 27 and CRM 49 related regressions. Isolated Main and CRM published HTTP smoke and matching file hashes.",
+          "remaining_scope": "Main remaining business writers and native roles. Other CRM effect writers and Main role/user/session/service revocation. Cross-store failover and recovery qualification. PGT-017 NOT_RUN.",
+          "main_tested_source_sha": "f4abf8cbc860c90d08a8f403d943cf325ed09d97",
+          "product_repository": "CP6.CRM",
+          "product_worktree": "D:/CP6-worktrees/dev-2",
+          "product_baseline": "a4890974b3dce2fa9e978a62d3cbcfeb1958bf91",
+          "product_branch": "codex/w540-01",
+          "product_source_sha": "01e96d07c659dda7b203f2ffb2b128032f9fd9d0",
+          "product_remote_main_sha": "974cb61b2ed630b9ef39eb363f27d1b76d1dc708",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/208",
+          "product_branch_disposition": "deleted-local-and-remote",
+          "product_workspace_status": "fixed-seat-detached-for-reuse",
+          "product_seat_released": true
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -262983,6 +263000,66 @@
             "main_tested_source_sha": "544f72f3349fc9e02860016f266be4393b938064",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1016",
             "main_remote_main_sha": "4004fe606cae47c2bbdb0ded3882b63d9e0e52f9"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W539",
+        "path": "docs/development/evidence/W539-01/DELIVERY.md",
+        "baseline_sha": "4004fe606cae47c2bbdb0ded3882b63d9e0e52f9",
+        "registered_at": "2026-11-13T15:01:27.957650+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续核对其余 Main 写者与普通数据库角色，验证 Main/CRM 跨库协议。",
+        "windows": [
+          {
+            "id": "W539-01",
+            "workspace_task": "W539-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w539-01",
+            "planned_scope_ref": "docs/development/evidence/W539-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W539-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main WMS ink and matching HTTP writers",
+              "Main formal PostgreSQL acceptance and roadmap"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "5 项油墨并发用例，27 项 PostgreSQL、3 项油墨组件测试通过，撤权及混合失败回滚实测；本地发布 200/403/401。",
+            "remaining_scope": "PGT-017 全写者登记、其他 Main Owner 事务和数据库角色、Main/CRM 跨库提交协议仍待完成。",
+            "main_tested_source_sha": "61b7ec49b80e49a12e64c0fcaa0de82f2b925d51",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1018",
+            "main_remote_main_sha": "a2c4c2566c10f349d2787122deb4c84e5981d6fc"
           }
         ],
         "storage": {

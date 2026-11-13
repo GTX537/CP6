@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W540 PGT-017 余项
+
+继续核对 Main 空间、OA/工作流、财务、采购与 Stock 普通角色，补齐 CRM 公开提交、受理、导出和维护等写者及 Main 角色、用户、会话、服务授权的跨库撤销。 [本任务](../development/evidence/W540-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W539 PGT-017 余项
 
 继续核对待采用的 Main 写者、普通数据库角色，以及 Main/CRM 等价跨库提交协议。 [本任务](../development/evidence/W539-01/DELIVERY.md)

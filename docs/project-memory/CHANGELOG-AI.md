@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W540 跨库暂停与配置
+
+Main 已登记租户暂停前取得 CRM 持久封存回执。CRM 配置 Owner 在原事务核对同一存储和版本。6 项两仓联验、76 项相关回归通过，PGT-017 继续 NOT_RUN。 [本任务](../development/evidence/W540-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W539 油墨创建、开封、混合、配色
 
 保留原动作键和数量精度，现行 PostgreSQL HTTP 写者经共同根进入同一 Core 事务。27 项 PostgreSQL 和 3 项组件测试通过。 [本任务](../development/evidence/W539-01/DELIVERY.md)
