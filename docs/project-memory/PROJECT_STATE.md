@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W534 财务、采购及计划主数据写入
+
+资产分类、手工供应商价表、品目策略的 7 条写者接入共同根并实测。正式 PostgreSQL 26/27，PGT-017 仍有余项。 [本任务](../development/evidence/W534-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W533 旧单任务审批与撤权
 
 旧审批共用 PostgreSQL 事务根，真实 IAM 撤权两种提交顺序通过。PGT-017 仍待核销其他写者，正式 PostgreSQL 26/27，原询盘 60/60。 [本任务](../development/evidence/W533-01/DELIVERY.md)
