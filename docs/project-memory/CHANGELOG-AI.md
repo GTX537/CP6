@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W542 公开入口采用租户暂停栅栏
+
+Main 在线服务许可携带当前租户版本，CRM 公开 attempt 签发与新业务提交共用已登记存储的 C02 事务栅栏。两仓本地发布和定向回归通过。 [本任务](../development/evidence/W542-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W541 连接体、模板与手动分析
 
 11 个现行 HTTP 写入口在请求 Core 事务中使用 Main 认证根。修复前复现 14 项，修复后 48 项通过。 [本任务](../development/evidence/W541-01/DELIVERY.md)
