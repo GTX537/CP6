@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W547 服务登记撤销验证
+
+对已合入的服务来源封存补齐实际发布器与 CRM 导出两库用例。 [本任务](../development/evidence/W547-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W546 用户源和会话封存
 
 Main 在提交 C02 用户、浏览器 grant 撤销及服务主体变更前封存对应来源，CRM 在业务事务内使用已验证的身份版本和会话标识。 [本任务](../development/evidence/W546-01/DELIVERY.md)

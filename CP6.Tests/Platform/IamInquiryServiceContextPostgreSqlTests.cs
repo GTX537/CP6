@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.CrmIdentity;
+using CP6.Core.Services.Platform;
 using CP6.WebApi.Services;
 using CP6.Platform.Messaging;
 using CP6.Platform.EntityFramework;
@@ -17,10 +18,10 @@ namespace CP6.Tests.Platform;
 public sealed partial class IamUserAssignmentsPostgreSqlTests
 {
     private static string ServiceNonce() => Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)).TrimEnd('=').Replace('+','-').Replace('/','_');
-    private static CrmIdentityRuntime ContextRuntime(Guid tenant, string issuer)
+    private static CrmIdentityRuntime ContextRuntime(Guid tenant, string issuer, CrmInquiryTenantPauseV1? fence = null)
     {
         var options=new CrmIdentityOptions { Enabled=true,Issuer=issuer,ProjectionReaderClientIds=["fixture-reader"] };
-        options.Tenants.Add(tenant,"us");return new(options,new IdentityEventValidator(Cp6ContractBundle.Load(Path.Combine(AppContext.BaseDirectory,"contracts/events/platform")),issuer));
+        options.Tenants.Add(tenant,"us");return new(options,new IdentityEventValidator(Cp6ContractBundle.Load(Path.Combine(AppContext.BaseDirectory,"contracts/events/platform")),issuer), inquiryFence: fence);
     }
     private static bool ContextSignature(JsonObject body, string publicKey, string domain="cp6-inquiry-service-context-v1")
     {

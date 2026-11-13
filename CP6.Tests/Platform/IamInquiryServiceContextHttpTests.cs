@@ -48,7 +48,12 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     public Task PGT017_Main_role_revocation_and_CRM_export_commit()
         => ServiceContextHttp(false, privacy: true, tenantPause: true, roleRevocation: true);
 
-    private async Task ServiceContextHttp(bool retention, bool privacy = false, bool tenantPause = false, bool roleRevocation = false)
+    [Pgt017MainFact]
+    public Task PGT017_Main_service_registration_revocation_and_CRM_export_commit()
+        => ServiceContextHttp(false, privacy: true, tenantPause: true, serviceRevocation: true);
+
+    private async Task ServiceContextHttp(bool retention, bool privacy = false, bool tenantPause = false,
+        bool roleRevocation = false, bool serviceRevocation = false)
     {
         var project=Environment.GetEnvironmentVariable("CP6_CRM_CROSS_PROJECT")??throw new InvalidOperationException("Owned CRM project required; no skip");
         var output=Environment.GetEnvironmentVariable("CP6_SERVICE_CONTEXT_OUTPUT")!;var folder=Path.GetDirectoryName(output)!;
@@ -149,11 +154,25 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                     var prefix = $"CrmInquiryTenantPause__Tenants__{h.Tenant:D}__";
                     environment[prefix + "StoreId"] = storeId!.Value.ToString("D");
                     environment[prefix + "ConnectionString"] = sealConnection!;
-                    await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, environment);
-                    if (roleRevocation) await ExerciseCrmExportRoleRevocation(host, h, stageDirectory!, child.WaitForExitAsync(timeout.Token));
-                    else await ExerciseCrmTenantPause(host, h, stageDirectory!, publicSubmission: true, childExited: child.WaitForExitAsync(timeout.Token));
+                    var exited = child.WaitForExitAsync(timeout.Token);
+                    if (serviceRevocation)
+                    {
+                        var subject = config.Source.Registrations.Single().SubjectId;
+                        config.Source.Version = "owned-revoked-v2";
+                        config.Source.IdentityPublicationRevision = 2;
+                        config.Source.Registrations.Clear();
+                        var removed = new InquiryServicePrincipalRegistryV1(config.Source, config.Oidc);
+                        await ExerciseCrmExportServiceRevocation(h, stageDirectory!, exited, subject,
+                            removed, ContextRuntime(h.Tenant, options.Issuer, binding));
+                    }
+                    else
+                    {
+                        await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, environment);
+                        if (roleRevocation) await ExerciseCrmExportRoleRevocation(host, h, stageDirectory!, exited);
+                        else await ExerciseCrmTenantPause(host, h, stageDirectory!, publicSubmission: true, childExited: exited);
+                    }
                     using var revoked = await Send(command with { RequestNonce = ServiceNonce() }, ServiceBasic().ToString());
-                    Assert.Equal(HttpStatusCode.Forbidden, revoked.StatusCode);
+                    Assert.Equal(serviceRevocation ? HttpStatusCode.ServiceUnavailable : HttpStatusCode.Forbidden, revoked.StatusCode);
                 }
                 await child.WaitForExitAsync(timeout.Token);
             }

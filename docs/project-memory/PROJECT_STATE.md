@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W547 Main 服务登记撤销
+
+服务登记撤销与 CRM 导出在独立 PostgreSQL 通过两种提交顺序。正式 PostgreSQL 26/27。 [本任务](../development/evidence/W547-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W546 Main 用户和 OIDC 会话撤权
 
 用户禁用和 OIDC 会话撤销与 CRM 人工受理通过两种提交顺序。正式 PostgreSQL 26/27。 [本任务](../development/evidence/W546-01/DELIVERY.md)

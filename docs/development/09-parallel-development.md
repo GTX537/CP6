@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W547 实际 Main 服务登记撤销与 CRM 导出通过两种提交顺序。正式 PostgreSQL 仍为 26/27。 [本任务](evidence/W547-01/DELIVERY.md)
+
 > W546 完成 Main 用户禁用和 OIDC 会话撤销与 CRM 人工受理的两库联验。正式 PostgreSQL 仍为 26/27。 [本任务](evidence/W546-01/DELIVERY.md)
 
 > W545 实测 Main 角色导出撤权与 CRM 生成制品的两种顺序，正式 PostgreSQL 仍为 26/27。 [本任务](evidence/W545-01/DELIVERY.md)
