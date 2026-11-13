@@ -1,5 +1,6 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,6 +30,7 @@ public class InkController : ControllerBase
 
     [HttpPost("lots")]
     [RequirePermission("wms-ink", "add")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> CreateLot([FromBody] InkLotDto dto)
     {
         try
@@ -41,6 +43,7 @@ public class InkController : ControllerBase
 
     [HttpPost("lots/{no}/open")]
     [RequirePermission("wms-ink", "open")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> OpenLot(string no, [FromBody] OpenRequest req)
     {
         try { await _svc.OpenLotAsync(no, req?.NewExpiryDate, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
@@ -49,6 +52,7 @@ public class InkController : ControllerBase
 
     [HttpPost("lots/mix")]
     [RequirePermission("wms-ink", "mix")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Mix([FromBody] MixInkRequest req)
     {
         try
@@ -65,6 +69,7 @@ public class InkController : ControllerBase
 
     [HttpPost("matches")]
     [RequirePermission("wms-ink", "add")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> RecordMatch([FromBody] InkColorMatchDto dto)
     {
         try
