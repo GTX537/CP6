@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W549 公开表单签发与自然到期
+
+CRM 已在 PostgreSQL 提交阶段复核期限。三种数据库等待通过，正式 PostgreSQL 26/27。 [本任务](../development/evidence/W549-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W548 租户有效期与 CRM 事务
 
 Main 缩短租户有效期与 CRM 导出在独立 PostgreSQL 通过两种提交顺序。正式 PostgreSQL 26/27。 [本任务](../development/evidence/W548-01/DELIVERY.md)
