@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W549 公开表单签发期限
+
+CRM 新签发保存当前权威期限，由 PostgreSQL 提交阶段复核。 [本任务](../development/evidence/W549-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W548 租户有效期
 
 Main 在租户有效期版本生效前封存 CRM 的旧版本，补齐实际两库竞争和已暂停租户保护。 [本任务](../development/evidence/W548-01/DELIVERY.md)

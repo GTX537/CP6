@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W549 实测 CRM 公开表单签发跨过租户到期后的拒绝。正式 PostgreSQL 仍为 26/27。 [本任务](evidence/W549-01/DELIVERY.md)
+
 > W548 实际 Main 有效期变更与 CRM 导出通过两种提交顺序。正式 PostgreSQL 仍为 26/27。 [本任务](evidence/W548-01/DELIVERY.md)
 
 > W547 实际 Main 服务登记撤销与 CRM 导出通过两种提交顺序。正式 PostgreSQL 仍为 26/27。 [本任务](evidence/W547-01/DELIVERY.md)
