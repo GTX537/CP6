@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W554 询盘范围撤权
+
+Main 精确站点与表单撤权和 CRM 导出通过两种提交顺序，独立服务令牌目录的本库控制也通过。正式 PostgreSQL 26/27，PGT-017 待核销。 [交付](../development/evidence/W554-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W553 定时 ABC 栅栏
 
 Main 定时 ABC 快照已接入租户暂停事务根，两种 PostgreSQL 提交顺序通过。正式 PostgreSQL 26/27，PGT-017 待核销。 [交付](../development/evidence/W553-01/DELIVERY.md)

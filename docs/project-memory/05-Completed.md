@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-13 UTC · W554 询盘范围撤权提交
+
+验证 CRM 先提交保留原制品，Main 范围撤权先提交拒绝旧授权。保留的站点表单组合在 Main 仍能签发。 [交付](../development/evidence/W554-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W553 定时 ABC 快照
 
 隔离 PostgreSQL 验证快照先提交保留，暂停先提交无新快照。50 项定向检查通过。 [交付](../development/evidence/W553-01/DELIVERY.md)
