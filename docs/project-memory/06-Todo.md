@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W550 PGT-017 余项
+
+原生控制或直接 SQL、Main 其他独立写者、两库中断和恢复仍待验收。 [本任务](../development/evidence/W550-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W549 PGT-017 余项
 
 部门变更、独立原生控制或直接 SQL、Main 其他写者及两库恢复仍待核对。 [本任务](../development/evidence/W549-01/DELIVERY.md)
