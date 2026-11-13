@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W524 实测源身份处置关闭候选，独立再批准重施撤销；候选只登记 A 的 RMA 绑定时，A 读回、B 源读取及 B 候选拒绝均通过。 [本任务](evidence/W524-01/DELIVERY.md)
+
 > W523 同 v11 实测源 IAM 撤销、ERP 原键 Pending 到 Published 对账和候选 Stock 派送拒绝。Stock 源端正式包仍受 #844 约束。 [本任务](evidence/W523-01/DELIVERY.md)
 
 > W522 在 W521 四域组合候选停机副本实际走源端独立批准、普通 RMA 读回和源隐私纪元更新后拒绝，原候选与队列保留。 [本任务](evidence/W522-01/DELIVERY.md)

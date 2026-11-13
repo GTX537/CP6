@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W524 候选身份处置重施与 RMA 绑定
+
+源处置推进隐私纪元，候选先关闭，再批准后撤销原候选会话。A 专用候选 RMA 绑定、B 源读取及 B 缺绑定拒绝通过。正式 PostgreSQL 21 PASS / 6 NOT_RUN，原询盘 60/60。 [本任务](../development/evidence/W524-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W523 现行 IAM 和投递对账
 
 源端普通 IAM 实际拒绝已签发访问和刷新凭据，B 保持。ERP 同键识别当前 Published，Stock 源端遇 #844，候选保持零派送。正式 PostgreSQL 21 PASS / 6 NOT_RUN，原询盘 60/60。 [本任务](../development/evidence/W523-01/DELIVERY.md)
