@@ -308,13 +308,19 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     public Task PGT017_human_inquiry_mutation_and_Main_pause_commit()
         => InquiryProducerHttp(Environment.GetEnvironmentVariable("CP6_PGT017_HUMAN_PURPOSE")!, humanContext: true, crossDatabasePause: true);
 
-    private async Task InquiryProducerHttp(string purpose, bool humanContext=false, bool crossDatabasePause=false)
+    [Pgt017MainFact]
+    public Task PGT017_human_inquiry_mutation_and_Main_user_or_session_revocation_commit()
+        => InquiryProducerHttp("intake:reject", humanContext: true, crossDatabasePause: true,
+            revocation: Environment.GetEnvironmentVariable("CP6_PGT017_REVOKER")!);
+
+    private async Task InquiryProducerHttp(string purpose, bool humanContext=false, bool crossDatabasePause=false, string? revocation=null)
     {
         await using var h = await Seed(); var intake = purpose.StartsWith("intake:", StringComparison.Ordinal);
         var consent = purpose == "privacy:consent-withdraw";
         var privacy = purpose is "privacy:export" or "privacy:download";
         var humanPause = humanContext && crossDatabasePause;
         var pair = privacy ? await GrantPrivacy(h) : consent ? await GrantConsent(h) : intake ? await GrantIntake(h) : (await GrantInquiry(h))[0]; var options = InquiryPermissionSigningTests.Options();
+        if (revocation == "user") await SeedInquiryUserRevoker(h);
         if(humanContext)
         {
             (await h.Db.Sys_Users.SingleAsync(x=>x.Id==h.ActorId)).AuthenticationEpoch=Guid.NewGuid();await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
@@ -330,6 +336,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         environment["CrmOidc__Issuer"] = options.Issuer;
         environment["CrmOidc__Clients__0__SecretSha256"] = CrmOidcCrypto.Hash(clientSecret);
         environment["CrmOidc__Clients__0__RedirectUris__0"] = redirect;
+        if (revocation == "session") environment["CrmOidc__Clients__0__PostLogoutRedirectUris__0"] = InquirySignedOut;
         environment["CrmOidc__TrustedTokenProxyAddresses__0"] = "127.0.0.1";
         environment["InquiryPermissionSigning__Enabled"] = "true";
         environment["InquiryPermissionSigning__Issuer"] = options.Issuer; environment["InquiryPermissionSigning__KeyId"] = options.KeyId;
@@ -421,7 +428,10 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             {
                 try
                 {
-                    if (humanPause) await ExerciseCrmTenantPause(host, h, bridgeDirectory, waitForCompletePause: true);
+                    if (revocation is not null)
+                        await ExerciseInquiryUserOrSessionRevocation(host, h, bridgeDirectory, revocation,
+                            tokenBody.RootElement.GetProperty("id_token").GetString()!, cookies, clientSecret, options.Issuer);
+                    else if (humanPause) await ExerciseCrmTenantPause(host, h, bridgeDirectory, waitForCompletePause: true);
                     else await ExerciseCrmTenantPause(host, h, bridgeDirectory);
                 }
                 finally { File.Delete(Path.Combine(bridgeDirectory, "session.json")); }

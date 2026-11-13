@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W546 PGT-017 余项
+
+继续核对实际服务登记撤权、部门、租户自然到期、直接 SQL、两库恢复及 Main 独立事务。 [本任务](../development/evidence/W546-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W545 PGT-017 余项
 
 用户、会话、服务主体、部门、自然到期、直接 SQL 和跨库故障恢复仍待验收。继续核对 Main 其余独立业务事务。 [本任务](../development/evidence/W545-01/DELIVERY.md)

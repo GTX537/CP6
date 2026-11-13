@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W546 用户源和会话封存
+
+Main 在提交 C02 用户、浏览器 grant 撤销及服务主体变更前封存对应来源，CRM 在业务事务内使用已验证的身份版本和会话标识。 [本任务](../development/evidence/W546-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W545 角色权限版本
 
 Main 提交新角色快照前先在 CRM 原 C02 锁下持久化角色最低版本，CRM 在 Owner 事务中的新效果前核对当前角色来源。 [本任务](../development/evidence/W545-01/DELIVERY.md)
