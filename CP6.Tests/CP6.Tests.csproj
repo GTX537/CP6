@@ -7,6 +7,10 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
+  <ItemGroup Condition="'$(Cp6PostgreSqlDevelopment)' == 'true'">
+    <Compile Remove="Persistence/OrderModelForeignKeyRepairTests.cs;Persistence/OrderModelIndexRepairTests.cs;Persistence/QuotationAuditColumnCapacityRepairTests.cs;Space/SpaceRetryLeaseMigrationTests.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.30" />

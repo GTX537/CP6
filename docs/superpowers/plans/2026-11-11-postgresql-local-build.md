@@ -10,7 +10,7 @@
 
 ---
 
-计划状态：**未实施**。本轮W490只核对源码/依赖并编排本计划。[原构建及组件验证范围](../../development/evidence/W482-01/DELIVERY.md)、[本轮结算](../../development/evidence/W490-01/DELIVERY.md)。它不是默认完整构建成功证明，也不改变正式候选、发布或部署权限。
+计划状态：**W526-01 已实施并验证**。已加入显式属性与本地入口；Tests（包含当前 WebApi）及兼容性 Probe 编译通过，18项相关原生测试通过。1 GiB heap 在分析器阶段失败后改用2 GiB，未关闭分析器；默认编译输入及全部253个 PostgreSQL 编译项保持。实际结果见[W526报告](../../development/evidence/W526-01/DELIVERY.md)。以下保留原计划；它不证明默认全量构建或生产候选通过。[原构建范围](../../development/evidence/W482-01/DELIVERY.md)、[W490结算](../../development/evidence/W490-01/DELIVERY.md)。
 
 ## 任务与准入
 

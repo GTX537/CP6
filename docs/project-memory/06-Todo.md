@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W526 剩余5项正式 PostgreSQL 验收
+
+剩余 PGT-011、017、022、024、025。优先接续022的合法route epoch生命周期与旧消息恢复、024的实际双模型兼容/回退；其余按原卡真实Owner范围验证。PGT-021和#844正式包采用不再列为前置阻塞，永久A/B双库路由不是原同库恢复要求。 [本任务](../development/evidence/W526-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W525 PGT-021 切换余项
 
 继续权威租户目录、统一入口和源端写入排空，补普通 IAM 跨库权威、更多 Owner 原件及非空共享依赖。Stock #844 正式采用后复测同源 Published，PGT-022 和 PGT-024 按原合同。 [本任务](../development/evidence/W525-01/DELIVERY.md)

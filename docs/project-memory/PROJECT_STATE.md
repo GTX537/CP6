@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W526 同库恢复验收完成
+
+PGT-021 PASS；正式 PostgreSQL 22 PASS / 5 NOT_RUN，原询盘60/60。A 原业务、当前权限和消息事实保持，B 并发读写通过。已正式采用签名 Platform 0.10.4，Stock 原 Pending 正常派送；18项相关测试通过。生产部署未执行。 [本任务](../development/evidence/W526-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W525 出库原件与候选 RMA 写入
 
 出库头、明细、原 RowVersion 和四份 v11 投影对齐。候选普通角色实测草稿、提交、同键回放和认证锁等待，源端 B 保持自己的访问。正式 PostgreSQL 21 PASS / 6 NOT_RUN，原询盘 60/60。 [本任务](../development/evidence/W525-01/DELIVERY.md)
