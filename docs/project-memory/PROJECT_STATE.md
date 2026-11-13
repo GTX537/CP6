@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W538 手工凭证提交栅栏
+
+财务手工凭证 5 个写入口完成定向 PostgreSQL 实测。正式 26/27，PGT-017 还有其他写者。 [本任务](../development/evidence/W538-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W537 OIDC 会话族撤销
 
 Main OIDC 与正常业务共用根，原会话族及身份 Outbox 证据已实测。正式 PostgreSQL 26/27。 [本任务](../development/evidence/W537-01/DELIVERY.md)
