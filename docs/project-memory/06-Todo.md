@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W519 WP02-02 恢复后续
+
+补同源 Stock 单笔 ADJ 的原生库存、流水与序号，核对原 journal 和首次 Pending 由一个目标事务写入。完整 A 恢复、当前路由纪元恢复和双模型兼容矩阵继续各自范围。 [本任务](../development/evidence/W519-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W518 WP02-02 恢复与版本后续
 
 继续同源 ERP Order 失败原图和 Stock 完整业务恢复。PGT-022 需受控恢复入口读取当前路由纪元；PGT-024 需正式兼容矩阵和实际双模型绑定。 [本任务](../development/evidence/W518-01/DELIVERY.md)

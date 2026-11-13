@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-13 UTC · W519 ERP Order 关闭候选
+
+新增受控 Order 失败原件恢复配置，复用 ERP Owner 的原合同和请求摘要，保留现有 Partner 恢复配置。 [本任务](../development/evidence/W519-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W518 PGT-024 同库真实新旧宿主
 
 两个经核对的 Main 制品同库实际并行；旧写者无旁路，当前数据可由兼容旧读路径读取。 [本任务](../development/evidence/W518-01/DELIVERY.md)

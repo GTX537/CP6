@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W519 ERP 订单失败原件恢复
+
+真实 ERP Owner 原图在 PostgreSQL 关闭候选中按原键和原字节回读，B 保持。正式 PostgreSQL 21 PASS / 6 NOT_RUN，原询盘验收 60/60。 [本任务](../development/evidence/W519-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W518 PGT-024 同库真实新旧宿主
 
 旧宿主实际读取 B、新宿主实际写入 A。旧写入被拒且无普通业务 SQL，停新版后旧版能读原数据，四份迁移历史保持。正式 PostgreSQL 21 PASS / 6 NOT_RUN。 [本任务](../development/evidence/W518-01/DELIVERY.md)

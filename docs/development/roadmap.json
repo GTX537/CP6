@@ -165567,6 +165567,11 @@
       "at": "2026-11-13T00:10:12.381905+00:00",
       "change": "W518 补 PGT-024 同库真实新旧 RMA 宿主并行、旧写者拒绝和实际回退读取；正式 PostgreSQL 仍 21 PASS / 6 NOT_RUN。",
       "evidence": "docs/development/evidence/W518-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T00:39:18.323905+00:00",
+      "change": "W519 用真实 PostgreSQL ERP Owner 的 OrderFailed 原件验证关闭候选导入、精确回执和 Partner 兼容。正式 PostgreSQL 21 PASS / 6 NOT_RUN。",
+      "evidence": "docs/development/evidence/W519-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211453,10 +211458,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W518",
-      "path": "docs/development/evidence/W518-01/DELIVERY.md",
-      "baseline_sha": "49ec9af45c82ee80d1bbb6478809a1db42ccb77f",
-      "registered_at": "2026-11-13T00:09:52.880791+00:00",
+      "id": "W519",
+      "path": "docs/development/evidence/W519-01/DELIVERY.md",
+      "baseline_sha": "582d8e66e0e2295a6e51c962b1fb55ccaf968bc5",
+      "registered_at": "2026-11-13T00:13:17.617794+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211470,14 +211475,13 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "从现有关闭候选继续 ERP Order 终态失败原件恢复；Stock 完整业务账恢复与批准切换另做，精确区分现有派送问题和路由 epoch 采用。",
+      "next_action": "下一窗补 W477 单笔 Stock ADJ 的同快照四张原生账及关闭候选整事务恢复，继续保留原流水、序号和 B 租户。PGT-022 另接当前纪元恢复入口，PGT-024 另定义真实第二模型和共享最低版本。",
       "windows": [
         {
-          "id": "W518-01",
-          "workspace_task": "W518-01",
+          "id": "W519-01",
+          "workspace_task": "W519-01",
           "related_tasks": [
-            "WP02-02",
-            "WP02-28"
+            "WP02-02"
           ],
           "chat": "COORD",
           "mode": "SINGLE_CHAT",
@@ -211485,37 +211489,30 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w518-01",
-          "planned_scope_ref": "docs/development/evidence/W518-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W518-01/DELIVERY.md",
+          "branch": "codex/w519-01",
+          "planned_scope_ref": "docs/development/evidence/W519-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W519-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "Main:rma-mixed-version-native-verification"
+            "Main:erp-closed-restore-profile"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Actual PostgreSQL 18.6 and two pinned hosted applications. Concurrent authorized B older read 200/A newer write 201, original same key, old write 503 before tenant SQL, both read after newer stop, four histories unchanged.",
-          "remaining_scope": "PGT-024 approved dual-model bindings, release compatibility matrix and shared minimum version not proven. PGT-022 needs authorized old route epoch recovery check; Stock 0.10.4 guard package is independent.",
-          "integration_workspace_task": "W518-VERIFY",
-          "integration_worktree": "D:/CP6-worktrees/s02-00-20261012",
-          "integration_tested_source_sha": "7783e38adc59b8213e0c1257d06ae102a274cf81",
-          "integration_validation_outcome": "verified",
-          "integration_branch_disposition": "no-task-branch",
-          "integration_workspace_status": "fixed-seat-detached-for-reuse",
-          "integration_seat_released": true
+          "validation_summary": "PostgreSQL 18.6 and rebuilt ERP Owner produce A/B OrderFailed originals; 41-member v11 and eight ERP byte readbacks, exact 711-byte recovery and repeat receipt, native late 23505 rollback, unchanged B and default Partner receipt readable by the old CLI, exact decimal scale and maximum.",
+          "remaining_scope": "PGT-021 needs the same-snapshot Stock native effect rows, broader ERP graphs, full single-tenant recovery and approved admission. PGT-022 needs the current production-shaped route-epoch restore entry. PGT-024 needs adopted distinct tenant models and the shared compatibility matrix.",
+          "main_tested_source_sha": "5f90276636bd94e49842a30eae158e3b5873b033"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "D:/CP6-worktrees/s02-00-20261012"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
-      "product_integrated": false
+      "product_integrated": true
     },
     "wave_history": [
       {
@@ -261492,6 +261489,73 @@
           "new_worktrees": 0
         },
         "product_integrated": true
+      },
+      {
+        "id": "W518",
+        "path": "docs/development/evidence/W518-01/DELIVERY.md",
+        "baseline_sha": "49ec9af45c82ee80d1bbb6478809a1db42ccb77f",
+        "registered_at": "2026-11-13T00:09:52.880791+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "从现有关闭候选继续 ERP Order 终态失败原件恢复；Stock 完整业务账恢复与批准切换另做，精确区分现有派送问题和路由 epoch 采用。",
+        "windows": [
+          {
+            "id": "W518-01",
+            "workspace_task": "W518-01",
+            "related_tasks": [
+              "WP02-02",
+              "WP02-28"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w518-01",
+            "planned_scope_ref": "docs/development/evidence/W518-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W518-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "Main:rma-mixed-version-native-verification"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Actual PostgreSQL 18.6 and two pinned hosted applications. Concurrent authorized B older read 200/A newer write 201, original same key, old write 503 before tenant SQL, both read after newer stop, four histories unchanged.",
+            "remaining_scope": "PGT-024 approved dual-model bindings, release compatibility matrix and shared minimum version not proven. PGT-022 needs authorized old route epoch recovery check; Stock 0.10.4 guard package is independent.",
+            "integration_workspace_task": "W518-VERIFY",
+            "integration_worktree": "D:/CP6-worktrees/s02-00-20261012",
+            "integration_tested_source_sha": "7783e38adc59b8213e0c1257d06ae102a274cf81",
+            "integration_validation_outcome": "verified",
+            "integration_branch_disposition": "no-task-branch",
+            "integration_workspace_status": "fixed-seat-detached-for-reuse",
+            "integration_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/986",
+            "main_remote_main_sha": "582d8e66e0e2295a6e51c962b1fb55ccaf968bc5"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/s02-00-20261012"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": false
       }
     ],
     "development_priority": {

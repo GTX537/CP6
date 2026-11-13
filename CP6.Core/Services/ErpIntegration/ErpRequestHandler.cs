@@ -1,5 +1,4 @@
 using System.Data;
-using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
@@ -287,15 +286,9 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
             var data = root.GetProperty("data");
             var bp = type == ErpEventContracts.BusinessPartnerRequested ? data.Deserialize<ErpBusinessPartnerRequested>(ErpEventContracts.Json) : null;
             var order = type == ErpEventContracts.OrderRequested ? data.Deserialize<ErpOrderRequested>(ErpEventContracts.Json) : null;
-            // A numerically identical amount retains the same command identity across
-            // JSON serializers and SQL decimal scales (300 and 300.00 are one request).
-            object input = bp is not null ? bp : new
-            {
-                order!.TenantId, order.RequestId, order.AccountId, order.RequestVersion, order.OpportunityId,
-                order.BusinessPartnerKey, order.QuotationKey, order.QuotationVersion,
-                ExpectedAmount = order.ExpectedAmount.ToString("G29", CultureInfo.InvariantCulture), order.Currency
-            };
-            var hash = ErpEventContracts.Hash(JsonSerializer.SerializeToUtf8Bytes(input, input.GetType(), ErpEventContracts.Json));
+            var hash = bp is not null
+                ? ErpEventContracts.Hash(JsonSerializer.SerializeToUtf8Bytes(bp, ErpEventContracts.Json))
+                : ErpEventContracts.OrderInputSha256(order!);
             return new(data.GetProperty("tenantId").GetGuid(), data.GetProperty("requestId").GetGuid(),
                 data.GetProperty("accountId").GetGuid(), data.GetProperty("requestVersion").GetInt32(),
                 root.GetProperty("aggregateid").GetGuid(), root.GetProperty("aggregateversion").GetInt32(),

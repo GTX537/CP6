@@ -4,6 +4,9 @@ using System.Text.Json.Serialization;
 using CP6.Core.Persistence.Tenancy;
 using Npgsql;
 
+if (args is ["inspect-erp-order-original-v1", "--stdin"] && Console.IsInputRedirected)
+    return await ErpOrderOriginalInspection.RunAsync();
+
 // No arbitrary connection string, default business connection, password argument, or startup hook.
 var serviceToken = args.SequenceEqual(["install-service-token-v1", "--stdin"]);
 var revocation = args.SequenceEqual(["install-service-revocation-v1", "--stdin"]);
