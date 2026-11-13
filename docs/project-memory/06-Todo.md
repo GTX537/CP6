@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W536 PGT-017 余项
+
+继续核对其余 Main 业务事务、refresh 注销即时信号、OIDC 族锁序、普通数据库角色及 Main 与 CRM 新效果之间的等价共同协议。 [本任务](../development/evidence/W536-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W535 PGT-017 余项
 
 继续核对原 Owner 事务、原生角色及 Main 暂停与 CRM 新效果的跨库等价协议。原询盘 60/60。 [本任务](../development/evidence/W535-01/DELIVERY.md)

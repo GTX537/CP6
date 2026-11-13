@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W536 仅访问令牌注销采用共同栅栏
+
+精确签发撤销标记与审计同事务。30 项 PostgreSQL 验证通过，原询盘 60/60。 [本任务](../development/evidence/W536-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W535 订单取号纳入栅栏
 
 订单取号与实际暂停的两种顺序已覆盖。37 项回归通过，正式矩阵 26/27。 [本任务](../development/evidence/W535-01/DELIVERY.md)

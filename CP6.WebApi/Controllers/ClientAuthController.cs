@@ -400,6 +400,13 @@ public sealed partial class ClientAuthController : ControllerBase
     public async Task<IActionResult> Logout(NativeLogoutRequest request)
     {
         ValidateClient(request.Client);
+        var reason = ClientReason(request.Client, "logout");
+        if (_db.Database.IsNpgsql() && string.IsNullOrWhiteSpace(request.RefreshToken))
+        {
+            await AccessLogoutHttpV1.RevokeAsync(_db, HttpContext, reason);
+            return Ok(new { code = 0, message = "OK" });
+        }
+
         var jti = User.FindFirst("jti")?.Value;
         if (!string.IsNullOrEmpty(jti))
         {
@@ -420,7 +427,7 @@ public sealed partial class ClientAuthController : ControllerBase
             : (Guid?)null;
         await _audit.LogAsync(
             SecurityEventType.Logout, userId, User.Identity?.Name, null,
-            ClientIp, ClientUa, ClientReason(request.Client, "logout"));
+            ClientIp, ClientUa, reason);
         return Ok(new { code = 0, message = "OK" });
     }
 

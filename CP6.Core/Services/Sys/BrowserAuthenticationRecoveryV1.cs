@@ -40,7 +40,8 @@ public sealed class BrowserAuthenticationRecoveryV1(CP6Context db)
         if (!db.Database.IsNpgsql() || string.IsNullOrEmpty(accessJti)) throw new InvalidOperationException("REAUTH_REQUIRED");
         var hash = KeyHash(key); await RequireOpenAsync(key, ct);
         var current = await new AuthenticationInteractionStoreV1(db).ReadSessionAsync(accessJti, ct);
-        if (current == null || current.Parse().Primary.ClientKind != "Web") throw new InvalidOperationException("REAUTH_REQUIRED");
+        if (current == null || current.Rejected || current.Parse().Primary.ClientKind != "Web")
+            throw new InvalidOperationException("REAUTH_REQUIRED");
         var match = await db.Database.SqlQuery<bool>($"""
             SELECT EXISTS(SELECT 1 FROM cp6_authentication_v1.access_sessions a
               JOIN cp6_authentication_v1.session_evidence s ON s.refresh_hash=a.refresh_hash

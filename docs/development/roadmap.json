@@ -165652,6 +165652,11 @@
       "at": "2026-11-13T13:11:47.494726+00:00",
       "change": "W535 订单取号与暂停的两种 PostgreSQL 提交顺序通过，37 项通过；PGT-017 仍待其余写者及跨库核对。",
       "evidence": "docs/development/evidence/W535-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T13:38:17.475626+00:00",
+      "change": "W536 Web 与原生仅访问令牌注销持久化同根撤权和审计，四种 PostgreSQL 提交组合及升级通过，正式仍 26/27。",
+      "evidence": "docs/development/evidence/W536-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211658,10 +211663,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W535",
-      "path": "docs/development/evidence/W535-01/DELIVERY.md",
-      "baseline_sha": "c7f6ea0c5cdd25d7354b9bb69d35a25a55d45389",
-      "registered_at": "2026-11-13T12:55:26.987633+00:00",
+      "id": "W536",
+      "path": "docs/development/evidence/W536-01/DELIVERY.md",
+      "baseline_sha": "05906d98dbf2b68484545cf94df0440607ff24fc",
+      "registered_at": "2026-11-13T13:17:21.806299+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211675,11 +211680,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续按原提交单元核对 PGT-017 剩余写者；Main 暂停与 CRM 新效果仍需验证等价共同协议。",
+      "next_action": "继续按原事务核对剩余 Main 写者和权威来源；Main 暂停与 CRM 新效果需独立核对等价协议和原结果保持。",
       "windows": [
         {
-          "id": "W535-01",
-          "workspace_task": "W535-01",
+          "id": "W536-01",
+          "workspace_task": "W536-01",
           "related_tasks": [
             "WP02-03",
             "PGT-017"
@@ -211690,21 +211695,21 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w535-01",
-          "planned_scope_ref": "docs/development/evidence/W535-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W535-01/DELIVERY.md",
+          "branch": "codex/w536-01",
+          "planned_scope_ref": "docs/development/evidence/W536-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W536-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main ORD standalone number transaction",
+            "Main authentication access-only logout and forward PostgreSQL migration",
             "Main formal PostgreSQL acceptance and roadmap"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "真实租户暂停与 ORD 取号两种顺序，库存/订单定向回归，共 37 通过、0 失败、0 跳过。",
-          "remaining_scope": "PGT-017 余下采购询价回写、采购收货、财务过账、MRP、旧流程批办、部分 WMS/Space、缓存注销、普通数据库角色以及 Main 与 CRM 跨库新效果的等价栅栏。",
-          "main_tested_source_sha": "4f02cd347c02195f09446ba257eb7558711d76f2"
+          "validation_summary": "Web 与原生仅访问令牌注销四种实际竞争、OIDC/认证/原注销行为及升级，30 通过、0 失败、0 跳过。",
+          "remaining_scope": "PGT-017 仍需核对其他 Main 业务提交、刷新注销即时缓存信号、OIDC 族锁序、普通数据库角色及 Main→CRM 跨库共同协议。",
+          "main_tested_source_sha": "a1725295743647ac177b05fbf6a5f2383ebc1790"
         }
       ],
       "storage": {
@@ -262723,6 +262728,66 @@
             "main_tested_source_sha": "71ebdbbbd3875f82ada81fb4722d1d2f4564e23f",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1007",
             "main_remote_main_sha": "c7f6ea0c5cdd25d7354b9bb69d35a25a55d45389"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W535",
+        "path": "docs/development/evidence/W535-01/DELIVERY.md",
+        "baseline_sha": "c7f6ea0c5cdd25d7354b9bb69d35a25a55d45389",
+        "registered_at": "2026-11-13T12:55:26.987633+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续按原提交单元核对 PGT-017 剩余写者；Main 暂停与 CRM 新效果仍需验证等价共同协议。",
+        "windows": [
+          {
+            "id": "W535-01",
+            "workspace_task": "W535-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w535-01",
+            "planned_scope_ref": "docs/development/evidence/W535-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W535-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main ORD standalone number transaction",
+              "Main formal PostgreSQL acceptance and roadmap"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "真实租户暂停与 ORD 取号两种顺序，库存/订单定向回归，共 37 通过、0 失败、0 跳过。",
+            "remaining_scope": "PGT-017 余下采购询价回写、采购收货、财务过账、MRP、旧流程批办、部分 WMS/Space、缓存注销、普通数据库角色以及 Main 与 CRM 跨库新效果的等价栅栏。",
+            "main_tested_source_sha": "4f02cd347c02195f09446ba257eb7558711d76f2",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1009",
+            "main_remote_main_sha": "05906d98dbf2b68484545cf94df0440607ff24fc"
           }
         ],
         "storage": {

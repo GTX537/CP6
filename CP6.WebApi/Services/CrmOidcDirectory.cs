@@ -96,6 +96,8 @@ public sealed class CrmOidcDirectory(CP6Context db, ITenantContext tenant, IToke
     {
         if (!options.Enabled || !options.Organizations.Any(o => o.TenantId == organizationId && o.CrmEnabled)
             || string.IsNullOrWhiteSpace(sourceJti) || await blacklist.IsBlacklistedAsync(sourceJti)) return null;
+        if (db.Database.IsNpgsql() && await new AuthenticationInteractionStoreV1(db).IsAccessRevokedAsync(sourceJti))
+            return null;
         var organization = await db.Sys_Tenants.AsNoTracking().SingleOrDefaultAsync(t => t.Id == organizationId);
         if (organization is not { Enable: true } || organization.ExpireDate is { } expiry && expiry <= DateTime.Now) return null;
         var user = await db.Sys_Users.IgnoreQueryFilters().AsNoTracking()

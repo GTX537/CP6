@@ -634,6 +634,14 @@ public partial class AuthController : LocalizedControllerBase
     [Authorize]
     public async Task<IActionResult> Logout()
     {
+        var raw = Request.Cookies[AuthCookieWriter.RefreshCookie];
+        if (_context.Database.IsNpgsql() && string.IsNullOrEmpty(raw))
+        {
+            await AccessLogoutHttpV1.RevokeAsync(_context, HttpContext);
+            _cookies.ClearAuthCookies(Response);
+            return Ok(new { code = 0, message = "OK" });
+        }
+
         // 1. access jti 入黑名单：TTL 取令牌剩余寿命（exp 推算），否则兜底一个完整 access 寿命
         var jti = User.FindFirst("jti")?.Value;
         if (!string.IsNullOrEmpty(jti))
@@ -648,7 +656,6 @@ public partial class AuthController : LocalizedControllerBase
         }
 
         // 2. 吊销 refresh 令牌（cp6_rt 不存在则静默）
-        var raw = Request.Cookies[AuthCookieWriter.RefreshCookie];
         if (!string.IsNullOrEmpty(raw))
             await _refresh.RevokeAsync(raw);
 

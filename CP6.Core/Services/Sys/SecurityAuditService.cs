@@ -23,17 +23,7 @@ public class SecurityAuditService : ISecurityAuditService
     {
         try
         {
-            _db.Sys_SecurityLogs.Add(new Sys_SecurityLog
-            {
-                UserId = userId,
-                UserName = Trunc(userName, 100),
-                RequestTenantCode = Trunc(requestTenantCode, 64),
-                EventType = (int)type,
-                ClientIp = Trunc(ip, 64),
-                UserAgent = Trunc(ua, 256),
-                Reason = Trunc(reason, 256),
-                CreatedAt = DateTime.Now
-            });
+            _db.Sys_SecurityLogs.Add(CreateRecord(type, userId, userName, requestTenantCode, ip, ua, reason));
             await _db.SaveChangesAsync();
         }
         catch (Exception ex)
@@ -42,6 +32,20 @@ public class SecurityAuditService : ISecurityAuditService
             _logger?.LogWarning(ex, "安全审计写入失败 type={EventType} user={UserName}", type, userName);
         }
     }
+
+    internal static Sys_SecurityLog CreateRecord(SecurityEventType type, Guid? userId, string? userName,
+        string? requestTenantCode, string? ip, string? ua, string? reason)
+        => new()
+        {
+            UserId = userId,
+            UserName = Trunc(userName, 100),
+            RequestTenantCode = Trunc(requestTenantCode, 64),
+            EventType = (int)type,
+            ClientIp = Trunc(ip, 64),
+            UserAgent = Trunc(ua, 256),
+            Reason = Trunc(reason, 256),
+            CreatedAt = DateTime.Now
+        };
 
     /// <summary>截断到列长（含 null 透传），防超长输入触发 DB 截断异常。</summary>
     private static string? Trunc(string? value, int max)
