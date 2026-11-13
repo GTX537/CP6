@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W548 PGT-017 余项
+
+部门授权、自然到期、数据库原生控制入口、其余 Main 写者和两库故障恢复待验收。 [本任务](../development/evidence/W548-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W547 PGT-017 余项
 
 部门授权、租户到期、直接 SQL、两库故障恢复及 Main 其余独立写入口待验收。 [本任务](../development/evidence/W547-01/DELIVERY.md)

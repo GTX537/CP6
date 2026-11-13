@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-13 UTC · W548 租户有效期跨库栅栏
+
+实际版本化租户管理和 CRM 导出验证，共同锁和单调版本门槛随两仓合入。 [本任务](../development/evidence/W548-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W547 服务来源版本联验
 
 原服务登记发布器实测撤销，核对旧 TLS 权限、制品、身份快照、代次与优先 Outbox。 [本任务](../development/evidence/W547-01/DELIVERY.md)
