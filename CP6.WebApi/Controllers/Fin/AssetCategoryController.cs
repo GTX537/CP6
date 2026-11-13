@@ -2,6 +2,7 @@ using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ public class AssetCategoryController : ControllerBase
 
     [HttpPost]
     [RequirePermission("fin-asset-category", "add")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Create([FromBody] AssetCategory c)
     {
         c.Id = Guid.NewGuid();
@@ -40,6 +42,7 @@ public class AssetCategoryController : ControllerBase
 
     [HttpPut("{id}")]
     [RequirePermission("fin-asset-category", "edit")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Update(Guid id, [FromBody] AssetCategory c)
     {
         var e = await _db.AssetCategories.FindAsync(id);
@@ -58,6 +61,7 @@ public class AssetCategoryController : ControllerBase
 
     [HttpDelete("{id}")]
     [RequirePermission("fin-asset-category", "delete")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Delete(Guid id)
     {
         if (await _db.AssetCategories.AnyAsync(x => x.ParentId == id)

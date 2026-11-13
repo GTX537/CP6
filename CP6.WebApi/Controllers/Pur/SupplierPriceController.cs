@@ -1,6 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Pur;
 using CP6.Entity.DomainModels.Pur;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,6 +33,7 @@ public class SupplierPriceController : ControllerBase
 
     [HttpPost]
     [RequirePermission("pur-supplier-price", "add")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Save([FromBody] SupplierPrice price)
     {
         try { return Ok2(await _svc.SaveAsync(price, CurrentUser)); }
@@ -40,6 +42,7 @@ public class SupplierPriceController : ControllerBase
 
     [HttpDelete("{id}")]
     [RequirePermission("pur-supplier-price", "delete")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Delete(Guid id)
     {
         try { await _svc.DeleteAsync(id, CurrentUser); return Ok2(); }

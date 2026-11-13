@@ -1,6 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Plan;
 using CP6.Entity.DomainModels.Plan;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,6 +30,7 @@ public class ItemPlanningPolicyController : ControllerBase
 
     [HttpPost]
     [RequirePermission("plan-item-policy", "add")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Upsert([FromBody] Plan_ItemPlanningPolicy dto)
     {
         try { await _svc.UpsertAsync(dto, CurrentUser); return Ok2(); }
@@ -37,6 +39,7 @@ public class ItemPlanningPolicyController : ControllerBase
 
     [HttpDelete("{itemCd}")]
     [RequirePermission("plan-item-policy", "delete")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Delete(string itemCd)
     {
         try { await _svc.DeleteAsync(itemCd, CurrentUser); return Ok2(); }
