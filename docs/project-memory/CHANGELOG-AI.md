@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W543 受理与隐私人工写入栅栏
+
+Main 在在线人类许可中附当前租户版本，CRM 在已登记租户的原 Owner 事务拒绝暂停后的新效果。 [本任务](../development/evidence/W543-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W542 公开入口采用租户暂停栅栏
 
 Main 在线服务许可携带当前租户版本，CRM 公开 attempt 签发与新业务提交共用已登记存储的 C02 事务栅栏。两仓本地发布和定向回归通过。 [本任务](../development/evidence/W542-01/DELIVERY.md)
