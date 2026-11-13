@@ -65,9 +65,13 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     public Task PGT017_Main_inquiry_scope_revocation_and_CRM_export_commit()
         => ServiceContextHttp(false, privacy: true, tenantPause: true, inquiryScopeRevocation: true);
 
+    [Pgt017MainFact]
+    public Task PGT017_Main_inquiry_scope_regrant_and_CRM_export_commit()
+        => ServiceContextHttp(false, privacy: true, tenantPause: true, inquiryScopeRevocation: true, regrantInquiryScope: true);
+
     private async Task ServiceContextHttp(bool retention, bool privacy = false, bool tenantPause = false,
         bool roleRevocation = false, bool serviceRevocation = false, bool shortenDeadline = false, bool departmentRevocation = false,
-        bool inquiryScopeRevocation = false)
+        bool inquiryScopeRevocation = false, bool regrantInquiryScope = false)
     {
         var project=Environment.GetEnvironmentVariable("CP6_CRM_CROSS_PROJECT")??throw new InvalidOperationException("Owned CRM project required; no skip");
         var output=Environment.GetEnvironmentVariable("CP6_SERVICE_CONTEXT_OUTPUT")!;var folder=Path.GetDirectoryName(output)!;
@@ -158,6 +162,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 "FullyQualifiedName~"+childTest,"--logger","trx;LogFileName="+run+".trx","--results-directory",folder,"-v:q","--disable-build-servers","-m:1","-p:UseSharedCompilation=false"})start.ArgumentList.Add(arg);
             if (tenantPause) start.ArgumentList.Add("--no-build");
             start.Environment["CP6_MAIN_SERVICE_BRIDGE"]=bridge;
+            if (regrantInquiryScope) start.Environment["CP6_PGT017_SCOPE_REGRANT"] = "1";
             using var child=Process.Start(start)!;var stdout=child.StandardOutput.ReadToEndAsync();var stderr=child.StandardError.ReadToEndAsync();
             using var timeout=new CancellationTokenSource(TimeSpan.FromMinutes(4));
             string log;
@@ -186,13 +191,14 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                         await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, environment);
                         if (roleRevocation) await ExerciseCrmExportRoleRevocation(host, h, stageDirectory!, exited);
                         else if (departmentRevocation) await ExerciseCrmExportDepartmentRevocation(host, h, stageDirectory!, exited);
-                        else if (inquiryScopeRevocation) await ExerciseCrmExportScopeRevocation(host, h, pair, stageDirectory!, exited);
+                        else if (inquiryScopeRevocation) await ExerciseCrmExportScopeRevocation(host, h, pair, stageDirectory!, exited, regrantInquiryScope);
                         else await ExerciseCrmTenantPause(host, h, stageDirectory!, publicSubmission: true, childExited: exited,
                             shortenDeadline: shortenDeadline);
                     }
                     using var revoked = await Send(command with { RequestNonce = ServiceNonce() }, ServiceBasic().ToString());
-                    Assert.Equal(serviceRevocation ? HttpStatusCode.ServiceUnavailable : HttpStatusCode.Forbidden, revoked.StatusCode);
-                    if (inquiryScopeRevocation)
+                    Assert.Equal(serviceRevocation ? HttpStatusCode.ServiceUnavailable : regrantInquiryScope ? HttpStatusCode.OK : HttpStatusCode.Forbidden,
+                        revoked.StatusCode);
+                    if (inquiryScopeRevocation && !regrantInquiryScope)
                     {
                         var retained = Assert.Single(await IamInquiryScopeAdministrationV1.ReadSourceAsync(h.Db, h.Tenant, 71, default));
                         using var stillAllowed = await Send(command with { SiteId = retained.SiteId, FormId = retained.FormId,
