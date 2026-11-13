@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W517 PGT-021 同源快照与普通 B 并发
+
+实际普通 B 在 A 快照持有期间写入原草稿、版本及回执。A 归档和独立关闭暂存核验通过。正式 PostgreSQL 21 PASS / 6 NOT_RUN。 [本任务](../development/evidence/W517-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W516 正式 PGT-026 认证与公共路由
 
 Main 认证、普通角色目录限制、实际租户 schema 启用及 CRM 共享公开路由已采用。正式 PostgreSQL 21 PASS / 6 NOT_RUN。 [本任务](../development/evidence/W516-01/DELIVERY.md)
