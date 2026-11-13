@@ -1,6 +1,8 @@
+using System.Data;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Integration;
+using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wms;
 using CP6.Core.Services.Wf;
 using CP6.Entity.DomainModels.Space;
@@ -94,12 +96,34 @@ public sealed class SpaceAnalyticsService : ISpaceAnalyticsService
         var site = await _db.Space_Sites.AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == siteId && !x.IsDeleted, ct)
             ?? throw new BizException("E-SPACE-001");
-        var warehouseCd = ResolveWarehouse(site);
         var config = await GetConfigAsync(ct);
-        var now = ServerNow;
         var scheduledDate = string.Equals(trigger, "manual", StringComparison.OrdinalIgnoreCase)
             ? (DateOnly?)null
             : TenantToday;
+        var snapshot = await BuildSnapshotAsync(site, config, scheduledDate, user, ct);
+        _db.Space_AbcSnapshots.Add(snapshot);
+        try
+        {
+            await _db.SaveChangesAsync(ct);
+        }
+        catch (DbUpdateException) when (scheduledDate.HasValue)
+        {
+            _db.Entry(snapshot).State = EntityState.Detached;
+            var existing = await _db.Space_AbcSnapshots.AsNoTracking()
+                .Where(x => x.SiteId == siteId && x.ScheduledDate == scheduledDate && !x.IsDeleted)
+                .OrderByDescending(x => x.CalculatedAt)
+                .FirstOrDefaultAsync(ct);
+            if (existing is null) throw;
+            return MapSnapshot(existing);
+        }
+        return MapSnapshot(snapshot);
+    }
+
+    private async Task<Space_AbcSnapshot> BuildSnapshotAsync(Space_Site site, SpaceAnalyticsConfigDto config,
+        DateOnly? scheduledDate, string? user, CancellationToken ct)
+    {
+        var warehouseCd = ResolveWarehouse(site);
+        var now = ServerNow;
         var from = now.AddDays(-config.WindowDays);
         var aggregates = await _analytics.GetOutboundAggregatesAsync(warehouseCd, from, now, ct);
         var products = AbcClassifier.Classify(
@@ -118,7 +142,7 @@ public sealed class SpaceAnalyticsService : ISpaceAnalyticsService
             })
             .ToList();
 
-        var snapshot = new Space_AbcSnapshot
+        return new Space_AbcSnapshot
         {
             Id = Guid.NewGuid(),
             SiteId = site.Id,
@@ -132,27 +156,11 @@ public sealed class SpaceAnalyticsService : ISpaceAnalyticsService
             ThresholdA = config.ThresholdA,
             ThresholdB = config.ThresholdB,
             ItemCount = products.Count,
-            Trigger = string.Equals(trigger, "manual", StringComparison.OrdinalIgnoreCase) ? "manual" : "scheduled",
+            Trigger = scheduledDate.HasValue ? "scheduled" : "manual",
             ResultJson = JsonSerializer.Serialize(products, Json),
             Creator = user,
             CreateDate = now,
         };
-        _db.Space_AbcSnapshots.Add(snapshot);
-        try
-        {
-            await _db.SaveChangesAsync(ct);
-        }
-        catch (DbUpdateException) when (scheduledDate.HasValue)
-        {
-            _db.Entry(snapshot).State = EntityState.Detached;
-            var existing = await _db.Space_AbcSnapshots.AsNoTracking()
-                .Where(x => x.SiteId == siteId && x.ScheduledDate == scheduledDate && !x.IsDeleted)
-                .OrderByDescending(x => x.CalculatedAt)
-                .FirstOrDefaultAsync(ct);
-            if (existing is null) throw;
-            return MapSnapshot(existing);
-        }
-        return MapSnapshot(snapshot);
     }
 
     public async Task<int> RebuildDueSnapshotsAsync(CancellationToken ct = default)
@@ -174,11 +182,19 @@ public sealed class SpaceAnalyticsService : ISpaceAnalyticsService
             .ToHashSet();
 
         var rebuilt = 0;
+        var postgreSql = _db.Database.IsNpgsql();
         foreach (var siteId in sites.Where(x => !completed.Contains(x)))
         {
             try
             {
-                await RebuildAbcAsync(siteId, "scheduled", "SpaceAbcSnapshotWorker", ct);
+                if (postgreSql)
+                {
+                    if (!await TryRebuildDuePostgreSqlSnapshotAsync(siteId, ct)) continue;
+                }
+                else
+                {
+                    await RebuildAbcAsync(siteId, "scheduled", "SpaceAbcSnapshotWorker", ct);
+                }
                 rebuilt++;
             }
             catch (OperationCanceledException) when (ct.IsCancellationRequested)
@@ -191,6 +207,41 @@ public sealed class SpaceAnalyticsService : ISpaceAnalyticsService
             }
         }
         return rebuilt;
+    }
+
+    private async Task<bool> TryRebuildDuePostgreSqlSnapshotAsync(Guid siteId, CancellationToken ct)
+    {
+        await using var transaction = await _db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
+        // The enumerated tenant list is a scheduling hint. Pause and configuration writers use this same root.
+        await AuthenticationCompletionGateV1.AcquireAsync(_db, ct);
+        var tenant = await _db.Sys_Tenants.AsNoTracking().Where(x => x.Id == _db.CurrentTenantId)
+            .Select(x => new { x.Enable, x.ExpireDate }).SingleOrDefaultAsync(ct);
+        if (tenant is not { Enable: true } || tenant.ExpireDate <= DateTime.Now) return false;
+
+        var config = await GetConfigAsync(ct);
+        var now = TenantNow;
+        if (!config.EnableScheduledSnapshot || now.Hour < config.ScheduledHourLocal) return false;
+        var site = await _db.Space_Sites.AsNoTracking()
+            .SingleOrDefaultAsync(x => x.Id == siteId && !x.IsDeleted && x.Enable, ct);
+        if (site is null) return false;
+        var date = DateOnly.FromDateTime(now);
+        if (await _db.Space_AbcSnapshots.AsNoTracking()
+            .AnyAsync(x => x.SiteId == siteId && x.ScheduledDate == date && !x.IsDeleted, ct)) return false;
+
+        var snapshot = await BuildSnapshotAsync(site, config, date, "SpaceAbcSnapshotWorker", ct);
+        _db.Space_AbcSnapshots.Add(snapshot);
+        try
+        {
+            await _db.SaveChangesAsync(ct);
+            // The root protects the stored deadline, but the clock can advance while the insert waits.
+            if (tenant.ExpireDate <= DateTime.Now) return false;
+            await transaction.CommitAsync(ct);
+            return true;
+        }
+        finally
+        {
+            _db.Entry(snapshot).State = EntityState.Detached;
+        }
     }
 
     public async Task<SpaceUtilizationResponse> GetUtilizationAsync(Guid floorId, CancellationToken ct = default)
