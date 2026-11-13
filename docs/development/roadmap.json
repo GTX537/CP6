@@ -165632,6 +165632,11 @@
       "at": "2026-11-13T11:57:15.896725+00:00",
       "change": "W531 实测订单改价与 IAM 撤权双向竞争，修复并验证 9 个旧工作流写入口。PGT-017 仍有已定位写者旁路，正式 26 PASS / 1 NOT_RUN，原询盘 60/60。",
       "evidence": "docs/development/evidence/W531-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T12:17:08.078295+00:00",
+      "change": "W532 修复旧菜单和管理员 2FA 的六个现行写入口，保留自失效和审计原子性。38 项通过。PGT-017 仍待核销其他实际写者，正式 PostgreSQL 26/27。",
+      "evidence": "docs/development/evidence/W532-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -177152,6 +177157,17 @@
         "formal_acceptance": "NOT_RUN",
         "validation": "PostgreSQL 18.6：16 通过，零跳过。订单撤权、普通库存暂停和日历竞争双顺序，9 个旧写入口及 WF_AUTH 原生核对通过。另 24 项通过，4 项旧 SQLite 夹具失败及旧静态路由失败均在基线复现。",
         "remaining": "PGT-017 保持 NOT_RUN。优先封闭旧菜单与 2FA 权威写入，再按现有事务归属推进旧 OA、FIN/PUR/PLAN、WMS/Space 和其他登记入口，核对普通运行凭据与实际映射边界。",
+        "full_task_complete": false
+      },
+      "wave532_delivery": {
+        "status": "LOCAL_VERIFIED",
+        "report": "docs/development/evidence/W532-01/DELIVERY.md",
+        "tested_source": "f74aeb2d6d31b989d063b4a5de4d19ca92539dbe",
+        "issue": "https://github.com/GTX537/CP6/issues/1002",
+        "formal_case": "PGT-017",
+        "formal_acceptance": "NOT_RUN",
+        "validation": "PostgreSQL 18.6 22项及16项既有组件测试，合计38通过、0失败、0跳过。六个旧权威入口、合法自失效、既有工作流与改价竞争通过。",
+        "remaining": "继续 PGT-017。核对旧流程办理、财务/采购/计划、WMS/Space、订单取号、缓存注销和普通数据库写权限，沿已有提交单元补齐当前授权及写者证据。",
         "full_task_complete": false
       }
     },
@@ -211605,10 +211621,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W531",
-      "path": "docs/development/evidence/W531-01/DELIVERY.md",
-      "baseline_sha": "f370917c4425dea32fe77f72437eb2010cca4794",
-      "registered_at": "2026-11-13T10:59:07.324436+00:00",
+      "id": "W532",
+      "path": "docs/development/evidence/W532-01/DELIVERY.md",
+      "baseline_sha": "6d62e4124c9641af834d7cdd32291df399c8d6ce",
+      "registered_at": "2026-11-13T12:00:42.168742+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211622,11 +211638,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "PGT-017 保持 NOT_RUN。优先封闭旧菜单与 2FA 权威写入，再按现有事务归属推进旧 OA、FIN/PUR/PLAN、WMS/Space 和其他登记入口，核对普通运行凭据与实际映射边界。",
+      "next_action": "继续 PGT-017。核对旧流程办理、财务/采购/计划、WMS/Space、订单取号、缓存注销和普通数据库写权限，沿已有提交单元补齐当前授权及写者证据。",
       "windows": [
         {
-          "id": "W531-01",
-          "workspace_task": "W531-01",
+          "id": "W532-01",
+          "workspace_task": "W532-01",
           "related_tasks": [
             "WP02-03",
             "PGT-017"
@@ -211637,21 +211653,21 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w531-01",
-          "planned_scope_ref": "docs/development/evidence/W531-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W531-01/DELIVERY.md",
+          "branch": "codex/w532-01",
+          "planned_scope_ref": "docs/development/evidence/W532-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W532-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main IAM root and OA legacy workflow write entrypoints",
+            "Main legacy menu and 2FA writers",
             "Main formal PostgreSQL acceptance and roadmap"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "PostgreSQL 18.6：16 通过，零跳过。订单撤权、普通库存暂停和日历竞争双顺序，9 个旧写入口及 WF_AUTH 原生核对通过。另 24 项通过，4 项旧 SQLite 夹具失败及旧静态路由失败均在基线复现。",
-          "remaining_scope": "PGT-017 保持 NOT_RUN。优先封闭旧菜单与 2FA 权威写入，再按现有事务归属推进旧 OA、FIN/PUR/PLAN、WMS/Space 和其他登记入口，核对普通运行凭据与实际映射边界。",
-          "main_tested_source_sha": "0afcfd6b1c80a2dfa480c980589177f9c02e48c1"
+          "validation_summary": "PostgreSQL 18.6 22项及16项既有组件测试，合计38通过、0失败、0跳过。六个旧权威入口、合法自失效、既有工作流与改价竞争通过。",
+          "remaining_scope": "继续 PGT-017。核对旧流程办理、财务/采购/计划、WMS/Space、订单取号、缓存注销和普通数据库写权限，沿已有提交单元补齐当前授权及写者证据。",
+          "main_tested_source_sha": "f74aeb2d6d31b989d063b4a5de4d19ca92539dbe"
         }
       ],
       "storage": {
@@ -262435,6 +262451,66 @@
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018",
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W531",
+        "path": "docs/development/evidence/W531-01/DELIVERY.md",
+        "baseline_sha": "f370917c4425dea32fe77f72437eb2010cca4794",
+        "registered_at": "2026-11-13T10:59:07.324436+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "PGT-017 保持 NOT_RUN。优先封闭旧菜单与 2FA 权威写入，再按现有事务归属推进旧 OA、FIN/PUR/PLAN、WMS/Space 和其他登记入口，核对普通运行凭据与实际映射边界。",
+        "windows": [
+          {
+            "id": "W531-01",
+            "workspace_task": "W531-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w531-01",
+            "planned_scope_ref": "docs/development/evidence/W531-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W531-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main IAM root and OA legacy workflow write entrypoints",
+              "Main formal PostgreSQL acceptance and roadmap"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "PostgreSQL 18.6：16 通过，零跳过。订单撤权、普通库存暂停和日历竞争双顺序，9 个旧写入口及 WF_AUTH 原生核对通过。另 24 项通过，4 项旧 SQLite 夹具失败及旧静态路由失败均在基线复现。",
+            "remaining_scope": "PGT-017 保持 NOT_RUN。优先封闭旧菜单与 2FA 权威写入，再按现有事务归属推进旧 OA、FIN/PUR/PLAN、WMS/Space 和其他登记入口，核对普通运行凭据与实际映射边界。",
+            "main_tested_source_sha": "0afcfd6b1c80a2dfa480c980589177f9c02e48c1",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1001",
+            "main_remote_main_sha": "6d62e4124c9641af834d7cdd32291df399c8d6ce"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },

@@ -12,7 +12,7 @@ Main Kestrel、PostgreSQL 18.6、.NET SDK 8.0.424、EF Core 8.0.30、Npgsql 8.0.
 | IAM 动作撤销与订单单价更正 V1 | 更正持根等待订单行，IAM 等更正。精确单价、工作流意图、原回执和审计均提交。保留 `query` 权限的旧会话仍可按原键读取和重放相同结果，新键返回 403。 | IAM 持根等待 `Sys_RoleAction`，更正等 IAM。新写 403，订单明细、意图、回执和审计写集前后相等。两个顺序中，IAM 角色版本更新、身份快照和代次各加 1，同版本 Outbox、审计和原回执各一条。 |
 | IAM 动作撤销与工作日历写入 | 日历写持根等待日历行，IAM 等日历。合法修改提交，旧会话后续请求返回 403。 | IAM 持根等待授权表，日历、委派及审批人映射的 9 个写入口均在根上等待，随后 403，目标写集不变。9 个入口均执行过正常写入。 |
 
-旧 9 个入口只在事务外鉴权。部分写表触发器在 DML 时才取锁。修复后，9 个已核对入口沿用原动作键，在请求的 Core 事务中获取 IAM 根并读取当前会话与权限，持锁到提交。提交前再确认会话。取消及异常走原 IAM 回滚和未知结果语义。原业务输入、响应和合法模拟会话沿用既有认证判定。 [事务接入](../../../../CP6.WebApi/Filters/WorkflowWriteAuthorityAttribute.cs) · [真实 IAM 与改价](../../../../CP6.Tests/Erp/Pgt017IamRevocationPostgreSqlTests.cs) · [九个入口回归](../../../../CP6.Tests/Erp/Pgt017LegacyAuthorityPostgreSqlTests.cs) · [库存与暂停](../W435-01/DELIVERY.md)
+旧 9 个入口只在事务外鉴权。部分写表触发器在 DML 时才取锁。修复后，9 个已核对入口沿用原动作键，在请求的 Core 事务中获取 IAM 根并读取当前会话与权限，持锁到提交。提交前再确认会话。取消及异常走原 IAM 回滚和未知结果语义。原业务输入、响应和合法模拟会话沿用既有认证判定。 [当时的事务接入](https://github.com/GTX537/CP6/blob/0afcfd6b1c80a2dfa480c980589177f9c02e48c1/CP6.WebApi/Filters/WorkflowWriteAuthorityAttribute.cs) · [真实 IAM 与改价](../../../../CP6.Tests/Erp/Pgt017IamRevocationPostgreSqlTests.cs) · [九个入口回归](../../../../CP6.Tests/Erp/Pgt017LegacyAuthorityPostgreSqlTests.cs) · [库存与暂停](../W435-01/DELIVERY.md)
 
 - `baseline.trx` 在旧产品上执行 11 项，订单两种顺序通过，9 个旧入口均返回 200 并使回归失败。`fix-01.trx` 验证修复后 15 项 PostgreSQL 全部通过，另外 2 项静态路由测试通过、2 项失败；旧 W529 同源码制品实测相同失败（控制器计数及旧权限约定）。
 - 最终 `final.trx` 40 通过、4 失败、零跳过。其中 **16 项 PostgreSQL 全部通过**，包括 12 项本任务用例及 Stock、WF_AUTH 原生覆盖。其余 24 项通过为 ApproverMap、AdvancedFlow、RequirePermissionFilter 的既有组件测试。4 项旧 SQLite 日历夹具在建表时报缺少 `Latin1_General_100_BIN2`，W529 同相关源码的已存制品重现同 4 项失败。正式日历行为采用上述 PostgreSQL HTTP 结果。

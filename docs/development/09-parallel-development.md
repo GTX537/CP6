@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W532 修复旧菜单和管理员 2FA 共 6 个写入口。已实测等待后撤权拒绝、自失效与共同审计；正式 PostgreSQL 仍为 26/27。 [本任务](evidence/W532-01/DELIVERY.md)
+
 > W531 补齐真实 IAM 撤权与改价两种提交顺序，修复 9 个旧工作流写入口。PGT-017 仍有已定位写者旁路，正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [本任务](evidence/W531-01/DELIVERY.md)
 
 > W530 完成 PGT-025。CRM 真实 Owner 在租户 schema 与共享回执中保留负零、原字节和精度，实际回滚并从新连接恢复。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [本任务](evidence/W530-01/DELIVERY.md)
