@@ -59,7 +59,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         using var current = await host.Send(OperationsRequest(manager, HttpMethod.Get, ManagementPath(tenant)));
         var initial = await NumberHttpData<TenantManagementSnapshotV1>(current);
 
-        var authorityBefore = await ReadPauseAuthority();
+        var authorityBefore = await ReadPauseAuthority(stockTenant, administrator.User);
         var stockBefore = await ReadStockWriteSet();
         var admitted = StockPauseCommand(1.12345678m);
         var stockFirst = new TenantManagementCommandV1("stock-first-pause", initial.Revision, "suspend", null);
@@ -77,7 +77,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
                 firstPause = Manage(stockFirst);
                 pauseRoot = await WaitForFence(observer, stockGraph.Backend, "%cp6_authentication_v1.acquire()%", null, firstPause);
                 Assert.Equal(stockBefore, await ReadStockWriteSet());
-                Assert.Equal(authorityBefore, await ReadPauseAuthority());
+                Assert.Equal(authorityBefore, await ReadPauseAuthority(stockTenant, administrator.User));
             }
             finally { await table.RollbackAsync(); }
         }
@@ -107,7 +107,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             Assert.Equal(source.GetProperty("NativeId").GetGuid(), outbox.GetProperty("Id").GetGuid());
             Assert.Equal(stock.PhysicalQty + admitted.Qty, rows.GetProperty("stock").GetProperty("PhysicalQty").GetDecimal());
         }
-        var firstAuthority = await ReadPauseAuthority();
+        var firstAuthority = await ReadPauseAuthority(stockTenant, administrator.User);
         CheckPause(authorityBefore, firstAuthority, paused, stockFirst);
         using (var stale = await Adjust(StockPauseCommand(2m))) Assert.Equal(HttpStatusCode.Unauthorized, stale.StatusCode);
         Assert.Equal(committed, await ReadStockWriteSet());
@@ -116,7 +116,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var active = await NumberHttpData<TenantManagementReceiptV1>(reactivated);
         Assert.True(active.Snapshot.Enable);
         writer = await Login(host, stockTenant);
-        var activeAuthority = await ReadPauseAuthority();
+        var activeAuthority = await ReadPauseAuthority(stockTenant, administrator.User);
         var pauseFirst = new TenantManagementCommandV1("pause-first", active.Snapshot.Revision, "suspend", null);
         var denied = StockPauseCommand(4m);
         FenceWait pauseRow, stockRoot;
@@ -134,7 +134,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
                 secondStock = Adjust(denied);
                 stockRoot = await WaitForFence(observer, pauseRow.Backend, "%cp6_stock_adjust_owner_v1.lock_graph%", login, secondStock);
                 Assert.Equal(committed, await ReadStockWriteSet());
-                Assert.Equal(activeAuthority, await ReadPauseAuthority());
+                Assert.Equal(activeAuthority, await ReadPauseAuthority(stockTenant, administrator.User));
             }
             finally { await row.RollbackAsync(); }
         }
@@ -145,7 +145,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Contains("REAUTH_REQUIRED", await secondStockResponse.Content.ReadAsStringAsync());
         using (var stale = await Adjust(StockPauseCommand(8m))) Assert.Equal(HttpStatusCode.Unauthorized, stale.StatusCode);
         Assert.Equal(committed, await ReadStockWriteSet());
-        var finalAuthority = await ReadPauseAuthority();
+        var finalAuthority = await ReadPauseAuthority(stockTenant, administrator.User);
         CheckPause(activeAuthority, finalAuthority, second, pauseFirst);
 
         using var report = File.Open(Path.Combine(Environment.GetEnvironmentVariable(CurrentPermissionPostgresFactAttribute.RootVariable)!,
@@ -162,24 +162,6 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             OperationsRequest(writer, HttpMethod.Post, "api/wms/stock/commands/v1/apply", command));
         Task<HttpResponseMessage> Manage(TenantManagementCommandV1 command) => host.Send(
             OperationsRequest(manager, HttpMethod.Post, ManagementPath(tenant, "/commands"), command));
-
-        async Task<PauseAuthority> ReadPauseAuthority()
-        {
-            var json = await db.Database.SqlQuery<string>($"""
-                SELECT json_build_object('Enabled',t."Enable",'PolicyRevision',t."AuthenticationPolicyRevision",
-                    'Revision',v.revision,'RootRevision',(SELECT revision FROM cp6_platform_admin_guard_v1.root WHERE singleton),
-                    'Generation',coalesce((SELECT "Generation" FROM public."CrmIdentityTenantGenerations" WHERE "TenantId"={tenant}),0),
-                    'SnapshotVersion',coalesce((SELECT "Version" FROM crm_identity."Snapshot" WHERE "TenantId"={tenant}
-                        AND "AggregateId"={$"tenant:{tenant:D}"}),0),
-                    'PriorityCount',(SELECT count(*) FROM crm_identity_priority."Cp6_OutboxMessage" WHERE "TenantId"={tenant}),
-                    'AuditCount',(SELECT count(*) FROM public."Sys_SecurityLogs" WHERE "UserId"={administrator.User}
-                        AND "RequestTenantCode"={tenant.ToString("N")} AND "EventType"={(int)SecurityEventType.TenantSuspended}),
-                    'ReceiptCount',(SELECT count(*) FROM cp6_tenant_management_v1.commands WHERE tenant_id={tenant}))::text AS "Value"
-                FROM public."Sys_Tenants" t JOIN cp6_tenant_management_v1.versions v ON v.tenant_id=t."Id"
-                WHERE t."Id"={tenant}
-                """).SingleAsync();
-            return JsonSerializer.Deserialize<PauseAuthority>(json)!;
-        }
 
         Task<string> ReadStockWriteSet() => db.Database.SqlQuery<string>($"""
             SELECT jsonb_build_object('stock',(SELECT to_jsonb(s) FROM public."T_Stock" s WHERE s."Id"={stock.Id}),
@@ -202,6 +184,25 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 
     private sealed record PauseAuthority(bool Enabled, Guid PolicyRevision, long Revision, long RootRevision,
         long Generation, long SnapshotVersion, int PriorityCount, int AuditCount, int ReceiptCount);
+
+    private static async Task<PauseAuthority> ReadPauseAuthority(Harness h, Guid administrator)
+    {
+        var tenant = h.Tenant;
+        var json = await h.Db.Database.SqlQuery<string>($"""
+            SELECT json_build_object('Enabled',t."Enable",'PolicyRevision',t."AuthenticationPolicyRevision",
+                'Revision',v.revision,'RootRevision',(SELECT revision FROM cp6_platform_admin_guard_v1.root WHERE singleton),
+                'Generation',coalesce((SELECT "Generation" FROM public."CrmIdentityTenantGenerations" WHERE "TenantId"={tenant}),0),
+                'SnapshotVersion',coalesce((SELECT "Version" FROM crm_identity."Snapshot" WHERE "TenantId"={tenant}
+                    AND "AggregateId"={$"tenant:{tenant:D}"}),0),
+                'PriorityCount',(SELECT count(*) FROM crm_identity_priority."Cp6_OutboxMessage" WHERE "TenantId"={tenant}),
+                'AuditCount',(SELECT count(*) FROM public."Sys_SecurityLogs" WHERE "UserId"={administrator}
+                    AND "RequestTenantCode"={tenant.ToString("N")} AND "EventType"={(int)SecurityEventType.TenantSuspended}),
+                'ReceiptCount',(SELECT count(*) FROM cp6_tenant_management_v1.commands WHERE tenant_id={tenant}))::text AS "Value"
+            FROM public."Sys_Tenants" t JOIN cp6_tenant_management_v1.versions v ON v.tenant_id=t."Id"
+            WHERE t."Id"={tenant}
+            """).SingleAsync();
+        return JsonSerializer.Deserialize<PauseAuthority>(json)!;
+    }
 
     private static void CheckPause(PauseAuthority before, PauseAuthority after, TenantManagementReceiptV1 receipt, TenantManagementCommandV1 command)
     {

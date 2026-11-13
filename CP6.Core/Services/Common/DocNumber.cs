@@ -21,15 +21,19 @@ namespace CP6.Core.Services.Common;
 public static class DocNumber
 {
     /// <summary>機能コード別の次番号を採番する。戻り値：(13桁番号, 自増値)。</summary>
-    public static async Task<(string No, int Seq)> NextAsync(CP6Context db, string funcCode, DateTime? date = null)
+    public static Task<(string No, int Seq)> NextAsync(CP6Context db, string funcCode, DateTime? date = null)
+        => NextAsync(db, funcCode, date, CancellationToken.None);
+
+    internal static async Task<(string No, int Seq)> NextAsync(CP6Context db, string funcCode, DateTime? date,
+        CancellationToken ct)
     {
         var code = funcCode.ToUpperInvariant();
         if (code == "ORD" && (db.Database.IsSqlServer() || db.Database.IsNpgsql()))
-            return await NextOrderAsync(db, date);
+            return await NextOrderAsync(db, date, ct);
         // 同一 DbContext 内で複数回採番する場合（例：FSC 一括発行のループ）、
         // 未保存の追加済みカウンタ行を DB クエリは拾えないため、まず Local を確認する。
         var row = db.DocSequences.Local.FirstOrDefault(x => x.FuncCode == code)
-                  ?? await db.DocSequences.FirstOrDefaultAsync(x => x.FuncCode == code);
+                  ?? await db.DocSequences.FirstOrDefaultAsync(x => x.FuncCode == code, ct);
         if (row == null)
         {
             row = new DocSequence { FuncCode = code, LastSeq = 0, CreateDate = DateTime.Now };
@@ -40,7 +44,7 @@ public static class DocNumber
         return ($"{code}{d:yyyyMM}{row.LastSeq:D4}", row.LastSeq);
     }
 
-    private static async Task<(string No, int Seq)> NextOrderAsync(CP6Context db, DateTime? date)
+    private static async Task<(string No, int Seq)> NextOrderAsync(CP6Context db, DateTime? date, CancellationToken ct)
     {
         if (db.ChangeTracker.Entries<DocSequence>().Any(e => e.Entity.FuncCode == "ORD" &&
                 e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted))
@@ -50,7 +54,7 @@ public static class DocNumber
         // Its independent reservation needs no multi-statement Serializable snapshot;
         // an existing caller transaction always retains its own isolation and rollback.
         await using var ownedTransaction = db.Database.CurrentTransaction is null
-            ? await db.Database.BeginTransactionAsync(postgreSql ? IsolationLevel.ReadCommitted : IsolationLevel.Serializable) : null;
+            ? await db.Database.BeginTransactionAsync(postgreSql ? IsolationLevel.ReadCommitted : IsolationLevel.Serializable, ct) : null;
         await using var command = db.Database.GetDbConnection().CreateCommand();
         command.Transaction = db.Database.CurrentTransaction!.GetDbTransaction();
         command.CommandText = postgreSql ? """
@@ -75,9 +79,9 @@ public static class DocNumber
         now.Value = postgreSql ? DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified) : DateTime.UtcNow;
         if (postgreSql) now.DbType = DbType.DateTime2;
         command.Parameters.Add(now);
-        var value = await command.ExecuteScalarAsync();
+        var value = await command.ExecuteScalarAsync(ct);
         var sequence = Convert.ToInt32(value, System.Globalization.CultureInfo.InvariantCulture);
-        if (ownedTransaction is not null) await ownedTransaction.CommitAsync();
+        if (ownedTransaction is not null) await ownedTransaction.CommitAsync(ct);
         return ($"ORD{date ?? DateTime.Today:yyyyMM}{sequence:D4}", sequence);
     }
 }

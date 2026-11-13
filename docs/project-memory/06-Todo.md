@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W535 PGT-017 余项
+
+继续核对原 Owner 事务、原生角色及 Main 暂停与 CRM 新效果的跨库等价协议。原询盘 60/60。 [本任务](../development/evidence/W535-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W534 PGT-017 余项
 
 采购询价回写、订单及收货、财务过账、MRP、旧流程批办及部分 WMS/Space 等按原提交单元继续，订单取号、缓存注销和普通数据库角色范围仍待核对。 [本任务](../development/evidence/W534-01/DELIVERY.md)

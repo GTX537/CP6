@@ -165647,6 +165647,11 @@
       "at": "2026-11-13T12:47:36.361939+00:00",
       "change": "W534 修复资产分类、手工供应商价表及品目策略的 7 条提交授权，28 项通过。PGT-017 仍有其他实际写者，正式 PostgreSQL 26/27。",
       "evidence": "docs/development/evidence/W534-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T13:11:47.494726+00:00",
+      "change": "W535 订单取号与暂停的两种 PostgreSQL 提交顺序通过，37 项通过；PGT-017 仍待其余写者及跨库核对。",
+      "evidence": "docs/development/evidence/W535-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211653,10 +211658,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W534",
-      "path": "docs/development/evidence/W534-01/DELIVERY.md",
-      "baseline_sha": "6cfcc76f224e81ee7f08557472859445ff211cc5",
-      "registered_at": "2026-11-13T12:38:12.629872+00:00",
+      "id": "W535",
+      "path": "docs/development/evidence/W535-01/DELIVERY.md",
+      "baseline_sha": "c7f6ea0c5cdd25d7354b9bb69d35a25a55d45389",
+      "registered_at": "2026-11-13T12:55:26.987633+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211670,11 +211675,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "PGT-017 余下采购询价回写、采购订单/收货、财务过账、MRP、旧流程批办/退回/转交/撤回、部分 WMS/Space、订单取号、缓存注销和普通数据库写者。按原提交单元验证。",
+      "next_action": "继续按原提交单元核对 PGT-017 剩余写者；Main 暂停与 CRM 新效果仍需验证等价共同协议。",
       "windows": [
         {
-          "id": "W534-01",
-          "workspace_task": "W534-01",
+          "id": "W535-01",
+          "workspace_task": "W535-01",
           "related_tasks": [
             "WP02-03",
             "PGT-017"
@@ -211685,21 +211690,21 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w534-01",
-          "planned_scope_ref": "docs/development/evidence/W534-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W534-01/DELIVERY.md",
+          "branch": "codex/w535-01",
+          "planned_scope_ref": "docs/development/evidence/W535-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W535-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main FIN/PUR/PLAN manual master-data writers",
+            "Main ORD standalone number transaction",
             "Main formal PostgreSQL acceptance and roadmap"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "7 条真实 PostgreSQL 撤权与重新授权，21 项定向组件回归，共 28 通过、0 失败、0 跳过。",
-          "remaining_scope": "PGT-017 余下采购询价回写、采购订单/收货、财务过账、MRP、旧流程批办/退回/转交/撤回、部分 WMS/Space、订单取号、缓存注销和普通数据库写者。按原提交单元验证。",
-          "main_tested_source_sha": "71ebdbbbd3875f82ada81fb4722d1d2f4564e23f"
+          "validation_summary": "真实租户暂停与 ORD 取号两种顺序，库存/订单定向回归，共 37 通过、0 失败、0 跳过。",
+          "remaining_scope": "PGT-017 余下采购询价回写、采购收货、财务过账、MRP、旧流程批办、部分 WMS/Space、缓存注销、普通数据库角色以及 Main 与 CRM 跨库新效果的等价栅栏。",
+          "main_tested_source_sha": "4f02cd347c02195f09446ba257eb7558711d76f2"
         }
       ],
       "storage": {
@@ -262658,6 +262663,66 @@
             "main_tested_source_sha": "959cbc574f3c7f20ebbfd26b0ecbf86245ddc62d",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1005",
             "main_remote_main_sha": "6cfcc76f224e81ee7f08557472859445ff211cc5"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W534",
+        "path": "docs/development/evidence/W534-01/DELIVERY.md",
+        "baseline_sha": "6cfcc76f224e81ee7f08557472859445ff211cc5",
+        "registered_at": "2026-11-13T12:38:12.629872+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "PGT-017 余下采购询价回写、采购订单/收货、财务过账、MRP、旧流程批办/退回/转交/撤回、部分 WMS/Space、订单取号、缓存注销和普通数据库写者。按原提交单元验证。",
+        "windows": [
+          {
+            "id": "W534-01",
+            "workspace_task": "W534-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w534-01",
+            "planned_scope_ref": "docs/development/evidence/W534-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W534-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main FIN/PUR/PLAN manual master-data writers",
+              "Main formal PostgreSQL acceptance and roadmap"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "7 条真实 PostgreSQL 撤权与重新授权，21 项定向组件回归，共 28 通过、0 失败、0 跳过。",
+            "remaining_scope": "PGT-017 余下采购询价回写、采购订单/收货、财务过账、MRP、旧流程批办/退回/转交/撤回、部分 WMS/Space、订单取号、缓存注销和普通数据库写者。按原提交单元验证。",
+            "main_tested_source_sha": "71ebdbbbd3875f82ada81fb4722d1d2f4564e23f",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1007",
+            "main_remote_main_sha": "c7f6ea0c5cdd25d7354b9bb69d35a25a55d45389"
           }
         ],
         "storage": {

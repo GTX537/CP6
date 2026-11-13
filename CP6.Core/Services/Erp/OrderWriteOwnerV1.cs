@@ -1,4 +1,5 @@
 using System.Data;
+using System.Data.Common;
 using CP6.Core.Services.Integration;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
@@ -78,6 +79,46 @@ public sealed partial class OrderWriteOwnerV1
         =>ExecuteCoreAsync(action,number,request,(dto,actor,_)=>body(dto,actor),ct);
     internal Task<Result> ExecuteCancellationAsync(string number,Func<string,StockTransactionInheritanceV1,Task<string>> body,
         CancellationToken ct=default)=>ExecuteCoreAsync("cancel",number,null,(_,actor,inheritance)=>body(actor,inheritance!),ct);
+
+    // The standalone reservation requires a current authenticated session.
+    // Order creation and integration allocate within their own existing transactions.
+    internal async Task<string> ReserveSequenceAsync(Func<CancellationToken, Task<string>> allocate)
+    {
+        var ct = http.HttpContext?.RequestAborted ?? CancellationToken.None;
+        if (db.Database.CurrentTransaction != null || System.Transactions.Transaction.Current != null)
+            throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
+        IDbContextTransaction? tx = null;
+        var committing = false;
+        try
+        {
+            tx = await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
+            await AuthenticationCompletionGateV1.AcquireAsync(db, ct);
+            var actor = await currentActor(ct);
+            var number = await allocate(ct);
+            if (await currentActor(ct) != actor)
+                throw new OrderPriceCorrectionException("REAUTH_REQUIRED", 401);
+            ct.ThrowIfCancellationRequested();
+            committing = true;
+            await tx.CommitAsync(ct);
+            return number;
+        }
+        catch (Exception error)
+        {
+            if (tx != null)
+            {
+                try { await tx.RollbackAsync(CancellationToken.None); }
+                catch (Exception rollback)
+                { throw new OrderPriceCorrectionException("ORDER_SEQUENCE_OUTCOME_UNKNOWN", 503, new AggregateException(error, rollback)); }
+            }
+            if (committing) throw new OrderPriceCorrectionException("ORDER_SEQUENCE_OUTCOME_UNKNOWN", 503, error);
+            if (error is DbException) throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503, error);
+            throw;
+        }
+        finally
+        {
+            if (tx != null) await tx.DisposeAsync();
+        }
+    }
     private async Task<Result> ExecuteCoreAsync(string action,string? number,OrderDto? request,
         Func<OrderDto?,string,StockTransactionInheritanceV1?,Task<string>> body,CancellationToken ct)
     {
