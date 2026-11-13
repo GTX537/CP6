@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W519 ERP 订单失败恢复实测
+
+新增显式 Order profile 及 .NET 原件检查，以 PostgreSQL 验证原始回执和既有 Partner 行为。 [本任务](../development/evidence/W519-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W518 PGT-024 同库验证
 
 核对同一 RMA v1 模型的两版宿主、旧写者拒绝、原回执和前向历史。本次为本地验证和台账交付。 [本任务](../development/evidence/W518-01/DELIVERY.md)

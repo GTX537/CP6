@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W519 实测 ERP Order 失败原图、原键与关闭候选回执恢复，已有 Partner 路径回归通过。 [本任务](evidence/W519-01/DELIVERY.md)
+
 > W518 实测同一 PostgreSQL 上真实旧版读取、新版普通写入、旧写者拒绝及停新版后读取；按 PGT-024 原范围保存。 [本任务](evidence/W518-01/DELIVERY.md)
 
 > W517 同源 PostgreSQL A 快照持有期间，普通 B 提交一笔合法 RMA。A 归档及独立关闭候选保持准确。 [本任务](evidence/W517-01/DELIVERY.md)
