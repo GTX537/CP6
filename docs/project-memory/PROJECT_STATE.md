@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W544 CRM 服务写入与租户暂停
+
+导出生成、保留匿名化和复核过期通过两库并发验收。正式 PostgreSQL 26/27。 [本任务](../development/evidence/W544-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W543 人工询盘写入与租户暂停
 
 人工受理、撤回同意、导出请求和一次性下载通过两库并发验收。正式 PostgreSQL 26/27。 [本任务](../development/evidence/W543-01/DELIVERY.md)
