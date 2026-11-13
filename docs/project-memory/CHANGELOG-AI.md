@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W520 Stock 同源恢复
+
+增加原生 Stock 调整导出、导入和验证入口。实测事务、原字节、序列与 worker 关闭约束。 [本任务](../development/evidence/W520-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W519 ERP 订单失败恢复实测
 
 新增显式 Order profile 及 .NET 原件检查，以 PostgreSQL 验证原始回执和既有 Partner 行为。 [本任务](../development/evidence/W519-01/DELIVERY.md)

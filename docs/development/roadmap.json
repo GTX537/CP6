@@ -165572,6 +165572,11 @@
       "at": "2026-11-13T00:39:18.323905+00:00",
       "change": "W519 用真实 PostgreSQL ERP Owner 的 OrderFailed 原件验证关闭候选导入、精确回执和 Partner 兼容。正式 PostgreSQL 21 PASS / 6 NOT_RUN。",
       "evidence": "docs/development/evidence/W519-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T01:40:38.245312+00:00",
+      "change": "W520 同源导出单笔 Stock ADJ 的四张原生表，并以真实 PostgreSQL 验证同事务原件、精确回执、故障回滚和候选禁止派送。正式 PostgreSQL 21 PASS / 6 NOT_RUN。",
+      "evidence": "docs/development/evidence/W520-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211458,10 +211463,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W519",
-      "path": "docs/development/evidence/W519-01/DELIVERY.md",
-      "baseline_sha": "582d8e66e0e2295a6e51c962b1fb55ccaf968bc5",
-      "registered_at": "2026-11-13T00:13:17.617794+00:00",
+      "id": "W520",
+      "path": "docs/development/evidence/W520-01/DELIVERY.md",
+      "baseline_sha": "57ecd7701222398616c28b018923616c202ac1f6",
+      "registered_at": "2026-11-13T01:06:22.351538+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211475,11 +211480,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "下一窗补 W477 单笔 Stock ADJ 的同快照四张原生账及关闭候选整事务恢复，继续保留原流水、序号和 B 租户。PGT-022 另接当前纪元恢复入口，PGT-024 另定义真实第二模型和共享最低版本。",
+      "next_action": "把 W520 Stock 与已有 RMA、FileContent、ERP 关闭候选放到同一物理 PostgreSQL，核验同源依赖和各原回执；按正式范围继续当前权限、受控准入与普通 A/B 复测。",
       "windows": [
         {
-          "id": "W519-01",
-          "workspace_task": "W519-01",
+          "id": "W520-01",
+          "workspace_task": "W520-01",
           "related_tasks": [
             "WP02-02"
           ],
@@ -211489,21 +211494,21 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w519-01",
-          "planned_scope_ref": "docs/development/evidence/W519-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W519-01/DELIVERY.md",
+          "branch": "codex/w520-01",
+          "planned_scope_ref": "docs/development/evidence/W520-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W520-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "Main:erp-closed-restore-profile"
+            "Main:stock-closed-restore-profile"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "PostgreSQL 18.6 and rebuilt ERP Owner produce A/B OrderFailed originals; 41-member v11 and eight ERP byte readbacks, exact 711-byte recovery and repeat receipt, native late 23505 rollback, unchanged B and default Partner receipt readable by the old CLI, exact decimal scale and maximum.",
-          "remaining_scope": "PGT-021 needs the same-snapshot Stock native effect rows, broader ERP graphs, full single-tenant recovery and approved admission. PGT-022 needs the current production-shaped route-epoch restore entry. PGT-024 needs adopted distinct tenant models and the shared compatibility matrix.",
-          "main_tested_source_sha": "5f90276636bd94e49842a30eae158e3b5873b033"
+          "validation_summary": "Real PostgreSQL 18.6 same-cut Stock ADJ four native tables and 40 existing CSV byte matches; split transaction and injected late deferred 23514; atomic source, originals and allocator rollback; exact A/B COPY and 973-byte recovery, same-key retry, owner-only worker marker rejection for both original Pending notifications.",
+          "remaining_scope": "PGT-021 requires same-candidate integration and authorized admission plus ordinary A/B retest, and wider Stock/ERP coverage as applicable. PGT-022 needs the current route-epoch restore boundary and PGT-024 needs two adopted models with explicit shared-version compatibility.",
+          "main_tested_source_sha": "d3cc9c6b4de607f0b1bd708391aa10e09418f763"
         }
       ],
       "storage": {
@@ -261556,6 +261561,65 @@
           "new_worktrees": 0
         },
         "product_integrated": false
+      },
+      {
+        "id": "W519",
+        "path": "docs/development/evidence/W519-01/DELIVERY.md",
+        "baseline_sha": "582d8e66e0e2295a6e51c962b1fb55ccaf968bc5",
+        "registered_at": "2026-11-13T00:13:17.617794+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "下一窗补 W477 单笔 Stock ADJ 的同快照四张原生账及关闭候选整事务恢复，继续保留原流水、序号和 B 租户。PGT-022 另接当前纪元恢复入口，PGT-024 另定义真实第二模型和共享最低版本。",
+        "windows": [
+          {
+            "id": "W519-01",
+            "workspace_task": "W519-01",
+            "related_tasks": [
+              "WP02-02"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w519-01",
+            "planned_scope_ref": "docs/development/evidence/W519-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W519-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "Main:erp-closed-restore-profile"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "PostgreSQL 18.6 and rebuilt ERP Owner produce A/B OrderFailed originals; 41-member v11 and eight ERP byte readbacks, exact 711-byte recovery and repeat receipt, native late 23505 rollback, unchanged B and default Partner receipt readable by the old CLI, exact decimal scale and maximum.",
+            "remaining_scope": "PGT-021 needs the same-snapshot Stock native effect rows, broader ERP graphs, full single-tenant recovery and approved admission. PGT-022 needs the current production-shaped route-epoch restore entry. PGT-024 needs adopted distinct tenant models and the shared compatibility matrix.",
+            "main_tested_source_sha": "5f90276636bd94e49842a30eae158e3b5873b033",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/987",
+            "main_remote_main_sha": "57ecd7701222398616c28b018923616c202ac1f6"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
       }
     ],
     "development_priority": {
