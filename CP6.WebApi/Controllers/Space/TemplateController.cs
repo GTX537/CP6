@@ -1,5 +1,6 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Space;
+using CP6.WebApi.Filters;
 using CP6.Entity.DTOs.Space;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,7 @@ public class TemplateController : ControllerBase
     /// <summary>创建模板</summary>
     [HttpPost("template")]
     [RequirePermission("space-floor", "edit")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Create([FromBody] TemplateDto d)
     {
         return Ok2(new { id = await _svc.CreateAsync(d, CurrentUser) });
@@ -39,6 +41,7 @@ public class TemplateController : ControllerBase
     /// <summary>更新模板</summary>
     [HttpPut("template/{id:guid}")]
     [RequirePermission("space-floor", "edit")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Update(Guid id, [FromBody] TemplateDto d)
     {
         await _svc.UpdateAsync(id, d, CurrentUser); return Ok2();
@@ -47,6 +50,7 @@ public class TemplateController : ControllerBase
     /// <summary>删除模板</summary>
     [HttpDelete("template/{id:guid}")]
     [RequirePermission("space-floor", "edit")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Delete(Guid id)
     {
         await _svc.DeleteAsync(id); return Ok2();
@@ -55,6 +59,7 @@ public class TemplateController : ControllerBase
     /// <summary>克隆模板（新 Id + 新编码，同 Params/Type）</summary>
     [HttpPost("template/{id:guid}/clone")]
     [RequirePermission("space-floor", "edit")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Clone(Guid id)
     {
         return Ok2(new { id = await _svc.CloneAsync(id, CurrentUser) });

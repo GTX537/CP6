@@ -1,6 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Space;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,7 @@ public sealed class SpaceAnalyticsController : ControllerBase
 
     [HttpPut("site/{siteId:guid}/analytics/config")]
     [RequirePermission("space-control-tower", "manage")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> UpdateConfig(
         Guid siteId, [FromBody] SpaceAnalyticsConfigUpdate request, CancellationToken ct)
     {
@@ -50,6 +52,7 @@ public sealed class SpaceAnalyticsController : ControllerBase
 
     [HttpPost("site/{siteId:guid}/analytics/abc/rebuild")]
     [RequirePermission("space-control-tower", "manage")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> RebuildAbc(Guid siteId, CancellationToken ct) =>
         Ok2(await _service.RebuildAbcAsync(siteId, "manual", CurrentUser, ct));
 
