@@ -165612,6 +165612,11 @@
       "at": "2026-11-13T08:33:01.865771+00:00",
       "change": "W527 完成 PGT-022 的真实 Stock 路由纪元、旧备份和未知发送恢复验收。正式 PostgreSQL 23 PASS、4 NOT_RUN；WP02-02 保持原任务状态。",
       "evidence": "docs/development/evidence/W527-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T09:18:05.086923+00:00",
+      "change": "W528 完成 PGT-024 的同库 A v2/B v1、共享最低版本与应用回退。正式 PostgreSQL 24 PASS、3 NOT_RUN，原询盘 60/60，WP02-02 原任务状态保留。",
+      "evidence": "docs/development/evidence/W528-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -170428,6 +170433,16 @@
         "full_task_completed": false,
         "tested_source_sha": "7028b48ecedd1f5219f4559046e0646449d3b52d",
         "actual_evidence": "D:/CP6-test-artifacts/W527-01/native-03/actual.json"
+      },
+      "wave528_delivery": {
+        "report": "docs/development/evidence/W528-01/DELIVERY.md",
+        "scope": "PGT-024 Main RMA v2/v1 mixed models, shared gate and app rollback",
+        "status": "LOCALLY_VERIFIED",
+        "formal_case": "PGT-024",
+        "formal_acceptance": "PASS",
+        "full_task_completed": false,
+        "tested_source_sha": "01c7640e540cef40a7661e1c3ddb74f5af9fd6a0",
+        "actual_evidence": "D:/CP6-test-artifacts/W528-01/native-04/actual.json"
       }
     },
     {
@@ -211543,10 +211558,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W527",
-      "path": "docs/development/evidence/W527-01/DELIVERY.md",
-      "baseline_sha": "422c578f28dbc6a1afcb2fe831d61eb476525daa",
-      "registered_at": "2026-11-13T07:32:19.107185+00:00",
+      "id": "W528",
+      "path": "docs/development/evidence/W528-01/DELIVERY.md",
+      "baseline_sha": "0d54024d146b1dbc445f9af2eaea2ddf6d7de5d6",
+      "registered_at": "2026-11-13T08:49:41.463128+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211560,11 +211575,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续 PGT-024 的真实 A 新模型/B 旧模型、共享最低版本与应用回退。PGT-011、017、025 按原卡前置推进，Identity Directory fresh 安装问题另见 #995。",
+      "next_action": "继续 PGT-011、PGT-017、PGT-025 的原卡验收。优先核对 WP02-04 后台服务 A/B 独立 scope、当前授权与管理员边界；并发撤权和合同精度保留各自真实 Owner 前置。",
       "windows": [
         {
-          "id": "W527-01",
-          "workspace_task": "W527-01",
+          "id": "W528-01",
+          "workspace_task": "W528-01",
           "related_tasks": [
             "WP02-02"
           ],
@@ -211574,22 +211589,23 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w527-01",
-          "planned_scope_ref": "docs/development/evidence/W527-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W527-01/DELIVERY.md",
+          "branch": "codex/w528-01",
+          "planned_scope_ref": "docs/development/evidence/W528-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W528-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "Main:rma-same-database-recovery",
-            "Main:stock-outbox-route-control"
+            "Main:tenant-storage",
+            "Main:ef-model",
+            "Main:rma-core-writers"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Stock PostgreSQL tests 19 PASS, 0 FAIL/SKIP. Same-source v11: active epoch 1 to Draining to active epoch 2 with two durable Owner receipts; old source restore rolls back and current Published original reconciles; durable UNKNOWN rejects restore and is not resent; cross-tenant global key collision and absent original safely classified. v11 with epoch-aware Stock section staged and recovered in an isolated database. Fresh Identity Directory installation failure reproduced at the W526 baseline and filed as #995.",
-          "remaining_scope": "PGT-024 needs two actual compatible tenant models, shared minimum-version enforcement and app rollback. PGT-011/017/025 stay open under their original cards. Identity Directory fresh installation issue #995 is tracked separately. The Stock switch supports terminal queues with the same publisher.",
-          "main_tested_source_sha": "7028b48ecedd1f5219f4559046e0646449d3b52d"
+          "validation_summary": "21 selected tests PASS, including actual EF shared expand. Native PostgreSQL 18.6 and two independent Main processes exercise actual v2 EF views and writers for A, v1 tables and writers for B, missing shared/tenant version and unknown model refusals, native v1 draft/submit/close rejection on A, exact migration replay, application-only rollback and unchanged forward history. Local WebApi publish contains the pinned compatibility matrix.",
+          "remaining_scope": "PGT-011/017/025 remain open under their original cards. Existing RMA v11 export/restore supports v1; v2 requires compatible recovery and is refused by the v1 tools. During app rollback A remains readable and requires a v2-capable host to write. Existing production tenant migration remains separate.",
+          "main_tested_source_sha": "01c7640e540cef40a7661e1c3ddb74f5af9fd6a0"
         }
       ],
       "storage": {
@@ -262116,6 +262132,66 @@
             },
             "main_pull_request": "https://github.com/GTX537/CP6/pull/994",
             "main_remote_main_sha": "422c578f28dbc6a1afcb2fe831d61eb476525daa"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W527",
+        "path": "docs/development/evidence/W527-01/DELIVERY.md",
+        "baseline_sha": "422c578f28dbc6a1afcb2fe831d61eb476525daa",
+        "registered_at": "2026-11-13T07:32:19.107185+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续 PGT-024 的真实 A 新模型/B 旧模型、共享最低版本与应用回退。PGT-011、017、025 按原卡前置推进，Identity Directory fresh 安装问题另见 #995。",
+        "windows": [
+          {
+            "id": "W527-01",
+            "workspace_task": "W527-01",
+            "related_tasks": [
+              "WP02-02"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w527-01",
+            "planned_scope_ref": "docs/development/evidence/W527-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W527-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "Main:rma-same-database-recovery",
+              "Main:stock-outbox-route-control"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Stock PostgreSQL tests 19 PASS, 0 FAIL/SKIP. Same-source v11: active epoch 1 to Draining to active epoch 2 with two durable Owner receipts; old source restore rolls back and current Published original reconciles; durable UNKNOWN rejects restore and is not resent; cross-tenant global key collision and absent original safely classified. v11 with epoch-aware Stock section staged and recovered in an isolated database. Fresh Identity Directory installation failure reproduced at the W526 baseline and filed as #995.",
+            "remaining_scope": "PGT-024 needs two actual compatible tenant models, shared minimum-version enforcement and app rollback. PGT-011/017/025 stay open under their original cards. Identity Directory fresh installation issue #995 is tracked separately. The Stock switch supports terminal queues with the same publisher.",
+            "main_tested_source_sha": "7028b48ecedd1f5219f4559046e0646449d3b52d",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/996",
+            "main_remote_main_sha": "0d54024d146b1dbc445f9af2eaea2ddf6d7de5d6"
           }
         ],
         "storage": {

@@ -951,8 +951,18 @@
       ],
       "implementation_task": "WP02-02",
       "source_scope": "CTX02-A6;CTX02-A7",
-      "status": "NOT_RUN",
-      "execution_evidence": []
+      "status": "PASS",
+      "execution_evidence": [
+        {
+          "report": "docs/development/evidence/W528-01/DELIVERY.md",
+          "result": "PASS",
+          "executed_at": "2026-11-13T09:15:32Z",
+          "scope": "Main commissioned native RMA, distinct EF v2 views and v1 tables for A/B in one database. Shared/tenant/version mismatch fail closed. Real previous host is read-compatible with A and keeps B writes; A v1 draft/submit/close effects are blocked by PostgreSQL. Application-only rollback keeps physical history.",
+          "environment": "Owned local PostgreSQL 18.6, .NET 8.0.424, previous and current Main WebApi processes using formal Platform 0.10.4, simulated tenants and business data.",
+          "evidence": "D:/CP6-test-artifacts/W528-01/native-04/actual.json",
+          "supplemental": "D:/CP6-test-artifacts/W528-01/native-04/mixed-native.log; D:/CP6-test-artifacts/W528-01/native-04/denied-native.log; D:/CP6-test-artifacts/W528-01/results/rma-model-final.trx; D:/CP6-test-artifacts/W528-01/local-publish.json"
+        }
+      ]
     },
     {
       "id": "PGT-025",

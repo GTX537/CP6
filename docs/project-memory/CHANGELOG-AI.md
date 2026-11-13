@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W528 RMA v2 与回退兼容
+
+接入逐租户 v2 模型、共享最低版本和数据库写者限制，兼容矩阵随 WebApi 构建与本地发布产物交付。PGT-024 升为 PASS，21 项相关测试通过。 [本任务](../development/evidence/W528-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W527 Stock 路由纪元与恢复
 
 增加明确 Owner 入口、向前迁移和版本化 Stock 归档段。现行未决发送及旧纪元在同库恢复事务中关闭准入。PGT-022 升为 PASS，19 项 Stock PostgreSQL 回归通过。 [本任务](../development/evidence/W527-01/DELIVERY.md)
