@@ -59,7 +59,7 @@ public class AdvancedFlowController : LocalizedControllerBase
     /// <summary>登记委派（章07 §5）。委托人=登录用户。</summary>
     [HttpPost("delegate")]
     [RequirePermission("oa-settings", "delegate")]
-    [WorkflowWriteAuthority]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Delegate([FromBody] DelegateReq r)
     {
         try

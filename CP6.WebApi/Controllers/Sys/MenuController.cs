@@ -1,6 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,7 @@ public class MenuController : ControllerBase
 
     [HttpPost]
     [RequirePermission("menu", "add")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Add([FromBody] Sys_Menu entity)
     {
         entity.CreateDate = DateTime.Now;
@@ -43,6 +45,7 @@ public class MenuController : ControllerBase
 
     [HttpPut]
     [RequirePermission("menu", "edit")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Update([FromBody] Sys_Menu entity)
     {
         // #4 字段审计 T4：先查后改（替 attach-as-Modified），令 Modified diff 准确。
@@ -68,6 +71,7 @@ public class MenuController : ControllerBase
     /// </summary>
     [HttpPut("tree")]
     [RequirePermission("menu", "edit")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> UpdateTree([FromBody] MenuTreePosition[] positions)
     {
         if (positions.Length == 0)
@@ -126,6 +130,7 @@ public class MenuController : ControllerBase
 
     [HttpDelete]
     [RequirePermission("menu", "delete")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Delete([FromBody] int[] ids)
     {
         var entities = await _context.Sys_Menus.Where(m => ids.Contains(m.MenuId)).ToListAsync();

@@ -1,10 +1,14 @@
 using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
+using CP6.Entity.DomainModels.Sys;
+using CP6.WebApi.Filters;
 using CP6.WebApi.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using System.Text.Json;
 
 namespace CP6.WebApi.Controllers.Sys;
 
@@ -40,6 +44,7 @@ public class TwoFactorPolicyController : ControllerBase
     /// <summary>设置当前租户 2FA 策略（mode ∈ {0,1,2}）。复用 user:edit 权限点。</summary>
     [HttpPut]
     [RequirePermission("user", "edit")]
+    [CurrentWriteAuthority(ChangesAuthentication = true)]
     public async Task<IActionResult> Put([FromBody] TwoFactorPolicyRequest req)
     {
         if (req.Mode < 0 || req.Mode > 2)
@@ -49,6 +54,24 @@ public class TwoFactorPolicyController : ControllerBase
             .FirstOrDefaultAsync(t => t.Id == _tenant.CurrentTenantId);
         if (tenant == null) return NotFound();
 
+        if (_context.Database.IsNpgsql() && tenant.TwoFactorMode != req.Mode)
+        {
+            _context.Sys_SecurityLogs.Add(new()
+            {
+                UserId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub")!),
+                UserName = User.Identity?.Name,
+                EventType = (int)SecurityEventType.IamAdministrationChanged,
+                Reason = "two-factor-policy",
+                ContextJson = JsonSerializer.Serialize(new
+                {
+                    kind = "two-factor-policy",
+                    before = tenant.TwoFactorMode,
+                    after = req.Mode,
+                    impersonatorId = User.FindFirstValue("impersonator_id")
+                }),
+                CreatedAt = DateTime.Now
+            });
+        }
         tenant.TwoFactorMode = req.Mode;
         await _context.SaveChangesAsync();
         return Ok(new { code = 0 });
