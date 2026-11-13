@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W518 实测同一 PostgreSQL 上真实旧版读取、新版普通写入、旧写者拒绝及停新版后读取；按 PGT-024 原范围保存。 [本任务](evidence/W518-01/DELIVERY.md)
+
 > W517 同源 PostgreSQL A 快照持有期间，普通 B 提交一笔合法 RMA。A 归档及独立关闭候选保持准确。 [本任务](evidence/W517-01/DELIVERY.md)
 
 > W516 实测 CRM 同宿主共享公开目录的 A/B 映射与未登记拒绝，合用 Main 认证、普通角色和 schema 启用证据。PGT-026 已采用，正式 PostgreSQL 21/27。 [本任务](evidence/W516-01/DELIVERY.md)

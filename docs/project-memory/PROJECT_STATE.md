@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W518 PGT-024 同库真实新旧宿主
+
+旧宿主实际读取 B、新宿主实际写入 A。旧写入被拒且无普通业务 SQL，停新版后旧版能读原数据，四份迁移历史保持。正式 PostgreSQL 21 PASS / 6 NOT_RUN。 [本任务](../development/evidence/W518-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W517 PGT-021 同源快照与普通 B 并发
 
 实际普通 B 在 A 快照持有期间写入原草稿、版本及回执。A 归档和独立关闭暂存核验通过。正式 PostgreSQL 21 PASS / 6 NOT_RUN。 [本任务](../development/evidence/W517-01/DELIVERY.md)
