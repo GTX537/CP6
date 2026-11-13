@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-13 UTC · W552 CRM 提交回包恢复
+
+实际同步复制等待中断，独立核对两库写集、原操作查询和幂等重试。 [本任务](../development/evidence/W552-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W551 角色撤权原命令恢复
 
 两库独立读回封存、旧授权无效果、Main 原操作 UNKNOWN 和同键恢复。 [本任务](../development/evidence/W551-01/DELIVERY.md)

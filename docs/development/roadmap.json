@@ -165732,6 +165732,11 @@
       "at": "2026-11-13T22:49:41.889301+00:00",
       "change": "W551 实测 CRM 封存后 Main 角色撤权提交被取消及原命令重试；正式 PostgreSQL 保持 26/27。",
       "evidence": "docs/development/evidence/W551-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T23:00:10.133374+00:00",
+      "change": "W552 实测 CRM 封存本地持久化后 COMMIT 回执丢失及同一 Main 撤权命令恢复；正式 PostgreSQL 保持 26/27。",
+      "evidence": "docs/development/evidence/W552-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211738,10 +211743,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W551",
-      "path": "docs/development/evidence/W551-01/DELIVERY.md",
-      "baseline_sha": "f252d248866efe706eb3e19292ebe70058a144fe",
-      "registered_at": "2026-11-13T22:42:49.177534+00:00",
+      "id": "W552",
+      "path": "docs/development/evidence/W552-01/DELIVERY.md",
+      "baseline_sha": "2a2697ebe199e971d71470de1f826d1c0f39f87a",
+      "registered_at": "2026-11-13T22:55:21.015166+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211755,11 +211760,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Complete the remaining direct writer inventory and commit-acknowledgement and restoration scenarios before closing PGT-017.",
+      "next_action": "Reconcile the protected database binding and restore watermark, plus direct and independent writer inventory, before final PGT-017 acceptance.",
       "windows": [
         {
-          "id": "W551-01",
-          "workspace_task": "W551-01",
+          "id": "W552-01",
+          "workspace_task": "W552-01",
           "related_tasks": [
             "WP02-03",
             "PGT-017"
@@ -211770,22 +211775,22 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w551-01",
-          "planned_scope_ref": "docs/development/evidence/W551-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W551-01/DELIVERY.md",
+          "branch": "codex/w552-01",
+          "planned_scope_ref": "docs/development/evidence/W552-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W552-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main IAM operation ledger and C02 role source",
-            "CRM registered inquiry store and prior W550 artifact",
+            "Main IAM operation ledger and CRM commit acknowledgement",
+            "CRM registered role fence and W550 artifact",
             "Main PostgreSQL acceptance and roadmap"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Actual Main commit cancellation after durable CRM role seal, original IAM UNKNOWN then exact retry/receipt, paired compatibility (4 combined passes); reuse W550 matching published hosts.",
-          "remaining_scope": "Lost CRM commit response, restored stores, direct native authority and remaining Main independent writers.",
-          "main_tested_source_sha": "f877edfa61d1b4da9ecb3acc5f25a15cc2bda048"
+          "validation_summary": "Actual CRM SyncRep connection termination after local role seal, both database readbacks, original IAM UNKNOWN and same-command receipt recovery; 2 combined passes.",
+          "remaining_scope": "Two-store physical restore and continuity proof, direct SQL authority and remaining independent Main writers.",
+          "main_tested_source_sha": "048666daddc08fc5c503d990b50a8135de48eb09"
         }
       ],
       "storage": {
@@ -263878,6 +263883,67 @@
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018",
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W551",
+        "path": "docs/development/evidence/W551-01/DELIVERY.md",
+        "baseline_sha": "f252d248866efe706eb3e19292ebe70058a144fe",
+        "registered_at": "2026-11-13T22:42:49.177534+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Complete the remaining direct writer inventory and commit-acknowledgement and restoration scenarios before closing PGT-017.",
+        "windows": [
+          {
+            "id": "W551-01",
+            "workspace_task": "W551-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w551-01",
+            "planned_scope_ref": "docs/development/evidence/W551-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W551-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main IAM operation ledger and C02 role source",
+              "CRM registered inquiry store and prior W550 artifact",
+              "Main PostgreSQL acceptance and roadmap"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Actual Main commit cancellation after durable CRM role seal, original IAM UNKNOWN then exact retry/receipt, paired compatibility (4 combined passes); reuse W550 matching published hosts.",
+            "remaining_scope": "Lost CRM commit response, restored stores, direct native authority and remaining Main independent writers.",
+            "main_tested_source_sha": "f877edfa61d1b4da9ecb3acc5f25a15cc2bda048",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1032",
+            "main_remote_main_sha": "2a2697ebe199e971d71470de1f826d1c0f39f87a"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },

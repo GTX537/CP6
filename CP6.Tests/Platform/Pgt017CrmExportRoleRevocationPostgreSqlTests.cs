@@ -54,6 +54,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             await Stage("permission-held");
             if (Environment.GetEnvironmentVariable("CP6_PGT017_ROLE_ABORT_AFTER_SEAL") == "1")
                 await AbortAfterSeal();
+            if (Environment.GetEnvironmentVariable("CP6_PGT017_ROLE_LOSE_CRM_COMMIT_ACK") == "1")
+                await LoseCrmCommitAcknowledgement();
             change = Revoke();
         }
         else
@@ -158,6 +160,79 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 $"api/iam/role-policies/operations/{command.OperationId:D}?kind=role-policy-actions", cookies));
             Assert.True(pending.StatusCode == HttpStatusCode.OK, await pending.Content.ReadAsStringAsync());
             Assert.Equal("UNKNOWN", (await pending.Content.ReadFromJsonAsync<IamOperationV1>())!.State);
+        }
+
+        async Task LoseCrmCommitAcknowledgement()
+        {
+            using var settings = JsonDocument.Parse(await File.ReadAllTextAsync(Environment.GetEnvironmentVariable("CP6_CRM_PG_SETTINGS")!));
+            var fixture = settings.RootElement;
+            await using var db = new NpgsqlConnection(Environment.GetEnvironmentVariable("CP6_PGT017_CRM_OBSERVER"));
+            await db.OpenAsync();
+            await using var identity = new NpgsqlCommand("""
+                SELECT system_identifier::text,current_setting('data_directory'),inet_server_port(),
+                    (SELECT oid::text FROM pg_database WHERE datname=current_database()),session_user,current_setting('synchronous_standby_names')
+                FROM pg_control_system()
+                """, db);
+            await using (var reader = await identity.ExecuteReaderAsync())
+            {
+                Assert.True(await reader.ReadAsync());
+                Assert.Equal(fixture.GetProperty("SystemIdentifier").GetString(), reader.GetString(0));
+                Assert.Equal(Path.GetFullPath(fixture.GetProperty("DataDirectory").GetString()!), Path.GetFullPath(reader.GetString(1)));
+                Assert.Equal(fixture.GetProperty("Port").GetInt32(), reader.GetInt32(2));
+                Assert.Equal(fixture.GetProperty("DatabaseOid").GetString(), reader.GetString(3));
+                Assert.Equal(fixture.GetProperty("Admin").GetString(), reader.GetString(4));
+                Assert.Empty(reader.GetString(5));
+            }
+            await using var setting = new NpgsqlCommand("ALTER SYSTEM SET synchronous_standby_names='pgt017_absent_test_standby'", db);
+            await setting.ExecuteNonQueryAsync();
+            try
+            {
+                await Reload("pgt017_absent_test_standby");
+                var attempted = Revoke();
+                await using var wait = new NpgsqlCommand("""
+                    SELECT pid FROM pg_stat_activity WHERE datname=current_database()
+                        AND application_name='cp6-main-inquiry-tenant-pause-v1'
+                        AND query LIKE 'COMMIT%' AND wait_event_type='IPC' AND wait_event='SyncRep'
+                    """, db);
+                using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                int backend;
+                while (true)
+                {
+                    if (await wait.ExecuteScalarAsync(deadline.Token) is int pid) { backend = pid; break; }
+                    Assert.False(attempted.IsCompleted, "The CRM transaction did not wait for its commit acknowledgement.");
+                    await Task.Delay(20, deadline.Token);
+                }
+                await using var disconnect = new NpgsqlCommand("SELECT pg_terminate_backend(@pid,3000)", db);
+                disconnect.Parameters.AddWithValue("pid", backend);
+                Assert.Equal(true, await disconnect.ExecuteScalarAsync(deadline.Token));
+                using var failed = await attempted;
+                Assert.Equal(HttpStatusCode.ServiceUnavailable, failed.StatusCode);
+                Assert.Contains("AUTHORITY_FENCE_UNAVAILABLE", await failed.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+                Assert.Equal(before, await Read());
+                Assert.Equal(before.Snapshot + 1, await CrmRoleFloor());
+            }
+            finally
+            {
+                setting.CommandText = "ALTER SYSTEM RESET synchronous_standby_names";
+                await setting.ExecuteNonQueryAsync();
+                await Reload("");
+            }
+            await File.WriteAllTextAsync(Path.Combine(bridge, "paused"), "PASS");
+            await Stage("finished");
+            using var pending = await host.Send(Request(HttpMethod.Get,
+                $"api/iam/role-policies/operations/{command.OperationId:D}?kind=role-policy-actions", cookies));
+            Assert.True(pending.StatusCode == HttpStatusCode.OK, await pending.Content.ReadAsStringAsync());
+            Assert.Equal("UNKNOWN", (await pending.Content.ReadFromJsonAsync<IamOperationV1>())!.State);
+
+            async Task Reload(string expected)
+            {
+                await using var reload = new NpgsqlCommand("SELECT pg_reload_conf()", db);
+                Assert.Equal(true, await reload.ExecuteScalarAsync());
+                await using var current = new NpgsqlCommand("SHOW synchronous_standby_names", db);
+                using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(4));
+                while (!Equals(await current.ExecuteScalarAsync(deadline.Token), expected))
+                    await Task.Delay(25, deadline.Token);
+            }
         }
 
         async Task<int> CrmRoleFloor()
