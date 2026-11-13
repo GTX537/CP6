@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W532 PGT-017 余项
+
+继续旧流程办理、财务/采购/计划、部分 WMS/Space、订单取号、缓存注销及普通 PostgreSQL 直接业务写入，沿原提交单元完成实际写者覆盖。 [本任务](../development/evidence/W532-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W531 PGT-017 余项
 
 旧菜单与 2FA、旧流程办理、FIN/PUR/PLAN、部分 WMS/Space 及其余写者还需按实际 Owner 事务接入并实测。核对运行时数据库授权与启用映射，完成全写者登记后再核销 PGT-017。 [已核对范围](../development/evidence/W531-01/DELIVERY.md#仍待核销的正式前置)

@@ -10,11 +10,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Filters;
 
-/// <summary>For workflow commands that use the request's Core context and save their effects
+/// <summary>For commands that use the request's Core context and save their effects
 /// before returning. The Owner and Main IAM share the native transaction root.</summary>
 [AttributeUsage(AttributeTargets.Method)]
-public sealed class WorkflowWriteAuthorityAttribute : Attribute, IAsyncActionFilter
+public sealed class CurrentWriteAuthorityAttribute : Attribute, IAsyncActionFilter
 {
+    public bool ChangesAuthentication { get; set; }
+
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var http = context.HttpContext;
@@ -35,7 +37,9 @@ public sealed class WorkflowWriteAuthorityAttribute : Attribute, IAsyncActionFil
                 executed = await next();
                 if (executed is { Exception: { } error, ExceptionHandled: false })
                     (executed.ExceptionDispatchInfo ?? ExceptionDispatchInfo.Capture(error)).Throw();
-                if (await CurrentActor(ct) != actor)
+                if (ChangesAuthentication)
+                    await TenantAdministrationHttpV1.Complete(http, services, ct);
+                else if (await CurrentActor(ct) != actor)
                     throw new IamAdministrationExceptionV1(401, "REAUTH_REQUIRED");
                 return true;
             }, http.RequestAborted);
@@ -49,7 +53,7 @@ public sealed class WorkflowWriteAuthorityAttribute : Attribute, IAsyncActionFil
             Fail(503, "AUTHORITY_FENCE_UNAVAILABLE");
         }
 
-        // These existing workflow actions accept a validated impersonation session.
+        // These existing actions accept a validated impersonation session.
         Task<Guid> CurrentActor(CancellationToken ct) =>
             IamAdministrationHttpV1.CurrentActor(http, services, ct, allowImpersonation: true);
 

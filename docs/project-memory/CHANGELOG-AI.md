@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W532 菜单与 2FA 提交授权
+
+旧菜单及管理员 2FA 共 6 条写入在共同根内判断。保留 2FA 合法自失效并记录同事务审计。实测 38 通过，PGT-017 继续待验收。 [本任务](../development/evidence/W532-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W531 工作流写者与撤权锁序
 
 本地 Kestrel/PostgreSQL 证明 9 条旧写者已从过期授权写入改为在共同事务内决定。订单改价真实 IAM 命令竞争、历史读回及库存暂停均有双向提交证据。正式 PostgreSQL 仍为 26/27。 [本任务](../development/evidence/W531-01/DELIVERY.md)

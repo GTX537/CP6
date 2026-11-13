@@ -39,7 +39,7 @@ public class WorkCalendarController : LocalizedControllerBase
     /// <summary>反转某日（补班/假日/备注 upsert）。</summary>
     [HttpPost("toggle")]
     [RequirePermission("oa-work-calendar", "Calendar.Edit")]
-    [WorkflowWriteAuthority]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Toggle([FromBody] ToggleReq req, CancellationToken ct)
     {
         await _svc.SetDayAsync(req.Date, req.IsWorkday, req.Note, ct);
@@ -49,7 +49,7 @@ public class WorkCalendarController : LocalizedControllerBase
     /// <summary>回归默认态（删例外行）。date 路由段格式 yyyy-MM-dd。</summary>
     [HttpDelete("{date:datetime}")]
     [RequirePermission("oa-work-calendar", "Calendar.Edit")]
-    [WorkflowWriteAuthority]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Clear(DateTime date, CancellationToken ct)
     {
         await _svc.ClearDayAsync(date, ct);
@@ -59,7 +59,7 @@ public class WorkCalendarController : LocalizedControllerBase
     /// <summary>空态导入日本法定假日到当前租户（幂等）。返回本次新增行数。</summary>
     [HttpPost("import-jp")]
     [RequirePermission("oa-work-calendar", "Calendar.Edit")]
-    [WorkflowWriteAuthority]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> ImportJp(CancellationToken ct)
         => Ok2(new { inserted = await _svc.ImportJapaneseHolidaysAsync(ct) });
 

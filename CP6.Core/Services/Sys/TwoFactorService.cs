@@ -128,11 +128,16 @@ public class TwoFactorService : ITwoFactorService
 
     public async Task ResetAsync(Sys_User user, string? reason = null)
     {
+        ResetCredentials(user);
+        await _audit.LogAsync(SecurityEventType.TwoFactorReset, user.Id, user.UserName, null, null, null, reason);
+    }
+
+    internal static void ResetCredentials(Sys_User user)
+    {
         user.TwoFactorEnabled = false;
         user.TwoFactorSecret = null;
         user.TwoFactorEnrolledAt = null;
         user.AuthenticationEpoch = Guid.NewGuid();
-        await _audit.LogAsync(SecurityEventType.TwoFactorReset, user.Id, user.UserName, null, null, null, reason);
     }
 
     private static string GenerateNumericOtp(int length)

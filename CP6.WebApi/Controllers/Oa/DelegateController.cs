@@ -53,7 +53,7 @@ public class DelegateController : LocalizedControllerBase
 
     [HttpPost("add")]
     [RequirePermission("oa-settings", "delegate")]
-    [WorkflowWriteAuthority]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Add([FromBody] AddDelegateReq r)
     {
         try
@@ -71,7 +71,7 @@ public class DelegateController : LocalizedControllerBase
 
     [HttpPost("remove")]
     [RequirePermission("oa-settings", "delegate")]
-    [WorkflowWriteAuthority]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Remove([FromBody] RemoveDelegateReq r)
     {
         try
