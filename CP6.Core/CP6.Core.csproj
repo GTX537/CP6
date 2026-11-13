@@ -10,8 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CP6.Platform.Messaging" Version="[0.10.3]" />
-    <PackageReference Include="CP6.Platform.EntityFramework" Version="[0.10.3]" />
+    <PackageReference Include="CP6.Platform.Messaging" Version="[0.10.4]" />
+    <PackageReference Include="CP6.Platform.EntityFramework" Version="[0.10.4]" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="AWSSDK.S3" Version="3.7.511.8" />
     <PackageReference Include="Otp.NET" Version="1.4.0" />
@@ -36,6 +36,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup Condition="'$(Cp6PostgreSqlDevelopment)' == 'true'">
+    <Compile Remove="Migrations/**/*.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="../contracts/events/platform/**/*" Link="contracts/events/platform/%(RecursiveDir)%(Filename)%(Extension)"

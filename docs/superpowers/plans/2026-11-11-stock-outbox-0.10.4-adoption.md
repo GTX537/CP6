@@ -10,7 +10,7 @@
 
 ---
 
-计划状态：**准备完成，未执行正式发布或Main包升级**。[W490报告](../../development/evidence/W490-01/DELIVERY.md)保存实际前置及原失败范围。本计划不授予Actions、签名发布或部署权限。
+计划状态：**W526-01 已实施并验证**。用户另行授权的一次正式发布 [43378516039](https://github.com/GTX537/CP6.Platform/actions/runs/43378516039) 已成功；Main 实际四条直接引用及六份受影响锁文件升级，18项原生 Stock/Program 回归通过，同一 W477 原 Pending 消息实际完成派送。[W526报告](../../development/evidence/W526-01/DELIVERY.md)记录集成及 Issue 处置；以下 W490 输入和检查清单保留为原实施计划。本次授权不覆盖其他 Actions 或部署。
 
 ## 已核实输入
 

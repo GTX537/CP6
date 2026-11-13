@@ -4,12 +4,12 @@
     "net8.0": {
       "CP6.Platform.AspNetCore": {
         "type": "Direct",
-        "requested": "[0.10.3, 0.10.3]",
-        "resolved": "0.10.3",
-        "contentHash": "PGjsIyWXOtz1qv0+fVmbnyiJl5Rc+u2bjhn2FV2R7/bkxYi8EF1RmpOo2PhdU35O1VKczkD6QxIiu0Du6VP56g==",
+        "requested": "[0.10.4, 0.10.4]",
+        "resolved": "0.10.4",
+        "contentHash": "GJYA4Rk/a0vFGeff993/8vWtNgNDJqef+1nLkuFUnF32Uyj8qSPzQCqevJeQqjSRQTX1H6/kdu6aNvU2Tv72kQ==",
         "dependencies": {
-          "CP6.Platform.Abstractions": "0.10.3",
-          "CP6.Platform.Contracts": "0.10.3",
+          "CP6.Platform.Abstractions": "0.10.4",
+          "CP6.Platform.Contracts": "0.10.4",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.30",
           "Microsoft.Extensions.Http.Resilience": "10.9.0",
           "OpenTelemetry.Extensions.Hosting": "1.18.0",
@@ -194,35 +194,35 @@
       },
       "CP6.Platform.Abstractions": {
         "type": "Transitive",
-        "resolved": "0.10.3",
-        "contentHash": "Omv7gGvdAJ8P4bXo0Xh8mPvOJY/Ehc2YRZztUoJAglZP8gnGFkGGVn3JMH5Ab+pYZgEbKtqQGwj8tHWwDsEoIg==",
+        "resolved": "0.10.4",
+        "contentHash": "Q/y6cZ83VLPMaZ7VO8gfhgm6+WHWJrB+SXORf4CoQ0Z/IODzv596Y554usFQzQzEG7/udJL8hKZkIUcyQmuRTQ==",
         "dependencies": {
-          "CP6.Platform.Contracts": "0.10.3"
+          "CP6.Platform.Contracts": "0.10.4"
         }
       },
       "CP6.Platform.Contracts": {
         "type": "Transitive",
-        "resolved": "0.10.3",
-        "contentHash": "kIa42dTduWovpzEcfbog4hVIXQAFmNx2Q1kFl4AxzFgnfevvWqg0QTWoMFIRYZ52Ass1peNtqHx48yDXQgR81g=="
+        "resolved": "0.10.4",
+        "contentHash": "a9RutMs6taYm8qJqH+NFEiDWVs5oHkCZGYc9H4rvsdwVcqOED4ErMcxy8TboUVithGXmMC/hvVFJTJlFqaVBUQ=="
       },
       "CP6.Platform.EntityFramework": {
         "type": "Transitive",
-        "resolved": "0.10.3",
-        "contentHash": "kw8q95H2s62BhsG7ZR2RQCCJtuBai0MR28DCODU+7ifixXAWKxLOwDBY3Th09bYzb9JIVXH9FY9ALszKTaJj4g==",
+        "resolved": "0.10.4",
+        "contentHash": "7bFx3T3KKQTPrThnRymMqMPvIU4N6X1PS5NsTbmZblIAfP/xRPhqLw95pLYQTAkX00o9pZLeMjktmBGNO97HOw==",
         "dependencies": {
-          "CP6.Platform.Abstractions": "0.10.3",
-          "CP6.Platform.Contracts": "0.10.3",
+          "CP6.Platform.Abstractions": "0.10.4",
+          "CP6.Platform.Contracts": "0.10.4",
           "Microsoft.EntityFrameworkCore": "8.0.30",
           "Microsoft.EntityFrameworkCore.Relational": "8.0.30"
         }
       },
       "CP6.Platform.Messaging": {
         "type": "Transitive",
-        "resolved": "0.10.3",
-        "contentHash": "rWiHMQpakb36G/zFEjPAyMSvEdBFuS3oz+16DG6SrIol5HhMg+sUkQ/YtJuc9GsM07dD9shPaR9siU2UFwuThQ==",
+        "resolved": "0.10.4",
+        "contentHash": "c2j4INQQy3MCP3AtPRm0x0HMq+GCxyknNHaf338Q7N2FQKhpK6I8Anx35Og12Y/ykGryoCZXiM53O5abFe44Hg==",
         "dependencies": {
-          "CP6.Platform.Abstractions": "0.10.3",
-          "CP6.Platform.Contracts": "0.10.3",
+          "CP6.Platform.Abstractions": "0.10.4",
+          "CP6.Platform.Contracts": "0.10.4",
           "CloudNative.CloudEvents": "2.9.0",
           "CloudNative.CloudEvents.SystemTextJson": "2.9.0",
           "Dapr.Client": "1.18.5",
@@ -1425,8 +1425,8 @@
           "AWSSDK.S3": "[3.7.511.8, )",
           "BCrypt.Net-Next": "[4.0.3, )",
           "CP6.Entity": "[1.0.0, )",
-          "CP6.Platform.EntityFramework": "[0.10.3, 0.10.3]",
-          "CP6.Platform.Messaging": "[0.10.3, 0.10.3]",
+          "CP6.Platform.EntityFramework": "[0.10.4, 0.10.4]",
+          "CP6.Platform.Messaging": "[0.10.4, 0.10.4]",
           "ClosedXML": "[0.105.0, )",
           "Confluent.Kafka": "[2.6.1, )",
           "Dapper": "[2.1.72, )",
