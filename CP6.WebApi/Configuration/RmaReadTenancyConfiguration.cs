@@ -46,10 +46,11 @@ internal static class RmaReadTenancyConfiguration
         TenantStorageCatalog catalog;
         try
         {
-            catalog = new(TenantRmaReadStore.Host, [RmaTenantStorageV1.CoreReadProfile],
+            catalog = new(TenantRmaReadStore.Host, [RmaTenantStorageV1.CoreReadProfile, RmaTenantStorageV1.CoreReadProfileV2],
                 tenants.Select(t => new TenantStorageBindingV1(t.TenantId, TenantRmaReadStore.Host, databaseRef,
-                    TenantStorageBindingV1.SupportedLayout, RmaTenantStorageV1.CoreReadProfile, settings.Revision,
-                    t.CredentialVersion, t.Login, [], TenantStorageState.Ready, RmaTenantStorageV1.CoreReadMigration)),
+                    TenantStorageBindingV1.SupportedLayout, t.ModelVersion, settings.Revision, t.CredentialVersion,
+                    t.Login, [], TenantStorageState.Ready, t.ModelVersion == RmaTenantStorageV1.CoreReadProfileV2
+                        ? RmaTenantStorageV1.CoreReadMigrationV2 : RmaTenantStorageV1.CoreReadMigration)),
                 [new(databaseRef, ip.ToString(), endpoint.Port, endpoint.Database, ssl)],
                 tenants.Select(t => new TenantPrincipal(t.Login, t.Login)));
         }
@@ -80,6 +81,7 @@ internal static class RmaReadTenancyConfiguration
         public string Login { get; set; } = "";
         public string Password { get; set; } = "";
         public string CredentialVersion { get; set; } = "";
+        public string ModelVersion { get; set; } = RmaTenantStorageV1.CoreReadProfile;
     }
 
     private sealed class Credentials(IReadOnlyDictionary<Guid, string> passwords) : ITenantCredentialResolver

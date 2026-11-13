@@ -263,11 +263,12 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
             var view = await PrepareDraft(access, command, quantities, tenantDb, token);
             var result = new RmaApplicationResultV1(command.OperationId, view.Id, view.Version, view.State, view.Etag);
             var audit = JsonSerializer.Serialize(new { action = "create-application", result });
-            await tenantDb.Database.ExecuteSqlInterpolatedAsync($"""
-                SELECT cp6_rma_draft_writer_v1.create_draft({tenantDb.Binding.TenantId},{command.OperationId},{view.Id},
-                    {access.ActorId},{view.OutboundId},CAST({JsonSerializer.Serialize(view)} AS jsonb),{input},
-                    {MainOwnerOperationJournalV1.Digest(input)},{MainOwnerOperationJournalV1.Encode(result)},CAST({audit} AS jsonb))
-                """, token);
+            var writer = tenantDb.UsesV2 ? "cp6_rma_model_v2.create_draft" : "cp6_rma_draft_writer_v1.create_draft";
+            await tenantDb.Database.ExecuteSqlRawAsync("SELECT " + writer
+                + "({0},{1},{2},{3},{4},CAST({5} AS jsonb),{6},{7},{8},CAST({9} AS jsonb))",
+                [tenantDb.Binding.TenantId, command.OperationId, view.Id, access.ActorId, view.OutboundId,
+                    JsonSerializer.Serialize(view), input, MainOwnerOperationJournalV1.Digest(input),
+                    MainOwnerOperationJournalV1.Encode(result), audit], token);
             return result;
         }, ct);
 
@@ -331,11 +332,12 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
             var view = await PrepareSubmission(access, id, command.ExpectedVersion, ifMatch, tenantDb, token);
             var result = new RmaApplicationResultV1(command.OperationId, id, view.Version, view.State, view.Etag);
             var audit = JsonSerializer.Serialize(new { action = "submit-application", result });
-            var changed = await tenantDb.Database.SqlQuery<bool>($"""
-                SELECT cp6_rma_submit_writer_v1.submit_draft({tenantDb.Binding.TenantId},{command.OperationId},{id},
-                    {access.ActorId},{command.ExpectedVersion},CAST({JsonSerializer.Serialize(view)} AS jsonb),{input},
-                    {MainOwnerOperationJournalV1.Digest(input)},{MainOwnerOperationJournalV1.Encode(result)},CAST({audit} AS jsonb)) AS "Value"
-                """).SingleAsync(token);
+            var writer = tenantDb.UsesV2 ? "cp6_rma_model_v2.submit_draft" : "cp6_rma_submit_writer_v1.submit_draft";
+            var changed = await tenantDb.Database.SqlQueryRaw<bool>("SELECT " + writer
+                + """({0},{1},{2},{3},{4},CAST({5} AS jsonb),{6},{7},{8},CAST({9} AS jsonb)) AS "Value" """,
+                tenantDb.Binding.TenantId, command.OperationId, id, access.ActorId, command.ExpectedVersion,
+                JsonSerializer.Serialize(view), input, MainOwnerOperationJournalV1.Digest(input),
+                MainOwnerOperationJournalV1.Encode(result), audit).SingleAsync(token);
             if (!changed) throw Error("RMA_APPLICATION_CHANGED", 412);
             return result;
         }, ct);
@@ -414,10 +416,16 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
 
             var result = new RmaApplicationOperationV1(id, "CLOSED");
             var audit = JsonSerializer.Serialize(new { action = CloseAuditAction });
-            await tenantDb.Database.ExecuteSqlInterpolatedAsync($"""
-                SELECT cp6_rma_original_journal_v1.store({tenantDb.Binding.TenantId},{id},{access.ActorId},
-                    'CLOSED',NULL::bytea,NULL::text,{MainOwnerOperationJournalV1.Encode(result)},ARRAY[]::uuid[],CAST({audit} AS jsonb))
-                """, token);
+            if (tenantDb.UsesV2)
+                await tenantDb.Database.ExecuteSqlInterpolatedAsync($"""
+                    SELECT cp6_rma_model_v2.close_operation({tenantDb.Binding.TenantId},{id},{access.ActorId},
+                        {MainOwnerOperationJournalV1.Encode(result)},CAST({audit} AS jsonb))
+                    """, token);
+            else
+                await tenantDb.Database.ExecuteSqlInterpolatedAsync($"""
+                    SELECT cp6_rma_original_journal_v1.store({tenantDb.Binding.TenantId},{id},{access.ActorId},
+                        'CLOSED',NULL::bytea,NULL::text,{MainOwnerOperationJournalV1.Encode(result)},ARRAY[]::uuid[],CAST({audit} AS jsonb))
+                    """, token);
             return result;
         }, ct);
 

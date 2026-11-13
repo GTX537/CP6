@@ -35,6 +35,27 @@ public sealed class RmaTenantReadModelTests
             .FindPrimaryKey()!.Properties.Select(property => property.Name));
     }
 
+    [Fact]
+    public void Rma_read_v2_uses_explicit_compatibility_views_and_keeps_v1_tables()
+    {
+        using var connection = new NpgsqlConnection();
+        var v1 = Binding(Guid.NewGuid());
+        using var oldModel = Open(connection, v1);
+        using var newModel = Open(connection, Binding(v1.TenantId, model: "rma-application-core-tenant-v2"));
+        using var otherTenant = Open(connection, Binding(Guid.NewGuid()));
+
+        var head = newModel.Model.FindEntityType(typeof(RmaTenantHead))!;
+        var version = newModel.Model.FindEntityType(typeof(RmaTenantVersion))!;
+        Assert.Equal("application_heads_v2", head.GetViewName());
+        Assert.Equal("application_versions_v2", version.GetViewName());
+        Assert.Equal(v1.SchemaName, head.GetViewSchema());
+        Assert.Equal(v1.SchemaName, version.GetViewSchema());
+        Assert.Equal(new[] { "heads", "versions" }, Tables(oldModel, v1.SchemaName));
+        Assert.Equal(new[] { "heads", "versions" }, Tables(otherTenant, otherTenant.Binding.SchemaName));
+        Assert.Contains($"FROM {v1.SchemaName}.application_heads_v2", newModel.Heads.ToQueryString());
+        Assert.Contains($"FROM {otherTenant.Binding.SchemaName}.versions", otherTenant.Versions.ToQueryString());
+    }
+
     private static RmaTenantReadContext Open(NpgsqlConnection connection, TenantStorageBindingV1 binding) =>
         new(RmaTenantReadContext.Options(connection).Options, binding);
 

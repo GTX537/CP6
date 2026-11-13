@@ -266,6 +266,14 @@ def check_source(query, target, installation, tenant):
     return ready
 
 
+def require_v1_schema(query, tenant):
+    if query("""
+        SELECT to_json(EXISTS (SELECT FROM pg_trigger
+            WHERE tgrelid=to_regclass({heads}) AND tgname='rma_model_v2_writer' AND NOT tgisinternal));
+    """.format(heads=literal("t_" + tenant.hex + ".heads"))):
+        raise ArchiveError("rma-storage-model-v2-requires-compatible-recovery")
+
+
 def outbounds_sql(tenant, schema):
     return """
         SELECT o."TenantId" AS tenant_id, o."Id" AS outbound_id, o."OutboundNo"::text AS outbound_no,
@@ -589,6 +597,7 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
     connection = connection_args(target, username)
     with snapshot_session(pg_bin, connection, environ, logs) as query:
         ready = check_source(query, target, installation, tenant)
+        require_v1_schema(query, tenant)
         draft_executor = adopted_draft_executor(query, target, installation, ready)
         submit_writer = adopted_submit_writer(query, target, installation, ready, draft_executor)
         captured = capture(query, tenant, schema, ready, draft_executor, submit_writer)
