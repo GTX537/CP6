@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W536 Web 和原生仅访问令牌注销接入共同事务根，四种提交组合、Main OIDC 与前向升级实测通过。PGT-017 仍待其余写者，正式 PostgreSQL 26/27。 [本任务](evidence/W536-01/DELIVERY.md)
+
 > W535 实测订单取号与租户暂停的两种提交顺序，已将该入口接入共同根。正式 PostgreSQL 26/27，PGT-017 其余写者及跨库协议待核对。 [本任务](evidence/W535-01/DELIVERY.md)
 
 > W534 修复资产分类、手工供应商价表和品目策略的 7 条写者。PGT-017 仍待其他写者采用，正式 PostgreSQL 26/27。 [本任务](evidence/W534-01/DELIVERY.md)

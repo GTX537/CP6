@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W536 仅访问令牌注销
+
+Web 与原生仅 access 注销进入 Main 共同事务根。正式 PostgreSQL 26/27，PGT-017 其余写者和跨库协议待核对。 [本任务](../development/evidence/W536-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W535 订单取号与暂停
 
 订单取号事务采用 Main 共同根。两种提交顺序与持久计数均通过。正式 PostgreSQL 26/27，PGT-017 仍有其他写者。 [本任务](../development/evidence/W535-01/DELIVERY.md)
