@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W535 订单取号与暂停
+
+订单取号事务采用 Main 共同根。两种提交顺序与持久计数均通过。正式 PostgreSQL 26/27，PGT-017 仍有其他写者。 [本任务](../development/evidence/W535-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W534 财务、采购及计划主数据写入
 
 资产分类、手工供应商价表、品目策略的 7 条写者接入共同根并实测。正式 PostgreSQL 26/27，PGT-017 仍有余项。 [本任务](../development/evidence/W534-01/DELIVERY.md)
