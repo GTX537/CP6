@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W539 WMS 油墨写入
+
+4 个油墨写入口采用 Main 共同事务栅栏，混合与撤权两种提交顺序通过。正式 PostgreSQL 26/27，原询盘 60/60。 [本任务](../development/evidence/W539-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W536 仅访问令牌注销
 
 Web 与原生仅 access 注销进入 Main 共同事务根。正式 PostgreSQL 26/27，PGT-017 其余写者和跨库协议待核对。 [本任务](../development/evidence/W536-01/DELIVERY.md)

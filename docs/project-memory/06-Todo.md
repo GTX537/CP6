@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W539 PGT-017 余项
+
+继续核对待采用的 Main 写者、普通数据库角色、已登记的 OIDC 和财务分支，以及 Main/CRM 等价跨库提交协议。 [本任务](../development/evidence/W539-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W536 PGT-017 余项
 
 继续核对其余 Main 业务事务、refresh 注销即时信号、OIDC 族锁序、普通数据库角色及 Main 与 CRM 新效果之间的等价共同协议。 [本任务](../development/evidence/W536-01/DELIVERY.md)
