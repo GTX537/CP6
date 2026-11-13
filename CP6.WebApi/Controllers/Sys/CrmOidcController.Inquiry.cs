@@ -1,5 +1,6 @@
 using System.Data.Common;
 using CP6.Core.Services.Sys;
+using CP6.Core.Services.Platform;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,17 +18,19 @@ public sealed partial class CrmOidcController
         if (!IsServiceTransportAllowed()) return OAuthError("invalid_request");
         try
         {
-            var result = await inquiryPermissions.IssueAsync(request, async (db, _) =>
+            var result = await inquiryPermissions.IssueWithFenceAsync(request, async (db, _) =>
             {
                 var session = await ReadBearerAsync(db);
                 return session is null ? null : new InquiryPermissionSubjectV1(session.Value.User.TenantId,
                     session.Value.User.Id, session.Value.Grant.Id, session.Value.ExpiresAtUtc);
             }, HttpContext.RequestAborted);
-            return Content(result, "application/json");
+            if (result.TenantFence is { } fence) Response.Headers["X-CP6-Inquiry-Tenant-Fence"] = fence;
+            return Content(result.Json, "application/json");
         }
         catch (InquiryPermissionExceptionV1 error) { return OAuthError(error.Message, error.Status); }
         catch (IamAdministrationExceptionV1) { return OAuthError("inquiry_authority_unavailable", 503); }
         catch (CurrentPermissionUnavailableException) { return OAuthError("inquiry_authority_unavailable", 503); }
+        catch (TenantManagementExceptionV1) { return OAuthError("inquiry_authority_unavailable", 503); }
         catch (DbException) { return OAuthError("inquiry_authority_unavailable", 503); }
     }
 

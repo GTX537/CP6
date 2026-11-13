@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W540 Main 暂停与 CRM 配置
+
+两套 PostgreSQL 18.6 已通过配置写先提交、暂停先提交以及 Main 中断后的原操作恢复。正式 PostgreSQL 26/27，原询盘 60/60。 [本任务](../development/evidence/W540-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W539 WMS 油墨写入
 
 4 个油墨写入口采用 Main 共同事务栅栏，混合与撤权两种提交顺序通过。正式 PostgreSQL 26/27，原询盘 60/60。 [本任务](../development/evidence/W539-01/DELIVERY.md)

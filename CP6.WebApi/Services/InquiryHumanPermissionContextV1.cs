@@ -17,7 +17,7 @@ internal sealed record InquiryHumanSourceV1(CrmIdentitySnapshot User, Guid Epoch
 public sealed partial class InquiryPermissionIssuerV1
 {
     public bool HumanContextEnabled => Enabled && identityRuntime?.Options.Enabled == true;
-    public Task<string> IssueHumanContextAsync(InquiryHumanContextRequestV1 request,
+    public async Task<string> IssueHumanContextAsync(InquiryHumanContextRequestV1 request,
         Func<CP6Context, CancellationToken, Task<InquiryPermissionSubjectV1?>> currentBearer, CancellationToken ct)
     {
         if (request is null || !InquiryPermissionSigningKeyV1.ValidServiceNonce(request.RequestNonce))
@@ -25,7 +25,7 @@ public sealed partial class InquiryPermissionIssuerV1
         if (request.Purpose is not ("intake:list" or "intake:detail" or "intake:release" or "intake:reject" or "privacy:consent-withdraw" or "privacy:export" or "privacy:download"))
             throw new InquiryPermissionExceptionV1(400, "unsupported_projection_purpose");
         if (!HumanContextEnabled) throw new InquiryPermissionExceptionV1(503, "inquiry_human_context_unavailable");
-        return IssueCoreAsync(new(request.Purpose, request.SiteId, request.FormId), currentBearer, request.RequestNonce, ct);
+        return (await IssueCoreAsync(new(request.Purpose, request.SiteId, request.FormId), currentBearer, request.RequestNonce, ct)).Json;
     }
 
     // Caller holds the same Main authentication root as the permission and final Bearer recheck.
