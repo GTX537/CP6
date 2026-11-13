@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W522 组合候选受控本地准入
+
+源端实际独立批准后普通角色读取原 RMA，源隐私纪元更新后原请求被拒，组合回执和队列保持。正式 PostgreSQL 21 PASS / 6 NOT_RUN，原询盘 60/60。 [本任务](../development/evidence/W522-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W521 同一关闭候选四域恢复
 
 Stock、RMA、ERP Partner 和 FileContent 在同一原生候选恢复，五份原回执和文件原字节通过，普通 B 跨租读取 42501。正式 PostgreSQL 21 PASS / 6 NOT_RUN，原询盘 60/60。 [本任务](../development/evidence/W521-01/DELIVERY.md)
