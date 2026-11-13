@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W553 PGT-017 余项
+
+仍需核对独立 Space Design、OA、财务、采购、MRP、普通数据库写者及 Main/CRM 恢复水位。 [交付](../development/evidence/W553-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W552 PGT-017 余项
 
 仍需核对两库恢复实例及水位、直接 SQL 权威和 Main 其他独立写者。 [本任务](../development/evidence/W552-01/DELIVERY.md)
