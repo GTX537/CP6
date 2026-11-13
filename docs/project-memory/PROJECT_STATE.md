@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W523 现行 IAM 和投递对账
+
+源端普通 IAM 实际拒绝已签发访问和刷新凭据，B 保持。ERP 同键识别当前 Published，Stock 源端遇 #844，候选保持零派送。正式 PostgreSQL 21 PASS / 6 NOT_RUN，原询盘 60/60。 [本任务](../development/evidence/W523-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W522 组合候选受控本地准入
 
 源端实际独立批准后普通角色读取原 RMA，源隐私纪元更新后原请求被拒，组合回执和队列保持。正式 PostgreSQL 21 PASS / 6 NOT_RUN，原询盘 60/60。 [本任务](../development/evidence/W522-01/DELIVERY.md)
