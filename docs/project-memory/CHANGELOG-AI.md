@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W541 连接体、模板与手动分析
+
+11 个现行 HTTP 写入口在请求 Core 事务中使用 Main 认证根。修复前复现 14 项，修复后 48 项通过。 [本任务](../development/evidence/W541-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W540 跨库暂停与配置
 
 Main 已登记租户暂停前取得 CRM 持久封存回执。CRM 配置 Owner 在原事务核对同一存储和版本。6 项两仓联验、76 项相关回归通过，PGT-017 继续 NOT_RUN。 [本任务](../development/evidence/W540-01/DELIVERY.md)

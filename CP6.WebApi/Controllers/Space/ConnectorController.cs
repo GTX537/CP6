@@ -1,5 +1,6 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Space;
+using CP6.WebApi.Filters;
 using CP6.Entity.DTOs.Space;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ public class ConnectorController : ControllerBase
 
     [HttpPost("connector")]
     [RequirePermission("space-floor", "edit")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Create([FromBody] ConnectorDto d)
     {
         return Ok2(new { id = await _svc.CreateAsync(d, CurrentUser) });
@@ -34,6 +36,7 @@ public class ConnectorController : ControllerBase
 
     [HttpPut("connector/{id:guid}/stop")]
     [RequirePermission("space-floor", "edit")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> UpsertStop(Guid id, [FromBody] ConnectorStopDto d)
     {
         await _svc.UpsertStopAsync(id, d, CurrentUser); return Ok2();
@@ -41,10 +44,12 @@ public class ConnectorController : ControllerBase
 
     [HttpDelete("connector/{id:guid}/stop/{floorId:guid}")]
     [RequirePermission("space-floor", "edit")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> DeleteStop(Guid id, Guid floorId) { await _svc.DeleteStopAsync(id, floorId); return Ok2(); }
 
     [HttpPut("connector/{id:guid}")]
     [RequirePermission("space-floor", "edit")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Update(Guid id, [FromBody] ConnectorUpdateDto d)
     {
         await _svc.UpdateAsync(id, d, CurrentUser); return Ok2();
@@ -52,5 +57,6 @@ public class ConnectorController : ControllerBase
 
     [HttpDelete("connector/{id:guid}")]
     [RequirePermission("space-floor", "edit")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Delete(Guid id) { await _svc.DeleteAsync(id); return Ok2(); }
 }
