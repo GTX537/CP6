@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-13 UTC · W524 候选本地凭据撤销
+
+完成同源组合候选的实际处置、旧准入失效、独立再批准和本地会话重施验证，普通角色用两宿主读回原 RMA。 [本任务](../development/evidence/W524-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W523 源 IAM 与 ERP 原键验证
 
 同 v11 在隔离 PostgreSQL 验证真实源 IAM 停用和重置、ERP 模拟传输确认及只读对账，并保存两侧 Stock 实际拒绝。 [本任务](../development/evidence/W523-01/DELIVERY.md)

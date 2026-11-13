@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W524 本地重施和双宿主读取
+
+复用封存宿主执行原隐私处置与恢复 Owner，候选普通 A 的原凭据撤销，其他 A/B 会话及原业务和队列保持。 [本任务](../development/evidence/W524-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W523 源端撤销和旧消息验证
 
 复用封存宿主和现有原键工具，保留源 IAM 提交、ERP 原消息 Published 对账与 Stock guard 证据。 [本任务](../development/evidence/W523-01/DELIVERY.md)
