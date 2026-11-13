@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W531 PGT-017 写入口核对
+
+已实测库存暂停、订单撤权和日历写入的两种提交顺序，修复 9 个旧工作流写入口。PGT-017 仍待核销已定位旁路，正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [本任务](../development/evidence/W531-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W530 原生合同与精度
 
 PGT-025 PASS，正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。CRM 真实配置 Owner 在物理租户分区写入，并从共享回执恢复原 201、UTF-8 和 ETag。 [本任务](../development/evidence/W530-01/DELIVERY.md)

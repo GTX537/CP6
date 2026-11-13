@@ -165627,6 +165627,11 @@
       "at": "2026-11-13T10:48:02.576959+00:00",
       "change": "W530 采用 CRM 真实询盘配置 Owner 的物理租户草稿分区和共享原回执，实测精度、原字节、回滚和新连接原结果恢复。正式 PostgreSQL 26 PASS / 1 NOT_RUN。",
       "evidence": "docs/development/evidence/W530-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T11:57:15.896725+00:00",
+      "change": "W531 实测订单改价与 IAM 撤权双向竞争，修复并验证 9 个旧工作流写入口。PGT-017 仍有已定位写者旁路，正式 26 PASS / 1 NOT_RUN，原询盘 60/60。",
+      "evidence": "docs/development/evidence/W531-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -177137,6 +177142,17 @@
         "branch_disposition": "deleted-local-and-remote",
         "workspace_status": "fixed-seat-detached-for-reuse",
         "seat_released": true
+      },
+      "wave531_delivery": {
+        "status": "LOCAL_VERIFIED",
+        "report": "docs/development/evidence/W531-01/DELIVERY.md",
+        "tested_source": "0afcfd6b1c80a2dfa480c980589177f9c02e48c1",
+        "issue": "https://github.com/GTX537/CP6/issues/1000",
+        "formal_case": "PGT-017",
+        "formal_acceptance": "NOT_RUN",
+        "validation": "PostgreSQL 18.6：16 通过，零跳过。订单撤权、普通库存暂停和日历竞争双顺序，9 个旧写入口及 WF_AUTH 原生核对通过。另 24 项通过，4 项旧 SQLite 夹具失败及旧静态路由失败均在基线复现。",
+        "remaining": "PGT-017 保持 NOT_RUN。优先封闭旧菜单与 2FA 权威写入，再按现有事务归属推进旧 OA、FIN/PUR/PLAN、WMS/Space 和其他登记入口，核对普通运行凭据与实际映射边界。",
+        "full_task_complete": false
       }
     },
     {
@@ -211589,10 +211605,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W530",
-      "path": "docs/development/evidence/W530-01/DELIVERY.md",
-      "baseline_sha": "3f773d3b65f2b0d3a8487cf0c3cbdc611f3d16e3",
-      "registered_at": "2026-11-13T10:46:38.777203+00:00",
+      "id": "W531",
+      "path": "docs/development/evidence/W531-01/DELIVERY.md",
+      "baseline_sha": "f370917c4425dea32fe77f72437eb2010cca4794",
+      "registered_at": "2026-11-13T10:59:07.324436+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211606,52 +211622,41 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续 PGT-017。核对用户写者与 Main 暂停/撤权写者的完整实际清单及共同 fence，复用已有普通库存时序并补齐真实遗漏。",
+      "next_action": "PGT-017 保持 NOT_RUN。优先封闭旧菜单与 2FA 权威写入，再按现有事务归属推进旧 OA、FIN/PUR/PLAN、WMS/Space 和其他登记入口，核对普通运行凭据与实际映射边界。",
       "windows": [
         {
-          "id": "W530-01",
-          "workspace_task": "W530-01",
+          "id": "W531-01",
+          "workspace_task": "W531-01",
           "related_tasks": [
-            "WP02-10",
-            "PGT-025"
+            "WP02-03",
+            "PGT-017"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+          "mode": "SINGLE_CHAT",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w530-01",
-          "planned_scope_ref": "docs/development/evidence/W530-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W530-01/DELIVERY.md",
+          "branch": "codex/w531-01",
+          "planned_scope_ref": "docs/development/evidence/W531-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W531-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:formal-postgresql-acceptance-ledger",
-            "CRM:inquiry-draft-storage",
-            "CRM:owned-PostgreSQL-55591"
+            "Main IAM root and OA legacy workflow write entrypoints",
+            "Main formal PostgreSQL acceptance and roadmap"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "CRM 隔离 PostgreSQL 18.6 真实 Owner 新租户分区及共享回执场景 1 通过，旧布局定向回归 11 通过，0 失败、0 跳过。实际回滚、COMMIT 回包中断及新后端同键恢复。",
-          "remaining_scope": "PGT-017 仍需现存新业务 writer 的共同 fence 登记与两种真实提交顺序。CRM 既有库迁移、生产启用及其余业务布局另行推进。WP02-10 整卡仍按原范围。",
-          "product_repository": "CP6.CRM",
-          "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "eb35232c1ae819efaacac318781c78e4cf9d0d2b",
-          "product_branch": "codex/w530-01",
-          "product_source_sha": "e2e8a23a32345fedde6b44cb2ab72b533c25e0f7",
-          "product_remote_main_sha": "a4890974b3dce2fa9e978a62d3cbcfeb1958bf91",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/207",
-          "product_branch_disposition": "deleted-local-and-remote",
-          "product_workspace_status": "fixed-seat-detached-for-reuse",
-          "product_seat_released": true
+          "validation_summary": "PostgreSQL 18.6：16 通过，零跳过。订单撤权、普通库存暂停和日历竞争双顺序，9 个旧写入口及 WF_AUTH 原生核对通过。另 24 项通过，4 项旧 SQLite 夹具失败及旧静态路由失败均在基线复现。",
+          "remaining_scope": "PGT-017 保持 NOT_RUN。优先封闭旧菜单与 2FA 权威写入，再按现有事务归属推进旧 OA、FIN/PUR/PLAN、WMS/Space 和其他登记入口，核对普通运行凭据与实际映射边界。",
+          "main_tested_source_sha": "0afcfd6b1c80a2dfa480c980589177f9c02e48c1"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -262359,6 +262364,77 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W530",
+        "path": "docs/development/evidence/W530-01/DELIVERY.md",
+        "baseline_sha": "3f773d3b65f2b0d3a8487cf0c3cbdc611f3d16e3",
+        "registered_at": "2026-11-13T10:46:38.777203+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续 PGT-017。核对用户写者与 Main 暂停/撤权写者的完整实际清单及共同 fence，复用已有普通库存时序并补齐真实遗漏。",
+        "windows": [
+          {
+            "id": "W530-01",
+            "workspace_task": "W530-01",
+            "related_tasks": [
+              "WP02-10",
+              "PGT-025"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w530-01",
+            "planned_scope_ref": "docs/development/evidence/W530-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W530-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:formal-postgresql-acceptance-ledger",
+              "CRM:inquiry-draft-storage",
+              "CRM:owned-PostgreSQL-55591"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "CRM 隔离 PostgreSQL 18.6 真实 Owner 新租户分区及共享回执场景 1 通过，旧布局定向回归 11 通过，0 失败、0 跳过。实际回滚、COMMIT 回包中断及新后端同键恢复。",
+            "remaining_scope": "PGT-017 仍需现存新业务 writer 的共同 fence 登记与两种真实提交顺序。CRM 既有库迁移、生产启用及其余业务布局另行推进。WP02-10 整卡仍按原范围。",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "eb35232c1ae819efaacac318781c78e4cf9d0d2b",
+            "product_branch": "codex/w530-01",
+            "product_source_sha": "e2e8a23a32345fedde6b44cb2ab72b533c25e0f7",
+            "product_remote_main_sha": "a4890974b3dce2fa9e978a62d3cbcfeb1958bf91",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/207",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/999",
+            "main_remote_main_sha": "f370917c4425dea32fe77f72437eb2010cca4794"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },

@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W531 工作流写者与撤权锁序
+
+本地 Kestrel/PostgreSQL 证明 9 条旧写者已从过期授权写入改为在共同事务内决定。订单改价真实 IAM 命令竞争、历史读回及库存暂停均有双向提交证据。正式 PostgreSQL 仍为 26/27。 [本任务](../development/evidence/W531-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W530 正式 PostgreSQL PGT-025
 
 采用 CRM 询盘配置草稿租户分区，真实 Owner 同事务写共享原回执。新连接恢复、原字节及旧布局通过，正式 PostgreSQL 26/27。 [本任务](../development/evidence/W530-01/DELIVERY.md)
