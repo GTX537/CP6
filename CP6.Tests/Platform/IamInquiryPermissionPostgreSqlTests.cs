@@ -304,7 +304,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         }
     }
 
-    private async Task InquiryProducerHttp(string purpose, bool humanContext=false)
+    private async Task InquiryProducerHttp(string purpose, bool humanContext=false, bool crossDatabasePause=false)
     {
         await using var h = await Seed(); var intake = purpose.StartsWith("intake:", StringComparison.Ordinal);
         var consent = purpose == "privacy:consent-withdraw";
@@ -315,7 +315,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             (await h.Db.Sys_Users.SingleAsync(x=>x.Id==h.ActorId)).AuthenticationEpoch=Guid.NewGuid();await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
             await new IdentityBootstrapService(h.Db,ContextRuntime(h.Tenant,options.Issuer)).InitializeAsync(h.Tenant);h.Db.ChangeTracker.Clear();
         }
-        var bridgeDirectory = Environment.GetEnvironmentVariable("CP6_INQUIRY_CONFIGURATION_BRIDGE");
+        var bridgeDirectory = Environment.GetEnvironmentVariable(crossDatabasePause
+            ? "CP6_PGT017_BRIDGE" : "CP6_INQUIRY_CONFIGURATION_BRIDGE");
         if (intake || consent || privacy) bridgeDirectory = null;
         if (bridgeDirectory is not null)
             await h.Db.Sys_Users.Where(x => x.Id == h.ActorId).ExecuteUpdateAsync(x => x.SetProperty(u => u.DeptId, h.Parent));
@@ -330,6 +331,12 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         environment["InquiryPermissionSigning__PrivateKeyBase64"] = options.PrivateKeyBase64;
         environment["InquiryPermissionSigning__PublicKeyBase64"] = options.PublicKeyBase64;
         environment["InquiryPermissionSigning__ActiveFromUtc"] = options.ActiveFromUtc.ToString("O");
+        if (crossDatabasePause)
+        {
+            var prefix = $"CrmInquiryTenantPause__Tenants__{h.Tenant:D}__";
+            environment[prefix + "ConnectionString"] = Environment.GetEnvironmentVariable("CP6_PGT017_SEAL_CONNECTION")!;
+            environment[prefix + "StoreId"] = Environment.GetEnvironmentVariable("CP6_PGT017_STORE_ID")!;
+        }
         await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, environment, allowAutoRedirect: false);
         var cookies = await Login(host, h); var verifier = CrmOidcCrypto.RandomToken();
         var authorize = QueryHelpers.AddQueryString("connect/authorize", new Dictionary<string, string?> {
@@ -400,6 +407,12 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 tenantId = h.Tenant, subjectId = h.ActorId, departmentId = h.Parent, siteId = pair.SiteId, formId = pair.FormId,
                 keyId = options.KeyId, publicKeyBase64 = options.PublicKeyBase64, activeFromUtc = options.ActiveFromUtc
             }));
+            if (crossDatabasePause)
+            {
+                try { await ExerciseCrmTenantPause(host, h, bridgeDirectory); }
+                finally { File.Delete(Path.Combine(bridgeDirectory, "session.json")); }
+                return;
+            }
             await WaitConfigurationBridge(bridgeDirectory, "saved");
         }
         var revokeAction = privacy ? "export" : consent ? "consent-withdraw" : intake ? purpose is "intake:list" or "intake:detail" ? "query" : "add" : "configure";

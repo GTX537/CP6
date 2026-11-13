@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.CrmIdentity;
+using CP6.Core.Services.Platform;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Services;
@@ -10,6 +11,7 @@ namespace CP6.WebApi.Services;
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record InquiryPermissionRequestV1(string Purpose, Guid SiteId, Guid FormId);
 public sealed record InquiryPermissionSubjectV1(Guid TenantId, Guid SubjectId, Guid SessionId, DateTimeOffset ExpiresAtUtc);
+internal sealed record InquiryPermissionResponseV1(string Json, string? TenantFence);
 public sealed class InquiryPermissionExceptionV1(int status, string code) : InvalidOperationException(code)
 { public int Status { get; } = status; }
 
@@ -17,14 +19,19 @@ public sealed class InquiryPermissionExceptionV1(int status, string code) : Inva
 /// existing authenticated CRM Bearer reader, rerun inside the Main authentication root.
 /// A signed point-in-time projection is not a cross-database business commit fence.</summary>
 public sealed partial class InquiryPermissionIssuerV1(CP6Context db, InquiryPermissionSigningKeyV1 signing,
-    Func<AuthorizationCatalogSnapshotV1>? captureCatalog = null, CrmIdentityRuntime? identityRuntime = null)
+    Func<AuthorizationCatalogSnapshotV1>? captureCatalog = null, CrmIdentityRuntime? identityRuntime = null,
+    CrmInquiryTenantPauseV1? tenantPause = null)
 {
     public bool Enabled => signing.Enabled;
-    public Task<string> IssueAsync(InquiryPermissionRequestV1 request,
+    public async Task<string> IssueAsync(InquiryPermissionRequestV1 request,
+        Func<CP6Context, CancellationToken, Task<InquiryPermissionSubjectV1?>> currentBearer, CancellationToken ct)
+        => (await IssueWithFenceAsync(request, currentBearer, ct)).Json;
+
+    internal Task<InquiryPermissionResponseV1> IssueWithFenceAsync(InquiryPermissionRequestV1 request,
         Func<CP6Context, CancellationToken, Task<InquiryPermissionSubjectV1?>> currentBearer, CancellationToken ct)
         => IssueCoreAsync(request, currentBearer, null, ct);
 
-    private async Task<string> IssueCoreAsync(InquiryPermissionRequestV1 request,
+    private async Task<InquiryPermissionResponseV1> IssueCoreAsync(InquiryPermissionRequestV1 request,
         Func<CP6Context, CancellationToken, Task<InquiryPermissionSubjectV1?>> currentBearer, string? nonce, CancellationToken ct)
     {
         if (request is null || request.SiteId == Guid.Empty || request.FormId == Guid.Empty)
@@ -77,7 +84,9 @@ public sealed partial class InquiryPermissionIssuerV1(CP6Context db, InquiryPerm
         var expires = new[] { now.AddMinutes(5), subject.ExpiresAtUtc, final.ExpiresAtUtc }.Min();
         var result = signing.Sign(subject, request, facts, now, expires);
         if (source is not null) result = signing.SignHumanContext(result, nonce!, source, identityRuntime!.ContractBundleSha256, request, now, expires);
+        var fence = tenantPause is not null && request.Purpose is ("configuration:write" or "configuration:preview" or "configuration:activate")
+            ? await tenantPause.ReadBindingAsync(db, subject.TenantId, ct) : null;
         ct.ThrowIfCancellationRequested(); await tx.CommitAsync(ct);
-        return result;
+        return new(result, fence);
     }
 }

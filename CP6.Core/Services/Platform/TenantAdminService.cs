@@ -20,17 +20,20 @@ public partial class TenantAdminService : ITenantAdminService
     private readonly IPasswordHasher _hasher;
     private readonly ICurrentUserAccessor? _current;
     private readonly IHttpContextAccessor? _http;
+    private readonly CrmInquiryTenantPauseV1? _crmPause;
 
     public TenantAdminService(
         CP6Context db,
         IPasswordHasher hasher,
         ICurrentUserAccessor? current = null,
-        IHttpContextAccessor? http = null)
+        IHttpContextAccessor? http = null,
+        CrmInquiryTenantPauseV1? crmPause = null)
     {
         _db = db;
         _hasher = hasher;
         _current = current;
         _http = http;
+        _crmPause = crmPause;
     }
 
     public async Task<PagedResult<TenantRow>> ListAsync(string? keyword, bool? enable, int page, int pageSize)
@@ -179,6 +182,8 @@ public partial class TenantAdminService : ITenantAdminService
     private async Task SetEnableAsync(Guid id, bool enable, SecurityEventType evt, PlatformAdminAuthorization.Actor? actor, CancellationToken cancellationToken)
     {
         var t = await CurrentTargetAsync(id, cancellationToken);
+        if (_crmPause is not null && _db.Database.IsNpgsql() && t.Enable != enable)
+            await _crmPause.SetEnabledAsync(_db, id, enable, cancellationToken);
         t.Enable = enable;
         StageManagementAudit(evt, t, actor);
         await SaveManagementChangesAsync(cancellationToken);
