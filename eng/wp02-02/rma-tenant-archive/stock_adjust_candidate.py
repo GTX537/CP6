@@ -428,6 +428,8 @@ def execute(args):
         _, metadata = stage.checked_bundle(bundle, output, tenant, pin, target, root, include_stock_outbox=True,
                                            include_file_content_history=True)
         section = metadata["stockOutbox"]
+        if section["root"]["epoch"] != 1:
+            raise stage.StageError("rma-stage-stock-candidate-fixed-epoch-required")
         if any(section["tables"][archive.STOCK_MEMBER_PREFIX + part.member]["count"] != int(part in WRITES)
                for part in STOCK.TABLES):
             raise stage.StageError("rma-stage-stock-candidate-shape-rejected")

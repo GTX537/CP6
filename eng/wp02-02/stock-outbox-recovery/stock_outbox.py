@@ -21,11 +21,13 @@ from privacy_evidence import CSV_LIMIT_LOCK
 
 
 FORMAT = "cp6-main-stock-outbox-archive-v1"
+EPOCH_FORMAT = "cp6-main-stock-outbox-archive-v2"
 SCHEMA = "cp6_stock_outbox_v1"
 JOURNAL_SCHEMA = "cp6_main_owner_v1"
 HISTORY = "__EFMigrationsHistory"
 MIGRATIONS = ("20261022061500_MainOwnerOperationsV1", "20261023003000_MainStockOutboxV1",
               "20261026001000_MainStockCreationOutboxV2")
+EPOCH_MIGRATION = "20261113073000_MainStockOutboxTerminalEpochV1"
 OWNER = "Main.Wms.InventoryNotification"
 DOMAIN = "Main.Stock.Notification.v1"
 ROUTE = "InventoryInvalidatedV1"
@@ -104,12 +106,35 @@ def relation(item):
     return schema + "." + ident(item.name)
 
 
-def root(tenant):
+def root(tenant, epoch=1, last_switch=None):
     value = json.dumps([OWNER, str(tenant), DOMAIN, ROUTE], separators=(",", ":")).encode("utf-8")
     root_id = hashlib.sha256(value).hexdigest()
     lock = (0x4350364F << 32) | int.from_bytes(hashlib.sha256(root_id.encode("utf-8")).digest()[:4], "big")
-    return dict(id=root_id, owner=OWNER, domain=DOMAIN, route=ROUTE, profile=PROFILE, profileVersion=1,
-                epoch=1, phase="Active", lockKey=lock, publisher=PUBLISHER, policy=POLICY)
+    identity = dict(id=root_id, owner=OWNER, domain=DOMAIN, route=ROUTE, profile=PROFILE, profileVersion=1,
+                    epoch=epoch, phase="Active", lockKey=lock, publisher=PUBLISHER, policy=POLICY)
+    if last_switch is not None:
+        identity["lastSwitchId"] = str(last_switch)
+    return identity
+
+
+def archive_root(tenant, value):
+    if not isinstance(value, dict):
+        raise archive.ArchiveError("stock-manifest-route-rejected")
+    epoch = value.get("epoch")
+    if type(epoch) is not int or not 1 <= epoch <= 2**63 - 1:
+        raise archive.ArchiveError("stock-manifest-route-rejected")
+    last_switch = None if epoch == 1 else archive.guid(value.get("lastSwitchId"))
+    if value != root(tenant, epoch, last_switch):
+        raise archive.ArchiveError("stock-manifest-route-rejected")
+    return value
+
+
+def archive_format(route):
+    return FORMAT if route["epoch"] == 1 else EPOCH_FORMAT
+
+
+def archive_migrations(route):
+    return list(MIGRATIONS if route["epoch"] == 1 else (*MIGRATIONS, EPOCH_MIGRATION))
 
 
 def rows_sql(item, tenant, root_id, *, ordered=True):
@@ -207,6 +232,7 @@ def graph_sql(tenant, route, *, table_relation=relation, source_tenant=True):
     root_sql = archive.literal(route["id"])
     contract_sql = ",".join(map(archive.literal, JOURNAL_CONTRACTS))
     tenant_join = 'JOIN public."Sys_Tenants" ten ON ten."Id"=a."TenantId"' if source_tenant else ""
+    last_switch = archive.literal(route["lastSwitchId"]) + "::uuid" if "lastSwitchId" in route else "NULL::uuid"
     return f"""
         WITH n AS (SELECT * FROM {table_relation(NATIVE)} WHERE "TenantId"={tenant_sql}),
              s AS (SELECT * FROM {table_relation(SOURCE)} WHERE "TenantId"={tenant_sql}),
@@ -221,7 +247,8 @@ def graph_sql(tenant, route, *, table_relation=relation, source_tenant=True):
             WHERE r."Id"={root_sql} AND r."TenantId"={tenant_sql} AND a."TenantId"=r."TenantId"
               AND r."OwnerId"={archive.literal(OWNER)} AND r."QueueDomainId"={archive.literal(DOMAIN)}
               AND r."RouteId"={archive.literal(ROUTE)} AND r."ProfileId"={archive.literal(PROFILE)} AND r."ProfileVersion"=1
-              AND r."CurrentEpoch"=1 AND r."Phase"=0 AND r."LastSwitchId" IS NULL AND r."LockKey"={route['lockKey']}
+              AND r."CurrentEpoch"={route['epoch']} AND r."Phase"=0
+              AND r."LastSwitchId" IS NOT DISTINCT FROM {last_switch} AND r."LockKey"={route['lockKey']}
               AND r."PublisherSetReference"={archive.literal(PUBLISHER)} AND a."PublisherReference"=r."PublisherSetReference"
               AND a."PolicyVersion"={archive.literal(POLICY)})
             AND (SELECT count(*) FROM {table_relation(ROUTE_TABLE)} WHERE "TenantId"={tenant_sql})=1,
@@ -242,7 +269,10 @@ def graph_sql(tenant, route, *, table_relation=relation, source_tenant=True):
               OR n."CausationId" COLLATE "C" IS DISTINCT FROM n."AggregateId" COLLATE "C"
               OR b."MessageId" COLLATE "C" IS DISTINCT FROM n."MessageId" COLLATE "C"
               OR b."RawEnvelopeSha256" COLLATE "C" IS DISTINCT FROM n."PayloadSha256" COLLATE "C"
-              OR b."AssignedEpoch"<>1 OR b."ClaimEpoch"<>1 OR n."Status" NOT BETWEEN 0 AND 3),
+              OR b."AssignedEpoch" NOT BETWEEN 1 AND {route['epoch']}
+              OR (n."Status" IN (0,1) AND b."AssignedEpoch"<>{route['epoch']})
+              OR (b."ClaimEpoch" IS NOT NULL AND b."ClaimEpoch"<>b."AssignedEpoch")
+              OR n."Status" NOT BETWEEN 0 AND 3),
           'companions',NOT EXISTS(SELECT FROM t WHERE NOT EXISTS(SELECT FROM n WHERE n."Id"=t."NativeId")
                 OR NOT EXISTS(SELECT FROM c WHERE c."RequestId"=t."RequestId"
                     AND c."Tickets"::jsonb @> jsonb_build_array(t."Ticket"::jsonb)))
@@ -253,7 +283,15 @@ def graph_sql(tenant, route, *, table_relation=relation, source_tenant=True):
                     SELECT FROM t WHERE t."RequestId"=r."RequestId" AND NOT EXISTS(SELECT FROM m
                         WHERE m."MutationId"=t."ReceiptReference" AND m."NativeId"=t."NativeId"
                             AND m."Output"::jsonb->>'Transition' IN ('Published','RetryScheduled','DeadLettered')))))
-            AND NOT EXISTS(SELECT FROM m WHERE NOT EXISTS(SELECT FROM n WHERE n."Id"=m."NativeId"))
+            AND NOT EXISTS(SELECT FROM m WHERE NOT EXISTS(SELECT FROM n WHERE n."Id"=m."NativeId")
+                AND (m."NativeId"='00000000-0000-0000-0000-000000000000'::uuid
+                    AND m."Input"::jsonb->>'Kind' IN ('BeginDrain','AdvanceEpoch')
+                    AND m."Output"::jsonb->>'Epoch' IS NOT NULL) IS NOT TRUE)
+            AND ({last_switch} IS NULL OR EXISTS(SELECT FROM m
+                WHERE m."NativeId"='00000000-0000-0000-0000-000000000000'::uuid
+                  AND m."Input"::jsonb->>'Kind'='AdvanceEpoch'
+                  AND m."Input"::jsonb->>'switchId'={last_switch}::text
+                  AND m."Output"::jsonb->>'Epoch'={archive.literal(route['epoch'])}))
             AND NOT EXISTS(SELECT FROM {table_relation(AUDIT)} a WHERE a."RootId"={root_sql} AND a."NativeId" IS NOT NULL
                 AND NOT EXISTS(SELECT FROM n WHERE n."Id"=a."NativeId"))
             AND NOT EXISTS(SELECT FROM sent a WHERE NOT EXISTS(SELECT FROM t WHERE t."ReceiptReference"=a."MutationId"
@@ -277,8 +315,20 @@ def check_graph(query, tenant, route):
 def capture(query, tenant, owner_oid):
     """Inspect and plan the Stock slice inside the caller's open source snapshot."""
     query("SET LOCAL row_security=off; SELECT to_json(true);")
-    route = root(tenant)
     check_layout(query, owner_oid)
+    base = root(tenant)
+    current = query(f"""
+        SELECT coalesce((SELECT json_build_object('epoch',"CurrentEpoch",'switch',"LastSwitchId")
+            FROM {relation(ROUTE_TABLE)} WHERE "Id"={archive.literal(base['id'])}), 'null'::json);
+    """)
+    if current is None:
+        raise archive.ArchiveError("stock-route-rejected")
+    route = archive_root(tenant, root(tenant, current["epoch"], current["switch"]))
+    if route["epoch"] > 1 and not query(f"""
+        SELECT to_json(EXISTS(SELECT FROM public."{HISTORY}"
+            WHERE "MigrationId"={archive.literal(EPOCH_MIGRATION)}));
+    """):
+        raise archive.ArchiveError("stock-epoch-migration-required")
     check_graph(query, tenant, route)
     counts = ",".join(f"{archive.literal(item.name)},(SELECT count(*) FROM ({rows_sql(item, tenant, route['id'], ordered=False)}) r)"
                       for item in TABLES)
@@ -312,8 +362,8 @@ def export(pg_bin, target, username, tenant, output):
         for item in TABLES:
             archive.copy_snapshot(pg_bin, connection, os.environ, logs, bundle / item.member, item.name, snapshot["snapshotId"],
                                   rows_sql(item, tenant, route["id"]), COPY_SETTINGS)
-    manifest = dict(format=FORMAT, recoveryReady=False, tenantId=str(tenant), source=target.mapping(), snapshot=snapshot,
-                    migrations=list(MIGRATIONS), databaseCollation=collation, root=route,
+    manifest = dict(format=archive_format(route), recoveryReady=False, tenantId=str(tenant), source=target.mapping(), snapshot=snapshot,
+                    migrations=archive_migrations(route), databaseCollation=collation, root=route,
                     journal=journal_manifest(),
                     tables={item.member: table_manifest(item, counts[item.name]) for item in TABLES},
                     members={member: archive.file_digest(bundle / member) for member in MEMBERS})
@@ -334,10 +384,10 @@ def verify(bundle, tenant, digest):
     if not re.fullmatch(r"[0-9a-fA-F]{64}", digest) or hashlib.sha256(pinned).hexdigest() != digest.lower():
         raise archive.ArchiveError("stock-manifest-digest-mismatch")
     manifest = json.loads(pinned)
-    route = root(tenant)
-    if not isinstance(manifest, dict) or manifest.get("format") != FORMAT or manifest.get("recoveryReady") is not False \
+    route = archive_root(tenant, manifest.get("root") if isinstance(manifest, dict) else None)
+    if manifest.get("format") != archive_format(route) or manifest.get("recoveryReady") is not False \
             or manifest.get("tenantId") != str(tenant) or manifest.get("root") != route \
-            or manifest.get("migrations") != list(MIGRATIONS) or manifest.get("journal") != journal_manifest():
+            or manifest.get("migrations") != archive_migrations(route) or manifest.get("journal") != journal_manifest():
         raise archive.ArchiveError("stock-manifest-scope-rejected")
     archive.PhysicalTarget.from_mapping(manifest.get("source"))
     snapshot = manifest.get("snapshot")

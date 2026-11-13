@@ -34,7 +34,7 @@ internal sealed class StockOutboxFactoryV1(DbContextOptions<StockOutboxContextV1
 /// <summary>One fresh tenant job. This private verifier and the same-transaction Owner share actual authority;
 /// a serialized ctx-v1 envelope or lack of HttpContext cannot authorize the worker.</summary>
 internal sealed class StockOutboxHostV1(IDbContextFactory<StockOutboxContextV1> factory,
-    StockOutboxHostOptionsV1 options, Guid tenant, bool privacyRestoreConfigured) : IOutboxOwnerV2,
+    StockOutboxHostOptionsV1 options, Guid tenant, bool privacyRestoreConfigured, bool routeControl = false) : IOutboxOwnerV2,
     IContextSourceVerifierV1<object>, IContextBindingAuthorityV1
 {
     private readonly object _invocation = new();
@@ -127,11 +127,44 @@ internal sealed class StockOutboxHostV1(IDbContextFactory<StockOutboxContextV1> 
         await RequireDispatchDatabaseAsync(tx.Context, privacyRestoreConfigured, ct);
         await ResolveAsync(tx.Context, _accessor.CurrentTrusted ?? throw new OutboxProtocolExceptionV2("STOCK_OUTBOX_TRUSTED_HOST_REQUIRED"), tx.Registration.Root, ct);
         var (authority, _) = await Current(tx.Context, ct);
-        if (access is OutboxAccessV2.Switch or OutboxAccessV2.Retention
+        if (access == OutboxAccessV2.Retention || (access == OutboxAccessV2.Switch && !routeControl)
+            || (routeControl && access is not (OutboxAccessV2.ReadReceipt or OutboxAccessV2.Switch))
             || (access != OutboxAccessV2.ReadReceipt && !authority.Enabled))
             throw new OutboxProtocolExceptionV2("STOCK_OUTBOX_WRITE_NOT_AUTHORIZED");
+        if (access == OutboxAccessV2.Switch)
+            await RequireTerminalQueueAsync(tx, ct);
     }
-    public ValueTask<OutboxHandoverV2?> VerifyHandoverAsync(OutboxTransactionV2 tx, Guid id, CancellationToken ct) => ValueTask.FromResult<OutboxHandoverV2?>(null);
+
+    private static async Task RequireTerminalQueueAsync(OutboxTransactionV2 tx, CancellationToken ct)
+    {
+        var root = tx.Registration.Root.Id;
+        // Held under the package's tenant, authority and route locks. DispatchRun and the
+        // original completion receipts cover in-flight work, including a lost send response.
+        var ready = await tx.Context.Database.SqlQuery<bool>($"""
+            SELECT (NOT EXISTS (SELECT FROM cp6_stock_outbox_v1."DispatchRun"
+                WHERE "RootId"={root} AND "CompletedAtUtc" IS NULL)
+              AND NOT EXISTS (SELECT FROM cp6_stock_outbox_v1."Cp6_OutboxMessage" n
+                LEFT JOIN cp6_stock_outbox_v1."Cp6_OutboxBindingV2" b ON b."NativeId"=n."Id"
+                WHERE n."TenantId"={tx.TenantId} AND
+                  (b."RootId" IS DISTINCT FROM {root} OR n."Status" NOT IN (2,3)
+                   OR n."LeaseOwner" IS NOT NULL OR n."LeaseToken" IS NOT NULL OR n."LeaseExpiresAtUtc" IS NOT NULL
+                   OR b."CurrentClaimId" IS NOT NULL OR b."ClaimEpoch" IS NOT NULL
+                   OR NOT EXISTS (SELECT FROM cp6_stock_outbox_v1."Cp6_OutboxMutationReceiptV2" m
+                     WHERE m."RootId"={root} AND m."NativeId"=n."Id" AND m."Output"::jsonb->>'Transition'=
+                       CASE n."Status" WHEN 2 THEN 'Published' WHEN 3 THEN 'DeadLettered' END)))
+              AND NOT EXISTS (SELECT FROM cp6_stock_outbox_v1."Cp6_OutboxSendAttemptV2" s
+                WHERE s."RootId"={root} AND NOT EXISTS (
+                  SELECT FROM cp6_stock_outbox_v1."Cp6_OutboxMutationReceiptV2" m
+                  WHERE (m."RootId",m."MutationId")=(s."RootId",s."MutationId")
+                    AND m."Output"::jsonb->>'Transition' IN ('Published','RetryScheduled','DeadLettered')))) AS "Value"
+            """).SingleAsync(ct);
+        if (!ready) throw new OutboxProtocolExceptionV2("STOCK_OUTBOX_SWITCH_UNRESOLVED");
+    }
+
+    public ValueTask<OutboxHandoverV2?> VerifyHandoverAsync(OutboxTransactionV2 tx, Guid id, CancellationToken ct)
+        => ValueTask.FromResult<OutboxHandoverV2?>(routeControl
+            ? new(id.ToString("D"), StockOutboxProtocolV1.Publisher, [], true)
+            : null);
     public ValueTask<OutboxRetentionEvidenceV1?> RetentionEligibilityAsync(OutboxTransactionV2 tx, OutboxRetentionCandidateV1 candidate, CancellationToken ct)
         => ValueTask.FromResult<OutboxRetentionEvidenceV1?>(null);
 }

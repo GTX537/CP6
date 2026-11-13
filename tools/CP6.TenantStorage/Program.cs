@@ -3,9 +3,12 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using CP6.Core.Persistence.Tenancy;
 using Npgsql;
+using static TenantStorageInput;
 
 if (args is ["inspect-erp-order-original-v1", "--stdin"] && Console.IsInputRedirected)
     return await ErpOrderOriginalInspection.RunAsync();
+if (args is ["stock-outbox-epoch-v1", "--stdin"] && Console.IsInputRedirected)
+    return await StockOutboxEpochCommand.RunAsync();
 
 // No arbitrary connection string, default business connection, password argument, or startup hook.
 var serviceToken = args.SequenceEqual(["install-service-token-v1", "--stdin"]);
@@ -40,7 +43,7 @@ var stockInstallContract = args switch
 var controlExecutionStarted = false;
 if ((!args.SequenceEqual(["provision", "--stdin"]) && !revocation && !serviceToken && !tenantControl && !directoryControl && !rmaControl && stockInstallContract is null) || !Console.IsInputRedirected)
 {
-    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1|install-identity-directory-v2|inspect-identity-directory-v2|install-rma-tenant-storage-v1|migrate-rma-tenant-storage-v1|prepare-rma-core-tenant-storage-v1|commission-rma-core-tenant-storage-v1|prepare-rma-core-from-creation-v2|commission-rma-core-from-creation-v2|migrate-rma-core-outbound-index-v1|install-rma-core-original-journal-v1|install-rma-core-draft-writer-v1|install-rma-core-submit-writer-v1|install-stock-read-v1|inspect-stock-read-v1|install-stock-write-fence-v1|install-stock-original-journal-v1|install-stock-outbox-writer-v1|install-stock-movement-writer-v1|install-stock-adjust-owner-v1|install-stock-creation-writer-v2 --stdin (one bounded JSON document on redirected standard input).");
+    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1|install-identity-directory-v2|inspect-identity-directory-v2|install-rma-tenant-storage-v1|migrate-rma-tenant-storage-v1|prepare-rma-core-tenant-storage-v1|commission-rma-core-tenant-storage-v1|prepare-rma-core-from-creation-v2|commission-rma-core-from-creation-v2|migrate-rma-core-outbound-index-v1|install-rma-core-original-journal-v1|install-rma-core-draft-writer-v1|install-rma-core-submit-writer-v1|install-stock-read-v1|inspect-stock-read-v1|install-stock-write-fence-v1|install-stock-original-journal-v1|install-stock-outbox-writer-v1|install-stock-movement-writer-v1|install-stock-adjust-owner-v1|install-stock-creation-writer-v2|stock-outbox-epoch-v1 --stdin (one bounded JSON document on redirected standard input).");
     return 2;
 }
 try
@@ -375,14 +378,6 @@ static void RequireLosslessTenantDeadlines(JsonElement root)
             if (text[i] != '0') throw new TenantProvisioningException("input-rejected");
     }
 }
-
-static bool Unique(JsonElement element) => element.ValueKind switch
-{
-    JsonValueKind.Object => element.EnumerateObject().Select(p => p.Name).Distinct(StringComparer.Ordinal).Count()
-        == element.EnumerateObject().Count() && element.EnumerateObject().All(p => Unique(p.Value)),
-    JsonValueKind.Array => element.EnumerateArray().All(Unique),
-    _ => true
-};
 
 internal sealed record ProvisioningInput(TenantProvisioningRequest Request,string AdminUsername,string AdminPassword,string SslMode="VerifyFull");
 internal sealed record RevocationInput(ServiceRevocationInstallRequest Request,string AdminUsername,string AdminPassword,string SslMode="VerifyFull");

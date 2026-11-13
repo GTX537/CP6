@@ -77,22 +77,23 @@ def original_key(stock, tenant, route, native, source, binding, journal):
     operation = archive.guid(source["OperationId"])
     native_id = str(archive.guid(native["Id"]))
     message = "stock-hint:" + tenant.hex + ":" + operation.hex
+    assigned, status = int(binding["AssignedEpoch"]), int(native["Status"])
     if (native["TenantId"], source["TenantId"]) != (str(tenant), str(tenant)) \
             or (source["NativeId"], binding["NativeId"]) != (native_id, native_id) \
             or (native["MessageId"], binding["MessageId"]) != (message, message) \
             or source["SourceOwner"] != stock.JOURNAL_OWNER or source["ResultSha256"] != journal["ResultSha256"] \
             or str(operation) != journal["OperationId"] or binding["RootId"] != route["id"] \
-            or int(binding["AssignedEpoch"]) != route["epoch"] or binding["RawEnvelopeSha256"] != PAYLOAD_SHA256 \
+            or not 1 <= assigned <= route["epoch"] or (status in (0, 1) and assigned != route["epoch"]) \
+            or binding["RawEnvelopeSha256"] != PAYLOAD_SHA256 \
             or native["Payload"] != "\\x7b7d" or native["PayloadSha256"] != PAYLOAD_SHA256 \
             or native["TopicName"] != stock.TOPIC or native["PartitionKey"] != str(tenant) \
             or (native["CorrelationId"], native["CausationId"], native["AggregateId"]) != (str(operation),) * 3 \
             or native["AggregateVersion"] != "1":
         raise archive.ArchiveError("stock-archived-binding-rejected")
-    key = dict(journal, NativeId=native_id, RootId=route["id"], AssignedEpoch=route["epoch"],
+    key = dict(journal, NativeId=native_id, RootId=route["id"], AssignedEpoch=assigned,
                SourceOwner=source["SourceOwner"], CreatedAtUtc=native["CreatedAtUtc"], AggregateVersion=1,
                **{name: native[name] for name in ENVELOPE_TEXT})
     lease_token = native["LeaseToken"]
-    status = int(native["Status"])
     if status not in STATES:
         raise archive.ArchiveError("stock-archived-status-rejected")
     archived = {name[0].lower() + name[1:]: native[name] or None for name in STATE_TIMES}
@@ -129,6 +130,37 @@ def archived_rows(stock, inputs, tenant, route):
             yield original_key(stock, tenant, route, native, source, binding, proof)
         if journal:
             raise archive.ArchiveError("stock-archived-original-rejected")
+
+
+def current_route(query, stock, tenant, route):
+    """Read the current root independently of archived messages, including empty archives."""
+    literal = archive.literal
+    return query(f"""
+        SELECT coalesce((SELECT json_build_object(
+            'epoch',r."CurrentEpoch",'phase',r."Phase",'lastSwitchId',r."LastSwitchId",
+            'controlVersion','pg-xmin-v1:'||r.xmin::text,
+            'lastAdvance',CASE WHEN r."CurrentEpoch">1 AND r."Phase"=0 THEN (
+                SELECT json_build_object('operationId',m."MutationId",
+                    'receiptSha256',encode(sha256(convert_to(m."Output",'UTF8')),'hex'))
+                FROM {stock.relation(stock.MUTATION)} m
+                WHERE m."RootId"=r."Id" AND m."NativeId"='00000000-0000-0000-0000-000000000000'::uuid
+                  AND m."Input"::jsonb->>'Kind'='AdvanceEpoch'
+                  AND m."Input"::jsonb->>'switchId'=r."LastSwitchId"::text
+                  AND m."Output"::jsonb->>'Epoch'=r."CurrentEpoch"::text
+                  AND m."Output"::jsonb->>'ControlVersion'='pg-xmin-v1:'||r.xmin::text) END,
+            'eligible',a."Enabled" AND ten."Enable"
+                AND (ten."ExpireDate" IS NULL OR ten."ExpireDate">clock_timestamp()))
+          FROM {stock.relation(stock.ROUTE_TABLE)} r
+          JOIN {stock.relation(stock.AUTHORITY)} a ON a."RootId"=r."Id" AND a."TenantId"=r."TenantId"
+          JOIN public."Sys_Tenants" ten ON ten."Id"=r."TenantId"
+          WHERE r."Id"={literal(route["id"])} AND r."TenantId"={literal(tenant)}::uuid
+            AND r."OwnerId"={literal(route["owner"])} AND r."QueueDomainId"={literal(route["domain"])}
+            AND r."RouteId"={literal(route["route"])} AND r."ProfileId"={literal(route["profile"])}
+            AND r."ProfileVersion"={route["profileVersion"]} AND r."LockKey"={route["lockKey"]}
+            AND r."PublisherSetReference"={literal(route["publisher"])}
+            AND a."PublisherReference"=r."PublisherSetReference" AND a."PolicyVersion"={literal(route["policy"])}),
+          'null'::json);
+    """, failure="stock-current-route-read-failed (see native logs)")
 
 
 def lookup(query, stock, tenant, route, bindings):
@@ -170,20 +202,36 @@ def lookup(query, stock, tenant, route, bindings):
                 THEN json_build_object('decision','BLOCKED','reason','ORIGINAL_OPERATION_CONFLICT')
             WHEN r."Id" IS NULL OR a."RootId" COLLATE "C" IS DISTINCT FROM {root_sql}
                 OR a."Enabled" IS DISTINCT FROM true OR ten."Enable" IS DISTINCT FROM true
+                OR (ten."ExpireDate" IS NOT NULL AND ten."ExpireDate"<=clock_timestamp())
                 OR r."TenantId" IS DISTINCT FROM {tenant_sql}
                 OR r."OwnerId" COLLATE "C" IS DISTINCT FROM {literal(route["owner"])}
                 OR r."QueueDomainId" COLLATE "C" IS DISTINCT FROM {literal(route["domain"])}
                 OR r."RouteId" COLLATE "C" IS DISTINCT FROM {literal(route["route"])}
                 OR r."ProfileId" COLLATE "C" IS DISTINCT FROM {literal(route["profile"])}
                 OR r."ProfileVersion" IS DISTINCT FROM {route["profileVersion"]}
-                OR r."CurrentEpoch" IS DISTINCT FROM {route["epoch"]}::bigint OR r."Phase" IS DISTINCT FROM 0
-                OR r."LastSwitchId" IS NOT NULL OR r."LockKey" IS DISTINCT FROM {route["lockKey"]}::bigint
+                OR r."LockKey" IS DISTINCT FROM {route["lockKey"]}::bigint
                 OR r."PublisherSetReference" COLLATE "C" IS DISTINCT FROM {literal(route["publisher"])}
                 OR a."PublisherReference" COLLATE "C" IS DISTINCT FROM {literal(route["publisher"])}
                 OR a."PolicyVersion" COLLATE "C" IS DISTINCT FROM {literal(route["policy"])}
                 THEN json_build_object('decision','BLOCKED','reason','ROUTE_AUTHORITY_CONFLICT')
+            WHEN r."CurrentEpoch"<>{route["epoch"]}::bigint AND NOT (
+                r."CurrentEpoch">{route["epoch"]}::bigint AND r."Phase"=0 AND r."LastSwitchId" IS NOT NULL
+                AND n."Status"=2)
+                THEN json_build_object('decision','BLOCKED','reason','ROUTE_EPOCH_CHANGED')
+            WHEN r."Phase"<>0
+                THEN json_build_object('decision','BLOCKED','reason','ROUTE_NOT_ACTIVE')
             WHEN n."Status" NOT BETWEEN 0 AND 3 OR (n."Status"=3 AND n."DeadLetteredAtUtc" IS NULL)
                 THEN json_build_object('decision','BLOCKED','reason','CURRENT_STATE_INVALID')
+            WHEN n."Status"=1 AND EXISTS (
+                SELECT FROM {relation(stock.SEND)} attempt
+                JOIN {relation(stock.TICKET)} ticket ON (ticket."RootId",ticket."ReceiptReference",ticket."NativeId")=
+                    (attempt."RootId",attempt."MutationId",n."Id")
+                WHERE attempt."RootId"=b."RootId" AND attempt."ClaimId"=b."CurrentClaimId"
+                    AND NOT EXISTS (SELECT FROM {relation(stock.MUTATION)} completed
+                        WHERE (completed."RootId",completed."MutationId",completed."NativeId")=
+                            (attempt."RootId",attempt."MutationId",n."Id")
+                          AND completed."Output"::jsonb->>'Transition' IN ('Published','RetryScheduled','DeadLettered')))
+                THEN json_build_object('decision','UNKNOWN','reason','SEND_OUTCOME_UNKNOWN')
             WHEN n."Status"=2 AND (n."PublishedAtUtc" IS NULL OR done.originals IS NULL
                 OR json_array_length(done.originals)<>1)
                 THEN json_build_object('decision','BLOCKED','reason','PUBLISHED_ORIGINAL_REJECTED')
@@ -235,6 +283,8 @@ def lookup(query, stock, tenant, route, bindings):
                     AND t."Ticket"::jsonb->>'NativeId'=n."Id"::text
                     AND (t."Ticket"::jsonb->>'MessageId') COLLATE "C"=n."MessageId" COLLATE "C"
                     AND t."Ticket"::jsonb->>'RawEnvelopeSha256'=b."RawEnvelopeSha256"
+                    AND t."Ticket"::jsonb->>'AssignedEpoch'=b."AssignedEpoch"::text
+                    AND t."Ticket"::jsonb->>'ClaimEpoch'=b."AssignedEpoch"::text
                     AND t."Ticket"::jsonb->>'ClaimReceiptRef'=t."ReceiptReference"::text
                     AND m."Output"::jsonb->>'MutationId'=m."MutationId"::text
                     AND m."Output"::jsonb->>'Transition'='Published'
@@ -289,9 +339,15 @@ def reconcile(pg_bin, target, username, tenant, bundle, digest, output, file_con
                         'isolation',current_setting('transaction_isolation'));
                 """)
                 stock.check_layout(query, ready["ownerOid"])
+                control = current_route(query, stock, tenant, route)
+                route_issue = ("ROUTE_AUTHORITY_CONFLICT" if control is None or not control["eligible"]
+                               else "ROUTE_EPOCH_CHANGED" if control["epoch"] != route["epoch"]
+                               else "ROUTE_NOT_ACTIVE" if control["phase"] != 0
+                               else "ROUTE_AUTHORITY_CONFLICT" if control["lastSwitchId"] != route.get("lastSwitchId")
+                               or (control["epoch"] > 1 and control["lastAdvance"] is None) else None)
                 record(dict(type="header", format=FORMAT, tenantId=str(tenant), installationId=str(installation),
                             source=target.mapping(), manifestSha256=digest, root=route,
-                            archived=manifest["snapshot"], current=current))
+                            archived=manifest["snapshot"], current=current, currentRoute=control))
                 with CSV_LIMIT_LOCK:
                     previous = csv.field_size_limit(2_147_483_647)
                     try:
@@ -304,8 +360,11 @@ def reconcile(pg_bin, target, username, tenant, bundle, digest, output, file_con
                                     record(observation)
                     finally:
                         csv.field_size_limit(previous)
-                result = "BLOCKED" if counts["BLOCKED"] else "UNKNOWN" if counts["UNKNOWN"] else "OBSERVED"
-                record(dict(type="summary", result=result, counts=counts, recoveryReady=False))
+                result = "BLOCKED" if route_issue or counts["BLOCKED"] else "UNKNOWN" if counts["UNKNOWN"] else "OBSERVED"
+                summary = dict(type="summary", result=result, counts=counts, recoveryReady=False)
+                if route_issue:
+                    summary["reason"] = route_issue
+                record(summary)
         pending.replace(report)
     finally:
         pending.unlink(missing_ok=True)
