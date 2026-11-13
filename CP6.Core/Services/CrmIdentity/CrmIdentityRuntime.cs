@@ -1,4 +1,5 @@
 using CP6.Platform.Messaging;
+using CP6.Core.Services.Platform;
 
 namespace CP6.Core.Services.CrmIdentity;
 
@@ -20,9 +21,10 @@ public sealed class CrmIdentityRuntime
     public IdentityEventValidator Validator { get; }
     public TimeProvider Clock { get; }
     public string ContractBundleSha256 { get; }
+    internal CrmInquiryTenantPauseV1? InquiryFence { get; }
 
     public CrmIdentityRuntime(CrmIdentityOptions options, IdentityEventValidator validator, TimeProvider? clock = null,
-        string? contractDirectory = null)
+        string? contractDirectory = null, CrmInquiryTenantPauseV1? inquiryFence = null)
     {
         if (!options.Enabled || options.Tenants.Count == 0 || options.Tenants.Keys.Any(t => t == Guid.Empty) ||
             options.PasswordMaxAgeDays < 0 || options.ProjectionReaderClientIds.Length == 0)
@@ -31,6 +33,7 @@ public sealed class CrmIdentityRuntime
         Options = options;
         Validator = validator;
         Clock = clock ?? TimeProvider.System;
+        InquiryFence = inquiryFence;
         ContractBundleSha256 = IdentityEventContracts.Hash(File.ReadAllBytes(Path.Combine(contractDirectory ??
             Path.Combine(AppContext.BaseDirectory, "contracts/events/platform"), Cp6ContractBundle.IndexFileName)));
     }

@@ -32,6 +32,7 @@ public static class IamAdministrationHttpV1
     {
         try { return controller.Ok(await action()); }
         catch(IamAdministrationExceptionV1 e){return controller.StatusCode(e.Status,new {code=e.Message});}
+        catch(TenantManagementExceptionV1 e){return controller.StatusCode(e.Status,new {code=e.Message});}
         catch(DbUpdateException e) when(PlatformAdminMutationV1.IsSurvivorViolation(e))
         {return controller.Conflict(new {code="E-SEC-037"});}
         catch(DbUpdateException e) when(e.InnerException is PostgresException {SqlState:"23505"})
