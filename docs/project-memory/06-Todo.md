@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W533 PGT-017 余项
+
+按原提交单元继续旧批办、转交、退回、撤回，财务、采购、计划、WMS/Space 及订单取号；核对缓存注销和普通数据库角色直接写入。 [本任务](../development/evidence/W533-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W532 PGT-017 余项
 
 继续旧流程办理、财务/采购/计划、部分 WMS/Space、订单取号、缓存注销及普通 PostgreSQL 直接业务写入，沿原提交单元完成实际写者覆盖。 [本任务](../development/evidence/W532-01/DELIVERY.md)

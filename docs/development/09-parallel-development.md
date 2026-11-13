@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W533 旧单任务审批采用原 PostgreSQL 事务共同根，真实撤权与审批的两种提交顺序通过。PGT-017 仍待核销其他写者，正式 PostgreSQL 26/27。 [本任务](evidence/W533-01/DELIVERY.md)
+
 > W532 修复旧菜单和管理员 2FA 共 6 个写入口。已实测等待后撤权拒绝、自失效与共同审计；正式 PostgreSQL 仍为 26/27。 [本任务](evidence/W532-01/DELIVERY.md)
 
 > W531 补齐真实 IAM 撤权与改价两种提交顺序，修复 9 个旧工作流写入口。PGT-017 仍有已定位写者旁路，正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [本任务](evidence/W531-01/DELIVERY.md)
