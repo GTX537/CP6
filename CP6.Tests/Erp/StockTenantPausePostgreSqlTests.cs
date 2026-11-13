@@ -224,7 +224,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     private sealed record FenceWait(int Backend, int Blocker, string Login, string WaitEvent, DateTimeOffset ObservedAt);
 
     private static async Task<FenceWait> WaitForFence(NpgsqlConnection observer, int blocker, string statement, string? login,
-        Task<HttpResponseMessage> request)
+        Task request)
     {
         using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(8));
         await using var command = new NpgsqlCommand("""
@@ -240,7 +240,12 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             await using (var rows = await command.ExecuteReaderAsync(deadline.Token))
                 if (await rows.ReadAsync(deadline.Token))
                     return new(rows.GetInt32(0), blocker, rows.GetString(1), rows.GetString(2), rows.GetFieldValue<DateTimeOffset>(3));
-            if (request.IsCompleted) Assert.Fail("Request completed before the expected native fence: " + await OperationsFailure(await request));
+            if (request.IsCompleted)
+            {
+                await request;
+                var details = request is Task<HttpResponseMessage> http ? await OperationsFailure(await http) : "worker finished";
+                Assert.Fail("Request completed before the expected native fence: " + details);
+            }
             await Task.Delay(35, deadline.Token);
         }
     }

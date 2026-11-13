@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W553 定时 ABC 并发修复
+
+定时写在持有 Main 授权事务根后重新读取当前租户、计划和站点，按站点保留原日快照语义。 [交付](../development/evidence/W553-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W552 CRM 回执丢失联验
 
 实际 CRM COMMIT 回包丢失后复测 Main 撤权与旧服务授权，原命令安全重试。 [本任务](../development/evidence/W552-01/DELIVERY.md)
