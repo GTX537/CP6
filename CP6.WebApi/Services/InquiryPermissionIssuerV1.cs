@@ -84,7 +84,10 @@ public sealed partial class InquiryPermissionIssuerV1(CP6Context db, InquiryPerm
         var expires = new[] { now.AddMinutes(5), subject.ExpiresAtUtc, final.ExpiresAtUtc }.Min();
         var result = signing.Sign(subject, request, facts, now, expires);
         if (source is not null) result = signing.SignHumanContext(result, nonce!, source, identityRuntime!.ContractBundleSha256, request, now, expires);
-        var fence = tenantPause is not null && request.Purpose is ("configuration:write" or "configuration:preview" or "configuration:activate")
+        var needsFence = nonce is null
+            ? request.Purpose is "configuration:write" or "configuration:preview" or "configuration:activate"
+            : request.Purpose is "intake:release" or "intake:reject" or "privacy:consent-withdraw" or "privacy:export" or "privacy:download";
+        var fence = tenantPause is not null && needsFence
             ? await tenantPause.ReadBindingAsync(db, subject.TenantId, ct) : null;
         ct.ThrowIfCancellationRequested(); await tx.CommitAsync(ct);
         return new(result, fence);
