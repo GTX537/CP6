@@ -53,7 +53,12 @@ try {
     }
     Invoke-DotNet 'postgresql-tests' (@('test', 'CP6.Tests/CP6.Tests.csproj', '--no-build', '--no-restore', '--filter', $Filter,
         '--logger', 'trx;LogFileName=postgresql-profile.trx', '--results-directory', (Join-Path $artifacts 'results')) + $common)
-    Write-Output "PostgreSQL development checks passed. Logs and TRX: $artifacts"
+    [xml]$results = Get-Content -LiteralPath (Join-Path $artifacts 'results/postgresql-profile.trx') -Raw
+    $counts = $results.TestRun.ResultSummary.Counters
+    if ([int]$counts.executed -eq 0 -or [int]$counts.passed -ne [int]$counts.total) {
+        throw 'The selected PostgreSQL tests must execute and pass without skips; inspect the TRX.'
+    }
+    Write-Output "PostgreSQL development checks passed ($($counts.passed) tests). Logs and TRX: $artifacts"
 }
 finally {
     Pop-Location
