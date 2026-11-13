@@ -10,6 +10,7 @@ using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.CrmIdentity;
+using CP6.Core.Services.Platform;
 using CP6.WebApi.Controllers.Sys;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Builder;
@@ -33,7 +34,10 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     public Task Inquiry_retention_actual_TLS_controller_to_CRM_current_service_transaction()=>ServiceContextHttp(true);
     [CurrentPermissionPostgresFact]
     public Task Inquiry_export_service_v2_actual_TLS_requires_independent_privacy_authority()=>ServiceContextHttp(false,true);
-    private async Task ServiceContextHttp(bool retention,bool privacy=false)
+    [Pgt017MainFact]
+    public Task PGT017_public_submit_and_Main_pause_commit() => ServiceContextHttp(false, tenantPause: true);
+
+    private async Task ServiceContextHttp(bool retention, bool privacy = false, bool tenantPause = false)
     {
         var project=Environment.GetEnvironmentVariable("CP6_CRM_CROSS_PROJECT")??throw new InvalidOperationException("Owned CRM project required; no skip");
         var output=Environment.GetEnvironmentVariable("CP6_SERVICE_CONTEXT_OUTPUT")!;var folder=Path.GetDirectoryName(output)!;
@@ -45,6 +49,13 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var registry=new InquiryServicePrincipalRegistryV1(config.Source,config.Oidc);
         var publisherTenant=new TenantContext();await using(var db=server.Context(publisherTenant,runtime))
             await new InquiryServiceIdentityPublisherV1(db,publisherTenant,registry,runtime).PublishAsync(h.Tenant);
+        var storeId = tenantPause ? Guid.Parse(Environment.GetEnvironmentVariable("CP6_PGT017_STORE_ID")!) : (Guid?)null;
+        var sealConnection = tenantPause ? Environment.GetEnvironmentVariable("CP6_PGT017_SEAL_CONNECTION")! : null;
+        var stageDirectory = tenantPause ? Environment.GetEnvironmentVariable("CP6_PGT017_BRIDGE")! : null;
+        await using var binding = storeId is { } store
+            ? new CrmInquiryTenantPauseV1(new Dictionary<Guid, CrmInquiryTenantPauseBindingV1>
+                { [h.Tenant] = new() { StoreId = store, ConnectionString = sealConnection! } })
+            : null;
         using var rsa=RSA.Create(2048);var certRequest=new CertificateRequest("CN=owned-W117-Main",rsa,HashAlgorithmName.SHA256,RSASignaturePadding.Pkcs1);
         var names=new SubjectAlternativeNameBuilder();names.AddDnsName(new Uri(options.Issuer).Host);names.AddIpAddress(IPAddress.Loopback);certRequest.CertificateExtensions.Add(names.Build());
         using var created=certRequest.CreateSelfSigned(DateTimeOffset.UtcNow.AddMinutes(-1),DateTimeOffset.UtcNow.AddHours(1));
@@ -52,7 +63,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var builder=WebApplication.CreateBuilder(new WebApplicationOptions{EnvironmentName="Development"});builder.Logging.ClearProviders();
         builder.WebHost.ConfigureKestrel(k=>k.Listen(IPAddress.Loopback,0,l=>l.UseHttps(certificate)));
         builder.Services.AddScoped<TenantContext>();builder.Services.AddScoped<CP6Context>(sp=>server.Context(sp.GetRequiredService<TenantContext>(),runtime));
-        builder.Services.AddScoped(sp=>new InquiryServicePermissionIssuerV1(sp.GetRequiredService<CP6Context>(),sp.GetRequiredService<TenantContext>(),registry,key,()=>privacy?PrivacyCatalog():IntakeCatalog(),runtime));
+        builder.Services.AddScoped(sp=>new InquiryServicePermissionIssuerV1(sp.GetRequiredService<CP6Context>(),sp.GetRequiredService<TenantContext>(),registry,key,()=>privacy?PrivacyCatalog():IntakeCatalog(),runtime,binding));
         builder.Services.AddControllers().AddApplicationPart(typeof(CrmOidcController).Assembly).ConfigureApplicationPartManager(m=>m.FeatureProviders.Add(new ServiceContextControllers())).AddControllersAsServices();
         // Other controller actions are not exercised. Service authentication, publication gate,
         // source reads, permission decision, signing, model binding and TLS are all product code.
@@ -70,7 +81,17 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             var command=new InquiryServiceContextRequestV1(privacy?"privacy:export":retention?"privacy:retention-worker":"intake:release",pair.SiteId,pair.FormId,ServiceNonce());
             using(var wrong=await Send(command,ServiceBasic("wrong").ToString()))Assert.Equal(HttpStatusCode.Unauthorized,wrong.StatusCode);
             using(var forged=await Send(new{command.Purpose,command.SiteId,command.FormId,command.RequestNonce,SubjectId=h.ActorId},ServiceBasic().ToString()))Assert.Equal(HttpStatusCode.BadRequest,forged.StatusCode);
-            using(var good=await Send(command,ServiceBasic().ToString())){Assert.Equal(HttpStatusCode.OK,good.StatusCode);Assert.Contains("no-store",good.Headers.CacheControl!.ToString());}
+            using (var good = await Send(command, ServiceBasic().ToString()))
+            {
+                Assert.Equal(HttpStatusCode.OK, good.StatusCode);
+                Assert.True(good.Headers.CacheControl?.NoStore);
+                if (storeId is { } expected)
+                {
+                    Assert.Equal($"{expected:D}/1", Assert.Single(good.Headers.GetValues("X-CP6-Inquiry-Tenant-Fence")));
+                    var body = System.Text.Json.Nodes.JsonNode.Parse(await good.Content.ReadAsStringAsync())!.AsObject();
+                    Assert.True(ContextSignature(body, options.PublicKeyBase64));
+                }
+            }
             if(privacy)
             {
                 using var response=await Send(command,ServiceBasic().ToString());
@@ -83,7 +104,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 Assert.Equal(7,projection.RootElement.GetProperty("fieldPermissions").GetArrayLength());
             }
             var rows=await h.Db.CrmIdentitySnapshots.AsNoTracking().Where(x=>x.TenantId==h.Tenant).OrderBy(x=>x.AggregateId).ToArrayAsync();
-            var run=(privacy?"actual-main-export-v2-":retention?"actual-main-retention-":"actual-main-submit-")+DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffffffZ");
+            var run=(tenantPause?"actual-main-public-pause-":privacy?"actual-main-export-v2-":retention?"actual-main-retention-":"actual-main-submit-")+DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffffffZ");
             var bridge=Path.Combine(folder,run+"-bridge.json");
             await File.WriteAllTextAsync(bridge,JsonSerializer.Serialize(new{issuer=options.Issuer,origin,thumbprint=certificate.Thumbprint,
                 tenantId=h.Tenant,departmentId=h.Parent,subjectId=config.Source.Registrations[0].SubjectId,epoch=config.Source.Registrations[0].AuthenticationEpoch,
@@ -91,13 +112,40 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 rows=rows.Select(x=>new{x.AggregateId,x.EventType,x.Version,x.PayloadSha256,x.IsDeleted,data=JsonDocument.Parse(x.PayloadJson).RootElement})},IdentityEventContracts.Json));
             var start=new ProcessStartInfo(Environment.GetEnvironmentVariable("DOTNET_HOST_PATH")??"C:/Users/tt/.dotnet/dotnet.exe")
                 {WorkingDirectory=Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(project)))!,UseShellExecute=false,CreateNoWindow=true,RedirectStandardOutput=true,RedirectStandardError=true};
+            var childTest = tenantPause ? "PGT017_public_submit_actual_Main_TLS_and_pause"
+                : privacy ? "Privacy_export_actual_Main_TLS_v2_current_service_and_CRM_artifact_transaction"
+                : retention ? "Retention_actual_Main_TLS_current_authority_and_CRM_transaction"
+                : "Public_submit_actual_Main_TLS_controller_PG_identity_and_CRM_complete_graph_commit";
             foreach(var arg in new[]{"test",project,"--no-restore","--artifacts-path",Environment.GetEnvironmentVariable("CP6_CRM_CROSS_ARTIFACTS")!,"--filter",
-                privacy?"FullyQualifiedName~Privacy_export_actual_Main_TLS_v2_current_service_and_CRM_artifact_transaction":retention?"FullyQualifiedName~Retention_actual_Main_TLS_current_authority_and_CRM_transaction":"FullyQualifiedName~Public_submit_actual_Main_TLS_controller_PG_identity_and_CRM_complete_graph_commit","--logger","trx;LogFileName="+run+".trx","--results-directory",folder,"-v:q","--disable-build-servers","-m:1","-p:UseSharedCompilation=false"})start.ArgumentList.Add(arg);
+                "FullyQualifiedName~"+childTest,"--logger","trx;LogFileName="+run+".trx","--results-directory",folder,"-v:q","--disable-build-servers","-m:1","-p:UseSharedCompilation=false"})start.ArgumentList.Add(arg);
+            if (tenantPause) start.ArgumentList.Add("--no-build");
             start.Environment["CP6_MAIN_SERVICE_BRIDGE"]=bridge;
             using var child=Process.Start(start)!;var stdout=child.StandardOutput.ReadToEndAsync();var stderr=child.StandardError.ReadToEndAsync();
             using var timeout=new CancellationTokenSource(TimeSpan.FromMinutes(4));
-            try{await child.WaitForExitAsync(timeout.Token);}finally{if(!child.HasExited){child.Kill(entireProcessTree:true);await child.WaitForExitAsync();}}
-            var log=await stdout+await stderr;await File.WriteAllTextAsync(Path.Combine(folder,run+".log"),log);
+            string log;
+            try
+            {
+                if (tenantPause)
+                {
+                    var environment = IdentityEnvironment(h.Tenant);
+                    environment["CrmOidc__Issuer"] = options.Issuer;
+                    var prefix = $"CrmInquiryTenantPause__Tenants__{h.Tenant:D}__";
+                    environment[prefix + "StoreId"] = storeId!.Value.ToString("D");
+                    environment[prefix + "ConnectionString"] = sealConnection!;
+                    await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, environment);
+                    await ExerciseCrmTenantPause(host, h, stageDirectory!, publicSubmission: true, childExited: child.WaitForExitAsync(timeout.Token));
+                    using var revoked = await Send(command with { RequestNonce = ServiceNonce() }, ServiceBasic().ToString());
+                    Assert.Equal(HttpStatusCode.Forbidden, revoked.StatusCode);
+                }
+                await child.WaitForExitAsync(timeout.Token);
+            }
+            finally
+            {
+                if (!child.HasExited) { child.Kill(entireProcessTree:true); await child.WaitForExitAsync(); }
+                log = await stdout + await stderr;
+                await File.WriteAllTextAsync(Path.Combine(folder, run + ".log"), log);
+                if (tenantPause) File.Delete(bridge);
+            }
             Assert.True(child.ExitCode==0,log);
             var result=System.Xml.Linq.XDocument.Load(Path.Combine(folder,run+".trx"));
             var counters=result.Descendants().Single(x=>x.Name.LocalName=="Counters");
