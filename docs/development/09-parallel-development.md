@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W525 恢复同一 v11 来源的完整出库头和明细，实测候选普通 RMA 草稿、提交、同键回放和认证锁等待。 [本任务](evidence/W525-01/DELIVERY.md)
+
 > W524 实测源身份处置关闭候选，独立再批准重施撤销；候选只登记 A 的 RMA 绑定时，A 读回、B 源读取及 B 候选拒绝均通过。 [本任务](evidence/W524-01/DELIVERY.md)
 
 > W523 同 v11 实测源 IAM 撤销、ERP 原键 Pending 到 Published 对账和候选 Stock 派送拒绝。Stock 源端正式包仍受 #844 约束。 [本任务](evidence/W523-01/DELIVERY.md)
