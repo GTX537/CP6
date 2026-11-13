@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W528 剩余 3 项正式 PostgreSQL 验收
+
+PGT-011 后台重试与管理员范围、PGT-017 并发暂停与撤权、PGT-025 原生合同与精度。各按原卡和真实 Owner 范围推进。RMA v2 归档恢复需独立兼容路径。 [本任务](../development/evidence/W528-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W527 剩余 4 项正式 PostgreSQL 验收
 
 剩余 PGT-011、017、024、025。优先接续 024 的真实双模型兼容与应用回退，其余继续原卡的后台执行范围、并发撤权及原合同极值验收。 [本任务](../development/evidence/W527-01/DELIVERY.md)

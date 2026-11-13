@@ -23,10 +23,11 @@ var rmaPrepareCore = args.SequenceEqual(["prepare-rma-core-tenant-storage-v1", "
 var rmaCommissionCore = args.SequenceEqual(["commission-rma-core-tenant-storage-v1", "--stdin"]);
 var rmaCreatedCore = args is ["prepare-rma-core-from-creation-v2" or "commission-rma-core-from-creation-v2", "--stdin"];
 var rmaOutboundIndex = args.SequenceEqual(["migrate-rma-core-outbound-index-v1", "--stdin"]);
+var rmaModelV2 = args.SequenceEqual(["migrate-rma-core-model-v2", "--stdin"]);
 var rmaOriginalJournal = args.SequenceEqual(["install-rma-core-original-journal-v1", "--stdin"]);
 var rmaDraftWriter = args.SequenceEqual(["install-rma-core-draft-writer-v1", "--stdin"]);
 var rmaSubmitWriter = args.SequenceEqual(["install-rma-core-submit-writer-v1", "--stdin"]);
-var rmaControl = rmaInstall || rmaMigrate || rmaPrepareCore || rmaCommissionCore || rmaCreatedCore || rmaOutboundIndex
+var rmaControl = rmaInstall || rmaMigrate || rmaPrepareCore || rmaCommissionCore || rmaCreatedCore || rmaOutboundIndex || rmaModelV2
     || rmaOriginalJournal || rmaDraftWriter || rmaSubmitWriter;
 var stockReadInspect = args.SequenceEqual(["inspect-stock-read-v1", "--stdin"]);
 var stockInstallContract = args switch
@@ -76,7 +77,7 @@ try
             throw new TenantProvisioningException("input-rejected");
 
         var install = rmaInstall ? rmaInput.Request.Deserialize<RmaTenantInstallRequestV1>(json) : null;
-        var migrate = rmaMigrate || rmaOutboundIndex ? rmaInput.Request.Deserialize<RmaTenantMigrationRequestV1>(json) : null;
+        var migrate = rmaMigrate || rmaOutboundIndex || rmaModelV2 ? rmaInput.Request.Deserialize<RmaTenantMigrationRequestV1>(json) : null;
         var core = rmaPrepareCore || rmaCommissionCore || rmaOriginalJournal || rmaDraftWriter || rmaSubmitWriter
             ? rmaInput.Request.Deserialize<RmaCoreCommissionRequestV1>(json) : null;
         var created = rmaCreatedCore ? rmaInput.Request.Deserialize<RmaCreatedTenantCoreCommissionRequestV2>(json) : null;
@@ -96,6 +97,7 @@ try
             ApplicationName = rmaInstall ? "CP6.TenantStorage.RmaInstallV1"
                 : rmaMigrate ? "CP6.TenantStorage.RmaMigrateV1"
                 : rmaOutboundIndex ? "CP6.TenantStorage.RmaOutboundIndexV1"
+                : rmaModelV2 ? "CP6.TenantStorage.RmaModelV2"
                 : rmaOriginalJournal ? "CP6.TenantStorage.RmaOriginalJournalV1"
                 : rmaDraftWriter ? "CP6.TenantStorage.RmaDraftWriterV1"
                 : rmaSubmitWriter ? "CP6.TenantStorage.RmaSubmitWriterV1"
@@ -109,6 +111,7 @@ try
             "prepare-rma-core-from-creation-v2" => await RmaTenantStorageV1.PrepareCoreFromCreationAsync(control, created!, timeout.Token),
             "commission-rma-core-from-creation-v2" => await RmaTenantStorageV1.CommissionCoreFromCreationAsync(control, created!, timeout.Token),
             "migrate-rma-core-outbound-index-v1" => await RmaTenantStorageV1.MigrateCoreOutboundIndexAsync(control, migrate!, timeout.Token),
+            "migrate-rma-core-model-v2" => await RmaTenantStorageV1.MigrateCoreModelV2Async(control, migrate!, timeout.Token),
             "install-rma-core-original-journal-v1" => await RmaTenantStorageV1.InstallCoreOriginalJournalAsync(control, core!, timeout.Token),
             "install-rma-core-draft-writer-v1" => await RmaTenantStorageV1.InstallCoreDraftWriterAsync(control, core!, timeout.Token),
             "install-rma-core-submit-writer-v1" => await RmaTenantStorageV1.InstallCoreSubmitWriterAsync(control, core!, timeout.Token),

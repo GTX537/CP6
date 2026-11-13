@@ -9,6 +9,7 @@ internal sealed class RmaTenantReadContext(DbContextOptions<RmaTenantReadContext
 {
     internal const string Provider = "Npgsql.EntityFrameworkCore.PostgreSQL";
     internal TenantStorageBindingV1 Binding { get; } = binding;
+    internal bool UsesV2 => Binding.ModelVersion == RmaTenantStorageV1.CoreReadProfileV2;
     internal DbSet<RmaTenantHead> Heads => Set<RmaTenantHead>();
     internal DbSet<RmaTenantVersion> Versions => Set<RmaTenantVersion>();
 
@@ -19,7 +20,10 @@ internal sealed class RmaTenantReadContext(DbContextOptions<RmaTenantReadContext
     protected override void OnModelCreating(ModelBuilder model)
     {
         var heads = model.Entity<RmaTenantHead>();
-        heads.ToTable("heads", Binding.SchemaName, table => table.ExcludeFromMigrations());
+        if (UsesV2)
+            heads.ToView("application_heads_v2", Binding.SchemaName);
+        else
+            heads.ToTable("heads", Binding.SchemaName, table => table.ExcludeFromMigrations());
         heads.HasKey(row => new { row.TenantId, row.Id });
         heads.Property(row => row.TenantId).HasColumnName("tenant_id");
         heads.Property(row => row.Id).HasColumnName("id");
@@ -28,7 +32,10 @@ internal sealed class RmaTenantReadContext(DbContextOptions<RmaTenantReadContext
         heads.Property(row => row.Version).HasColumnName("version");
 
         var versions = model.Entity<RmaTenantVersion>();
-        versions.ToTable("versions", Binding.SchemaName, table => table.ExcludeFromMigrations());
+        if (UsesV2)
+            versions.ToView("application_versions_v2", Binding.SchemaName);
+        else
+            versions.ToTable("versions", Binding.SchemaName, table => table.ExcludeFromMigrations());
         versions.HasKey(row => new { row.TenantId, row.Id, row.Version });
         versions.Property(row => row.TenantId).HasColumnName("tenant_id");
         versions.Property(row => row.Id).HasColumnName("id");

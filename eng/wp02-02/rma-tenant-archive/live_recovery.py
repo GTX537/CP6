@@ -197,6 +197,7 @@ def binding(query, target, tenant, installation, receipt_digest, manifest):
           FOR UPDATE OF m), 'null'::json);
     """)
     require(rows is not None and rows["migration"] == manifest["migration"], "current-binding-rejected")
+    archive.require_v1_schema(query, tenant)
     query(f"LOCK TABLE {schema}.heads,{schema}.versions IN ACCESS EXCLUSIVE MODE; SELECT to_json(true);")
     require(query(f"""
         SELECT to_json(current_setting('session_replication_role')='origin'

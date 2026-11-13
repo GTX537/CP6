@@ -163,6 +163,8 @@ internal static partial class RmaTenantStorageV1
 {
     internal const string CoreReadProfile = CoreProfile;
     internal const string CoreReadMigration = MigrationId;
+    internal const string CoreReadProfileV2 = "rma-application-core-tenant-v2";
+    internal const string CoreReadMigrationV2 = "rma-tenant-storage-0002";
     private const string PrimaryIdentity = """
         pg_catalog.concat_ws('/', pg_catalog.host(pg_catalog.inet_server_addr()), pg_catalog.inet_server_port(),
             d.oid, extract(epoch FROM pg_catalog.pg_postmaster_start_time()))
@@ -180,22 +182,27 @@ internal static partial class RmaTenantStorageV1
             JOIN {Control}.tenant_migrations m ON m.tenant_id=@tenant
             JOIN cp6_tenancy_v1.login_tenant l ON l.tenant_id=m.tenant_id AND l.role_oid=m.role_oid AND l.role_name=m.role_name
             JOIN pg_catalog.pg_roles r ON r.oid=l.role_oid AND r.rolname=l.role_name
-            WHERE i.singleton AND p.singleton AND i.installation_id=@installation AND i.profile=@model
+            WHERE i.singleton AND p.singleton AND i.installation_id=@installation AND i.profile=@profile
                 AND p.commission_receipt::jsonb->>'InstallationId'=i.installation_id::text
                 AND p.commission_receipt::jsonb->>'Profile'=i.profile
-                AND m.lineage=@lineage AND m.state='Ready' AND m.migration_id=@migration AND r.rolname::text=@login
+                AND m.lineage=@lineage AND m.state='Ready' AND m.migration_id=@initial AND r.rolname::text=@login
                 AND d.datname=pg_catalog.current_database() AND NOT pg_catalog.pg_is_in_recovery()
                 AND i.target->>'Database'=d.datname::text AND i.target->>'DatabaseOid'=d.oid::text
                 AND i.target->>'Server'=pg_catalog.host(pg_catalog.inet_server_addr())
                 AND i.target->>'Port'=pg_catalog.inet_server_port()::text
                 AND i.target->>'SystemIdentifier'=(SELECT system_identifier::text FROM pg_catalog.pg_control_system())
+                {CoreReadModelV2Predicate(binding)}
             FOR SHARE OF i,p,m
             """, connection, tx);
         command.Parameters.AddWithValue("tenant", binding.TenantId);
         command.Parameters.AddWithValue("installation", installation);
-        command.Parameters.AddWithValue("model", binding.ModelVersion);
+        command.Parameters.AddWithValue("profile", CoreProfile);
         command.Parameters.AddWithValue("lineage", Lineage);
-        command.Parameters.AddWithValue("migration", binding.MigrationVersion);
+        command.Parameters.AddWithValue("initial", MigrationId);
+        if (binding.ModelVersion == CoreReadProfileV2)
+            command.Parameters.AddWithValue("migration", binding.MigrationVersion);
+        else if (binding.ModelVersion != CoreReadProfile || binding.MigrationVersion != CoreReadMigration)
+            throw new TenantStorageException(TenantStorageFailure.BindingRejected);
         command.Parameters.AddWithValue("login", login);
         return await command.ExecuteScalarAsync(ct) as string
             ?? throw new TenantStorageException(TenantStorageFailure.IdentityRejected);

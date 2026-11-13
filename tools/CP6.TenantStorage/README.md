@@ -194,6 +194,14 @@ After normal Core initialization and Tenant Creation V1, submit the same plan to
 
 Use the resolved tenant and login mapping for the existing original journal and writer installation steps. The ordinary runtime still requires the live storage binding and the current authorization checks before business writes.
 
+### Mixed Core RMA tenant models
+
+`migrate-rma-core-model-v2 --stdin` uses the same request envelope as the tenant outbound index migration. Supply the commissioned `Target`, `InstallationId`, one `TenantId`, and a new `OperationId`. The database owner first applies Core migration `20261113090000_RmaTenantModelV2Shared` and installs the original journal, draft, and submit writers. PostgreSQL 15 or later is required for the new model's security-invoker views. The tenant command creates the views, enables the database writer fence, and stores the local history and shared original receipt in one transaction. Repeat the exact request to recover its original result after uncertain output.
+
+Set `RmaReadTenancy:Tenants:<index>:ModelVersion` to `rma-application-core-tenant-v2` for that tenant in the new host. The default binding continues to use v1. A v2 binding needs both the shared EF migration and the matching tenant history. The views use the ordinary login's existing read privileges. The tenant receives EXECUTE on the v2 writers, and the database rejects v1 draft, submit, and close effects for that tenant. A compatible old host can read the original tables during application rollback. Run a v2-capable host to resume writing for upgraded tenants.
+
+The [compatibility matrix](../../CP6.WebApi/rma-tenant-model-compatibility.json) accompanies the WebApi build and publish outputs. The existing v11 export and live recovery tools support v1 tenants and refuse v2 storage. [PostgreSQL view permissions](https://www.postgresql.org/docs/18/sql-createview.html)
+
 ### Concurrent outbound index on a commissioned Core tenant
 
 Use `migrate-rma-core-outbound-index-v1 --stdin` with the same private envelope. Its `Request` contains the original `Target` and `InstallationId`, one Ready `TenantId`, and a new nonempty `OperationId` for this index step. The step builds a B-tree on the tenant's `heads.outbound_id`. The original Ready record and old-compatible reads continue while the index is prepared.

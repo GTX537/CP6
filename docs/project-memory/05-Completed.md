@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-13 UTC · W528 PGT-024 验收
+
+新增实际 RMA v2 PostgreSQL 视图与逐租户迁移、原回执和受控写入。两个真实宿主实测 v1/v2 共存、旧版拒绝写 A 及应用回退。 [本任务](../development/evidence/W528-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W527 PGT-022 验收
 
 完成 Stock Owner 纪元控制与原回执查询、旧 Pending 到现行 Published 的原键对账、UNKNOWN 不重放与旧纪元恢复拒绝。纪元 2 的 v11 在隔离库暂存后可恢复原回执。 [本任务](../development/evidence/W527-01/DELIVERY.md)

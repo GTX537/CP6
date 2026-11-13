@@ -58,7 +58,6 @@ internal sealed partial class TenantRmaReadStore
                                 await RmaTenantStorageV1.RequireCoreDraftBindingAsync(authorityConnection, authorityTx, _installation, token);
                                 if (entry == RmaWriteEntry.Submit)
                                     await RmaTenantStorageV1.RequireCoreSubmitBindingAsync(authorityConnection, authorityTx, _installation, token);
-
                                 using var guard = new TenantEfCommandGuard(transaction, connection, dbTransaction, tenant);
                                 var options = RmaTenantReadContext.Options(connection).AddInterceptors(guard);
                                 await using var storage = new RmaTenantReadContext(options.Options, transaction.CurrentBinding);
@@ -96,6 +95,11 @@ internal sealed partial class TenantRmaReadStore
             throw new OrderPriceCorrectionException("OPERATIONS_OUTCOME_UNKNOWN", 503, error);
         }
         catch (TenantStorageException error)
+        {
+            throw new OrderPriceCorrectionException("RMA_TENANT_BINDING_UNAVAILABLE", 503, error);
+        }
+        catch (PostgresException error) when (error.SqlState is PostgresErrorCodes.UndefinedTable
+            or PostgresErrorCodes.InvalidSchemaName or PostgresErrorCodes.InsufficientPrivilege)
         {
             throw new OrderPriceCorrectionException("RMA_TENANT_BINDING_UNAVAILABLE", 503, error);
         }

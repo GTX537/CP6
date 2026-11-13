@@ -1,0 +1,65 @@
+{
+  "format": "cp6-main-rma-tenant-model-compatibility-v1",
+  "layoutVersion": "cp6-pg-tenancy-v1",
+  "sharedExpand": "20261113090000_RmaTenantModelV2Shared",
+  "minimumPostgreSqlMajorForV2": 15,
+  "contract": "Main.Wms.RmaApplication.v1",
+  "applicationRollback": "application-only",
+  "combinations": [
+    {
+      "application": "v1",
+      "tenantModel": "rma-application-core-tenant-v1",
+      "read": "v1-tables",
+      "write": "v1",
+      "minShared": "core-rma-commissioned"
+    },
+    {
+      "application": "v1",
+      "tenantModel": "rma-application-core-tenant-v2",
+      "read": "v1-tables",
+      "write": "denied",
+      "minShared": "20261113090000_RmaTenantModelV2Shared"
+    },
+    {
+      "application": "v2",
+      "tenantModel": "rma-application-core-tenant-v1",
+      "read": "v1-tables",
+      "write": "v1",
+      "minShared": "core-rma-commissioned"
+    },
+    {
+      "application": "v2",
+      "tenantModel": "rma-application-core-tenant-v2",
+      "read": "v2-views",
+      "write": "v2",
+      "minShared": "20261113090000_RmaTenantModelV2Shared"
+    }
+  ],
+  "tenantMigrations": {
+    "rma-application-core-tenant-v1": "rma-tenant-storage-0001",
+    "rma-application-core-tenant-v2": "rma-tenant-storage-0002"
+  },
+  "writerEntries": {
+    "sharedRetired": [
+      "cp6_rma_application_v1.heads",
+      "cp6_rma_application_v1.versions",
+      "cp6_main_owner_v1.operations (direct RMA insert)"
+    ],
+    "v1": [
+      "cp6_rma_draft_writer_v1.create_draft",
+      "cp6_rma_submit_writer_v1.submit_draft",
+      "cp6_rma_original_journal_v1.store"
+    ],
+    "v2": [
+      "cp6_rma_model_v2.create_draft",
+      "cp6_rma_model_v2.submit_draft",
+      "cp6_rma_model_v2.close_operation"
+    ]
+  },
+  "unsupported": "reject-without-fallback",
+  "recovery": {
+    "rma-application-core-tenant-v1": "existing-v11",
+    "rma-application-core-tenant-v2": "requires-compatible-archive-and-restore"
+  },
+  "contraction": "none"
+}

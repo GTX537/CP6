@@ -36,4 +36,9 @@
     <InternalsVisibleTo Include="CP6.Tests" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="rma-tenant-model-compatibility.json" CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
