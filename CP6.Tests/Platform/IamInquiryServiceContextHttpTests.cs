@@ -36,12 +36,22 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     public Task Inquiry_export_service_v2_actual_TLS_requires_independent_privacy_authority()=>ServiceContextHttp(false,true);
     [Pgt017MainFact]
     public Task PGT017_public_submit_and_Main_pause_commit() => ServiceContextHttp(false, tenantPause: true);
+    [Pgt017MainFact]
+    public Task PGT017_worker_and_Main_pause_commit()
+    {
+        var worker = Environment.GetEnvironmentVariable("CP6_PGT017_WORKER");
+        Assert.Contains(worker, new[] { "export", "retention", "review" });
+        return ServiceContextHttp(worker != "export", privacy: worker == "export", tenantPause: true);
+    }
 
     private async Task ServiceContextHttp(bool retention, bool privacy = false, bool tenantPause = false)
     {
         var project=Environment.GetEnvironmentVariable("CP6_CRM_CROSS_PROJECT")??throw new InvalidOperationException("Owned CRM project required; no skip");
         var output=Environment.GetEnvironmentVariable("CP6_SERVICE_CONTEXT_OUTPUT")!;var folder=Path.GetDirectoryName(output)!;
-        await using var h=await Seed();var pair=privacy?await GrantPrivacy(h,5):retention?await GrantRetention(h):await GrantIntake(h,5);var options=InquiryPermissionSigningTests.Options();
+        await using var h=await Seed();
+        var pair = privacy ? await GrantPrivacy(h, 5) : retention && !tenantPause ? await GrantRetention(h) : await GrantIntake(h, 5);
+        if (retention && tenantPause) await GrantRetention(h);
+        var options=InquiryPermissionSigningTests.Options();
         using var key=InquiryPermissionSigningTests.Signer(options);var runtime=ContextRuntime(h.Tenant,options.Issuer);
         await new IdentityBootstrapService(h.Db,runtime).InitializeAsync(h.Tenant);h.Db.ChangeTracker.Clear();
         var config=ServiceRegistration(h,Guid.NewGuid());config.Oidc.Issuer=options.Issuer;
@@ -73,6 +83,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         await using var app=builder.Build();app.MapControllers();await app.StartAsync();
         try
         {
+            var worker = tenantPause && (privacy || retention);
             var origin=app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.Single();
             using var http=new HttpClient(new HttpClientHandler{AllowAutoRedirect=false,UseCookies=false,UseProxy=false,
                 ServerCertificateCustomValidationCallback=(_,cert,_,_)=>cert?.Thumbprint==certificate.Thumbprint}){BaseAddress=new(origin)};
@@ -85,7 +96,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             {
                 Assert.Equal(HttpStatusCode.OK, good.StatusCode);
                 Assert.True(good.Headers.CacheControl?.NoStore);
-                if (storeId is { } expected)
+                if (storeId is { } expected && !worker)
                 {
                     Assert.Equal($"{expected:D}/1", Assert.Single(good.Headers.GetValues("X-CP6-Inquiry-Tenant-Fence")));
                     var body = System.Text.Json.Nodes.JsonNode.Parse(await good.Content.ReadAsStringAsync())!.AsObject();
@@ -104,7 +115,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 Assert.Equal(7,projection.RootElement.GetProperty("fieldPermissions").GetArrayLength());
             }
             var rows=await h.Db.CrmIdentitySnapshots.AsNoTracking().Where(x=>x.TenantId==h.Tenant).OrderBy(x=>x.AggregateId).ToArrayAsync();
-            var run=(tenantPause?"actual-main-public-pause-":privacy?"actual-main-export-v2-":retention?"actual-main-retention-":"actual-main-submit-")+DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffffffZ");
+            var run=(worker?"actual-main-worker-pause-":tenantPause?"actual-main-public-pause-":privacy?"actual-main-export-v2-":retention?"actual-main-retention-":"actual-main-submit-")+DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffffffZ");
             var bridge=Path.Combine(folder,run+"-bridge.json");
             await File.WriteAllTextAsync(bridge,JsonSerializer.Serialize(new{issuer=options.Issuer,origin,thumbprint=certificate.Thumbprint,
                 tenantId=h.Tenant,departmentId=h.Parent,subjectId=config.Source.Registrations[0].SubjectId,epoch=config.Source.Registrations[0].AuthenticationEpoch,
@@ -112,7 +123,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 rows=rows.Select(x=>new{x.AggregateId,x.EventType,x.Version,x.PayloadSha256,x.IsDeleted,data=JsonDocument.Parse(x.PayloadJson).RootElement})},IdentityEventContracts.Json));
             var start=new ProcessStartInfo(Environment.GetEnvironmentVariable("DOTNET_HOST_PATH")??"C:/Users/tt/.dotnet/dotnet.exe")
                 {WorkingDirectory=Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(project)))!,UseShellExecute=false,CreateNoWindow=true,RedirectStandardOutput=true,RedirectStandardError=true};
-            var childTest = tenantPause ? "PGT017_public_submit_actual_Main_TLS_and_pause"
+            var childTest = worker ? "PGT017_service_worker_actual_Main_TLS_and_pause"
+                : tenantPause ? "PGT017_public_submit_actual_Main_TLS_and_pause"
                 : privacy ? "Privacy_export_actual_Main_TLS_v2_current_service_and_CRM_artifact_transaction"
                 : retention ? "Retention_actual_Main_TLS_current_authority_and_CRM_transaction"
                 : "Public_submit_actual_Main_TLS_controller_PG_identity_and_CRM_complete_graph_commit";
@@ -150,7 +162,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             var result=System.Xml.Linq.XDocument.Load(Path.Combine(folder,run+".trx"));
             var counters=result.Descendants().Single(x=>x.Name.LocalName=="Counters");
             Assert.Equal("1",counters.Attribute("total")!.Value);Assert.Equal("1",counters.Attribute("passed")!.Value);
-            if(privacy)
+            if(privacy && !tenantPause)
             {
                 await h.Db.Sys_RoleActions.Where(x=>x.RoleId==71&&x.ActionCode=="export").ExecuteDeleteAsync();
                 using var revoked=await Send(command,ServiceBasic().ToString());Assert.Equal(HttpStatusCode.Forbidden,revoked.StatusCode);
