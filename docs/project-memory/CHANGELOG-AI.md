@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W517 PGT-021 同源 v11 定向验证
+
+新增可复现 PostgreSQL 验证入口，复用真实普通 RMA 写入与现有 v11 归档、暂存和回执。 [本任务](../development/evidence/W517-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W516 正式 PGT-026 认证与公共路由
 
 新增同宿主真实公开路由验收，RMA 原读取与 schema 启用使用独立夹具入口。正式 PGT-026 已采用。 [本任务](../development/evidence/W516-01/DELIVERY.md)

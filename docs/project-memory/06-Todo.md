@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W517 WP02-02 恢复后续
+
+继续现行 ERP 扩展业务图、Stock 业务账闭合恢复和实际批准切换。PGT-022 的旧纪元恢复入口与 PGT-024 实际混合绑定仍待采用。 [本任务](../development/evidence/W517-01/DELIVERY.md)
+
 ## 2026-11-12 UTC · W516 正式 PostgreSQL 剩余 6 项
 
 PGT-021、022、024 共用 WP02-02 的恢复及版本前置。PGT-017 后接 PGT-011。PGT-025 按实际物理租户 schema 与共享原回执组合继续。 [本任务](../development/evidence/W516-01/DELIVERY.md)
