@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W526 完成 PGT-021 的同库 v11 完整逻辑单元恢复、正式 0.10.4 采用与 Stock 原 Pending 派送。旧窗口新增的永久双库切换要求回归 S02 原范围；正式 PostgreSQL 22 PASS / 5 NOT_RUN。 [本任务](evidence/W526-01/DELIVERY.md)
+
 > W525 恢复同一 v11 来源的完整出库头和明细，实测候选普通 RMA 草稿、提交、同键回放和认证锁等待。 [本任务](evidence/W525-01/DELIVERY.md)
 
 > W524 实测源身份处置关闭候选，独立再批准重施撤销；候选只登记 A 的 RMA 绑定时，A 读回、B 源读取及 B 候选拒绝均通过。 [本任务](evidence/W524-01/DELIVERY.md)

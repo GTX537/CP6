@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W526 完整恢复与正式包采用
+
+新增同库RMA恢复CLI及PG开发构建入口；Main锁定0.10.4并补LF/CRLF/篡改守卫回归。PGT-021升为PASS，正式总计22/27；缺件、晚期回滚、丢答原键恢复和B合法差量均有原生证据。 [本任务](../development/evidence/W526-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W525 原出库依赖与候选写入
 
 实测候选草稿、提交与原 journal 在普通租户连接持久化，五份既有导入回执和两库原件保持一致。 [本任务](../development/evidence/W525-01/DELIVERY.md)
