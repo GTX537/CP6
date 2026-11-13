@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W518 PGT-024 同库验证
+
+核对同一 RMA v1 模型的两版宿主、旧写者拒绝、原回执和前向历史。本次为本地验证和台账交付。 [本任务](../development/evidence/W518-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W517 PGT-021 同源 v11 定向验证
 
 新增可复现 PostgreSQL 验证入口，复用真实普通 RMA 写入与现有 v11 归档、暂存和回执。 [本任务](../development/evidence/W517-01/DELIVERY.md)

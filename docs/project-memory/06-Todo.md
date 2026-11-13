@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W518 WP02-02 恢复与版本后续
+
+继续同源 ERP Order 失败原图和 Stock 完整业务恢复。PGT-022 需受控恢复入口读取当前路由纪元；PGT-024 需正式兼容矩阵和实际双模型绑定。 [本任务](../development/evidence/W518-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W517 WP02-02 恢复后续
 
 继续现行 ERP 扩展业务图、Stock 业务账闭合恢复和实际批准切换。PGT-022 的旧纪元恢复入口与 PGT-024 实际混合绑定仍待采用。 [本任务](../development/evidence/W517-01/DELIVERY.md)

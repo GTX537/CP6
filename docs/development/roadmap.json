@@ -165562,6 +165562,11 @@
       "at": "2026-11-13T00:06:14.083446+00:00",
       "change": "W517 补 PGT-021 普通 B 在 A v11 归档期间的原生提交，核对 A 原件和隔离暂存。正式 PostgreSQL 保持 21 PASS / 6 NOT_RUN。",
       "evidence": "docs/development/evidence/W517-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T00:10:12.381905+00:00",
+      "change": "W518 补 PGT-024 同库真实新旧 RMA 宿主并行、旧写者拒绝和实际回退读取；正式 PostgreSQL 仍 21 PASS / 6 NOT_RUN。",
+      "evidence": "docs/development/evidence/W518-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211448,10 +211453,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W517",
-      "path": "docs/development/evidence/W517-01/DELIVERY.md",
-      "baseline_sha": "7783e38adc59b8213e0c1257d06ae102a274cf81",
-      "registered_at": "2026-11-12T23:52:11.326600+00:00",
+      "id": "W518",
+      "path": "docs/development/evidence/W518-01/DELIVERY.md",
+      "baseline_sha": "49ec9af45c82ee80d1bbb6478809a1db42ccb77f",
+      "registered_at": "2026-11-13T00:09:52.880791+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211465,13 +211470,14 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "汇总 W518 同库新旧 RMA 宿主证据，再补同源 ERP 新业务图的闭合候选及完整 Stock 写入恢复。",
+      "next_action": "从现有关闭候选继续 ERP Order 终态失败原件恢复；Stock 完整业务账恢复与批准切换另做，精确区分现有派送问题和路由 epoch 采用。",
       "windows": [
         {
-          "id": "W517-01",
-          "workspace_task": "W517-01",
+          "id": "W518-01",
+          "workspace_task": "W518-01",
           "related_tasks": [
-            "WP02-02"
+            "WP02-02",
+            "WP02-28"
           ],
           "chat": "COORD",
           "mode": "SINGLE_CHAT",
@@ -211479,30 +211485,37 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w517-01",
-          "planned_scope_ref": "docs/development/evidence/W517-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W517-01/DELIVERY.md",
+          "branch": "codex/w518-01",
+          "planned_scope_ref": "docs/development/evidence/W518-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W518-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "Main:rma-v11-snapshot-native-verification"
+            "Main:rma-mixed-version-native-verification"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Actual PostgreSQL 18.6 normal B database writer commits while A repeatable-read snapshot remains open, B-only graph and original receipt, 40 stable CSVs and exact logical A RMA dump, 23 closed-stage byte readbacks and equal stage/recovery receipts.",
-          "remaining_scope": "Full A tenant recovery with supported live Stock/ERP imports and approved cutover remain under PGT-021. PGT-022 exact old epoch recovery entry and PGT-024 actual mixed bindings remain open.",
-          "main_tested_source_sha": "8cfd8ec768a20d5256704cc92e4a50ce2bf0772f"
+          "validation_summary": "Actual PostgreSQL 18.6 and two pinned hosted applications. Concurrent authorized B older read 200/A newer write 201, original same key, old write 503 before tenant SQL, both read after newer stop, four histories unchanged.",
+          "remaining_scope": "PGT-024 approved dual-model bindings, release compatibility matrix and shared minimum version not proven. PGT-022 needs authorized old route epoch recovery check; Stock 0.10.4 guard package is independent.",
+          "integration_workspace_task": "W518-VERIFY",
+          "integration_worktree": "D:/CP6-worktrees/s02-00-20261012",
+          "integration_tested_source_sha": "7783e38adc59b8213e0c1257d06ae102a274cf81",
+          "integration_validation_outcome": "verified",
+          "integration_branch_disposition": "no-task-branch",
+          "integration_workspace_status": "fixed-seat-detached-for-reuse",
+          "integration_seat_released": true
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "D:/CP6-worktrees/s02-00-20261012"
         ],
         "new_worktrees": 0
       },
-      "product_integrated": true
+      "product_integrated": false
     },
     "wave_history": [
       {
@@ -261416,6 +261429,65 @@
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018",
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W517",
+        "path": "docs/development/evidence/W517-01/DELIVERY.md",
+        "baseline_sha": "7783e38adc59b8213e0c1257d06ae102a274cf81",
+        "registered_at": "2026-11-12T23:52:11.326600+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "汇总 W518 同库新旧 RMA 宿主证据，再补同源 ERP 新业务图的闭合候选及完整 Stock 写入恢复。",
+        "windows": [
+          {
+            "id": "W517-01",
+            "workspace_task": "W517-01",
+            "related_tasks": [
+              "WP02-02"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w517-01",
+            "planned_scope_ref": "docs/development/evidence/W517-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W517-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "Main:rma-v11-snapshot-native-verification"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Actual PostgreSQL 18.6 normal B database writer commits while A repeatable-read snapshot remains open, B-only graph and original receipt, 40 stable CSVs and exact logical A RMA dump, 23 closed-stage byte readbacks and equal stage/recovery receipts.",
+            "remaining_scope": "Full A tenant recovery with supported live Stock/ERP imports and approved cutover remain under PGT-021. PGT-022 exact old epoch recovery entry and PGT-024 actual mixed bindings remain open.",
+            "main_tested_source_sha": "8cfd8ec768a20d5256704cc92e4a50ce2bf0772f",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/985",
+            "main_remote_main_sha": "49ec9af45c82ee80d1bbb6478809a1db42ccb77f"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },
