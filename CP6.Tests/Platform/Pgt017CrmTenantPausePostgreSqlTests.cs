@@ -18,7 +18,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     }
 
     private async Task ExerciseCrmTenantPause(AuthenticationApiProcess host, Harness target, string bridge,
-        bool publicSubmission = false, Task? childExited = null, bool waitForCompletePause = false)
+        bool publicSubmission = false, Task? childExited = null, bool waitForCompletePause = false, bool shortenDeadline = false)
     {
         await using var admin = await Seed();
         var user = await admin.Db.Sys_Users.SingleAsync(row => row.Id == admin.ActorId);
@@ -29,6 +29,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         using var read = await host.Send(Request(HttpMethod.Get, path, manager));
         Assert.True(read.StatusCode == HttpStatusCode.OK, await read.Content.ReadAsStringAsync());
         var current = (await read.Content.ReadFromJsonAsync<TenantManagementSnapshotV1>())!;
+        var auditType = shortenDeadline ? SecurityEventType.TenantUpdated : SecurityEventType.TenantSuspended;
         var before = await State();
         Assert.True(before.Enabled);
         Assert.Equal(1, before.SnapshotVersion);
@@ -36,9 +37,11 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var order = Environment.GetEnvironmentVariable("CP6_PGT017_ORDER");
         var pauseFirst = order is "pause-first" or "pause-first-review";
         var recovery = order == "pause-recovery";
-        var operation = publicSubmission ? "pgt017-crm-public-pause"
+        var operation = shortenDeadline ? "pgt017-crm-tenant-deadline" : publicSubmission ? "pgt017-crm-public-pause"
             : waitForCompletePause ? "pgt017-crm-human-write-pause" : "pgt017-crm-configuration-pause";
-        var command = new TenantManagementCommandV1(operation, current.Revision, "suspend", null);
+        var expiry = shortenDeadline ? DateTime.SpecifyKind(DateTime.Today.AddDays(-1), DateTimeKind.Unspecified) : current.ExpireDate;
+        var configuration = shortenDeadline ? new TenantConfigurationV1(current.TenantName, expiry, current.Remark, current.TimeZoneId) : null;
+        var command = new TenantManagementCommandV1(operation, current.Revision, shortenDeadline ? "update" : "suspend", configuration);
 
         Task<HttpResponseMessage> pause;
         await WaitStage("ready");
@@ -106,7 +109,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                     if (pause.IsCompleted)
                     {
                         using var early = await pause;
-                        Assert.Fail($"Main suspension returned HTTP {(int)early.StatusCode} while the admitted CRM Owner was still waiting.");
+                        Assert.Fail($"Main {command.Kind} returned HTTP {(int)early.StatusCode} while the admitted CRM Owner was still waiting.");
                     }
                     await Task.Delay(25, deadline.Token);
                 }
@@ -119,13 +122,19 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Assert.True(result.StatusCode == HttpStatusCode.OK, await result.Content.ReadAsStringAsync());
         var receipt = (await result.Content.ReadFromJsonAsync<TenantManagementReceiptV1>())!;
         var after = await State();
-        Assert.False(after.Enabled);
+        Assert.Equal(shortenDeadline, after.Enabled);
+        Assert.Equal(expiry, after.Expires);
+        if (shortenDeadline)
+        {
+            Assert.NotEqual(before.Expires, after.Expires);
+            Assert.Equal(new DateTimeOffset(expiry!.Value).ToUniversalTime(), after.ProjectedExpiry);
+        }
         Assert.NotEqual(before.Policy, after.Policy);
         Assert.Equal(before.Revision + 1, after.Revision);
         Assert.Equal(before.Generation + 1 + before.ActiveBrowserGrants, after.Generation);
         Assert.Equal(before.SnapshotVersion + 1, after.SnapshotVersion);
-        Assert.Equal(before.PriorityOutbox + 1, after.PriorityOutbox);
-        Assert.Equal(before.StandardOutbox, after.StandardOutbox);
+        Assert.Equal(before.PriorityOutbox + (shortenDeadline ? 0 : 1), after.PriorityOutbox);
+        Assert.Equal(before.StandardOutbox + (shortenDeadline ? 1 : 0), after.StandardOutbox);
         Assert.Equal(before.RevocationOutbox + before.ActiveBrowserGrants, after.RevocationOutbox);
         Assert.Equal(0, after.ActiveBrowserGrants);
         Assert.Equal(before.Audit + 1, after.Audit);
@@ -173,7 +182,10 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             var tenant = target.Tenant;
             var aggregate = $"tenant:{tenant:D}";
             var json = await target.Db.Database.SqlQuery<string>($"""
-                SELECT jsonb_build_object('Enabled',t."Enable",'Policy',t."AuthenticationPolicyRevision",'Revision',v.revision,
+                SELECT jsonb_build_object('Enabled',t."Enable",'Expires',t."ExpireDate",
+                  'ProjectedExpiry',(SELECT "PayloadJson"::jsonb->'expiresAtUtc' FROM crm_identity."Snapshot"
+                      WHERE "TenantId"={tenant} AND "AggregateId"={aggregate}),
+                  'Policy',t."AuthenticationPolicyRevision",'Revision',v.revision,
                   'Generation',coalesce((SELECT "Generation" FROM public."CrmIdentityTenantGenerations" WHERE "TenantId"={tenant}),0),
                   'SnapshotVersion',coalesce((SELECT "Version" FROM crm_identity."Snapshot" WHERE "TenantId"={tenant} AND "AggregateId"={aggregate}),0),
                   'PriorityOutbox',(SELECT count(*) FROM crm_identity_priority."Cp6_OutboxMessage" WHERE "TenantId"={tenant} AND "AggregateId"={aggregate}),
@@ -181,7 +193,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                   'RevocationOutbox',(SELECT count(*) FROM crm_identity_priority."Cp6_OutboxMessage" WHERE "TenantId"={tenant} AND "AggregateId" LIKE 'token:%'),
                   'ActiveBrowserGrants',(SELECT count(*) FROM public."CrmOidcGrant" WHERE "OrganizationId"={tenant} AND NOT "Revoked"),
                   'Audit',(SELECT count(*) FROM public."Sys_SecurityLogs" WHERE "UserId"={admin.ActorId} AND "RequestTenantCode"=t."TenantCode"
-                    AND "EventType"={(int)SecurityEventType.TenantSuspended}),
+                    AND "EventType"={(int)auditType}),
                   'Receipts',(SELECT count(*) FROM cp6_tenant_management_v1.commands WHERE tenant_id={tenant}))::text AS "Value"
                 FROM public."Sys_Tenants" t JOIN cp6_tenant_management_v1.versions v ON v.tenant_id=t."Id" WHERE t."Id"={tenant}
                 """).SingleAsync();
@@ -206,7 +218,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         }
     }
 
-    private sealed record CrmPauseState(bool Enabled, Guid Policy, long Revision, long Generation, int SnapshotVersion,
+    private sealed record CrmPauseState(bool Enabled, DateTime? Expires, DateTimeOffset? ProjectedExpiry, Guid Policy, long Revision, long Generation, int SnapshotVersion,
         int PriorityOutbox, int StandardOutbox, int RevocationOutbox, int ActiveBrowserGrants, int Audit, int Receipts);
 }
 

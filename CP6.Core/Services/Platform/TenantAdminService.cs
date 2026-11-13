@@ -165,6 +165,8 @@ public partial class TenantAdminService : ITenantAdminService
             catch (Exception ex) when (ex is TimeZoneNotFoundException or InvalidTimeZoneException)
             { throw new InvalidOperationException("E-WF-028"); }
         }
+        if (_crmPause is not null && _db.Database.IsNpgsql() && t.Enable && t.ExpireDate != expire)
+            await _crmPause.RequireDeadlineCaptureAsync(_db, id, cancellationToken);
         t.TenantName = name;
         t.ExpireDate = expire;
         t.Remark = remark;

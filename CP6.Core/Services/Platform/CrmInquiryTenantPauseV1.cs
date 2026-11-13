@@ -11,7 +11,7 @@ public sealed class CrmInquiryTenantPauseBindingV1
     public string ConnectionString { get; set; } = "";
 }
 
-/// <summary>Coordinates the registered CRM configuration store before Main changes tenant enablement.</summary>
+/// <summary>Records authority changes in the registered CRM store before the Main source commits.</summary>
 public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
 {
     private readonly Dictionary<Guid, (Guid StoreId, NpgsqlDataSource Source)> bindings = [];
@@ -43,8 +43,7 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
     internal async Task SetEnabledAsync(CP6Context authority, Guid tenant, bool enable, CancellationToken ct)
     {
         if (!bindings.TryGetValue(tenant, out var binding)) return;
-        try { authority.RequireIdentityCapture(tenant); }
-        catch (InvalidOperationException error) { throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503, error); }
+        RequireIdentityCapture(authority, tenant);
         var version = await CurrentTenantVersionAsync(authority, tenant, ct);
         if (version == int.MaxValue)
             throw new TenantManagementExceptionV1("TENANT_REVISION_EXHAUSTED", 422);
@@ -80,6 +79,19 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
         }
     }
 
+    internal async Task RequireDeadlineCaptureAsync(CP6Context authority, Guid tenant, CancellationToken ct)
+    {
+        if (!bindings.ContainsKey(tenant)) return;
+        RequireIdentityCapture(authority, tenant);
+        await CurrentTenantVersionAsync(authority, tenant, ct);
+    }
+
+    private static void RequireIdentityCapture(CP6Context authority, Guid tenant)
+    {
+        try { authority.RequireIdentityCapture(tenant); }
+        catch (InvalidOperationException error) { throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503, error); }
+    }
+
     internal async Task<string?> ReadBindingAsync(CP6Context authority, Guid tenant, CancellationToken ct)
     {
         if (!bindings.TryGetValue(tenant, out var binding)) return null;
@@ -88,7 +100,16 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
     }
 
     // CRM records the authority boundary while the Main source transaction is still open.
-    internal async Task AdvanceIdentityAsync(Guid tenant, string aggregate, int version, bool role, CancellationToken ct)
+    internal Task AdvanceIdentityAsync(Guid tenant, string aggregate, int version, bool role, CancellationToken ct)
+        => AdvanceVersionAsync(tenant, version, role
+            ? "SELECT crm_inquiry_tenant_pause_v1.advance_role_v1(@tenant,@store,@aggregate,@version)"
+            : "SELECT crm_inquiry_tenant_pause_v1.advance_identity_v1(@tenant,@store,@aggregate,@version)", ct, aggregate);
+
+    internal Task AdvanceDeadlineAsync(Guid tenant, int version, CancellationToken ct)
+        => AdvanceVersionAsync(tenant, version,
+            "SELECT crm_inquiry_tenant_pause_v1.advance_deadline_v1(@tenant,@store,@version)", ct);
+
+    private async Task AdvanceVersionAsync(Guid tenant, int version, string sql, CancellationToken ct, string? aggregate = null)
     {
         if (!bindings.TryGetValue(tenant, out var binding)) return;
         try
@@ -97,13 +118,10 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
             await using var tx = await db.BeginTransactionAsync(ct);
             await using var durability = new NpgsqlCommand("SET LOCAL synchronous_commit='on'", db, tx);
             await durability.ExecuteNonQueryAsync(ct);
-            var sql = role
-                ? "SELECT crm_inquiry_tenant_pause_v1.advance_role_v1(@tenant,@store,@aggregate,@version)"
-                : "SELECT crm_inquiry_tenant_pause_v1.advance_identity_v1(@tenant,@store,@aggregate,@version)";
             await using var command = new NpgsqlCommand(sql, db, tx);
             command.Parameters.AddWithValue("tenant", tenant);
             command.Parameters.AddWithValue("store", binding.StoreId);
-            command.Parameters.AddWithValue("aggregate", aggregate);
+            if (aggregate is not null) command.Parameters.AddWithValue("aggregate", aggregate);
             command.Parameters.AddWithValue("version", version);
             if (await command.ExecuteScalarAsync(ct) is not int recorded || recorded != version)
                 throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503);
