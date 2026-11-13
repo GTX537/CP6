@@ -61,7 +61,8 @@ public static class CrmIdentityConfiguration
         var bundle = Cp6ContractBundle.Load(directory);
         var validator = new IdentityEventValidator(bundle, oidc.Issuer);
         services.AddSingleton(validator);
-        services.AddSingleton(provider => new CrmIdentityRuntime(options, validator, provider.GetService<TimeProvider>(), directory));
+        services.AddSingleton(provider => new CrmIdentityRuntime(options, validator, provider.GetService<TimeProvider>(), directory,
+            provider.GetService<CP6.Core.Services.Platform.CrmInquiryTenantPauseV1>()));
         services.AddScoped<IdentitySnapshotReader>();
         services.AddScoped<IIdentitySnapshotReader>(provider => provider.GetRequiredService<IdentitySnapshotReader>());
         services.AddScoped<IdentityBootstrapService>();

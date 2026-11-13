@@ -87,6 +87,33 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
         return FormattableString.Invariant($"{binding.StoreId:D}/{version}");
     }
 
+    // The caller holds the Main transaction for this C02 role source. CRM closes the old
+    // source under the same local locks as inquiry effects, before Main publishes the change.
+    internal async Task AdvanceRoleAsync(Guid tenant, string aggregate, int version, CancellationToken ct)
+    {
+        if (!bindings.TryGetValue(tenant, out var binding)) return;
+        try
+        {
+            await using var db = await binding.Source.OpenConnectionAsync(ct);
+            await using var tx = await db.BeginTransactionAsync(ct);
+            await using var durability = new NpgsqlCommand("SET LOCAL synchronous_commit='on'", db, tx);
+            await durability.ExecuteNonQueryAsync(ct);
+            await using var command = new NpgsqlCommand(
+                "SELECT crm_inquiry_tenant_pause_v1.advance_role_v1(@tenant,@store,@aggregate,@version)", db, tx);
+            command.Parameters.AddWithValue("tenant", tenant);
+            command.Parameters.AddWithValue("store", binding.StoreId);
+            command.Parameters.AddWithValue("aggregate", aggregate);
+            command.Parameters.AddWithValue("version", version);
+            if (await command.ExecuteScalarAsync(ct) is not int recorded || recorded != version)
+                throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503);
+            await tx.CommitAsync(ct);
+        }
+        catch (Exception error) when (error is NpgsqlException or TimeoutException)
+        {
+            throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503, error);
+        }
+    }
+
     private static async Task<int> CurrentTenantVersionAsync(CP6Context authority, Guid tenant, CancellationToken ct)
     {
         var aggregate = $"tenant:{tenant:D}";

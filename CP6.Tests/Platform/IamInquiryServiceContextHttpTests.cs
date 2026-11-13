@@ -44,13 +44,18 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         return ServiceContextHttp(worker != "export", privacy: worker == "export", tenantPause: true);
     }
 
-    private async Task ServiceContextHttp(bool retention, bool privacy = false, bool tenantPause = false)
+    [Pgt017MainFact]
+    public Task PGT017_Main_role_revocation_and_CRM_export_commit()
+        => ServiceContextHttp(false, privacy: true, tenantPause: true, roleRevocation: true);
+
+    private async Task ServiceContextHttp(bool retention, bool privacy = false, bool tenantPause = false, bool roleRevocation = false)
     {
         var project=Environment.GetEnvironmentVariable("CP6_CRM_CROSS_PROJECT")??throw new InvalidOperationException("Owned CRM project required; no skip");
         var output=Environment.GetEnvironmentVariable("CP6_SERVICE_CONTEXT_OUTPUT")!;var folder=Path.GetDirectoryName(output)!;
         await using var h=await Seed();
         var pair = privacy ? await GrantPrivacy(h, 5) : retention && !tenantPause ? await GrantRetention(h) : await GrantIntake(h, 5);
         if (retention && tenantPause) await GrantRetention(h);
+        if (roleRevocation) await SeedCrmExportPolicyEditor(h);
         var options=InquiryPermissionSigningTests.Options();
         using var key=InquiryPermissionSigningTests.Signer(options);var runtime=ContextRuntime(h.Tenant,options.Issuer);
         await new IdentityBootstrapService(h.Db,runtime).InitializeAsync(h.Tenant);h.Db.ChangeTracker.Clear();
@@ -145,7 +150,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                     environment[prefix + "StoreId"] = storeId!.Value.ToString("D");
                     environment[prefix + "ConnectionString"] = sealConnection!;
                     await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, environment);
-                    await ExerciseCrmTenantPause(host, h, stageDirectory!, publicSubmission: true, childExited: child.WaitForExitAsync(timeout.Token));
+                    if (roleRevocation) await ExerciseCrmExportRoleRevocation(host, h, stageDirectory!, child.WaitForExitAsync(timeout.Token));
+                    else await ExerciseCrmTenantPause(host, h, stageDirectory!, publicSubmission: true, childExited: child.WaitForExitAsync(timeout.Token));
                     using var revoked = await Send(command with { RequestNonce = ServiceNonce() }, ServiceBasic().ToString());
                     Assert.Equal(HttpStatusCode.Forbidden, revoked.StatusCode);
                 }
