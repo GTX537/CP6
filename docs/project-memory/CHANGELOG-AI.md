@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W550 部门版本
+
+Main 部门变化在提交前封存。CRM 实际新写入核对相关部门来源，旧部门版本拒绝新效果。 [本任务](../development/evidence/W550-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W549 公开表单签发期限
 
 CRM 新签发保存当前权威期限，由 PostgreSQL 提交阶段复核。 [本任务](../development/evidence/W549-01/DELIVERY.md)

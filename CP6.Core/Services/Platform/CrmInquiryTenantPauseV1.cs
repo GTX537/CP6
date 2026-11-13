@@ -109,7 +109,11 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
         => AdvanceVersionAsync(tenant, version,
             "SELECT crm_inquiry_tenant_pause_v1.advance_deadline_v1(@tenant,@store,@version)", ct);
 
-    private async Task AdvanceVersionAsync(Guid tenant, int version, string sql, CancellationToken ct, string? aggregate = null)
+    internal Task AdvanceDepartmentAsync(Guid tenant, Guid department, int version, CancellationToken ct)
+        => AdvanceVersionAsync(tenant, version,
+            "SELECT crm_inquiry_tenant_pause_v1.advance_department_v1(@tenant,@store,@aggregate,@version)", ct, department);
+
+    private async Task AdvanceVersionAsync(Guid tenant, int version, string sql, CancellationToken ct, object? aggregate = null)
     {
         if (!bindings.TryGetValue(tenant, out var binding)) return;
         try

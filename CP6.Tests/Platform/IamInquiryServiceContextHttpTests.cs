@@ -56,8 +56,12 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     public Task PGT017_Main_tenant_deadline_change_and_CRM_export_commit()
         => ServiceContextHttp(false, privacy: true, tenantPause: true, shortenDeadline: true);
 
+    [Pgt017MainFact]
+    public Task PGT017_Main_department_revocation_and_CRM_export_commit()
+        => ServiceContextHttp(false, privacy: true, tenantPause: true, departmentRevocation: true);
+
     private async Task ServiceContextHttp(bool retention, bool privacy = false, bool tenantPause = false,
-        bool roleRevocation = false, bool serviceRevocation = false, bool shortenDeadline = false)
+        bool roleRevocation = false, bool serviceRevocation = false, bool shortenDeadline = false, bool departmentRevocation = false)
     {
         var project=Environment.GetEnvironmentVariable("CP6_CRM_CROSS_PROJECT")??throw new InvalidOperationException("Owned CRM project required; no skip");
         var output=Environment.GetEnvironmentVariable("CP6_SERVICE_CONTEXT_OUTPUT")!;var folder=Path.GetDirectoryName(output)!;
@@ -65,6 +69,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var pair = privacy ? await GrantPrivacy(h, 5) : retention && !tenantPause ? await GrantRetention(h) : await GrantIntake(h, 5);
         if (retention && tenantPause) await GrantRetention(h);
         if (roleRevocation) await SeedCrmExportPolicyEditor(h);
+        if (departmentRevocation) await SeedDepartmentEditor(h);
         var options=InquiryPermissionSigningTests.Options();
         using var key=InquiryPermissionSigningTests.Signer(options);var runtime=ContextRuntime(h.Tenant,options.Issuer);
         await new IdentityBootstrapService(h.Db,runtime).InitializeAsync(h.Tenant);h.Db.ChangeTracker.Clear();
@@ -173,6 +178,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                     {
                         await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, environment);
                         if (roleRevocation) await ExerciseCrmExportRoleRevocation(host, h, stageDirectory!, exited);
+                        else if (departmentRevocation) await ExerciseCrmExportDepartmentRevocation(host, h, stageDirectory!, exited);
                         else await ExerciseCrmTenantPause(host, h, stageDirectory!, publicSubmission: true, childExited: exited,
                             shortenDeadline: shortenDeadline);
                     }
