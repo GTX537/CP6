@@ -18,7 +18,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     }
 
     private async Task ExerciseCrmTenantPause(AuthenticationApiProcess host, Harness target, string bridge,
-        bool publicSubmission = false, Task? childExited = null)
+        bool publicSubmission = false, Task? childExited = null, bool waitForCompletePause = false)
     {
         await using var admin = await Seed();
         var user = await admin.Db.Sys_Users.SingleAsync(row => row.Id == admin.ActorId);
@@ -36,12 +36,13 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var order = Environment.GetEnvironmentVariable("CP6_PGT017_ORDER");
         var pauseFirst = order is "pause-first" or "pause-first-review";
         var recovery = order == "pause-recovery";
-        var operation = publicSubmission ? "pgt017-crm-public-pause" : "pgt017-crm-configuration-pause";
+        var operation = publicSubmission ? "pgt017-crm-public-pause"
+            : waitForCompletePause ? "pgt017-crm-human-write-pause" : "pgt017-crm-configuration-pause";
         var command = new TenantManagementCommandV1(operation, current.Revision, "suspend", null);
 
         Task<HttpResponseMessage> pause;
         await WaitStage("ready");
-        if (publicSubmission && pauseFirst)
+        if ((publicSubmission || waitForCompletePause) && pauseFirst)
         {
             await WaitStage("permission-held");
             pause = Pause();

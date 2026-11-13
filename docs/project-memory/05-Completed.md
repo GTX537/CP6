@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-13 UTC · W543 人类授权 Owner
+
+实际 Main 人类权限和 CRM Owner 实测 5 个动作，两种提交顺序共 10 组联验。 [本任务](../development/evidence/W543-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W542 公开询盘的暂停顺序
 
 实际两库验证签发与业务先提交、暂停先拒绝自动建线索与人工复核。两仓联验 8 项，兼容联验 2 项。 [本任务](../development/evidence/W542-01/DELIVERY.md)

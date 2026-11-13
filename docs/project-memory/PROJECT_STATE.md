@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W543 人工询盘写入与租户暂停
+
+人工受理、撤回同意、导出请求和一次性下载通过两库并发验收。正式 PostgreSQL 26/27。 [本任务](../development/evidence/W543-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W542 公开询盘与租户暂停
 
 Main 与 CRM 的公开签发和提交竞争已通过两库联验。正式 PostgreSQL 26/27。 [本任务](../development/evidence/W542-01/DELIVERY.md)

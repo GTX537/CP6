@@ -304,11 +304,16 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         }
     }
 
+    [Pgt017MainFact]
+    public Task PGT017_human_inquiry_mutation_and_Main_pause_commit()
+        => InquiryProducerHttp(Environment.GetEnvironmentVariable("CP6_PGT017_HUMAN_PURPOSE")!, humanContext: true, crossDatabasePause: true);
+
     private async Task InquiryProducerHttp(string purpose, bool humanContext=false, bool crossDatabasePause=false)
     {
         await using var h = await Seed(); var intake = purpose.StartsWith("intake:", StringComparison.Ordinal);
         var consent = purpose == "privacy:consent-withdraw";
         var privacy = purpose is "privacy:export" or "privacy:download";
+        var humanPause = humanContext && crossDatabasePause;
         var pair = privacy ? await GrantPrivacy(h) : consent ? await GrantConsent(h) : intake ? await GrantIntake(h) : (await GrantInquiry(h))[0]; var options = InquiryPermissionSigningTests.Options();
         if(humanContext)
         {
@@ -317,7 +322,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         }
         var bridgeDirectory = Environment.GetEnvironmentVariable(crossDatabasePause
             ? "CP6_PGT017_BRIDGE" : "CP6_INQUIRY_CONFIGURATION_BRIDGE");
-        if (intake || consent || privacy) bridgeDirectory = null;
+        if (!humanPause && (intake || consent || privacy)) bridgeDirectory = null;
         if (bridgeDirectory is not null)
             await h.Db.Sys_Users.Where(x => x.Id == h.ActorId).ExecuteUpdateAsync(x => x.SetProperty(u => u.DeptId, h.Parent));
         var environment = IdentityEnvironment(h.Tenant); const string clientSecret = "owned-local-client-secret";
@@ -400,16 +405,25 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             bridgeDirectory = Path.GetFullPath(bridgeDirectory);
             Assert.StartsWith(root + Path.DirectorySeparatorChar, bridgeDirectory, StringComparison.OrdinalIgnoreCase);
             Directory.CreateDirectory(bridgeDirectory);
+            var sources = humanPause
+                ? await h.Db.CrmIdentitySnapshots.AsNoTracking().Where(x => x.TenantId == h.Tenant).OrderBy(x => x.AggregateId).ToArrayAsync()
+                : [];
             await File.WriteAllTextAsync(Path.Combine(bridgeDirectory, "session.json"), JsonSerializer.Serialize(new
             {
                 marker = "CP6-owned-inquiry-configuration-interop-v1", issuer = options.Issuer, origin = host.Origin.ToString(),
                 accessToken = token, idToken = tokenBody.RootElement.GetProperty("id_token").GetString(),
                 tenantId = h.Tenant, subjectId = h.ActorId, departmentId = h.Parent, siteId = pair.SiteId, formId = pair.FormId,
-                keyId = options.KeyId, publicKeyBase64 = options.PublicKeyBase64, activeFromUtc = options.ActiveFromUtc
+                keyId = options.KeyId, publicKeyBase64 = options.PublicKeyBase64, activeFromUtc = options.ActiveFromUtc,
+                sourceRows = sources.Select(x => new { x.AggregateId, x.EventType, x.Version, x.PayloadSha256, x.IsDeleted, x.PayloadJson }),
+                authenticationEpoch = humanPause ? outer.RootElement.GetProperty("authenticationEpoch").GetGuid() : (Guid?)null
             }));
             if (crossDatabasePause)
             {
-                try { await ExerciseCrmTenantPause(host, h, bridgeDirectory); }
+                try
+                {
+                    if (humanPause) await ExerciseCrmTenantPause(host, h, bridgeDirectory, waitForCompletePause: true);
+                    else await ExerciseCrmTenantPause(host, h, bridgeDirectory);
+                }
                 finally { File.Delete(Path.Combine(bridgeDirectory, "session.json")); }
                 return;
             }
@@ -431,7 +445,11 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     private static async Task WaitConfigurationBridge(string directory, string stage)
     {
         using var timeout = new CancellationTokenSource(TimeSpan.FromMinutes(3));
-        while (!File.Exists(Path.Combine(directory, stage))) await Task.Delay(100, timeout.Token);
+        while (!File.Exists(Path.Combine(directory, stage)))
+        {
+            Assert.False(File.Exists(Path.Combine(directory, "aborted")), $"CRM fixture failed before stage {stage}.");
+            await Task.Delay(100, timeout.Token);
+        }
         Assert.Equal("PASS", await File.ReadAllTextAsync(Path.Combine(directory, stage), timeout.Token));
     }
 }
