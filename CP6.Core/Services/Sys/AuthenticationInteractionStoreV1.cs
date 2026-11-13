@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Sys;
@@ -113,7 +114,57 @@ public sealed class AuthenticationInteractionStoreV1(CP6Context db)
     public Task<int> RejectAsync(Guid completion, CancellationToken ct = default) => db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_authentication_v1.session_evidence SET rejected_at=clock_timestamp() WHERE completion_id={completion} AND rejected_at IS NULL", ct);
 
     public Task<AuthenticationSessionRow?> ReadSessionAsync(string jti, CancellationToken ct = default)
-        => db.Database.SqlQuery<AuthenticationSessionRow>($"SELECT s.refresh_hash AS \"RefreshHash\", s.evidence::text AS \"Evidence\", (s.rejected_at IS NOT NULL OR i.state<>'completed' OR r.\"CompletionPending\" OR r.\"CompletionRejectedAtUtc\" IS NOT NULL OR (r.\"RevokedAt\" IS NOT NULL AND r.\"ReplacedByTokenHash\" IS NULL)) AS \"Rejected\" FROM cp6_authentication_v1.session_evidence s JOIN cp6_authentication_v1.access_sessions a ON a.refresh_hash=s.refresh_hash JOIN cp6_authentication_v1.interactions i ON i.completion_id=s.completion_id JOIN public.\"Sys_RefreshTokens\" r ON r.\"TokenHash\"=s.refresh_hash WHERE a.access_jti={jti}").SingleOrDefaultAsync(ct);
+        => db.Database.SqlQuery<AuthenticationSessionRow>($"""
+            SELECT s.refresh_hash AS "RefreshHash", s.evidence::text AS "Evidence",
+              (a.revoked_at IS NOT NULL OR s.rejected_at IS NOT NULL OR i.state<>'completed'
+                OR r."CompletionPending" OR r."CompletionRejectedAtUtc" IS NOT NULL
+                OR (r."RevokedAt" IS NOT NULL AND r."ReplacedByTokenHash" IS NULL)) AS "Rejected"
+            FROM cp6_authentication_v1.access_sessions a
+            JOIN cp6_authentication_v1.session_evidence s ON a.refresh_hash=s.refresh_hash
+            JOIN cp6_authentication_v1.interactions i ON i.completion_id=s.completion_id
+            JOIN public."Sys_RefreshTokens" r ON r."TokenHash"=s.refresh_hash
+            WHERE a.access_jti={jti}
+            """).SingleOrDefaultAsync(ct);
+
+    internal Task<bool> IsAccessRevokedAsync(string jti, CancellationToken ct = default)
+        => db.Database.SqlQuery<bool>($"""
+            SELECT EXISTS (SELECT 1 FROM cp6_authentication_v1.access_sessions
+                WHERE access_jti={jti} AND revoked_at IS NOT NULL) AS "Value"
+            """).SingleAsync(ct);
+
+    // The signed access identifier selects one issuance, even when it shares a refresh
+    // generation with a different access alias. Only the first retirement adds audit.
+    internal async Task RevokeAccessAsync(string jti, Sys_SecurityLog audit, CancellationToken ct)
+    {
+        if (db.Database.CurrentTransaction != null || System.Transactions.Transaction.Current != null || db.ChangeTracker.HasChanges())
+            throw new InvalidOperationException("AUTH_SESSION_AUTHORITY_UNAVAILABLE");
+        await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted, ct);
+        var committing = false;
+        try
+        {
+            await AuthenticationCompletionGateV1.AcquireAsync(db, ct);
+            var changed = await db.Database.ExecuteSqlInterpolatedAsync($"""
+                UPDATE cp6_authentication_v1.access_sessions SET revoked_at=clock_timestamp()
+                WHERE access_jti={jti} AND revoked_at IS NULL
+                """, ct);
+            if (changed == 1)
+            {
+                db.Sys_SecurityLogs.Add(audit);
+                await db.SaveChangesAsync(ct);
+            }
+            ct.ThrowIfCancellationRequested();
+            committing = true;
+            await tx.CommitAsync(ct);
+        }
+        catch (Exception error)
+        {
+            try { await tx.RollbackAsync(CancellationToken.None); }
+            catch (Exception rollback) { throw new RefreshCompletionUnknownException(new AggregateException(error, rollback)); }
+            finally { db.Entry(audit).State = EntityState.Detached; }
+            if (committing) throw new RefreshCompletionUnknownException(error);
+            throw;
+        }
+    }
 
     public Task<AuthenticationSessionRow?> ReadSessionByRefreshAsync(string hash, CancellationToken ct = default)
         => db.Database.SqlQuery<AuthenticationSessionRow>($"SELECT s.refresh_hash AS \"RefreshHash\", s.evidence::text AS \"Evidence\", (s.rejected_at IS NOT NULL OR i.state<>'completed') AS \"Rejected\" FROM cp6_authentication_v1.session_evidence s JOIN cp6_authentication_v1.interactions i ON i.completion_id=s.completion_id WHERE s.refresh_hash={hash}").SingleOrDefaultAsync(ct);

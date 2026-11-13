@@ -211,6 +211,16 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Assert.Equal(1, await a.Db.Sys_Roles.Where(x => x.RoleId == 71).ExecuteUpdateAsync(x => x.SetProperty(role => role.Enable, false)));
         await AssertContext(a, firstSlug, aToken.Raw, []);
 
+        using var logout = await host.Send(Request(HttpMethod.Post, "api/auth/logout",
+            aCookies.Where(pair => pair.Key != "cp6_rt").ToDictionary(), new { }));
+        Assert.Equal(HttpStatusCode.OK, logout.StatusCode);
+        Assert.True((await new AuthenticationInteractionStoreV1(a.Db).ReadSessionAsync(aToken.SourceJti))!.Rejected);
+        using var oldContextRequest = new HttpRequestMessage(HttpMethod.Get, "connect/crm-context");
+        oldContextRequest.Headers.Authorization = new("Bearer", aToken.Raw);
+        using var oldContext = await host.Send(oldContextRequest);
+        Assert.Equal(HttpStatusCode.Unauthorized, oldContext.StatusCode);
+        await AssertContext(b, secondSlug, bToken.Raw, []);
+
         static string Authorize(Guid tenant, string verifier, string state, string nonce) => QueryHelpers.AddQueryString("connect/authorize",
             new Dictionary<string, string?> { ["client_id"] = client, ["redirect_uri"] = redirect, ["response_type"] = "code",
                 ["code_challenge_method"] = "S256", ["code_challenge"] = CrmOidcCrypto.Challenge(verifier), ["scope"] = "openid profile crm",
