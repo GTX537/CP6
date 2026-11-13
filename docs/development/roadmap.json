@@ -165642,6 +165642,11 @@
       "at": "2026-11-13T12:35:09.178269+00:00",
       "change": "W533 将旧单任务审批接入原 PostgreSQL 事务的共同根，实测真实撤权与审批的两种提交顺序；7 项通过，正式 PostgreSQL 26/27。",
       "evidence": "docs/development/evidence/W533-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T12:47:36.361939+00:00",
+      "change": "W534 修复资产分类、手工供应商价表及品目策略的 7 条提交授权，28 项通过。PGT-017 仍有其他实际写者，正式 PostgreSQL 26/27。",
+      "evidence": "docs/development/evidence/W534-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -177184,6 +177189,17 @@
         "formal_acceptance": "NOT_RUN",
         "validation": "PostgreSQL 18.6 真实旧审批撤权两种顺序、新版审批 HTTP 回归、四项旧组件回归，共 7 通过、0 失败、0 跳过。",
         "remaining": "继续 PGT-017。旧流程批办、退回、转交、撤回，财务/采购/计划、部分 WMS/Space、订单取号，以及缓存注销和数据库角色直接写入仍需逐入口核对。",
+        "full_task_complete": false
+      },
+      "wave534_delivery": {
+        "status": "LOCAL_VERIFIED",
+        "report": "docs/development/evidence/W534-01/DELIVERY.md",
+        "tested_source": "71ebdbbbd3875f82ada81fb4722d1d2f4564e23f",
+        "issue": "https://github.com/GTX537/CP6/issues/1006",
+        "formal_case": "PGT-017",
+        "formal_acceptance": "NOT_RUN",
+        "validation": "7 条真实 PostgreSQL 撤权与重新授权，21 项定向组件回归，共 28 通过、0 失败、0 跳过。",
+        "remaining": "PGT-017 余下采购询价回写、采购订单/收货、财务过账、MRP、旧流程批办/退回/转交/撤回、部分 WMS/Space、订单取号、缓存注销和普通数据库写者。按原提交单元验证。",
         "full_task_complete": false
       }
     },
@@ -211637,10 +211653,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W533",
-      "path": "docs/development/evidence/W533-01/DELIVERY.md",
-      "baseline_sha": "e8ca7b6246a814351dc98f22fec881bc6fa33103",
-      "registered_at": "2026-11-13T12:23:07.075764+00:00",
+      "id": "W534",
+      "path": "docs/development/evidence/W534-01/DELIVERY.md",
+      "baseline_sha": "6cfcc76f224e81ee7f08557472859445ff211cc5",
+      "registered_at": "2026-11-13T12:38:12.629872+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211654,11 +211670,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续 PGT-017。旧流程批办、退回、转交、撤回，财务/采购/计划、部分 WMS/Space、订单取号，以及缓存注销和数据库角色直接写入仍需逐入口核对。",
+      "next_action": "PGT-017 余下采购询价回写、采购订单/收货、财务过账、MRP、旧流程批办/退回/转交/撤回、部分 WMS/Space、订单取号、缓存注销和普通数据库写者。按原提交单元验证。",
       "windows": [
         {
-          "id": "W533-01",
-          "workspace_task": "W533-01",
+          "id": "W534-01",
+          "workspace_task": "W534-01",
           "related_tasks": [
             "WP02-03",
             "PGT-017"
@@ -211669,21 +211685,21 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w533-01",
-          "planned_scope_ref": "docs/development/evidence/W533-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W533-01/DELIVERY.md",
+          "branch": "codex/w534-01",
+          "planned_scope_ref": "docs/development/evidence/W534-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W534-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main legacy OA task decision",
+            "Main FIN/PUR/PLAN manual master-data writers",
             "Main formal PostgreSQL acceptance and roadmap"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "PostgreSQL 18.6 真实旧审批撤权两种顺序、新版审批 HTTP 回归、四项旧组件回归，共 7 通过、0 失败、0 跳过。",
-          "remaining_scope": "继续 PGT-017。旧流程批办、退回、转交、撤回，财务/采购/计划、部分 WMS/Space、订单取号，以及缓存注销和数据库角色直接写入仍需逐入口核对。",
-          "main_tested_source_sha": "959cbc574f3c7f20ebbfd26b0ecbf86245ddc62d"
+          "validation_summary": "7 条真实 PostgreSQL 撤权与重新授权，21 项定向组件回归，共 28 通过、0 失败、0 跳过。",
+          "remaining_scope": "PGT-017 余下采购询价回写、采购订单/收货、财务过账、MRP、旧流程批办/退回/转交/撤回、部分 WMS/Space、订单取号、缓存注销和普通数据库写者。按原提交单元验证。",
+          "main_tested_source_sha": "71ebdbbbd3875f82ada81fb4722d1d2f4564e23f"
         }
       ],
       "storage": {
@@ -262582,6 +262598,66 @@
             "main_tested_source_sha": "f74aeb2d6d31b989d063b4a5de4d19ca92539dbe",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1003",
             "main_remote_main_sha": "e8ca7b6246a814351dc98f22fec881bc6fa33103"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W533",
+        "path": "docs/development/evidence/W533-01/DELIVERY.md",
+        "baseline_sha": "e8ca7b6246a814351dc98f22fec881bc6fa33103",
+        "registered_at": "2026-11-13T12:23:07.075764+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续 PGT-017。旧流程批办、退回、转交、撤回，财务/采购/计划、部分 WMS/Space、订单取号，以及缓存注销和数据库角色直接写入仍需逐入口核对。",
+        "windows": [
+          {
+            "id": "W533-01",
+            "workspace_task": "W533-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w533-01",
+            "planned_scope_ref": "docs/development/evidence/W533-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W533-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main legacy OA task decision",
+              "Main formal PostgreSQL acceptance and roadmap"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "PostgreSQL 18.6 真实旧审批撤权两种顺序、新版审批 HTTP 回归、四项旧组件回归，共 7 通过、0 失败、0 跳过。",
+            "remaining_scope": "继续 PGT-017。旧流程批办、退回、转交、撤回，财务/采购/计划、部分 WMS/Space、订单取号，以及缓存注销和数据库角色直接写入仍需逐入口核对。",
+            "main_tested_source_sha": "959cbc574f3c7f20ebbfd26b0ecbf86245ddc62d",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1005",
+            "main_remote_main_sha": "6cfcc76f224e81ee7f08557472859445ff211cc5"
           }
         ],
         "storage": {
