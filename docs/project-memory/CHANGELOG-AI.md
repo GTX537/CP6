@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W521 四域组合恢复实测
+
+扩展现有组合验证入口，纳入原 Stock ADJ、A/B 原生读回和 Stock worker 关闭验证。 [本任务](../development/evidence/W521-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W520 Stock 同源恢复
 
 增加原生 Stock 调整导出、导入和验证入口。实测事务、原字节、序列与 worker 关闭约束。 [本任务](../development/evidence/W520-01/DELIVERY.md)
