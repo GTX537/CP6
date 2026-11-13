@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W537 OIDC 会话族撤销
+
+Main OIDC 与正常业务共用根，原会话族及身份 Outbox 证据已实测。正式 PostgreSQL 26/27。 [本任务](../development/evidence/W537-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W536 仅访问令牌注销
 
 Web 与原生仅 access 注销进入 Main 共同事务根。正式 PostgreSQL 26/27，PGT-017 其余写者和跨库协议待核对。 [本任务](../development/evidence/W536-01/DELIVERY.md)
