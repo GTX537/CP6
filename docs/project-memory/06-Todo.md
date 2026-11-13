@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W551 PGT-017 余项
+
+直接数据库入口和 Main 其余独立写者待核对，继续覆盖 CRM 提交确认丢失和两库恢复。 [本任务](../development/evidence/W551-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W550 PGT-017 余项
 
 原生控制或直接 SQL、Main 其他独立写者、两库中断和恢复仍待验收。 [本任务](../development/evidence/W550-01/DELIVERY.md)

@@ -52,6 +52,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         if (Environment.GetEnvironmentVariable("CP6_PGT017_ORDER") == "pause-first")
         {
             await Stage("permission-held");
+            if (Environment.GetEnvironmentVariable("CP6_PGT017_ROLE_ABORT_AFTER_SEAL") == "1")
+                await AbortAfterSeal();
             change = Revoke();
         }
         else
@@ -105,6 +107,70 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         await Stage("finished");
 
         Task<HttpResponseMessage> Revoke() => host.Send(Request(HttpMethod.Put, path, cookies, command));
+
+        async Task AbortAfterSeal()
+        {
+            await using var main = new NpgsqlConnection(h.Db.Database.GetConnectionString());
+            await main.OpenAsync();
+            await using var hook = new NpgsqlCommand("""
+                CREATE FUNCTION cp6_authentication_v1.pgt017_wait_for_abort() RETURNS trigger LANGUAGE plpgsql AS $test$
+                BEGIN PERFORM pg_advisory_xact_lock(1129330260,551); RETURN NEW; END $test$;
+                CREATE CONSTRAINT TRIGGER "Pgt017AbortAfterSeal" AFTER INSERT ON cp6_authentication_v1.iam_operations
+                DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION cp6_authentication_v1.pgt017_wait_for_abort()
+                """, main);
+            await hook.ExecuteNonQueryAsync();
+            try
+            {
+                await using var barrier = await main.BeginTransactionAsync();
+                await using var hold = new NpgsqlCommand("SELECT pg_advisory_xact_lock(1129330260,551)", main, barrier);
+                await hold.ExecuteNonQueryAsync();
+                var attempted = Revoke();
+                try
+                {
+                    await using var observer = new NpgsqlConnection(h.Db.Database.GetConnectionString());
+                    await observer.OpenAsync();
+                    var backend = await WaitForMainBlock(observer, main.ProcessID, "COMMIT%", attempted);
+                    Assert.Equal(before, await Read());
+                    Assert.Equal(before.Snapshot + 1, await CrmRoleFloor());
+                    // Let CRM use the prior signed response while Main's source is still uncommitted.
+                    await File.WriteAllTextAsync(Path.Combine(bridge, "paused"), "PASS");
+                    await Stage("finished");
+                    await using var cancel = new NpgsqlCommand("SELECT pg_cancel_backend(@pid)", observer);
+                    cancel.Parameters.AddWithValue("pid", backend);
+                    Assert.Equal(true, await cancel.ExecuteScalarAsync());
+                    using var failed = await attempted;
+                    Assert.Equal(HttpStatusCode.ServiceUnavailable, failed.StatusCode);
+                    Assert.Contains("IAM_OPERATION_UNKNOWN", await failed.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+                }
+                finally { await barrier.RollbackAsync(); }
+            }
+            finally
+            {
+                hook.CommandText = """
+                    DROP TRIGGER "Pgt017AbortAfterSeal" ON cp6_authentication_v1.iam_operations;
+                    DROP FUNCTION cp6_authentication_v1.pgt017_wait_for_abort()
+                    """;
+                await hook.ExecuteNonQueryAsync();
+            }
+            Assert.Equal(before, await Read());
+            Assert.Equal(before.Snapshot + 1, await CrmRoleFloor());
+            using var pending = await host.Send(Request(HttpMethod.Get,
+                $"api/iam/role-policies/operations/{command.OperationId:D}?kind=role-policy-actions", cookies));
+            Assert.True(pending.StatusCode == HttpStatusCode.OK, await pending.Content.ReadAsStringAsync());
+            Assert.Equal("UNKNOWN", (await pending.Content.ReadFromJsonAsync<IamOperationV1>())!.State);
+        }
+
+        async Task<int> CrmRoleFloor()
+        {
+            await using var db = new NpgsqlConnection(Environment.GetEnvironmentVariable("CP6_PGT017_CRM_OBSERVER"));
+            await db.OpenAsync();
+            await using var floor = new NpgsqlCommand("""
+                SELECT minimum_version FROM crm_inquiry_tenant_pause_v1.role_fences
+                WHERE tenant_id=@tenant AND aggregate_id='permission:role:71'
+                """, db);
+            floor.Parameters.AddWithValue("tenant", h.Tenant);
+            return (int)(await floor.ExecuteScalarAsync())!;
+        }
 
         async Task Stage(string marker)
         {

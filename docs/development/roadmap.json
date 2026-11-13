@@ -165727,6 +165727,11 @@
       "at": "2026-11-13T22:40:03.805967+00:00",
       "change": "W550 Main 部门停用与 CRM 导出两种提交顺序通过，已登记 CRM 事务核对实际依赖部门及其上级来源。",
       "evidence": "docs/development/evidence/W550-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T22:49:41.889301+00:00",
+      "change": "W551 实测 CRM 封存后 Main 角色撤权提交被取消及原命令重试；正式 PostgreSQL 保持 26/27。",
+      "evidence": "docs/development/evidence/W551-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211733,10 +211738,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W550",
-      "path": "docs/development/evidence/W550-01/DELIVERY.md",
-      "baseline_sha": "4174e3b3998bbaa2f824a01ed38157d2b7150834",
-      "registered_at": "2026-11-13T22:25:19.522895+00:00",
+      "id": "W551",
+      "path": "docs/development/evidence/W551-01/DELIVERY.md",
+      "baseline_sha": "f252d248866efe706eb3e19292ebe70058a144fe",
+      "registered_at": "2026-11-13T22:42:49.177534+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211750,53 +211755,42 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Reconcile direct database and independent Main write entrypoints and test cross-store interrupted or restored authority before marking PGT-017.",
+      "next_action": "Complete the remaining direct writer inventory and commit-acknowledgement and restoration scenarios before closing PGT-017.",
       "windows": [
         {
-          "id": "W550-01",
-          "workspace_task": "W550-01",
+          "id": "W551-01",
+          "workspace_task": "W551-01",
           "related_tasks": [
             "WP02-03",
             "PGT-017"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+          "mode": "SINGLE_CHAT",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w550-01",
-          "planned_scope_ref": "docs/development/evidence/W550-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W550-01/DELIVERY.md",
+          "branch": "codex/w551-01",
+          "planned_scope_ref": "docs/development/evidence/W551-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W551-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main department IAM mutation and C02 source",
-            "CRM inquiry owners and department paths",
+            "Main IAM operation ledger and C02 role source",
+            "CRM registered inquiry store and prior W550 artifact",
             "Main PostgreSQL acceptance and roadmap"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Both paired real PostgreSQL department-disable/export orders (4 passes), two compatibility pairs (4 passes), 14 Main and 10 CRM regressions, matching local publication HTTP.",
-          "remaining_scope": "Native control and direct SQL, remaining Main independent writers, broader authority recovery and two-store restoration.",
-          "main_tested_source_sha": "b0860945581e0d2cfadad14a914eb016fb967f0e",
-          "product_repository": "CP6.CRM",
-          "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "ef66e49f34ee75615813178aa4e911ae8b992803",
-          "product_branch": "codex/w550-01",
-          "product_source_sha": "57627512f698290ab78c2a52ea939f9212201d4a",
-          "product_remote_main_sha": "724570d3d7fe8e3c26615d3097c73546c5eacd63",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/216",
-          "product_branch_disposition": "deleted-local-and-remote",
-          "product_workspace_status": "fixed-seat-detached-for-reuse",
-          "product_seat_released": true
+          "validation_summary": "Actual Main commit cancellation after durable CRM role seal, original IAM UNKNOWN then exact retry/receipt, paired compatibility (4 combined passes); reuse W550 matching published hosts.",
+          "remaining_scope": "Lost CRM commit response, restored stores, direct native authority and remaining Main independent writers.",
+          "main_tested_source_sha": "f877edfa61d1b4da9ecb3acc5f25a15cc2bda048"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -263806,6 +263800,78 @@
             "product_seat_released": true,
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1030",
             "main_remote_main_sha": "4174e3b3998bbaa2f824a01ed38157d2b7150834"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W550",
+        "path": "docs/development/evidence/W550-01/DELIVERY.md",
+        "baseline_sha": "4174e3b3998bbaa2f824a01ed38157d2b7150834",
+        "registered_at": "2026-11-13T22:25:19.522895+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Reconcile direct database and independent Main write entrypoints and test cross-store interrupted or restored authority before marking PGT-017.",
+        "windows": [
+          {
+            "id": "W550-01",
+            "workspace_task": "W550-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w550-01",
+            "planned_scope_ref": "docs/development/evidence/W550-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W550-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main department IAM mutation and C02 source",
+              "CRM inquiry owners and department paths",
+              "Main PostgreSQL acceptance and roadmap"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Both paired real PostgreSQL department-disable/export orders (4 passes), two compatibility pairs (4 passes), 14 Main and 10 CRM regressions, matching local publication HTTP.",
+            "remaining_scope": "Native control and direct SQL, remaining Main independent writers, broader authority recovery and two-store restoration.",
+            "main_tested_source_sha": "b0860945581e0d2cfadad14a914eb016fb967f0e",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "ef66e49f34ee75615813178aa4e911ae8b992803",
+            "product_branch": "codex/w550-01",
+            "product_source_sha": "57627512f698290ab78c2a52ea939f9212201d4a",
+            "product_remote_main_sha": "724570d3d7fe8e3c26615d3097c73546c5eacd63",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/216",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1031",
+            "main_remote_main_sha": "f252d248866efe706eb3e19292ebe70058a144fe"
           }
         ],
         "storage": {

@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-13 UTC · W551 角色撤权原命令恢复
+
+两库独立读回封存、旧授权无效果、Main 原操作 UNKNOWN 和同键恢复。 [本任务](../development/evidence/W551-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W550 部门来源版本联验
 
 原版本化部门停用与 CRM 导出通过联验。新效果核对实际主体、业务部门和上级来源。 [本任务](../development/evidence/W550-01/DELIVERY.md)
