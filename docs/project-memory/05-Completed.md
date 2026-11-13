@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-13 UTC · W547 服务来源版本联验
+
+原服务登记发布器实测撤销，核对旧 TLS 权限、制品、身份快照、代次与优先 Outbox。 [本任务](../development/evidence/W547-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W546 用户和会话栅栏
 
 实测 Main 用户禁用、OIDC end-session 与 CRM 拒绝受理的四组并发，核对原业务、身份快照、Outbox、会话及 IAM 回执。 [本任务](../development/evidence/W546-01/DELIVERY.md)
