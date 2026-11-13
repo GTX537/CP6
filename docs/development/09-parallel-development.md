@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W531 补齐真实 IAM 撤权与改价两种提交顺序，修复 9 个旧工作流写入口。PGT-017 仍有已定位写者旁路，正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [本任务](evidence/W531-01/DELIVERY.md)
+
 > W530 完成 PGT-025。CRM 真实 Owner 在租户 schema 与共享回执中保留负零、原字节和精度，实际回滚并从新连接恢复。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [本任务](evidence/W530-01/DELIVERY.md)
 
 > W529 完成 PGT-011。A/B 独立后台 scope、原申请人撤权、平台管理与业务写分权、Stock 技术投递及原回执已实测。正式 PostgreSQL 25 PASS / 2 NOT_RUN。 [本任务](evidence/W529-01/DELIVERY.md)

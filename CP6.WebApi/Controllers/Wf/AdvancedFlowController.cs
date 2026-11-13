@@ -1,6 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -58,6 +59,7 @@ public class AdvancedFlowController : LocalizedControllerBase
     /// <summary>登记委派（章07 §5）。委托人=登录用户。</summary>
     [HttpPost("delegate")]
     [RequirePermission("oa-settings", "delegate")]
+    [WorkflowWriteAuthority]
     public async Task<IActionResult> Delegate([FromBody] DelegateReq r)
     {
         try

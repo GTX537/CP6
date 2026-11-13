@@ -19,6 +19,8 @@ public sealed class RequirePermissionAttribute : Attribute, IAsyncAuthorizationF
     private readonly string _menu;
     private readonly string _action;
 
+    internal string PermissionKey => $"{_menu}:{_action}";
+
     public bool UseProblemDetails { get; set; }
 
     public RequirePermissionAttribute(string menu, string action)

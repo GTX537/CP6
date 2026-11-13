@@ -1,5 +1,6 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Wf;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,6 +29,7 @@ public class ApproverMapController : LocalizedControllerBase
 
     [HttpPost]
     [RequirePermission("oa-approver-map", "add")]
+    [WorkflowWriteAuthority]
     public async Task<IActionResult> Create([FromBody] CreateReq r)
     {
         try { return Ok2(await _svc.CreateAsync(r.MapKey, r.MatchValue, r.ApproverUserId, r.ApproverRoleId, r.OrderNo)); }
@@ -36,6 +38,7 @@ public class ApproverMapController : LocalizedControllerBase
 
     [HttpPut("{id}")]
     [RequirePermission("oa-approver-map", "edit")]
+    [WorkflowWriteAuthority]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateReq r)
     {
         try { await _svc.UpdateAsync(id, r.MatchValue, r.ApproverUserId, r.ApproverRoleId, r.OrderNo, r.Enable); return Ok2(); }
@@ -44,5 +47,6 @@ public class ApproverMapController : LocalizedControllerBase
 
     [HttpDelete("{id}")]
     [RequirePermission("oa-approver-map", "del")]
+    [WorkflowWriteAuthority]
     public async Task<IActionResult> Delete(Guid id) { await _svc.DeleteAsync(id); return Ok2(); }
 }
