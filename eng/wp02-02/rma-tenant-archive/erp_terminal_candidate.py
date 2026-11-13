@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """Import one original C03 missing-partner result into a closed PostgreSQL candidate."""
 import argparse
+import base64
+import csv
 import json
 from pathlib import Path
+import re
 import stat
+import subprocess
 import sys
 
 sys.dont_write_bytecode = True
@@ -15,6 +19,7 @@ import file_content_history as paths
 import stage
 
 PROFILE = "cp6-erp-c03-partner-terminal-candidate-v1"
+ORDER_PROFILE = "cp6-erp-c03-order-failure-candidate-v1"
 RECEIPTS = "cp6_erp_c03_candidate_import_v1"
 PLAN = candidate.PLAN
 SEQUENCE = "cp6_storage_erp.rowversion_v1"
@@ -22,6 +27,8 @@ TOKEN_FUNCTION = "cp6_storage_erp.set_rowversion_v1()"
 TOKEN_BODY = """BEGIN NEW."RowVersion" := pg_catalog.int8send(nextval('"cp6_storage_erp".rowversion_v1'::regclass)); RETURN NEW; END"""
 REQUEST = "com.gtx537.crm.erp.business-partner-requested.v1"
 RESULT = "com.gtx537.erp.business-partner-failed.v1"
+ORDER_REQUEST = "com.gtx537.crm.erp.order-requested.v1"
+ORDER_RESULT = "com.gtx537.erp.order-failed.v1"
 FAILURE = "C03_BUSINESS_PARTNER_NOT_FOUND"
 NAMES = ("Aggregate", "Request", "CommandInbox", "Cp6_OutboxMessage")
 COUNTS = {table.name: int(table.name in NAMES) for table in erp.TABLES}
@@ -165,9 +172,63 @@ def staged_sql():
     """ for name, table in TABLES.items())
 
 
-def graph_sql():
+def inspect_order(checked, dotnet, inspection, output):
+    max_envelope = 1_048_576
+    max_csv = 2 * max_envelope + 8_192
+
+    def envelope(name):
+        path = checked / TABLES[name].member
+        if path.stat().st_size > max_csv:
+            raise stage.StageError('rma-stage-erp-order-original-rejected')
+        previous_limit = csv.field_size_limit(max_csv)
+        try:
+            with path.open(encoding='utf-8', newline='') as raw:
+                reader = csv.DictReader(raw, strict=True)
+                row = next(reader, None)
+                if tuple(reader.fieldnames or ()) != TABLES[name].columns or row is None or next(reader, None) is not None:
+                    raise stage.StageError('rma-stage-erp-order-original-rejected')
+        finally:
+            csv.field_size_limit(previous_limit)
+        value = row['Payload']
+        if not value or not value.startswith('\\x'):
+            raise stage.StageError('rma-stage-erp-order-original-rejected')
+        return base64.b64encode(bytes.fromhex(value[2:])).decode('ascii')
+
+    supplied = json.dumps(dict(request=envelope('CommandInbox'), result=envelope('Cp6_OutboxMessage'))).encode('ascii')
+    try:
+        result = subprocess.run([str(dotnet.resolve(strict=True)), str(inspection.resolve(strict=True)),
+                                 'inspect-erp-order-original-v1', '--stdin'], cwd=output,
+                                input=supplied, capture_output=True, timeout=20, creationflags=archive.FLAGS)
+    except subprocess.TimeoutExpired as error:
+        raise stage.StageError('rma-stage-erp-order-inspection-unavailable') from error
+    (output / 'order-inspection.stderr').write_bytes(result.stderr)
+    if result.returncode != 0:
+        raise stage.StageError('rma-stage-erp-order-original-rejected')
+    try:
+        proof = json.loads(result.stdout)
+    except ValueError as error:
+        raise stage.StageError('rma-stage-erp-order-inspection-unavailable') from error
+    if not isinstance(proof, dict) or set(proof) != {'requestSha256', 'resultSha256', 'inputSha256'} or any(
+            not isinstance(value, str) or not re.fullmatch(r'[a-f0-9]{64}', value) for value in proof.values()):
+        raise stage.StageError('rma-stage-erp-order-inspection-unavailable')
+    (output / 'order-inspection.json').write_bytes(result.stdout)
+    return proof
+
+
+def graph_sql(profile=PROFILE):
     counts = ' OR '.join(f'(SELECT count(*) FROM {temporary(name)})<>{count}' for name, count in COUNTS.items())
     a, r, i, o = map(temporary, NAMES)
+    order = profile == ORDER_PROFILE
+    kind, request_type, result_type = (2, ORDER_REQUEST, ORDER_RESULT) if order else (1, REQUEST, RESULT)
+    aggregate = 'a."AggregateId"' if order else 'r."AccountId"'
+    opportunity = ",'opportunityId',a.\"AggregateId\"" if order else ''
+    binding = "a.\"AggregateId\"<>'00000000-0000-0000-0000-000000000000'::uuid" if order else 'r."AccountId"=a."AggregateId"'
+    hash_check = f'''i."PayloadSha256"::text COLLATE "C"=current_setting('{PLAN}')::jsonb->'orderProof'->>'requestSha256'
+          AND o."PayloadSha256"::text COLLATE "C"=current_setting('{PLAN}')::jsonb->'orderProof'->>'resultSha256'
+          AND r."InputSha256"::text COLLATE "C"=current_setting('{PLAN}')::jsonb->'orderProof'->>'inputSha256'
+          AND (command.body->>'region') COLLATE "C"=(result.body->>'region') COLLATE "C"''' if order else '''r."InputSha256"::text COLLATE "C"=encode(sha256(convert_to(format(
+              '{"tenantId":"%s","requestId":"%s","accountId":"%s","requestVersion":%s}',
+               tenant,r."RequestId",r."AccountId",r."RequestVersion"),'UTF8')),'hex')'''
     return f"""
     DO $erp_candidate_graph$
     DECLARE
@@ -176,40 +237,38 @@ def graph_sql():
     BEGIN
         IF {counts} THEN RAISE EXCEPTION 'rma-stage-erp-candidate-shape-rejected'; END IF;
         SELECT a."TenantId"=tenant AND r."TenantId"=tenant AND i."TenantId"=tenant AND o."TenantId"=tenant
-          AND a."Kind"=1 AND r."Kind"=1 AND a."AggregateId"=r."AggregateId" AND a."AggregateId"=i."AggregateId"
-          AND r."AccountId"=a."AggregateId" AND o."AggregateId"::text COLLATE "C"=a."AggregateId"::text
+          AND a."Kind"={kind} AND r."Kind"={kind} AND a."AggregateId"=r."AggregateId" AND a."AggregateId"=i."AggregateId"
+          AND {binding} AND o."AggregateId"::text COLLATE "C"=a."AggregateId"::text
           AND r."AccountId"<>'00000000-0000-0000-0000-000000000000'::uuid
           AND r."RequestId"<>'00000000-0000-0000-0000-000000000000'::uuid
           AND a."LastRequestVersion"=r."RequestVersion" AND a."LastAggregateVersion"=i."AggregateVersion"
           AND a."LastResultVersion"=r."ResultVersion" AND o."AggregateVersion"=r."ResultVersion"
           AND r."RequestVersion">0 AND i."AggregateVersion">0 AND r."ResultVersion">0
-          AND r."Terminal" AND NOT r."Succeeded" AND r."ResultType"::text COLLATE "C"='{RESULT}'
+          AND r."Terminal" AND NOT r."Succeeded" AND r."ResultType"::text COLLATE "C"='{result_type}'
           AND i."Status"=1 AND i."AttemptCount"=1 AND i."ConflictCount"=0 AND i."ProcessedAtUtc" IS NOT NULL
           AND i."RetryAtUtc" IS NULL AND i."ErrorCode" IS NULL AND i."LastConflictSha256" IS NULL
           AND i."ReplayedAtUtc" IS NULL AND i."ReplayReasonCode" IS NULL
           AND o."Status"=0 AND o."AttemptCount"=0 AND o."LeaseOwner" IS NULL AND o."LeaseToken" IS NULL
           AND o."LeaseExpiresAtUtc" IS NULL AND o."PublishedAtUtc" IS NULL AND o."DeadLetteredAtUtc" IS NULL
           AND o."LastErrorCode" IS NULL AND o."SupportReference" IS NULL
-          AND o."MessageId"::text COLLATE "C"<>i."MessageId"::text AND i."EventType"::text COLLATE "C"='{REQUEST}'
+          AND o."MessageId"::text COLLATE "C"<>i."MessageId"::text AND i."EventType"::text COLLATE "C"='{request_type}'
           AND o."TopicName"::text COLLATE "C"='cp6.erp.events.v1'
-          AND o."PartitionKey"::text COLLATE "C"=tenant::text||':'||r."AccountId"::text
+          AND o."PartitionKey"::text COLLATE "C"=tenant::text||':'||{aggregate}::text
           AND o."CausationId"::text COLLATE "C"=i."MessageId"::text
           AND i."PayloadSha256"::text COLLATE "C"=encode(sha256(i."Payload"),'hex')
           AND o."PayloadSha256"::text COLLATE "C"=encode(sha256(o."Payload"),'hex')
-          AND r."InputSha256"::text COLLATE "C"=encode(sha256(convert_to(format(
-              '{{"tenantId":"%s","requestId":"%s","accountId":"%s","requestVersion":%s}}',
-               tenant,r."RequestId",r."AccountId",r."RequestVersion"),'UTF8')),'hex')
+          AND {hash_check}
           AND command.body @> jsonb_build_object('id',i."MessageId"::text,'tenantid',tenant,
-               'type','{REQUEST}','source','urn:cp6:crm','aggregateid',r."AccountId",'aggregateversion',i."AggregateVersion",
+               'type','{request_type}','source','urn:cp6:crm','aggregateid',{aggregate},'aggregateversion',i."AggregateVersion",
                'data',jsonb_build_object('tenantId',tenant,'requestId',r."RequestId",'accountId',r."AccountId",
-                                         'requestVersion',r."RequestVersion"))
+                                         'requestVersion',r."RequestVersion"{opportunity}))
           AND result.body @> jsonb_build_object('id',o."MessageId"::text,'tenantid',tenant,
-               'type','{RESULT}','source','urn:cp6:erp','aggregateid',r."AccountId",'aggregateversion',r."ResultVersion",
+               'type','{result_type}','source','urn:cp6:erp','aggregateid',{aggregate},'aggregateversion',r."ResultVersion",
                'correlationid',o."CorrelationId"::text,'causationid',i."MessageId"::text)
           AND (command.body->>'correlationid') COLLATE "C"=o."CorrelationId"::text
           AND r."ResultDataJson"::text::jsonb=result.body->'data'
           AND result.body->'data'=jsonb_build_object('tenantId',tenant,'requestId',r."RequestId",'accountId',r."AccountId",
-               'requestVersion',r."RequestVersion",'resultVersion',r."ResultVersion",'errorCode','{FAILURE}','retryable',false)
+               'requestVersion',r."RequestVersion",'resultVersion',r."ResultVersion",'errorCode','{FAILURE}','retryable',false{opportunity})
         INTO valid
         FROM {a} a CROSS JOIN {r} r CROSS JOIN {i} i CROSS JOIN {o} o
         CROSS JOIN LATERAL (SELECT convert_from(i."Payload",'UTF8')::jsonb AS body) command
@@ -249,7 +308,7 @@ def allocate_sql():
     """
 
 
-def adopt_sql():
+def adopt_sql(profile=PROFILE):
     writes = '\n'.join(f"""
     ALTER TABLE ONLY {relation(name)} DISABLE TRIGGER cp6_rowversion_v1;
     INSERT INTO {relation(name)} ({columns(name)}) SELECT {columns(name)} FROM {temporary(name)};
@@ -262,7 +321,7 @@ def adopt_sql():
         singleton boolean PRIMARY KEY CHECK(singleton), input jsonb NOT NULL, result_json text NOT NULL);
     REVOKE ALL ON {RECEIPTS}.receipt FROM PUBLIC;
     INSERT INTO {RECEIPTS}.receipt
-    SELECT true,p->'key',json_build_object('outcome','IMPORTED','recoveryReady',false,'profile','{PROFILE}',
+    SELECT true,p->'key',json_build_object('outcome','IMPORTED','recoveryReady',false,'profile','{profile}',
         'binding',p->'key','format',p->>'format','counts',p->'counts',
         'rowVersionNext',current_setting('{PLAN}_erp_sequence_next')::bigint)::text
     FROM (SELECT current_setting('{PLAN}')::jsonb p) s;
@@ -278,6 +337,13 @@ def execute(args):
     if not args.username or '\0' in args.username:
         raise stage.StageError('rma-stage-invalid-username')
     recover = args.action == 'recover'
+    profile = getattr(args, 'profile', PROFILE)
+    order = profile == ORDER_PROFILE
+    include_history = getattr(args, 'include_file_content_history', False)
+    dotnet = getattr(args, 'dotnet', None)
+    inspection = getattr(args, 'tenant_storage', None)
+    if not recover and (order and (not include_history or not dotnet or not inspection) or not order and (dotnet or inspection)):
+        raise stage.StageError('rma-stage-erp-candidate-profile-rejected')
     output = paths.checked_output(args.output.absolute(), args.target_file.resolve(strict=True))
     if not recover:
         bundle = assets.checked_root(args.bundle.absolute()).resolve(strict=True)
@@ -288,17 +354,18 @@ def execute(args):
         paths.checked_output(output, root)
     archive.private_directory(output)
     plan = dict(key=dict(target=target.mapping(), candidateId=str(candidate_id), tenantId=str(tenant), manifestSha256=pin))
-    receipt = candidate.receipt_sql(schema=RECEIPTS, profile=PROFILE)
+    receipt = candidate.receipt_sql(schema=RECEIPTS, profile=profile)
     if recover:
         driver = candidate.target_sql(plan, True) + receipt
     else:
-        include_history = getattr(args, 'include_file_content_history', False)
-        _, metadata = stage.checked_bundle(bundle, output, tenant, pin, target, root, include_stock_outbox=True,
-                                           include_file_content_history=include_history)
+        checked, metadata = stage.checked_bundle(bundle, output, tenant, pin, target, root, include_stock_outbox=True,
+                                                include_file_content_history=include_history)
         source_format = archive.FORMAT_WITH_FILE_CONTENT_HISTORY if include_history else archive.FORMAT_WITH_STOCK_OUTBOX
         if metadata['format'] != source_format or metadata.get('erpIntegrationCounts') != COUNTS:
             raise stage.StageError('rma-stage-erp-candidate-shape-rejected')
         plan.update(format=metadata['format'], counts=COUNTS)
+        if order:
+            plan['orderProof'] = inspect_order(checked, dotnet, inspection, output)
         driver = candidate.target_sql(plan, False) + f"""
         SELECT to_regnamespace('{RECEIPTS}') IS NOT NULL AS has_receipt \\gset
         \\if :has_receipt
@@ -307,9 +374,9 @@ def execute(args):
         {closed_sql()}
         {layout_sql()}
         {staged_sql()}
-        {graph_sql()}
+        {graph_sql(profile)}
         {allocate_sql()}
-        {adopt_sql()}
+        {adopt_sql(profile)}
         \\endif
         """
     (output / 'driver.sql').write_text(driver, encoding='utf-8')
@@ -325,14 +392,17 @@ def main():
             command.add_argument('--' + field, type=Path, required=True)
         for field in ('username', 'tenant', 'candidate-id', 'manifest-sha256'):
             command.add_argument('--' + field, required=True)
+        command.add_argument('--profile', choices=(PROFILE, ORDER_PROFILE), default=PROFILE)
         if name == 'import':
             command.add_argument('--bundle', type=Path, required=True)
             command.add_argument('--file-content-root', type=Path, required=True)
             command.add_argument('--include-file-content-history', action='store_true',
                                  help='accept a complete v11 archive for this ERP C03 import')
+            command.add_argument('--dotnet', type=Path, help='trusted .NET host for order inspection')
+            command.add_argument('--tenant-storage', type=Path, help='trusted CP6.TenantStorage.dll from the matching application build')
     try:
         sys.stdout.buffer.write(execute(parser.parse_args()))
-    except (archive.ArchiveError, OSError, ValueError, stage.StageError) as error:
+    except (archive.ArchiveError, OSError, ValueError, csv.Error, stage.StageError) as error:
         print('ERP terminal candidate rejected:', error, file=sys.stderr)
         return 1
     return 0

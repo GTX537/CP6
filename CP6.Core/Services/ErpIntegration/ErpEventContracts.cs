@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text.Json;
 using CP6.Platform.EntityFramework;
@@ -22,6 +23,15 @@ public static class ErpEventContracts
 
     public static string Hash(ReadOnlySpan<byte> bytes)
         => Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
+
+    internal static string OrderInputSha256(ErpOrderRequested order)
+        => Hash(JsonSerializer.SerializeToUtf8Bytes(new
+        {
+            order.TenantId, order.RequestId, order.AccountId, order.RequestVersion, order.OpportunityId,
+            order.BusinessPartnerKey, order.QuotationKey, order.QuotationVersion,
+            // The same amount at different decimal scales is one original business request.
+            ExpectedAmount = order.ExpectedAmount.ToString("G29", CultureInfo.InvariantCulture), order.Currency
+        }, Json));
 
     public static Cp6OutboxEnvelope Create<T>(Guid tenantId, string aggregateId, int version, string type,
         T data, string region, string correlationId, string causationId, TimeProvider? clock = null)
