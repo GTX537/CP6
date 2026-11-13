@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W537 PGT-017 余项
+
+继续验证财务、采购、OA、WMS、Space 的原提交边界、refresh 注销即时信号、普通数据库角色及跨库共同协议。 [本任务](../development/evidence/W537-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W536 PGT-017 余项
 
 继续核对其余 Main 业务事务、refresh 注销即时信号、OIDC 族锁序、普通数据库角色及 Main 与 CRM 新效果之间的等价共同协议。 [本任务](../development/evidence/W536-01/DELIVERY.md)
