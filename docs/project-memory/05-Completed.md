@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-13 UTC · W544 CRM 服务授权 Owner
+
+三类服务写入已采用当前 Main 租户版本，实测六组提交顺序和两库业务写集。 [本任务](../development/evidence/W544-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W543 人类授权 Owner
 
 实际 Main 人类权限和 CRM Owner 实测 5 个动作，两种提交顺序共 10 组联验。 [本任务](../development/evidence/W543-01/DELIVERY.md)
