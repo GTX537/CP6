@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W548 租户有效期
+
+Main 在租户有效期版本生效前封存 CRM 的旧版本，补齐实际两库竞争和已暂停租户保护。 [本任务](../development/evidence/W548-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W547 服务登记撤销验证
 
 对已合入的服务来源封存补齐实际发布器与 CRM 导出两库用例。 [本任务](../development/evidence/W547-01/DELIVERY.md)

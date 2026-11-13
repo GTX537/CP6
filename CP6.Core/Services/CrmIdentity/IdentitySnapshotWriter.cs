@@ -188,6 +188,12 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
                 data["subjectId"]!.GetValue<string>().StartsWith("user:", StringComparison.Ordinal);
             if (browserRevocation || previous is not null && versionedSource)
                 await fence.AdvanceIdentityAsync(tenant, aggregate, version, role, cancellationToken).ConfigureAwait(false);
+            if (previous is { IsDeleted: false } && value is TenantIdentityData { Enabled: true } currentTenant)
+            {
+                var oldTenant = JsonSerializer.Deserialize<TenantIdentityData>(previous.PayloadJson, IdentityEventContracts.Json)!;
+                if (oldTenant.Enabled && oldTenant.ExpiresAtUtc != currentTenant.ExpiresAtUtc)
+                    await fence.AdvanceDeadlineAsync(tenant, version, cancellationToken).ConfigureAwait(false);
+            }
         }
         var snapshot = previous ?? new CrmIdentitySnapshot { TenantId = tenant, AggregateId = aggregate };
         snapshot.Version = version;

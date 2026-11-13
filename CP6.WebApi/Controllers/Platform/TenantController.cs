@@ -65,6 +65,7 @@ public class TenantController : ControllerBase
             await _svc.UpdateAsync(id, req.Name, req.Expire, req.Remark, req.TimeZoneId, cancellationToken);
             return Ok(new { code = 0 });
         }
+        catch (TenantManagementExceptionV1 ex) { return StatusCode(ex.Status, new { code = ex.Message }); }
         catch (PlatformAdminAuthorizationException ex) { throw new BizException(ex.Message, StatusCodes.Status403Forbidden); }
         catch (InvalidOperationException ex)
         {
