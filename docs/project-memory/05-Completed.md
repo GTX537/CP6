@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-13 UTC · W527 PGT-022 验收
+
+完成 Stock Owner 纪元控制与原回执查询、旧 Pending 到现行 Published 的原键对账、UNKNOWN 不重放与旧纪元恢复拒绝。纪元 2 的 v11 在隔离库暂存后可恢复原回执。 [本任务](../development/evidence/W527-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W526 PGT-021 与 Stock 阻塞闭环
 
 交付同库恢复入口、原键回执及未知提交恢复，验证 A/B 普通读写、当前撤权、缺件与故障回滚。正式0.10.4七包发布及双系统验签成功，Main采用、18项相关回归和同源Stock/ERP已发送事实通过。 [本任务](../development/evidence/W526-01/DELIVERY.md)
