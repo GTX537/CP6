@@ -99,6 +99,8 @@ internal static class IdentityDirectoryRowSecurityV1
                     pg_catalog.to_regprocedure('cp6_stock_outbox_v1.envelope_immutable()'),
                     pg_catalog.to_regprocedure('cp6_stock_outbox_v1.binding_identity_immutable()'),
                     pg_catalog.to_regprocedure('cp6_stock_outbox_v1.authority_identity_immutable()'),
+                    pg_catalog.to_regprocedure('cp6_stock_outbox_v1.route_epoch_guard()'),
+                    pg_catalog.to_regprocedure('cp6_stock_outbox_v1.route_epoch_receipt()'),
                     pg_catalog.to_regprocedure('cp6_stock_outbox_v1.run_guard()'),
                     pg_catalog.to_regprocedure('cp6_storage_identity.set_rowversion_v1()')]) known(oid) WHERE known.oid=p.oid)
                   OR EXISTS(SELECT FROM pg_catalog.aclexplode(coalesce(p.proacl,pg_catalog.acldefault('f',p.proowner))) a
@@ -127,6 +129,9 @@ internal static class IdentityDirectoryRowSecurityV1
                     ('cp6_stock_outbox_v1.cp6_outbox_v2_immutable()','5ea4f613f2e980bbd5d629ec1dc213e07fd2109cb11c639204a4d2df996bdf01'),
                     ('cp6_stock_outbox_v1.source_proof()','3a3b06e915fdbdcbfc7675e3fac42e0692d5a1081c74358e9dd08324a9d60ba7'),
                     ('cp6_stock_outbox_v1.source_proof()','d95eb95f9c30cab04091e585a046882bae80255b73ca2a142f4dd8116ddf3f14'),
+                    ('cp6_stock_outbox_v1.source_proof()','04400955a79f97fef3cefecfd2b400273991da123188c49fe41b2a7430bae709'),
+                    ('cp6_stock_outbox_v1.route_epoch_guard()','0097fb4bf979b294585aab3dd1356ba4442d9fb5a263a7faee59296fb3e35117'),
+                    ('cp6_stock_outbox_v1.route_epoch_receipt()','98dc433431b94b908eeb05c83b764dc44bcb9dd652d16df826484653106c747e'),
                     ('cp6_stock_outbox_v1.envelope_immutable()','9a746686675b7df60111cd9982294d24a0095d2d20dadacf89d920915164c8dc'),
                     ('cp6_stock_outbox_v1.binding_identity_immutable()','22fa68f1b7791bb0acb38e590e3de61fdca613e7987af18ce741649600b4b62e'),
                     ('cp6_stock_outbox_v1.authority_identity_immutable()','0a86616c48e6fc6fec1562047daa677114bc77cc47336a47f102969673385498'),

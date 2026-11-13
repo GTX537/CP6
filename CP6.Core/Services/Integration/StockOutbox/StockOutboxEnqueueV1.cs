@@ -46,7 +46,7 @@ internal static class StockOutboxEnqueueV1
         await queue.Database.ExecuteSqlInterpolatedAsync($"SELECT pg_advisory_xact_lock({StockOutboxProtocolV1.RouteLock(root)})", ct);
         var control = await queue.Set<OutboxRouteControlV2>().FromSqlInterpolated($"SELECT *,xmin FROM cp6_stock_outbox_v1.\"Cp6_OutboxRouteV2\" WHERE \"Id\"={root.Id} FOR UPDATE")
             .AsNoTracking().SingleAsync(ct);
-        if(control.Phase != OutboxPhaseV2.Active || control.CurrentEpoch != 1 || control.PublisherSetReference != StockOutboxProtocolV1.Publisher
+        if(control.Phase != OutboxPhaseV2.Active || control.CurrentEpoch < 1 || control.PublisherSetReference != StockOutboxProtocolV1.Publisher
             || control.OwnerId != root.OwnerId || control.TenantId != tenant || control.QueueDomainId != root.QueueDomainId
             || control.RouteId != root.RouteId || control.ProfileId != OutboxEncodingV2.Profile || control.ProfileVersion != 1
             || control.LockKey != StockOutboxProtocolV1.RouteLock(root))

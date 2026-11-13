@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W527 完成 PGT-022。同源旧 v11 保留原 Published 回执，过期纪元与 UNKNOWN 恢复均拒绝。正式 PostgreSQL 23 PASS / 4 NOT_RUN。 [本任务](evidence/W527-01/DELIVERY.md)
+
 > W526 完成 PGT-021 的同库 v11 完整逻辑单元恢复、正式 0.10.4 采用与 Stock 原 Pending 派送。旧窗口新增的永久双库切换要求回归 S02 原范围；正式 PostgreSQL 22 PASS / 5 NOT_RUN。 [本任务](evidence/W526-01/DELIVERY.md)
 
 > W525 恢复同一 v11 来源的完整出库头和明细，实测候选普通 RMA 草稿、提交、同键回放和认证锁等待。 [本任务](evidence/W525-01/DELIVERY.md)

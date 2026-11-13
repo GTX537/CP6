@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W527 Stock 路由纪元与恢复
+
+增加明确 Owner 入口、向前迁移和版本化 Stock 归档段。现行未决发送及旧纪元在同库恢复事务中关闭准入。PGT-022 升为 PASS，19 项 Stock PostgreSQL 回归通过。 [本任务](../development/evidence/W527-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W526 完整恢复与正式包采用
 
 新增同库RMA恢复CLI及PG开发构建入口；Main锁定0.10.4并补LF/CRLF/篡改守卫回归。PGT-021升为PASS，正式总计22/27；缺件、晚期回滚、丢答原键恢复和B合法差量均有原生证据。 [本任务](../development/evidence/W526-01/DELIVERY.md)

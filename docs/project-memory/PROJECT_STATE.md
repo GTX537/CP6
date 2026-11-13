@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W527 旧备份与消息恢复
+
+PGT-022 PASS，正式 PostgreSQL 23 PASS / 4 NOT_RUN，原询盘 60/60。Stock 同发布者终态队列完成纪元 1→2，旧包与 UNKNOWN 恢复均实测回滚，现行撤权和 B 原件保留。 [本任务](../development/evidence/W527-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W526 同库恢复验收完成
 
 PGT-021 PASS；正式 PostgreSQL 22 PASS / 5 NOT_RUN，原询盘60/60。A 原业务、当前权限和消息事实保持，B 并发读写通过。已正式采用签名 Platform 0.10.4，Stock 原 Pending 正常派送；18项相关测试通过。生产部署未执行。 [本任务](../development/evidence/W526-01/DELIVERY.md)

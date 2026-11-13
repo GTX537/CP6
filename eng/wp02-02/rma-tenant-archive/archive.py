@@ -531,7 +531,7 @@ def file_content_history_module():
 
 
 def stock_section(stock, route, collation, tables):
-    return dict(format=stock.FORMAT, root=route, databaseCollation=collation, migrations=list(stock.MIGRATIONS),
+    return dict(format=stock.archive_format(route), root=route, databaseCollation=collation, migrations=stock.archive_migrations(route),
                 journal=stock.journal_manifest(), tables=tables)
 
 
@@ -539,7 +539,7 @@ def verify_stock_section(stock, bundle, tenant, section):
     if not isinstance(section, dict):
         raise ArchiveError("stock-outbox-section-rejected")
     collation, tables = section.get("databaseCollation"), section.get("tables")
-    route = stock.root(tenant)
+    route = stock.archive_root(tenant, section.get("root"))
     if not isinstance(collation, dict) or set(collation) != {"provider", "collate", "ctype", "locale"} \
             or any(not isinstance(collation[field], str) for field in ("provider", "collate", "ctype")) \
             or (collation["locale"] is not None and not isinstance(collation["locale"], str)) \

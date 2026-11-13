@@ -334,6 +334,11 @@ def keep_stock(query, tenant, bundle, metadata, output):
     lock_rows(query, stock.relation(stock.AUTHORITY), f'"RootId"={Q(route["id"])}', "UPDATE")
     query(f'DO $lock$ BEGIN PERFORM pg_advisory_xact_lock({int(route["lockKey"])}); END $lock$; SELECT to_json(true);')
     lock_rows(query, stock.relation(stock.ROUTE_TABLE), f'"Id"={Q(route["id"])}', "UPDATE")
+    control = stock_delivery.current_route(query, stock, tenant, route)
+    require(control is not None and control["eligible"] and control["epoch"] == route["epoch"]
+            and control["phase"] == 0 and control["lastSwitchId"] == route.get("lastSwitchId")
+            and (control["epoch"] == 1 or control["lastAdvance"] is not None),
+            "stock-current-route-incompatible")
     originals = list(stock_delivery.archived_rows(stock, bundle, tenant, route))
     current = stock_delivery.lookup(query, stock, tenant, route,
         [dict(key, LeaseTokenSha256=lease) for key, _, lease in originals]) if originals else []

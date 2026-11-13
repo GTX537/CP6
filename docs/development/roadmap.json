@@ -165607,6 +165607,11 @@
       "at": "2026-11-13T07:02:54.857559+00:00",
       "change": "W526 完成 PGT-021 同库完整逻辑单元恢复、正式 Platform 0.10.4 采用与 Stock #844 真实原 Pending 回归、本地 PostgreSQL 构建入口；正式 PostgreSQL 22 PASS / 5 NOT_RUN，询盘60/60。",
       "evidence": "docs/development/evidence/W526-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T08:33:01.865771+00:00",
+      "change": "W527 完成 PGT-022 的真实 Stock 路由纪元、旧备份和未知发送恢复验收。正式 PostgreSQL 23 PASS、4 NOT_RUN；WP02-02 保持原任务状态。",
+      "evidence": "docs/development/evidence/W527-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -170413,7 +170418,17 @@
             "scope": "Previously verified main ancestry and exact scoped blobs; Handoff 5c6eedf577056b4b88b0a85f390f51431482e6a3"
           }
         }
-      ]
+      ],
+      "wave527_delivery": {
+        "report": "docs/development/evidence/W527-01/DELIVERY.md",
+        "scope": "PGT-022 old same-source backup, current original delivery, and actual Stock route epoch",
+        "status": "LOCALLY_VERIFIED",
+        "formal_case": "PGT-022",
+        "formal_acceptance": "PASS",
+        "full_task_completed": false,
+        "tested_source_sha": "7028b48ecedd1f5219f4559046e0646449d3b52d",
+        "actual_evidence": "D:/CP6-test-artifacts/W527-01/native-03/actual.json"
+      }
     },
     {
       "id": "WP02-03",
@@ -211528,10 +211543,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W526",
-      "path": "docs/development/evidence/W526-01/DELIVERY.md",
-      "baseline_sha": "d24348432569fda429cfdfc6cc210b42c8e3e551",
-      "registered_at": "2026-11-13T06:20:28.203348+00:00",
+      "id": "W527",
+      "path": "docs/development/evidence/W527-01/DELIVERY.md",
+      "baseline_sha": "422c578f28dbc6a1afcb2fe831d61eb476525daa",
+      "registered_at": "2026-11-13T07:32:19.107185+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211545,11 +211560,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "PGT-021 同库恢复与 Stock #844 正式包采用已闭环。接续 PGT-022 的合法 route epoch 生命周期、PGT-024 的双模型兼容与回退；PGT-011/017/025 按原卡推进，不重复已通过恢复场景。",
+      "next_action": "继续 PGT-024 的真实 A 新模型/B 旧模型、共享最低版本与应用回退。PGT-011、017、025 按原卡前置推进，Identity Directory fresh 安装问题另见 #995。",
       "windows": [
         {
-          "id": "W526-01",
-          "workspace_task": "W526-01",
+          "id": "W527-01",
+          "workspace_task": "W527-01",
           "related_tasks": [
             "WP02-02"
           ],
@@ -211559,36 +211574,22 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w526-01",
-          "planned_scope_ref": "docs/development/evidence/W526-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W526-01/DELIVERY.md",
+          "branch": "codex/w527-01",
+          "planned_scope_ref": "docs/development/evidence/W527-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W527-01/DELIVERY.md",
           "full_task_completed": false,
-          "actions_authorized": true,
+          "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
             "Main:rma-same-database-recovery",
-            "Main:platform-package-adoption-and-postgresql-build"
+            "Main:stock-outbox-route-control"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Explicit PostgreSQL build of Tests/WebApi and compatibility Probe passed; 18 related Stock/Program tests, 0 failed/skipped. Native same-cut recovery restores A originals, retains current IAM and Published Stock/ERP, preserves B except one ordinary concurrent draft, supports ordinary A reads/new write, rejects missing inputs and newer source rows, atomically rolls back late failure, and recovers lost COMMIT acknowledgement. Concurrent same-key first use produces one identical receipt.",
-          "remaining_scope": "PGT-022 needs the adopted legal route-epoch change and old-message recovery scenario; PGT-024 needs two actual compatible models and app rollback. PGT-011/017/025 and remaining WP02 Owner adoption stay open under their original cards. Permanent A/B cross-database routing is not a PGT-021 prerequisite.",
-          "main_tested_source_sha": "1ba5bca33ab5733c3b33e137696cadca26834e9c",
-          "actions_authorization_scope": {
-            "repository": "GTX537/CP6.Platform",
-            "workflow": ".github/workflows/p10-formal-packages.yml",
-            "run_id": 43378516039,
-            "run_url": "https://github.com/GTX537/CP6.Platform/actions/runs/43378516039",
-            "source_sha": "f3fbe4be67d40641f7a8a969d74be65a95541819",
-            "version": "0.10.4",
-            "authorization": "User explicitly authorized this single formal release.",
-            "status": "SUCCESS",
-            "package_count": 7,
-            "windows_verification": "Success",
-            "linux_verification": "Success",
-            "publication_sha256": "acca9c41c4e658ca2db3067a3c48abbf3dda8e4be896307916019f2d36193577"
-          }
+          "validation_summary": "Stock PostgreSQL tests 19 PASS, 0 FAIL/SKIP. Same-source v11: active epoch 1 to Draining to active epoch 2 with two durable Owner receipts; old source restore rolls back and current Published original reconciles; durable UNKNOWN rejects restore and is not resent; cross-tenant global key collision and absent original safely classified. v11 with epoch-aware Stock section staged and recovered in an isolated database. Fresh Identity Directory installation failure reproduced at the W526 baseline and filed as #995.",
+          "remaining_scope": "PGT-024 needs two actual compatible tenant models, shared minimum-version enforcement and app rollback. PGT-011/017/025 stay open under their original cards. Identity Directory fresh installation issue #995 is tracked separately. The Stock switch supports terminal queues with the same publisher.",
+          "main_tested_source_sha": "7028b48ecedd1f5219f4559046e0646449d3b52d"
         }
       ],
       "storage": {
@@ -262050,6 +262051,80 @@
           "new_worktrees": 0
         },
         "product_integrated": false
+      },
+      {
+        "id": "W526",
+        "path": "docs/development/evidence/W526-01/DELIVERY.md",
+        "baseline_sha": "d24348432569fda429cfdfc6cc210b42c8e3e551",
+        "registered_at": "2026-11-13T06:20:28.203348+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "PGT-021 同库恢复与 Stock #844 正式包采用已闭环。接续 PGT-022 的合法 route epoch 生命周期、PGT-024 的双模型兼容与回退；PGT-011/017/025 按原卡推进，不重复已通过恢复场景。",
+        "windows": [
+          {
+            "id": "W526-01",
+            "workspace_task": "W526-01",
+            "related_tasks": [
+              "WP02-02"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w526-01",
+            "planned_scope_ref": "docs/development/evidence/W526-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W526-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": true,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "Main:rma-same-database-recovery",
+              "Main:platform-package-adoption-and-postgresql-build"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Explicit PostgreSQL build of Tests/WebApi and compatibility Probe passed; 18 related Stock/Program tests, 0 failed/skipped. Native same-cut recovery restores A originals, retains current IAM and Published Stock/ERP, preserves B except one ordinary concurrent draft, supports ordinary A reads/new write, rejects missing inputs and newer source rows, atomically rolls back late failure, and recovers lost COMMIT acknowledgement. Concurrent same-key first use produces one identical receipt.",
+            "remaining_scope": "PGT-022 needs the adopted legal route-epoch change and old-message recovery scenario; PGT-024 needs two actual compatible models and app rollback. PGT-011/017/025 and remaining WP02 Owner adoption stay open under their original cards. Permanent A/B cross-database routing is not a PGT-021 prerequisite.",
+            "main_tested_source_sha": "1ba5bca33ab5733c3b33e137696cadca26834e9c",
+            "actions_authorization_scope": {
+              "repository": "GTX537/CP6.Platform",
+              "workflow": ".github/workflows/p10-formal-packages.yml",
+              "run_id": 43378516039,
+              "run_url": "https://github.com/GTX537/CP6.Platform/actions/runs/43378516039",
+              "source_sha": "f3fbe4be67d40641f7a8a969d74be65a95541819",
+              "version": "0.10.4",
+              "authorization": "User explicitly authorized this single formal release.",
+              "status": "SUCCESS",
+              "package_count": 7,
+              "windows_verification": "Success",
+              "linux_verification": "Success",
+              "publication_sha256": "acca9c41c4e658ca2db3067a3c48abbf3dda8e4be896307916019f2d36193577"
+            },
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/994",
+            "main_remote_main_sha": "422c578f28dbc6a1afcb2fe831d61eb476525daa"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
       }
     ],
     "development_priority": {
