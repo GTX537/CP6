@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W542 PGT-017 余项
+
+Main 角色、用户、会话、询盘范围和服务撤权的跨库采用继续跟踪 #1012。CRM 受理决策、撤回同意、导出和下载、保留与复核过期以及 Main 独立业务写者仍需验收。 [本任务](../development/evidence/W542-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W541 PGT-017 余项
 
 空间独立 Design 事务和定时 ABC、旧 OA、财务、采购和 Stock 普通角色仍待核对。Main 与 CRM 其余撤权和业务写者继续按 W540 推进。 [本任务](../development/evidence/W541-01/DELIVERY.md)

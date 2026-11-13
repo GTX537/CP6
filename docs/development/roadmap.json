@@ -165682,6 +165682,11 @@
       "at": "2026-11-13T18:18:39.947055+00:00",
       "change": "W541 连接体、停靠点、模板和手动分析共 11 个空间写入口采用 Main 共同根，14 项 PostgreSQL 并发回归通过，正式 26/27。",
       "evidence": "docs/development/evidence/W541-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T19:02:22.381299+00:00",
+      "change": "W542 完成 Main 暂停与 CRM 公开表单签发、公开提交的两库 PostgreSQL 并发验收，正式仍为 26/27。",
+      "evidence": "docs/development/evidence/W542-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211688,10 +211693,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W541",
-      "path": "docs/development/evidence/W541-01/DELIVERY.md",
-      "baseline_sha": "642c3cf4d599401a599e56abadb3e23b4253a184",
-      "registered_at": "2026-11-13T18:07:44.415106+00:00",
+      "id": "W542",
+      "path": "docs/development/evidence/W542-01/DELIVERY.md",
+      "baseline_sha": "60030a93ce24085dd381b03be879ca4c3fe73f0d",
+      "registered_at": "2026-11-13T18:23:14.081485+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211705,41 +211710,53 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Continue PGT-017 in the remaining transaction owners and the cross-database authorization scope from #1012.",
+      "next_action": "Continue PGT-017 with the outstanding Main authority paths and CRM Owners documented in issue #1012. Keep formal PGT-017 NOT_RUN until the full writer and scenario evidence exists.",
       "windows": [
         {
-          "id": "W541-01",
-          "workspace_task": "W541-01",
+          "id": "W542-01",
+          "workspace_task": "W542-01",
           "related_tasks": [
             "WP02-03",
             "PGT-017"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT",
+          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w541-01",
-          "planned_scope_ref": "docs/development/evidence/W541-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W541-01/DELIVERY.md",
+          "branch": "codex/w542-01",
+          "planned_scope_ref": "docs/development/evidence/W542-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W542-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main Space Connector, Template and manual Analytics HTTP writes",
-            "Main PostgreSQL acceptance and roadmap"
+            "Main inquiry TLS service context and versioned tenant suspension",
+            "CRM public form issuance and submission Owners",
+            "Main formal PostgreSQL acceptance and roadmap"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "14 real PostgreSQL authorization races; 34 related component checks; local published WebApi hash, startup and HTTP checks.",
-          "remaining_scope": "Separate Space Design context and scheduled ABC; legacy OA, finance, PUR and Stock database roles; remaining CRM Owner and Main revocation, cross-database recovery.",
-          "main_tested_source_sha": "d75cf1c6a20233109572e65e648023e31fe30fe7"
+          "validation_summary": "Four paired Main/CRM PostgreSQL 18.6 tests (8 passes), legacy paired test (2 passes), Main 10 and CRM 20 targeted checks, matching local publish and startup.",
+          "remaining_scope": "Main roles, user, session, scope and service cross-database revocation and recovery; CRM intake decisions, consent, privacy export and download, retention and review expiry; independent Main Space, OA, Finance, PUR and Stock database writers.",
+          "main_tested_source_sha": "fbe33930cb236b59659fe0458922305acc6fe97f",
+          "product_repository": "CP6.CRM",
+          "product_worktree": "D:/CP6-worktrees/dev-2",
+          "product_baseline": "974cb61b2ed630b9ef39eb363f27d1b76d1dc708",
+          "product_branch": "codex/w542-01",
+          "product_source_sha": "1d185639e0b95319fba9394ad602d02a3d78b9c3",
+          "product_remote_main_sha": "39df2fd32c1ff0b12328d5eb71f07ec5d521221d",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/209",
+          "product_branch_disposition": "deleted-local-and-remote",
+          "product_workspace_status": "fixed-seat-detached-for-reuse",
+          "product_seat_released": true
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -263130,6 +263147,66 @@
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018",
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W541",
+        "path": "docs/development/evidence/W541-01/DELIVERY.md",
+        "baseline_sha": "642c3cf4d599401a599e56abadb3e23b4253a184",
+        "registered_at": "2026-11-13T18:07:44.415106+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Continue PGT-017 in the remaining transaction owners and the cross-database authorization scope from #1012.",
+        "windows": [
+          {
+            "id": "W541-01",
+            "workspace_task": "W541-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w541-01",
+            "planned_scope_ref": "docs/development/evidence/W541-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W541-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main Space Connector, Template and manual Analytics HTTP writes",
+              "Main PostgreSQL acceptance and roadmap"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "14 real PostgreSQL authorization races; 34 related component checks; local published WebApi hash, startup and HTTP checks.",
+            "remaining_scope": "Separate Space Design context and scheduled ABC; legacy OA, finance, PUR and Stock database roles; remaining CRM Owner and Main revocation, cross-database recovery.",
+            "main_tested_source_sha": "d75cf1c6a20233109572e65e648023e31fe30fe7",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1022",
+            "main_remote_main_sha": "60030a93ce24085dd381b03be879ca4c3fe73f0d"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },

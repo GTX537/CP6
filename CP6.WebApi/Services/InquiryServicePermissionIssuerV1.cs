@@ -4,6 +4,7 @@ using CP6.Entity.DomainModels.Sys;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.CrmIdentity;
+using CP6.Core.Services.Platform;
 using CP6.Core.Services.Sys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
@@ -15,13 +16,16 @@ namespace CP6.WebApi.Services;
 /// CRM still needs its own current identity/resource fence inside the business transaction.</summary>
 public sealed class InquiryServicePermissionIssuerV1(CP6Context db, ITenantContext tenant,
     InquiryServicePrincipalRegistryV1 registry, InquiryPermissionSigningKeyV1 signing,
-    Func<AuthorizationCatalogSnapshotV1>? captureCatalog = null, CrmIdentityRuntime? identityRuntime = null)
+    Func<AuthorizationCatalogSnapshotV1>? captureCatalog = null, CrmIdentityRuntime? identityRuntime = null,
+    CrmInquiryTenantPauseV1? tenantPause = null)
 {
     public bool Enabled => registry.Enabled && signing.Enabled;
     public bool ContextEnabled => Enabled && registry.IdentityPublicationEnabled && identityRuntime is not null;
-    public Task<string> IssueAsync(InquiryPermissionRequestV1 request, StringValues authorization, CancellationToken ct)
-        => IssueCoreAsync(request, authorization, null, ct);
-    public Task<string> IssueContextAsync(InquiryServiceContextRequestV1 request, StringValues authorization, CancellationToken ct)
+    public async Task<string> IssueAsync(InquiryPermissionRequestV1 request, StringValues authorization, CancellationToken ct)
+        => (await IssueCoreAsync(request, authorization, null, ct)).Json;
+    public async Task<string> IssueContextAsync(InquiryServiceContextRequestV1 request, StringValues authorization, CancellationToken ct)
+        => (await IssueContextWithFenceAsync(request, authorization, ct)).Json;
+    internal Task<InquiryPermissionResponseV1> IssueContextWithFenceAsync(InquiryServiceContextRequestV1 request, StringValues authorization, CancellationToken ct)
     {
         if (request is null || !InquiryPermissionSigningKeyV1.ValidServiceNonce(request.RequestNonce))
             throw new InquiryPermissionExceptionV1(400, "invalid_request");
@@ -30,14 +34,15 @@ public sealed class InquiryServicePermissionIssuerV1(CP6Context db, ITenantConte
     }
     // v2 adds the existing R3 export purpose for a real service principal. It never widens
     // the v1 endpoint or reuses the retention grant, browser subject or signature domain.
-    public Task<string> IssueExportContextV2Async(InquiryServiceContextRequestV1 request,StringValues authorization,CancellationToken ct)
+    public async Task<string> IssueExportContextV2Async(InquiryServiceContextRequestV1 request,StringValues authorization,CancellationToken ct)
     {
         if(request is null||request.Purpose!="privacy:export"||!InquiryPermissionSigningKeyV1.ValidServiceNonce(request.RequestNonce))
             throw new InquiryPermissionExceptionV1(400,"invalid_request");
         if(!ContextEnabled)throw new InquiryPermissionExceptionV1(503,"inquiry_service_context_unavailable");
-        return IssueCoreAsync(new(request.Purpose,request.SiteId,request.FormId),authorization,request.RequestNonce,ct,InquiryPermissionSigningKeyV1.PrivacyExportServiceContextVersion);
+        return (await IssueCoreAsync(new(request.Purpose,request.SiteId,request.FormId),authorization,request.RequestNonce,ct,
+            InquiryPermissionSigningKeyV1.PrivacyExportServiceContextVersion)).Json;
     }
-    private async Task<string> IssueCoreAsync(InquiryPermissionRequestV1 request, StringValues authorization, string? nonce, CancellationToken ct,
+    private async Task<InquiryPermissionResponseV1> IssueCoreAsync(InquiryPermissionRequestV1 request, StringValues authorization, string? nonce, CancellationToken ct,
         string contextVersion=InquiryPermissionSigningKeyV1.ServiceContextVersion)
     {
         if (request is null || request.SiteId == Guid.Empty || request.FormId == Guid.Empty)
@@ -114,8 +119,10 @@ public sealed class InquiryServicePermissionIssuerV1(CP6Context db, ITenantConte
                     throw new InquiryPermissionExceptionV1(503, "inquiry_service_role_source_unavailable");
                 result = signing.SignServiceContext(result, nonce, registration, serviceSource!, roles, identityRuntime!.ContractBundleSha256, request, issued, expiry,contextVersion);
             }
+            var fence = tenantPause is not null && nonce is not null && request.Purpose is ("intake:release" or "public:receive")
+                ? await tenantPause.ReadBindingAsync(db, registration.Tenant, ct) : null;
             ct.ThrowIfCancellationRequested(); await tx.CommitAsync(ct);
-            return result ?? throw new InquiryPermissionExceptionV1(503,"inquiry_authority_unavailable");
+            return new(result ?? throw new InquiryPermissionExceptionV1(503,"inquiry_authority_unavailable"), fence);
         }
         finally { tenant.CurrentTenantId = previousTenant; }
     }

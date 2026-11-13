@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W542 完成公开表单签发、自动建线索与进入人工复核的 Main 暂停两库联验。正式 PostgreSQL 26/27，PGT-017 其余写者待验收。 [本任务](evidence/W542-01/DELIVERY.md)
+
 > W541 将空间连接体、停靠点、模板和手动分析的 11 个 HTTP 写入口接入共同根，14 项 PostgreSQL 并发回归通过。PGT-017 仍待其余写者。 [本任务](evidence/W541-01/DELIVERY.md)
 
 > W540 补齐 Main 租户暂停与 CRM 配置保存的两种提交顺序，验证预览和激活的迟到授权拒绝及封存后的原操作恢复。正式 PostgreSQL 26/27，PGT-017 尚有写者与跨库撤权待验收。 [本任务](evidence/W540-01/DELIVERY.md)

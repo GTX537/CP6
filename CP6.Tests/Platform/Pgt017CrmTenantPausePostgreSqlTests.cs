@@ -17,7 +17,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         await InquiryProducerHttp("configuration:write", crossDatabasePause: true);
     }
 
-    private async Task ExerciseCrmTenantPause(AuthenticationApiProcess host, Harness target, string bridge)
+    private async Task ExerciseCrmTenantPause(AuthenticationApiProcess host, Harness target, string bridge,
+        bool publicSubmission = false, Task? childExited = null)
     {
         await using var admin = await Seed();
         var user = await admin.Db.Sys_Users.SingleAsync(row => row.Id == admin.ActorId);
@@ -31,15 +32,21 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var before = await State();
         Assert.True(before.Enabled);
         Assert.Equal(1, before.SnapshotVersion);
-        Assert.Equal(1, before.ActiveBrowserGrants);
+        Assert.Equal(publicSubmission ? 0 : 1, before.ActiveBrowserGrants);
         var order = Environment.GetEnvironmentVariable("CP6_PGT017_ORDER");
-        var pauseFirst = order == "pause-first";
+        var pauseFirst = order is "pause-first" or "pause-first-review";
         var recovery = order == "pause-recovery";
-        var command = new TenantManagementCommandV1("pgt017-crm-configuration-pause", current.Revision, "suspend", null);
+        var operation = publicSubmission ? "pgt017-crm-public-pause" : "pgt017-crm-configuration-pause";
+        var command = new TenantManagementCommandV1(operation, current.Revision, "suspend", null);
 
         Task<HttpResponseMessage> pause;
-        await WaitConfigurationBridge(bridge, "ready");
-        if (pauseFirst || recovery)
+        await WaitStage("ready");
+        if (publicSubmission && pauseFirst)
+        {
+            await WaitStage("permission-held");
+            pause = Pause();
+        }
+        else if (pauseFirst || recovery)
         {
             if (pauseFirst) await WaitConfigurationBridge(bridge, "permission-held");
             using var connection = new NpgsqlConnection(target.Db.Database.GetConnectionString());
@@ -79,7 +86,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         }
         else
         {
-            await WaitConfigurationBridge(bridge, "owner-held");
+            await WaitStage("owner-held");
             pause = Pause();
             await using var observer = new NpgsqlConnection(Environment.GetEnvironmentVariable("CP6_PGT017_CRM_OBSERVER"));
             await observer.OpenAsync();
@@ -129,7 +136,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Assert.Equal(receipt, await replay.Content.ReadFromJsonAsync<TenantManagementReceiptV1>());
         Assert.Equal(after, await State());
         await File.WriteAllTextAsync(Path.Combine(bridge, "paused"), "PASS");
-        await WaitConfigurationBridge(bridge, "finished");
+        await WaitStage("finished");
         if (recovery)
         {
             var reactivate = new TenantManagementCommandV1("pgt017-crm-configuration-reactivate", after.Revision, "reactivate", null);
@@ -148,6 +155,17 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         }
 
         Task<HttpResponseMessage> Pause() => host.Send(Request(HttpMethod.Post, path + "/commands", manager, command));
+
+        async Task WaitStage(string stage)
+        {
+            var wait = WaitConfigurationBridge(bridge, stage);
+            if (childExited is not null && await Task.WhenAny(wait, childExited) == childExited && !wait.IsCompleted)
+            {
+                // The child can exit after writing the final marker but before the poll observes it.
+                Assert.True(File.Exists(Path.Combine(bridge, stage)), $"CRM exited before reaching {stage}. See the child test log.");
+            }
+            await wait;
+        }
 
         async Task<CrmPauseState> State()
         {
