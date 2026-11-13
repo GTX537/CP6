@@ -4,6 +4,14 @@
 
 保留原动作键和数量精度，现行 PostgreSQL HTTP 写者经共同根进入同一 Core 事务。27 项 PostgreSQL 和 3 项组件测试通过。 [本任务](../development/evidence/W539-01/DELIVERY.md)
 
+## 2026-11-13 UTC · W538 手工凭证采用共同栅栏
+
+凭证、分录、会计期间和采番由同一业务事务提交。32 项验证通过。 [本任务](../development/evidence/W538-01/DELIVERY.md)
+
+## 2026-11-13 UTC · W537 OIDC 会话族撤销与订单取号串行
+
+两种顺序和原撤销写集通过。38 项定向验证，正式矩阵 26/27。 [本任务](../development/evidence/W537-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W536 仅访问令牌注销采用共同栅栏
 
 精确签发撤销标记与审计同事务。30 项 PostgreSQL 验证通过，原询盘 60/60。 [本任务](../development/evidence/W536-01/DELIVERY.md)

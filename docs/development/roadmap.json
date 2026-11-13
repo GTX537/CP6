@@ -165659,7 +165659,17 @@
       "evidence": "docs/development/evidence/W536-01/DELIVERY.md"
     },
     {
-      "at": "2026-11-13T15:20:16.186610+00:00",
+      "at": "2026-11-13T14:23:44.893542+00:00",
+      "change": "W537 Main OIDC 会话族撤销采用根优先锁序，38 项定向验证通过，PGT-017 仍待其他写者及跨库协议。",
+      "evidence": "docs/development/evidence/W537-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T15:49:34.364165+00:00",
+      "change": "W538 五个财务手工凭证入口采用共同根，32 项定向验证通过，PGT-017 保持 NOT_RUN。",
+      "evidence": "docs/development/evidence/W538-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T15:58:02.341015+00:00",
       "change": "W539 油墨 4 个现行写者采用 PostgreSQL 共同事务，混合及撤权两种顺序和部分写回滚实测通过。正式 PostgreSQL 26/27，原询盘 60/60。",
       "evidence": "docs/development/evidence/W539-01/DELIVERY.md"
     }
@@ -211670,7 +211680,7 @@
     "current_wave": {
       "id": "W539",
       "path": "docs/development/evidence/W539-01/DELIVERY.md",
-      "baseline_sha": "a0582b0d7e230ea1282c56f531b21cd75d2b69bf",
+      "baseline_sha": "4004fe606cae47c2bbdb0ded3882b63d9e0e52f9",
       "registered_at": "2026-11-13T15:01:27.957650+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
@@ -211685,7 +211695,7 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "逐个核对待合并的其他 Main 事务，按原提交单位采用共同栅栏，继续 Main/CRM 跨库协议和两库验证。",
+      "next_action": "继续核对其余 Main 写者与普通数据库角色，验证 Main/CRM 跨库协议。",
       "windows": [
         {
           "id": "W539-01",
@@ -262853,6 +262863,126 @@
             "main_tested_source_sha": "a1725295743647ac177b05fbf6a5f2383ebc1790",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1011",
             "main_remote_main_sha": "a0582b0d7e230ea1282c56f531b21cd75d2b69bf"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W537",
+        "path": "docs/development/evidence/W537-01/DELIVERY.md",
+        "baseline_sha": "a0582b0d7e230ea1282c56f531b21cd75d2b69bf",
+        "registered_at": "2026-11-13T14:10:26.950900+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "按原事务验证财务和其他 Main 写者；跨库协议在 Issue #1012 持续跟踪。",
+        "windows": [
+          {
+            "id": "W537-01",
+            "workspace_task": "W537-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w537-01",
+            "planned_scope_ref": "docs/development/evidence/W537-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W537-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main OIDC browser-family revocation and identity outbox",
+              "Main formal PostgreSQL acceptance and roadmap"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "真实 OIDC 会话族撤销与 ORD 取号两种提交顺序，身份快照与优先 Outbox 一致，9 项实际 PostgreSQL 和 29 项相关组件通过。",
+            "remaining_scope": "PGT-017 尚有财务过账、采购收货/询价回写、旧流程批办、WMS/Space、refresh 注销即时信号、普通数据库角色及 Main→CRM 跨库协议。",
+            "main_tested_source_sha": "8c6086976116b432423d207a64818802b5230e1f",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1014",
+            "main_remote_main_sha": "829bdeaafbca78fe0329acd2b02738373659b142"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W538",
+        "path": "docs/development/evidence/W538-01/DELIVERY.md",
+        "baseline_sha": "829bdeaafbca78fe0329acd2b02738373659b142",
+        "registered_at": "2026-11-13T14:34:13.468142+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续按原事务核对其余 Main 写者，验证 Main/CRM 跨库协议。",
+        "windows": [
+          {
+            "id": "W538-01",
+            "workspace_task": "W538-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w538-01",
+            "planned_scope_ref": "docs/development/evidence/W538-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W538-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main manual finance journal HTTP writes",
+              "Main formal PostgreSQL acceptance and roadmap"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "五个撤权先提交、手工过账先提交、失败回滚和原业务精度，15 项 PostgreSQL 加 17 项组件通过。",
+            "remaining_scope": "PGT-017 尚有银行与自动凭证、采购、旧流程批办、WMS、Space、其他撤权写者、普通数据库角色及 Main/CRM 跨库协议。",
+            "main_tested_source_sha": "544f72f3349fc9e02860016f266be4393b938064",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1016",
+            "main_remote_main_sha": "4004fe606cae47c2bbdb0ded3882b63d9e0e52f9"
           }
         ],
         "storage": {

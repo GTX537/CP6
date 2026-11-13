@@ -2,6 +2,10 @@
 
 > W539 将 WMS 油墨四个写入口接入共同事务根，实测混合与撤权的两种提交顺序和父批次、采番一并回滚。正式 PostgreSQL 26/27，PGT-017 仍有其他写者及跨库协议待完成。 [本任务](evidence/W539-01/DELIVERY.md)
 
+> W538 手工凭证五类写入接入共同根，实际过账两种提交顺序通过。正式 PostgreSQL 26/27，PGT-017 其余写者仍待核对。 [本任务](evidence/W538-01/DELIVERY.md)
+
+> W537 Main OIDC 会话族撤销与业务取号的两种提交顺序通过。正式 PostgreSQL 26/27，PGT-017 尚有其他写者和跨库协议。 [本任务](evidence/W537-01/DELIVERY.md)
+
 > W536 Web 和原生仅访问令牌注销接入共同事务根，四种提交组合、Main OIDC 与前向升级实测通过。PGT-017 仍待其余写者，正式 PostgreSQL 26/27。 [本任务](evidence/W536-01/DELIVERY.md)
 
 > W535 实测订单取号与租户暂停的两种提交顺序，已将该入口接入共同根。正式 PostgreSQL 26/27，PGT-017 其余写者及跨库协议待核对。 [本任务](evidence/W535-01/DELIVERY.md)

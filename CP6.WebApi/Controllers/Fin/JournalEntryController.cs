@@ -1,8 +1,11 @@
 using CP6.Core.Auth;
+using CP6.Core.EFDbContext;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Controllers.Fin;
 
@@ -16,7 +19,12 @@ namespace CP6.WebApi.Controllers.Fin;
 public class JournalEntryController : ControllerBase
 {
     private readonly IJournalEntryService _svc;
-    public JournalEntryController(IJournalEntryService svc) => _svc = svc;
+    private readonly CP6Context _db;
+    public JournalEntryController(IJournalEntryService svc, CP6Context db)
+    {
+        _svc = svc;
+        _db = db;
+    }
 
     private string CurrentUser => User?.Identity?.Name ?? "anonymous";
     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
@@ -36,25 +44,39 @@ public class JournalEntryController : ControllerBase
     /// <summary>新建草稿。</summary>
     [HttpPost]
     [RequirePermission("fin-journal", "add")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Create([FromBody] JournalEntry entry)
-        => Ok2(new { id = await _svc.CreateDraftAsync(entry, CurrentUser) });
+    {
+        if (_db.Database.IsNpgsql())
+        {
+            var tenantId = _db.CurrentTenantId;
+            entry.TenantId = tenantId;
+            foreach (var line in entry.Lines)
+                line.TenantId = tenantId;
+        }
+        return Ok2(new { id = await _svc.CreateDraftAsync(entry, CurrentUser) });
+    }
 
     [HttpPost("{id}/submit")]
     [RequirePermission("fin-journal", "submit")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Submit(Guid id) => Fin(await _svc.SubmitForReviewAsync(id));
 
     /// <summary>过账（过账人=当前登录用户，须≠制单人）。</summary>
     [HttpPost("{id}/post")]
     [RequirePermission("fin-journal", "post")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Post(Guid id) => Fin(await _svc.PostAsync(id, CurrentUser));
 
     [HttpPost("{id}/reject")]
     [RequirePermission("fin-journal", "reject")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Reject(Guid id, [FromBody] ReasonReq r) => Fin(await _svc.RejectAsync(id, r.Reason));
 
     /// <summary>手工红冲（走复核，autoPost=false）。</summary>
     [HttpPost("{id}/reverse")]
     [RequirePermission("fin-journal", "reverse")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Reverse(Guid id, [FromBody] ReasonReq r)
         => Fin(await _svc.ReverseAsync(id, CurrentUser, r.Reason, autoPost: false));
 

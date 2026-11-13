@@ -12,4 +12,6 @@
 
 实际测试宿主与本地发布 WebApi 的 SHA-256 均为 `306e1eed2251fa6b70fd352d2d2ab22b1b9d58fbf5aec555bd99bafb306be5e5`。310 个发布文件摘要、TRX 和本地启动证据在 `D:/CP6-test-artifacts/W539-01`。冒烟初次跳过建库导致本地化查表失败，使用发布制品的 DatabaseInit 在隔离实例完成初始化后，通过存活 200、无 CSRF 的混合请求 403、匿名查询 401。测试及发布宿主和 PostgreSQL 均已停止。Actions 启动和取消为零。
 
-正式 PGT-017 仍需核销其他 Main 业务写者、普通数据库角色及 [Main/CRM 跨库提交](https://github.com/GTX537/CP6/issues/1012)。[OIDC #1014](https://github.com/GTX537/CP6/pull/1014) 与 [财务 #1016](https://github.com/GTX537/CP6/pull/1016) 已独立本地验证并保存，创建本分支时远端未采用。本窗只覆盖四个油墨 HTTP 入口。分支和席位见本任务 PR 与 `main-finish.json`。
+正式 PGT-017 仍需核销其他 Main 业务写者、普通数据库角色及 [Main/CRM 跨库提交](https://github.com/GTX537/CP6/issues/1012)。[OIDC #1014](https://github.com/GTX537/CP6/pull/1014) 与 [财务 #1016](https://github.com/GTX537/CP6/pull/1016) 已通过原验收并进入本次集成基线。本窗只覆盖四个油墨 HTTP 入口。分支和席位见本任务 PR 与 `main-finish.json`。
+
+本次集成基线 `4004fe606cae47c2bbdb0ded3882b63d9e0e52f9`。原任务产品与测试文件均逐文件核对，复用前述验证。新的集成冒烟结果随 PR 记录。

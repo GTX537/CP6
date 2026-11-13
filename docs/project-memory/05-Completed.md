@@ -4,6 +4,14 @@
 
 实测撤权先提交后四个油墨入口拒写，混合先提交时保留父批扣减、子批和采番。子批保存失败整体回滚。 [本任务](../development/evidence/W539-01/DELIVERY.md)
 
+## 2026-11-13 UTC · W538 手工凭证当前授权
+
+撤权先提交拒绝五类新写，过账先提交保留合法凭证，草稿失败回滚期间及采番。32 项通过。 [本任务](../development/evidence/W538-01/DELIVERY.md)
+
+## 2026-11-13 UTC · W537 OIDC 同根锁序
+
+业务与 OIDC 族撤销两个提交顺序、同账号其他会话及原撤销事实通过，共 38 项。 [本任务](../development/evidence/W537-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W536 精确会话撤权
 
 Web 和原生四种提交组合、Main OIDC 来源、既有刷新注销合同和前向升级实测通过，共 30 项。 [本任务](../development/evidence/W536-01/DELIVERY.md)
