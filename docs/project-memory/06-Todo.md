@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W521 PGT-021 受控准入后续
+
+在同一已验证候选复用真实源审批链，做本地应用准入及普通角色复测。继续核当前 IAM/撤销、队列及租户定向切换边界。 [本任务](../development/evidence/W521-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W520 PGT-021 后续
 
 把已通过的 Stock 单笔 ADJ 与同源 RMA、ERP、FileContent 放进一个关闭候选，复查原回执与依赖，再按原门推进受控准入和普通 A/B 复测。PGT-022 当前纪元和 PGT-024 双模型仍待。 [本任务](../development/evidence/W520-01/DELIVERY.md)

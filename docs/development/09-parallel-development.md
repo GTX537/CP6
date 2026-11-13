@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> W521 同一 PostgreSQL 关闭候选完成 Stock、RMA、ERP Partner、FileContent 组合，五份原回执及 B 原数据保持，实际 Stock worker 拒绝派送。 [本任务](evidence/W521-01/DELIVERY.md)
+
 > W520 实测同源 Stock 单笔 ADJ 原库存、流水、两套序号和首次 Pending 的关闭恢复。晚段原生故障完整回滚，普通派送入口拒绝关闭库。 [本任务](evidence/W520-01/DELIVERY.md)
 
 > W519 实测 ERP Order 失败原图、原键与关闭候选回执恢复，已有 Partner 路径回归通过。 [本任务](evidence/W519-01/DELIVERY.md)

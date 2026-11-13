@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W521 同一关闭候选四域恢复
+
+Stock、RMA、ERP Partner 和 FileContent 在同一原生候选恢复，五份原回执和文件原字节通过，普通 B 跨租读取 42501。正式 PostgreSQL 21 PASS / 6 NOT_RUN，原询盘 60/60。 [本任务](../development/evidence/W521-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W520 Stock 原调整关闭恢复
 
 单笔 Stock ADJ 四张原生表和原队列同源导出，并在 PostgreSQL 一个事务导入。保留原流水、回执和 B 数据，关闭候选 worker 拒绝派送。正式 PostgreSQL 21 PASS / 6 NOT_RUN，原询盘 60/60。 [本任务](../development/evidence/W520-01/DELIVERY.md)
