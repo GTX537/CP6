@@ -165582,6 +165582,11 @@
       "at": "2026-11-13T02:18:04.271074+00:00",
       "change": "W521 在同一真实 PostgreSQL 关闭候选组合 Stock、RMA、ERP Partner 和 FileContent，五份数据库回执、外部资产、B 保持、普通隔离和实际 Stock 派送拒绝通过。正式 PostgreSQL 21 PASS / 6 NOT_RUN。",
       "evidence": "docs/development/evidence/W521-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T02:41:39.873309+00:00",
+      "change": "W522 验证非空组合候选的源端独立批准、普通读回和现行隐私纪元失效。正式 PostgreSQL 21 PASS / 6 NOT_RUN。",
+      "evidence": "docs/development/evidence/W522-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211468,10 +211473,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W521",
-      "path": "docs/development/evidence/W521-01/DELIVERY.md",
-      "baseline_sha": "922f05e116dbd7d6d61cf652fd17e22504045b82",
-      "registered_at": "2026-11-13T02:01:41.930003+00:00",
+      "id": "W522",
+      "path": "docs/development/evidence/W522-01/DELIVERY.md",
+      "baseline_sha": "1ec0dd87b46a7b389ed6ca43c9a1cd791e88853a",
+      "registered_at": "2026-11-13T02:20:29.468257+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211485,11 +211490,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "沿 W410 原批准链验证组合候选的独立本地准入和普通应用角色复测，保持发布关闭，并核对当前源权限/撤销与原回执。真实单租户切换仍按已批准范围单独执行。",
+      "next_action": "以现有本地批准准入证据继续验证当前 IAM、凭据撤销与投递对账，明确目标只接管授权租户的路由。PGT-022 的当前纪元恢复及 PGT-024 双模型按各自前置推进。",
       "windows": [
         {
-          "id": "W521-01",
-          "workspace_task": "W521-01",
+          "id": "W522-01",
+          "workspace_task": "W522-01",
           "related_tasks": [
             "WP02-02"
           ],
@@ -211499,21 +211504,20 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w521-01",
-          "planned_scope_ref": "docs/development/evidence/W521-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W521-01/DELIVERY.md",
+          "branch": "codex/w522-01",
+          "planned_scope_ref": "docs/development/evidence/W522-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W522-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "Main:stock-rma-erp-file-closed-candidate-verification"
+            "Main:combined-candidate-controlled-admission"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "PostgreSQL 18.6 single independent candidate using W520 v11 plus Stock effect manifest; five exact original database receipts and external file receipt; exact A Stock/ERP/RMA/FileContent originals, B Stock and ERP bytes and RMA sentinel unchanged; native late 23514 rollback and ordinary cross-A 42501; actual Stock worker zero publisher callbacks.",
-          "remaining_scope": "PGT-021 needs the controlled source approval and application-role retest on the combined nonempty candidate, current general IAM and delivery reconciliation, and authorized A-only cutover. Existing host bindings and ERP/Identity dispatch closure remain separate. PGT-022 current epoch recovery and PGT-024 dual-model validation remain open.",
-          "main_tested_source_sha": "eb7b90f1c29e5cd72f3bde95481c80ba2121fa63"
+          "validation_summary": "PostgreSQL 18.6 与封存 W466 WebApi，native-03 实际退出 0。独立审批 200，RMA/FileContent 读回通过，源端 B 并发合法写入提交，跨租拒绝，源隐私纪元更新后既有会话 503。五份回执及 116 份原生读回前后一致。",
+          "remaining_scope": "Full PGT-021 still requires broader native restore coverage, current source IAM and token state across the target authority boundary, current queue reconciliation, and a tenant-directed cutover. PGT-022 and PGT-024 remain open."
         }
       ],
       "storage": {
@@ -211522,7 +211526,7 @@
         ],
         "new_worktrees": 0
       },
-      "product_integrated": true
+      "product_integrated": false
     },
     "wave_history": [
       {
@@ -261675,6 +261679,65 @@
             "main_tested_source_sha": "d3cc9c6b4de607f0b1bd708391aa10e09418f763",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/988",
             "main_remote_main_sha": "922f05e116dbd7d6d61cf652fd17e22504045b82"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W521",
+        "path": "docs/development/evidence/W521-01/DELIVERY.md",
+        "baseline_sha": "922f05e116dbd7d6d61cf652fd17e22504045b82",
+        "registered_at": "2026-11-13T02:01:41.930003+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "沿 W410 原批准链验证组合候选的独立本地准入和普通应用角色复测，保持发布关闭，并核对当前源权限/撤销与原回执。真实单租户切换仍按已批准范围单独执行。",
+        "windows": [
+          {
+            "id": "W521-01",
+            "workspace_task": "W521-01",
+            "related_tasks": [
+              "WP02-02"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w521-01",
+            "planned_scope_ref": "docs/development/evidence/W521-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W521-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "Main:stock-rma-erp-file-closed-candidate-verification"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "PostgreSQL 18.6 single independent candidate using W520 v11 plus Stock effect manifest; five exact original database receipts and external file receipt; exact A Stock/ERP/RMA/FileContent originals, B Stock and ERP bytes and RMA sentinel unchanged; native late 23514 rollback and ordinary cross-A 42501; actual Stock worker zero publisher callbacks.",
+            "remaining_scope": "PGT-021 needs the controlled source approval and application-role retest on the combined nonempty candidate, current general IAM and delivery reconciliation, and authorized A-only cutover. Existing host bindings and ERP/Identity dispatch closure remain separate. PGT-022 current epoch recovery and PGT-024 dual-model validation remain open.",
+            "main_tested_source_sha": "eb7b90f1c29e5cd72f3bde95481c80ba2121fa63",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/989",
+            "main_remote_main_sha": "1ec0dd87b46a7b389ed6ca43c9a1cd791e88853a"
           }
         ],
         "storage": {

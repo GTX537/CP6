@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W522 本地恢复准入验证
+
+在 W521 停机副本使用现有审批、HTTP 和 PostgreSQL 入口验证受控读取，保留五份原回执与非空队列。 [本任务](../development/evidence/W522-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W521 四域组合恢复实测
 
 扩展现有组合验证入口，纳入原 Stock ADJ、A/B 原生读回和 Stock worker 关闭验证。 [本任务](../development/evidence/W521-01/DELIVERY.md)

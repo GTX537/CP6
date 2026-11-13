@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-13 UTC · W522 组合候选真实审批
+
+完成非空四域候选的实际申请、独立审批、普通角色读回和源隐私纪元失效验证。 [本任务](../development/evidence/W522-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W521 关闭候选四域组合
 
 同源 41 成员 v11 和 Stock 四表已实际导入一个隔离 PostgreSQL，五份数据库原回执及外部文件回执可恢复。B 原件保持，实际 Stock worker 不派送。 [本任务](../development/evidence/W521-01/DELIVERY.md)
