@@ -157,7 +157,7 @@ public partial class OrderService : IOrderService
             }
         }
 
-        var webOrderNo = await NextSequenceAsync();
+        var webOrderNo = await NextSequenceCoreAsync();
         var now = DateTime.Now;
         var orderDate = dto.OrderDate ?? now.Date;
 
@@ -507,10 +507,13 @@ public partial class OrderService : IOrderService
     //  採番
     // ═══════════════════════════════════════════════════════════
 
-    public async Task<string> NextSequenceAsync()
+    public Task<string> NextSequenceAsync()
+        => _db.Database.IsNpgsql() ? WriteOwner.ReserveSequenceAsync(NextSequenceCoreAsync) : NextSequenceCoreAsync();
+
+    private async Task<string> NextSequenceCoreAsync(CancellationToken ct = default)
     {
         // WebOrderNo = 機能コード(ORD)+年(4)+月(2)+自増(4)=13桁
-        var (no, _) = await DocNumber.NextAsync(_db, "ORD");
+        var (no, _) = await DocNumber.NextAsync(_db, "ORD", date: null, ct);
         return no;
     }
 
