@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W530 原生合同与精度
+
+PGT-025 PASS，正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。CRM 真实配置 Owner 在物理租户分区写入，并从共享回执恢复原 201、UTF-8 和 ETag。 [本任务](../development/evidence/W530-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W529 后台重试与平台管理权限
 
 PGT-011 PASS，正式 PostgreSQL 25 PASS / 2 NOT_RUN，原询盘 60/60。Main 在本机 PostgreSQL 18.6 实测 A/B 的已认领原任务、当前服务与原申请人、暂停后原回执、管理员和模拟会话权限、Stock 技术派送。 [本任务](../development/evidence/W529-01/DELIVERY.md)

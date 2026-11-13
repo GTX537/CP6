@@ -165622,6 +165622,11 @@
       "at": "2026-11-13T09:51:37.087288+00:00",
       "change": "W529 在本机 PostgreSQL 完成 PGT-011。原任务重试、服务与原申请人区分、模拟会话及跨租户未获准批量写、独立技术派送和原回执。正式 PostgreSQL 25 PASS / 2 NOT_RUN。",
       "evidence": "docs/development/evidence/W529-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T10:48:02.576959+00:00",
+      "change": "W530 采用 CRM 真实询盘配置 Owner 的物理租户草稿分区和共享原回执，实测精度、原字节、回滚和新连接原结果恢复。正式 PostgreSQL 26 PASS / 1 NOT_RUN。",
+      "evidence": "docs/development/evidence/W530-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -180785,6 +180790,17 @@
         "formal_state_changed": false,
         "new_product_validation": false,
         "latest_window": "W346-01"
+      },
+      "wave530_delivery": {
+        "report": "docs/development/evidence/W530-01/DELIVERY.md",
+        "scope": "PGT-025 CRM inquiry configuration exact storage and recovery",
+        "status": "LOCALLY_VERIFIED",
+        "formal_case": "PGT-025",
+        "formal_acceptance": "PASS",
+        "full_task_completed": false,
+        "tested_source_sha": "e2e8a23a32345fedde6b44cb2ab72b533c25e0f7",
+        "crm_remote_main_sha": "a4890974b3dce2fa9e978a62d3cbcfeb1958bf91",
+        "actual_evidence": "D:/CP6-test-artifacts/W530-01/pg/57368780aa3788e88da9acc1193dbf59/pgt025-owner-recovery.json"
       }
     },
     {
@@ -211573,10 +211589,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W529",
-      "path": "docs/development/evidence/W529-01/DELIVERY.md",
-      "baseline_sha": "1dd538e4a48f5d0f5f5e33b4fe0b7765a054709c",
-      "registered_at": "2026-11-13T09:29:42.196714+00:00",
+      "id": "W530",
+      "path": "docs/development/evidence/W530-01/DELIVERY.md",
+      "baseline_sha": "3f773d3b65f2b0d3a8487cf0c3cbdc611f3d16e3",
+      "registered_at": "2026-11-13T10:46:38.777203+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211590,41 +211606,52 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "推进 PGT-025 的现行 Owner 物理租户 schema、共享回执、原字节/负零和重连恢复。PGT-017 核对全 writer 与共同 fence 后执行剩余时序。",
+      "next_action": "继续 PGT-017。核对用户写者与 Main 暂停/撤权写者的完整实际清单及共同 fence，复用已有普通库存时序并补齐真实遗漏。",
       "windows": [
         {
-          "id": "W529-01",
-          "workspace_task": "W529-01",
+          "id": "W530-01",
+          "workspace_task": "W530-01",
           "related_tasks": [
-            "WP02-04",
-            "PGT-011"
+            "WP02-10",
+            "PGT-025"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT",
+          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w529-01",
-          "planned_scope_ref": "docs/development/evidence/W529-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W529-01/DELIVERY.md",
+          "branch": "codex/w530-01",
+          "planned_scope_ref": "docs/development/evidence/W530-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W530-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:formal-postgresql-acceptance-ledger",
-            "Main:owned-PostgreSQL-55590"
+            "CRM:inquiry-draft-storage",
+            "CRM:owned-PostgreSQL-55591"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "本机隔离 PostgreSQL 18.6 上两个 PGT-011 场景与四个定向回归共 6 PASS、0 跳过。实际 NativeTimeout 扫描和 Main 登录/API、Stock 技术派送、当前身份与原回执均已验证。",
-          "remaining_scope": "PGT-017 全 writer 登记和竞争验收、PGT-025 原生合同与精度。WP02-04 整卡保持原状态。",
-          "main_tested_source_sha": "23db035bd78e6e8f4698b34918139958b87edfea"
+          "validation_summary": "CRM 隔离 PostgreSQL 18.6 真实 Owner 新租户分区及共享回执场景 1 通过，旧布局定向回归 11 通过，0 失败、0 跳过。实际回滚、COMMIT 回包中断及新后端同键恢复。",
+          "remaining_scope": "PGT-017 仍需现存新业务 writer 的共同 fence 登记与两种真实提交顺序。CRM 既有库迁移、生产启用及其余业务布局另行推进。WP02-10 整卡仍按原范围。",
+          "product_repository": "CP6.CRM",
+          "product_worktree": "D:/CP6-worktrees/dev-2",
+          "product_baseline": "eb35232c1ae819efaacac318781c78e4cf9d0d2b",
+          "product_branch": "codex/w530-01",
+          "product_source_sha": "e2e8a23a32345fedde6b44cb2ab72b533c25e0f7",
+          "product_remote_main_sha": "a4890974b3dce2fa9e978a62d3cbcfeb1958bf91",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/207",
+          "product_branch_disposition": "deleted-local-and-remote",
+          "product_workspace_status": "fixed-seat-detached-for-reuse",
+          "product_seat_released": true
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -262267,6 +262294,66 @@
             "main_tested_source_sha": "01c7640e540cef40a7661e1c3ddb74f5af9fd6a0",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/997",
             "main_remote_main_sha": "1dd538e4a48f5d0f5f5e33b4fe0b7765a054709c"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W529",
+        "path": "docs/development/evidence/W529-01/DELIVERY.md",
+        "baseline_sha": "1dd538e4a48f5d0f5f5e33b4fe0b7765a054709c",
+        "registered_at": "2026-11-13T09:29:42.196714+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "推进 PGT-025 的现行 Owner 物理租户 schema、共享回执、原字节/负零和重连恢复。PGT-017 核对全 writer 与共同 fence 后执行剩余时序。",
+        "windows": [
+          {
+            "id": "W529-01",
+            "workspace_task": "W529-01",
+            "related_tasks": [
+              "WP02-04",
+              "PGT-011"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w529-01",
+            "planned_scope_ref": "docs/development/evidence/W529-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W529-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:formal-postgresql-acceptance-ledger",
+              "Main:owned-PostgreSQL-55590"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "本机隔离 PostgreSQL 18.6 上两个 PGT-011 场景与四个定向回归共 6 PASS、0 跳过。实际 NativeTimeout 扫描和 Main 登录/API、Stock 技术派送、当前身份与原回执均已验证。",
+            "remaining_scope": "PGT-017 全 writer 登记和竞争验收、PGT-025 原生合同与精度。WP02-04 整卡保持原状态。",
+            "main_tested_source_sha": "23db035bd78e6e8f4698b34918139958b87edfea",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/998",
+            "main_remote_main_sha": "3f773d3b65f2b0d3a8487cf0c3cbdc611f3d16e3"
           }
         ],
         "storage": {

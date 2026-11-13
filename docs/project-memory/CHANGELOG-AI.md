@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W530 正式 PostgreSQL PGT-025
+
+采用 CRM 询盘配置草稿租户分区，真实 Owner 同事务写共享原回执。新连接恢复、原字节及旧布局通过，正式 PostgreSQL 26/27。 [本任务](../development/evidence/W530-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W529 正式 PostgreSQL PGT-011
 
 新增两项 PostgreSQL 验收回归，验证后台重试与平台管理权限。6 项定向通过，正式 PostgreSQL 25/27。测试使用隔离数据、实际 Main HTTP 和模拟 Stock 外部传输。 [本任务](../development/evidence/W529-01/DELIVERY.md)
