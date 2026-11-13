@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using CP6.Core.Auth;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
+using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -70,7 +71,7 @@ public sealed class TaskDecisionController : ControllerBase
             }
             var result = await _decisions.DecideAsync(new(
                 taskId, actual, effective, request.Decision, request.Comment,
-                request.DataPatch, Decode(request.ExpectedFormDataRowVersion)), ct);
+                request.DataPatch, Decode(request.ExpectedFormDataRowVersion)), CurrentActor, ct);
             return Ok(new { code = 0, message = "OK", data = result });
         }
         catch (ScopeAuthorizationExceptionV1 ex) { return NativeError(ex, request.CommandId,personal?taskId:null); }
@@ -78,6 +79,12 @@ public sealed class TaskDecisionController : ControllerBase
         { return NativeError(new(ex.Message, ex.Status), request.CommandId); }
         catch (CurrentPermissionUnavailableException)
         { return NativeError(new("AUTHORITY_UNAVAILABLE", 503), request.CommandId,personal?taskId:null); }
+        catch (IamAdministrationExceptionV1 ex)
+        {
+            if (ex.Status == 403)
+                return StatusCode(403, new { code = 403, message = "无权限：oa-inbox:approve" });
+            return StatusCode(ex.Status, new { code = ex.Status, message = ex.Message });
+        }
         catch(Exception ex)when(personal && ex is Npgsql.NpgsqlException or Microsoft.EntityFrameworkCore.DbUpdateException)
         {return NativeError(new("FORM_STORAGE_UNAVAILABLE",503),request.CommandId,taskId);}
         catch (UnauthorizedAccessException ex)
@@ -92,6 +99,9 @@ public sealed class TaskDecisionController : ControllerBase
             return StatusCode(status, new { code, message = ex.Message });
         }
     }
+
+    private Task<Guid> CurrentActor(CancellationToken ct) =>
+        IamAdministrationHttpV1.CurrentActor(HttpContext, HttpContext.RequestServices, ct, allowImpersonation: true);
 
     [HttpGet("{taskId:guid}/decision-context")]
     public async Task<IActionResult> DecisionContext(Guid taskId, CancellationToken ct)
