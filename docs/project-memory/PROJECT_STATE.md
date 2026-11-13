@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W551 角色撤权中断恢复
+
+CRM 封存后 Main 取消提交，旧授权仍拒绝，同一 IAM 命令重试恢复。正式 PostgreSQL 26/27。 [本任务](../development/evidence/W551-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W550 部门授权与 CRM 事务
 
 部门停用与 CRM 导出在独立 PostgreSQL 通过两种提交顺序。正式 PostgreSQL 26/27。 [本任务](../development/evidence/W550-01/DELIVERY.md)

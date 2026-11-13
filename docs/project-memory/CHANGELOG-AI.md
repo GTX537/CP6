@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W551 角色撤权恢复联验
+
+通过原 IAM 入口补齐 Main 提交取消、CRM 持久封存、原操作查询与重试的实测。 [本任务](../development/evidence/W551-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W550 部门版本
 
 Main 部门变化在提交前封存。CRM 实际新写入核对相关部门来源，旧部门版本拒绝新效果。 [本任务](../development/evidence/W550-01/DELIVERY.md)
