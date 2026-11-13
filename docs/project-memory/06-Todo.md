@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W538 PGT-017 余项
+
+恢复 W537 已验证的 OIDC 任务，继续核对银行/自动凭证、采购、流程、WMS、Space、普通数据库角色及 Main 与 CRM 的等价共同协议。 [本任务](../development/evidence/W538-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W536 PGT-017 余项
 
 继续核对其余 Main 业务事务、refresh 注销即时信号、OIDC 族锁序、普通数据库角色及 Main 与 CRM 新效果之间的等价共同协议。 [本任务](../development/evidence/W536-01/DELIVERY.md)

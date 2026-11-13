@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W538 手工凭证采用共同栅栏
+
+凭证、分录、会计期间和采番由同一业务事务提交。32 项验证通过。 [本任务](../development/evidence/W538-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W536 仅访问令牌注销采用共同栅栏
 
 精确签发撤销标记与审计同事务。30 项 PostgreSQL 验证通过，原询盘 60/60。 [本任务](../development/evidence/W536-01/DELIVERY.md)
