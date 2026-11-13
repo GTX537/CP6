@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W533 旧单任务审批与撤权
+
+旧审批共用 PostgreSQL 事务根，真实 IAM 撤权两种提交顺序通过。PGT-017 仍待核销其他写者，正式 PostgreSQL 26/27，原询盘 60/60。 [本任务](../development/evidence/W533-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W532 旧菜单和 2FA 权威写入
 
 6 个入口采用 PostgreSQL 共同事务并完成实际撤权回归。PGT-017 尚有其他写者缺口，正式 PostgreSQL 26/27，原询盘 60/60。 [本任务](../development/evidence/W532-01/DELIVERY.md)

@@ -1,6 +1,9 @@
+using System.Data;
+using System.Data.Common;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
@@ -14,42 +17,90 @@ public sealed class TaskDecisionService : ITaskDecisionService
     private readonly IFormFieldProjectionService _projection;
     private readonly IFormService _forms;
     private readonly FlowEngine _engine;
+    private readonly ICurrentPermissionContext? _permissions;
 
     public TaskDecisionService(
         CP6Context db, IOaInstanceAccessService access,
-        IFormFieldProjectionService projection, IFormService forms, FlowEngine engine)
+        IFormFieldProjectionService projection, IFormService forms, FlowEngine engine,
+        ICurrentPermissionContext? permissions = null)
     {
         _db = db;
         _access = access;
         _projection = projection;
         _forms = forms;
         _engine = engine;
+        _permissions = permissions;
     }
 
-    public async Task<TaskDecisionResult> DecideAsync(
-        TaskDecisionCommand command, CancellationToken ct = default)
+    public Task<TaskDecisionResult> DecideAsync(TaskDecisionCommand command, CancellationToken ct = default) =>
+        DecideCoreAsync(command, null, ct);
+
+    public Task<TaskDecisionResult> DecideAsync(TaskDecisionCommand command,
+        Func<CancellationToken, Task<Guid>> currentActor, CancellationToken ct) =>
+        DecideCoreAsync(command, currentActor, ct);
+
+    private async Task<TaskDecisionResult> DecideCoreAsync(TaskDecisionCommand command,
+        Func<CancellationToken, Task<Guid>>? currentActor, CancellationToken ct)
     {
+        var postgres = _db.Database.IsNpgsql();
+        if (postgres && (currentActor == null || _permissions == null || _db.Database.CurrentTransaction != null
+            || System.Transactions.Transaction.Current != null || _db.ChangeTracker.HasChanges()))
+            throw new IamAdministrationExceptionV1(503, "AUTHORITY_FENCE_UNAVAILABLE");
+
         for (var attempt = 0; ; attempt++)
         {
             var ownsTransaction = _db.Database.IsRelational() && _db.Database.CurrentTransaction == null;
-            await using var transaction = ownsTransaction ? await _db.Database.BeginTransactionAsync(ct) : null;
+            var committing = false;
             try
             {
-                var result = await DecideOnceAsync(command, ct);
-                if (transaction != null) await transaction.CommitAsync(ct);
-                return result;
+                await using var transaction = postgres
+                    ? await _db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct)
+                    : ownsTransaction ? await _db.Database.BeginTransactionAsync(ct) : null;
+                try
+                {
+                    if (postgres)
+                    {
+                        await AuthenticationCompletionGateV1.AcquireAsync(_db, ct);
+                        if (await currentActor!(ct) != command.ActualUserId)
+                            throw new IamAdministrationExceptionV1(401, "REAUTH_REQUIRED");
+                        var current = await _permissions!.GetAsync();
+                        if (current.UserId != command.ActualUserId || !current.ActionKeys.Contains("oa-inbox:approve"))
+                            throw new IamAdministrationExceptionV1(403, "ACTION_FORBIDDEN");
+                    }
+
+                    var result = await DecideOnceAsync(command, ct);
+                    if (postgres && await currentActor!(ct) != command.ActualUserId)
+                        throw new IamAdministrationExceptionV1(401, "REAUTH_REQUIRED");
+                    if (transaction != null)
+                    {
+                        ct.ThrowIfCancellationRequested();
+                        committing = true;
+                        await transaction.CommitAsync(ct);
+                    }
+                    return result;
+                }
+                catch (Exception) when (!committing && transaction != null)
+                {
+                    try { await transaction.RollbackAsync(CancellationToken.None); }
+                    catch (DbException) when (postgres)
+                    { throw new IamAdministrationExceptionV1(503, "LEGACY_TASK_DECISION_OUTCOME_UNKNOWN"); }
+                    throw;
+                }
             }
-            catch (DbUpdateConcurrencyException) when (attempt < 2)
+            catch (DbUpdateConcurrencyException) when (attempt < 2 && !committing)
             {
-                if (transaction != null) await transaction.RollbackAsync(ct);
                 _db.ChangeTracker.Clear();
                 // The retry deliberately restarts at task/instance/FormData reads and repeats
                 // authorization, mask projection, patching, computation and engine action.
             }
-            catch
+            catch (Exception error) when (postgres && (committing || error is DbException or DbUpdateException))
             {
-                if (transaction != null) await transaction.RollbackAsync(ct);
-                throw;
+                throw new IamAdministrationExceptionV1(503, committing
+                    ? "LEGACY_TASK_DECISION_OUTCOME_UNKNOWN" : "AUTHORITY_FENCE_UNAVAILABLE");
+            }
+            finally
+            {
+                if (postgres) _db.ChangeTracker.Clear();
             }
         }
     }

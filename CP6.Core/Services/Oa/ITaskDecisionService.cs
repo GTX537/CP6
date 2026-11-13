@@ -16,4 +16,6 @@ public sealed record TaskDecisionResult(Guid TaskId, Guid InstanceId, int TaskSt
 public interface ITaskDecisionService
 {
     Task<TaskDecisionResult> DecideAsync(TaskDecisionCommand command, CancellationToken ct = default);
+    Task<TaskDecisionResult> DecideAsync(TaskDecisionCommand command,
+        Func<CancellationToken, Task<Guid>> currentActor, CancellationToken ct);
 }
