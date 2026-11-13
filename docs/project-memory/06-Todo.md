@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W525 PGT-021 切换余项
+
+继续权威租户目录、统一入口和源端写入排空，补普通 IAM 跨库权威、更多 Owner 原件及非空共享依赖。Stock #844 正式采用后复测同源 Published，PGT-022 和 PGT-024 按原合同。 [本任务](../development/evidence/W525-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W524 PGT-021 切换余项
 
 继续普通 IAM 跨库权威、更广原件和共享依赖、Stock #844 后的同源 Published，以及有权威目录和写入排空的 A 定向切换。PGT-022、024 按原合同。 [本任务](../development/evidence/W524-01/DELIVERY.md)

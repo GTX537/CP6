@@ -165597,6 +165597,11 @@
       "at": "2026-11-13T05:01:52.719913+00:00",
       "change": "W524 实测源隐私处置使候选关闭，独立再批准重施撤销，并验证 A 专用候选 RMA 绑定与 B 源库持续读取。正式 PostgreSQL 21 PASS / 6 NOT_RUN。",
       "evidence": "docs/development/evidence/W524-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T05:42:11.088177+00:00",
+      "change": "W525 在隔离组合候选恢复同源出库原行，实测普通角色 RMA 草稿、提交、同键回放、拒绝无写入和认证锁等待。正式 PostgreSQL 21 PASS / 6 NOT_RUN。",
+      "evidence": "docs/development/evidence/W525-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211483,10 +211488,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W524",
-      "path": "docs/development/evidence/W524-01/DELIVERY.md",
-      "baseline_sha": "ed04c669643ffd5363a64909906076f995c7703f",
-      "registered_at": "2026-11-13T04:46:52.336248+00:00",
+      "id": "W525",
+      "path": "docs/development/evidence/W525-01/DELIVERY.md",
+      "baseline_sha": "5622c04964b70c9b88a18038906f8820d4f75b0f",
+      "registered_at": "2026-11-13T05:25:10.046482+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211500,11 +211505,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续 PGT-021 的普通 IAM 跨库权威、更多业务原件及共享依赖，明确有权威目录和写入排空的单租户切换。Stock #844 正式采用后的同源 Published、PGT-022 现行路由纪元及 PGT-024 双模型分别推进。",
+      "next_action": "继续 PGT-021 的权威租户目录、统一入口和源端写入排空，补普通 IAM 跨库权威及更多共享依赖。Stock #844 正式采用后的同源 Published、PGT-022 现行路由纪元和 PGT-024 双模型按原范围验收。",
       "windows": [
         {
-          "id": "W524-01",
-          "workspace_task": "W524-01",
+          "id": "W525-01",
+          "workspace_task": "W525-01",
           "related_tasks": [
             "WP02-02"
           ],
@@ -211514,20 +211519,20 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w524-01",
-          "planned_scope_ref": "docs/development/evidence/W524-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W524-01/DELIVERY.md",
+          "branch": "codex/w525-01",
+          "planned_scope_ref": "docs/development/evidence/W525-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W525-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:development-ledger",
-            "Main:combined-candidate-privacy-and-rma-host-binding"
+            "Main:combined-candidate-rma-original-source-and-writes"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "PostgreSQL 18.6 native-04 exit 0. Source disposition advances epoch, previously valid candidate session 503, independent reapproval reapplies original tombstone and closes browser family. A-only candidate RMA 200, B source 200, B missing target binding 503. Five receipts and 116 protected native CSVs unchanged.",
-          "remaining_scope": "PGT-021 requires the current authority for ordinary cross-database IAM changes, more native originals and shared dependencies, Stock #844 current Published verification, and an authorized tenant-directed routing and write cutover. PGT-022 current route epoch and PGT-024 dual model remain open."
+          "validation_summary": "PostgreSQL 18.6 native-03 exit 0. Full original outbound header/detail, RowVersions and four v11 projections match. Candidate ordinary RMA draft/submit 201/200, exact same-key HTTP and COMMITTED native results, old source/ETag 412 and disabled write 503 with no changes. Observed ordinary writer wait at the native authentication root, B source continuity, five original receipts and 116 protected CSVs unchanged.",
+          "remaining_scope": "PGT-021 requires authority for ordinary cross-database IAM, broader native originals and nonempty shared dependencies, Stock #844 current Published verification, and tenant-directed routing and durable source write drain. PGT-022 current route epoch and PGT-024 dual model remain open."
         }
       ],
       "storage": {
@@ -261864,6 +261869,64 @@
             "remaining_scope": "PGT-021 still requires current IAM authority for candidate-local identities, broader originals and shared dependencies, eligible Stock source dispatch and tenant-directed cutover. PGT-022 authorized current route epoch and PGT-024 dual model remain open.",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/991",
             "main_remote_main_sha": "ed04c669643ffd5363a64909906076f995c7703f"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": false
+      },
+      {
+        "id": "W524",
+        "path": "docs/development/evidence/W524-01/DELIVERY.md",
+        "baseline_sha": "ed04c669643ffd5363a64909906076f995c7703f",
+        "registered_at": "2026-11-13T04:46:52.336248+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续 PGT-021 的普通 IAM 跨库权威、更多业务原件及共享依赖，明确有权威目录和写入排空的单租户切换。Stock #844 正式采用后的同源 Published、PGT-022 现行路由纪元及 PGT-024 双模型分别推进。",
+        "windows": [
+          {
+            "id": "W524-01",
+            "workspace_task": "W524-01",
+            "related_tasks": [
+              "WP02-02"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w524-01",
+            "planned_scope_ref": "docs/development/evidence/W524-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W524-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:development-ledger",
+              "Main:combined-candidate-privacy-and-rma-host-binding"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "PostgreSQL 18.6 native-04 exit 0. Source disposition advances epoch, previously valid candidate session 503, independent reapproval reapplies original tombstone and closes browser family. A-only candidate RMA 200, B source 200, B missing target binding 503. Five receipts and 116 protected native CSVs unchanged.",
+            "remaining_scope": "PGT-021 requires the current authority for ordinary cross-database IAM changes, more native originals and shared dependencies, Stock #844 current Published verification, and an authorized tenant-directed routing and write cutover. PGT-022 current route epoch and PGT-024 dual model remain open.",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/992",
+            "main_remote_main_sha": "5622c04964b70c9b88a18038906f8820d4f75b0f"
           }
         ],
         "storage": {
