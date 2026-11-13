@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+## 2026-11-13 UTC · W554 询盘资源范围撤权
+
+COORD 复用 Main DEV-1，CRM 复用已采用测试制品。实际范围撤权与 CRM 导出的两种提交顺序已验证。 [交付](evidence/W554-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W553 定时 ABC 与租户暂停
 
 COORD 复用 CP6 DEV-1。定时 ABC 与版本化暂停在隔离 PostgreSQL 通过两种顺序。其他独立写者和跨库恢复待核对。 [交付](evidence/W553-01/DELIVERY.md)

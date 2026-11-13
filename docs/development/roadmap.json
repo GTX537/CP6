@@ -165742,6 +165742,11 @@
       "at": "2026-11-13T23:24:42.185349+00:00",
       "change": "W553 Main 定时 ABC 写入接入租户暂停共同事务根。两种提交顺序和实际暂停写集通过，正式 PostgreSQL 仍 26/27。",
       "evidence": "docs/development/evidence/W553-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T23:42:51.115761+00:00",
+      "change": "W554 正式 PGT-017 补 Main 询盘范围撤权与 CRM 导出两种时序，核对独立服务令牌原生控制。正式 PostgreSQL 仍 26/27。",
+      "evidence": "docs/development/evidence/W554-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211748,10 +211753,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W553",
-      "path": "docs/development/evidence/W553-01/DELIVERY.md",
-      "baseline_sha": "366d32ae8667309e0fe409637f5d93e15420b8e0",
-      "registered_at": "2026-11-13T23:05:07.929152+00:00",
+      "id": "W554",
+      "path": "docs/development/evidence/W554-01/DELIVERY.md",
+      "baseline_sha": "19d32cf46b740d74be933ea8fc7cfa31ff07f616",
+      "registered_at": "2026-11-13T23:32:27.258002+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211765,12 +211770,13 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "核对剩余独立事务及普通数据库角色，按原提交单元推进。继续两库恢复和映射水位证明。PGT-017 按完整写者清单核销。",
+      "next_action": "按现有提交单元核对独立 Main 写者和普通数据库角色，继续两库恢复和 C02 重授联验。PGT-017 按完整覆盖核销。",
       "windows": [
         {
-          "id": "W553-01",
-          "workspace_task": "W553-01",
+          "id": "W554-01",
+          "workspace_task": "W554-01",
           "related_tasks": [
+            "WP02-02",
             "WP02-03",
             "PGT-017"
           ],
@@ -211780,21 +211786,21 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w553-01",
-          "planned_scope_ref": "docs/development/evidence/W553-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W553-01/DELIVERY.md",
+          "branch": "codex/w554-01",
+          "planned_scope_ref": "docs/development/evidence/W554-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W554-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "CP6 Core Space scheduled ABC owner",
-            "isolated Main PostgreSQL and CP6 WebApi"
+            "Main IAM inquiry resource scopes",
+            "isolated Main and CRM PostgreSQL and separate native service-token profile"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "两种 PostgreSQL 提交顺序均通过，另有 14 项空间栅栏回归和 34 项相关组件测试。Main 本地发布 310 文件与受测程序集一致，隔离宿主建库退出 0、存活 200、匿名租户管理和空间配置 401。",
-          "remaining_scope": "独立 Space Design、旧 OA 批办及自有事务、财务、采购、MRP、普通数据库角色和 Main 原生控制，两库恢复后的存储身份、水位和授权重建，当前 C02 补齐与滚动采用范围。",
-          "main_tested_source_sha": "1de58fd27de89ac38e767c50506c75c6ef6ab600"
+          "validation_summary": "两种 Main 询盘范围撤权与 CRM 导出竞争各有 Main、CRM 真实运行通过。Main 本地 16 项相关回归通过，另 1 项联验在独立进程完成。独立 service-token-v1 原生控制与签发 11 项通过。",
+          "remaining_scope": "全 Main 写者登记、独立 Space Design/OA/财务/采购/MRP/Stock 普通数据库角色，两库恢复后的存储身份和权限水位，最新 C02 替换投影与重授、滚动采用范围。",
+          "main_tested_source_sha": "dd549a28a30c0e3052645a165dcbf4f63940d433"
         }
       ],
       "storage": {
@@ -264004,6 +264010,66 @@
             "main_tested_source_sha": "048666daddc08fc5c503d990b50a8135de48eb09",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1033",
             "main_remote_main_sha": "366d32ae8667309e0fe409637f5d93e15420b8e0"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W553",
+        "path": "docs/development/evidence/W553-01/DELIVERY.md",
+        "baseline_sha": "366d32ae8667309e0fe409637f5d93e15420b8e0",
+        "registered_at": "2026-11-13T23:05:07.929152+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "核对剩余独立事务及普通数据库角色，按原提交单元推进。继续两库恢复和映射水位证明。PGT-017 按完整写者清单核销。",
+        "windows": [
+          {
+            "id": "W553-01",
+            "workspace_task": "W553-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w553-01",
+            "planned_scope_ref": "docs/development/evidence/W553-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W553-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CP6 Core Space scheduled ABC owner",
+              "isolated Main PostgreSQL and CP6 WebApi"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "两种 PostgreSQL 提交顺序均通过，另有 14 项空间栅栏回归和 34 项相关组件测试。Main 本地发布 310 文件与受测程序集一致，隔离宿主建库退出 0、存活 200、匿名租户管理和空间配置 401。",
+            "remaining_scope": "独立 Space Design、旧 OA 批办及自有事务、财务、采购、MRP、普通数据库角色和 Main 原生控制，两库恢复后的存储身份、水位和授权重建，当前 C02 补齐与滚动采用范围。",
+            "main_tested_source_sha": "1de58fd27de89ac38e767c50506c75c6ef6ab600",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1035",
+            "main_remote_main_sha": "19d32cf46b740d74be933ea8fc7cfa31ff07f616"
           }
         ],
         "storage": {
