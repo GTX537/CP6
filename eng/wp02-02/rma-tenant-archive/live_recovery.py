@@ -313,7 +313,6 @@ def keep_erp(query, tenant, bundle, metadata):
     for part in lock_order:
         lock_rows(query, erp.relation(part, erp.SCHEMA), erp.tenant_filter(tenant))
     for index, part in enumerate(erp.TABLES):
-        relation = erp.relation(part, erp.SCHEMA)
         if part in erp_delivery.TEXT_BINDINGS:
             bindings = list(erp_delivery.archived_rows(bundle / part.member, part, tenant,
                 metadata["erpIntegrationCounts"][part.name]))
