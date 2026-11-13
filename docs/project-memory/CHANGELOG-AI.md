@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W545 角色权限版本
+
+Main 提交新角色快照前先在 CRM 原 C02 锁下持久化角色最低版本，CRM 在 Owner 事务中的新效果前核对当前角色来源。 [本任务](../development/evidence/W545-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W544 服务上下文与原事务封存
 
 Main 的服务 V1/V2 附当前租户版本，CRM 三类服务 Owner 在原事务写入新效果前核对持久封存。 [本任务](../development/evidence/W544-01/DELIVERY.md)

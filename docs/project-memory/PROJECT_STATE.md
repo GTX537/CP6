@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-13 UTC · W545 Main 角色撤权与 CRM 导出
+
+已登记 CRM 在原事务核对角色最低版本。实际角色撤权与导出的两种顺序通过。正式 PostgreSQL 26/27。 [本任务](../development/evidence/W545-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W544 CRM 服务写入与租户暂停
 
 导出生成、保留匿名化和复核过期通过两库并发验收。正式 PostgreSQL 26/27。 [本任务](../development/evidence/W544-01/DELIVERY.md)

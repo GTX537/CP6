@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-13 UTC · W545 角色源版本
+
+实际 IAM 撤权与 CRM 导出通过两库联验。核对旧授权、无关角色、已提交制品、角色快照、代次、Outbox 和审计。 [本任务](../development/evidence/W545-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W544 CRM 服务授权 Owner
 
 三类服务写入已采用当前 Main 租户版本，实测六组提交顺序和两库业务写集。 [本任务](../development/evidence/W544-01/DELIVERY.md)

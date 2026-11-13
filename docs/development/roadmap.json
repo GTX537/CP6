@@ -165697,6 +165697,11 @@
       "at": "2026-11-13T20:14:04.782465+00:00",
       "change": "W544 完成 Main 暂停与 CRM 导出生成、保留匿名化、复核过期的两种提交顺序，正式 PostgreSQL 仍为 26/27。",
       "evidence": "docs/development/evidence/W544-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-13T20:48:36.662930+00:00",
+      "change": "W545 接入 Main 角色源版本栅栏，实际导出权限撤销和 CRM 写入的两种顺序通过，正式 PostgreSQL 仍为 26/27。",
+      "evidence": "docs/development/evidence/W545-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211703,10 +211708,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W544",
-      "path": "docs/development/evidence/W544-01/DELIVERY.md",
-      "baseline_sha": "8df218a5d6c14d0dee184cb4b69eb52911c87316",
-      "registered_at": "2026-11-13T19:42:10.910254+00:00",
+      "id": "W545",
+      "path": "docs/development/evidence/W545-01/DELIVERY.md",
+      "baseline_sha": "477041d69d3591db212d5769a98be869a643d7af",
+      "registered_at": "2026-11-13T20:20:58.775724+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211720,11 +211725,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "PGT-017 remains NOT_RUN. Resolve and verify the cross-store revocation paths in #1012 and the remaining Main writer transactions before formal acceptance.",
+      "next_action": "Continue the exact Main user, session and service authority paths, remaining direct writes and recovery scenarios from #1012. Keep PGT-017 NOT_RUN until full writer and accepted evidence.",
       "windows": [
         {
-          "id": "W544-01",
-          "workspace_task": "W544-01",
+          "id": "W545-01",
+          "workspace_task": "W545-01",
           "related_tasks": [
             "WP02-03",
             "PGT-017"
@@ -211735,29 +211740,29 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w544-01",
-          "planned_scope_ref": "docs/development/evidence/W544-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W544-01/DELIVERY.md",
+          "branch": "codex/w545-01",
+          "planned_scope_ref": "docs/development/evidence/W545-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W545-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main service permission TLS and tenant suspension",
-            "CRM native privacy export generation, retention and review expiry Owners",
-            "Main PostgreSQL acceptance and roadmap"
+            "Main C02 role source snapshot writer and IAM",
+            "CRM inquiry role versions and existing C02 Owner fence",
+            "Main formal PostgreSQL acceptance and roadmap"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Six paired Main and CRM PostgreSQL 18.6 cases (12 passes), three paired legacy regressions, 20 Main and 13 CRM targeted regressions, matching local publishes and HTTP smoke.",
-          "remaining_scope": "Main cross-database role, user, session, inquiry-scope and service revocation, natural expiry, raw tenant writes and two-store recovery; Main independent Space, OA, Workflow, finance, purchasing and Stock write boundaries.",
-          "main_tested_source_sha": "659ea15f3c8206199d3eaa13ea9f7221578fc608",
+          "validation_summary": "Two paired Main and CRM PostgreSQL 18.6 real IAM revocation races (4 passes), three paired pause compatibility cases, 14 Main and 8 CRM targeted checks, local publishes and HTTP smoke.",
+          "remaining_scope": "Main user, session, service-principal, department, tenant-expiry and direct-SQL authority changes, source-publication and cross-store recovery, and remaining Main independent writer transactions. More role write types require scenario coverage.",
+          "main_tested_source_sha": "a205a0fc8312f8f178d7033db6a8f5cccba61e86",
           "product_repository": "CP6.CRM",
           "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "928b6ae82743bca6d9a2228c9c1bc2c876b6c231",
-          "product_branch": "codex/w544-01",
-          "product_source_sha": "2a497ae97fe82a6cf22f28a88751f48a14c86771",
-          "product_remote_main_sha": "a26a851352dcbc665768de64cae5202764baa7f3",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/211",
+          "product_baseline": "a26a851352dcbc665768de64cae5202764baa7f3",
+          "product_branch": "codex/w545-01",
+          "product_source_sha": "91f088f58420c44eca3f5bbe36486518bab144c8",
+          "product_remote_main_sha": "4490ec11043db2fef1500db5c818f47fddd821a3",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/212",
           "product_branch_disposition": "deleted-local-and-remote",
           "product_workspace_status": "fixed-seat-detached-for-reuse",
           "product_seat_released": true
@@ -263355,6 +263360,78 @@
             "product_seat_released": true,
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1024",
             "main_remote_main_sha": "8df218a5d6c14d0dee184cb4b69eb52911c87316"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W544",
+        "path": "docs/development/evidence/W544-01/DELIVERY.md",
+        "baseline_sha": "8df218a5d6c14d0dee184cb4b69eb52911c87316",
+        "registered_at": "2026-11-13T19:42:10.910254+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "PGT-017 remains NOT_RUN. Resolve and verify the cross-store revocation paths in #1012 and the remaining Main writer transactions before formal acceptance.",
+        "windows": [
+          {
+            "id": "W544-01",
+            "workspace_task": "W544-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w544-01",
+            "planned_scope_ref": "docs/development/evidence/W544-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W544-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main service permission TLS and tenant suspension",
+              "CRM native privacy export generation, retention and review expiry Owners",
+              "Main PostgreSQL acceptance and roadmap"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Six paired Main and CRM PostgreSQL 18.6 cases (12 passes), three paired legacy regressions, 20 Main and 13 CRM targeted regressions, matching local publishes and HTTP smoke.",
+            "remaining_scope": "Main cross-database role, user, session, inquiry-scope and service revocation, natural expiry, raw tenant writes and two-store recovery; Main independent Space, OA, Workflow, finance, purchasing and Stock write boundaries.",
+            "main_tested_source_sha": "659ea15f3c8206199d3eaa13ea9f7221578fc608",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "928b6ae82743bca6d9a2228c9c1bc2c876b6c231",
+            "product_branch": "codex/w544-01",
+            "product_source_sha": "2a497ae97fe82a6cf22f28a88751f48a14c86771",
+            "product_remote_main_sha": "a26a851352dcbc665768de64cae5202764baa7f3",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/211",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1025",
+            "main_remote_main_sha": "477041d69d3591db212d5769a98be869a643d7af"
           }
         ],
         "storage": {
