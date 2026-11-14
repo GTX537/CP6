@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 · W573-01 真实 C02 broker 联验
+
+现有 PostgreSQL 跨库测试覆盖 Main 普通 C02 dispatcher、真实 broker 和 CRM native HTTP Inbox，保留封存拒写、明确两版原始消息和原业务回读。 [交付记录](../development/evidence/W573-01/DELIVERY.md)
+
 ## 2026-11-14 · W572-01 已修复旧 OA 单笔转交
 
 转交入口接入已有 Main IAM 事务根并在锁内重验权限。两个 PostgreSQL 并发顺序与已有批量和审批服务用例通过，同一受测 WebApi 程序集通过本地发布冒烟。 [交付记录](../development/evidence/W572-01/DELIVERY.md)

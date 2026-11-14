@@ -11,11 +11,12 @@ namespace CP6.Tests.Platform;
 public sealed partial class IamUserAssignmentsPostgreSqlTests
 {
     private static async Task ExerciseCrmExportScopeRevocation(AuthenticationApiProcess host, Harness h,
-        InquirySiteFormScopeV1 target, string bridge, Task childExited, bool regrant)
+        InquirySiteFormScopeV1 target, string bridge, Task childExited, bool regrant, CrmIdentityRuntime runtime)
     {
         const string path = "api/iam/inquiry-scopes/71";
         const string aggregate = "permission:role:71";
         var cookies = await Login(host, h);
+        var broker = regrant && Environment.GetEnvironmentVariable("CP6_PGT017_C02_KAFKA") == "1";
         using var read = await host.Send(Request(HttpMethod.Get, path, cookies));
         Assert.True(read.StatusCode == HttpStatusCode.OK, await read.Content.ReadAsStringAsync());
         var editor = (await read.Content.ReadFromJsonAsync<IamInquiryScopeEditorV1>())!;
@@ -109,10 +110,15 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Assert.True(replay.StatusCode == HttpStatusCode.OK, await replay.Content.ReadAsStringAsync());
         Assert.Equal(receipt, await replay.Content.ReadFromJsonAsync<IamOperationV1>());
         Assert.Equal(after, await State());
-        if (regrant) await SendPublication("revoked", after.Version);
+        if (regrant && !broker) await SendPublication("revoked", after.Version);
         await File.WriteAllTextAsync(Path.Combine(bridge, "paused"), "PASS");
         if (regrant)
         {
+            if (broker)
+            {
+                await Stage("sealed-write-denied");
+                await SendPublication("revoked", after.Version);
+            }
             await Stage("revocation-published");
             using var currentResponse = await host.Send(Request(HttpMethod.Get, path, cookies));
             Assert.True(currentResponse.StatusCode == HttpStatusCode.OK, await currentResponse.Content.ReadAsStringAsync());
@@ -150,6 +156,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
 
         async Task SendPublication(string stage, int version)
         {
+            if (broker)
+                await DispatchC02ScopeThroughBroker(h, runtime, aggregate, version);
             var envelope = await h.Db.Database.SqlQuery<byte[]>($"""
                 SELECT "Payload" AS "Value" FROM crm_identity."Cp6_OutboxMessage"
                 WHERE "TenantId"={h.Tenant} AND "AggregateId"={aggregate} AND "AggregateVersion"={version}
