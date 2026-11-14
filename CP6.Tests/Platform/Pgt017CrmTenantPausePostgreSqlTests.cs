@@ -44,6 +44,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var command = new TenantManagementCommandV1(operation, current.Revision, shortenDeadline ? "update" : "suspend", configuration);
 
         Task<HttpResponseMessage> pause;
+        if (Environment.GetEnvironmentVariable("CP6_PGT017_WORKER") == "artifact-expiry")
+            await WaitStage("artifact-awaiting-deadline");
         await WaitStage("ready");
         if ((publicSubmission || waitForCompletePause) && pauseFirst)
         {
@@ -168,7 +170,9 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
 
         async Task WaitStage(string stage)
         {
-            var wait = WaitConfigurationBridge(bridge, stage);
+            var wait = WaitConfigurationBridge(bridge, stage,
+                stage == "ready" && Environment.GetEnvironmentVariable("CP6_PGT017_WORKER") == "artifact-expiry"
+                    ? TimeSpan.FromMinutes(6) : null);
             if (childExited is not null && await Task.WhenAny(wait, childExited) == childExited && !wait.IsCompleted)
             {
                 // The child can exit after writing the final marker but before the poll observes it.

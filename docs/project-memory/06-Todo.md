@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 UTC · W563 PGT-017 余项
+
+Main 其余普通及独立事务写者、两库恢复对账、真实传输与旧宿主排空。 [交付](../development/evidence/W563-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W562 PGT-017 余项
 
 采购送审、采购收货和其他采购写者、旧 OA、财务、独立 Space Design、Stock 普通身份、两库恢复及运输待验。 [交付](../development/evidence/W562-01/DELIVERY.md)

@@ -41,8 +41,9 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     public Task PGT017_worker_and_Main_pause_commit()
     {
         var worker = Environment.GetEnvironmentVariable("CP6_PGT017_WORKER");
-        Assert.Contains(worker, new[] { "export", "retention", "review" });
-        return ServiceContextHttp(worker != "export", privacy: worker == "export", tenantPause: true);
+        Assert.Contains(worker, new[] { "export", "artifact-expiry", "retention", "review" });
+        var privacy = worker is "export" or "artifact-expiry";
+        return ServiceContextHttp(!privacy, privacy: privacy, tenantPause: true);
     }
 
     [Pgt017MainFact]
@@ -164,7 +165,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             start.Environment["CP6_MAIN_SERVICE_BRIDGE"]=bridge;
             if (regrantInquiryScope) start.Environment["CP6_PGT017_SCOPE_REGRANT"] = "1";
             using var child=Process.Start(start)!;var stdout=child.StandardOutput.ReadToEndAsync();var stderr=child.StandardError.ReadToEndAsync();
-            using var timeout=new CancellationTokenSource(TimeSpan.FromMinutes(4));
+            var elapsedArtifact = Environment.GetEnvironmentVariable("CP6_PGT017_WORKER") == "artifact-expiry";
+            using var timeout=new CancellationTokenSource(TimeSpan.FromMinutes(elapsedArtifact ? 9 : 4));
             string log;
             try
             {

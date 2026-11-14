@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 UTC · W563 CRM 制品自然到期实测
+
+两仓联验增加原导出制品和凭证过期，核对原回执、原询盘、审计及 Outbox。 [交付](../development/evidence/W563-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W562 采购建单当前权限
 
 采购申请和订单的直接建单与订单取消取得 Main 共同根并持至提交。 [交付](../development/evidence/W562-01/DELIVERY.md)
