@@ -2,6 +2,10 @@
 
 ## 2026-11-14 · PGT-017 剩余范围
 
+正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 采购送审、采购确认收货及采购检收已有定向证据。剩余范围包括Main 旧 OA 其余写者、财务、独立 Space Design、原生数据库角色，以及两库未知结果恢复、重开对账、已登记宿主传输和旧实例排空。 [交付记录](../development/evidence/W567-01/DELIVERY.md)
+
+## 2026-11-14 · PGT-017 剩余范围
+
 正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 采购检查结果与采购送审已有定向证据。剩余范围包括采购确认收货的 WMS 自有事务和采购累计、旧 OA 其余写者、财务、独立 Space Design、原生数据库角色，以及两库未知结果恢复、重开对账、已登记宿主传输和旧实例排空。 [交付记录](../development/evidence/W566-01/DELIVERY.md)
 
 ## PGT-017 · 当前剩余范围

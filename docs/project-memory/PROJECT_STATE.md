@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 · W567-01 采购确认收货
+
+现行采购确认收货将采购单、PO 收货累计、WMS 入库、库存流水和编号放在同一 PostgreSQL 授权事务。网页可按原操作键恢复结果。 正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 剩余范围包括Main 旧 OA 其余写者、财务、独立 Space Design、原生数据库角色，以及两库未知结果恢复、重开对账、已登记宿主传输和旧实例排空。 [交付记录](../development/evidence/W567-01/DELIVERY.md)
+
 ## 2026-11-14 · W566-01 采购送审
 
 采购申请与采购订单送审采用 Main 当前授权事务。工作流启动所遇同步 WebAPI 节点在该事务中保存作业，由 worker 在提交后执行。最终 8 项真实 PostgreSQL 验证通过。 正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 剩余范围包括采购确认收货的 WMS 自有事务和采购累计、旧 OA 其余写者、财务、独立 Space Design、原生数据库角色，以及两库未知结果恢复、重开对账、已登记宿主传输和旧实例排空。 [交付记录](../development/evidence/W566-01/DELIVERY.md)
