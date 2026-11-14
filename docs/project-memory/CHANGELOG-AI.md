@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 · W574-01 未取得尾段 WAL 的拒写证据
+
+保留原恢复点，用源库离线下的新隔离实例验证业务 503 和受限发布者绑定拒绝。实测 1 项通过。 [交付记录](../development/evidence/W574-01/DELIVERY.md)
+
 ## 2026-11-14 · W573-01 真实 C02 broker 联验
 
 现有 PostgreSQL 跨库测试覆盖 Main 普通 C02 dispatcher、真实 broker 和 CRM native HTTP Inbox，保留封存拒写、明确两版原始消息和原业务回读。 [交付记录](../development/evidence/W573-01/DELIVERY.md)

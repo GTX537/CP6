@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-14 · W574-01 不完整恢复负向验收
+
+实测旧恢复点的身份版本、原回执和消息字节相符，业务及发送写集不完整。实际 CRM 写权限与数据库发布绑定继续关闭。 [交付记录](../development/evidence/W574-01/DELIVERY.md)
+
 ## 2026-11-14 · W573-01 C02 撤权及重授已实测投递
 
 Main 原 Outbox 经 Dapr/Kafka 到 CRM C02 Inbox，撤权和重授版本 6、7 的原始字节与独立 offset 读回一致，封存拒写和原导出只完成一次。 [交付记录](../development/evidence/W573-01/DELIVERY.md)
