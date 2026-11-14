@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 · W582-01 PGT-017 余项
+
+验证尾 WAL 缺失后的差量写集与安全重开、正式切换，继续收齐旧 OA 触发器、财务与独立 Space Design 等写者。 [交付记录](../development/evidence/W582-01/DELIVERY.md)
+
 ## 2026-11-14 · W581-01 PGT-017 余项
 
 继续旧 OA 触发器、财务、独立 Space Design 与其余写者。CRM 继续实际目录投影、C02 和两库事务组合，以及缺失写集恢复后安全重开。 [交付记录](../development/evidence/W581-01/DELIVERY.md)
