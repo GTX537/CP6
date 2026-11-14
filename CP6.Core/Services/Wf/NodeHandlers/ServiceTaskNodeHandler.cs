@@ -49,6 +49,7 @@ internal sealed class ServiceTaskNodeHandler : INodeHandler
         var mode = (kind == ServiceKind.Timer)
             ? ServiceMode.Async
             : (node.ServiceMode ?? (kind == ServiceKind.WebApi ? ServiceMode.Async : ServiceMode.Sync));
+        var deferExternalCall = mode == ServiceMode.Sync && kind == ServiceKind.WebApi && ctx.Engine.DeferExternalStart;
 
         int maxAttempts = (node.ServiceMaxRetries ?? DefaultMaxRetries) + 1;   // P0-1：消 off-by-one
         int backoffSec = node.ServiceRetryBackoffSec ?? DefaultBackoffSec;
@@ -58,7 +59,7 @@ internal sealed class ServiceTaskNodeHandler : INodeHandler
         var key = ServiceTaskActionRef.ResolveExecutorKey(actionRef);
         var nowUtc = DateTime.UtcNow;
 
-        if (mode == ServiceMode.Sync)
+        if (mode == ServiceMode.Sync && !deferExternalCall)
         {
             // ── sync：内联乐观一击（快/原子），失败降级异步重试 ──
             ServiceTaskResult result;
@@ -110,7 +111,7 @@ internal sealed class ServiceTaskNodeHandler : INodeHandler
         var dueAtUtc = (kind == ServiceKind.Timer)
             ? await ComputeTimerDueUtcAsync(node, inst.VarsJson, ct: default)
             : nowUtc;
-        EnqueueServiceJob(ctx, node, token, kind, actionRefJson,
+        EnqueueServiceJob(ctx, node, token, deferExternalCall ? WfJobKind.DeferredWebApiStart : kind, actionRefJson,
             dueAtUtc: dueAtUtc, attemptCount: 0, maxAttempts: maxAttempts,
             nextAttemptAtUtc: dueAtUtc);
     }

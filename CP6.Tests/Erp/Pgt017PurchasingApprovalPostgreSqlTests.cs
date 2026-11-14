@@ -20,34 +20,13 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await using var h = await Seed();
         await SeedFenceAdministrator(h);
         var db = h.Db;
-        var resource = $"pur-{document}";
-        if (!await db.Sys_Menus.AnyAsync(row => row.MenuKey == resource))
-        {
-            db.Sys_Menus.Add(new() { MenuId = document == "pr" ? 32746 : 32747, MenuKey = resource, MenuName = resource });
-            await db.SaveChangesAsync();
-        }
-        await GrantLegacyAuthorityAction(h, resource, "submit");
         var request = document == "pr";
-        var number = document.ToUpperInvariant() + h.Tenant.ToString("N")[..12];
-        var flow = "purchasing-" + h.Tenant.ToString("N");
-        var bizType = request ? "PUR_PR" : "PUR_PO";
         var schema = """
             {"start":"start","nodes":[{"id":"start","type":"start"},{"id":"approve","type":"approval",
             "approverStrategy":"Specified","approverUserId":"__WRITER__"},{"id":"end","type":"end"}],
             "edges":[{"from":"start","to":"approve"},{"from":"approve","to":"end"}]}
             """.Replace("__WRITER__", h.User.ToString("D"), StringComparison.Ordinal);
-        var definition = await LegacyDefinitionFixture.Flow(db, flow, "Simulated purchase approval", null, schema);
-        db.Wf_ApprovalBindings.Add(new() { BizType = bizType, FlowKey = flow, Enable = true });
-        if (request)
-            db.PurchaseRequests.Add(new()
-            {
-                PrNo = number, RequestDate = DateTime.Today, RequesterId = "price-owner", Creator = "price-owner",
-                Lines = [new() { PrNo = number, LineNo = 1, ItemId = "part", Qty = 3.12345678m, EstPrice = 12.1234m }]
-            });
-        else
-            db.PurchaseOrders.Add(new() { PoNo = number, SupplierId = "supplier", OrderDate = DateTime.Today });
-        await db.SaveChangesAsync();
-        db.ChangeTracker.Clear();
+        var (number, bizType, definition) = await SeedPurchaseApproval(h, document, schema);
 
         var connection = db.Database.GetConnectionString()!;
         await using var host = await AuthenticationApiProcess.Start(connection,
@@ -142,5 +121,77 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
                 await db.Wf_FlowHistories.CountAsync(row => instances.Contains(row.InstanceId)),
                 await db.Wf_Notifications.CountAsync(row => row.InstanceId != null && instances.Contains(row.InstanceId.Value)));
         }
+    }
+
+    [TenantManagementPostgresTheory]
+    [InlineData("pr")]
+    [InlineData("po")]
+    public async Task PGT017_purchase_approval_preserves_immediate_callback_result(string document)
+    {
+        await using var h = await Seed();
+        var db = h.Db;
+        var (number, bizType, _) = await SeedPurchaseApproval(h, document, """
+            {"start":"start","nodes":[{"id":"start","type":"start"},{"id":"end","type":"end"}],
+             "edges":[{"from":"start","to":"end"}]}
+            """);
+        await using var host = await AuthenticationApiProcess.Start(db.Database.GetConnectionString()!,
+            IamUserAssignmentsPostgreSqlTests.IdentityEnvironment(h.Tenant));
+        var writer = await Login(host, h);
+        using var response = await host.Send(OperationsRequest(writer, HttpMethod.Post,
+            $"api/pur/{document}/{number}/submit"));
+        Assert.True(response.StatusCode == HttpStatusCode.OK, await OperationsFailure(response));
+        var instance = await db.Wf_FlowInstances.AsNoTracking().SingleAsync(row => row.BizId == number);
+        Assert.Equal(bizType, instance.BizType);
+        Assert.Equal(h.User, instance.StarterId);
+        Assert.Equal(FlowInstanceStatus.Approved, instance.Status);
+        if (document == "pr")
+        {
+            var pr = await db.PurchaseRequests.AsNoTracking().SingleAsync(row => row.PrNo == number);
+            Assert.Equal((PrStatus.Approved, instance.Id.ToString()), (pr.Status, pr.ApprovalRef));
+        }
+        else
+        {
+            var po = await db.PurchaseOrders.AsNoTracking().SingleAsync(row => row.PoNo == number);
+            Assert.Equal((PoStatus.Confirmed, instance.Id.ToString()), (po.Status, po.ApprovalRef));
+        }
+        Assert.Equal(1, await db.Wf_Notifications.CountAsync(row => row.InstanceId == instance.Id));
+        Assert.False(await db.Wf_ServiceJobs.AnyAsync(row => row.InstanceId == instance.Id));
+    }
+
+    private static async Task<(string Number, string BizType, Guid Definition)> SeedPurchaseApproval(
+        Harness h, string document, string schema)
+    {
+        var db = h.Db;
+        var request = document == "pr";
+        var resource = $"pur-{document}";
+        if (!await db.Sys_Menus.AnyAsync(row => row.MenuKey == resource))
+        {
+            db.Sys_Menus.Add(new() { MenuId = request ? 32746 : 32747, MenuKey = resource, MenuName = resource });
+            await db.SaveChangesAsync();
+        }
+        await GrantLegacyAuthorityAction(h, resource, "submit");
+        var number = document.ToUpperInvariant() + h.Tenant.ToString("N")[..12];
+        var flow = "purchasing-" + h.Tenant.ToString("N");
+        var bizType = request ? "PUR_PR" : "PUR_PO";
+        var definition = await LegacyDefinitionFixture.Flow(db, flow, "Simulated purchase approval", null, schema);
+        db.Wf_ApprovalBindings.Add(new() { BizType = bizType, FlowKey = flow, Enable = true });
+        if (request)
+        {
+            db.PurchaseRequests.Add(new()
+            {
+                PrNo = number, RequestDate = DateTime.Today, RequesterId = "price-owner", Creator = "price-owner",
+                Lines = [new() { PrNo = number, LineNo = 1, ItemId = "part", Qty = 3.12345678m, EstPrice = 12.1234m }]
+            });
+        }
+        else
+        {
+            db.PurchaseOrders.Add(new()
+            {
+                PoNo = number, SupplierId = "supplier", OrderDate = DateTime.Today, GrossAmount = 12.1234m
+            });
+        }
+        await db.SaveChangesAsync();
+        db.ChangeTracker.Clear();
+        return (number, bizType, definition);
     }
 }

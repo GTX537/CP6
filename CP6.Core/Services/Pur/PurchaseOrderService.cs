@@ -145,26 +145,45 @@ public class PurchaseOrderService : IPurchaseOrderService
     }
 
     /// <inheritdoc />
-    public async Task<PurchaseOrder> SubmitForApprovalAsync(string poNo, string? userName)
+    public async Task<PurchaseOrder> SubmitForApprovalAsync(string poNo, string? userName, Guid actorId = default,
+        CancellationToken ct = default)
     {
-        var po = await _db.PurchaseOrders.FirstOrDefaultAsync(p => p.PoNo == poNo && !p.IsDeleted)
+        var po = await _db.PurchaseOrders.FirstOrDefaultAsync(p => p.PoNo == poNo && !p.IsDeleted, ct)
                  ?? throw new InvalidOperationException("E-PUR-027"); // PO 不存在
         if (po.Status != PoStatus.Draft) throw new InvalidOperationException("E-PUR-028"); // 仅草稿可送审
 
+        Guid? instanceId = null;
+        if (_db.Database.IsNpgsql())
+        {
+            // An immediately finished workflow can call back before SubmitAsync returns.
+            instanceId = Guid.NewGuid();
+            po.ApprovalRef = instanceId.ToString();
+            po.Status = PoStatus.PendingApproval;
+            po.Modifier = userName;
+            po.ModifyDate = DateTime.Now;
+        }
         var result = await _approval.SubmitAsync(new ApprovalSubmitRequest
         {
             BizType = ApprovalBizType,
             BizKey = po.PoNo,
+            ActorId = actorId,
+            InstanceId = instanceId,
             Amount = po.GrossAmount,
             Submitter = userName,
         });
 
+        if (instanceId != null && !result.AutoApproved &&
+            !string.Equals(result.ApprovalRef, instanceId.ToString(), StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException("E-PUR-060");
         po.ApprovalRef = result.ApprovalRef;
-        // 桩即时通过 → 直接确认；真实流程未即时通过则置送审中，待回调确认
-        po.Status = result.AutoApproved ? PoStatus.Confirmed : PoStatus.PendingApproval;
-        po.Modifier = userName;
-        po.ModifyDate = DateTime.Now;
-        await _db.SaveChangesAsync();
+        if (result.AutoApproved) po.Status = PoStatus.Confirmed;
+        if (instanceId == null)
+        {
+            if (!result.AutoApproved) po.Status = PoStatus.PendingApproval;
+            po.Modifier = userName;
+            po.ModifyDate = DateTime.Now;
+        }
+        await _db.SaveChangesAsync(ct);
         return po;
     }
 

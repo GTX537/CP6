@@ -84,6 +84,7 @@ public static class WfTriggerType
 public static class WfJobKind
 {
     public const string SubFlowResume = "subFlowResume";
+    internal const string DeferredWebApiStart = "deferredWebApiStart";
 }
 
 /// <summary>子流程完成策略（spec §2.1 SubCompletionPolicy 值域）。</summary>

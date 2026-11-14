@@ -12,6 +12,21 @@ public static class IamAdministrationHttpV1
     public static Task<Guid> CurrentActor(HttpContext context,CancellationToken ct)
         => CurrentActor(context,context.RequestServices,ct);
 
+    internal static Task<T> ExecuteWriteAsync<T>(HttpContext context, IamAdministrationV1 authority,
+        string permission, Func<UserPermissionContext, CancellationToken, Task<T>> write)
+    {
+        return authority.ExecuteCurrentAsync(permission, Actor, async (current, ct) =>
+        {
+            var result = await write(current, ct);
+            if (await Actor(ct) != current.UserId)
+                throw new IamAdministrationExceptionV1(401, "REAUTH_REQUIRED");
+            return result;
+        }, context.RequestAborted);
+
+        Task<Guid> Actor(CancellationToken ct) =>
+            CurrentActor(context, context.RequestServices, ct, allowImpersonation: true);
+    }
+
     // Independent Owners supply their own DI scope so authentication reads use the same
     // fresh context and transaction as the business decision, including the final recheck.
     internal static async Task<Guid> CurrentActor(HttpContext context,IServiceProvider services,CancellationToken ct,
