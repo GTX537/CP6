@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+## 2026-11-14 UTC · W563 CRM 到期清除联验
+
+COORD 复用 Main DEV-1 和 CRM DEV-2，验证制品自然到期与 Main 暂停。 [交付](evidence/W563-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W562 采购直接写入口
 
 COORD 使用 Main DEV-1，在采购申请建单、订单建单及取消使用既有 Core 授权事务。 [交付](evidence/W562-01/DELIVERY.md)
