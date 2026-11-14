@@ -1,6 +1,12 @@
+using System.Data;
+using System.Data.Common;
+using CP6.Core.EFDbContext;
 using CP6.Core.Services.Integration;
+using CP6.Core.Services.Sys;
+using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Controllers.Integration;
 
@@ -14,18 +20,49 @@ namespace CP6.WebApi.Controllers.Integration;
 public class WfTriggerEchoController : ControllerBase
 {
     private readonly IWfTriggerBridgeHook _hook;
+    private readonly CP6Context _db;
 
-    public WfTriggerEchoController(IWfTriggerBridgeHook hook) { _hook = hook; }
+    public WfTriggerEchoController(IWfTriggerBridgeHook hook, CP6Context db) { _hook = hook; _db = db; }
 
     [HttpPost("fire")]
-    public async Task<IActionResult> Fire([FromBody] EchoEventReq r)
+    public async Task<IActionResult> Fire([FromBody] EchoEventReq r, CancellationToken ct)
     {
-        var result = await _hook.OnEventAsync(
-            string.IsNullOrWhiteSpace(r.EventKey) ? "QA|OnEchoAsync" : r.EventKey,
-            string.IsNullOrWhiteSpace(r.EventId) ? Guid.NewGuid().ToString("N") : r.EventId,
-            r.PayloadJson ?? "{}",
-            User.Identity?.Name);
-        return Ok(new { code = 0, message = "OK", data = new { result.Success, result.MatchedCount, result.FiredCount, result.Message } });
+        var eventKey = string.IsNullOrWhiteSpace(r.EventKey) ? "QA|OnEchoAsync" : r.EventKey;
+        var eventId = string.IsNullOrWhiteSpace(r.EventId) ? Guid.NewGuid().ToString("N") : r.EventId;
+        if (!_db.Database.IsNpgsql()) return Result(await FireAsync());
+
+        var commitAttempted = false;
+        try
+        {
+            await using var tx = await _db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
+            await AuthenticationCompletionGateV1.AcquireAsync(_db, ct);
+            var actor = await CurrentActorAsync();
+            var result = await FireAsync();
+            if (await CurrentActorAsync() != actor)
+                throw new IamAdministrationExceptionV1(401, "REAUTH_REQUIRED");
+            ct.ThrowIfCancellationRequested();
+            commitAttempted = true;
+            await tx.CommitAsync(ct);
+            return Result(result);
+        }
+        catch (IamAdministrationExceptionV1 error)
+        {
+            return StatusCode(error.Status, new { code = error.Status, message = error.Message });
+        }
+        catch (Exception error) when (commitAttempted && error is (DbException or TimeoutException or OperationCanceledException))
+        {
+            return StatusCode(503, new { code = 503, message = "AUTHORITY_COMMIT_UNKNOWN" });
+        }
+        catch (Exception error) when (error is DbException or DbUpdateException or CurrentPermissionUnavailableException)
+        {
+            return StatusCode(503, new { code = 503, message = "AUTHORITY_FENCE_UNAVAILABLE" });
+        }
+
+        Task<Guid> CurrentActorAsync() => IamAdministrationHttpV1.CurrentActor(HttpContext,
+            HttpContext.RequestServices, ct, allowImpersonation: true);
+        Task<WfTriggerBridgeResult> FireAsync() => _hook.OnEventAsync(eventKey, eventId, r.PayloadJson ?? "{}", User.Identity?.Name, ct);
+        IActionResult Result(WfTriggerBridgeResult result) =>
+            Ok(new { code = 0, message = "OK", data = new { result.Success, result.MatchedCount, result.FiredCount, result.Message } });
     }
 
     public record EchoEventReq(string? EventKey, string? EventId, string? PayloadJson);

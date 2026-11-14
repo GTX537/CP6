@@ -4,13 +4,15 @@ namespace CP6.Core.Services.Integration;
 /// <summary>WF 触发器桥接 hook（BridgeHook 家族成员，D4）。业务模块发事件＝一行调用 OnEventAsync。</summary>
 public interface IWfTriggerBridgeHook
 {
-    /// <summary>业务调用入口：匹配 eventKey 的启用触发器逐条发起 + 写 IntegrationEvents 台账（失败行由 RetryWorker 重放）。</summary>
+    /// <summary>匹配启用的触发器并登记原事件。PostgreSQL 调用方持当前租户权限事务。</summary>
     /// <param name="eventKey">"{SourceModule}|{HookName}"，如 "WMS|OnShipmentConfirmedAsync"</param>
     /// <param name="eventId">业务事件唯一标识（必填，幂等键素材 "{eventId}:{TriggerId}"，spec §2.2）</param>
-    Task<WfTriggerBridgeResult> OnEventAsync(string eventKey, string eventId, string payloadJson, string? userName);
+    Task<WfTriggerBridgeResult> OnEventAsync(string eventKey, string eventId, string payloadJson, string? userName,
+        CancellationToken ct = default);
 
     /// <summary>dispatcher 重放入口：同一执行逻辑但不再写新 outbox 行（防重放行自增殖，映射表⑦）；去重靠 TriggerFire 幂等闸。</summary>
-    Task<WfTriggerBridgeResult> ReplayEventAsync(string eventKey, string eventId, string payloadJson, string? userName);
+    Task<WfTriggerBridgeResult> ReplayEventAsync(string eventKey, string eventId, string payloadJson, string? userName,
+        CancellationToken ct = default);
 }
 
 /// <summary>outbox 负载契约（PersistEventAsync 序列化 / dispatcher 反序列化，重放原样复用 eventId）。</summary>
@@ -33,8 +35,10 @@ public class WfTriggerBridgeResult
 
 public class NoOpWfTriggerBridgeHook : IWfTriggerBridgeHook
 {
-    public Task<WfTriggerBridgeResult> OnEventAsync(string eventKey, string eventId, string payloadJson, string? userName)
+    public Task<WfTriggerBridgeResult> OnEventAsync(string eventKey, string eventId, string payloadJson, string? userName,
+        CancellationToken ct = default)
         => Task.FromResult(WfTriggerBridgeResult.Skipped("WfTriggerBridge:Enabled=false"));
-    public Task<WfTriggerBridgeResult> ReplayEventAsync(string eventKey, string eventId, string payloadJson, string? userName)
+    public Task<WfTriggerBridgeResult> ReplayEventAsync(string eventKey, string eventId, string payloadJson, string? userName,
+        CancellationToken ct = default)
         => Task.FromResult(WfTriggerBridgeResult.Skipped("WfTriggerBridge:Enabled=false"));
 }

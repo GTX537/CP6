@@ -1,9 +1,12 @@
 using System.Diagnostics;
+using System.Data;
 using CP6.Core.EFDbContext;
 using CP6.Core.Options;
 using CP6.Core.Services;
 using CP6.Core.Services.Common;
+using CP6.Core.Services.Integration;
 using CP6.Core.Services.Space.Observability;
+using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -125,6 +128,13 @@ public class IntegrationEventRetryWorker : BackgroundService
 
         foreach (var evt in due)
         {
+            if (db.Database.IsNpgsql() && IntegrationEventDispatcher.IsWfTriggerEvent(evt))
+            {
+                // Keep workflow saves and savepoint recovery away from other tracked retries.
+                await ProcessWorkflowEventAsync(tenantId, evt.Id, now, ct);
+                continue;
+            }
+
             if (string.Equals(
                     evt.SourceModule,
                     SpaceSourceModule,
@@ -156,6 +166,55 @@ public class IntegrationEventRetryWorker : BackgroundService
             tenantId,
             ct);
         await db.SaveChangesAsync(ct);
+    }
+
+    private async Task ProcessWorkflowEventAsync(Guid tenantId, Guid eventId, DateTime now, CancellationToken ct)
+    {
+        using var scope = _scopeFactory.CreateScope();
+        var sp = scope.ServiceProvider;
+        sp.GetRequiredService<ITenantContext>().CurrentTenantId = tenantId;
+        var db = sp.GetRequiredService<CP6Context>();
+        await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
+        await AuthenticationCompletionGateV1.AcquireAsync(db, ct);
+        var tenant = await db.Sys_Tenants.AsNoTracking().Where(t => t.Id == tenantId)
+            .Select(t => new { t.Enable, t.ExpireDate }).SingleOrDefaultAsync(ct);
+        if (tenant is not { Enable: true } || tenant.ExpireDate <= DateTime.Now) return;
+
+        var evt = await db.IntegrationEvents.SingleOrDefaultAsync(e => e.Id == eventId
+            && e.Status == IntegrationEventStatus.Failed && e.NextRetryAt <= now
+            && e.Attempts < _opts.MaxAttempts, ct);
+        if (evt == null) return;
+        var dispatcher = sp.GetRequiredService<IIntegrationEventDispatcher>();
+        bool succeeded;
+        const string dispatch = "wf_retry_dispatch";
+        await tx.CreateSavepointAsync(dispatch, ct);
+        try
+        {
+            succeeded = await dispatcher.DispatchAsync(evt, ct);
+        }
+        catch (Exception error) when (error is not OperationCanceledException)
+        {
+            // Preserve the attempt backoff, while undoing any uncommitted flow changes.
+            await tx.RollbackToSavepointAsync(dispatch, ct);
+            db.ChangeTracker.Clear();
+            db.Attach(evt);
+            evt.LastError = error.ToString();
+            succeeded = false;
+        }
+        await tx.ReleaseSavepointAsync(dispatch, ct);
+
+        // The flow's business-failure savepoint may clear the tracker.
+        if (db.Entry(evt).State == EntityState.Detached) db.Attach(evt);
+        evt.Attempts++;
+        var dead = !succeeded && evt.Attempts >= _opts.MaxAttempts;
+        evt.Status = succeeded ? IntegrationEventStatus.Success
+            : dead ? IntegrationEventStatus.DeadLetter : IntegrationEventStatus.Failed;
+        evt.NextRetryAt = succeeded || dead ? null : now.AddSeconds(_opts.GetBackoffSeconds(evt.Attempts));
+        await db.SaveChangesAsync(ct);
+        if (tenant.ExpireDate <= DateTime.Now) return;
+        await tx.CommitAsync(ct);
+        if (dead)
+            await sp.GetRequiredService<IDeadLetterNotifier>().NotifyAsync(evt, ct);
     }
 
     private async Task ProcessNonSpaceEventAsync(

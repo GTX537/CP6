@@ -18,9 +18,11 @@ public class WfTriggerDispatchTests
         public string? LastMethod, LastEventKey, LastEventId, LastPayload, LastUser;
         public bool NextSuccess = true;
 
-        public Task<WfTriggerBridgeResult> OnEventAsync(string eventKey, string eventId, string payloadJson, string? userName)
+        public Task<WfTriggerBridgeResult> OnEventAsync(string eventKey, string eventId, string payloadJson, string? userName,
+            CancellationToken ct = default)
             => Record("OnEventAsync", eventKey, eventId, payloadJson, userName);
-        public Task<WfTriggerBridgeResult> ReplayEventAsync(string eventKey, string eventId, string payloadJson, string? userName)
+        public Task<WfTriggerBridgeResult> ReplayEventAsync(string eventKey, string eventId, string payloadJson, string? userName,
+            CancellationToken ct = default)
             => Record("ReplayEventAsync", eventKey, eventId, payloadJson, userName);
 
         private Task<WfTriggerBridgeResult> Record(string method, string k, string id, string p, string? u)

@@ -25,8 +25,7 @@ public class TriggerFireResult
 
 public interface IFlowTriggerService
 {
-    /// <summary>统一发起（D2，spec §3.1）：Enabled 检查 → 幂等闸（撞键幂等返回既有 InstanceId 不报错）
-    /// → 运行时双检 E-WF-022/023 → 变量构造由调用方完成 → SubmitAsync(trigger.StarterUserId) → 写流水 → 更新水位。</summary>
+    /// <summary>统一发起。PostgreSQL 事件触发加入调用方的当前权限事务。</summary>
     Task<TriggerFireResult> FireAsync(Wf_FlowTrigger trigger, string? varsJson,
                                       int source, string idempotencyKey, CancellationToken ct);
 
@@ -58,16 +57,17 @@ public class FlowTriggerService : IFlowTriggerService
 
     public Task<TriggerFireResult> FireAsync(Wf_FlowTrigger trigger, string? varsJson,
                                                    int source, string idempotencyKey, CancellationToken ct)
-        => FireCoreAsync(trigger, varsJson, source, idempotencyKey, null, ct);
+        => FireCoreAsync(trigger, varsJson, source, idempotencyKey, CurrentTriggerAuthority(), ct);
 
     public Task<TriggerFireResult> FireManualAsync(Wf_FlowTrigger trigger, string? varsJson, CancellationToken ct)
     {
-        var authorityTransaction = _db.Database.IsNpgsql()
-            ? _db.Database.CurrentTransaction ?? throw new CurrentPermissionUnavailableException()
-            : null;
         return FireCoreAsync(trigger, varsJson, trigger.TriggerType, $"{ManualKeyPrefix}{Guid.NewGuid():N}",
-            authorityTransaction, ct);
+            CurrentTriggerAuthority(), ct);
     }
+
+    private IDbContextTransaction? CurrentTriggerAuthority() => _db.Database.IsNpgsql()
+        ? _db.Database.CurrentTransaction ?? throw new CurrentPermissionUnavailableException()
+        : null;
 
     public async Task<TriggerFireResult> FireMessageAsync(Wf_FlowTrigger trigger, string? rawKey, string idempotencyKey,
         string bodyJson, CancellationToken ct)
