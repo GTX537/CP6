@@ -165767,6 +165767,11 @@
       "at": "2026-11-14T01:18:12.397198+00:00",
       "change": "W558 现行 MRP 运算与计划订单动作复用 Main 当前授权事务，实测两序和第三次保存回滚。正式 PostgreSQL 26/27。",
       "evidence": "docs/development/evidence/W558-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T01:33:52.247493+00:00",
+      "change": "W559 采购询价发起、邀请、报价、排名、选定采用共同授权事务，两种锁序和原价量通过。正式 PostgreSQL 26/27。",
+      "evidence": "docs/development/evidence/W559-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211773,10 +211778,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W558",
-      "path": "docs/development/evidence/W558-01/DELIVERY.md",
-      "baseline_sha": "b91125954e13f9f73c9d6438a03453ae6d396ce8",
-      "registered_at": "2026-11-14T01:08:09.137618+00:00",
+      "id": "W559",
+      "path": "docs/development/evidence/W559-01/DELIVERY.md",
+      "baseline_sha": "a37dbab4ed674815634c798e214b90ee605a00f6",
+      "registered_at": "2026-11-14T01:23:44.366688+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211790,11 +211795,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续核对现行独立 Space Design、OA、财务、采购与 Stock 数据库写入口，以及两库恢复后重新开放和对账。PGT-017 继续保持 NOT_RUN。",
+      "next_action": "从原分组提交入手核对转采购单，再推进剩余独立写者和两库恢复。PGT-017 保持 NOT_RUN。",
       "windows": [
         {
-          "id": "W558-01",
-          "workspace_task": "W558-01",
+          "id": "W559-01",
+          "workspace_task": "W559-01",
           "related_tasks": [
             "WP02-03",
             "PGT-017"
@@ -211805,21 +211810,21 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w558-01",
-          "planned_scope_ref": "docs/development/evidence/W558-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W558-01/DELIVERY.md",
+          "branch": "codex/w559-01",
+          "planned_scope_ref": "docs/development/evidence/W559-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W559-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main MRP and planned order state",
+            "Main RFQ authoring writes",
             "isolated Main PostgreSQL and CP6 WebApi"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "四个 HTTP 写入、两种撤权顺序及第三次保存失败回滚共 6 项 PostgreSQL，29 项组件通过。四项通用既有断言在基线复现；本地发布 310 文件，存活 200、匿名管理和 MRP 401。",
-          "remaining_scope": "独立 Space Design、旧 OA、财务、采购、Stock 普通数据库角色，以及两库物理恢复后重新开放、原结果及消息对账与实际传输。正式 MRP 与真实计划订单下游接收按各自任务验收。",
-          "main_tested_source_sha": "0ccf8408cb0e36e154561311b67379260325160c"
+          "validation_summary": "五个询价入口在角色撤权先提交时拒绝。报价先提交保留。原逐笔回写一起验证，10 项 PostgreSQL、40 项组件通过。发布 310 文件，存活 200、匿名管理与询价 401。",
+          "remaining_scope": "RFQ 分组转采购单、采购其它入口、独立 Space Design、旧 OA、财务、Stock 普通数据库角色及两库恢复后重新开放与对账。",
+          "main_tested_source_sha": "6a79570084a31f78fe220e064c90c37ac3260d7a"
         }
       ],
       "storage": {
@@ -264357,6 +264362,66 @@
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018",
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W558",
+        "path": "docs/development/evidence/W558-01/DELIVERY.md",
+        "baseline_sha": "b91125954e13f9f73c9d6438a03453ae6d396ce8",
+        "registered_at": "2026-11-14T01:08:09.137618+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续核对现行独立 Space Design、OA、财务、采购与 Stock 数据库写入口，以及两库恢复后重新开放和对账。PGT-017 继续保持 NOT_RUN。",
+        "windows": [
+          {
+            "id": "W558-01",
+            "workspace_task": "W558-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w558-01",
+            "planned_scope_ref": "docs/development/evidence/W558-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W558-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main MRP and planned order state",
+              "isolated Main PostgreSQL and CP6 WebApi"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "四个 HTTP 写入、两种撤权顺序及第三次保存失败回滚共 6 项 PostgreSQL，29 项组件通过。四项通用既有断言在基线复现；本地发布 310 文件，存活 200、匿名管理和 MRP 401。",
+            "remaining_scope": "独立 Space Design、旧 OA、财务、采购、Stock 普通数据库角色，以及两库物理恢复后重新开放、原结果及消息对账与实际传输。正式 MRP 与真实计划订单下游接收按各自任务验收。",
+            "main_tested_source_sha": "0ccf8408cb0e36e154561311b67379260325160c",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1043",
+            "main_remote_main_sha": "a37dbab4ed674815634c798e214b90ee605a00f6"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },
