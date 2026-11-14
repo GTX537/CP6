@@ -165792,6 +165792,11 @@
       "at": "2026-11-14T03:06:48.732832+00:00",
       "change": "W563 以真实到期时间补齐 CRM 隐私导出制品清除与 Main 暂停两种提交顺序。正式 PostgreSQL 26/27。",
       "evidence": "docs/development/evidence/W563-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T03:33:52.360928+00:00",
+      "change": "W564 数据库原生触发器要求 Stock 普通库存、流水及编号写入已持有 Main 共同事务根，并拒绝暂停租户。正式 PostgreSQL 26/27。",
+      "evidence": "docs/development/evidence/W564-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211798,10 +211803,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W563",
-      "path": "docs/development/evidence/W563-01/DELIVERY.md",
-      "baseline_sha": "c3fb0ca08070afe3a9eb0ec41f3f53565408b355",
-      "registered_at": "2026-11-14T02:53:48.830031+00:00",
+      "id": "W564",
+      "path": "docs/development/evidence/W564-01/DELIVERY.md",
+      "baseline_sha": "c272150887cd00e9a6e1578fb8d876c7e1f7b2a4",
+      "registered_at": "2026-11-14T03:20:05.991155+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211815,11 +211820,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "优先核销仍能产生新效果的数据库写者及不同物理事务的 Main 入口，同时延续两库对账。PGT-017 保持 NOT_RUN。",
+      "next_action": "沿独立业务事务、普通写者和跨库恢复继续核对，PGT-017 保持 NOT_RUN。",
       "windows": [
         {
-          "id": "W563-01",
-          "workspace_task": "W563-01",
+          "id": "W564-01",
+          "workspace_task": "W564-01",
           "related_tasks": [
             "WP02-03",
             "PGT-017"
@@ -211830,21 +211835,21 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w563-01",
-          "planned_scope_ref": "docs/development/evidence/W563-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W563-01/DELIVERY.md",
+          "branch": "codex/w564-01",
+          "planned_scope_ref": "docs/development/evidence/W564-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W564-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main tenant pause and CRM elapsed privacy export expiry",
-            "isolated Main and CRM PostgreSQL plus actual TLS and CRM Owner"
+            "Main Stock ordinary PostgreSQL movement and identifier writes",
+            "isolated Main PostgreSQL and CP6 WebApi"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "真实到期后两种提交顺序各通过 Main 和 CRM 一项。CRM 先提交保留清除和审计；Main 先提交拒绝旧授权清除。保留原结果字节和 ETag，Outbox 一致。",
-          "remaining_scope": "Main 采购送审和收货、旧 OA、财务、独立 Space Design、Stock 及其他普通数据库写者，跨库恢复重新开放、实际传输和旧宿主排空。",
-          "main_tested_source_sha": "2ab27367e505b2a3afe970a6588194d8527991d4"
+          "validation_summary": "五个真实 PostgreSQL 用例覆盖普通写者四个表、暂停、已有各种原 Owner 及同一事务读回。隔离本地发布 310 文件，存活 200、保护入口 401。",
+          "remaining_scope": "采购送审和收货、旧 OA、财务、独立 Space Design、普通写角色的业务主体与其它写入口、两库恢复对账、重新开放和滚动采用。",
+          "main_tested_source_sha": "ee9378d4c5385c4fe843f5401b7e60e636230c61"
         }
       ],
       "storage": {
@@ -264677,6 +264682,66 @@
             "main_tested_source_sha": "0c733d4e2756df94e02bf25c0cca89294e962f20",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1051",
             "main_remote_main_sha": "c3fb0ca08070afe3a9eb0ec41f3f53565408b355"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W563",
+        "path": "docs/development/evidence/W563-01/DELIVERY.md",
+        "baseline_sha": "c3fb0ca08070afe3a9eb0ec41f3f53565408b355",
+        "registered_at": "2026-11-14T02:53:48.830031+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "优先核销仍能产生新效果的数据库写者及不同物理事务的 Main 入口，同时延续两库对账。PGT-017 保持 NOT_RUN。",
+        "windows": [
+          {
+            "id": "W563-01",
+            "workspace_task": "W563-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w563-01",
+            "planned_scope_ref": "docs/development/evidence/W563-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W563-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main tenant pause and CRM elapsed privacy export expiry",
+              "isolated Main and CRM PostgreSQL plus actual TLS and CRM Owner"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "真实到期后两种提交顺序各通过 Main 和 CRM 一项。CRM 先提交保留清除和审计；Main 先提交拒绝旧授权清除。保留原结果字节和 ETag，Outbox 一致。",
+            "remaining_scope": "Main 采购送审和收货、旧 OA、财务、独立 Space Design、Stock 及其他普通数据库写者，跨库恢复重新开放、实际传输和旧宿主排空。",
+            "main_tested_source_sha": "2ab27367e505b2a3afe970a6588194d8527991d4",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1052",
+            "main_remote_main_sha": "c272150887cd00e9a6e1578fb8d876c7e1f7b2a4"
           }
         ],
         "storage": {

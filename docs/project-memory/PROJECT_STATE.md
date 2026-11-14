@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 UTC · W564 Stock 数据库事务根验证
+
+四个普通写入表见证同一授权事务，暂停、V1 与 V2 Owner 回归通过。正式 PostgreSQL 26/27。 [交付](../development/evidence/W564-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W563 CRM 制品到期的两库顺序
 
 正式 PostgreSQL 26/27。真实到期和 Main 暂停两种时序已通过。 [交付](../development/evidence/W563-01/DELIVERY.md)

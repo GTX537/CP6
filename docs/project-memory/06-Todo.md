@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 UTC · W564 PGT-017 余项
+
+普通数据库写者的其余权限边界、独立业务事务以及两库恢复、传输与旧宿主待核销。 [交付](../development/evidence/W564-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W563 PGT-017 余项
 
 Main 其余普通及独立事务写者、两库恢复对账、真实传输与旧宿主排空。 [交付](../development/evidence/W563-01/DELIVERY.md)

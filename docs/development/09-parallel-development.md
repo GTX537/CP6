@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+## 2026-11-14 UTC · W564 Stock 普通写库角色
+
+COORD 复用 Main DEV-1，以前向迁移守住普通写者的库存、流水和编号。 [交付](evidence/W564-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W563 CRM 到期清除联验
 
 COORD 复用 Main DEV-1 和 CRM DEV-2，验证制品自然到期与 Main 暂停。 [交付](evidence/W563-01/DELIVERY.md)
