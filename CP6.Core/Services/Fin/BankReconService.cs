@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Erp;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.EntityFrameworkCore;
@@ -7,20 +8,21 @@ using Microsoft.Extensions.Logging;
 
 namespace CP6.Core.Services.Fin;
 
-public class BankReconService : IBankReconService
+public partial class BankReconService : IBankReconService
 {
     private readonly CP6Context _db;
     private readonly IJournalEntryService _journal;    // used by C-2 AutoMatch
     private readonly IFiscalPeriodService _period;     // used by C-2 AutoMatch
     private readonly ILogger<BankReconService>? _logger;
+    private readonly IamAdministrationV1? _authority;
     private const int DefaultWindowDays = 90;
     private const int SubsetSumK = 8;                  // used by C-2 AutoMatch
     // must exceed the max possible date-distance so amount-match always outranks date-closeness
     private const int AmountMismatchPenalty = 100_000;
 
     public BankReconService(CP6Context db, IJournalEntryService journal, IFiscalPeriodService period,
-        ILogger<BankReconService>? logger = null)
-    { _db = db; _journal = journal; _period = period; _logger = logger; }
+        ILogger<BankReconService>? logger = null, IamAdministrationV1? authority = null)
+    { _db = db; _journal = journal; _period = period; _logger = logger; _authority = authority; }
 
     public async Task<List<BankCandidateLine>> GetCandidatesAsync(Guid statementId, Guid statementLineId, bool widen)
     {
@@ -306,8 +308,13 @@ public class BankReconService : IBankReconService
         return FinResult.Pass();
     }
     public async Task<List<BankOnlyLineResult>> GenerateBankOnlyVoucherAsync(Guid statementId, List<Guid> lineIds,
-        Guid counterAccountId, string? counterRole, string? partnerId, string? user)
+        Guid counterAccountId, string? counterRole, string? partnerId, string? user,
+        Func<CancellationToken, Task<Guid>>? currentActor = null, CancellationToken ct = default, Guid? impersonatorId = null)
     {
+        if (_db.Database.IsNpgsql())
+            return await GenerateBankOnlyVoucherPostgreSqlAsync(statementId, lineIds, counterAccountId, counterRole,
+                partnerId, user, currentActor, impersonatorId, ct);
+
         var results = new List<BankOnlyLineResult>();
         var stmt = await _db.BankStatements.AsNoTracking().FirstOrDefaultAsync(x => x.Id == statementId);
         if (stmt == null) { foreach (var id in lineIds) results.Add(new() { LineId = id, Ok = false, Code = "E-A4-MATCH-004" }); return results; }
@@ -316,8 +323,7 @@ public class BankReconService : IBankReconService
 
         var acct = await _db.BankAccounts.AsNoTracking().FirstAsync(x => x.Id == stmt.BankAccountId);
         // 对方科目：显式 Id 优先，否则按 Role 解析
-        Guid? counterId = counterAccountId != Guid.Empty ? counterAccountId
-            : (counterRole != null ? (await _db.GlAccounts.FirstOrDefaultAsync(a => a.Role == counterRole && a.IsActive && a.IsLeaf))?.Id : null);
+        var counterId = await ResolveBankVoucherCounterAsync(counterAccountId, counterRole, ct);
 
         foreach (var lineId in lineIds)
         {
@@ -334,42 +340,13 @@ public class BankReconService : IBankReconService
             IDbContextTransaction? tx = isInMemory ? null : await _db.Database.BeginTransactionAsync();
             try
             {
-                await _period.EnsureOpenAsync(line.TxnDate, user);
-                // 凭证方向：Withdrawal 借对方/贷银行；Deposit 借银行/贷对方
-                var bankLine = new JournalLine { AccountId = acct.GlAccountId, PartnerId = null };
-                var counterLine = new JournalLine { AccountId = cAcc, PartnerId = partnerId };
-                if (line.Direction == BankLineDirection.Withdrawal)
-                { counterLine.Debit = line.Amount; bankLine.Credit = line.Amount; }
-                else
-                { bankLine.Debit = line.Amount; counterLine.Credit = line.Amount; }
-
-                var entry = new JournalEntry
+                var result = await PostBankOnlyVoucherAsync(stmt, acct, line, cAcc, partnerId, user, stmt.No, ct);
+                if (tx != null)
                 {
-                    Id = Guid.NewGuid(), VoucherDate = line.TxnDate, Source = VoucherSource.BankRecon,
-                    SourceDocNo = stmt.No, Description = $"银行对账单边项 {stmt.No} 行{line.LineNo}：{line.Description}",
-                    Lines = { bankLine, counterLine },
-                };
-                var post = await _journal.AutoPostAsync(entry);
-                if (!post.Ok) { if (tx != null) await tx.RollbackAsync(); results.Add(new() { LineId = lineId, Ok = false, Code = post.Code }); continue; }
-
-                // 重新取该凭证的银行GL行 Id
-                var newBankJl = await _db.JournalLines.FirstAsync(l => l.EntryId == entry.Id && l.AccountId == acct.GlAccountId);
-
-                line.GeneratedJournalEntryId = entry.Id;
-                line.GeneratedAt = DateTime.Now; line.GeneratedBy = user;
-                line.Category = line.Direction == BankLineDirection.Withdrawal ? BankLineCategory.BankCharge : BankLineCategory.InterestIncome;
-
-                var match = new BankReconMatch { Id = Guid.NewGuid(), StatementId = statementId, MatchType = BankReconMatchType.Auto,
-                    StmtSignedSum = line.SignedAmount, MatchedAt = DateTime.Now, MatchedBy = user ?? "system", Creator = user, CreateDate = DateTime.Now };
-                _db.BankReconMatches.Add(match);
-                _db.BankReconJournalLinks.Add(new BankReconJournalLink { Id = Guid.NewGuid(), MatchGroupId = match.Id,
-                    JournalLineId = newBankJl.Id, JournalEntryId = entry.Id, BankSignedAmount = newBankJl.Debit - newBankJl.Credit, Creator = user, CreateDate = DateTime.Now });
-                line.MatchStatus = BankLineMatchStatus.Matched; line.MatchGroupId = match.Id;
-                line.Modifier = user; line.ModifyDate = DateTime.Now;
-
-                await _db.SaveChangesAsync();
-                if (tx != null) await tx.CommitAsync();
-                results.Add(new() { LineId = lineId, Ok = true, JournalEntryId = entry.Id });
+                    if (result.Ok) await tx.CommitAsync();
+                    else await tx.RollbackAsync();
+                }
+                results.Add(result);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
@@ -384,6 +361,47 @@ public class BankReconService : IBankReconService
         }
         return results;
     }
+
+    private async Task<BankOnlyLineResult> PostBankOnlyVoucherAsync(BankStatement stmt, BankAccount acct,
+        BankStatementLine line, Guid cAcc, string? partnerId, string? user, string sourceDocNo, CancellationToken ct)
+    {
+        await _period.EnsureOpenAsync(line.TxnDate, user);
+        // 凭证方向：Withdrawal 借对方/贷银行；Deposit 借银行/贷对方
+        var bankLine = new JournalLine { AccountId = acct.GlAccountId, PartnerId = null };
+        var counterLine = new JournalLine { AccountId = cAcc, PartnerId = partnerId };
+        if (line.Direction == BankLineDirection.Withdrawal)
+        { counterLine.Debit = line.Amount; bankLine.Credit = line.Amount; }
+        else
+        { bankLine.Debit = line.Amount; counterLine.Credit = line.Amount; }
+
+        var entry = new JournalEntry
+        {
+            Id = Guid.NewGuid(), VoucherDate = line.TxnDate, Source = VoucherSource.BankRecon,
+            SourceDocNo = sourceDocNo, Description = $"银行对账单边项 {stmt.No} 行{line.LineNo}：{line.Description}",
+            Lines = { bankLine, counterLine },
+        };
+        var post = await _journal.AutoPostAsync(entry);
+        if (!post.Ok) return BankVoucherFailed(line.Id, post.Code);
+
+        // 重新取该凭证的银行GL行 Id
+        var newBankJl = await _db.JournalLines.FirstAsync(l => l.EntryId == entry.Id && l.AccountId == acct.GlAccountId, ct);
+
+        line.GeneratedJournalEntryId = entry.Id;
+        line.GeneratedAt = DateTime.Now; line.GeneratedBy = user;
+        line.Category = line.Direction == BankLineDirection.Withdrawal ? BankLineCategory.BankCharge : BankLineCategory.InterestIncome;
+
+        var match = new BankReconMatch { Id = Guid.NewGuid(), StatementId = stmt.Id, MatchType = BankReconMatchType.Auto,
+            StmtSignedSum = line.SignedAmount, MatchedAt = DateTime.Now, MatchedBy = user ?? "system", Creator = user, CreateDate = DateTime.Now };
+        _db.BankReconMatches.Add(match);
+        _db.BankReconJournalLinks.Add(new BankReconJournalLink { Id = Guid.NewGuid(), MatchGroupId = match.Id,
+            JournalLineId = newBankJl.Id, JournalEntryId = entry.Id, BankSignedAmount = newBankJl.Debit - newBankJl.Credit, Creator = user, CreateDate = DateTime.Now });
+        line.MatchStatus = BankLineMatchStatus.Matched; line.MatchGroupId = match.Id;
+        line.Modifier = user; line.ModifyDate = DateTime.Now;
+
+        await _db.SaveChangesAsync(ct);
+        return new() { LineId = line.Id, Ok = true, JournalEntryId = entry.Id };
+    }
+
     public async Task<FinResult> MarkPendingAsync(Guid statementId, List<Guid> lineIds, BankLineCategory category, byte[]? rowVersion, string? user)
     {
         var stmt = await _db.BankStatements.AsNoTracking().FirstOrDefaultAsync(x => x.Id == statementId);

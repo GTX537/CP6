@@ -165917,6 +165917,11 @@
       "at": "2026-11-14T19:07:01.836023+00:00",
       "change": "W588-01 事件 HTTP 和存量重投采用 Main 共同事务，原事件及实际流程效果同步，正式仍为 26/27。",
       "evidence": "docs/development/evidence/W588-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T19:29:10.095303+00:00",
+      "change": "W589-01 银行凭证每笔过账同时确认当前权限，原合同的一行一凭证和失败回滚通过 PostgreSQL，正式仍为 26/27。",
+      "evidence": "docs/development/evidence/W589-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211923,10 +211928,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W588",
-      "path": "docs/development/evidence/W588-01/DELIVERY.md",
-      "baseline_sha": "0d4225e8bff26b12cf13f3d936e260b2655d19d9",
-      "registered_at": "2026-11-14T18:45:20.211878+00:00",
+      "id": "W589",
+      "path": "docs/development/evidence/W589-01/DELIVERY.md",
+      "baseline_sha": "f1362739b793410b38dd390bcd49ea3730abe379",
+      "registered_at": "2026-11-14T19:11:47.877864+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211940,11 +211945,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "核对银行按笔写入及独立 Space Design 提交边界，继续 CRM 正式恢复切换编排及全写者登记。",
+      "next_action": "核对银行自动撮合和独立 Space Design 所持事务，继续 CRM 正式恢复切换编排与全写者登记。",
       "windows": [
         {
-          "id": "W588-01",
-          "workspace_task": "W588-01",
+          "id": "W589-01",
+          "workspace_task": "W589-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -211955,23 +211960,23 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w588-01",
-          "planned_scope_ref": "docs/development/evidence/W588-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W588-01/DELIVERY.md",
+          "branch": "codex/w589-01",
+          "planned_scope_ref": "docs/development/evidence/W589-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W589-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:OA-Flow-Trigger-Event",
+            "Main:FIN-BankRecon",
             "Main:IAM-CurrentWriteAuthority",
-            "Main:IntegrationEvent-Retry",
+            "Main:Fin-Journal-and-Sequence",
             "Local:PostgreSQL-HTTP"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "5/5 新 PostgreSQL 用例通过。复用同产品二进制的 25 个实际 PostgreSQL 和 4 个事件分派回归，无跳过。",
-          "remaining_scope": "财务按笔提交、独立 Space Design 和全写者登记，CRM 正式恢复/重开与切换编排。",
-          "main_tested_source_sha": "5e185830dff0600414fe2034671f8c841e0b3336"
+          "validation_summary": "40/40，11 项实际 PostgreSQL，29 项相关组件回归，零跳过。过账与暂停、撤权各两种顺序，批量部分成功、失败不占号和旧流水重复拒绝。",
+          "remaining_scope": "银行自动撮合及其他财务写者、独立 Space Design、全写者登记，CRM 正式恢复/重开与切换编排。",
+          "main_tested_source_sha": "cebf05b4a0ad0a57b1abc20a013054c172f93bd3"
         }
       ],
       "storage": {
@@ -266423,6 +266428,68 @@
             "main_tested_source_sha": "f969f66b82d054f9b9d3dde8a89628ad8c046731",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1090",
             "main_remote_main_sha": "0d4225e8bff26b12cf13f3d936e260b2655d19d9"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W588",
+        "path": "docs/development/evidence/W588-01/DELIVERY.md",
+        "baseline_sha": "0d4225e8bff26b12cf13f3d936e260b2655d19d9",
+        "registered_at": "2026-11-14T18:45:20.211878+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "核对银行按笔写入及独立 Space Design 提交边界，继续 CRM 正式恢复切换编排及全写者登记。",
+        "windows": [
+          {
+            "id": "W588-01",
+            "workspace_task": "W588-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w588-01",
+            "planned_scope_ref": "docs/development/evidence/W588-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W588-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:OA-Flow-Trigger-Event",
+              "Main:IAM-CurrentWriteAuthority",
+              "Main:IntegrationEvent-Retry",
+              "Local:PostgreSQL-HTTP"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "5/5 新 PostgreSQL 用例通过。复用同产品二进制的 25 个实际 PostgreSQL 和 4 个事件分派回归，无跳过。",
+            "remaining_scope": "财务按笔提交、独立 Space Design 和全写者登记，CRM 正式恢复/重开与切换编排。",
+            "main_tested_source_sha": "5e185830dff0600414fe2034671f8c841e0b3336",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1092",
+            "main_remote_main_sha": "f1362739b793410b38dd390bcd49ea3730abe379"
           }
         ],
         "storage": {
