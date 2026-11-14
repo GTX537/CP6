@@ -207,7 +207,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                         await using var host = await AuthenticationApiProcess.Start(connection.ConnectionString, environment);
                         if (roleRevocation) await ExerciseCrmExportRoleRevocation(host, h, stageDirectory!, exited, relay);
                         else if (departmentRevocation) await ExerciseCrmExportDepartmentRevocation(host, h, stageDirectory!, exited);
-                        else if (inquiryScopeRevocation) await ExerciseCrmExportScopeRevocation(host, h, pair, stageDirectory!, exited, regrantInquiryScope);
+                        else if (inquiryScopeRevocation) await ExerciseCrmExportScopeRevocation(host, h, pair, stageDirectory!, exited, regrantInquiryScope,
+                            ContextRuntime(h.Tenant, options.Issuer));
                         else await ExerciseCrmTenantPause(host, h, stageDirectory!, publicSubmission: true, childExited: exited,
                             shortenDeadline: shortenDeadline);
                     }
