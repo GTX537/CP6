@@ -1,5 +1,6 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Wf;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,6 +41,7 @@ public class FlowTriggerAdminController : LocalizedControllerBase
 
     [HttpPost]
     [RequirePermission("oa-flow-admin", "FlowTrigger.Edit")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Create([FromBody] FlowTriggerSaveReq req, CancellationToken ct)
     {
         try
@@ -52,6 +54,7 @@ public class FlowTriggerAdminController : LocalizedControllerBase
 
     [HttpPut("{id:guid}")]
     [RequirePermission("oa-flow-admin", "FlowTrigger.Edit")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Update(Guid id, [FromBody] FlowTriggerSaveReq req, CancellationToken ct)
     {
         try { await _admin.UpdateAsync(id, req, ct); return Ok2(); }
@@ -60,6 +63,7 @@ public class FlowTriggerAdminController : LocalizedControllerBase
 
     [HttpPost("{id:guid}/enable")]
     [RequirePermission("oa-flow-admin", "FlowTrigger.Edit")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Enable(Guid id, [FromBody] EnableReq r, CancellationToken ct)
     {
         try { await _admin.SetEnabledAsync(id, r.Enabled, ct); return Ok2(); }
@@ -68,6 +72,7 @@ public class FlowTriggerAdminController : LocalizedControllerBase
 
     [HttpPost("{id:guid}/reset-key")]
     [RequirePermission("oa-flow-admin", "FlowTrigger.Edit")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> ResetKey(Guid id, CancellationToken ct)
     {
         try { return Ok2(new { apiKeyPlain = await _admin.ResetKeyAsync(id, ct) }); }

@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 · W583-01 PGT-017 余项
+
+旧流程试发、消息、定时和事件另有提交路径。继续核对财务、独立 Space Design 及剩余写者，以及 CRM 差量恢复、安全重开和正式切换。 [交付记录](../development/evidence/W583-01/DELIVERY.md)
+
 ## 2026-11-14 · W582-01 PGT-017 余项
 
 验证尾 WAL 缺失后的差量写集与安全重开、正式切换，继续收齐旧 OA 触发器、财务与独立 Space Design 等写者。 [交付记录](../development/evidence/W582-01/DELIVERY.md)
