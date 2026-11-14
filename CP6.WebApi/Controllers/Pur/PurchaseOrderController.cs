@@ -1,6 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Pur;
 using CP6.Entity.DomainModels.Pur;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,6 +33,7 @@ public class PurchaseOrderController : ControllerBase
 
     [HttpPost]
     [RequirePermission("pur-po", "add")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Create([FromBody] PoCreateDto dto)
     {
         try { return Ok2(await _svc.CreateAsync(dto, CurrentUser)); }
@@ -50,6 +52,7 @@ public class PurchaseOrderController : ControllerBase
     /// <summary>取消（仅草稿/确认且未收货可取消）。</summary>
     [HttpPost("{poNo}/cancel")]
     [RequirePermission("pur-po", "cancel")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Cancel(string poNo)
     {
         try { await _svc.CancelAsync(poNo, CurrentUser); return Ok2(); }
