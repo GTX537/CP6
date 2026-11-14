@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 · W579-01 修复完整 Core 的目录安装
+
+鲜装按已评审的 PostgreSQL 18 全量迁移 catalog 准入，撤销原有默认业务函数 PUBLIC EXECUTE，保留普通登录隔离和未知变更拒绝。 [交付记录](../development/evidence/W579-01/DELIVERY.md)
+
 ## 2026-11-14 · W578-01 补齐 CRM 先提交的真实运输
 
 封存后、撤权更新后及重授后同一个 CRM 原导出写集摘要保持相等。两条 C02 事件使用真实 Dapr/Kafka 进入 CRM 原生 Inbox。 [交付记录](../development/evidence/W578-01/DELIVERY.md)
