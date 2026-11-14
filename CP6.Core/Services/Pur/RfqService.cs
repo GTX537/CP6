@@ -363,8 +363,12 @@ public partial class RfqService : IRfqService
     }
 
     /// <inheritdoc />
-    public async Task<List<string>> ConvertToPoAsync(string rfqNo, string? userName)
+    public async Task<List<string>> ConvertToPoAsync(string rfqNo, string? userName,
+        Func<CancellationToken, Task<Guid>>? currentActor = null, CancellationToken ct = default)
     {
+        if (_db.Database.IsNpgsql())
+            return await ConvertToPoPostgreSqlAsync(rfqNo, userName, currentActor, ct);
+
         var rfq = await _db.Rfqs.FirstOrDefaultAsync(r => r.RfqNo == rfqNo && !r.IsDeleted)
                   ?? throw new InvalidOperationException("E-PUR-061"); // RFQ 不存在
 
@@ -387,23 +391,14 @@ public partial class RfqService : IRfqService
         // 按选中供应商分组拆 PO（同供应商的行合一张；不同行可花落不同家）
         foreach (var grp in selected.GroupBy(q => q.SupplierId))
         {
-            var dto = new PoCreateDto
+            var purchaseLines = grp.Select(q => new PoLineCreateDto
             {
-                SupplierId = grp.Key,
-                Type = 1,
-                OrderDate = rfq.RfqDate,
-                SourceRfqNo = rfqNo,             // 行级追溯回 RFQ
-                Remarks = $"RFQ {rfqNo}",
-                Lines = grp.Select(q => new PoLineCreateDto
-                {
-                    ItemId = lines[q.LineNo].ItemId,
-                    Qty = lines[q.LineNo].Qty,
-                    UnitPrice = q.QuotedPrice,   // ★成交价=询价价，不再走价表取价
-                    RequiredDate = lines[q.LineNo].RequiredDate,
-                }).ToList(),
-            };
-            var po = await _po.CreateAsync(dto, userName);
-            poNos.Add(po.PoNo);
+                ItemId = lines[q.LineNo].ItemId,
+                Qty = lines[q.LineNo].Qty,
+                UnitPrice = q.QuotedPrice,
+                RequiredDate = lines[q.LineNo].RequiredDate,
+            });
+            poNos.Add(await CreatePurchaseOrderAsync(rfq, grp.Key, purchaseLines, userName));
         }
 
         // 全部询价行都已选中转出 → RFQ 推 Converted
@@ -416,5 +411,20 @@ public partial class RfqService : IRfqService
         rfq.ModifyDate = now;
         await _db.SaveChangesAsync();
         return poNos;
+    }
+
+    private async Task<string> CreatePurchaseOrderAsync(Rfq rfq, string supplierId,
+        IEnumerable<PoLineCreateDto> lines, string? userName)
+    {
+        var order = await _po.CreateAsync(new()
+        {
+            SupplierId = supplierId,
+            Type = 1,
+            OrderDate = rfq.RfqDate,
+            SourceRfqNo = rfq.RfqNo,
+            Remarks = $"RFQ {rfq.RfqNo}",
+            Lines = lines.ToList(),
+        }, userName);
+        return order.PoNo;
     }
 }

@@ -9,9 +9,6 @@ public partial class RfqService
     private async Task<Rfq> WriteBackPostgreSqlAsync(string rfqNo, string? userName,
         Func<CancellationToken, Task<Guid>>? currentActor, CancellationToken ct)
     {
-        if (_authority?.Owns(_db) != true || currentActor == null)
-            throw new IamAdministrationExceptionV1(503, "AUTHORITY_FENCE_UNAVAILABLE");
-
         var quotes = await CommitAsync(async token =>
         {
             if (!await _db.Rfqs.AsNoTracking().AnyAsync(row => row.RfqNo == rfqNo && !row.IsDeleted, token))
@@ -48,12 +45,21 @@ public partial class RfqService
         });
 
         Task<T> CommitAsync<T>(Func<CancellationToken, Task<T>> body) =>
-            _authority!.ExecuteAsync("pur-rfq:writeback", currentActor!, async (actor, token) =>
-            {
-                var result = await body(token);
-                if (await currentActor(token) != actor)
-                    throw new IamAdministrationExceptionV1(401, "REAUTH_REQUIRED");
-                return result;
-            }, ct);
+            CommitRfqEffectAsync("pur-rfq:writeback", currentActor, body, ct);
+    }
+
+    private Task<T> CommitRfqEffectAsync<T>(string permission, Func<CancellationToken, Task<Guid>>? currentActor,
+        Func<CancellationToken, Task<T>> body, CancellationToken ct)
+    {
+        if (_authority?.Owns(_db) != true || currentActor == null)
+            throw new IamAdministrationExceptionV1(503, "AUTHORITY_FENCE_UNAVAILABLE");
+
+        return _authority.ExecuteAsync(permission, currentActor, async (actor, token) =>
+        {
+            var result = await body(token);
+            if (await currentActor(token) != actor)
+                throw new IamAdministrationExceptionV1(401, "REAUTH_REQUIRED");
+            return result;
+        }, ct);
     }
 }

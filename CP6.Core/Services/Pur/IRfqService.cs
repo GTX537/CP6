@@ -62,7 +62,8 @@ public interface IRfqService
     /// <c>PurchaseOrderService.CreateAsync</c>；价用询价**成交价**（QuotedPrice）非价表取价；PO.SourceRfqNo 追溯回 RFQ；全部转出后 RFQ→Converted。
     /// RFQ 不存在 → E-PUR-061；无选中报价 → E-PUR-070；选中报价已过期（转 PO 第二道关）→ E-PUR-068。返回新建 PO 单号列表。
     /// </summary>
-    Task<List<string>> ConvertToPoAsync(string rfqNo, string? userName);
+    Task<List<string>> ConvertToPoAsync(string rfqNo, string? userName,
+        Func<CancellationToken, Task<Guid>>? currentActor = null, CancellationToken ct = default);
 }
 
 /// <summary>收报价单行入参（一行对应一个 RfqLine.LineNo）。</summary>
