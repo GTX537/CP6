@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 · W590-01 银行自动撮合采用共同事务栅栏
+
+原计算中的唯一解和逐组提交保留。暂停后拒绝新匹配，恢复保持原匹配并补齐剩余组。 [缺陷 #1095](https://github.com/GTX537/CP6/issues/1095) · [交付记录](../development/evidence/W590-01/DELIVERY.md)
+
 ## 2026-11-14 · W589-01 银行单边凭证按流水分配来源键
 
 同单多流水可逐笔过账并保留原关联，失败的流水不消耗 GL 凭证号。 [缺陷 #1093](https://github.com/GTX537/CP6/issues/1093) · [交付记录](../development/evidence/W589-01/DELIVERY.md)

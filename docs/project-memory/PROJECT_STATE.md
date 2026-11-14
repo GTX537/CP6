@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 · W590-01 银行自动撮合逐组提交
+
+自动撮合与租户暂停两种顺序通过。36 项相关验证，正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W590-01/DELIVERY.md)
+
 ## 2026-11-14 · W589-01 银行单边凭证逐笔过账
 
 暂停或撤权与银行凭证各两种 PostgreSQL 顺序通过，共 40 项验证。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W589-01/DELIVERY.md)

@@ -16,6 +16,7 @@ public partial class BankReconService : IBankReconService
     private readonly ILogger<BankReconService>? _logger;
     private readonly IamAdministrationV1? _authority;
     private const int DefaultWindowDays = 90;
+    private const int AutoMatchPoolSize = 20;
     private const int SubsetSumK = 8;                  // used by C-2 AutoMatch
     // must exceed the max possible date-distance so amount-match always outranks date-closeness
     private const int AmountMismatchPenalty = 100_000;
@@ -36,42 +37,49 @@ public partial class BankReconService : IBankReconService
     }
 
     /// <summary>账面侧候选来源（spec §4.2）：命中银行GL、Posted、未反转、未占用、VoucherDate≤PeriodEnd、窗口、外币原币规则。</summary>
-    private async Task<List<BankCandidateLine>> LoadCandidateRowsAsync(BankStatement stmt, int? windowDays)
+    private async Task<List<BankCandidateLine>> LoadCandidateRowsAsync(BankStatement stmt, int? windowDays,
+        CancellationToken ct = default, BankStatementLine? statementLine = null, Guid? candidateId = null,
+        IReadOnlyList<Guid>? eligibleCandidateIds = null)
     {
-        var acct = await _db.BankAccounts.AsNoTracking().FirstAsync(x => x.Id == stmt.BankAccountId);
+        var acct = await _db.BankAccounts.AsNoTracking().FirstAsync(x => x.Id == stmt.BankAccountId, ct);
         var isForeign = !FxConstants.IsBase(acct.CurrencyCd);
         var occupied = _db.BankReconJournalLinks.Select(x => x.JournalLineId);
         var lowerDate = windowDays is int w ? stmt.PeriodStart.AddDays(-w) : DateTime.MinValue;
 
-        var rows = await (from jl in _db.JournalLines.AsNoTracking()
-                          join je in _db.JournalEntries.AsNoTracking() on jl.EntryId equals je.Id
-                          where jl.AccountId == acct.GlAccountId
-                                && je.Status == JournalStatus.Posted
-                                && je.Source != VoucherSource.Reversal
-                                && je.VoucherDate <= stmt.PeriodEnd
-                                && je.VoucherDate >= lowerDate
-                                && !occupied.Contains(jl.Id)
-                          select new { jl, je }).ToListAsync();
+        var query = from jl in _db.JournalLines.AsNoTracking()
+                    join je in _db.JournalEntries.AsNoTracking() on jl.EntryId equals je.Id
+                    where jl.AccountId == acct.GlAccountId && je.Status == JournalStatus.Posted
+                        && je.Source != VoucherSource.Reversal && je.VoucherDate <= stmt.PeriodEnd
+                        && je.VoucherDate >= lowerDate && !occupied.Contains(jl.Id)
+                    select new
+                    {
+                        Line = jl, Entry = je,
+                        SignedAmount = isForeign ? (jl.Debit > 0 ? jl.OrigAmount : -jl.OrigAmount) : jl.Debit - jl.Credit
+                    };
+        if (isForeign)
+            query = query.Where(r => r.Line.OrigAmount != null && r.Line.CurrencyCd == acct.CurrencyCd);
+        if (candidateId.HasValue)
+            query = query.Where(r => r.Line.Id == candidateId.Value);
+        if (eligibleCandidateIds != null)
+            query = query.Where(r => eligibleCandidateIds.Contains(r.Line.Id));
+        if (statementLine != null)
+        {
+            var sign = Math.Sign(statementLine.SignedAmount);
+            var date = statementLine.TxnDate;
+            query = query.Where(r => sign > 0 ? r.SignedAmount > 0 : sign < 0 ? r.SignedAmount < 0 : r.SignedAmount == 0)
+                .OrderBy(r => Math.Abs((r.Entry.VoucherDate - date).Days)).ThenBy(r => r.Line.Id)
+                .Take(AutoMatchPoolSize);
+        }
+        var rows = await query.ToListAsync(ct);
 
         var list = new List<BankCandidateLine>();
         foreach (var r in rows)
         {
-            decimal bankSigned;
-            if (isForeign)
-            {
-                if (r.jl.OrigAmount is not decimal orig || r.jl.CurrencyCd != acct.CurrencyCd)
-                    continue;   // 外币：缺原币/币种不符 → 不进自动候选（§4.2/§6）
-                bankSigned = r.jl.Debit > 0 ? orig : -orig;
-            }
-            else
-            {
-                bankSigned = r.jl.Debit - r.jl.Credit;   // 本位币 Debit=+,Credit=−
-            }
             list.Add(new BankCandidateLine
             {
-                JournalLineId = r.jl.Id, JournalEntryId = r.je.Id, EntryNo = r.je.No,
-                VoucherDate = r.je.VoucherDate, BankSignedAmount = bankSigned,
-                CurrencyCd = r.jl.CurrencyCd, PartnerId = r.jl.PartnerId, Memo = r.jl.Memo,
+                JournalLineId = r.Line.Id, JournalEntryId = r.Entry.Id, EntryNo = r.Entry.No,
+                VoucherDate = r.Entry.VoucherDate, BankSignedAmount = r.SignedAmount!.Value,
+                CurrencyCd = r.Line.CurrencyCd, PartnerId = r.Line.PartnerId, Memo = r.Line.Memo,
             });
         }
         return list;
@@ -79,8 +87,12 @@ public partial class BankReconService : IBankReconService
 
     // ── C-2: AutoMatchAsync ──
 
-    public async Task<FinResult> AutoMatchAsync(Guid statementId, string? user)
+    public async Task<FinResult> AutoMatchAsync(Guid statementId, string? user,
+        Func<CancellationToken, Task<Guid>>? currentActor = null, CancellationToken ct = default)
     {
+        if (_db.Database.IsNpgsql())
+            return await AutoMatchPostgreSqlAsync(statementId, user, currentActor, ct);
+
         var stmt = await _db.BankStatements.FirstOrDefaultAsync(x => x.Id == statementId);
         if (stmt == null) return FinResult.Fail("E-A4-MATCH-004");
         if (stmt.Status != BankStatementStatus.Open) return FinResult.Fail("E-A4-STATEMENT-LOCKED");
@@ -98,21 +110,12 @@ public partial class BankReconService : IBankReconService
         foreach (var line in unmatched.ToList())
         {
             // 同方向且未被本轮占用的候选作为搜索池（按日期接近限 20 条，性能护栏）
-            var pool = candidates
-                .Where(c => !occupiedNow.Contains(c.JournalLineId)
-                            && Math.Sign(c.BankSignedAmount) == Math.Sign(line.SignedAmount))
-                .OrderBy(c => Math.Abs((c.VoucherDate - line.TxnDate).Days))
-                .Take(20)
-                .ToList();
-
-            // 在池中找所有 ΣBankSignedAmount==target 的子集（size 1..K）
-            var solutions = FindSubsetSums(pool, line.SignedAmount, SubsetSumK);
-
-            if (solutions.Count == 1)
+            var match = FindUniqueJournalMatch(line, candidates.Where(c => !occupiedNow.Contains(c.JournalLineId)));
+            if (match != null)
             {
                 // 唯一解（无论 size 1 = Phase1 精确，还是 size ≥2 = Phase2 组合）→ 自动撮合
-                await PersistMatchAsync(stmt, line, solutions[0], BankReconMatchType.Auto, null, user);
-                foreach (var c in solutions[0]) occupiedNow.Add(c.JournalLineId);
+                await PersistMatchAsync(stmt, [line], match, BankReconMatchType.Auto, null, user);
+                foreach (var c in match) occupiedNow.Add(c.JournalLineId);
                 unmatched.Remove(line);
             }
             // 0 解或 ≥2 解 → 留人工
@@ -122,24 +125,35 @@ public partial class BankReconService : IBankReconService
         foreach (var cand in candidates.Where(c => !occupiedNow.Contains(c.JournalLineId)).ToList())
         {
             // 同方向、剔已占用、按日期接近排序的未匹配流水池
-            var pool = unmatched
-                .Where(l => Math.Sign(l.SignedAmount) == Math.Sign(cand.BankSignedAmount))
-                .OrderBy(l => Math.Abs((l.TxnDate - cand.VoucherDate).Days))
-                .Take(20)
-                .ToList();   // 性能护栏
-
-            var sols = FindStmtSubsetSums(pool, cand.BankSignedAmount, SubsetSumK);
-
-            if (sols.Count == 1 && sols[0].Count >= 2)   // ≥2 才是 N:1（size==1 已由上方合并的 1:1/1:N 阶段覆盖）
+            var match = FindUniqueStatementMatch(cand, unmatched);
+            if (match != null)
             {
-                await PersistMatchAsync(stmt, sols[0], new[] { cand }, BankReconMatchType.Auto, null, user);
+                await PersistMatchAsync(stmt, match, [cand], BankReconMatchType.Auto, null, user);
                 occupiedNow.Add(cand.JournalLineId);
-                foreach (var l in sols[0]) unmatched.Remove(l);
+                foreach (var l in match) unmatched.Remove(l);
             }
             // 多解/无解 → 留人工
         }
 
         return FinResult.Pass();
+    }
+
+    private static List<BankCandidateLine>? FindUniqueJournalMatch(BankStatementLine line,
+        IEnumerable<BankCandidateLine> candidates)
+    {
+        var pool = candidates.Where(c => Math.Sign(c.BankSignedAmount) == Math.Sign(line.SignedAmount))
+            .OrderBy(c => Math.Abs((c.VoucherDate - line.TxnDate).Days)).Take(AutoMatchPoolSize).ToList();
+        var solutions = FindSubsetSums(pool, line.SignedAmount, SubsetSumK);
+        return solutions.Count == 1 ? solutions[0] : null;
+    }
+
+    private static List<BankStatementLine>? FindUniqueStatementMatch(BankCandidateLine candidate,
+        IEnumerable<BankStatementLine> lines)
+    {
+        var pool = lines.Where(l => Math.Sign(l.SignedAmount) == Math.Sign(candidate.BankSignedAmount))
+            .OrderBy(l => Math.Abs((l.TxnDate - candidate.VoucherDate).Days)).Take(AutoMatchPoolSize).ToList();
+        var solutions = FindStmtSubsetSums(pool, candidate.BankSignedAmount, SubsetSumK);
+        return solutions.Count == 1 && solutions[0].Count >= 2 ? solutions[0] : null;
     }
 
     /// <summary>有界子集和：在 pool 中找 ΣBankSignedAmount==target、大小≤K 的所有子集（绝不无界）。返回全部解（>1 即早停判唯一）。</summary>
@@ -186,14 +200,9 @@ public partial class BankReconService : IBankReconService
         return solutions;
     }
 
-    /// <summary>单流水行重载：委托给多流水行版本。</summary>
-    private async Task PersistMatchAsync(BankStatement stmt, BankStatementLine line, IReadOnlyList<BankCandidateLine> cands,
-        BankReconMatchType type, string? note, string? user)
-        => await PersistMatchAsync(stmt, new[] { line }, cands, type, note, user);
-
     /// <summary>把一组流水行 ↔ 一组凭证候选落库为 BankReconMatch + Link（自动撮合每组独立 SaveChanges）。</summary>
     private async Task PersistMatchAsync(BankStatement stmt, IReadOnlyList<BankStatementLine> lines,
-        IReadOnlyList<BankCandidateLine> cands, BankReconMatchType type, string? note, string? user)
+        IReadOnlyList<BankCandidateLine> cands, BankReconMatchType type, string? note, string? user, CancellationToken ct = default)
     {
         var stmtSum = lines.Sum(l => l.SignedAmount);
         var match = new BankReconMatch
@@ -210,14 +219,14 @@ public partial class BankReconService : IBankReconService
                 JournalEntryId = c.JournalEntryId, BankSignedAmount = c.BankSignedAmount,
                 Creator = user, CreateDate = DateTime.Now,
             });
-        foreach (var l in lines)
+        foreach (var line in lines)
         {
-            var tracked = await _db.BankStatementLines.FirstAsync(x => x.Id == l.Id);
-            tracked.MatchStatus = BankLineMatchStatus.Matched;
-            tracked.MatchGroupId = match.Id;
-            tracked.Modifier = user; tracked.ModifyDate = DateTime.Now;
+            line.MatchStatus = BankLineMatchStatus.Matched;
+            line.MatchGroupId = match.Id;
+            line.Modifier = user;
+            line.ModifyDate = DateTime.Now;
         }
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(ct);
     }
 
     // ── C-3: ManualMatchAsync + UnmatchAsync ──
