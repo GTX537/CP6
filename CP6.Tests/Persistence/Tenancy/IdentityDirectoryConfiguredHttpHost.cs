@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using CP6.Core.Persistence;
+using CP6.Core.Persistence.Tenancy;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.Sys;
@@ -31,6 +32,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using CP6.Tests.Platform;
 using Moq;
 
 namespace CP6.Tests.Persistence.Tenancy;
@@ -39,8 +41,15 @@ namespace CP6.Tests.Persistence.Tenancy;
 // issuer key/PG data and unavailable browser-only dependencies are fixtures.
 internal sealed class IdentityDirectoryConfiguredHttpHost : IAsyncDisposable
 {
+    internal sealed class Reader(Guid tenant, string login, string password, string clientId)
+    {
+        internal Guid Tenant { get; } = tenant;
+        internal string Login { get; } = login;
+        internal string Password { get; } = password;
+        internal string ClientId { get; } = clientId;
+    }
     private readonly WebApplication _app;
-    private readonly IdentityDirectoryConfiguredPostgresFixture _postgres;
+    private readonly TenantManagementPostgresFixture _postgres;
     private readonly CrmOidcCrypto _signer;
     private readonly OwnerQueryGuard _owner;
     private readonly RequestCounters _requests;
@@ -51,46 +60,56 @@ internal sealed class IdentityDirectoryConfiguredHttpHost : IAsyncDisposable
     internal IReadOnlyDictionary<string, string> BaselineSecrets { get; private set; } = new Dictionary<string, string>();
     internal int OwnerQueries => _owner.Calls;
     internal string RequestDiagnostics => $"received={_requests.Received}; aborted={_requests.Aborted}; completed={_requests.Completed}";
-    private IdentityDirectoryConfiguredHttpHost(WebApplication app, HttpClient client, IdentityDirectoryConfiguredPostgresFixture postgres,
+    private IdentityDirectoryConfiguredHttpHost(WebApplication app, HttpClient client, TenantManagementPostgresFixture postgres,
         CrmOidcOptions options, CrmIdentityRuntime runtime, IdentityDirectoryTenantHost host, OwnerQueryGuard owner, RequestCounters requests)
     { _app = app; Client = client; _postgres = postgres; Options = options; Runtime = runtime; Host = host; _owner = owner; _requests = requests; _signer = new(options); }
 
-    internal static async Task<IdentityDirectoryConfiguredHttpHost> Start(IdentityDirectoryConfiguredPostgresFixture postgres,
+    internal static Task<IdentityDirectoryConfiguredHttpHost> Start(IdentityDirectoryConfiguredPostgresFixture postgres,
+        IReadOnlyDictionary<string, string?>? overrides = null, TimeProvider? clock = null, bool baselineTokens = false)
+        => Start(postgres.Server, postgres.Identity, IdentityDirectoryPostgresFixture.Runtime(),
+            [new(TenantStorageContext.A, "directory_a", postgres.PasswordA, "reader-a"),
+             new(TenantStorageContext.B, "directory_b", postgres.PasswordB, "reader-b")],
+            overrides, clock, baselineTokens);
+
+    internal static async Task<IdentityDirectoryConfiguredHttpHost> Start(TenantManagementPostgresFixture postgres,
+        IdentityDirectoryDatabaseIdentity identity, CrmIdentityRuntime runtime, Reader[] readers,
         IReadOnlyDictionary<string, string?>? overrides = null, TimeProvider? clock = null, bool baselineTokens = false)
     {
-        var runtime = IdentityDirectoryPostgresFixture.Runtime(); using var rsa = RSA.Create(2048);
+        using var rsa = RSA.Create(2048);
         var key = new RsaSecurityKey(rsa.ExportParameters(false)) { KeyId = "configured-directory-fixture" };
         var options = new CrmOidcOptions
         {
             Enabled = true, Issuer = runtime.Options.Issuer, ActiveKeyId = key.KeyId,
             Keys = [new() { Kid = key.KeyId, Pem = rsa.ExportRSAPrivateKeyPem() }],
-            Organizations = new[] { TenantStorageContext.A, TenantStorageContext.B }.Select(t =>
-                new CrmOidcOrganization { TenantId = t, Slug = t.ToString("N"), Region = "us", CrmEnabled = true }).ToList(),
-            ServiceClients = new[] { ("reader-a", TenantStorageContext.A), ("reader-b", TenantStorageContext.B), ("not-reader", TenantStorageContext.A) }
-                .Select(x => new CrmOidcServiceClient { ClientId = x.Item1, TenantId = x.Item2, Enabled = true, AllowedScopes = ["cp6.services"] }).ToList()
+            Organizations = readers.Select(r =>
+                new CrmOidcOrganization { TenantId = r.Tenant, Slug = r.Tenant.ToString("N"), Region = runtime.Options.Tenants[r.Tenant], CrmEnabled = true }).ToList(),
+            ServiceClients = readers.Select(x => (x.ClientId, x.Tenant)).Append((ClientId: "not-reader", Tenant: readers[0].Tenant))
+                .Select(x => new CrmOidcServiceClient { ClientId = x.ClientId, TenantId = x.Tenant, Enabled = true, AllowedScopes = ["cp6.services"] }).ToList()
         };
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "Development" });
         builder.WebHost.ConfigureKestrel(k => k.Listen(IPAddress.Loopback, 0)); builder.Logging.ClearProviders();
-        await using var control = postgres.OwnerContext(TenantStorageContext.A);
+        await using var control = postgres.Context(new TenantContext { CurrentTenantId = readers[0].Tenant });
         var now = (clock ?? TimeProvider.System).GetUtcNow(); const string p = IdentityDirectoryConfigurationTests.Prefix;
         var values = new Dictionary<string, string?>
         {
             ["ConnectionStrings:DefaultConnection"] = control.Database.GetConnectionString(), ["Database:Provider"] = "PostgreSql",
-            ["CrmIdentity:Enabled"] = "true", ["CrmIdentity:Tenants:" + TenantStorageContext.A] = "us", ["CrmIdentity:Tenants:" + TenantStorageContext.B] = "us",
-            ["CrmIdentity:ProjectionReaderClientIds:0"] = "reader-a", ["CrmIdentity:ProjectionReaderClientIds:1"] = "reader-b",
+            ["CrmIdentity:Enabled"] = "true",
             [p + "Enabled"] = "true", [p + "HostId"] = "main", [p + "Revision"] = "r1", [p + "ValidFromUtc"] = now.AddHours(-1).ToString("O"),
-            [p + "ValidUntilUtc"] = now.AddHours(1).ToString("O"), [p + "Server"] = postgres.Identity.Server, [p + "Port"] = postgres.Identity.Port.ToString(),
-            [p + "Database"] = postgres.Identity.Database, [p + "DatabaseOid"] = postgres.Identity.DatabaseOid.ToString(),
-            [p + "SystemIdentifier"] = postgres.Identity.SystemIdentifier, [p + "InstallationId"] = postgres.Identity.InstallationId.ToString("D"),
-            [p + "Fingerprint"] = postgres.Identity.Fingerprint, [p + "SslMode"] = "Disable"
+            [p + "ValidUntilUtc"] = now.AddHours(1).ToString("O"), [p + "Server"] = identity.Server, [p + "Port"] = identity.Port.ToString(),
+            [p + "Database"] = identity.Database, [p + "DatabaseOid"] = identity.DatabaseOid.ToString(),
+            [p + "SystemIdentifier"] = identity.SystemIdentifier, [p + "InstallationId"] = identity.InstallationId.ToString("D"),
+            [p + "Fingerprint"] = identity.Fingerprint, [p + "SslMode"] = "Disable"
         };
-        for (var i = 0; i < 2; i++)
+        for (var i = 0; i < readers.Length; i++)
         {
-            values[p + $"Tenants:{i}:TenantId"] = (i == 0 ? TenantStorageContext.A : TenantStorageContext.B).ToString("D");
-            values[p + $"Tenants:{i}:Login"] = i == 0 ? "directory_a" : "directory_b";
-            values[p + $"Tenants:{i}:Password"] = i == 0 ? postgres.PasswordA : postgres.PasswordB;
+            var reader = readers[i];
+            values["CrmIdentity:Tenants:" + reader.Tenant.ToString("D")] = runtime.Options.Tenants[reader.Tenant];
+            values[$"CrmIdentity:ProjectionReaderClientIds:{i}"] = reader.ClientId;
+            values[p + $"Tenants:{i}:TenantId"] = reader.Tenant.ToString("D");
+            values[p + $"Tenants:{i}:Login"] = reader.Login;
+            values[p + $"Tenants:{i}:Password"] = reader.Password;
             values[p + $"Tenants:{i}:CredentialVersion"] = "v1";
-            values[p + $"Clients:{i}:ClientId"] = i == 0 ? "reader-a" : "reader-b";
+            values[p + $"Clients:{i}:ClientId"] = reader.ClientId;
             values[p + $"Clients:{i}:RegistrationVersion"] = "v1";
         }
         if (overrides is not null) foreach (var (name, value) in overrides) values[name] = value;
@@ -98,7 +117,7 @@ internal sealed class IdentityDirectoryConfiguredHttpHost : IAsyncDisposable
         var owner = new OwnerQueryGuard(); builder.Services.AddSingleton(options);
         if (clock is not null) builder.Services.AddSingleton(clock);
         builder.Services.AddScoped<ITenantContext>(_ => new TenantContext());
-        builder.Services.AddScoped(sp => postgres.Server.Context(sp.GetRequiredService<ITenantContext>(), null, owner));
+        builder.Services.AddScoped(sp => postgres.Context(sp.GetRequiredService<ITenantContext>(), null, owner));
         builder.Services.AddScoped<ICrmOidcServiceDirectory, CrmOidcDirectory>();
         builder.Services.AddSingleton(Mock.Of<ITokenBlacklistService>(MockBehavior.Strict));
         builder.Services.AddSingleton(Mock.Of<IPasswordPolicyService>(MockBehavior.Strict));
@@ -126,8 +145,8 @@ internal sealed class IdentityDirectoryConfiguredHttpHost : IAsyncDisposable
             builder.Services.AddScoped(sp =>
             {
                 CrmOidcServiceTokens.TryDecodeBasic(sp.GetRequiredService<IHttpContextAccessor>().HttpContext!.Request.Headers.Authorization, out var clientId, out _);
-                var tenant = options.ServiceClients.SingleOrDefault(c => c.ClientId == clientId)?.TenantId ?? TenantStorageContext.A;
-                return new TokenEndpointDatabase(postgres.OwnerContext(tenant));
+                var tenant = options.ServiceClients.SingleOrDefault(c => c.ClientId == clientId)?.TenantId ?? readers[0].Tenant;
+                return new TokenEndpointDatabase(postgres.Context(new TenantContext { CurrentTenantId = tenant }));
             });
             builder.Services.AddScoped(sp =>
             {
@@ -173,7 +192,7 @@ internal sealed class IdentityDirectoryConfiguredHttpHost : IAsyncDisposable
         var token = (historical ?? _signer).Sign(audience, claims, expires, "at+jwt");
         if (record)
         {
-            await using var db = _postgres.OwnerContext(tenant);
+            await using var db = _postgres.Context(new TenantContext { CurrentTenantId = tenant });
             await new CrmServiceTokenRecordStore(db, Runtime).RecordAsync(Options.Issuer, client, tenant, id, expires, default);
         }
         return (token, id);

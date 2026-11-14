@@ -88,6 +88,18 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         if (roleRevocation) await SeedCrmExportPolicyEditor(h);
         if (departmentRevocation) await SeedDepartmentEditor(h);
         if (inquiryScopeRevocation) await GrantPolicyHttpPermissions(h);
+        var nativeDirectory = regrantInquiryScope && Environment.GetEnvironmentVariable("CP6_PGT017_NATIVE_DIRECTORY") == "1";
+        var readerSubject = Guid.Empty;
+        var readerEpoch = Guid.Empty;
+        if (nativeDirectory)
+        {
+            var actor = await h.Db.Sys_Users.SingleAsync(x => x.Id == h.ActorId);
+            actor.DeptId = h.Parent;
+            actor.AuthenticationEpoch = readerEpoch = Guid.NewGuid();
+            readerSubject = actor.Id;
+            await h.Db.SaveChangesAsync();
+            h.Db.ChangeTracker.Clear();
+        }
         var options=InquiryPermissionSigningTests.Options();
         using var key=InquiryPermissionSigningTests.Signer(options);var runtime=ContextRuntime(h.Tenant,options.Issuer);
         await new IdentityBootstrapService(h.Db,runtime).InitializeAsync(h.Tenant);h.Db.ChangeTracker.Clear();
@@ -96,9 +108,12 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var registry=new InquiryServicePrincipalRegistryV1(config.Source,config.Oidc);
         var publisherTenant=new TenantContext();await using(var db=server.Context(publisherTenant,runtime))
             await new InquiryServiceIdentityPublisherV1(db,publisherTenant,registry,runtime).PublishAsync(h.Tenant);
+        await using var directory = nativeDirectory ? await StartNativeDirectory(h, runtime) : null;
         var storeId = tenantPause ? Guid.Parse(Environment.GetEnvironmentVariable("CP6_PGT017_STORE_ID")!) : (Guid?)null;
         var sealConnection = tenantPause ? Environment.GetEnvironmentVariable("CP6_PGT017_SEAL_CONNECTION")! : null;
         var stageDirectory = tenantPause ? Environment.GetEnvironmentVariable("CP6_PGT017_BRIDGE")! : null;
+        if (directory is not null)
+            await directory.WriteExpectedAsync(runtime, Path.Combine(stageDirectory!, "initial-directory.json"));
         await using var binding = storeId is { } store
             ? new CrmInquiryTenantPauseV1(new Dictionary<Guid, CrmInquiryTenantPauseBindingV1>
                 { [h.Tenant] = new() { StoreId = store, ConnectionString = sealConnection! } })
@@ -170,6 +185,16 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             if (tenantPause) start.ArgumentList.Add("--no-build");
             start.Environment["CP6_MAIN_SERVICE_BRIDGE"]=bridge;
             if (regrantInquiryScope) start.Environment["CP6_PGT017_SCOPE_REGRANT"] = "1";
+            if (directory is not null)
+                start.Environment["CP6_PGT017_ACTUAL_DIRECTORY"] = JsonSerializer.Serialize(new
+                {
+                    Origin = directory.Host.Client.BaseAddress!.AbsoluteUri,
+                    directory.Source,
+                    ClientId = "fixture-reader",
+                    ClientSecret = directory.Host.BaselineSecrets["fixture-reader"],
+                    Subject = readerSubject,
+                    Epoch = readerEpoch
+                });
             using var child=Process.Start(start)!;var stdout=child.StandardOutput.ReadToEndAsync();var stderr=child.StandardError.ReadToEndAsync();
             var elapsedArtifact = Environment.GetEnvironmentVariable("CP6_PGT017_WORKER") == "artifact-expiry";
             using var timeout=new CancellationTokenSource(TimeSpan.FromMinutes(elapsedArtifact ? 9 : 4));
@@ -208,7 +233,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                         if (roleRevocation) await ExerciseCrmExportRoleRevocation(host, h, stageDirectory!, exited, relay);
                         else if (departmentRevocation) await ExerciseCrmExportDepartmentRevocation(host, h, stageDirectory!, exited);
                         else if (inquiryScopeRevocation) await ExerciseCrmExportScopeRevocation(host, h, pair, stageDirectory!, exited, regrantInquiryScope,
-                            ContextRuntime(h.Tenant, options.Issuer));
+                            ContextRuntime(h.Tenant, options.Issuer), directory);
                         else await ExerciseCrmTenantPause(host, h, stageDirectory!, publicSubmission: true, childExited: exited,
                             shortenDeadline: shortenDeadline);
                     }
@@ -233,6 +258,11 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 if (tenantPause) File.Delete(bridge);
             }
             Assert.True(child.ExitCode==0,log);
+            if (directory is not null)
+            {
+                Assert.Equal(0, directory.Host.OwnerQueries);
+                Assert.Equal(0, directory.Host.Host.PoolSnapshot.Borrowers);
+            }
             var result=System.Xml.Linq.XDocument.Load(Path.Combine(folder,run+".trx"));
             var counters=result.Descendants().Single(x=>x.Name.LocalName=="Counters");
             Assert.Equal("1",counters.Attribute("total")!.Value);Assert.Equal("1",counters.Attribute("passed")!.Value);

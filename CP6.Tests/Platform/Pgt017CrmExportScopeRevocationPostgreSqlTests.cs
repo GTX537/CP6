@@ -11,7 +11,8 @@ namespace CP6.Tests.Platform;
 public sealed partial class IamUserAssignmentsPostgreSqlTests
 {
     private static async Task ExerciseCrmExportScopeRevocation(AuthenticationApiProcess host, Harness h,
-        InquirySiteFormScopeV1 target, string bridge, Task childExited, bool regrant, CrmIdentityRuntime runtime)
+        InquirySiteFormScopeV1 target, string bridge, Task childExited, bool regrant, CrmIdentityRuntime runtime,
+        NativeDirectoryFixture? directory)
     {
         const string path = "api/iam/inquiry-scopes/71";
         const string aggregate = "permission:role:71";
@@ -166,6 +167,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             var path = Path.Combine(bridge, stage + ".json");
             await File.WriteAllBytesAsync(path + ".tmp", envelope);
             File.Move(path + ".tmp", path);
+            if (directory is not null)
+                await directory.WriteExpectedAsync(runtime, Path.Combine(bridge, stage + "-directory.json"), aggregate, version);
         }
 
         async Task Stage(string name)
