@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 · W589-01 银行单边凭证逐笔过账
+
+暂停或撤权与银行凭证各两种 PostgreSQL 顺序通过，共 40 项验证。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W589-01/DELIVERY.md)
+
 ## 2026-11-14 · W588-01 旧 OA 事件与后台重投
 
 事件 HTTP 和重试分别通过与租户暂停的两种 PostgreSQL 顺序，共 5 项新增用例通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W588-01/DELIVERY.md)

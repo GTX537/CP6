@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 · W589-01 银行单边凭证按流水分配来源键
+
+同单多流水可逐笔过账并保留原关联，失败的流水不消耗 GL 凭证号。 [缺陷 #1093](https://github.com/GTX537/CP6/issues/1093) · [交付记录](../development/evidence/W589-01/DELIVERY.md)
+
 ## 2026-11-14 · W588-01 事件 HTTP 与重试的租户暂停顺序
 
 先提交保留原实例与状态，暂停先提交时保留原记录及重试次数。长事件键按完整负载恢复。 [缺陷 #1091](https://github.com/GTX537/CP6/issues/1091) · [交付记录](../development/evidence/W588-01/DELIVERY.md)
