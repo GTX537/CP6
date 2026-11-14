@@ -4,7 +4,8 @@ namespace CP6.Core.Services.Fin;
 public interface IBankReconService
 {
     Task<List<BankCandidateLine>> GetCandidatesAsync(Guid statementId, Guid statementLineId, bool widen);
-    Task<FinResult> AutoMatchAsync(Guid statementId, string? user);
+    Task<FinResult> AutoMatchAsync(Guid statementId, string? user,
+        Func<CancellationToken, Task<Guid>>? currentActor = null, CancellationToken ct = default);
     Task<FinResult> ManualMatchAsync(ManualMatchRequest req, byte[]? stmtLineRowVersion, string? user);
     Task<FinResult> UnmatchAsync(Guid groupId, string? user);
 
