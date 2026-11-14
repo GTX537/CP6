@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 · PGT-017 恢复对账与写者余项
+
+正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。物理恢复后核对 Main 权威、CRM 封存版本、C02 已发布身份、原业务回执及外部消息水位，验收重新开放、实际 broker 和旧实例排空。Main 旧 OA、财务、独立 Space Design 及其他普通数据库写者待核销。 [交付记录](../development/evidence/W569-01/DELIVERY.md)
+
 ## 2026-11-14 · PGT-017 恢复与写者余项
 
 正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 仍需完成物理恢复后的 Main 权威与 CRM 封存版本、C02 已发布身份、原业务回执和消息水位对账，目标库重新开放，实际宿主运输与旧实例排空，以及 Main 的旧 OA、财务、独立 Space Design 和其余普通数据库写者。 [交付记录](../development/evidence/W568-01/DELIVERY.md)

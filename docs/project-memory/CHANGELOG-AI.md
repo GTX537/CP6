@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 · W569-01
+
+已登记 CRM Outbox 发布前核对原 WAL 时间线，最小权限迁移与宿主一起采用。隔离 PostgreSQL 物理恢复复现 CRM Outbox 双发；已登记发布器校验 WAL 时间线后，原库发送一次，恢复库保留原回执和待发消息，未发生网络请求。 [交付记录](../development/evidence/W569-01/DELIVERY.md)
+
 ## 2026-11-14 · W568-01
 
 Main 在 CRM 封存后实际提交撤权并丢失 PostgreSQL 回执，原操作查询和重试读回已提交回执，CRM 旧许可不能写入。CRM 先提交对照保留原导出。 本轮增加实测和证据，复用相关产品发布验证。 [交付记录](../development/evidence/W568-01/DELIVERY.md)
