@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 UTC · W560 采购转单当前权限
+
+每个供应商订单与最后询价抬头在原提交前取得 Main 共同权限根，锁内确认当前成交依据与会话。 [交付](../development/evidence/W560-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W559 询价当前权限
 
 五个写入口在 Main 共同事务核对当前动作和会话。采番与业务提交绑定。 [交付](../development/evidence/W559-01/DELIVERY.md)

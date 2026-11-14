@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 UTC · W560 PGT-017 余项
+
+其他采购写入口、独立 Space Design、旧 OA、财务、Stock 普通身份以及两库恢复对账待验。RFQ 原请求没有跨组原回执，正式商业分组仍按 PUR-RFQ-01 验收。 [交付](../development/evidence/W560-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W559 PGT-017 余项
 
 RFQ 分组转 PO、其他采购、独立 Space Design、旧 OA、财务、Stock 普通角色及两库恢复对账待验。 [交付](../development/evidence/W559-01/DELIVERY.md)
