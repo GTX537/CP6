@@ -165777,6 +165777,11 @@
       "at": "2026-11-14T02:03:24.322872+00:00",
       "change": "W560 旧询价转采购单每个原事务持有 Main 授权根。采购分组、编号及最后抬头通过真实提交时序。正式 PostgreSQL 26/27。",
       "evidence": "docs/development/evidence/W560-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T02:24:22.404661+00:00",
+      "change": "W561 每个采购申请转单组中，采购单、明细、编号和来源回填在 Main 共同授权事务提交。正式 PostgreSQL 26/27。",
+      "evidence": "docs/development/evidence/W561-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211783,10 +211788,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W560",
-      "path": "docs/development/evidence/W560-01/DELIVERY.md",
-      "baseline_sha": "b018f0892ab6675e3733fdb9e9c32d5a28129b31",
-      "registered_at": "2026-11-14T01:45:41.593445+00:00",
+      "id": "W561",
+      "path": "docs/development/evidence/W561-01/DELIVERY.md",
+      "baseline_sha": "e61a10186912eff5662adb39dd3985a53198cb38",
+      "registered_at": "2026-11-14T02:13:07.705372+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211800,11 +211805,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "核对剩余 Main 独立业务提交和跨库恢复边界。PGT-017 保持 NOT_RUN。",
+      "next_action": "继续核对独立采购写者与跨库恢复，PGT-017 保持 NOT_RUN。",
       "windows": [
         {
-          "id": "W560-01",
-          "workspace_task": "W560-01",
+          "id": "W561-01",
+          "workspace_task": "W561-01",
           "related_tasks": [
             "WP02-03",
             "PGT-017"
@@ -211815,21 +211820,21 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w560-01",
-          "planned_scope_ref": "docs/development/evidence/W560-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W560-01/DELIVERY.md",
+          "branch": "codex/w561-01",
+          "planned_scope_ref": "docs/development/evidence/W561-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W561-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main per-supplier RFQ to PO transactions",
+            "Main PR to PO per-supplier writes",
             "isolated Main PostgreSQL and CP6 WebApi"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "14 项 PostgreSQL 与 42 项相关组件全部通过。真实撤权先提交、首组先提交与最终抬头先持锁三种时序。发布 310 文件，存活 200、保护端点 401。",
-          "remaining_scope": "采购申请与订单其他写入口、采购收货、独立 Space Design、旧 OA、财务、Stock 普通数据库身份、两库恢复对账及重新开放。旧 RFQ 同一 HTTP 请求没有跨组原回执，正式 PUR-RFQ-01 商业分组协议仍按原任务验收。",
-          "main_tested_source_sha": "03abc87f4e2deba633054187d83e056c6f581a9b"
+          "validation_summary": "三项实际 PostgreSQL 与 56 项相关组件通过。撤权两种时序、原组保留和重授仅继续余组、来源约束导致整个组回滚。发布 310 文件，200/401。",
+          "remaining_scope": "直接采购申请和订单建单、送审、取消，采购收货、其他采购、独立 Space Design、旧 OA、财务、Stock 普通数据库身份、两库恢复及传输。",
+          "main_tested_source_sha": "bd924c378b487e1843c09e3ca270171c5a58b624"
         }
       ],
       "storage": {
@@ -264482,6 +264487,66 @@
             "main_tested_source_sha": "6a79570084a31f78fe220e064c90c37ac3260d7a",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1045",
             "main_remote_main_sha": "b018f0892ab6675e3733fdb9e9c32d5a28129b31"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W560",
+        "path": "docs/development/evidence/W560-01/DELIVERY.md",
+        "baseline_sha": "b018f0892ab6675e3733fdb9e9c32d5a28129b31",
+        "registered_at": "2026-11-14T01:45:41.593445+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "核对剩余 Main 独立业务提交和跨库恢复边界。PGT-017 保持 NOT_RUN。",
+        "windows": [
+          {
+            "id": "W560-01",
+            "workspace_task": "W560-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w560-01",
+            "planned_scope_ref": "docs/development/evidence/W560-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W560-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main per-supplier RFQ to PO transactions",
+              "isolated Main PostgreSQL and CP6 WebApi"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "14 项 PostgreSQL 与 42 项相关组件全部通过。真实撤权先提交、首组先提交与最终抬头先持锁三种时序。发布 310 文件，存活 200、保护端点 401。",
+            "remaining_scope": "采购申请与订单其他写入口、采购收货、独立 Space Design、旧 OA、财务、Stock 普通数据库身份、两库恢复对账及重新开放。旧 RFQ 同一 HTTP 请求没有跨组原回执，正式 PUR-RFQ-01 商业分组协议仍按原任务验收。",
+            "main_tested_source_sha": "03abc87f4e2deba633054187d83e056c6f581a9b",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1047",
+            "main_remote_main_sha": "e61a10186912eff5662adb39dd3985a53198cb38"
           }
         ],
         "storage": {

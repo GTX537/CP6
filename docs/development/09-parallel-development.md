@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+## 2026-11-14 UTC · W561 采购申请分组转单
+
+COORD 使用 Main DEV-1，在每供应商事务整组提交采购单和申请来源。 [交付](evidence/W561-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W560 询价分组转采购单
 
 COORD 使用 Main DEV-1，在原供应商及抬头提交内采用共同授权事务。 [交付](evidence/W560-01/DELIVERY.md)
