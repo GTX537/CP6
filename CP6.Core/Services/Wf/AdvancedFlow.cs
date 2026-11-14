@@ -124,14 +124,22 @@ public partial class FlowEngine
 
         var schema = await LoadSchemaAsync(inst);
 
-        switch ((target.Kind ?? "node").Trim().ToLowerInvariant())
+        var defer = DeferSynchronousWebApi;
+        // A return to start can reach a synchronous HTTP node before parking at an approval.
+        // Record that work in the Owner transaction for delivery after commit.
+        DeferSynchronousWebApi = defer || (_db.Database.IsNpgsql() && _db.Database.CurrentTransaction is not null);
+        try
         {
-            case "node":      await SendBackToNodeAsync(inst, schema, task, actorId, target.NodeId, comment); break;
-            case "prevstage": await SendBackToPrevStageAsync(inst, schema, task, actorId, comment); break;   // T6
-            case "starter":   await SendBackToStarterAsync(inst, task, actorId, comment); break;             // T6
-            default: throw new InvalidOperationException("E-WF-012");
+            switch ((target.Kind ?? "node").Trim().ToLowerInvariant())
+            {
+                case "node":      await SendBackToNodeAsync(inst, schema, task, actorId, target.NodeId, comment); break;
+                case "prevstage": await SendBackToPrevStageAsync(inst, schema, task, actorId, comment); break;   // T6
+                case "starter":   await SendBackToStarterAsync(inst, task, actorId, comment); break;             // T6
+                default: throw new InvalidOperationException("E-WF-012");
+            }
+            await _db.SaveChangesAsync();
         }
-        await _db.SaveChangesAsync();
+        finally { DeferSynchronousWebApi = defer; }
     }
 
     private async Task SendBackToNodeAsync(Wf_FlowInstance inst, FlowSchema schema, Wf_FlowTask task,

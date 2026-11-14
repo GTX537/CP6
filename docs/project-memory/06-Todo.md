@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 · W580-01 PGT-017 余项
+
+继续核对旧 OA 批量办理及触发器、财务、独立 Space Design 等写者。CRM 仍需把实际投影与真实 C02 组合联验，并验证差量恢复和安全重开。 [交付记录](../development/evidence/W580-01/DELIVERY.md)
+
 ## 2026-11-14 · W579-01 PGT-017 余项
 
 继续把真实目录发布、生产同型事件投递和竞争写入放到同一两库场景，并验证缺失写集补足后安全开放。Main 继续核对旧 OA、财务、独立 Space Design 及其他入口。 [交付记录](../development/evidence/W579-01/DELIVERY.md)

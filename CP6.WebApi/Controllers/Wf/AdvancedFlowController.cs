@@ -31,6 +31,7 @@ public class AdvancedFlowController : LocalizedControllerBase
     /// <summary>退回到目标节点（章07 §2）。</summary>
     [HttpPost("sendback")]
     [RequirePermission("oa-inbox", "sendback")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> SendBack([FromBody] SendBackReq r)
     {
         try

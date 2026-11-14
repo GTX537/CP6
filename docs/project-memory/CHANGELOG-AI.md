@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 · W580-01 退回后的同步 HTTP 以持久任务派送
+
+收件箱和高级流程退回共用 IAM 事务栅栏。流程退回到起点时，连接器工作由已提交的服务任务派送，复用既有重试与任务身份。 [交付记录](../development/evidence/W580-01/DELIVERY.md)
+
 ## 2026-11-14 · W579-01 修复完整 Core 的目录安装
 
 鲜装按已评审的 PostgreSQL 18 全量迁移 catalog 准入，撤销原有默认业务函数 PUBLIC EXECUTE，保留普通登录隔离和未知变更拒绝。 [交付记录](../development/evidence/W579-01/DELIVERY.md)

@@ -49,7 +49,7 @@ internal sealed class ServiceTaskNodeHandler : INodeHandler
         var mode = (kind == ServiceKind.Timer)
             ? ServiceMode.Async
             : (node.ServiceMode ?? (kind == ServiceKind.WebApi ? ServiceMode.Async : ServiceMode.Sync));
-        var deferExternalCall = mode == ServiceMode.Sync && kind == ServiceKind.WebApi && ctx.Engine.DeferExternalStart;
+        var deferExternalCall = mode == ServiceMode.Sync && kind == ServiceKind.WebApi && ctx.Engine.DeferSynchronousWebApi;
 
         int maxAttempts = (node.ServiceMaxRetries ?? DefaultMaxRetries) + 1;   // P0-1：消 off-by-one
         int backoffSec = node.ServiceRetryBackoffSec ?? DefaultBackoffSec;

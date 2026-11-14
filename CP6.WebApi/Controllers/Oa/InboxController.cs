@@ -207,6 +207,7 @@ public class InboxController : LocalizedControllerBase
 
     [HttpPost("sendback")]
     [RequirePermission("oa-inbox", "sendback")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> SendBack([FromBody] SendBackReq r)
     {
         try
