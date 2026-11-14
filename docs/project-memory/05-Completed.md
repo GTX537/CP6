@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-14 UTC · W564 Stock 普通 SQL
+
+未持根或已停用时拒绝库存写入，合法库存调整、创建、移库及原件回归通过。 [交付](../development/evidence/W564-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W563 已生成隐私制品过期
 
 原 worker 持有共同栅栏，真实到期清除与 Main 暂停按先提交的事务定结果。 [交付](../development/evidence/W563-01/DELIVERY.md)

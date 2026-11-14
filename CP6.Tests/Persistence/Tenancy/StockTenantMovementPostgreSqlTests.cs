@@ -64,6 +64,22 @@ public sealed class StockTenantMovementPostgreSqlTests(TenantManagementPostgresF
         }
 
         Assert.Equal("0,0,0,0,0,0", await Facts());
+        await using (var unauthorized = Writer())
+        {
+            foreach (var command in new[]
+            {
+                """UPDATE public."T_Stock" SET "PhysicalQty"="PhysicalQty" WHERE "Id"={0}""",
+                """INSERT INTO public."T_StockTransaction" DEFAULT VALUES""",
+                """UPDATE public."T_WmsSequence" SET "NextNo"=0 WHERE false""",
+                """INSERT INTO cp6_stock_return_v1.movement_sequences(tenant_id,pool_id,movement_id) VALUES (DEFAULT,DEFAULT,DEFAULT)"""
+            })
+            {
+                var rejected = await Assert.ThrowsAsync<PostgresException>(() =>
+                    unauthorized.Database.ExecuteSqlRawAsync(command, stock.Id));
+                Assert.Equal(PostgresErrorCodes.InsufficientPrivilege, rejected.SqlState);
+                Assert.Equal("STOCK_WRITE_AUTHORITY_REQUIRED", rejected.MessageText);
+            }
+        }
         await Move(commit: false);
         Assert.Equal(originalQuantity, await Quantity(owner));
         Assert.Equal("0,0,0,0,0,0", await Facts());
@@ -76,6 +92,25 @@ public sealed class StockTenantMovementPostgreSqlTests(TenantManagementPostgresF
             WHERE tenant_id={tenantA} AND object_kind='stock-transaction'
             """).SingleAsync());
         Assert.Equal(delta, await owner.StockTransactions.AsNoTracking().Select(t => t.Qty).SingleAsync());
+
+        await owner.Database.ExecuteSqlInterpolatedAsync($"""
+            UPDATE public."Sys_Tenants" SET "Enable"=false WHERE "Id"={tenantA}
+            """);
+        await using (var paused = Writer())
+        await using (var tx = await paused.Database.BeginTransactionAsync())
+        {
+            await paused.Database.ExecuteSqlInterpolatedAsync($"SELECT cp6_stock_write_fence_v1.acquire({tenantA})");
+            var rejected = await Assert.ThrowsAsync<PostgresException>(() => paused.Database.ExecuteSqlInterpolatedAsync($"""
+                UPDATE public."T_Stock" SET "PhysicalQty"="PhysicalQty" WHERE "Id"={stock.Id}
+                """));
+            Assert.Equal("STOCK_WRITE_TENANT_UNAVAILABLE", rejected.MessageText);
+            await tx.RollbackAsync();
+        }
+        await owner.Database.ExecuteSqlInterpolatedAsync($"""
+            UPDATE public."Sys_Tenants" SET "Enable"=true WHERE "Id"={tenantA}
+            """);
+        Assert.Equal(originalQuantity + delta, await Quantity(owner));
+        Assert.Equal("1,1,1,1,1,1", await Facts());
 
         owner.StockTakes.Add(new() { StockTakeNo = "FROZEN", TargetWarehouseCd = "W1", Status = StockTakeStatus.Counting });
         owner.StockTakeDetails.Add(new()
@@ -110,10 +145,13 @@ public sealed class StockTenantMovementPostgreSqlTests(TenantManagementPostgresF
                     SELECT cp6_stock_movement_writer_v1.record_audit({tenantA},{actor},{actorName},
                         LOCALTIMESTAMP,LOCALTIMESTAMP,CAST({previousAudit} AS jsonb))
                     """))).SqlState);
+            await using var guarded = await probe.Database.BeginTransactionAsync();
+            await probe.Database.ExecuteSqlInterpolatedAsync($"SELECT cp6_stock_write_fence_v1.acquire({tenantA})");
             var protectedStock = await Assert.ThrowsAsync<PostgresException>(() => probe.Database.ExecuteSqlInterpolatedAsync($"""
                 UPDATE public."T_Stock" SET "PhysicalQty"="PhysicalQty" WHERE "Id"={stock.Id}
                 """));
             Assert.Equal("STOCK_ROOT_WRITER_REQUIRED", protectedStock.MessageText);
+            await guarded.RollbackAsync();
             Assert.Equal(PostgresErrorCodes.InsufficientPrivilege, (await Assert.ThrowsAsync<PostgresException>(() =>
                 probe.Database.ExecuteSqlRawAsync("SELECT log_id FROM cp6_privacy_security_fields_v1.tombstones"))).SqlState);
             Assert.Equal(PostgresErrorCodes.InsufficientPrivilege, (await Assert.ThrowsAsync<PostgresException>(() =>

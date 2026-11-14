@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 UTC · W564 Stock 普通写入需持根
+
+新增 PostgreSQL 前向迁移，校验库存、流水、两类编号语句的当前事务与租户启用状态。 [交付](../development/evidence/W564-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W563 CRM 制品自然到期实测
 
 两仓联验增加原导出制品和凭证过期，核对原回执、原询盘、审计及 Outbox。 [交付](../development/evidence/W563-01/DELIVERY.md)
