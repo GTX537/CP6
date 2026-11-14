@@ -24,6 +24,7 @@ internal static class IdentityDirectoryRowSecurityV1
         // Directory namespace 1 is mapping, 2 is service provisioning, 3 is this fresh overlay.
         await Execute("SELECT pg_catalog.pg_advisory_xact_lock(1129330260, 3)");
         await Execute("LOCK TABLE " + string.Join(", ", Tables) + " IN ACCESS EXCLUSIVE MODE");
+        var completeCoreLayout = await IdentityDirectoryCoreCatalogV1.MatchesAsync(connection, transaction, ct).ConfigureAwait(false);
         var roles = bindings.Select(x => x.Login).ToArray();
         await Require("""
             SELECT session_user=current_user
@@ -51,7 +52,7 @@ internal static class IdentityDirectoryRowSecurityV1
               AND NOT EXISTS(SELECT FROM pg_catalog.pg_attribute col JOIN pg_catalog.pg_class c ON c.oid=col.attrelid
                 JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace,LATERAL pg_catalog.aclexplode(col.attacl) a
                 WHERE n.nspname !~ '^pg_' AND n.nspname<>'information_schema' AND a.grantee<>c.relowner)
-              AND NOT EXISTS(SELECT FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
+              AND (@completeCoreLayout OR (NOT EXISTS(SELECT FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
                 WHERE n.nspname !~ '^pg_' AND n.nspname<>'information_schema' AND (
                   p.proowner<>current_user::regrole OR p.prosecdef
                   OR NOT EXISTS(SELECT FROM unnest(ARRAY[
@@ -137,7 +138,7 @@ internal static class IdentityDirectoryRowSecurityV1
                     ('cp6_stock_outbox_v1.authority_identity_immutable()','0a86616c48e6fc6fec1562047daa677114bc77cc47336a47f102969673385498'),
                     ('cp6_stock_outbox_v1.run_guard()','82d75b7d83b3e58545b61ccd860975b92710e54df4555a2560b946cb2d3fead6')
                   ) expected(signature,sha256) WHERE p.oid=pg_catalog.to_regprocedure(expected.signature)
-                    AND encode(sha256(convert_to(replace(p.prosrc,chr(13)||chr(10),chr(10)),'UTF8')),'hex')=expected.sha256)))
+                    AND encode(sha256(convert_to(replace(p.prosrc,chr(13)||chr(10),chr(10)),'UTF8')),'hex')=expected.sha256)))))
               AND pg_catalog.to_regprocedure('public.cp6_cp936_length_v1(text)') IS NOT NULL
               AND pg_catalog.to_regprocedure('public.cp6_text_range_v1(text,text)') IS NOT NULL
             """);
@@ -161,6 +162,8 @@ internal static class IdentityDirectoryRowSecurityV1
                     AND t.tgfoid='cp6_storage_core.advance_identity_generation_v1()'::regprocedure AND t.tgtype=29)))=3
             """);
         await Execute(PostgreSqlMigrationPrerequisitesV1.InstallSql);
+        if (completeCoreLayout)
+            await IdentityDirectoryCoreCatalogV1.RevokePublicExecuteAsync(connection, transaction, ct).ConfigureAwait(false);
         await Execute($$"""
             REVOKE CREATE,TEMPORARY ON DATABASE {{Q(connection.Database)}} FROM PUBLIC;
             REVOKE ALL ON SCHEMA public FROM PUBLIC;
@@ -213,6 +216,7 @@ internal static class IdentityDirectoryRowSecurityV1
         {
             await using var command = new NpgsqlCommand(sql, connection, transaction);
             command.Parameters.AddWithValue("roles", roles); command.Parameters.AddWithValue("tables", Tables.ToArray());
+            command.Parameters.AddWithValue("completeCoreLayout", completeCoreLayout);
             if (await command.ExecuteScalarAsync(ct).ConfigureAwait(false) is not true)
                 throw new InvalidOperationException("Identity directory read isolation preconditions were rejected; roll back the control transaction.");
         }

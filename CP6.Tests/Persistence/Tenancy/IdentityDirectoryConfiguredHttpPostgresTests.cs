@@ -16,7 +16,7 @@ public sealed class IdentityDirectoryConfiguredPostgresFixture : IdentityDirecto
     protected override Task Install(NpgsqlConnection connection, NpgsqlTransaction transaction) => Task.CompletedTask;
     protected override async Task AfterInstallation(NpgsqlConnection connection)
     {
-        var request = new IdentityDirectoryInstallRequestV2(Guid.NewGuid(), "127.0.0.1", 55435, connection.Database,
+        var request = new IdentityDirectoryInstallRequestV2(Guid.NewGuid(), "127.0.0.1", connection.Port, connection.Database,
             await Scalar<uint>(connection, "SELECT oid FROM pg_database WHERE datname=current_database()"),
             await Scalar<string>(connection, "SELECT system_identifier::text FROM pg_control_system()"), "73ddf0b9374e5f09140be4280895d150749f87c5", Logins);
         Identity = (await new IdentityDirectoryInstallationV2().InstallAsync(connection, request)).Identity!;

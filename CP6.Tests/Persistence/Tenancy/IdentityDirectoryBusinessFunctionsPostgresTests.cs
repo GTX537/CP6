@@ -17,7 +17,8 @@ public sealed class IdentityDirectoryBusinessFunctionsPostgresTests(IdentityDire
         await IdentityDirectoryRowSecurityV1.InstallAsync(owner,tx,Logins);
         await using var command=new NpgsqlCommand("""
             SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
-            WHERE n.nspname IN ('cp6_order_owner_v1','cp6_operations_owner_v1','cp6_oee_legacy_v1','cp6_main_owner_v1','cp6_stock_outbox_v1','cp6_inquiry_scope_v1')
+            WHERE n.nspname !~ '^pg_' AND n.nspname<>'information_schema'
+              AND p.oid<>'cp6_tenancy_v1.current_tenant_id()'::regprocedure
               AND (has_function_privilege('directory_a',p.oid,'EXECUTE') OR has_function_privilege('directory_b',p.oid,'EXECUTE'))
             """,owner,tx);
         Assert.Equal(0L,await command.ExecuteScalarAsync());await tx.RollbackAsync();
@@ -42,7 +43,8 @@ public sealed class IdentityDirectoryBusinessFunctionsPostgresTests(IdentityDire
             "ALTER FUNCTION cp6_inquiry_scope_v1.changed() SECURITY DEFINER",
             "ALTER FUNCTION cp6_inquiry_scope_v1.require_snapshot() SET search_path=public,pg_catalog",
             "GRANT EXECUTE ON FUNCTION cp6_inquiry_scope_v1.changed() TO PUBLIC",
-            "GRANT EXECUTE ON FUNCTION cp6_inquiry_scope_v1.require_snapshot() TO PUBLIC"})
+            "GRANT EXECUTE ON FUNCTION cp6_inquiry_scope_v1.require_snapshot() TO PUBLIC",
+            "ALTER TABLE public.\"T_Stock\" DISABLE TRIGGER stock_ordinary_authority_v1"})
         {
             await using var tx=await owner.BeginTransactionAsync();await using var change=new NpgsqlCommand(anomaly,owner,tx);await change.ExecuteNonQueryAsync();
             await Assert.ThrowsAsync<InvalidOperationException>(()=>IdentityDirectoryRowSecurityV1.InstallAsync(owner,tx,Logins));await tx.RollbackAsync();

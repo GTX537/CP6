@@ -1,4 +1,7 @@
 using System.Diagnostics;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using System.Xml.Linq;
 using CP6.Core.Services.CrmIdentity.Baselines;
@@ -17,14 +20,26 @@ public sealed class CrmNativeBaselineCrossRepositoryPostgresTests(IdentityDirect
         List<object> expected = [];
         foreach (var tenant in new[] { A, B })
         {
-            var token = await host.Token(tenant);
+            var client = tenant == A ? "reader-a" : "reader-b";
+            var secret = host.BaselineSecrets[client];
+            using var request = new HttpRequestMessage(HttpMethod.Post, "/connect/token")
+            {
+                Content = new FormUrlEncodedContent(new Dictionary<string, string>
+                    { ["grant_type"] = "client_credentials", ["scope"] = "cp6.services" })
+            };
+            request.Headers.Authorization = new AuthenticationHeaderValue("Basic",
+                Convert.ToBase64String(Encoding.UTF8.GetBytes(Uri.EscapeDataString(client) + ":" + Uri.EscapeDataString(secret))));
+            using var response = await host.Client.SendAsync(request);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            using var body = JsonDocument.Parse(await response.Content.ReadAsByteArrayAsync());
+            var token = body.RootElement.GetProperty("access_token").GetString()!;
             var source = new IdentityBaselineSourceV1(tenant, host.Runtime.Options.Issuer, host.Runtime.Options.Tenants[tenant],
                 host.Runtime.ContractBundleSha256, postgres.Identity.BaselineSha256);
             using var collector = new IdentityBaselineCollector(host.Runtime, source, host.Client.BaseAddress!,
-                _ => ValueTask.FromResult(token.Token), new(AllowLoopbackHttp: true));
-            var baseline = await collector.CollectAsync(); var client = tenant == A ? "reader-a" : "reader-b";
+                _ => ValueTask.FromResult(token), new(AllowLoopbackHttp: true));
+            var baseline = await collector.CollectAsync();
             expected.Add(new { Source = source, Digest = baseline.ContentSha256, Count = baseline.TotalCount,
-                ClientId = client, ClientSecret = host.BaselineSecrets[client] });
+                ClientId = client, ClientSecret = secret });
         }
         var project = Path.GetFullPath(Environment.GetEnvironmentVariable("CP6_CRM_CROSS_PROJECT")!);
         var artifacts = Path.GetFullPath(Environment.GetEnvironmentVariable("CP6_CRM_CROSS_ARTIFACTS")!);
