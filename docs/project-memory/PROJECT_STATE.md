@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 · W582-01 Main 目录与 CRM 原生发布的完整导出联验
+
+两种提交顺序都核对 Main 目录原值、实际 Dapr/Kafka、原生 Inbox 与 CRM 发布，保留业务先提交的原导出。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W582-01/DELIVERY.md)
+
 ## 2026-11-14 · W581-01 旧 OA 批量办理
 
 撤权先提交时两条待办未办结，首条先提交时保留其效果并拒绝第二条。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W581-01/DELIVERY.md)

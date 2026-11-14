@@ -165882,6 +165882,11 @@
       "at": "2026-11-14T15:41:12.132641+00:00",
       "change": "W581-01 旧 OA 批量办理由每条独立核对 IAM 权限和提交。正式 PostgreSQL 仍 26/27。",
       "evidence": "docs/development/evidence/W581-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T16:16:44.644809+00:00",
+      "change": "W582-01 两种提交顺序纳入真实 Main 目录和 CRM 原生发布，保持正式 PostgreSQL 26/27。",
+      "evidence": "docs/development/evidence/W582-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211888,10 +211893,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W581",
-      "path": "docs/development/evidence/W581-01/DELIVERY.md",
-      "baseline_sha": "a33d9c25fb87a160f33aace835d94b079df7c400",
-      "registered_at": "2026-11-14T15:27:55.090800+00:00",
+      "id": "W582",
+      "path": "docs/development/evidence/W582-01/DELIVERY.md",
+      "baseline_sha": "7018cc6306f6852d5d0ae1033507a73c4e086af3",
+      "registered_at": "2026-11-14T15:46:25.468587+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211905,41 +211910,55 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "核对旧触发器手动、消息及计时入口的权威边界，按实际调用链继续跨仓竞争验证。",
+      "next_action": "继续 CRM 缺失写集场景的可验证恢复边界及 Main 剩余 writer，按正式矩阵关闭 PGT-017。",
       "windows": [
         {
-          "id": "W581-01",
-          "workspace_task": "W581-01",
+          "id": "W582-01",
+          "workspace_task": "W582-01",
           "related_tasks": [
             "PGT-017",
+            "WP02-02",
             "WP02-03"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT",
+          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w581-01",
-          "planned_scope_ref": "docs/development/evidence/W581-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W581-01/DELIVERY.md",
+          "branch": "codex/w582-01",
+          "planned_scope_ref": "docs/development/evidence/W582-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W582-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:Core-IAM",
-            "Main:OA-legacy-batch-decision"
+            "Main:CRM-Identity-Directory",
+            "Main:CRM-C02-outbox-dispatch",
+            "CRM:C02-Inbox-and-publication",
+            "Local:PostgreSQL-Dapr-Kafka"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "39 项通过、零跳过。真实 PostgreSQL 18.6/HTTP 核对两种撤权顺序，验证两个 OA 入口的回滚和提交后才派送。",
-          "remaining_scope": "旧 OA 触发器，财务、独立 Space Design 与其余写者登记，CRM 实际投影和 C02 同场竞争、缺失写集差量恢复与重新开放。",
-          "main_tested_source_sha": "769af18abdab67dad7d5df99095de1a89224c502"
+          "validation_summary": "两种提交顺序合并实测 Main C2 目录、Dapr/Kafka 原字节、CRM Inbox 及原生发布。两仓共 17 项通过，零跳过。",
+          "remaining_scope": "CRM 业务写集在尾 WAL 缺失和源库不可用时的差量对账、安全重开与正式切换，Main 旧 OA 触发器、财务、独立 Space Design 与其他普通写者。",
+          "main_tested_source_sha": "fe781f325698d98d93ca310d9d93f97b65c582f3",
+          "product_repository": "CP6.CRM",
+          "product_worktree": "D:/CP6-worktrees/dev-2",
+          "product_baseline": "6ff25d1d5a590d637ea3a0577568e02783a03374",
+          "product_branch": "codex/w582-01",
+          "product_source_sha": "0c87996f0771c573351bc6508902e0da7015a715",
+          "product_remote_main_sha": "256d6ddff81aed86c06620d85f9f8ca95e2f7f3a",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/227",
+          "product_branch_disposition": "deleted-local-and-remote",
+          "product_workspace_status": "fixed-seat-detached-for-reuse",
+          "product_seat_released": true
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -265931,6 +265950,66 @@
             "main_tested_source_sha": "d6e7fdf747593ed6304d2146ce4edf3f4e205d2b",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1078",
             "main_remote_main_sha": "a33d9c25fb87a160f33aace835d94b079df7c400"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W581",
+        "path": "docs/development/evidence/W581-01/DELIVERY.md",
+        "baseline_sha": "a33d9c25fb87a160f33aace835d94b079df7c400",
+        "registered_at": "2026-11-14T15:27:55.090800+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "核对旧触发器手动、消息及计时入口的权威边界，按实际调用链继续跨仓竞争验证。",
+        "windows": [
+          {
+            "id": "W581-01",
+            "workspace_task": "W581-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w581-01",
+            "planned_scope_ref": "docs/development/evidence/W581-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W581-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:Core-IAM",
+              "Main:OA-legacy-batch-decision"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "39 项通过、零跳过。真实 PostgreSQL 18.6/HTTP 核对两种撤权顺序，验证两个 OA 入口的回滚和提交后才派送。",
+            "remaining_scope": "旧 OA 触发器，财务、独立 Space Design 与其余写者登记，CRM 实际投影和 C02 同场竞争、缺失写集差量恢复与重新开放。",
+            "main_tested_source_sha": "769af18abdab67dad7d5df99095de1a89224c502",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1080",
+            "main_remote_main_sha": "7018cc6306f6852d5d0ae1033507a73c4e086af3"
           }
         ],
         "storage": {
