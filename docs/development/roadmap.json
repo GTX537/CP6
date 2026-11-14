@@ -165877,6 +165877,11 @@
       "at": "2026-11-14T15:22:27.573802+00:00",
       "change": "W580-01 让旧 OA 两个退回入口共用现有 IAM 事务栅栏，同步连接器改由已提交任务派送。正式 PostgreSQL 仍 26/27。",
       "evidence": "docs/development/evidence/W580-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T15:41:12.132641+00:00",
+      "change": "W581-01 旧 OA 批量办理由每条独立核对 IAM 权限和提交。正式 PostgreSQL 仍 26/27。",
+      "evidence": "docs/development/evidence/W581-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211883,10 +211888,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W580",
-      "path": "docs/development/evidence/W580-01/DELIVERY.md",
-      "baseline_sha": "6a403e13d2f66f6df281be6b95d94e5d8e0e3b03",
-      "registered_at": "2026-11-14T15:07:41.211371+00:00",
+      "id": "W581",
+      "path": "docs/development/evidence/W581-01/DELIVERY.md",
+      "baseline_sha": "a33d9c25fb87a160f33aace835d94b079df7c400",
+      "registered_at": "2026-11-14T15:27:55.090800+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211900,11 +211905,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续旧 OA 批量办理逐条栅栏和触发器，复用 Main C2 目录与 CRM 原生后台核对跨库写入竞争。",
+      "next_action": "核对旧触发器手动、消息及计时入口的权威边界，按实际调用链继续跨仓竞争验证。",
       "windows": [
         {
-          "id": "W580-01",
-          "workspace_task": "W580-01",
+          "id": "W581-01",
+          "workspace_task": "W581-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -211915,22 +211920,21 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w580-01",
-          "planned_scope_ref": "docs/development/evidence/W580-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W580-01/DELIVERY.md",
+          "branch": "codex/w581-01",
+          "planned_scope_ref": "docs/development/evidence/W581-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W581-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:Core-IAM",
-            "Main:OA-legacy-sendback",
-            "Main:WF-external-service-jobs"
+            "Main:OA-legacy-batch-decision"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "44 项通过，7 项实际 PostgreSQL 18.6 和 HTTP，覆盖两个旧退回入口、外部调用提交门和采购原派发。零跳过。",
-          "remaining_scope": "旧 OA 批量办理和触发器、财务及独立 Space Design 写者，CRM 原生投影与真实 C02 同场竞争及缺失写集恢复开闸待验。",
-          "main_tested_source_sha": "d6e7fdf747593ed6304d2146ce4edf3f4e205d2b"
+          "validation_summary": "39 项通过、零跳过。真实 PostgreSQL 18.6/HTTP 核对两种撤权顺序，验证两个 OA 入口的回滚和提交后才派送。",
+          "remaining_scope": "旧 OA 触发器，财务、独立 Space Design 与其余写者登记，CRM 实际投影和 C02 同场竞争、缺失写集差量恢复与重新开放。",
+          "main_tested_source_sha": "769af18abdab67dad7d5df99095de1a89224c502"
         }
       ],
       "storage": {
@@ -265866,6 +265870,67 @@
             "main_tested_source_sha": "f3afd4d531f4c638df1dde426a6a1eabf33fae8b",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1076",
             "main_remote_main_sha": "6a403e13d2f66f6df281be6b95d94e5d8e0e3b03"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W580",
+        "path": "docs/development/evidence/W580-01/DELIVERY.md",
+        "baseline_sha": "6a403e13d2f66f6df281be6b95d94e5d8e0e3b03",
+        "registered_at": "2026-11-14T15:07:41.211371+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续旧 OA 批量办理逐条栅栏和触发器，复用 Main C2 目录与 CRM 原生后台核对跨库写入竞争。",
+        "windows": [
+          {
+            "id": "W580-01",
+            "workspace_task": "W580-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w580-01",
+            "planned_scope_ref": "docs/development/evidence/W580-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W580-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:Core-IAM",
+              "Main:OA-legacy-sendback",
+              "Main:WF-external-service-jobs"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "44 项通过，7 项实际 PostgreSQL 18.6 和 HTTP，覆盖两个旧退回入口、外部调用提交门和采购原派发。零跳过。",
+            "remaining_scope": "旧 OA 批量办理和触发器、财务及独立 Space Design 写者，CRM 原生投影与真实 C02 同场竞争及缺失写集恢复开闸待验。",
+            "main_tested_source_sha": "d6e7fdf747593ed6304d2146ce4edf3f4e205d2b",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1078",
+            "main_remote_main_sha": "a33d9c25fb87a160f33aace835d94b079df7c400"
           }
         ],
         "storage": {

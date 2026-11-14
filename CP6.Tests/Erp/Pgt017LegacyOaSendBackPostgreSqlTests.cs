@@ -131,31 +131,35 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
 
     [TenantManagementPostgresTheory]
-    [InlineData("api/wf/advanced/sendback")]
-    public async Task PGT017_legacy_OA_sendback_dispatches_external_work_after_commit(string route)
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task PGT017_legacy_OA_dispatches_external_work_after_commit(bool batch)
     {
         await using var h = await Seed();
-        await GrantLegacyAuthorityAction(h, "oa-inbox", "sendback");
+        var action = batch ? "approve" : "sendback";
+        await GrantLegacyAuthorityAction(h, "oa-inbox", action);
         var db = h.Db;
-        SubFlowTestHarness.SeedDef(db, "owned-return-from-start", new FlowSchema
+        SubFlowTestHarness.SeedDef(db, "owned-external-work", new FlowSchema
         {
-            Start = "start",
+            Start = batch ? "initial" : "start",
             Nodes =
             [
                 new() { Id = "start", Type = "start" },
+                new() { Id = "initial", ApproverStrategy = "Specified", ApproverUserId = h.User },
                 new() { Id = "external", Type = "serviceTask", ServiceKind = ServiceKind.WebApi, ServiceMode = ServiceMode.Sync,
                     ServiceConnectorName = "owned-return-http", ServicePath = "returned", ServiceHttpMethod = "POST" },
                 new() { Id = "review", ApproverStrategy = "Specified", ApproverUserId = h.User }
             ],
-            Edges = [new() { From = "start", To = "external" }, new() { From = "external", To = "review" }]
+            Edges = [new() { From = batch ? "initial" : "start", To = "external" }, new() { From = "external", To = "review" }]
         });
         var id = Guid.NewGuid();
         var tokenId = Guid.NewGuid();
         var taskId = Guid.NewGuid();
-        db.Wf_FlowInstances.Add(new() { Id = id, FlowKey = "owned-return-from-start", CurrentNode = "review",
+        var currentNode = batch ? "initial" : "review";
+        db.Wf_FlowInstances.Add(new() { Id = id, FlowKey = "owned-external-work", CurrentNode = currentNode,
             StarterId = h.User, Status = FlowInstanceStatus.Running });
-        db.Wf_FlowTokens.Add(new() { Id = tokenId, InstanceId = id, NodeId = "review", Status = FlowTokenStatus.Active });
-        db.Wf_FlowTasks.Add(new() { Id = taskId, InstanceId = id, TokenId = tokenId, NodeId = "review",
+        db.Wf_FlowTokens.Add(new() { Id = tokenId, InstanceId = id, NodeId = currentNode, Status = FlowTokenStatus.Active });
+        db.Wf_FlowTasks.Add(new() { Id = taskId, InstanceId = id, TokenId = tokenId, NodeId = currentNode,
             AssigneeId = h.User, Status = FlowTaskStatus.Pending });
         await db.SaveChangesAsync();
         await LegacyDefinitionFixture.ArrangePublishedHistory(db);
@@ -168,7 +172,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         remote.MapPost("/returned", async (HttpContext ctx) =>
         {
             await using var observed = server.Context(new TenantContext { CurrentTenantId = h.Tenant });
-            var committed = await observed.Wf_FlowHistories.AnyAsync(x => x.InstanceId == id && x.Action == "sendback");
+            var committed = await observed.Wf_FlowHistories.AnyAsync(x => x.InstanceId == id && x.Action == action);
             deliveries.Enqueue((ctx.Request.Headers["Idempotency-Key"].ToString(), committed));
             await ctx.Response.WriteAsJsonAsync(new { accepted = true });
         });
@@ -186,15 +190,15 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             BEGIN RAISE EXCEPTION 'sendback fixture commit rejected' USING ERRCODE='23514'; END $$;
             CREATE CONSTRAINT TRIGGER cp6_test_sendback_commit_reject
             AFTER INSERT ON public."Wf_FlowHistory" DEFERRABLE INITIALLY DEFERRED
-            FOR EACH ROW WHEN (NEW."Action" = 'sendback') EXECUTE FUNCTION public.cp6_test_sendback_commit_reject();
+            FOR EACH ROW WHEN (NEW."Action" IN ('sendback','approve')) EXECUTE FUNCTION public.cp6_test_sendback_commit_reject();
             """);
         try
         {
-            using var rejected = await SendBack();
+            using var rejected = await Submit();
             Assert.True(rejected.StatusCode == HttpStatusCode.ServiceUnavailable, await OperationsFailure(rejected));
             Assert.Empty(deliveries);
             Assert.Empty(await db.Wf_ServiceJobs.Where(x => x.InstanceId == id).ToListAsync());
-            Assert.False(await db.Wf_FlowHistories.AnyAsync(x => x.InstanceId == id && x.Action == "sendback"));
+            Assert.False(await db.Wf_FlowHistories.AnyAsync(x => x.InstanceId == id && x.Action == action));
             Assert.Equal(FlowTaskStatus.Pending, await db.Wf_FlowTasks.Where(x => x.Id == taskId).Select(x => x.Status).SingleAsync());
         }
         finally
@@ -205,7 +209,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
                 """);
         }
 
-        using var returned = await SendBack();
+        using var returned = await Submit();
         Assert.True(returned.StatusCode == HttpStatusCode.OK, await OperationsFailure(returned));
         Assert.Empty(deliveries);
         Assert.Equal("external", await db.Wf_FlowInstances.Where(x => x.Id == id).Select(x => x.CurrentNode).SingleAsync());
@@ -225,7 +229,10 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(0, await worker.ScanOnceAsync(clock.AddHours(1), "sendback-fixture"));
         Assert.Single(deliveries);
 
-        Task<HttpResponseMessage> SendBack() => host.Send(OperationsRequest(writer, HttpMethod.Post, route,
-            new { TaskId = taskId, TargetNodeId = "start" }));
+        Task<HttpResponseMessage> Submit() => batch
+            ? host.Send(OperationsRequest(writer, HttpMethod.Post, "api/oa/inbox/batch",
+                new { TaskIds = new[] { taskId }, Approve = true }))
+            : host.Send(OperationsRequest(writer, HttpMethod.Post, "api/wf/advanced/sendback",
+                new { TaskId = taskId, TargetNodeId = "start" }));
     }
 }

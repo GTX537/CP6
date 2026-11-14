@@ -17,7 +17,8 @@ public interface IInboxService
     // ── 批量办理（T7）──
     Task<IReadOnlyList<BatchActResultItem>> ActBatchAsync(Guid userId, IReadOnlyList<Guid> taskIds, bool approve, string? comment = null);
     // ── 批量办理（act-as，Phase C T8）── actorId=实际执行人；onBehalfOf=被代理人（null=本人操作）
-    Task<IReadOnlyList<BatchActResultItem>> ActBatchAsAsync(Guid actorId, Guid? onBehalfOf, IReadOnlyList<Guid> taskIds, bool approve, string? comment = null);
+    Task<IReadOnlyList<BatchActResultItem>> ActBatchAsAsync(Guid actorId, Guid? onBehalfOf, IReadOnlyList<Guid> taskIds,
+        bool approve, string? comment = null, Func<Func<Task>, Task>? commitItem = null);
     // ── 详情 + 仪表盘（T8）──
     Task<InboxDetail?> DetailAsync(Guid actualUserId, Guid effectiveUserId, Guid instanceId);
     Task<InboxStats> StatsAsync(Guid userId);

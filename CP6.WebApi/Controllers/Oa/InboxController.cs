@@ -22,6 +22,7 @@ namespace CP6.WebApi.Controllers.Oa;
 public class InboxController : LocalizedControllerBase
 {
     private const string BatchTransferAction = "batch-transfer";
+    private const string ApproveAction = "approve";
     private readonly IInboxService _inbox;
     private readonly ICurrentPermissionContext _ctx;
     private readonly IDelegateService _delegate;
@@ -171,15 +172,27 @@ public class InboxController : LocalizedControllerBase
     // ── 批量办理（act-as 版）──
 
     [HttpPost("batch")]
-    [RequirePermission("oa-inbox", "approve")]
+    [RequirePermission("oa-inbox", ApproveAction)]
     public async Task<IActionResult> Batch([FromBody] BatchReq r)
     {
         try
         {
             var me = (await _ctx.GetAsync()).UserId;
-            var (eff, onBehalf) = await EffectiveAsync();
-            return Ok2(await _inbox.ActBatchAsAsync(me, onBehalf, r.TaskIds, r.Approve, r.Comment));
+            var (_, onBehalf) = await EffectiveAsync();
+            var authority = HttpContext.RequestServices.GetRequiredService<IamAdministrationV1>();
+            return Ok2(await _inbox.ActBatchAsAsync(me, onBehalf, r.TaskIds, r.Approve, r.Comment,
+                authority.IsPostgreSql ? CommitItem : null));
+
+            Task CommitItem(Func<Task> decide) => IamAdministrationHttpV1.ExecuteWriteAsync(
+                HttpContext, authority, $"oa-inbox:{ApproveAction}", async (_, _) =>
+                {
+                    await decide();
+                    return true;
+                });
         }
+        catch (IamAdministrationExceptionV1 e) { return StatusCode(e.Status, new { code = e.Status, message = e.Message }); }
+        catch (Exception e) when (e is DbException or DbUpdateException or CurrentPermissionUnavailableException)
+        { return StatusCode(503, new { code = 503, message = "AUTHORITY_FENCE_UNAVAILABLE" }); }
         catch (InvalidOperationException e) { return Err(e); }
     }
 

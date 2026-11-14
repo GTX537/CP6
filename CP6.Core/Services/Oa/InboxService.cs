@@ -257,31 +257,37 @@ public partial class InboxService : IInboxService
     }
 
     public async Task<IReadOnlyList<BatchActResultItem>> ActBatchAsAsync(
-        Guid actorId, Guid? onBehalfOf, IReadOnlyList<Guid> taskIds, bool approve, string? comment = null)
+        Guid actorId, Guid? onBehalfOf, IReadOnlyList<Guid> taskIds, bool approve, string? comment = null,
+        Func<Func<Task>, Task>? commitItem = null)
     {
+        if (commitItem is null && _db.Database.IsNpgsql())
+            throw new IamAdministrationExceptionV1(503, "AUTHORITY_FENCE_UNAVAILABLE");
+
         var owner = onBehalfOf ?? actorId;
         var results = new List<BatchActResultItem>();
         foreach (var taskId in taskIds.Distinct())
         {
-            var t = await _db.Wf_FlowTasks.FirstOrDefaultAsync(x => x.Id == taskId);
-            if (t is null || t.AssigneeId != owner || t.Status != FlowTaskStatus.Pending)
-            { results.Add(new BatchActResultItem(taskId, false, "E-WF-004")); continue; }
-            if (await HasEditableFieldsAsync(t))
-            {
-                results.Add(new BatchActResultItem(taskId, false, "E-WF-042"));
-                continue;
-            }
-            if (await HasEditableFieldsAsync(t))
-            {
-                results.Add(new BatchActResultItem(taskId, false, "E-WF-042"));
-                continue;
-            }
             try
             {
-                await _engine.ActAsAsync(taskId, actorId, onBehalfOf, approve, comment);
+                if (commitItem is null)
+                    await Decide();
+                else
+                    await commitItem(Decide);
                 results.Add(new BatchActResultItem(taskId, true, null));
             }
-            catch (InvalidOperationException e) { results.Add(new BatchActResultItem(taskId, false, e.Message)); }
+            catch (InvalidOperationException e) when (e is not IamAdministrationExceptionV1 { Status: not 403 }
+                                                       and not CurrentPermissionUnavailableException)
+            { results.Add(new BatchActResultItem(taskId, false, e.Message)); }
+
+            async Task Decide()
+            {
+                var task = await _db.Wf_FlowTasks.FirstOrDefaultAsync(x => x.Id == taskId);
+                if (task is null || task.AssigneeId != owner || task.Status != FlowTaskStatus.Pending)
+                    throw new InvalidOperationException("E-WF-004");
+                if (await HasEditableFieldsAsync(task))
+                    throw new InvalidOperationException("E-WF-042");
+                await _engine.ActAsAsync(taskId, actorId, onBehalfOf, approve, comment);
+            }
         }
         return results;
     }

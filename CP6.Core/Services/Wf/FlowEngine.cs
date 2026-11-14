@@ -153,6 +153,17 @@ public partial class FlowEngine : IFlowEngine
     /// </summary>
     public async Task ActAsAsync(Guid taskId, Guid actorId, Guid? onBehalfOf, bool approve, string? comment = null)
     {
+        if (_db.Database.IsNpgsql() && _db.Database.CurrentTransaction is not null)
+        {
+            // The per-item Owner holds the current authority and commits the decision. Persist
+            // follow-up tasks with the decision so workers can handle them after commit.
+            var defer = DeferSynchronousWebApi;
+            DeferSynchronousWebApi = true;
+            try { await ActOnceAsync(taskId, actorId, approve, comment, onBehalfOf); }
+            finally { DeferSynchronousWebApi = defer; }
+            return;
+        }
+
         for (int attempt = 0; ; attempt++)
         {
             try { await ActOnceAsync(taskId, actorId, approve, comment, onBehalfOf); break; }
