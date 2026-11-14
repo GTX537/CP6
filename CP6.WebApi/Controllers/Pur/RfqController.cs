@@ -93,9 +93,7 @@ public class RfqController : ControllerBase
     {
         try
         {
-            return Ok2(await _svc.WriteBackPricesAsync(rfqNo, CurrentUser,
-                token => IamAdministrationHttpV1.CurrentActor(HttpContext, HttpContext.RequestServices, token, allowImpersonation: true),
-                HttpContext.RequestAborted));
+            return Ok2(await _svc.WriteBackPricesAsync(rfqNo, CurrentUser, CurrentActor, HttpContext.RequestAborted));
         }
         catch (IamAdministrationExceptionV1 e) { return StatusCode(e.Status, new { code = e.Status, message = e.Message }); }
         catch (CurrentPermissionUnavailableException) { return StatusCode(503, new { code = 503, message = "AUTHORITY_FENCE_UNAVAILABLE" }); }
@@ -107,9 +105,14 @@ public class RfqController : ControllerBase
     [RequirePermission("pur-rfq", "convert")]
     public async Task<IActionResult> Convert(string rfqNo)
     {
-        try { return Ok2(await _svc.ConvertToPoAsync(rfqNo, CurrentUser)); }
+        try { return Ok2(await _svc.ConvertToPoAsync(rfqNo, CurrentUser, CurrentActor, HttpContext.RequestAborted)); }
+        catch (IamAdministrationExceptionV1 e) { return StatusCode(e.Status, new { code = e.Status, message = e.Message }); }
+        catch (CurrentPermissionUnavailableException) { return StatusCode(503, new { code = 503, message = "AUTHORITY_FENCE_UNAVAILABLE" }); }
         catch (InvalidOperationException e) { return Err(e); }
     }
+
+    private Task<Guid> CurrentActor(CancellationToken ct) =>
+        IamAdministrationHttpV1.CurrentActor(HttpContext, HttpContext.RequestServices, ct, allowImpersonation: true);
 }
 
 /// <summary>收报价请求体：一个供应商对若干行的报价。</summary>
