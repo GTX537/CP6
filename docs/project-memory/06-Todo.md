@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 UTC · W556 PGT-017 余项
+
+RFQ 其他入口、采购收货、独立 OA、财务、MRP、Space Design、普通数据库角色及双库时间点恢复仍待核对。 [交付](../development/evidence/W556-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W555 PGT-017 余项
 
 独立业务事务、普通数据库角色、两库时间点恢复及部署期单写者采用仍待核对。 [交付](../development/evidence/W555-01/DELIVERY.md)

@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 UTC · W556 询价回写并发修复
+
+每笔价格和最终询价头更新取得共同授权事务根，沿用原逐笔提交及价表业务键。 [交付](../development/evidence/W556-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W555 跨库重授回归
 
 实际 Main 版本化范围变更及 Outbox 原字节驱动 CRM 投影与原导出恢复。 [交付](../development/evidence/W555-01/DELIVERY.md)
