@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+## 2026-11-13 UTC · W555 C02 范围重授
+
+COORD 复用两仓固定席位。两库实测 Main 原 C02 事件、CRM 投影撤权和重授后原导出恢复。 [交付](evidence/W555-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W554 询盘资源范围撤权
 
 COORD 复用 Main DEV-1，CRM 复用已采用测试制品。实际范围撤权与 CRM 导出的两种提交顺序已验证。 [交付](evidence/W554-01/DELIVERY.md)

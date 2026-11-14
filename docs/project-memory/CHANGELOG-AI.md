@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-13 UTC · W555 跨库重授回归
+
+实际 Main 版本化范围变更及 Outbox 原字节驱动 CRM 投影与原导出恢复。 [交付](../development/evidence/W555-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W554 询盘范围联验
 
 补两库实际 IAM 精确范围撤权的回归，确认复用角色版本栅栏。独立服务令牌库原生目录控制按其本库合同验证。 [交付](../development/evidence/W554-01/DELIVERY.md)
