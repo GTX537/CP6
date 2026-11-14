@@ -1,5 +1,6 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Pur;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,6 +42,7 @@ public class GoodsReceiptController : ControllerBase
     /// <summary>应用检收结果（仅检收基准；合格累加 PO 验收锚）。</summary>
     [HttpPost("{grNo}/apply-qc")]
     [RequirePermission("pur-gr", "qc")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> ApplyQc(string grNo)
     {
         try { return Ok2(await _svc.ApplyQcResultAsync(grNo, CurrentUser)); }
