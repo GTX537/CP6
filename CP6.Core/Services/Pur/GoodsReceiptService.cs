@@ -1,7 +1,11 @@
+using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Erp;
+using CP6.Core.Services.Integration;
 using CP6.Core.Services.Pub;
 using CP6.Core.Services.Pur.Contracts;
 using CP6.Entity.DomainModels.Pur;
+using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Pur;
@@ -10,6 +14,8 @@ namespace CP6.Core.Services.Pur;
 public class GoodsReceiptService : IGoodsReceiptService
 {
     private const string SeqKey = "GR";
+    private const string ConfirmationOwner = "Main.Pur.GoodsReceipt";
+    private const string ConfirmationContract = "Main.Pur.GoodsReceipt.Confirmation.v1";
     private const string AccrualBasis = "1";    // 着荷基准（收货即验收）
 
     private readonly CP6Context _db;
@@ -17,15 +23,17 @@ public class GoodsReceiptService : IGoodsReceiptService
     private readonly IWmsQcQuery _wmsQc;
     private readonly IPurchaseOrderService _po;
     private readonly ISeqService _seq;
+    private readonly OperationsOwnerV1? _owner;
 
     public GoodsReceiptService(CP6Context db, IWmsReceiveService wmsReceive, IWmsQcQuery wmsQc,
-        IPurchaseOrderService po, ISeqService seq)
+        IPurchaseOrderService po, ISeqService seq, OperationsOwnerV1? owner = null)
     {
         _db = db;
         _wmsReceive = wmsReceive;
         _wmsQc = wmsQc;
         _po = po;
         _seq = seq;
+        _owner = owner;
     }
 
     /// <inheritdoc />
@@ -48,7 +56,85 @@ public class GoodsReceiptService : IGoodsReceiptService
     }
 
     /// <inheritdoc />
-    public async Task<GoodsReceipt> ConfirmReceiveAsync(GrCreateDto dto, string? userName)
+    public async Task<GoodsReceipt> ConfirmReceiveAsync(GrCreateDto dto, string? userName, Guid? operationId = null)
+    {
+        if (operationId == Guid.Empty)
+            throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_REQUIRED", 400);
+        if (!_db.Database.IsNpgsql())
+            return await ConfirmReceiveCoreAsync(dto, userName, request => _wmsReceive.ReceiveAsync(request, userName));
+        if (_wmsReceive is not WmsReceiveServiceAdapter warehouse)
+            throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
+
+        var journal = new MainOwnerOperationJournalV1(_db);
+        var input = operationId.HasValue ? MainOwnerOperationJournalV1.Encode(dto) : null;
+        MainOwnerOperationJournalV1.Original? original = null;
+        var effects = new List<StockTransaction>();
+        Func<Task>? publish = null;
+        var receipt = await Owner.ExecuteAsync(OperationsOwnerV1.Inbound, "add", true, async (access, ct) =>
+        {
+            if (original is not null)
+                return await DiscloseConfirmationAsync(original, access, input, ct);
+            access.RequirePurchaseReceipt();
+            var confirmed = await ConfirmReceiveCoreAsync(dto, access.Actor, async request =>
+            {
+                var received = await warehouse.ReceiveWithinPurchaseAsync(_db, access, request, effects, ct);
+                publish = () => warehouse.PublishPurchaseReceiptAsync(received.ReceiptNo, request.WarehouseCd!, effects);
+                return received.Result;
+            });
+            if (operationId.HasValue)
+                await journal.Store(ConfirmationOwner, ConfirmationContract, operationId.Value, access.ActorId, input,
+                    confirmed, [confirmed.Id], new { confirmed.GrNo, confirmed.PoNo, confirmed.WmsInboundNo }, ct);
+            return confirmed;
+        }, actionAtFence: operationId.HasValue ? SelectAction : null);
+        if (publish is not null) await publish();
+        return receipt;
+
+        async Task<string> SelectAction(CancellationToken ct)
+        {
+            original = await journal.Read(ConfirmationOwner, operationId!.Value, ct);
+            return original is null ? "add" : "query";
+        }
+    }
+
+    public async Task<GoodsReceiptConfirmationScope> ConfirmationScopeAsync(CancellationToken ct = default)
+    {
+        if (!_db.Database.IsNpgsql())
+            throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
+        var access = await Owner.AuthorityAsync(OperationsOwnerV1.Inbound, "query", ct);
+        return new(_db.CurrentTenantId, access.Actor.UserId);
+    }
+
+    public Task<GoodsReceipt?> ReadConfirmationAsync(Guid operationId, CancellationToken ct = default)
+    {
+        if (operationId == Guid.Empty)
+            throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_REQUIRED", 400);
+        return Owner.ExecuteAsync<GoodsReceipt?>(OperationsOwnerV1.Inbound, "query", false, async (access, token) =>
+        {
+            var original = await new MainOwnerOperationJournalV1(_db).Read(ConfirmationOwner, operationId, token);
+            return original is null ? null : await DiscloseConfirmationAsync(original, access, null, token);
+        }, ct, readOnlyAuthorityFence: true);
+    }
+
+    private OperationsOwnerV1 Owner => _owner?.Owns(_db) == true ? _owner
+        : throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
+
+    private static async Task<GoodsReceipt> DiscloseConfirmationAsync(MainOwnerOperationJournalV1.Original original,
+        OperationsAccessV1 access, byte[]? input, CancellationToken ct)
+    {
+        if (original.Actor != access.ActorId || original.Contract != ConfirmationContract)
+            throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_FORBIDDEN", 403);
+        if (input is not null && !MainOwnerOperationJournalV1.Matches(original, input))
+            throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_INPUT_CONFLICT", 409);
+        var receipt = JsonSerializer.Deserialize<GoodsReceipt>(original.Result);
+        if (receipt is null || receipt.WmsInboundNo is null)
+            throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_UNAVAILABLE", 503);
+        await access.RequireInbound(receipt.WmsInboundNo, false, ct);
+        access.AtCommit(token => access.RequireInbound(receipt.WmsInboundNo, false, token));
+        return receipt;
+    }
+
+    private async Task<GoodsReceipt> ConfirmReceiveCoreAsync(GrCreateDto dto, string? userName,
+        Func<WmsReceiveRequest, Task<WmsReceiveResult>> receive)
     {
         if (dto.Lines == null || dto.Lines.Count == 0) throw new InvalidOperationException("E-PUR-030"); // 至少一行
 
@@ -80,13 +166,16 @@ public class GoodsReceiptService : IGoodsReceiptService
         // 校验 + 超收挡
         var wmsLines = new List<WmsReceiveLine>();
         var lineNo = 0;
+        var requestedByLine = new Dictionary<int, decimal>();
         foreach (var ld in dto.Lines)
         {
             if (ld.ReceivedQty <= 0) throw new InvalidOperationException("E-PUR-026"); // 数量须>0
             var poLine = poLines.FirstOrDefault(l => l.LineNo == ld.PoLineNo)
                          ?? throw new InvalidOperationException("E-PUR-034"); // PO 行不存在
-            if (poLine.ReceivedQty + ld.ReceivedQty > poLine.Qty)
-                throw new InvalidOperationException("E-PUR-031"); // 超收（超出订购量；容差细化随章04 MatchTolerance）
+            var remaining = poLine.Qty - poLine.ReceivedQty - requestedByLine.GetValueOrDefault(ld.PoLineNo);
+            if (ld.ReceivedQty > remaining)
+                throw new InvalidOperationException("E-PUR-031");
+            requestedByLine[ld.PoLineNo] = requestedByLine.GetValueOrDefault(ld.PoLineNo) + ld.ReceivedQty; // 超收（超出订购量；容差细化随章04 MatchTolerance）
 
             gr.Lines.Add(new GoodsReceiptLine
             {
@@ -105,10 +194,10 @@ public class GoodsReceiptService : IGoodsReceiptService
         }
 
         // 委托 WMS 物理入库（库存唯一真相在 WMS）
-        var wms = await _wmsReceive.ReceiveAsync(new WmsReceiveRequest
+        var wms = await receive(new WmsReceiveRequest
         {
             PoNo = po.PoNo, SupplierId = po.SupplierId, WarehouseCd = dto.WarehouseCd, Lines = wmsLines,
-        }, userName);
+        });
         gr.WmsInboundNo = wms.WmsInboundNo;
         foreach (var gl in gr.Lines)
             gl.WmsReceiptDetailRef = wms.LineRefs.FirstOrDefault(r => r.PoLineNo == gl.PoLineNo)?.WmsReceiptDetailRef;

@@ -47,6 +47,9 @@ export const poApi = {
   },
 }
 
+export interface GrConfirmationScope { tenantId: string; actorId: string }
+export interface GrConfirmation { operationId: string; state: 'UNKNOWN' | 'COMMITTED'; receipt: GoodsReceipt | null }
+
 /** 收货 /api/pur/gr（双基准收货 + 检收应用，回写 PO 三累计锚） */
 export const grApi = {
   list(poNo?: string, supplierId?: string) {
@@ -55,8 +58,14 @@ export const grApi = {
   get(grNo: string) {
     return http.get<any, ApiResp<GoodsReceipt>>(`/pur/gr/${grNo}`)
   },
-  confirm(data: GrCreateForm) {
-    return http.post<any, ApiResp<GoodsReceipt>>('/pur/gr', data)
+  confirm(data: GrCreateForm, operationId: string) {
+    return http.post<any, ApiResp<GoodsReceipt>>('/pur/gr', data, { headers: { 'Idempotency-Key': operationId } })
+  },
+  confirmationScope() {
+    return http.get<any, ApiResp<GrConfirmationScope>>('/pur/gr/operations/scope')
+  },
+  originalConfirmation(operationId: string) {
+    return http.get<any, ApiResp<GrConfirmation>>(`/pur/gr/operations/${encodeURIComponent(operationId)}`)
   },
   applyQc(grNo: string) {
     return http.post<any, ApiResp<GoodsReceipt>>(`/pur/gr/${grNo}/apply-qc`)

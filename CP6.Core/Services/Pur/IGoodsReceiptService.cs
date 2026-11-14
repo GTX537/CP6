@@ -17,7 +17,10 @@ public interface IGoodsReceiptService
     /// 确认收货（章03 §4）：委托 WMS 入库；PO 行 ReceivedQty 累加；
     /// 着荷基准→AcceptedQty 同步累加(免检)；检收基准→只收货 QcStatus=待检；超收挡。回写后刷新 PO 状态。
     /// </summary>
-    Task<GoodsReceipt> ConfirmReceiveAsync(GrCreateDto dto, string? userName);
+    Task<GoodsReceipt> ConfirmReceiveAsync(GrCreateDto dto, string? userName, Guid? operationId = null);
+
+    Task<GoodsReceiptConfirmationScope> ConfirmationScopeAsync(CancellationToken ct = default);
+    Task<GoodsReceipt?> ReadConfirmationAsync(Guid operationId, CancellationToken ct = default);
 
     /// <summary>
     /// 应用检收结果（章03 §5，仅检收基准）：查 WMS 质检→合格累加 PO 行 AcceptedQty / 不良记 RejectedQty；
@@ -25,6 +28,8 @@ public interface IGoodsReceiptService
     /// </summary>
     Task<GoodsReceipt> ApplyQcResultAsync(string grNo, string? userName);
 }
+
+public sealed record GoodsReceiptConfirmationScope(Guid TenantId, Guid ActorId);
 
 /// <summary>确认收货入参。</summary>
 public class GrCreateDto
