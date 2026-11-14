@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 · W572-01 旧 OA 单笔转交事务栅栏
+
+基线撤权先提交时旧请求仍返回成功。修复后，Main IAM 和旧 OA 单笔转交在同一 PostgreSQL 事务根上排队。两种提交顺序和写集回读通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W572-01/DELIVERY.md)
+
 ## 2026-11-14 · W571-01 CRM 计划切换
 
 隔离环境实测旧宿主排空、CRM 原库停机、保留最终 WAL 后恢复原封存、导出制品和两条发送事实。C02 版本 7 与角色封存一致。重新登记目标时间线后，旧版本被拒，两条真实 Kafka 消息未重发。 正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W571-01/DELIVERY.md)
