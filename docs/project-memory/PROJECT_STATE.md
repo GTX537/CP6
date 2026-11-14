@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 UTC · W558 MRP 事务栅栏
+
+现行 MRP 四个写入口纳入 Main 共同授权事务。正式 PostgreSQL 26/27，PGT-017 待核销。 [交付](../development/evidence/W558-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W557 CRM 恢复栅栏
 
 隔离物理恢复中的旧开放版本和六类封存被拒绝。正式 PostgreSQL 26/27，PGT-017 待核销。 [交付](../development/evidence/W557-01/DELIVERY.md)

@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 UTC · W558 现行 MRP 权限
+
+四个 HTTP 写入口复用当前授权门，运算的三次保存纳入同一 PostgreSQL 提交。 [交付](../development/evidence/W558-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W557 CRM WAL 时间线
 
 原集群标识和数据库 OID 加入 WAL 时间线。已登记存储升级和恢复时保留关闭，等待可信原库来源核对。 [交付](../development/evidence/W557-01/DELIVERY.md)

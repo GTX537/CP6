@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+## 2026-11-14 UTC · W558 现行 MRP
+
+COORD 复用 Main DEV-1。运算、确认、忽略和现行转单的提交与撤权采用同一根。 [交付](evidence/W558-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W557 CRM 物理恢复
 
 COORD 复用 Main DEV-1、CRM DEV-2。实际 WAL 恢复后原库绑定不被自动采纳。 [交付](evidence/W557-01/DELIVERY.md)
