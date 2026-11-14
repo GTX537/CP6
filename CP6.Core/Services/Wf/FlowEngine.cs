@@ -20,7 +20,7 @@ public partial class FlowEngine : IFlowEngine
     private readonly ApprovalDispatcher _dispatcher;
     private readonly IReadOnlyDictionary<string, INodeHandler> _handlers;
     private readonly IApprovalStagePlanner _planner;
-    internal bool DeferExternalStart { get; private set; }
+    internal bool DeferSynchronousWebApi { get; private set; }
 
     public FlowEngine(CP6Context db, IApproverResolver approver, IWfNotifier? notifier = null,
                       ApprovalDispatcher? dispatcher = null, IEnumerable<INodeHandler>? handlers = null,
@@ -86,7 +86,7 @@ public partial class FlowEngine : IFlowEngine
         AddHistory(inst.Id, first.Id, starterId, "submit", null);
 
         // The purchase start and any subflows it enters share the write transaction.
-        DeferExternalStart = _db.Database.IsNpgsql() && businessRef?.BizType is "PUR_PR" or "PUR_PO";
+        DeferSynchronousWebApi = _db.Database.IsNpgsql() && businessRef?.BizType is "PUR_PR" or "PUR_PO";
         try
         {
             var root = SpawnToken(inst, first, parent: null, fork: null);
@@ -95,7 +95,7 @@ public partial class FlowEngine : IFlowEngine
             await _db.SaveChangesAsync(ct);
             await FastPathSubFlowResumeAsync(ct);
         }
-        finally { DeferExternalStart = false; }
+        finally { DeferSynchronousWebApi = false; }
         return inst.Id;
     }
 
