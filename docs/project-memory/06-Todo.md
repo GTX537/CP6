@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## PGT-017 · 当前剩余范围
+
+继续核对采购送审和 WMS 自管事务的收货确认、旧 OA 其余写者、财务、独立 Space Design、数据库角色及两库恢复对账和已登记宿主的传输与旧实例排空。正式 PostgreSQL 26/27，原询盘 60/60。 [交付](../development/evidence/W565-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W564 PGT-017 余项
 
 普通数据库写者的其余权限边界、独立业务事务以及两库恢复、传输与旧宿主待核销。 [交付](../development/evidence/W564-01/DELIVERY.md)
