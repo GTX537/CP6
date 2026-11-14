@@ -165922,6 +165922,11 @@
       "at": "2026-11-14T19:29:10.095303+00:00",
       "change": "W589-01 银行凭证每笔过账同时确认当前权限，原合同的一行一凭证和失败回滚通过 PostgreSQL，正式仍为 26/27。",
       "evidence": "docs/development/evidence/W589-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T19:50:54.824173+00:00",
+      "change": "W590-01 银行自动撮合逐组重查权限、当前未匹配流水和凭证唯一解，正式仍为 26/27。",
+      "evidence": "docs/development/evidence/W590-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211928,10 +211933,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W589",
-      "path": "docs/development/evidence/W589-01/DELIVERY.md",
-      "baseline_sha": "f1362739b793410b38dd390bcd49ea3730abe379",
-      "registered_at": "2026-11-14T19:11:47.877864+00:00",
+      "id": "W590",
+      "path": "docs/development/evidence/W590-01/DELIVERY.md",
+      "baseline_sha": "b9e662263647d79c8c275e50c5cd169d08569574",
+      "registered_at": "2026-11-14T19:34:41.976056+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211945,11 +211950,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "核对银行自动撮合和独立 Space Design 所持事务，继续 CRM 正式恢复切换编排与全写者登记。",
+      "next_action": "核对银行会话各单事务写入口与独立 Space Design，继续 CRM 正式切换和全写者登记。",
       "windows": [
         {
-          "id": "W589-01",
-          "workspace_task": "W589-01",
+          "id": "W590-01",
+          "workspace_task": "W590-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -211960,23 +211965,22 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w589-01",
-          "planned_scope_ref": "docs/development/evidence/W589-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W589-01/DELIVERY.md",
+          "branch": "codex/w590-01",
+          "planned_scope_ref": "docs/development/evidence/W590-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W590-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:FIN-BankRecon",
             "Main:IAM-CurrentWriteAuthority",
-            "Main:Fin-Journal-and-Sequence",
             "Local:PostgreSQL-HTTP"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "40/40，11 项实际 PostgreSQL，29 项相关组件回归，零跳过。过账与暂停、撤权各两种顺序，批量部分成功、失败不占号和旧流水重复拒绝。",
-          "remaining_scope": "银行自动撮合及其他财务写者、独立 Space Design、全写者登记，CRM 正式恢复/重开与切换编排。",
-          "main_tested_source_sha": "cebf05b4a0ad0a57b1abc20a013054c172f93bd3"
+          "validation_summary": "36/36，7 项实际 PostgreSQL，29 项相关组件回归，零跳过。自动撮合与暂停两种顺序、恢复只补其余原组、银行单边凭证相关回归。",
+          "remaining_scope": "其余银行和财务写者、独立 Space Design、全写者登记，CRM 正式恢复/重开与切换编排。",
+          "main_tested_source_sha": "c8bc71892043f04f89c20a1c3bdfc75345fc0e31"
         }
       ],
       "storage": {
@@ -266490,6 +266494,68 @@
             "main_tested_source_sha": "5e185830dff0600414fe2034671f8c841e0b3336",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1092",
             "main_remote_main_sha": "f1362739b793410b38dd390bcd49ea3730abe379"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W589",
+        "path": "docs/development/evidence/W589-01/DELIVERY.md",
+        "baseline_sha": "f1362739b793410b38dd390bcd49ea3730abe379",
+        "registered_at": "2026-11-14T19:11:47.877864+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "核对银行自动撮合和独立 Space Design 所持事务，继续 CRM 正式恢复切换编排与全写者登记。",
+        "windows": [
+          {
+            "id": "W589-01",
+            "workspace_task": "W589-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w589-01",
+            "planned_scope_ref": "docs/development/evidence/W589-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W589-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:FIN-BankRecon",
+              "Main:IAM-CurrentWriteAuthority",
+              "Main:Fin-Journal-and-Sequence",
+              "Local:PostgreSQL-HTTP"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "40/40，11 项实际 PostgreSQL，29 项相关组件回归，零跳过。过账与暂停、撤权各两种顺序，批量部分成功、失败不占号和旧流水重复拒绝。",
+            "remaining_scope": "银行自动撮合及其他财务写者、独立 Space Design、全写者登记，CRM 正式恢复/重开与切换编排。",
+            "main_tested_source_sha": "cebf05b4a0ad0a57b1abc20a013054c172f93bd3",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1094",
+            "main_remote_main_sha": "b9e662263647d79c8c275e50c5cd169d08569574"
           }
         ],
         "storage": {

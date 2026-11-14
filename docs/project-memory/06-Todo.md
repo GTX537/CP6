@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 · W590-01 PGT-017 余项
+
+继续核对其他银行与财务写者、独立 Space Design、全写者登记及 CRM 正式恢复/重开与切换编排。 [交付记录](../development/evidence/W590-01/DELIVERY.md)
+
 ## 2026-11-14 · W589-01 PGT-017 余项
 
 核对银行自动撮合及其他财务写者、独立 Space Design 和全写者登记。CRM 恢复、重开与正式切换编排待验。 [交付记录](../development/evidence/W589-01/DELIVERY.md)
