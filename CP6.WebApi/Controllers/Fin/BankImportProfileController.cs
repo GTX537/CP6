@@ -1,6 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,11 +24,13 @@ public class BankImportProfileController : ControllerBase
 
     [HttpPost("upsert")]
     [RequirePermission("fin-bank-reconciliation", "profile-manage")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Upsert([FromBody] BankImportProfile dto)
         => Fin(await _svc.UpsertProfileAsync(dto, CurrentUser));
 
     [HttpDelete("{id}")]
     [RequirePermission("fin-bank-reconciliation", "profile-manage")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Delete(Guid id)
         => Fin(await _svc.DeleteProfileAsync(id, CurrentUser));
 }

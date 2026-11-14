@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 · W591-01 其余银行对账写入口
+
+12 个银行对账、会话、流水和模板写入口采用 Main 共同事务。65 项相关验证通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W591-01/DELIVERY.md)
+
 ## 2026-11-14 · W590-01 银行自动撮合逐组提交
 
 自动撮合与租户暂停两种顺序通过。36 项相关验证，正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W590-01/DELIVERY.md)
