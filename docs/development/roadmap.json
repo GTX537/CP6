@@ -165747,6 +165747,11 @@
       "at": "2026-11-13T23:42:51.115761+00:00",
       "change": "W554 正式 PGT-017 补 Main 询盘范围撤权与 CRM 导出两种时序，核对独立服务令牌原生控制。正式 PostgreSQL 仍 26/27。",
       "evidence": "docs/development/evidence/W554-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T00:00:01.813788+00:00",
+      "change": "W555 Main 询盘范围撤权和重授实际 C02 进入 CRM 本地 Inbox 和投影，原导出恢复一次。正式 PostgreSQL 仍 26/27。",
+      "evidence": "docs/development/evidence/W555-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211753,10 +211758,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W554",
-      "path": "docs/development/evidence/W554-01/DELIVERY.md",
-      "baseline_sha": "19d32cf46b740d74be933ea8fc7cfa31ff07f616",
-      "registered_at": "2026-11-13T23:32:27.258002+00:00",
+      "id": "W555",
+      "path": "docs/development/evidence/W555-01/DELIVERY.md",
+      "baseline_sha": "6830f343486af75f61805481b9f25f9119dfe790",
+      "registered_at": "2026-11-13T23:50:04.301964+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211770,42 +211775,52 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "按现有提交单元核对独立 Main 写者和普通数据库角色，继续两库恢复和 C02 重授联验。PGT-017 按完整覆盖核销。",
+      "next_action": "按原事务边界核对 Main 独立写入和普通数据库角色，补数据库恢复与切换门。PGT-017 按完整写者清单核销。",
       "windows": [
         {
-          "id": "W554-01",
-          "workspace_task": "W554-01",
+          "id": "W555-01",
+          "workspace_task": "W555-01",
           "related_tasks": [
-            "WP02-02",
             "WP02-03",
             "PGT-017"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT",
+          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w554-01",
-          "planned_scope_ref": "docs/development/evidence/W554-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W554-01/DELIVERY.md",
+          "branch": "codex/w555-01",
+          "planned_scope_ref": "docs/development/evidence/W555-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W555-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main IAM inquiry resource scopes",
-            "isolated Main and CRM PostgreSQL and separate native service-token profile"
+            "Main IAM inquiry scope and C02 Outbox",
+            "CRM native C02 ingress and export on separate PostgreSQL"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "两种 Main 询盘范围撤权与 CRM 导出竞争各有 Main、CRM 真实运行通过。Main 本地 16 项相关回归通过，另 1 项联验在独立进程完成。独立 service-token-v1 原生控制与签发 11 项通过。",
-          "remaining_scope": "全 Main 写者登记、独立 Space Design/OA/财务/采购/MRP/Stock 普通数据库角色，两库恢复后的存储身份和权限水位，最新 C02 替换投影与重授、滚动采用范围。",
-          "main_tested_source_sha": "dd549a28a30c0e3052645a165dcbf4f63940d433"
+          "validation_summary": "Main 真实范围撤销和重授，CRM 原事件接收及投影发布，原待处理导出仅一次完成。既有 CRM 先提交兼容同时通过，共 4 项真实两库测试通过，零跳过。",
+          "remaining_scope": "Main 其他独立写入口及普通数据库角色，两库数据库级时间点恢复和存储映射变更后的栅栏水位，实际传输调度及滚动采用。",
+          "main_tested_source_sha": "ad45a494a5004db9741063e23c514a8c16d7b9a7",
+          "product_repository": "CP6.CRM",
+          "product_worktree": "D:/CP6-worktrees/dev-2",
+          "product_baseline": "724570d3d7fe8e3c26615d3097c73546c5eacd63",
+          "product_branch": "codex/w555-01",
+          "product_source_sha": "5a7aeb2e407ef8d95307f2c1dc570df193866b6a",
+          "product_remote_main_sha": "27ce9d891dc252440186b2343dae0a7013b50d59",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/217",
+          "product_branch_disposition": "deleted-local-and-remote",
+          "product_workspace_status": "fixed-seat-detached-for-reuse",
+          "product_seat_released": true
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -264070,6 +264085,67 @@
             "main_tested_source_sha": "1de58fd27de89ac38e767c50506c75c6ef6ab600",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1035",
             "main_remote_main_sha": "19d32cf46b740d74be933ea8fc7cfa31ff07f616"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W554",
+        "path": "docs/development/evidence/W554-01/DELIVERY.md",
+        "baseline_sha": "19d32cf46b740d74be933ea8fc7cfa31ff07f616",
+        "registered_at": "2026-11-13T23:32:27.258002+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "按现有提交单元核对独立 Main 写者和普通数据库角色，继续两库恢复和 C02 重授联验。PGT-017 按完整覆盖核销。",
+        "windows": [
+          {
+            "id": "W554-01",
+            "workspace_task": "W554-01",
+            "related_tasks": [
+              "WP02-02",
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w554-01",
+            "planned_scope_ref": "docs/development/evidence/W554-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W554-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main IAM inquiry resource scopes",
+              "isolated Main and CRM PostgreSQL and separate native service-token profile"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "两种 Main 询盘范围撤权与 CRM 导出竞争各有 Main、CRM 真实运行通过。Main 本地 16 项相关回归通过，另 1 项联验在独立进程完成。独立 service-token-v1 原生控制与签发 11 项通过。",
+            "remaining_scope": "全 Main 写者登记、独立 Space Design/OA/财务/采购/MRP/Stock 普通数据库角色，两库恢复后的存储身份和权限水位，最新 C02 替换投影与重授、滚动采用范围。",
+            "main_tested_source_sha": "dd549a28a30c0e3052645a165dcbf4f63940d433",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1036",
+            "main_remote_main_sha": "6830f343486af75f61805481b9f25f9119dfe790"
           }
         ],
         "storage": {

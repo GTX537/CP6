@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-13 UTC · W555 C02 重授和业务恢复
+
+旧授权无效果，撤权投影仍拒绝。Main 重授后 CRM 更新投影，原导出只生成一份制品。 [交付](../development/evidence/W555-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W554 询盘范围撤权提交
 
 验证 CRM 先提交保留原制品，Main 范围撤权先提交拒绝旧授权。保留的站点表单组合在 Main 仍能签发。 [交付](../development/evidence/W554-01/DELIVERY.md)

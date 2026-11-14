@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-13 UTC · W555 PGT-017 余项
+
+独立业务事务、普通数据库角色、两库时间点恢复及部署期单写者采用仍待核对。 [交付](../development/evidence/W555-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W554 PGT-017 余项
 
 剩余 Main 独立事务及普通数据库写者，两库恢复与重授仍需核对。 [交付](../development/evidence/W554-01/DELIVERY.md)

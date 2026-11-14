@@ -11,9 +11,10 @@ namespace CP6.Tests.Platform;
 public sealed partial class IamUserAssignmentsPostgreSqlTests
 {
     private static async Task ExerciseCrmExportScopeRevocation(AuthenticationApiProcess host, Harness h,
-        InquirySiteFormScopeV1 target, string bridge, Task childExited)
+        InquirySiteFormScopeV1 target, string bridge, Task childExited, bool regrant)
     {
         const string path = "api/iam/inquiry-scopes/71";
+        const string aggregate = "permission:role:71";
         var cookies = await Login(host, h);
         using var read = await host.Send(Request(HttpMethod.Get, path, cookies));
         Assert.True(read.StatusCode == HttpStatusCode.OK, await read.Content.ReadAsStringAsync());
@@ -90,7 +91,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Assert.Equal(1, after.Receipts);
         Assert.Equal(retained, Assert.Single(await IamInquiryScopeAdministrationV1.ReadSourceAsync(h.Db, h.Tenant, 71, default)));
         var source = await h.Db.CrmIdentitySnapshots.AsNoTracking().SingleAsync(x => x.TenantId == h.Tenant
-            && x.AggregateId == "permission:role:71");
+            && x.AggregateId == aggregate);
         Assert.Equal(IdentityEventContracts.PermissionChangedV3, source.EventType);
         var data = JsonSerializer.Deserialize<PermissionIdentityDataV3>(source.PayloadJson, IdentityEventContracts.Json)!;
         Assert.Equal(retained, Assert.Single(data.SiteFormScopes));
@@ -108,10 +109,55 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Assert.True(replay.StatusCode == HttpStatusCode.OK, await replay.Content.ReadAsStringAsync());
         Assert.Equal(receipt, await replay.Content.ReadFromJsonAsync<IamOperationV1>());
         Assert.Equal(after, await State());
+        if (regrant) await SendPublication("revoked", after.Version);
         await File.WriteAllTextAsync(Path.Combine(bridge, "paused"), "PASS");
+        if (regrant)
+        {
+            await Stage("revocation-published");
+            using var currentResponse = await host.Send(Request(HttpMethod.Get, path, cookies));
+            Assert.True(currentResponse.StatusCode == HttpStatusCode.OK, await currentResponse.Content.ReadAsStringAsync());
+            var current = (await currentResponse.Content.ReadFromJsonAsync<IamInquiryScopeEditorV1>())!;
+            Assert.Equal(receipt.Version, current.Version);
+            Assert.Equal(retained, Assert.Single(current.SiteForms));
+            var restore = command with
+            {
+                OperationId = Guid.NewGuid(), ExpectedVersion = current.Version,
+                ExpectedReferencesVersion = current.ReferencesVersion, SiteForms = [retained, target],
+                Reason = "PGT-017 simulated site/form scope regrant"
+            };
+            using var restored = await host.Send(Request(HttpMethod.Put, path, cookies, restore));
+            Assert.True(restored.StatusCode == HttpStatusCode.OK, await restored.Content.ReadAsStringAsync());
+            var restoredReceipt = (await restored.Content.ReadFromJsonAsync<IamOperationV1>())!;
+            Assert.Equal("COMMITTED", restoredReceipt.State);
+            Assert.Equal(restore.OperationId, restoredReceipt.OperationId);
+            var restoredState = await State(restore.OperationId);
+            Assert.Equal(after.Version + 1, restoredState.Version);
+            Assert.Equal(after.Generation + 1, restoredState.Generation);
+            Assert.Equal(after.Outbox + 1, restoredState.Outbox);
+            Assert.Equal(1, restoredState.CurrentOutbox);
+            Assert.Equal(1, restoredState.Receipts);
+            Assert.Equal(1, restoredState.Audit);
+            Assert.Equal(restoredReceipt.Version, restoredState.Revision);
+            Assert.Equal(2, restoredState.PairCount);
+            using var restoreReplay = await host.Send(Request(HttpMethod.Put, path, cookies, restore));
+            Assert.Equal(restoredReceipt, await restoreReplay.Content.ReadFromJsonAsync<IamOperationV1>());
+            Assert.Equal(restoredState, await State(restore.OperationId));
+            await SendPublication("regranted", restoredState.Version);
+        }
         await Stage("finished");
 
         Task<HttpResponseMessage> Revoke() => host.Send(Request(HttpMethod.Put, path, cookies, command));
+
+        async Task SendPublication(string stage, int version)
+        {
+            var envelope = await h.Db.Database.SqlQuery<byte[]>($"""
+                SELECT "Payload" AS "Value" FROM crm_identity."Cp6_OutboxMessage"
+                WHERE "TenantId"={h.Tenant} AND "AggregateId"={aggregate} AND "AggregateVersion"={version}
+                """).SingleAsync();
+            var path = Path.Combine(bridge, stage + ".json");
+            await File.WriteAllBytesAsync(path + ".tmp", envelope);
+            File.Move(path + ".tmp", path);
+        }
 
         async Task Stage(string name)
         {
@@ -121,10 +167,10 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             await wait;
         }
 
-        async Task<InquiryScopeState> State()
+        async Task<InquiryScopeState> State(Guid? operation = null)
         {
             var tenant = h.Tenant;
-            const string aggregate = "permission:role:71";
+            var operationId = operation ?? command.OperationId;
             var json = await h.Db.Database.SqlQuery<string>($"""
                 WITH messages AS (
                     SELECT "AggregateVersion" FROM crm_identity."Cp6_OutboxMessage"
@@ -145,9 +191,9 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                     'CurrentOutbox',(SELECT count(*) FROM messages WHERE "AggregateVersion"=s."Version"),
                     'Audit',(SELECT count(*) FROM public."Sys_SecurityLogs" WHERE "TenantId"={tenant}
                         AND "EventType"={(int)SecurityEventType.IamAdministrationChanged}
-                        AND "ContextJson"::jsonb->>'operationId'={command.OperationId.ToString("D")}),
+                        AND "ContextJson"::jsonb->>'operationId'={operationId.ToString("D")}),
                     'Receipts',(SELECT count(*) FROM cp6_authentication_v1.iam_operations
-                        WHERE tenant_id={tenant} AND operation_id={command.OperationId}))::text AS "Value"
+                        WHERE tenant_id={tenant} AND operation_id={operationId}))::text AS "Value"
                 FROM public."Sys_Tenants" t JOIN crm_identity."Snapshot" s
                     ON s."TenantId"=t."Id" AND s."AggregateId"={aggregate}
                 WHERE t."Id"={tenant}
