@@ -9,7 +9,8 @@
       <div class="table-toolbar">
         <el-input v-model="poNo" size="small" style="width: 150px" :placeholder="t('采购订单号')" clearable @change="reload" />
         <el-input v-model="supplierId" size="small" style="width: 150px" :placeholder="t('供应商')" clearable @change="reload" />
-        <el-button v-permission="'pur-gr:add'" type="primary" size="small" @click="openCreate">{{ t('新建收货') }}</el-button>
+        <el-button v-permission="'pur-gr:add'" type="primary" size="small" :disabled="!!pending" @click="openCreate">{{ t('新建收货') }}</el-button>
+        <el-button v-if="pending" size="small" @click="createVisible = true">{{ t('查询原收货') }}</el-button>
         <el-button size="small" @click="reload">{{ t('刷新') }}</el-button>
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
       </div>
@@ -43,7 +44,8 @@
 
     <!-- 新建收货 -->
     <el-dialog v-model="createVisible" :title="t('新建收货')" width="820">
-      <el-form :model="form" label-width="90px" size="small">
+      <el-alert v-if="pending" :title="t('收货结果待确认')" :description="pendingNotice" type="warning" :closable="false" />
+      <el-form :model="form" label-width="90px" size="small" :disabled="!!pending || saving">
         <el-row :gutter="12">
           <el-col :span="10">
             <el-form-item :label="t('采购订单号')" required>
@@ -71,7 +73,11 @@
       </el-form>
       <template #footer>
         <el-button @click="createVisible = false" :disabled="saving">{{ t('取消') }}</el-button>
-        <el-button type="primary" :loading="saving" :disabled="lineRows.length === 0" @click="submit">{{ t('确认收货') }}</el-button>
+        <template v-if="pending">
+          <el-button :disabled="saving" @click="recover(false)">{{ t('查询原收货') }}</el-button>
+          <el-button v-permission="'pur-gr:add'" type="primary" :loading="saving" @click="recover(true)">{{ t('按原请求重试') }}</el-button>
+        </template>
+        <el-button v-else type="primary" :loading="saving" :disabled="lineRows.length === 0" @click="submit">{{ t('确认收货') }}</el-button>
       </template>
     </el-dialog>
 
@@ -102,10 +108,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref, shallowRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { grApi, poApi } from '@/api/pur/pur'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import {
   GR_STATUS_LABEL, GR_STATUS_TAG, QC_STATUS_LABEL, POSTING_BASIS_LABEL,
   type GoodsReceipt, type GrCreateForm,
@@ -115,12 +122,16 @@ const { t } = useI18n()
 const rows = ref<GoodsReceipt[]>([])
 const loading = ref(false)
 const loadingPo = ref(false)
-const saving = ref(false)
 const poNo = ref('')
 const supplierId = ref('')
 const createVisible = ref(false)
 const detailVisible = ref(false)
 const detail = ref<GoodsReceipt | null>(null)
+
+interface PendingConfirmation { operationId: string; request: GrCreateForm }
+const pending = shallowRef<PendingConfirmation>()
+const pendingNotice = ref('')
+const scopePrefix = 'cp6_gr_confirmation_v1:'
 
 interface GrLineRow { poLineNo: number; itemId: string; orderedQty: number; receivedQty: number; thisQty: number }
 const lineRows = ref<GrLineRow[]>([])
@@ -129,12 +140,26 @@ function emptyForm(): GrCreateForm {
   return { poNo: '', receiptDate: new Date().toISOString().slice(0, 10), warehouseCd: '', remarks: '', lines: [] }
 }
 const form = reactive<GrCreateForm>(emptyForm())
+const intent = useOperationsIntent(() => {
+  pending.value = undefined
+  pendingNotice.value = ''
+  createVisible.value = false
+  detailVisible.value = false
+  detail.value = null
+  rows.value = []
+  lineRows.value = []
+  Object.assign(form, emptyForm())
+  void restorePending()
+})
+const saving = intent.busy
+type ConfirmationIntent = ReturnType<typeof intent.capture>
 
 async function reload() {
+  const token = intent.capture()
   loading.value = true
   try {
     const res = await grApi.list(poNo.value || undefined, supplierId.value || undefined)
-    rows.value = res?.data || []
+    if (intent.current(token)) rows.value = res?.data || []
   } finally {
     loading.value = false
   }
@@ -148,9 +173,11 @@ function openCreate() {
 
 async function loadPoLines() {
   if (!form.poNo?.trim()) { ElMessage.warning(t('请先填采购订单号')); return }
+  const token = intent.capture()
   loadingPo.value = true
   try {
     const res = await poApi.get(form.poNo.trim())
+    if (!intent.current(token)) return
     const po = res?.data
     if (!po) { ElMessage.warning(t('采购订单不存在')); return }
     lineRows.value = (po.lines || [])
@@ -166,23 +193,102 @@ async function loadPoLines() {
   }
 }
 
+async function confirmationKey(token: ConfirmationIntent) {
+  const result = await grApi.confirmationScope()
+  if (!intent.current(token)) throw new Error(t('登录状态已改变，请重新读取当前页面。'))
+  if (result?.code !== 0 || !result.data?.tenantId || !result.data.actorId) throw new Error(t('无法确认当前用户和租户。'))
+  return scopePrefix + result.data.tenantId + ':' + result.data.actorId
+}
+
+function readPending(key: string) {
+  const value = sessionStorage.getItem(key)
+  return value === null ? undefined : JSON.parse(value) as PendingConfirmation
+}
+
+async function confirmed(key: string) {
+  sessionStorage.removeItem(key)
+  pending.value = undefined
+  ElMessage.success(t('已收货'))
+  createVisible.value = false
+  await reload()
+}
+
 async function submit() {
-  const lines = lineRows.value.filter(l => (l.thisQty ?? 0) > 0).map(l => ({ poLineNo: l.poLineNo, receivedQty: l.thisQty }))
+  const lines = lineRows.value.filter(l => l.thisQty > 0).map(l => ({ poLineNo: l.poLineNo, receivedQty: l.thisQty }))
   if (lines.length === 0) { ElMessage.warning(t('请填写至少一行收货量')); return }
-  saving.value = true
+  const token = intent.begin()
+  if (!token) return
+  const original = {
+    operationId: crypto.randomUUID(),
+    request: { poNo: form.poNo.trim(), receiptDate: form.receiptDate, warehouseCd: form.warehouseCd || null, remarks: form.remarks || null, lines },
+  }
   try {
-    await grApi.confirm({ poNo: form.poNo.trim(), receiptDate: form.receiptDate, warehouseCd: form.warehouseCd || null, remarks: form.remarks || null, lines })
-    ElMessage.success(t('已收货'))
-    createVisible.value = false
-    await reload()
+    const key = await confirmationKey(token)
+    pending.value = readPending(key)
+    if (pending.value) {
+      pendingNotice.value = t('请查询结果或按原请求重试。')
+      return
+    }
+    sessionStorage.setItem(key, JSON.stringify(original))
+    pending.value = original
+    try {
+      const result = await grApi.confirm(original.request, original.operationId)
+      if (!intent.current(token)) return
+      if (result?.code !== 0 || !result.data?.grNo) throw new Error(t('收货结果待确认'))
+    } catch (cause) {
+      if (!intent.current(token)) return
+      const status = (cause as { response?: { status?: number } }).response?.status
+      if (status && [400, 401, 403, 409, 422].includes(status)) {
+        sessionStorage.removeItem(key)
+        pending.value = undefined
+      } else {
+        pendingNotice.value = t('请查询结果或按原请求重试。')
+      }
+      return
+    }
+    await confirmed(key)
+  } catch {
+    if (intent.current(token)) ElMessage.error(t('无法读取或保存原收货记录。'))
   } finally {
-    saving.value = false
+    intent.finish(token)
+  }
+}
+
+async function recover(retry: boolean) {
+  const token = intent.begin()
+  if (!token) return
+  try {
+    const key = await confirmationKey(token)
+    const original = readPending(key)
+    if (!original) return
+    pending.value = original
+    if (retry) {
+      const result = await grApi.confirm(original.request, original.operationId)
+      if (!intent.current(token)) return
+      if (result?.code !== 0 || !result.data?.grNo) throw new Error(t('收货结果待确认'))
+    } else {
+      const result = await grApi.originalConfirmation(original.operationId)
+      if (!intent.current(token)) return
+      if (result?.code !== 0 || result.data?.operationId !== original.operationId) throw new Error(t('收货结果待确认'))
+      if (result.data.state === 'UNKNOWN') {
+        pendingNotice.value = t('尚未查到原收货结果。可按原请求重试。')
+        return
+      }
+      if (result.data.state !== 'COMMITTED' || !result.data.receipt?.grNo) throw new Error(t('收货结果待确认'))
+    }
+    await confirmed(key)
+  } catch {
+    if (intent.current(token)) pendingNotice.value = t('原收货结果仍待确认。')
+  } finally {
+    intent.finish(token)
   }
 }
 
 async function openDetail(row: GoodsReceipt) {
   if (!row.grNo) return
+  const token = intent.capture()
   const res = await grApi.get(row.grNo)
+  if (!intent.current(token)) return
   detail.value = res?.data || null
   detailVisible.value = true
 }
@@ -194,7 +300,20 @@ async function doApplyQc(row: GoodsReceipt) {
   await reload()
 }
 
-onMounted(reload)
+async function restorePending() {
+  const token = intent.capture()
+  try {
+    if (!Object.keys(sessionStorage).some(key => key.startsWith(scopePrefix))) return
+    const key = await confirmationKey(token)
+    if (!intent.current(token)) return
+    pending.value = readPending(key)
+    if (pending.value) pendingNotice.value = t('请查询结果或按原请求重试。')
+  } catch {
+    if (intent.current(token)) ElMessage.error(t('无法读取原收货记录。'))
+  }
+}
+
+onMounted(() => Promise.all([restorePending(), reload()]))
 </script>
 
 <style scoped>

@@ -1,3 +1,4 @@
+using CP6.Core.EFDbContext;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
@@ -29,12 +30,17 @@ public partial class InboundService
     {
         if(!_db.Database.IsNpgsql())return CreateOrderCoreAsync(dto,userName);
         var frozen=OperationsOwnerV1.Freeze(dto);ValidateOwnedOrder(frozen);
-        return Owner.ExecuteAsync(OperationsOwnerV1.Inbound,"add",true,async(a,ct)=>
-        {
-            a.RequirePriceWrite();var no=await CreateOrderCoreAsync(frozen,a.Actor);
-            a.AtCommit(t=>a.RequireInbound(no,false,t));return no;
-        });
+        return Owner.ExecuteAsync(OperationsOwnerV1.Inbound,"add",true,(a,_)=>CreateOwnedOrderAsync(frozen,a));
     }
+
+    private async Task<string> CreateOwnedOrderAsync(InboundOrderDto dto, OperationsAccessV1 access)
+    {
+        access.RequirePriceWrite();
+        var number = await CreateOrderCoreAsync(dto, access.Actor);
+        access.AtCommit(ct => access.RequireInbound(number, false, ct));
+        return number;
+    }
+
     public Task UpdateOrderAsync(string no,InboundOrderDto dto,string? userName)
     {
         if(!_db.Database.IsNpgsql())return UpdateOrderCoreAsync(no,dto,userName);
@@ -52,11 +58,17 @@ public partial class InboundService
             a.AtCommit(t=>a.RequireInbound(no,true,t));return true;
         });
     public Task ConfirmOrderAsync(string no,string? userName)=>!_db.Database.IsNpgsql()?ConfirmOrderCoreAsync(no,userName):
-        Owner.ExecuteAsync(OperationsOwnerV1.Inbound,"confirm",true,async(a,ct)=>
-        {
-            await a.RequireInbound(no,false,ct);await RequireUnreceived(no,ct);await ConfirmOrderCoreAsync(no,a.Actor);
-            a.AtCommit(t=>a.RequireInbound(no,false,t));return true;
-        });
+        Owner.ExecuteAsync(OperationsOwnerV1.Inbound,"confirm",true,(a,ct)=>ConfirmOwnedOrderAsync(no,a,ct));
+
+    private async Task<bool> ConfirmOwnedOrderAsync(string number, OperationsAccessV1 access, CancellationToken ct)
+    {
+        await access.RequireInbound(number, false, ct);
+        await RequireUnreceived(number, ct);
+        await ConfirmOrderCoreAsync(number, access.Actor);
+        access.AtCommit(token => access.RequireInbound(number, false, token));
+        return true;
+    }
+
     public Task CancelOrderAsync(string no,string? userName)=>!_db.Database.IsNpgsql()?CancelOrderCoreAsync(no,userName):
         Owner.ExecuteAsync(OperationsOwnerV1.Inbound,"cancel",true,async(a,ct)=>
         {
@@ -80,17 +92,40 @@ public partial class InboundService
     {
         if(!_db.Database.IsNpgsql())return await ConfirmReceiptCoreAsync(dto,userName);
         var frozen=OperationsOwnerV1.Freeze(dto);ValidateOwnedReceipt(frozen);var effects=new List<StockTransaction>();
-        var no=await Owner.ExecuteAsync(OperationsOwnerV1.Receipt,"post",true,async(a,ct)=>
-        {
-            _=StockOwner;a.RequirePriceWrite();frozen.OperatorCd=a.Actor;
-            foreach(var line in frozen.Details)await a.RequireLocation(frozen.WarehouseCd,line.LocationCd,ct);
-            await RequireReceiptSources(frozen,a,ct);
-            using var inheritance=StockOwner.InheritTransactions(a);
-            var number=await ConfirmReceiptCoreAsync(frozen,a.Actor,true);CaptureStock(effects);
-            a.AtCommit(t=>a.RequireReceipt(number,t));return number;
-        });
+        var no=await Owner.ExecuteAsync(OperationsOwnerV1.Receipt,"post",true,(a,ct)=>ConfirmOwnedReceiptAsync(frozen,a,effects,ct));
         await PublishReceipt(no,frozen.WarehouseCd,effects);return no;
     }
+
+    private async Task<string> ConfirmOwnedReceiptAsync(InboundReceiptDto dto, OperationsAccessV1 access,
+        List<StockTransaction> effects, CancellationToken ct)
+    {
+        access.RequirePriceWrite();
+        dto.OperatorCd = access.Actor;
+        foreach (var line in dto.Details) await access.RequireLocation(dto.WarehouseCd, line.LocationCd, ct);
+        await RequireReceiptSources(dto, access, ct);
+        using var inheritance = StockOwner.InheritTransactions(access);
+        var number = await ConfirmReceiptCoreAsync(dto, access.Actor, true);
+        CaptureStock(effects);
+        access.AtCommit(token => access.RequireReceipt(number, token));
+        return number;
+    }
+
+    internal async Task<(string Inbound, string Receipt)> ReceivePurchaseWithinOwnerAsync(CP6Context context,
+        OperationsAccessV1 parent, InboundOrderDto order, InboundReceiptDto receipt, List<StockTransaction> effects, CancellationToken ct)
+    {
+        if (!ReferenceEquals(context, _db) || _db.Database.CurrentTransaction is null)
+            throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
+        ValidateOwnedOrder(order);
+        ValidateOwnedReceipt(receipt);
+        _ = Owner;
+        var number = await CreateOwnedOrderAsync(order, parent);
+        var confirm = await parent.ActionAsync(OperationsOwnerV1.Inbound, "confirm", ct);
+        await ConfirmOwnedOrderAsync(number, confirm, ct);
+        var post = await parent.ActionAsync(OperationsOwnerV1.Receipt, "post", ct);
+        receipt.InboundNo = number;
+        return (number, await ConfirmOwnedReceiptAsync(receipt, post, effects, ct));
+    }
+
     public Task<string> CreateFinishedGoodsFromWorkOrderAsync(string no,decimal goodQty,string? userName)
         =>!_db.Database.IsNpgsql()?CreateFinishedGoodsFromWorkOrderCoreAsync(no,goodQty,userName):ReceiveFinished(no,goodQty,null);
     internal Task<string> ReceiveCompletedAsync(OperationsDelegationV1 ticket)=>ReceiveFinished(ticket.Number,ticket.CompletedQuantity??0,ticket);
@@ -143,7 +178,7 @@ public partial class InboundService
         return number;
     }
     internal Task PublishInspectionReceiptAsync(string number,string warehouse,List<StockTransaction> effects)=>PublishReceipt(number,warehouse,effects);
-    private async Task PublishReceipt(string no,string warehouse,List<StockTransaction> effects)
+    internal async Task PublishReceipt(string no,string warehouse,List<StockTransaction> effects)
     {
         foreach(var effect in effects)await StockOwner.PublishCommittedCancellationAsync(effect);
         try{await _notifier.NotifyInboundReceivedAsync(no,warehouse);}catch{/* Existing best-effort after confirmed commit. */}

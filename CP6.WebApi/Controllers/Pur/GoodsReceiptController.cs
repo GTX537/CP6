@@ -1,5 +1,7 @@
 using CP6.Core.Auth;
+using CP6.Core.Services.Erp;
 using CP6.Core.Services.Pur;
+using CP6.Core.Services.Sys;
 using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,10 +35,35 @@ public class GoodsReceiptController : ControllerBase
     /// <summary>确认收货（着荷即验收 / 检收转待检）。</summary>
     [HttpPost]
     [RequirePermission("pur-gr", "add")]
-    public async Task<IActionResult> Confirm([FromBody] GrCreateDto dto)
+    public async Task<IActionResult> Confirm([FromBody] GrCreateDto dto, [FromHeader(Name = "Idempotency-Key")] Guid? operationId)
     {
-        try { return Ok2(await _svc.ConfirmReceiveAsync(dto, CurrentUser)); }
+        try { return Ok2(await _svc.ConfirmReceiveAsync(dto, CurrentUser, operationId)); }
+        catch (OrderPriceCorrectionException e) { return StatusCode(e.Status, new { code = e.Status, message = e.Message }); }
         catch (InvalidOperationException e) { return Err(e); }
+    }
+
+    [HttpGet("operations/scope")]
+    public async Task<IActionResult> ConfirmationScope(CancellationToken ct)
+    {
+        Response.Headers.CacheControl = "no-store";
+        try { return Ok2(await _svc.ConfirmationScopeAsync(ct)); }
+        catch (OrderPriceCorrectionException e) { return StatusCode(e.Status, new { code = e.Status, message = e.Message }); }
+        catch (CurrentPermissionUnavailableException)
+        {
+            return StatusCode(503, new { code = 503, message = "AUTHORITY_FENCE_UNAVAILABLE" });
+        }
+    }
+
+    [HttpGet("operations/{operationId:guid}")]
+    public async Task<IActionResult> ReadConfirmation(Guid operationId, CancellationToken ct)
+    {
+        try
+        {
+            Response.Headers.CacheControl = "no-store";
+            var receipt = await _svc.ReadConfirmationAsync(operationId, ct);
+            return Ok2(new { operationId, state = receipt is null ? "UNKNOWN" : "COMMITTED", receipt });
+        }
+        catch (OrderPriceCorrectionException e) { return StatusCode(e.Status, new { code = e.Status, message = e.Message }); }
     }
 
     /// <summary>应用检收结果（仅检收基准；合格累加 PO 验收锚）。</summary>

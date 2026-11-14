@@ -22,6 +22,12 @@ internal sealed partial class OperationsAccessV1
     {
         if(!await ProductionWorkOrders().AnyAsync(w=>w.WorkOrderNo==number,ct))throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN",403);
     }
+    internal void RequirePurchaseReceipt()
+    {
+        if (!authority.Actor.ActionKeys.Contains("pur-gr:add"))
+            throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
+    }
+
     internal IQueryable<InboundOrder> Inbounds(bool includeDeleted=false)
         =>Inbounds(authority,includeDeleted);
     private IQueryable<InboundOrder> Inbounds(OperationsOwnerV1.Authority a,bool includeDeleted)
