@@ -36,7 +36,7 @@ public interface IFlowTriggerService
     Task<TriggerFireResult> FireMessageAsync(Wf_FlowTrigger trigger, string? rawKey, string idempotencyKey,
         string bodyJson, CancellationToken ct);
 
-    /// <summary>timer 扫描一轮（worker 复用；lease 语义 = RowVersion 乐观并发 + NextDueUtc 前移即抢占）。</summary>
+    /// <summary>扫描到期定时触发和旧占坑。PostgreSQL 下每条与当前租户权限一起提交。</summary>
     Task<int> ScanTimersOnceAsync(CancellationToken ct);
 }
 
@@ -213,20 +213,107 @@ public class FlowTriggerService : IFlowTriggerService
     public Task<int> ScanTimersOnceAsync(CancellationToken ct)
         => ScanTimersOnceAsync(DateTime.UtcNow, ct);
 
-    /// <summary>测试重载（注入 nowUtc，映射表⑤）——B-T2 实现。</summary>
-    public async Task<int> ScanTimersOnceAsync(DateTime nowUtc, CancellationToken ct)
+    public Task<int> ScanTimersOnceAsync(DateTime nowUtc, CancellationToken ct)
+        => _db.Database.IsNpgsql()
+            ? ScanTimersWithAuthorityAsync(nowUtc, ct)
+            : ScanLegacyTimersAsync(nowUtc, ct);
+
+    private IQueryable<Wf_FlowTrigger> EnabledTimers()
+        => _db.Wf_FlowTriggers.Where(t => t.Enabled && t.TriggerType == WfTriggerType.Timer);
+
+    private IQueryable<Wf_FlowTrigger> DueTimers(DateTime nowUtc)
+        => EnabledTimers().Where(t => t.NextDueUtc <= nowUtc);
+
+    private IQueryable<Wf_TriggerFire> RecoverableTimers(DateTime nowUtc)
+        => _db.Wf_TriggerFires.Where(f => f.Source == WfTriggerType.Timer && f.InstanceId == null
+            && f.Error == null && f.FiredUtc < nowUtc - RecoveryGrace);
+
+    private async Task<int> ScanTimersWithAuthorityAsync(DateTime nowUtc, CancellationToken ct)
+    {
+        var processed = 0;
+        // A legacy manual fire cannot recover as a timer because it has no human actor.
+        var enabledTimers = EnabledTimers();
+        var staleIds = await RecoverableTimers(nowUtc)
+            .Where(f => !f.IdempotencyKey.StartsWith(ManualKeyPrefix)
+                && enabledTimers.Any(t => t.Id == f.TriggerId))
+            .OrderBy(f => f.FiredUtc).Take(BatchSize).Select(f => f.Id).ToListAsync(ct);
+        foreach (var id in staleIds)
+            if (await ProcessTimerWithAuthorityAsync(id, nowUtc, recovery: true, ct)) processed++;
+
+        var dueIds = await DueTimers(nowUtc)
+            .OrderBy(t => t.NextDueUtc).Take(BatchSize).Select(t => t.Id).ToListAsync(ct);
+        foreach (var id in dueIds)
+            if (await ProcessTimerWithAuthorityAsync(id, nowUtc, recovery: false, ct)) processed++;
+
+        return processed;
+    }
+
+    private async Task<bool> ProcessTimerWithAuthorityAsync(Guid id, DateTime nowUtc, bool recovery,
+        CancellationToken ct)
+    {
+        await using var tx = await _db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
+        try
+        {
+            await AuthenticationCompletionGateV1.AcquireAsync(_db, ct);
+            var tenant = await _db.Sys_Tenants.AsNoTracking().Where(t => t.Id == _db.CurrentTenantId)
+                .Select(t => new { t.Enable, t.ExpireDate }).SingleOrDefaultAsync(ct);
+            if (tenant is not { Enable: true } || tenant.ExpireDate <= DateTime.Now) return false;
+
+            Wf_TriggerFire? fire = null;
+            Wf_FlowTrigger? trigger;
+            if (recovery)
+            {
+                fire = await RecoverableTimers(nowUtc).SingleOrDefaultAsync(f => f.Id == id, ct);
+                if (fire == null) return false;
+                trigger = await EnabledTimers().SingleOrDefaultAsync(t => t.Id == fire.TriggerId, ct);
+            }
+            else
+            {
+                trigger = await DueTimers(nowUtc).SingleOrDefaultAsync(t => t.Id == id, ct);
+            }
+            if (trigger == null) return false;
+
+            var cfg = WfTriggerConfig.ParseTimer(trigger.ConfigJson);
+            if (fire == null)
+            {
+                fire = ClaimTimer(trigger, cfg, nowUtc);
+                await _db.SaveChangesAsync(ct);
+            }
+            if (fire.Error == null)
+                await FireCoreAsync(trigger, cfg.VarsJson, WfTriggerType.Timer, fire.IdempotencyKey, tx, ct);
+
+            if (tenant.ExpireDate <= DateTime.Now) return false;
+            await tx.CommitAsync(ct);
+            return true;
+        }
+        finally
+        {
+            // The worker owns this context. Reload each slot after waiting for the current authority.
+            _db.ChangeTracker.Clear();
+        }
+    }
+
+    private Wf_TriggerFire ClaimTimer(Wf_FlowTrigger trigger, WfTimerTriggerConfig cfg, DateTime nowUtc)
+    {
+        var key = $"{trigger.Id}:{trigger.NextDueUtc!.Value:O}";
+        // 从扫描时刻推到未来一档。跨过的历史到期点只触发一次（spec §3.2）。
+        trigger.NextDueUtc = WfCronHelper.NextUtc(cfg.Cron, nowUtc);
+        var fire = new Wf_TriggerFire
+        {
+            TriggerId = trigger.Id, IdempotencyKey = key,
+            FiredUtc = nowUtc, Source = WfTriggerType.Timer,
+            Error = trigger.NextDueUtc == null ? "E-WF-022: cron 解析失败" : null,
+        };
+        _db.Wf_TriggerFires.Add(fire);
+        return fire;
+    }
+
+    private async Task<int> ScanLegacyTimersAsync(DateTime nowUtc, CancellationToken ct)
     {
         var processed = 0;
 
         // ── ① 补跑扫描（spec §3.2 崩溃恢复）：宽限期外仍未完成的占坑行 → 补第二段 ──
-        var recoverable = _db.Wf_TriggerFires
-            .Where(f => f.Source == WfTriggerType.Timer && f.InstanceId == null && f.Error == null
-                        && f.FiredUtc < nowUtc - RecoveryGrace);
-        // A legacy manual placeholder cannot recover as a timer. It does not record
-        // the human actor whose current authority would be needed to start the flow.
-        if (_db.Database.IsNpgsql())
-            recoverable = recoverable.Where(f => !f.IdempotencyKey.StartsWith(ManualKeyPrefix));
-        var staleIds = await recoverable
+        var staleIds = await RecoverableTimers(nowUtc)
             .OrderBy(f => f.FiredUtc)
             .Take(BatchSize)
             .Select(f => f.Id)
@@ -245,9 +332,7 @@ public class FlowTriggerService : IFlowTriggerService
         }
 
         // ── ② 到期扫描 + 占坑两段式 ──
-        var dueIds = await _db.Wf_FlowTriggers
-            .Where(t => t.Enabled && t.TriggerType == WfTriggerType.Timer
-                        && t.NextDueUtc != null && t.NextDueUtc <= nowUtc)
+        var dueIds = await DueTimers(nowUtc)
             .OrderBy(t => t.NextDueUtc)
             .Take(BatchSize)
             .Select(t => t.Id)
@@ -258,30 +343,17 @@ public class FlowTriggerService : IFlowTriggerService
             var trig = await _db.Wf_FlowTriggers.FirstOrDefaultAsync(t => t.Id == id, ct);   // 逐条重查（同上契约）
             if (trig == null || !trig.Enabled || trig.NextDueUtc == null || trig.NextDueUtc > nowUtc) continue;
 
-            var dueUtc = trig.NextDueUtc.Value;
-            var key = $"{trig.Id}:{dueUtc:O}";
             var cfg = WfTriggerConfig.ParseTimer(trig.ConfigJson);
 
             // 第一段：抢占 + 占坑，单 SaveChanges（隐式单事务）＝「NextDueUtc 前移 + INSERT 占坑行」原子提交。
-            // misfire：NextUtc 从 nowUtc 起算严格未来下一个 → 跨过的历史到期点只补最近（本次），不追积压（spec §3.2）。
-            var next = WfCronHelper.NextUtc(cfg.Cron, nowUtc);
-            var fire = new Wf_TriggerFire
-            {
-                TriggerId = trig.Id, IdempotencyKey = key,
-                FiredUtc = nowUtc, Source = WfTriggerType.Timer,
-            };
-            if (next == null)
+            var fire = ClaimTimer(trig, cfg, nowUtc);
+            if (fire.Error != null)
             {
                 // 保存后被改坏的 cron：停摆 + 记错（不占坑发起，不无限重扫）
-                trig.NextDueUtc = null;
-                fire.Error = "E-WF-022: cron 解析失败";
-                _db.Wf_TriggerFires.Add(fire);
                 await _db.SaveChangesAsync(ct);
                 processed++;
                 continue;
             }
-            trig.NextDueUtc = next;
-            _db.Wf_TriggerFires.Add(fire);
             try { await _db.SaveChangesAsync(ct); }
             catch (DbUpdateException)   // 含 DbUpdateConcurrencyException：RowVersion 被抢 / 占坑撞唯一键 → 让位
             {
@@ -296,7 +368,7 @@ public class FlowTriggerService : IFlowTriggerService
             _db.Entry(trig).State = EntityState.Detached;
 
             // 第二段：完成（FireAsync 复用占坑行回填 InstanceId/Error；两半各自幂等）
-            await FireAsync(trig, cfg.VarsJson, WfTriggerType.Timer, key, ct);
+            await FireAsync(trig, cfg.VarsJson, WfTriggerType.Timer, fire.IdempotencyKey, ct);
             processed++;
         }
 
