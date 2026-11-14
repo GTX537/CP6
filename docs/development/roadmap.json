@@ -165802,6 +165802,11 @@
       "at": "2026-11-14T03:58:58.211523+00:00",
       "change": "W565-01 接入采购检收和 PO 回写至 IAM 共同事务，实测两种撤权竞争；PGT-017 正式全写入口仍待核销。",
       "evidence": "docs/development/evidence/W565-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T05:26:41.028490+00:00",
+      "change": "W566-01 收口采购申请、采购订单送审事务和提交后工作流外发；PGT-017 仍待全 writer 及跨库恢复验收。",
+      "evidence": "docs/development/evidence/W566-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211808,10 +211813,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W565",
-      "path": "docs/development/evidence/W565-01/DELIVERY.md",
-      "baseline_sha": "6e97a005208dc06e7c0f7dfe243d2cf73778c769",
-      "registered_at": "2026-11-14T03:47:09.425780+00:00",
+      "id": "W566",
+      "path": "docs/development/evidence/W566-01/DELIVERY.md",
+      "baseline_sha": "b738ae07eb6b6547a9548a4e033f927ca5f8fc70",
+      "registered_at": "2026-11-14T04:12:01.972929+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211825,14 +211830,14 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "沿已确认的实际业务提交边界继续核对采购送审、WMS 独立收货、其他 Main 写者及跨库保障的剩余范围。",
+      "next_action": "核对采购确认收货的组合事务、WMS/Stock 原 Owner 权限及操作结果恢复，继续完成 PGT-017。",
       "windows": [
         {
-          "id": "W565-01",
-          "workspace_task": "W565-01",
+          "id": "W566-01",
+          "workspace_task": "W566-01",
           "related_tasks": [
-            "WP02-03",
-            "PGT-017"
+            "PGT-017",
+            "WP02-03"
           ],
           "chat": "COORD",
           "mode": "SINGLE_CHAT",
@@ -211840,21 +211845,22 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w565-01",
-          "planned_scope_ref": "docs/development/evidence/W565-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W565-01/DELIVERY.md",
+          "branch": "codex/w566-01",
+          "planned_scope_ref": "docs/development/evidence/W566-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W566-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:identity-authority",
-            "Main:purchase-receipt-quality"
+            "Main:purchase-approval",
+            "Main:legacy-workflow-start"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "PostgreSQL 18.6 采购检收与实际 IAM 撤权两种顺序通过，另四个采购 PostgreSQL 场景和八项相关组件测试通过；隔离本地发布 310 文件、建库和 HTTP 200/401。",
-          "remaining_scope": "采购送审和 WMS 自管事务的收货确认、旧 OA 其余写者、财务、独立 Space Design、数据库角色及两库恢复对账和已登记宿主的传输与旧实例排空",
-          "main_tested_source_sha": "b84fa740fdd849bba82abf88140b93d1a9ad6371"
+          "validation_summary": "PostgreSQL 18.6，最终 8 项定向用例通过。复用 35 项未受最终修改影响的组件及检收用例。310 文件本地发布和隔离 PostgreSQL/Kestrel 冒烟通过。",
+          "remaining_scope": "采购确认收货的 WMS 自有事务和采购累计、旧 OA 其余写者、财务、独立 Space Design、原生数据库角色，以及两库未知结果恢复、重开对账、已登记宿主传输和旧实例排空。",
+          "main_tested_source_sha": "3df55876ddad659a4817bec340ed0b48eb189852"
         }
       ],
       "storage": {
@@ -264807,6 +264813,66 @@
             "main_tested_source_sha": "ee9378d4c5385c4fe843f5401b7e60e636230c61",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1054",
             "main_remote_main_sha": "6e97a005208dc06e7c0f7dfe243d2cf73778c769"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W565",
+        "path": "docs/development/evidence/W565-01/DELIVERY.md",
+        "baseline_sha": "6e97a005208dc06e7c0f7dfe243d2cf73778c769",
+        "registered_at": "2026-11-14T03:47:09.425780+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "沿已确认的实际业务提交边界继续核对采购送审、WMS 独立收货、其他 Main 写者及跨库保障的剩余范围。",
+        "windows": [
+          {
+            "id": "W565-01",
+            "workspace_task": "W565-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w565-01",
+            "planned_scope_ref": "docs/development/evidence/W565-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W565-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:identity-authority",
+              "Main:purchase-receipt-quality"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "PostgreSQL 18.6 采购检收与实际 IAM 撤权两种顺序通过，另四个采购 PostgreSQL 场景和八项相关组件测试通过；隔离本地发布 310 文件、建库和 HTTP 200/401。",
+            "remaining_scope": "采购送审和 WMS 自管事务的收货确认、旧 OA 其余写者、财务、独立 Space Design、数据库角色及两库恢复对账和已登记宿主的传输与旧实例排空",
+            "main_tested_source_sha": "b84fa740fdd849bba82abf88140b93d1a9ad6371",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1056",
+            "main_remote_main_sha": "b738ae07eb6b6547a9548a4e033f927ca5f8fc70"
           }
         ],
         "storage": {

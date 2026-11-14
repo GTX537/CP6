@@ -81,6 +81,10 @@ public class PurchaseRequestController : ControllerBase
     {
         try
         {
+            var authority = HttpContext.RequestServices.GetRequiredService<IamAdministrationV1>();
+            if (authority.IsPostgreSql)
+                return Ok2(await IamAdministrationHttpV1.ExecuteWriteAsync(HttpContext, authority, "pur-pr:submit",
+                    (current, ct) => _svc.SubmitForApprovalAsync(prNo, current.UserId, current.UserName, current, ct)));
             var permission = await _permission.GetAsync();
             return Ok2(await _svc.SubmitForApprovalAsync(
                 prNo, permission.UserId, permission.UserName, permission, HttpContext.RequestAborted));
@@ -88,6 +92,11 @@ public class PurchaseRequestController : ControllerBase
         catch (UnauthorizedAccessException e)
         {
             return StatusCode(StatusCodes.Status403Forbidden, new { code = e.Message, message = e.Message });
+        }
+        catch (IamAdministrationExceptionV1 e) { return StatusCode(e.Status, new { code = e.Status, message = e.Message }); }
+        catch (Exception e) when (e is DbException or DbUpdateException or CurrentPermissionUnavailableException)
+        {
+            return StatusCode(503, new { code = 503, message = "AUTHORITY_FENCE_UNAVAILABLE" });
         }
         catch (InvalidOperationException e) { return Err(e); }
     }

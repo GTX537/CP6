@@ -1,9 +1,13 @@
+using System.Data.Common;
 using CP6.Core.Auth;
 using CP6.Core.Services.Pur;
+using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Pur;
 using CP6.WebApi.Filters;
+using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Controllers.Pur;
 
@@ -45,7 +49,18 @@ public class PurchaseOrderController : ControllerBase
     [RequirePermission("pur-po", "submit")]
     public async Task<IActionResult> Submit(string poNo)
     {
-        try { return Ok2(await _svc.SubmitForApprovalAsync(poNo, CurrentUser)); }
+        try
+        {
+            var authority = HttpContext.RequestServices.GetRequiredService<IamAdministrationV1>();
+            if (!authority.IsPostgreSql) return Ok2(await _svc.SubmitForApprovalAsync(poNo, CurrentUser));
+            return Ok2(await IamAdministrationHttpV1.ExecuteWriteAsync(HttpContext, authority, "pur-po:submit",
+                (current, ct) => _svc.SubmitForApprovalAsync(poNo, current.UserName, current.UserId, ct)));
+        }
+        catch (IamAdministrationExceptionV1 e) { return StatusCode(e.Status, new { code = e.Status, message = e.Message }); }
+        catch (Exception e) when (e is DbException or DbUpdateException or CurrentPermissionUnavailableException)
+        {
+            return StatusCode(503, new { code = 503, message = "AUTHORITY_FENCE_UNAVAILABLE" });
+        }
         catch (InvalidOperationException e) { return Err(e); }
     }
 

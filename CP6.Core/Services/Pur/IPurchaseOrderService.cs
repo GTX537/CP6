@@ -22,7 +22,8 @@ public interface IPurchaseOrderService
     /// <summary>
     /// 送审（章02 §7）：草稿 → 调审批服务（桩即时通过 / 真实流程进 PendingApproval）→ 回填 ApprovalRef。
     /// </summary>
-    Task<PurchaseOrder> SubmitForApprovalAsync(string poNo, string? userName);
+    Task<PurchaseOrder> SubmitForApprovalAsync(string poNo, string? userName, Guid actorId = default,
+        CancellationToken ct = default);
 
     /// <summary>OA 审批通过回调：PendingApproval→Confirmed（幂等；不 SaveChanges，由 OA 引擎统一持久化）。</summary>
     Task ConfirmFromApprovalAsync(string poNo, string decidedBy);

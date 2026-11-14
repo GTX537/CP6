@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 · W566-01
+
+采购申请与采购订单送审采用 Main 当前授权事务。工作流启动所遇同步 WebAPI 节点在该事务中保存作业，由 worker 在提交后执行。最终 8 项真实 PostgreSQL 验证通过。 正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 本地隔离发布建库通过，匿名管理和询盘均返回 401。 [交付记录](../development/evidence/W566-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W565-01
 
 采购检收应用与关联 PO 写集使用同一授权事务。PostgreSQL 18.6 采购检收与实际 IAM 撤权两种顺序通过，另四个采购 PostgreSQL 场景和八项相关组件测试通过；隔离本地发布 310 文件、建库和 HTTP 200/401。正式 PostgreSQL 26/27，原询盘 60/60。 [交付](../development/evidence/W565-01/DELIVERY.md)

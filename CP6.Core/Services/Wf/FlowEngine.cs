@@ -20,6 +20,7 @@ public partial class FlowEngine : IFlowEngine
     private readonly ApprovalDispatcher _dispatcher;
     private readonly IReadOnlyDictionary<string, INodeHandler> _handlers;
     private readonly IApprovalStagePlanner _planner;
+    internal bool DeferExternalStart { get; private set; }
 
     public FlowEngine(CP6Context db, IApproverResolver approver, IWfNotifier? notifier = null,
                       ApprovalDispatcher? dispatcher = null, IEnumerable<INodeHandler>? handlers = null,
@@ -84,11 +85,17 @@ public partial class FlowEngine : IFlowEngine
         _db.Wf_FlowInstances.Add(inst);
         AddHistory(inst.Id, first.Id, starterId, "submit", null);
 
-        var root = SpawnToken(inst, first, parent: null, fork: null);
-        await EnterNodeAsync(inst, schema, first, root);
-        await DispatchIfFinishedAsync(inst, starterId, null);   // 极少数"起即终态"（如 start→end）也分发，决策人记发起人
-        await _db.SaveChangesAsync(ct);
-        await FastPathSubFlowResumeAsync(ct);   // ★ 子流程 fast path：无 subFlow 请求=Local 空集 O(1) no-op
+        // The purchase start and any subflows it enters share the write transaction.
+        DeferExternalStart = _db.Database.IsNpgsql() && businessRef?.BizType is "PUR_PR" or "PUR_PO";
+        try
+        {
+            var root = SpawnToken(inst, first, parent: null, fork: null);
+            await EnterNodeAsync(inst, schema, first, root);
+            await DispatchIfFinishedAsync(inst, starterId, null);
+            await _db.SaveChangesAsync(ct);
+            await FastPathSubFlowResumeAsync(ct);
+        }
+        finally { DeferExternalStart = false; }
         return inst.Id;
     }
 

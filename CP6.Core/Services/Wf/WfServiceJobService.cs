@@ -145,6 +145,7 @@ public sealed class WfServiceJobService : IWfServiceJobService
                 }
                 else
                 {
+                    var deferredStart = job.Kind == WfJobKind.DeferredWebApiStart;
                     var sctx = new ServiceTaskContext
                     {
                         InstanceId = job.InstanceId,
@@ -153,8 +154,8 @@ public sealed class WfServiceJobService : IWfServiceJobService
                         StarterId = inst.StarterId,
                         JobId = job.Id,
                         AttemptNo = job.AttemptCount,
-                        ActorId = SystemActor,
-                        NowUtc = nowUtc,
+                        ActorId = deferredStart ? inst.StarterId : SystemActor,
+                        NowUtc = deferredStart ? job.DueAtUtc : nowUtc,
                         VarsJson = inst.VarsJson,
                         ActionRefJson = job.ActionRefJson,
                     };

@@ -168,7 +168,7 @@ public partial class PurchaseRequestService : IPurchaseRequestService
             if (transaction != null) await transaction.CommitAsync(ct);
             return pr;
         }
-        catch (Exception ex) when (ex is DbUpdateException or DbUpdateConcurrencyException)
+        catch (DbUpdateException) when (transaction != null || !_db.Database.IsRelational())
         {
             if (transaction != null) await transaction.RollbackAsync(ct);
             _db.ChangeTracker.Clear();
