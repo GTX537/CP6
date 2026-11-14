@@ -2,6 +2,7 @@ using CP6.Core.Auth;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -184,6 +185,7 @@ public class InboxController : LocalizedControllerBase
 
     [HttpPost("transfer")]
     [RequirePermission("oa-inbox", "transfer")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Transfer([FromBody] TransferReq r)
     {
         try
