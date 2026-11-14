@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 · W578-01 两种 C02/Kafka 提交顺序
+
+CRM 导出先提交及 Main 撤权先提交均通过实际 Dapr/Kafka 和两库验证。原制品、回执及审计保持原样，撤权后的新效果按当前代次处理。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W578-01/DELIVERY.md)
+
 ## 2026-11-14 · W577-01 旧 OA 撤回
 
 旧撤回共享 Main IAM PostgreSQL 事务栅栏。真实联验覆盖撤权和撤回两种顺序，以及恢复凭据先与撤回一并提交、父流程随后推进。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W577-01/DELIVERY.md)
