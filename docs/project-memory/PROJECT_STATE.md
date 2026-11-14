@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 · W568-01 Main 提交回执丢失
+
+Main 在 CRM 封存后实际提交撤权并丢失 PostgreSQL 回执，原操作查询和重试读回已提交回执，CRM 旧许可不能写入。CRM 先提交对照保留原导出。 正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W568-01/DELIVERY.md)
+
 ## 2026-11-14 · W567-01 采购确认收货
 
 现行采购确认收货将采购单、PO 收货累计、WMS 入库、库存流水和编号放在同一 PostgreSQL 授权事务。网页可按原操作键恢复结果。 正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 剩余范围包括Main 旧 OA 其余写者、财务、独立 Space Design、原生数据库角色，以及两库未知结果恢复、重开对账、已登记宿主传输和旧实例排空。 [交付记录](../development/evidence/W567-01/DELIVERY.md)
