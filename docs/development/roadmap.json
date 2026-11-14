@@ -165837,6 +165837,11 @@
       "at": "2026-11-14T12:31:56.167135+00:00",
       "change": "W572-01 修复 Main 旧 OA 单笔转交的提交时撤权栅栏，正式 PostgreSQL 保持 26/27。",
       "evidence": "docs/development/evidence/W572-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T13:00:19.491867+00:00",
+      "change": "W573-01 验证 Main C02 真实 broker 投递到 CRM Inbox，正式 PostgreSQL 保持 26/27。",
+      "evidence": "docs/development/evidence/W573-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211843,10 +211848,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W572",
-      "path": "docs/development/evidence/W572-01/DELIVERY.md",
-      "baseline_sha": "32a1182e31e506789c614dec3766cf5edad8f643",
-      "registered_at": "2026-11-14T12:15:54.545391+00:00",
+      "id": "W573",
+      "path": "docs/development/evidence/W573-01/DELIVERY.md",
+      "baseline_sha": "45ce8fd5f07ca62717751a7d853ca3dfc06b1ff1",
+      "registered_at": "2026-11-14T12:40:57.630062+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211860,42 +211865,54 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "沿旧 OA 各原有提交单元优先核对退回、撤回和批量路径，继续 Main 其余写者与跨库传输恢复的正式验收。",
+      "next_action": "继续核对 Main 各原有提交单元和缺失尾段 WAL 时的恢复与切换，沿用隔离 PostgreSQL 测试。",
       "windows": [
         {
-          "id": "W572-01",
-          "workspace_task": "W572-01",
+          "id": "W573-01",
+          "workspace_task": "W573-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT",
+          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w572-01",
-          "planned_scope_ref": "docs/development/evidence/W572-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W572-01/DELIVERY.md",
+          "branch": "codex/w573-01",
+          "planned_scope_ref": "docs/development/evidence/W573-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W573-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:legacy-oa-single-transfer",
-            "Main:IAM-authority-fence",
-            "Local:PostgreSQL"
+            "Main:inquiry-scope-authority",
+            "Main:C02-outbox",
+            "CRM:C02-identity-inbox",
+            "Local:Dapr-Kafka"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "基线撤权先提交仍返回 200。接入共同事务根后，两种 PostgreSQL HTTP 提交顺序和 13 项相关组件用例全部通过。发布同一受测程序集，存活 200、匿名转交 401。",
-          "remaining_scope": "旧 OA 退回、批量转交及办理、撤回和触发器，财务、独立 Space Design、其他数据库写者，及 Main C02 实际 broker 投递、缺失尾段 WAL 时的恢复、切换编排待验。",
-          "main_tested_source_sha": "f86490c267cc7585bf6640464a0c943d215ae3e6"
+          "validation_summary": "Main 和 CRM 两项跨库 PostgreSQL 18.6 通过，真实 Dapr/Kafka 和 CRM 原生 C02 Inbox，撤权和重授原件及 offset 回读一致。",
+          "remaining_scope": "旧 OA 退回、批量转交及办理、撤回和触发器，财务、独立 Space Design、其他数据库写者，及缺失尾段 WAL 时的恢复和生产切换编排待验。",
+          "main_tested_source_sha": "42528e5438607c1ec9304d1bea0ed81be3803406",
+          "product_repository": "CP6.CRM",
+          "product_worktree": "D:/CP6-worktrees/dev-2",
+          "product_baseline": "b0a4181076a4c7cf77b521ba0ca1932b4ca38d6f",
+          "product_branch": "codex/w573-01",
+          "product_source_sha": "f6f889cbf7ee8cf12e305a3025094f1b1bc8e9ed",
+          "product_remote_main_sha": "ec7158d3fbb547f60bc2bcd0b747fb254e54417e",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/224",
+          "product_branch_disposition": "deleted-local-and-remote",
+          "product_workspace_status": "fixed-seat-detached-for-reuse",
+          "product_seat_released": true
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -265309,6 +265326,67 @@
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018",
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W572",
+        "path": "docs/development/evidence/W572-01/DELIVERY.md",
+        "baseline_sha": "32a1182e31e506789c614dec3766cf5edad8f643",
+        "registered_at": "2026-11-14T12:15:54.545391+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "沿旧 OA 各原有提交单元优先核对退回、撤回和批量路径，继续 Main 其余写者与跨库传输恢复的正式验收。",
+        "windows": [
+          {
+            "id": "W572-01",
+            "workspace_task": "W572-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w572-01",
+            "planned_scope_ref": "docs/development/evidence/W572-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W572-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:legacy-oa-single-transfer",
+              "Main:IAM-authority-fence",
+              "Local:PostgreSQL"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "基线撤权先提交仍返回 200。接入共同事务根后，两种 PostgreSQL HTTP 提交顺序和 13 项相关组件用例全部通过。发布同一受测程序集，存活 200、匿名转交 401。",
+            "remaining_scope": "旧 OA 退回、批量转交及办理、撤回和触发器，财务、独立 Space Design、其他数据库写者，及 Main C02 实际 broker 投递、缺失尾段 WAL 时的恢复、切换编排待验。",
+            "main_tested_source_sha": "f86490c267cc7585bf6640464a0c943d215ae3e6",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1066",
+            "main_remote_main_sha": "45ce8fd5f07ca62717751a7d853ca3dfc06b1ff1"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },

@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-14 · W573-01 C02 撤权及重授已实测投递
+
+Main 原 Outbox 经 Dapr/Kafka 到 CRM C02 Inbox，撤权和重授版本 6、7 的原始字节与独立 offset 读回一致，封存拒写和原导出只完成一次。 [交付记录](../development/evidence/W573-01/DELIVERY.md)
+
 ## 2026-11-14 · W572-01 旧 OA 单笔转交
 
 修复旧 OA 单笔转交的撤权提交缺口。实际 PostgreSQL 18.6 验证撤权先提交时无新效果，转交先提交时完整保留改派、传签、履历和待办。15 项测试通过。 [交付记录](../development/evidence/W572-01/DELIVERY.md)

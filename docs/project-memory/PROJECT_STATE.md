@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 · W573-01 Main C02 真实 broker 投递
+
+隔离 PostgreSQL 18.6、Dapr 1.18.2 及 Kafka 4.3.1 联验通过。Main 撤权和重授两条事件在 CRM 原生 Inbox 落库并匹配 broker 原件。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W573-01/DELIVERY.md)
+
 ## 2026-11-14 · W572-01 旧 OA 单笔转交事务栅栏
 
 基线撤权先提交时旧请求仍返回成功。修复后，Main IAM 和旧 OA 单笔转交在同一 PostgreSQL 事务根上排队。两种提交顺序和写集回读通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W572-01/DELIVERY.md)

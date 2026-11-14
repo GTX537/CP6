@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 · W573-01 PGT-017 余项
+
+继续核销旧 OA 退回、批量、撤回和触发器，财务、独立 Space Design 及其他普通数据库写者。源库不可达或缺失尾段 WAL 的恢复与生产切换编排继续验收。 [交付记录](../development/evidence/W573-01/DELIVERY.md)
+
 ## 2026-11-14 · W572-01 PGT-017 余项
 
 继续核销旧 OA 退回、批量和撤回等入口，财务、独立 Space Design 及其余普通数据库写者。源库不可达或尾段 WAL 缺失时的恢复、Main C02 实际 broker 投递和切换编排待验。 [交付记录](../development/evidence/W572-01/DELIVERY.md)
