@@ -59,7 +59,9 @@ public abstract class BridgeHookBase
         object payload,
         string? operatorUser = null,
         Guid? jobId = null,
-        Guid? publishAttemptId = null)
+        Guid? publishAttemptId = null,
+        bool required = false,
+        CancellationToken ct = default)
     {
         IntegrationEvent? evt = null;
         try
@@ -84,15 +86,15 @@ public abstract class BridgeHookBase
                 CorrelationId = correlationId,
                 JobId = jobId,
                 PublishAttemptId = publishAttemptId,
-                PayloadJson = SafeSerialize(payload),
+                PayloadJson = required ? JsonSerializer.Serialize(payload) : SafeSerialize(payload),
                 Creator = string.IsNullOrWhiteSpace(operatorUser) ? "system" : operatorUser,
                 CreateDate = spaceNowUtc ?? DateTime.Now,
                 OccurredAtUtc = spaceNowUtc,
             };
             Db.IntegrationEvents.Add(evt);
-            await Db.SaveChangesAsync();
+            await Db.SaveChangesAsync(ct);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (!required)
         {
             // SaveChanges 失败后 Added 实体仍可能留在共享 ChangeTracker；
             // 必须先摘除，避免后续无关业务 Save 意外补写旧 Outbox。

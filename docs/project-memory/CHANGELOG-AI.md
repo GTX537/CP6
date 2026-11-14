@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 · W588-01 事件 HTTP 与重试的租户暂停顺序
+
+先提交保留原实例与状态，暂停先提交时保留原记录及重试次数。长事件键按完整负载恢复。 [缺陷 #1091](https://github.com/GTX537/CP6/issues/1091) · [交付记录](../development/evidence/W588-01/DELIVERY.md)
+
 ## 2026-11-14 · W587-01 定时触发领取与补跑原子提交
 
 租户暂停与定时写入串行。提交被数据库拒绝后原到期键可在下一轮完成。 [缺陷 #1089](https://github.com/GTX537/CP6/issues/1089) · [交付记录](../development/evidence/W587-01/DELIVERY.md)

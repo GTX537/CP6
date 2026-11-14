@@ -117,6 +117,9 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
     public static string RouteKey(string source, string target, string hook)
         => $"{source}|{target}|{hook}";
 
+    internal static bool IsWfTriggerEvent(IntegrationEvent evt)
+        => evt.TargetModule == "WF" && evt.HookName == nameof(IWfTriggerBridgeHook.OnEventAsync);
+
     /// <inheritdoc />
     public async Task<bool> DispatchAsync(IntegrationEvent evt, CancellationToken ct = default)
     {
@@ -126,12 +129,12 @@ public class IntegrationEventDispatcher : IIntegrationEventDispatcher
 
         // WF 触发器目标泛化路由（spec §3.3）：target=WF & hook=OnEventAsync 不看 source 直接路由。
         // 走 ReplayEventAsync（重放不再写新 outbox 行，映射表⑦）；DISPATCH-404 语义对其余路由不变。
-        if (evt.TargetModule == "WF" && evt.HookName == nameof(IWfTriggerBridgeHook.OnEventAsync))
+        if (IsWfTriggerEvent(evt))
         {
             var p = JsonSerializer.Deserialize<WfTriggerEventPayload>(evt.PayloadJson,
                         new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
                     ?? throw new InvalidOperationException("DISPATCH-400: empty WfTrigger payload");
-            var r = await _wfTrigger.ReplayEventAsync(p.EventKey, p.EventId, p.PayloadJson, p.UserName);
+            var r = await _wfTrigger.ReplayEventAsync(p.EventKey, p.EventId, p.PayloadJson, p.UserName, ct);
             return r.Success;
         }
 
