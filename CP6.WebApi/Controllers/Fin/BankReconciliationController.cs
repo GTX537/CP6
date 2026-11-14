@@ -3,6 +3,7 @@ using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Fin;
+using CP6.WebApi.Filters;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -37,6 +38,7 @@ public class BankReconciliationController : ControllerBase
 
     [HttpPost("{statementId}/manual-match")]
     [RequirePermission("fin-bank-reconciliation", "match")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> ManualMatch(Guid statementId, [FromBody] ManualMatchRequest req, [FromHeader(Name = "X-Row-Version")] string? rv)
     {
         req.StatementId = statementId;
@@ -46,6 +48,7 @@ public class BankReconciliationController : ControllerBase
 
     [HttpPost("unmatch/{groupId}")]
     [RequirePermission("fin-bank-reconciliation", "match")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Unmatch(Guid groupId) => Fin(await _svc.UnmatchAsync(groupId, CurrentUser));
 
     [HttpPost("{statementId}/generate-voucher")]
@@ -79,6 +82,7 @@ public class BankReconciliationController : ControllerBase
 
     [HttpPost("{statementId}/mark-pending")]
     [RequirePermission("fin-bank-reconciliation", "mark-pending")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> MarkPending(Guid statementId, [FromBody] MarkPendingReq req)
         => Fin(await _svc.MarkPendingAsync(statementId, req.LineIds, req.Category, req.RowVersion, CurrentUser));
 
@@ -89,9 +93,11 @@ public class BankReconciliationController : ControllerBase
 
     [HttpPost("{statementId}/lock")]
     [RequirePermission("fin-bank-reconciliation", "lock")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Lock(Guid statementId) => Fin(await _svc.LockAsync(statementId, CurrentUser));
 
     [HttpPost("{statementId}/unlock")]
     [RequirePermission("fin-bank-reconciliation", "unlock")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Unlock(Guid statementId, [FromBody] UnlockReq req) => Fin(await _svc.UnlockAsync(statementId, req.Reason, CurrentUser));
 }
