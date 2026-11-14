@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 · W574-01 缺失尾段 WAL 时继续关闭
+
+源库离线。目标已发布版本 7 的投影仍缺封存、原制品和发送记录，实际业务写权限返回 503，原发布者存储绑定拒绝。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W574-01/DELIVERY.md)
+
 ## 2026-11-14 · W573-01 Main C02 真实 broker 投递
 
 隔离 PostgreSQL 18.6、Dapr 1.18.2 及 Kafka 4.3.1 联验通过。Main 撤权和重授两条事件在 CRM 原生 Inbox 落库并匹配 broker 原件。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W573-01/DELIVERY.md)
