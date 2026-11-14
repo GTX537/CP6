@@ -3,7 +3,7 @@ using CP6.Core.Services.Wf;
 namespace CP6.WebApi.BackgroundServices;
 
 /// <summary>流程触发器 timer 扫描（spec §3.2）。逐租户 scope 切换照 TenantScopeRunner 现状口径（spec §6）；
-/// 多实例安全：抢占 = Wf_FlowTrigger.RowVersion 乐观并发 + NextDueUtc 前移 + 占坑唯一键，无需 lease。</summary>
+/// PostgreSQL 下每条领取或补跑使用当前租户权限事务。旧库保留 RowVersion 抢占和占坑补跑。</summary>
 public class WfTriggerWorker : BackgroundService
 {
     private static readonly TimeSpan Interval = TimeSpan.FromSeconds(30);   // cron 最小粒度 1min，30s 扫描足够
