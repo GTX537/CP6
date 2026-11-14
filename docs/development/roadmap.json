@@ -165932,6 +165932,11 @@
       "at": "2026-11-14T20:09:42.093125+00:00",
       "change": "W591-01 其余 12 个银行写入口采用 Main 当前权限事务，正式仍为 26/27。",
       "evidence": "docs/development/evidence/W591-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T20:37:59.264336+00:00",
+      "change": "W592-01 修复 CRM 恢复目标未重绑时的就绪误报；正式 PostgreSQL 保持 26/27，原询盘 60/60。",
+      "evidence": "docs/development/evidence/W592-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211938,10 +211943,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W591",
-      "path": "docs/development/evidence/W591-01/DELIVERY.md",
-      "baseline_sha": "b5d9acb0de34c7a2c2681799fd7a3fbde69652d2",
-      "registered_at": "2026-11-14T19:56:20.381295+00:00",
+      "id": "W592",
+      "path": "docs/development/evidence/W592-01/DELIVERY.md",
+      "baseline_sha": "589244462480eae6622cb3f652dd79799bd5aee8",
+      "registered_at": "2026-11-14T20:37:23.198030+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211955,43 +211960,53 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "核对独立 Space Design 和其余财务写者，继续 CRM 正式恢复切换与全写者登记。",
+      "next_action": "沿现有 CRM 封存和恢复水位完成全登记租户切换验证，继续核对剩余写者。",
       "windows": [
         {
-          "id": "W591-01",
-          "workspace_task": "W591-01",
+          "id": "W592-01",
+          "workspace_task": "W592-01",
           "related_tasks": [
             "PGT-017",
+            "WP02-02",
             "WP02-03"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT",
+          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w591-01",
-          "planned_scope_ref": "docs/development/evidence/W591-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W591-01/DELIVERY.md",
+          "branch": "codex/w592-01",
+          "planned_scope_ref": "docs/development/evidence/W592-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W592-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:FIN-BankRecon",
-            "Main:FIN-BankStatement",
-            "Main:IAM-CurrentWriteAuthority",
+            "CRM:PostgreSQL-Inquiry-Recovery",
+            "CRM:Native-Readiness",
             "Local:PostgreSQL-HTTP"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "65/65，23 项真实 PostgreSQL，42 项相关组件回归，零跳过。12 个银行写入口、三种写入的反向提交、导入预览和拒绝提交的原采番回滚。",
-          "remaining_scope": "其他财务写者、独立 Space Design 和全写者登记，CRM 正式恢复、重开与切换编排。",
-          "main_tested_source_sha": "c1f4126992207371a62ee57a110cd9855902db1b"
+          "validation_summary": "隔离 PostgreSQL 18.6 和实际原生 HTTP 6/6，零跳过。真实物理恢复、两租户绑定、权限和暂停语义通过。局部 Release 255 个文件 SHA-256。",
+          "remaining_scope": "CRM 全部登记租户恢复对账、原写者退出和受控重绑、切换。Main 其余财务、独立 Space Design 和全量写者登记。",
+          "product_repository": "CP6.CRM",
+          "product_worktree": "D:/CP6-worktrees/dev-2",
+          "product_baseline": "a8cde86ddd863be00cd9e08b8880e95d16c02234",
+          "product_branch": "codex/w592-01",
+          "product_source_sha": "5b5333cb751ba0b7abf950a5b3c3ab28cadf181b",
+          "product_remote_main_sha": "14062739ffa66e1664744595e59427508d7d982b",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/230",
+          "product_branch_disposition": "deleted-local-and-remote",
+          "product_workspace_status": "fixed-seat-detached-for-reuse",
+          "product_seat_released": true
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -266623,6 +266638,68 @@
             "main_tested_source_sha": "c8bc71892043f04f89c20a1c3bdfc75345fc0e31",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1096",
             "main_remote_main_sha": "b5d9acb0de34c7a2c2681799fd7a3fbde69652d2"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W591",
+        "path": "docs/development/evidence/W591-01/DELIVERY.md",
+        "baseline_sha": "b5d9acb0de34c7a2c2681799fd7a3fbde69652d2",
+        "registered_at": "2026-11-14T19:56:20.381295+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "核对独立 Space Design 和其余财务写者，继续 CRM 正式恢复切换与全写者登记。",
+        "windows": [
+          {
+            "id": "W591-01",
+            "workspace_task": "W591-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w591-01",
+            "planned_scope_ref": "docs/development/evidence/W591-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W591-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:FIN-BankRecon",
+              "Main:FIN-BankStatement",
+              "Main:IAM-CurrentWriteAuthority",
+              "Local:PostgreSQL-HTTP"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "65/65，23 项真实 PostgreSQL，42 项相关组件回归，零跳过。12 个银行写入口、三种写入的反向提交、导入预览和拒绝提交的原采番回滚。",
+            "remaining_scope": "其他财务写者、独立 Space Design 和全写者登记，CRM 正式恢复、重开与切换编排。",
+            "main_tested_source_sha": "c1f4126992207371a62ee57a110cd9855902db1b",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1098",
+            "main_remote_main_sha": "589244462480eae6622cb3f652dd79799bd5aee8"
           }
         ],
         "storage": {
