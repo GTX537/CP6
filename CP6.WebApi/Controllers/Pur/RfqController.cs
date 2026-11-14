@@ -2,6 +2,7 @@ using CP6.Core.Auth;
 using CP6.Core.Services.Pur;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Pur;
+using CP6.WebApi.Filters;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,6 +39,7 @@ public class RfqController : ControllerBase
     /// <summary>从 PR 发起询价（汇未定供应商的 PR 行，行级追溯）。</summary>
     [HttpPost("from-pr/{prNo}")]
     [RequirePermission("pur-rfq", "add")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> CreateFromPr(string prNo)
     {
         try { return Ok2(await _svc.CreateFromPrAsync(prNo, CurrentUser)); }
@@ -47,6 +49,7 @@ public class RfqController : ControllerBase
     /// <summary>邀请供应商（发注先，幂等，状态→邀请中）。</summary>
     [HttpPost("{rfqNo}/suppliers")]
     [RequirePermission("pur-rfq", "invite")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> AddSuppliers(string rfqNo, [FromBody] List<string> supplierIds)
     {
         try { return Ok2(await _svc.AddSuppliersAsync(rfqNo, supplierIds ?? new(), CurrentUser)); }
@@ -56,6 +59,7 @@ public class RfqController : ControllerBase
     /// <summary>收报价（按行 upsert 报价矩阵，状态→报价中）。</summary>
     [HttpPost("{rfqNo}/quote")]
     [RequirePermission("pur-rfq", "quote")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> RecordQuote(string rfqNo, [FromBody] RecordQuoteRequest req)
     {
         try { return Ok2(await _svc.RecordQuoteAsync(rfqNo, req.SupplierId, req.Lines ?? new(), CurrentUser)); }
@@ -65,6 +69,7 @@ public class RfqController : ControllerBase
     /// <summary>比价排名（按行，剔除过期，价格优先→交期；Rank 仅建议）。</summary>
     [HttpPost("{rfqNo}/rank")]
     [RequirePermission("pur-rfq", "rank")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Rank(string rfqNo, [FromBody] RankRequest? req)
     {
         try { return Ok2(await _svc.RankQuotesAsync(rfqNo, req?.AsOf, CurrentUser)); }
@@ -74,6 +79,7 @@ public class RfqController : ControllerBase
     /// <summary>选定（按行可拆不同供应商，一行一选，校验未过期；全行选中→已选定）。</summary>
     [HttpPost("{rfqNo}/select")]
     [RequirePermission("pur-rfq", "select")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Select(string rfqNo, [FromBody] List<RfqSelectionDto> selections)
     {
         try { return Ok2(await _svc.SelectAsync(rfqNo, selections ?? new(), CurrentUser)); }
