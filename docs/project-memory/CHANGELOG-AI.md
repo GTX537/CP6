@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 · W584-01 试发事务和提交后外部派送
+
+人工试发在原 IAM 事务保存流程、流水与水位。已提交任务驱动外部派送，旧人工占位不能伪作定时重启。 [缺陷 #1084](https://github.com/GTX537/CP6/issues/1084) · [交付记录](../development/evidence/W584-01/DELIVERY.md)
+
 ## 2026-11-14 · W583-01 触发配置栅栏
 
 撤权先提交时，旧会话不能创建、修改、启停或重置配置密钥。配置在先时保留原行或原密钥摘要。 [缺陷 #1082](https://github.com/GTX537/CP6/issues/1082) · [交付记录](../development/evidence/W583-01/DELIVERY.md)
