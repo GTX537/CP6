@@ -165827,6 +165827,11 @@
       "at": "2026-11-14T07:54:35.164673+00:00",
       "change": "W570-01 在关闭的 CRM 物理恢复库补齐 C02 原事件，记录尚缺的封存及业务和消息水位。正式 PostgreSQL 保持 26/27。",
       "evidence": "docs/development/evidence/W570-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T12:06:58.608523+00:00",
+      "change": "W571-01 核对 CRM 计划停库恢复时的原效果与真实 Kafka 水位，正式 PostgreSQL 保持 26/27。",
+      "evidence": "docs/development/evidence/W571-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211833,10 +211838,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W570",
-      "path": "docs/development/evidence/W570-01/DELIVERY.md",
-      "baseline_sha": "f3be6dda29dc18989a97b787a49919992ed69f3a",
-      "registered_at": "2026-11-14T07:53:52.486785+00:00",
+      "id": "W571",
+      "path": "docs/development/evidence/W571-01/DELIVERY.md",
+      "baseline_sha": "aa5d8ca7a166013a7e00c015be3c3bb278aed88a",
+      "registered_at": "2026-11-14T12:06:35.144593+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211850,11 +211855,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "保持恢复目标关闭，对齐 CRM 封存、已提交业务效果与真实 broker 水位，验收旧实例排空和重开。",
+      "next_action": "继续验证无尾段 WAL 的恢复边界及 Main 剩余写入口两种提交顺序，沿用 PostgreSQL 隔离夹具。",
       "windows": [
         {
-          "id": "W570-01",
-          "workspace_task": "W570-01",
+          "id": "W571-01",
+          "workspace_task": "W571-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -211865,29 +211870,30 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w570-01",
-          "planned_scope_ref": "docs/development/evidence/W570-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W570-01/DELIVERY.md",
+          "branch": "codex/w571-01",
+          "planned_scope_ref": "docs/development/evidence/W571-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W571-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:inquiry-scope-authority",
-            "CRM:identity-publication",
-            "CRM:PostgreSQL-physical-recovery"
+            "CRM:PostgreSQL-physical-recovery",
+            "CRM:native-outbox",
+            "Local:Dapr-Kafka"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "物理恢复目标用真实 Main C02 原事件补齐至版本 7，核对原回执、角色封存、导出制品和两条发送事实；两仓两场景共 4 项通过，零跳过。",
-          "remaining_scope": "恢复目标 C02 已用两条原事件追平。下一段补齐 CRM 封存、已提交业务效果和真实 broker 水位，排空旧实例并验收重开。Main 旧 OA、财务、独立 Space Design 及其余普通数据库写者仍待核销。",
+          "validation_summary": "三个计划切换联验通过，无跳过。最终 WAL 保留两库权威边界、原回执、制品和发送事实，Kafka 原字节、分区键和终点对账，重开无重发。",
+          "remaining_scope": "源库不可达或尾段 WAL 缺失时的差量恢复、生产切换编排和 Main C02 实际 broker 投递待验。继续核销 Main 旧 OA、财务、独立 Space Design 和其余普通数据库写者。",
           "main_tested_source_sha": "fed83700023c8dcf04c6366a4d8928fe01275ebf",
           "product_repository": "CP6.CRM",
           "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "5baf07e5df5d93278adce5c9dec6f76b5b482470",
-          "product_branch": "codex/w570-01",
-          "product_source_sha": "c820163668f4a95db7bbff4bc61597520c916cb1",
-          "product_remote_main_sha": "82a4383ab21b4313a6c469fc015fa95d98fd5784",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/222",
+          "product_baseline": "82a4383ab21b4313a6c469fc015fa95d98fd5784",
+          "product_branch": "codex/w571-01",
+          "product_source_sha": "19d82d5aaa5fedde84aff33ece57354efb7ec55d",
+          "product_remote_main_sha": "b0a4181076a4c7cf77b521ba0ca1932b4ca38d6f",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/223",
           "product_branch_disposition": "deleted-local-and-remote",
           "product_workspace_status": "fixed-seat-detached-for-reuse",
           "product_seat_released": true
@@ -265159,6 +265165,78 @@
             "product_seat_released": true,
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1062",
             "main_remote_main_sha": "f3be6dda29dc18989a97b787a49919992ed69f3a"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W570",
+        "path": "docs/development/evidence/W570-01/DELIVERY.md",
+        "baseline_sha": "f3be6dda29dc18989a97b787a49919992ed69f3a",
+        "registered_at": "2026-11-14T07:53:52.486785+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "保持恢复目标关闭，对齐 CRM 封存、已提交业务效果与真实 broker 水位，验收旧实例排空和重开。",
+        "windows": [
+          {
+            "id": "W570-01",
+            "workspace_task": "W570-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w570-01",
+            "planned_scope_ref": "docs/development/evidence/W570-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W570-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:inquiry-scope-authority",
+              "CRM:identity-publication",
+              "CRM:PostgreSQL-physical-recovery"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "物理恢复目标用真实 Main C02 原事件补齐至版本 7，核对原回执、角色封存、导出制品和两条发送事实；两仓两场景共 4 项通过，零跳过。",
+            "remaining_scope": "恢复目标 C02 已用两条原事件追平。下一段补齐 CRM 封存、已提交业务效果和真实 broker 水位，排空旧实例并验收重开。Main 旧 OA、财务、独立 Space Design 及其余普通数据库写者仍待核销。",
+            "main_tested_source_sha": "fed83700023c8dcf04c6366a4d8928fe01275ebf",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "5baf07e5df5d93278adce5c9dec6f76b5b482470",
+            "product_branch": "codex/w570-01",
+            "product_source_sha": "c820163668f4a95db7bbff4bc61597520c916cb1",
+            "product_remote_main_sha": "82a4383ab21b4313a6c469fc015fa95d98fd5784",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/222",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1063",
+            "main_remote_main_sha": "aa5d8ca7a166013a7e00c015be3c3bb278aed88a"
           }
         ],
         "storage": {
