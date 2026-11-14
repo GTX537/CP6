@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+## 2026-11-14 UTC · W557 CRM 物理恢复
+
+COORD 复用 Main DEV-1、CRM DEV-2。实际 WAL 恢复后原库绑定不被自动采纳。 [交付](evidence/W557-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W556 询价回写事务栅栏
 
 COORD 复用 Main DEV-1。逐笔采购价回写与暂停两种顺序通过，保留部分提交和原业务键。 [交付](evidence/W556-01/DELIVERY.md)
