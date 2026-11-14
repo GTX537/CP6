@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 · W585-01 CRM 原写集增量恢复
+
+源停机后用独立全量和增量备份恢复。原导出、权限封存和投递记录与真实 Kafka 偏移匹配，缺失写集的早期副本继续关闭。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W585-01/DELIVERY.md)
+
 ## 2026-11-14 · W584-01 旧 OA 手动试发使用当前 IAM 事务
 
 手动试发提交与撤权共享事务根。合法失败保留试发流水，异常提交时不产生外部请求。定向及相关回归 23 项通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W584-01/DELIVERY.md)
