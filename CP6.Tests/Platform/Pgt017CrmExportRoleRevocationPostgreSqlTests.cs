@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using CP6.Core.Services.Sys;
+using CP6.Tests.Erp;
 using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -25,7 +26,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         db.ChangeTracker.Clear();
     }
 
-    private static async Task ExerciseCrmExportRoleRevocation(AuthenticationApiProcess host, Harness h, string bridge, Task childExited)
+    private static async Task ExerciseCrmExportRoleRevocation(AuthenticationApiProcess host, Harness h, string bridge,
+        Task childExited, StockPostgresCommitRelay? mainCommitRelay)
     {
         const string path = "api/iam/role-policies/actions/71";
         var cookies = await Login(host, h);
@@ -56,6 +58,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 await AbortAfterSeal();
             if (Environment.GetEnvironmentVariable("CP6_PGT017_ROLE_LOSE_CRM_COMMIT_ACK") == "1")
                 await LoseCrmCommitAcknowledgement();
+            mainCommitRelay?.Arm();
             change = Revoke();
         }
         else
@@ -86,8 +89,30 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             finally { await File.WriteAllTextAsync(Path.Combine(bridge, "release-owner"), "PASS"); }
         }
         using var response = await change;
-        Assert.True(response.StatusCode == HttpStatusCode.OK, await response.Content.ReadAsStringAsync());
-        var receipt = (await response.Content.ReadFromJsonAsync<IamOperationV1>())!;
+        IamOperationV1 receipt;
+        if (mainCommitRelay is null)
+        {
+            Assert.True(response.StatusCode == HttpStatusCode.OK, await response.Content.ReadAsStringAsync());
+            receipt = (await response.Content.ReadFromJsonAsync<IamOperationV1>())!;
+        }
+        else
+        {
+            Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
+            Assert.Contains("IAM_OPERATION_UNKNOWN", await response.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+            await mainCommitRelay.Dropped.WaitAsync(TimeSpan.FromSeconds(5));
+            Assert.Equal(before.Snapshot + 1, await CrmRoleFloor());
+            var committed = await Read();
+            Assert.False(committed.Granted);
+            Assert.Equal((1L, 1L, 1L), (committed.CurrentOutbox, committed.Audit, committed.Receipts));
+
+            await File.WriteAllTextAsync(Path.Combine(bridge, "paused"), "PASS");
+            await Stage("finished"); // The actual CRM Owner proves the prior authorization produces no new effects.
+            using var recovered = await host.Send(Request(HttpMethod.Get,
+                $"api/iam/role-policies/operations/{command.OperationId:D}?kind=role-policy-actions", cookies));
+            Assert.True(recovered.StatusCode == HttpStatusCode.OK, await recovered.Content.ReadAsStringAsync());
+            receipt = (await recovered.Content.ReadFromJsonAsync<IamOperationV1>())!;
+            Assert.Equal(committed, await Read());
+        }
         Assert.Equal("COMMITTED", receipt.State);
         Assert.Equal(command.OperationId, receipt.OperationId);
         var after = await Read();
@@ -105,8 +130,11 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
         Assert.Equal(receipt, await replay.Content.ReadFromJsonAsync<IamOperationV1>());
         Assert.Equal(after, await Read());
-        await File.WriteAllTextAsync(Path.Combine(bridge, "paused"), "PASS");
-        await Stage("finished");
+        if (mainCommitRelay is null)
+        {
+            await File.WriteAllTextAsync(Path.Combine(bridge, "paused"), "PASS");
+            await Stage("finished");
+        }
 
         Task<HttpResponseMessage> Revoke() => host.Send(Request(HttpMethod.Put, path, cookies, command));
 

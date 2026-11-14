@@ -14,6 +14,8 @@ using CP6.Core.Services.Platform;
 using CP6.Core.Services.Sys;
 using CP6.WebApi.Controllers.Sys;
 using CP6.WebApi.Services;
+using CP6.Tests.Erp;
+using Npgsql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -51,6 +53,10 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         => ServiceContextHttp(false, privacy: true, tenantPause: true, roleRevocation: true);
 
     [Pgt017MainFact]
+    public Task PGT017_Main_commit_ack_lost_after_CRM_role_seal()
+        => ServiceContextHttp(false, privacy: true, tenantPause: true, roleRevocation: true, loseMainCommitAck: true);
+
+    [Pgt017MainFact]
     public Task PGT017_Main_service_registration_revocation_and_CRM_export_commit()
         => ServiceContextHttp(false, privacy: true, tenantPause: true, serviceRevocation: true);
 
@@ -72,7 +78,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
 
     private async Task ServiceContextHttp(bool retention, bool privacy = false, bool tenantPause = false,
         bool roleRevocation = false, bool serviceRevocation = false, bool shortenDeadline = false, bool departmentRevocation = false,
-        bool inquiryScopeRevocation = false, bool regrantInquiryScope = false)
+        bool inquiryScopeRevocation = false, bool regrantInquiryScope = false, bool loseMainCommitAck = false)
     {
         var project=Environment.GetEnvironmentVariable("CP6_CRM_CROSS_PROJECT")??throw new InvalidOperationException("Owned CRM project required; no skip");
         var output=Environment.GetEnvironmentVariable("CP6_SERVICE_CONTEXT_OUTPUT")!;var folder=Path.GetDirectoryName(output)!;
@@ -190,8 +196,16 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                     }
                     else
                     {
-                        await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, environment);
-                        if (roleRevocation) await ExerciseCrmExportRoleRevocation(host, h, stageDirectory!, exited);
+                        var connection = new NpgsqlConnectionStringBuilder(h.Db.Database.GetConnectionString());
+                        await using var relay = loseMainCommitAck
+                            ? new StockPostgresCommitRelay(connection.Port, connection.Username!) : null;
+                        if (relay is not null)
+                        {
+                            connection.Port = relay.Port;
+                            connection.SslMode = SslMode.Disable;
+                        }
+                        await using var host = await AuthenticationApiProcess.Start(connection.ConnectionString, environment);
+                        if (roleRevocation) await ExerciseCrmExportRoleRevocation(host, h, stageDirectory!, exited, relay);
                         else if (departmentRevocation) await ExerciseCrmExportDepartmentRevocation(host, h, stageDirectory!, exited);
                         else if (inquiryScopeRevocation) await ExerciseCrmExportScopeRevocation(host, h, pair, stageDirectory!, exited, regrantInquiryScope);
                         else await ExerciseCrmTenantPause(host, h, stageDirectory!, publicSubmission: true, childExited: exited,
