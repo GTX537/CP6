@@ -165892,6 +165892,11 @@
       "at": "2026-11-14T16:36:40.399900+00:00",
       "change": "W583-01 将四个旧 OA 流程触发配置写入口纳入 Main IAM 共同事务，正式 PostgreSQL 仍为 26/27。",
       "evidence": "docs/development/evidence/W583-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T17:09:03.292218+00:00",
+      "change": "W584-01 旧 OA 手动试发使用当前 IAM 事务，正式 PostgreSQL 仍为 26/27。",
+      "evidence": "docs/development/evidence/W584-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211898,10 +211903,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W583",
-      "path": "docs/development/evidence/W583-01/DELIVERY.md",
-      "baseline_sha": "69b374478569049029a96e6466dc2b3b0b0b69da",
-      "registered_at": "2026-11-14T16:23:17.602451+00:00",
+      "id": "W584",
+      "path": "docs/development/evidence/W584-01/DELIVERY.md",
+      "baseline_sha": "598806a3ba0d5c039cd86fd33fc9b1af0201451d",
+      "registered_at": "2026-11-14T16:40:26.744272+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211915,11 +211920,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "按各触发路径原有事务逐项核对，继续 CRM 恢复与 PGT-017 全写者登记。",
+      "next_action": "按旧消息、事件与定时各提交边界核对，继续 CRM 差量恢复与 PGT-017 全写者登记。",
       "windows": [
         {
-          "id": "W583-01",
-          "workspace_task": "W583-01",
+          "id": "W584-01",
+          "workspace_task": "W584-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -211930,22 +211935,23 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w583-01",
-          "planned_scope_ref": "docs/development/evidence/W583-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W583-01/DELIVERY.md",
+          "branch": "codex/w584-01",
+          "planned_scope_ref": "docs/development/evidence/W584-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W584-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:OA-Flow-Trigger-Configuration",
+            "Main:OA-Flow-Trigger-Manual",
             "Main:IAM-CurrentWriteAuthority",
+            "Main:WorkflowServiceJobs",
             "Local:PostgreSQL-HTTP"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "8 项实际 PostgreSQL/HTTP 竞争全部通过。附带验证 2 通过、19 失败，和修复前逐项相同。发布 310 个文件摘要，存活 200、匿名 401。",
-          "remaining_scope": "手动试发、外部消息和定时/事件触发，财务、独立 Space Design 等剩余写者；CRM 差量恢复、安全重开及正式切换。",
-          "main_tested_source_sha": "54661b00ccff7c95bf47516eac478b585136ec65"
+          "validation_summary": "23 项全通过，零跳过，其中 15 项实际 PostgreSQL。手动试发双顺序、合法失败、提交拒绝和旧占位恢复，与配置、退回、批量办理、采购与子流程回归一起验证。",
+          "remaining_scope": "旧消息、事件与定时触发，财务、独立 Space Design 等剩余写者；CRM 差量恢复、安全重开及正式切换。",
+          "main_tested_source_sha": "6ef7789ef5eda9a3c42a4934fe5d14f921fe34f9"
         }
       ],
       "storage": {
@@ -266081,6 +266087,67 @@
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018",
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W583",
+        "path": "docs/development/evidence/W583-01/DELIVERY.md",
+        "baseline_sha": "69b374478569049029a96e6466dc2b3b0b0b69da",
+        "registered_at": "2026-11-14T16:23:17.602451+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "按各触发路径原有事务逐项核对，继续 CRM 恢复与 PGT-017 全写者登记。",
+        "windows": [
+          {
+            "id": "W583-01",
+            "workspace_task": "W583-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w583-01",
+            "planned_scope_ref": "docs/development/evidence/W583-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W583-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:OA-Flow-Trigger-Configuration",
+              "Main:IAM-CurrentWriteAuthority",
+              "Local:PostgreSQL-HTTP"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "8 项实际 PostgreSQL/HTTP 竞争全部通过。附带验证 2 通过、19 失败，和修复前逐项相同。发布 310 个文件摘要，存活 200、匿名 401。",
+            "remaining_scope": "手动试发、外部消息和定时/事件触发，财务、独立 Space Design 等剩余写者；CRM 差量恢复、安全重开及正式切换。",
+            "main_tested_source_sha": "54661b00ccff7c95bf47516eac478b585136ec65",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1083",
+            "main_remote_main_sha": "598806a3ba0d5c039cd86fd33fc9b1af0201451d"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },

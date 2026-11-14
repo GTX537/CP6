@@ -1,4 +1,5 @@
 using CP6.Core.Auth;
+using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
 using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
@@ -81,6 +82,7 @@ public class FlowTriggerAdminController : LocalizedControllerBase
 
     [HttpPost("{id:guid}/manual-fire")]
     [RequirePermission("oa-flow-admin", "FlowTrigger.Edit")]   // 手动试发归 Edit（spec §6）
+    [CurrentWriteAuthority]
     public async Task<IActionResult> ManualFire(Guid id, CancellationToken ct)
     {
         try
@@ -90,7 +92,8 @@ public class FlowTriggerAdminController : LocalizedControllerBase
                 ? Ok2(new { r.InstanceId })
                 : BadRequest(new { code = 400, message = r.Error });
         }
-        catch (InvalidOperationException e) { return Err(e); }
+        catch (InvalidOperationException e) when (e is not (CurrentPermissionUnavailableException or IamAdministrationExceptionV1))
+        { return Err(e); }
     }
 
     [HttpGet("{id:guid}/fires")]

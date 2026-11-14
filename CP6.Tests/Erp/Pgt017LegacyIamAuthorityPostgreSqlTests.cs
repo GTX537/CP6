@@ -152,7 +152,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var menu = await db.Sys_Menus.SingleOrDefaultAsync(m => m.MenuKey == resource);
         if (menu == null)
         {
-            menu = new() { MenuId = resource == "menu" ? 32744 : 32745, MenuName = resource, MenuKey = resource };
+            // The menu catalog is shared by every tenant in this test database.
+            var nextMenuId = await db.Sys_Menus.MaxAsync(m => (int?)m.MenuId) ?? 0;
+            menu = new() { MenuId = Math.Max(34000, nextMenuId + 1), MenuName = resource, MenuKey = resource };
             db.Sys_Menus.Add(menu);
         }
         if (!await db.Sys_MenuActions.AnyAsync(a => a.MenuId == menu.MenuId && a.ActionCode == action))

@@ -55,10 +55,16 @@ public partial class FlowEngine : IFlowEngine
             instanceId: instanceId);
     }
 
+    public async Task<Guid> SubmitWithDeferredFollowUpsAsync(string flowKey, Guid starterId, string varsJson, CancellationToken ct)
+    {
+        var resolved = await ResolveLatestFlowVersionAsync(flowKey, ct);
+        return await StartPinnedAsync(resolved.Version.Id, starterId, varsJson, null, null, ct, deferFollowUps: true);
+    }
+
     internal async Task<Guid> StartPinnedAsync(
         Guid flowDefVersionId, Guid starterId, string varsJson,
         FlowBusinessRef? businessRef, FlowFormRef? formRef,
-        CancellationToken ct = default, Guid? instanceId = null)
+        CancellationToken ct = default, Guid? instanceId = null, bool deferFollowUps = false)
     {
         var version = await _db.Wf_FlowDefVersions.AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == flowDefVersionId && x.Status == WfDefinitionVersionStatus.Published, ct)
@@ -85,17 +91,19 @@ public partial class FlowEngine : IFlowEngine
         _db.Wf_FlowInstances.Add(inst);
         AddHistory(inst.Id, first.Id, starterId, "submit", null);
 
-        // The purchase start and any subflows it enters share the write transaction.
-        DeferSynchronousWebApi = _db.Database.IsNpgsql() && businessRef?.BizType is "PUR_PR" or "PUR_PO";
+        var previouslyDeferred = DeferSynchronousWebApi;
+        DeferSynchronousWebApi = previouslyDeferred || deferFollowUps
+            || (_db.Database.IsNpgsql() && businessRef?.BizType is "PUR_PR" or "PUR_PO");
         try
         {
             var root = SpawnToken(inst, first, parent: null, fork: null);
             await EnterNodeAsync(inst, schema, first, root);
             await DispatchIfFinishedAsync(inst, starterId, null);
             await _db.SaveChangesAsync(ct);
-            await FastPathSubFlowResumeAsync(ct);
+            if (!deferFollowUps)
+                await FastPathSubFlowResumeAsync(ct);
         }
-        finally { DeferSynchronousWebApi = false; }
+        finally { DeferSynchronousWebApi = previouslyDeferred; }
         return inst.Id;
     }
 

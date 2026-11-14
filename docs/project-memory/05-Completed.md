@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-14 · W584-01 旧触发器手动试发
+
+实际 PostgreSQL 验证两个提交顺序、流程失败流水、提交失败与持久派送，以及定时 Worker 不补跑旧人工占位。 [交付记录](../development/evidence/W584-01/DELIVERY.md)
+
 ## 2026-11-14 · W583-01 流程触发配置四入口
 
 四个入口均在业务写事务内核对当前 `FlowTrigger.Edit`。两种提交顺序各四项通过。 [交付记录](../development/evidence/W583-01/DELIVERY.md)

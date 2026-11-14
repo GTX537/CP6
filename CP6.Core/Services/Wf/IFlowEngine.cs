@@ -16,6 +16,9 @@ public interface IFlowEngine
     Task<Guid> SubmitAsync(string flowKey, Guid starterId, string varsJson, string? bizType = null,
         string? bizId = null, Guid? instanceId = null);
 
+    /// <summary>Start in the caller's write transaction and persist jobs for follow-up after commit.</summary>
+    Task<Guid> SubmitWithDeferredFollowUpsAsync(string flowKey, Guid starterId, string varsJson, CancellationToken ct);
+
     /// <summary>办理任务（同意/驳回）。幂等：已办任务再办无效，不重复流转。</summary>
     Task ActAsync(Guid taskId, Guid actorId, bool approve, string? comment = null);
 

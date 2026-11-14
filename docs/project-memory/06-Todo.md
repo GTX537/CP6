@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 · W584-01 PGT-017 余项
+
+旧消息、事件和定时仍要核对当前权威。继续核对财务、独立 Space Design 与其他写者，同时验收 CRM 差量恢复和安全切换。 [交付记录](../development/evidence/W584-01/DELIVERY.md)
+
 ## 2026-11-14 · W583-01 PGT-017 余项
 
 旧流程试发、消息、定时和事件另有提交路径。继续核对财务、独立 Space Design 及剩余写者，以及 CRM 差量恢复、安全重开和正式切换。 [交付记录](../development/evidence/W583-01/DELIVERY.md)
