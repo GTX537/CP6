@@ -165857,6 +165857,11 @@
       "at": "2026-11-14T14:03:51.371909+00:00",
       "change": "W576-01 修复 Main 旧 OA 批量转交逐条提交栅栏，正式 PostgreSQL 保持 26/27。",
       "evidence": "docs/development/evidence/W576-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T14:16:40.228405+00:00",
+      "change": "W577-01 修复 Main 旧 OA 撤回权限栅栏，父流程在撤回提交后处理。正式 PostgreSQL 保持 26/27。",
+      "evidence": "docs/development/evidence/W577-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211863,10 +211868,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W576",
-      "path": "docs/development/evidence/W576-01/DELIVERY.md",
-      "baseline_sha": "911d85a157d5e3184f68a9d4c8f6275160616b71",
-      "registered_at": "2026-11-14T13:37:53.848887+00:00",
+      "id": "W577",
+      "path": "docs/development/evidence/W577-01/DELIVERY.md",
+      "baseline_sha": "503b93252a503c88967056afab6eeeb245d17645",
+      "registered_at": "2026-11-14T14:07:34.503738+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211880,11 +211885,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "沿旧 OA 撤回的原业务边界核对撤权两种顺序和提交后父流程恢复。",
+      "next_action": "核对旧 OA 退回开始节点和批量办理的原提交边界，以及触发器的占位、派发与失败记录。",
       "windows": [
         {
-          "id": "W576-01",
-          "workspace_task": "W576-01",
+          "id": "W577-01",
+          "workspace_task": "W577-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -211895,22 +211900,22 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w576-01",
-          "planned_scope_ref": "docs/development/evidence/W576-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W576-01/DELIVERY.md",
+          "branch": "codex/w577-01",
+          "planned_scope_ref": "docs/development/evidence/W577-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W577-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:legacy-inbox-batch-transfer",
+            "Main:legacy-workflow-withdrawal",
             "Main:IAM-authority-fence",
             "Local:PostgreSQL"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "两种撤权顺序、并发改派、31 项相关回归均通过。实测发布存活 200、匿名转交 401。",
-          "remaining_scope": "旧 OA 撤回、退回、批量办理和触发器，财务、独立 Space Design、其余普通写者，以及缺失写集补齐后的安全重新开放和切换编排待验。",
-          "main_tested_source_sha": "ea85517352a9d2353109d4aea0399a2389fc7e5f"
+          "validation_summary": "两种 PostgreSQL 撤回顺序、提交后父流程恢复、17 项工作流组件及本地发布启动通过。",
+          "remaining_scope": "旧 OA 退回、批量办理、流程触发器，财务、独立 Space Design、其余普通写者，以及缺失写集补齐后的安全重新开放和恢复切换编排待验。",
+          "main_tested_source_sha": "761371cd056acc3ce7dd73475d61c83400693257"
         }
       ],
       "storage": {
@@ -265590,6 +265595,67 @@
             "main_tested_source_sha": "3b777feb7e472020d40b74c9466639e6ca12769c",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1070",
             "main_remote_main_sha": "911d85a157d5e3184f68a9d4c8f6275160616b71"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W576",
+        "path": "docs/development/evidence/W576-01/DELIVERY.md",
+        "baseline_sha": "911d85a157d5e3184f68a9d4c8f6275160616b71",
+        "registered_at": "2026-11-14T13:37:53.848887+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "沿旧 OA 撤回的原业务边界核对撤权两种顺序和提交后父流程恢复。",
+        "windows": [
+          {
+            "id": "W576-01",
+            "workspace_task": "W576-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w576-01",
+            "planned_scope_ref": "docs/development/evidence/W576-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W576-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:legacy-inbox-batch-transfer",
+              "Main:IAM-authority-fence",
+              "Local:PostgreSQL"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "两种撤权顺序、并发改派、31 项相关回归均通过。实测发布存活 200、匿名转交 401。",
+            "remaining_scope": "旧 OA 撤回、退回、批量办理和触发器，财务、独立 Space Design、其余普通写者，以及缺失写集补齐后的安全重新开放和切换编排待验。",
+            "main_tested_source_sha": "ea85517352a9d2353109d4aea0399a2389fc7e5f",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1072",
+            "main_remote_main_sha": "503b93252a503c88967056afab6eeeb245d17645"
           }
         ],
         "storage": {
