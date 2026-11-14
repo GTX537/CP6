@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 UTC · W559 PGT-017 余项
+
+RFQ 分组转 PO、其他采购、独立 Space Design、旧 OA、财务、Stock 普通角色及两库恢复对账待验。 [交付](../development/evidence/W559-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W558 PGT-017 余项
 
 独立 Space Design、旧 OA、财务、采购与普通 Stock 数据库写者仍需核对。两库重新开放、对账和真实传输待验。 [交付](../development/evidence/W558-01/DELIVERY.md)

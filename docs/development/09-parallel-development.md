@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+## 2026-11-14 UTC · W559 采购询价写入
+
+COORD 复用 Main DEV-1，五个询价入口采用共同授权事务并验证两种顺序。 [交付](evidence/W559-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W558 现行 MRP
 
 COORD 复用 Main DEV-1。运算、确认、忽略和现行转单的提交与撤权采用同一根。 [交付](evidence/W558-01/DELIVERY.md)

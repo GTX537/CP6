@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 UTC · W559 询价当前权限
+
+五个写入口在 Main 共同事务核对当前动作和会话。采番与业务提交绑定。 [交付](../development/evidence/W559-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W558 现行 MRP 权限
 
 四个 HTTP 写入口复用当前授权门，运算的三次保存纳入同一 PostgreSQL 提交。 [交付](../development/evidence/W558-01/DELIVERY.md)

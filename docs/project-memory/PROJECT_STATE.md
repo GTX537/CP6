@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 UTC · W559 采购询价事务栅栏
+
+发起、邀请、报价、排名、选定通过 PostgreSQL 实测。正式 PostgreSQL 26/27，PGT-017 待核销。 [交付](../development/evidence/W559-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W558 MRP 事务栅栏
 
 现行 MRP 四个写入口纳入 Main 共同授权事务。正式 PostgreSQL 26/27，PGT-017 待核销。 [交付](../development/evidence/W558-01/DELIVERY.md)
