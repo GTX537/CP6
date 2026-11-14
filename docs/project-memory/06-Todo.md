@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 UTC · W562 PGT-017 余项
+
+采购送审、采购收货和其他采购写者、旧 OA、财务、独立 Space Design、Stock 普通身份、两库恢复及运输待验。 [交付](../development/evidence/W562-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W561 PGT-017 余项
 
 采购申请、订单其他写动作，收货、独立 Space Design、旧 OA、财务、Stock 普通身份和两库恢复及传输待核销。 [交付](../development/evidence/W561-01/DELIVERY.md)

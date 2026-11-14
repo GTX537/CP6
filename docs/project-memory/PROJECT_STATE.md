@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 UTC · W562 采购直接写入栅栏
+
+采购申请与订单建单、订单取消的 PostgreSQL 当前权限验证通过。正式 PostgreSQL 26/27。 [交付](../development/evidence/W562-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W561 采购申请分组回填事务
 
 采购单和申请行回填两种撤权顺序、实际原子回滚及余组复续通过。正式 PostgreSQL 26/27。 [交付](../development/evidence/W561-01/DELIVERY.md)

@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+## 2026-11-14 UTC · W562 采购直接写入口
+
+COORD 使用 Main DEV-1，在采购申请建单、订单建单及取消使用既有 Core 授权事务。 [交付](evidence/W562-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W561 采购申请分组转单
 
 COORD 使用 Main DEV-1，在每供应商事务整组提交采购单和申请来源。 [交付](evidence/W561-01/DELIVERY.md)

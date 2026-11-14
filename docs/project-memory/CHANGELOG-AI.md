@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 UTC · W562 采购建单当前权限
+
+采购申请和订单的直接建单与订单取消取得 Main 共同根并持至提交。 [交付](../development/evidence/W562-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W561 采购申请转单授权
 
 按供应商分组的采购单、明细、编号及申请来源回填共用 Main 当前授权事务。 [交付](../development/evidence/W561-01/DELIVERY.md)

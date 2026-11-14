@@ -3,6 +3,7 @@ using CP6.Core.Auth;
 using CP6.Core.Services.Pur;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Pur;
+using CP6.WebApi.Filters;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -66,6 +67,7 @@ public class PurchaseRequestController : ControllerBase
 
     [HttpPost]
     [RequirePermission("pur-pr", "add")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> Create([FromBody] PrCreateDto dto)
     {
         try { return Ok2(await _svc.CreateAsync(dto, CurrentUser)); }
