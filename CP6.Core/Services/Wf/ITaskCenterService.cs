@@ -11,6 +11,12 @@ public interface ITaskCenterService
 
     /// <summary>撤回：仅发起人本人 + 实例进行中可撤；置 Withdrawn + 清在途任务 + 记痕迹。否则抛 InvalidOperationException。</summary>
     Task WithdrawAsync(Guid instanceId, Guid userId);
+
+    /// <summary>在调用方的业务事务中保存撤回和恢复凭据，调用方提交后再推进父流程。</summary>
+    Task SaveWithdrawalAsync(Guid instanceId, Guid userId, CancellationToken ct);
+
+    /// <summary>处理本次已提交撤回留下的子流程恢复凭据。</summary>
+    Task ResumeAfterWithdrawalAsync();
 }
 
 /// <summary>待办项。</summary>
