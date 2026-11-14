@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 · W568-01
+
+Main 在 CRM 封存后实际提交撤权并丢失 PostgreSQL 回执，原操作查询和重试读回已提交回执，CRM 旧许可不能写入。CRM 先提交对照保留原导出。 本轮增加实测和证据，复用相关产品发布验证。 [交付记录](../development/evidence/W568-01/DELIVERY.md)
+
 ## 2026-11-14 · W567-01
 
 现行采购确认收货将采购单、PO 收货累计、WMS 入库、库存流水和编号放在同一 PostgreSQL 授权事务。网页可按原操作键恢复结果。 正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 本地验收包含 Web 恢复和实际 PostgreSQL 提交故障。 [交付记录](../development/evidence/W567-01/DELIVERY.md)

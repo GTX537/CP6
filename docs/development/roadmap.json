@@ -165812,6 +165812,11 @@
       "at": "2026-11-14T06:19:18.145422+00:00",
       "change": "W567-01 采购确认收货合并采购和 WMS 授权事务，保留操作键恢复和原动作/字段/仓位边界。PGT-017 暂未结项。",
       "evidence": "docs/development/evidence/W567-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T06:30:58.915353+00:00",
+      "change": "W568-01 补齐 Main 实际 COMMIT 回执丢失的两库原结果联验。正式 PostgreSQL 保持 26/27。",
+      "evidence": "docs/development/evidence/W568-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211818,10 +211823,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W567",
-      "path": "docs/development/evidence/W567-01/DELIVERY.md",
-      "baseline_sha": "718aa9035e2f51147f88962e71c142d0d456a67b",
-      "registered_at": "2026-11-14T05:32:07.685188+00:00",
+      "id": "W568",
+      "path": "docs/development/evidence/W568-01/DELIVERY.md",
+      "baseline_sha": "e1c1e7d04af870e5573e5fd8e14a17597e9c93df",
+      "registered_at": "2026-11-14T06:25:27.305582+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211835,15 +211840,14 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "从 Main 历史 OA 与财务独立 Owner 写者继续逐项核验，补齐跨库恢复与已登记宿主采用。",
+      "next_action": "先在关闭的物理恢复目标上比对封存及身份水位、C02 原事件、业务回执和出站消息，保持旧实例排空条件，继续其余写者验收。",
       "windows": [
         {
-          "id": "W567-01",
-          "workspace_task": "W567-01",
+          "id": "W568-01",
+          "workspace_task": "W568-01",
           "related_tasks": [
             "PGT-017",
-            "WP02-03",
-            "PUR-GR-01"
+            "WP02-03"
           ],
           "chat": "COORD",
           "mode": "SINGLE_CHAT",
@@ -211851,23 +211855,22 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w567-01",
-          "planned_scope_ref": "docs/development/evidence/W567-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W567-01/DELIVERY.md",
+          "branch": "codex/w568-01",
+          "planned_scope_ref": "docs/development/evidence/W568-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W568-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:identity-authority",
-            "Main:procurement-receipt",
-            "Main:WMS-inbound-stock",
-            "Main:goods-receipt-web"
+            "Main:Iam-role-policy-receipts",
+            "CRM:registered-role-fence",
+            "Main:CRM-two-database-acceptance"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "PostgreSQL 18.6 和受影响服务的 40 项定向用例（8 项本窗口原生行为），3 项 Web 回归、TypeScript、前端构建及隔离本地发布冒烟通过。",
-          "remaining_scope": "Main 旧 OA 其余写者、财务、独立 Space Design、原生数据库角色，以及两库未知结果恢复、重开对账、已登记宿主传输和旧实例排空。",
-          "main_tested_source_sha": "64ea3f2eea76b17652a2051a61212aa798e52b74"
+          "validation_summary": "两套隔离 PostgreSQL 18.6，丢失 Main COMMIT 回执和 CRM 先提交对照，每组 Main/CRM 各一项通过，共 4 项，无跳过。",
+          "remaining_scope": "物理恢复后的 Main 权威与 CRM 封存版本、C02 已发布身份、原业务回执和消息水位对账，目标库重新开放，实际宿主运输与旧实例排空，以及 Main 的旧 OA、财务、独立 Space Design 和其余普通数据库写者。",
+          "main_tested_source_sha": "b7ae0e7891265e8988e829d8794086fa6730985f"
         }
       ],
       "storage": {
@@ -264941,6 +264944,69 @@
             "main_tested_source_sha": "3df55876ddad659a4817bec340ed0b48eb189852",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1058",
             "main_remote_main_sha": "718aa9035e2f51147f88962e71c142d0d456a67b"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W567",
+        "path": "docs/development/evidence/W567-01/DELIVERY.md",
+        "baseline_sha": "718aa9035e2f51147f88962e71c142d0d456a67b",
+        "registered_at": "2026-11-14T05:32:07.685188+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "从 Main 历史 OA 与财务独立 Owner 写者继续逐项核验，补齐跨库恢复与已登记宿主采用。",
+        "windows": [
+          {
+            "id": "W567-01",
+            "workspace_task": "W567-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03",
+              "PUR-GR-01"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w567-01",
+            "planned_scope_ref": "docs/development/evidence/W567-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W567-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:identity-authority",
+              "Main:procurement-receipt",
+              "Main:WMS-inbound-stock",
+              "Main:goods-receipt-web"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "PostgreSQL 18.6 和受影响服务的 40 项定向用例（8 项本窗口原生行为），3 项 Web 回归、TypeScript、前端构建及隔离本地发布冒烟通过。",
+            "remaining_scope": "Main 旧 OA 其余写者、财务、独立 Space Design、原生数据库角色，以及两库未知结果恢复、重开对账、已登记宿主传输和旧实例排空。",
+            "main_tested_source_sha": "64ea3f2eea76b17652a2051a61212aa798e52b74",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1060",
+            "main_remote_main_sha": "e1c1e7d04af870e5573e5fd8e14a17597e9c93df"
           }
         ],
         "storage": {
