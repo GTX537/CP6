@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 · W579-01 全量迁移后的 Identity Directory
+
+隔离 PostgreSQL 18.6 可鲜装目录并由 CRM 原生后台使用 Main 服务令牌发布两租户完整目录。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W579-01/DELIVERY.md)
+
 ## 2026-11-14 · W578-01 两种 C02/Kafka 提交顺序
 
 CRM 导出先提交及 Main 撤权先提交均通过实际 Dapr/Kafka 和两库验证。原制品、回执及审计保持原样，撤权后的新效果按当前代次处理。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W578-01/DELIVERY.md)

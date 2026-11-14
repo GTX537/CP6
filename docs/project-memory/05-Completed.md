@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-14 · W579-01 完整 Core 目录鲜装与 CRM 发布
+
+核对完整 Core 已评审的函数与触发器布局，两个目录账号的业务函数 EXECUTE 为零。Main/CRM 两仓共 15 项本地验证通过。 [交付记录](../development/evidence/W579-01/DELIVERY.md)
+
 ## 2026-11-14 · W578-01 CRM 导出先提交
 
 两种提交顺序都从真实 broker 收到 Main 撤权和重授，前序合法导出跨投影更新保留。已完成 Main 和 CRM 共 4 项回归。 [交付记录](../development/evidence/W578-01/DELIVERY.md)

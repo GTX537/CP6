@@ -114,7 +114,7 @@ public sealed class IdentityDirectoryInstallationPostgresTests(IdentityDirectory
         Assert.Equal(0, manager.Snapshot().Borrowers);
     }
 
-    internal static async Task<IdentityDirectoryInstallRequestV2> Request(NpgsqlConnection owner) => new(Guid.NewGuid(), "127.0.0.1", 55435, owner.Database,
+    internal static async Task<IdentityDirectoryInstallRequestV2> Request(NpgsqlConnection owner) => new(Guid.NewGuid(), "127.0.0.1", owner.Port, owner.Database,
         await Scalar<uint>(owner, "SELECT oid FROM pg_database WHERE datname=current_database()"),
         await Scalar<string>(owner, "SELECT system_identifier::text FROM pg_control_system()"), "1b03afcb8ba9b86ea6a9ccc8d45ad5392ba71364", Logins);
 
