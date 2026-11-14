@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 · W577-01 旧 OA 撤回
+
+旧撤回共享 Main IAM PostgreSQL 事务栅栏。真实联验覆盖撤权和撤回两种顺序，以及恢复凭据先与撤回一并提交、父流程随后推进。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W577-01/DELIVERY.md)
+
 ## 2026-11-14 · W576-01 旧 OA 批量转交
 
 隔离 PostgreSQL 实测，撤权先提交时批次两条均被拒；首条先提交时保存该条，撤权后的第二条被拒。待办在等待期间已改派时，候选旧归属被拒，其他合法条目继续。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W576-01/DELIVERY.md)

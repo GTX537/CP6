@@ -31,7 +31,13 @@ public class TaskCenterService : ITaskCenterService
 
     public async Task WithdrawAsync(Guid instanceId, Guid userId)
     {
-        var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == instanceId)
+        await SaveWithdrawalAsync(instanceId, userId, CancellationToken.None);
+        await ResumeAfterWithdrawalAsync();
+    }
+
+    public async Task SaveWithdrawalAsync(Guid instanceId, Guid userId, CancellationToken ct)
+    {
+        var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == instanceId, ct)
                    ?? throw new InvalidOperationException("流程实例不存在");
         if (inst.StarterId != userId) throw new InvalidOperationException("仅发起人可撤回");
         FlowEngine.RequireLegacyRuntime(inst);
@@ -43,13 +49,13 @@ public class TaskCenterService : ITaskCenterService
 
         var pending = await _db.Wf_FlowTasks
             .Where(t => t.InstanceId == instanceId && t.Status == FlowTaskStatus.Pending)
-            .ToListAsync();
+            .ToListAsync(ct);
         foreach (var t in pending) t.Status = FlowTaskStatus.Cancelled;   // 清在途待办
 
         // ★ Fix3：撤回 = terminate，级联清理读模型，否则未来收件箱残留幻影 token / 待签
         var activeTokens = await _db.Wf_FlowTokens
             .Where(t => t.InstanceId == instanceId && t.Status == FlowTokenStatus.Active)
-            .ToListAsync();
+            .ToListAsync(ct);
         foreach (var t in activeTokens) t.Status = FlowTokenStatus.Cancelled;   // 在途 token → Cancelled
 
         // ── 子流程 C-T1（spec §3.3 路径①）：撤回 = terminate,就地循环不经 CancelAllActiveTokens → 此处补级联 ──
@@ -57,7 +63,7 @@ public class TaskCenterService : ITaskCenterService
 
         var pendingFormTos = await _db.Wf_FlowFormTos
             .Where(f => f.InstanceId == instanceId && f.Status == FlowFormToStatus.Pending)
-            .ToListAsync();
+            .ToListAsync(ct);
         foreach (var f in pendingFormTos) f.Status = FlowFormToStatus.Voided;   // 在途传签履历 → Voided
 
         // ★ B-T3（P0-5 入队侧）：撤回 = terminate，同步清理 Pending 服务任务 job。
@@ -67,7 +73,7 @@ public class TaskCenterService : ITaskCenterService
         //     此处直接 DB 查即可——WithdrawAsync 是事务起点无前置未落盘 job 变动）。
         var pendingJobs = await _db.Wf_ServiceJobs
             .Where(j => j.InstanceId == instanceId && j.Status == ServiceJobStatus.Pending)
-            .ToListAsync();
+            .ToListAsync(ct);
         var withdrawNow = DateTime.UtcNow;
         foreach (var j in pendingJobs) { j.Status = ServiceJobStatus.Cancelled; j.CompletedAtUtc = withdrawNow; }
 
@@ -83,7 +89,8 @@ public class TaskCenterService : ITaskCenterService
             ActorId = userId,
             Action = "withdraw",
         });
-        await _db.SaveChangesAsync();
-        if (_engine is not null) await _engine.FastPathSubFlowResumeAsync();   // ★ 子流程 fast path（null=worker 兜底）
+        await _db.SaveChangesAsync(ct);
     }
+
+    public Task ResumeAfterWithdrawalAsync() => _engine?.FastPathSubFlowResumeAsync() ?? Task.CompletedTask;
 }
