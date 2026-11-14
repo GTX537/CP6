@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 UTC · W556 询价回写
+
+采购询价逐笔价格写入采用当前授权根，实测两种提交顺序。正式 PostgreSQL 26/27，PGT-017 待核销。 [交付](../development/evidence/W556-01/DELIVERY.md)
+
 ## 2026-11-13 UTC · W555 询盘授权恢复
 
 CRM 原生接收 Main C02 撤权和重授，重授投影发布后原导出成功一次。正式 PostgreSQL 26/27，PGT-017 待核销。 [交付](../development/evidence/W555-01/DELIVERY.md)

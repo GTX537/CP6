@@ -1,6 +1,8 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Pur;
+using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Pur;
+using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -83,7 +85,14 @@ public class RfqController : ControllerBase
     [RequirePermission("pur-rfq", "writeback")]
     public async Task<IActionResult> WriteBack(string rfqNo)
     {
-        try { return Ok2(await _svc.WriteBackPricesAsync(rfqNo, CurrentUser)); }
+        try
+        {
+            return Ok2(await _svc.WriteBackPricesAsync(rfqNo, CurrentUser,
+                token => IamAdministrationHttpV1.CurrentActor(HttpContext, HttpContext.RequestServices, token, allowImpersonation: true),
+                HttpContext.RequestAborted));
+        }
+        catch (IamAdministrationExceptionV1 e) { return StatusCode(e.Status, new { code = e.Status, message = e.Message }); }
+        catch (CurrentPermissionUnavailableException) { return StatusCode(503, new { code = 503, message = "AUTHORITY_FENCE_UNAVAILABLE" }); }
         catch (InvalidOperationException e) { return Err(e); }
     }
 
