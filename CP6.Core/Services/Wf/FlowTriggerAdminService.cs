@@ -122,9 +122,10 @@ public class FlowTriggerAdminService : IFlowTriggerAdminService
         var varsJson = t.TriggerType == WfTriggerType.Timer
             ? WfTriggerConfig.ParseTimer(t.ConfigJson).VarsJson
             : "{}";
-        // 同上下文重复试发时脱钩：令触发服务重查到带当前 RowVersion 的鲜活实例，
-        // 避免上次 LastFiredUtc 写触达后本追踪实例持旧令牌撞乐观并发（同 ScanTimersOnceAsync 第二段脱钩口径）。
-        _db.Entry(t).State = EntityState.Detached;
+        // Keep the in-transaction trigger tracked for its watermark. Legacy callers
+        // reload the current row token before their separate write transaction.
+        if (!_db.Database.IsNpgsql())
+            _db.Entry(t).State = EntityState.Detached;
         return await _fire.FireManualAsync(t, varsJson, ct);
     }
 
