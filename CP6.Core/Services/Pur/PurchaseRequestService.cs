@@ -10,7 +10,7 @@ using WfStatus = CP6.Core.Services.Wf.FlowInstanceStatus;
 namespace CP6.Core.Services.Pur;
 
 /// <summary>采购申请服务实现（采购 章05 §4/§5）。手工建单 + 送审 + PR→PO 按建议供应商分组转单。</summary>
-public class PurchaseRequestService : IPurchaseRequestService
+public partial class PurchaseRequestService : IPurchaseRequestService
 {
     private const string SeqKey = "PR";
     private const string ApprovalBizType = "PUR_PR";
@@ -20,15 +20,17 @@ public class PurchaseRequestService : IPurchaseRequestService
     private readonly IApprovalService _approval;
     private readonly IPurchaseOrderService _po;
     private readonly IDataScopeFilter _scope;
+    private readonly IamAdministrationV1? _authority;
 
     public PurchaseRequestService(CP6Context db, ISeqService seq, IApprovalService approval,
-        IPurchaseOrderService po, IDataScopeFilter? scope = null)
+        IPurchaseOrderService po, IDataScopeFilter? scope = null, IamAdministrationV1? authority = null)
     {
         _db = db;
         _seq = seq;
         _approval = approval;
         _po = po;
         _scope = scope ?? new DataScopeFilter(db);
+        _authority = authority;
     }
 
     /// <inheritdoc />
@@ -262,8 +264,12 @@ public class PurchaseRequestService : IPurchaseRequestService
     }
 
     /// <inheritdoc />
-    public async Task<List<string>> ConvertToPoAsync(string prNo, string? userName)
+    public async Task<List<string>> ConvertToPoAsync(string prNo, string? userName,
+        Func<CancellationToken, Task<Guid>>? currentActor = null, CancellationToken ct = default)
     {
+        if (_db.Database.IsNpgsql())
+            return await ConvertToPoPostgreSqlAsync(prNo, userName, currentActor, ct);
+
         var pr = await _db.PurchaseRequests.FirstOrDefaultAsync(p => p.PrNo == prNo && !p.IsDeleted)
                  ?? throw new InvalidOperationException("E-PUR-056"); // PR 不存在
         if (pr.Status != PrStatus.Approved) throw new InvalidOperationException("E-PUR-053"); // 仅已批可转 PO
@@ -285,23 +291,7 @@ public class PurchaseRequestService : IPurchaseRequestService
         // 按建议供应商分组拆单：一供应商一张 PO（一 PR 多供应商→拆多 PO）
         foreach (var group in convertible.GroupBy(l => l.SuggestSupplierId!))
         {
-            var poDto = new PoCreateDto
-            {
-                SupplierId = group.Key,
-                Type = 1,
-                OrderDate = pr.RequestDate,
-                Remarks = $"PR {pr.PrNo}",
-                Lines = group.Select(l => new PoLineCreateDto
-                {
-                    ItemId = l.ItemId,
-                    Qty = l.Qty,
-                    UnitPrice = l.EstPrice, // PR 估价作 PO 单价；null 则 PO 侧按阶梯价解析
-                    RequiredDate = l.RequiredDate,
-                }).ToList(),
-            };
-
-            var po = await _po.CreateAsync(poDto, userName);
-
+            var po = await CreateOrderAsync(pr, group.Key, group, userName);
             foreach (var l in group)
                 l.ConvertedPoNo = po.PoNo;
             createdPoNos.Add(po.PoNo);
@@ -317,4 +307,20 @@ public class PurchaseRequestService : IPurchaseRequestService
         await _db.SaveChangesAsync();
         return createdPoNos;
     }
+
+    private Task<PurchaseOrder> CreateOrderAsync(PurchaseRequest pr, string supplierId,
+        IEnumerable<PurchaseRequestLine> lines, string? userName) => _po.CreateAsync(new()
+    {
+        SupplierId = supplierId,
+        Type = 1,
+        OrderDate = pr.RequestDate,
+        Remarks = $"PR {pr.PrNo}",
+        Lines = lines.Select(l => new PoLineCreateDto
+        {
+            ItemId = l.ItemId,
+            Qty = l.Qty,
+            UnitPrice = l.EstPrice, // PR 估价作 PO 单价；null 则 PO 侧按阶梯价解析
+            RequiredDate = l.RequiredDate,
+        }).ToList(),
+    }, userName);
 }
