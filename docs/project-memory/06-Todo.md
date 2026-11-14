@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 · W592-01 PGT-017 余项
+
+完成 CRM 各登记租户的恢复对账、旧写者退出及受控重绑和切换。继续核对其他财务、独立 Space Design 与全量写者登记。 [交付记录](../development/evidence/W592-01/DELIVERY.md)
+
 ## 2026-11-14 · W591-01 PGT-017 余项
 
 继续核对其他财务与独立 Space Design 写者、全量写者登记及 CRM 正式恢复、重开与切换编排。 [交付记录](../development/evidence/W591-01/DELIVERY.md)
