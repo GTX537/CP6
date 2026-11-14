@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 · W583-01 触发配置栅栏
+
+撤权先提交时，旧会话不能创建、修改、启停或重置配置密钥。配置在先时保留原行或原密钥摘要。 [缺陷 #1082](https://github.com/GTX537/CP6/issues/1082) · [交付记录](../development/evidence/W583-01/DELIVERY.md)
+
 ## 2026-11-14 · W582-01 CRM 导出联验改用真实目录
 
 Main 目录使用普通登录和实际 C2 凭据，CRM 在真实 Inbox 提交后使用原生发布循环。两阶段核对每个聚合的存储原值和完整摘要。 [交付记录](../development/evidence/W582-01/DELIVERY.md)
