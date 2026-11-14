@@ -1,8 +1,12 @@
+using System.Data.Common;
 using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
+using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Fin;
+using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Controllers.Fin;
 
@@ -45,8 +49,26 @@ public class BankReconciliationController : ControllerBase
 
     [HttpPost("{statementId}/generate-voucher")]
     [RequirePermission("fin-bank-reconciliation", "generate-voucher")]
-    public async Task<IActionResult> GenerateVoucher(Guid statementId, [FromBody] GenVoucherReq req)
-        => Ok2(await _svc.GenerateBankOnlyVoucherAsync(statementId, req.LineIds, req.CounterAccountId, req.CounterRole, req.PartnerId, CurrentUser));
+    public async Task<IActionResult> GenerateVoucher(Guid statementId, [FromBody] GenVoucherReq req, CancellationToken ct)
+    {
+        try
+        {
+            var impersonator = Guid.TryParse(User.FindFirst("impersonator_id")?.Value, out var id) ? (Guid?)id : null;
+            return Ok2(await _svc.GenerateBankOnlyVoucherAsync(statementId, req.LineIds, req.CounterAccountId,
+                req.CounterRole, req.PartnerId, CurrentUser, CurrentActor, ct, impersonator));
+        }
+        catch (IamAdministrationExceptionV1 error)
+        {
+            return StatusCode(error.Status, new { code = error.Status, message = error.Message });
+        }
+        catch (Exception error) when (error is CurrentPermissionUnavailableException or DbException or DbUpdateException)
+        {
+            return StatusCode(503, new { code = 503, message = "AUTHORITY_FENCE_UNAVAILABLE" });
+        }
+
+        Task<Guid> CurrentActor(CancellationToken token) => IamAdministrationHttpV1.CurrentActor(HttpContext,
+            HttpContext.RequestServices, token, allowImpersonation: true);
+    }
 
     [HttpPost("{statementId}/mark-pending")]
     [RequirePermission("fin-bank-reconciliation", "mark-pending")]

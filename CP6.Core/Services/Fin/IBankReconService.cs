@@ -9,7 +9,9 @@ public interface IBankReconService
     Task<FinResult> UnmatchAsync(Guid groupId, string? user);
 
     // D 阶段
-    Task<List<BankOnlyLineResult>> GenerateBankOnlyVoucherAsync(Guid statementId, List<Guid> lineIds, Guid counterAccountId, string? counterRole, string? partnerId, string? user);
+    Task<List<BankOnlyLineResult>> GenerateBankOnlyVoucherAsync(Guid statementId, List<Guid> lineIds,
+        Guid counterAccountId, string? counterRole, string? partnerId, string? user,
+        Func<CancellationToken, Task<Guid>>? currentActor = null, CancellationToken ct = default, Guid? impersonatorId = null);
     Task<FinResult> MarkPendingAsync(Guid statementId, List<Guid> lineIds, BankLineCategory category, byte[]? rowVersion, string? user);
     Task<ReconciliationStatementDto> GetReconciliationStatementAsync(Guid statementId);
     Task<FinResult> LockAsync(Guid statementId, string? user);
