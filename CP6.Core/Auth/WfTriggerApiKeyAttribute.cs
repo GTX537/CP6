@@ -37,8 +37,8 @@ public sealed class WfTriggerApiKeyAttribute : Attribute, IAsyncAuthorizationFil
         }
 
         // 跨租户按 Id 定位（key 绑定单触发器单租户，IgnoreQueryFilters 仿 RefreshTokenService 先例）
-        var trigger = await db.Wf_FlowTriggers.IgnoreQueryFilters()
-            .FirstOrDefaultAsync(t => t.Id == id && t.TriggerType == WfTriggerType.Message);
+        var trigger = await db.Wf_FlowTriggers.IgnoreQueryFilters().AsNoTracking()
+            .FirstOrDefaultAsync(t => t.Id == id && t.TriggerType == WfTriggerType.Message, http.RequestAborted);
         if (trigger == null || !trigger.Enabled)
         {
             context.Result = NotFound404();   // 停用与不存在不区分（spec §3.4）

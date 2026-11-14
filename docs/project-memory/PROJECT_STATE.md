@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 · W586-01 旧 OA 消息触发的当前权限事务
+
+已验证密钥轮换、租户暂停与消息写入各两种真实 PostgreSQL 顺序。本地 36 项通过，正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W586-01/DELIVERY.md)
+
 ## 2026-11-14 · W585-01 CRM 原写集增量恢复
 
 源停机后用独立全量和增量备份恢复。原导出、权限封存和投递记录与真实 Kafka 偏移匹配，缺失写集的早期副本继续关闭。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W585-01/DELIVERY.md)

@@ -1,10 +1,13 @@
+using System.Data.Common;
 using System.Text;
 using System.Text.Json;
 using CP6.Core.Auth;
+using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Controllers.Integration;
 
@@ -41,19 +44,24 @@ public class FlowTriggerFireController : ControllerBase
         if (Encoding.UTF8.GetByteCount(body) > MaxPayloadBytes)
             return BadRequest(new { code = 400, message = "payload too large (64KB max)" });
 
-        // varsSchema 白名单过滤（防变量注入，spec §2.3/§6）
-        string varsJson;
+        TriggerFireResult r;
         try
         {
-            var cfg = WfTriggerConfig.ParseMessage(trigger.ConfigJson);
-            varsJson = WfTriggerVarsMapper.FilterBySchema(body, cfg.VarsSchema);
+            r = await _triggers.FireMessageAsync(trigger, Request.Headers["X-Api-Key"].FirstOrDefault(), idemKey, body, ct);
         }
         catch (JsonException)
         {
             return BadRequest(new { code = 400, message = "body must be a JSON object" });
         }
+        catch (ScopeAuthorizationExceptionV1 error)
+        {
+            return StatusCode(error.Status, new { code = error.Status, message = error.Message });
+        }
+        catch (Exception error) when (error is DbException or DbUpdateException or CurrentPermissionUnavailableException)
+        {
+            return StatusCode(503, new { code = 503, message = "AUTHORITY_FENCE_UNAVAILABLE" });
+        }
 
-        var r = await _triggers.FireAsync(trigger, varsJson, WfTriggerType.Message, idemKey, ct);
         if (!r.Success)
             return StatusCode(500, new { code = 500, message = r.Error });
         return r.Replayed

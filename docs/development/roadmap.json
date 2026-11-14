@@ -165902,6 +165902,11 @@
       "at": "2026-11-14T18:00:24.866222+00:00",
       "change": "W585-01 实测原库停止后使用 PostgreSQL 原生增量备份恢复 CRM 原写集，正式仍为 26/27。",
       "evidence": "docs/development/evidence/W585-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T18:15:52.860660+00:00",
+      "change": "W586-01 消息触发采用与租户暂停和密钥重置共享的 Main 事务，正式仍为 26/27。",
+      "evidence": "docs/development/evidence/W586-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211908,10 +211913,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W585",
-      "path": "docs/development/evidence/W585-01/DELIVERY.md",
-      "baseline_sha": "fe011b9aa96fa623ed6c19472638e9097c1d1ade",
-      "registered_at": "2026-11-14T17:59:41.803420+00:00",
+      "id": "W586",
+      "path": "docs/development/evidence/W586-01/DELIVERY.md",
+      "baseline_sha": "f35479cb2acbccc094f7372802ac3c175cfdbf92",
+      "registered_at": "2026-11-14T18:04:28.536732+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211925,55 +211930,43 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "补齐正式切换编排与其余写者登记和验证，再收口 PGT-017。",
+      "next_action": "验证事件和定时各自的 Owner 提交边界，继续 CRM 正式切换编排及全部 writer 登记。",
       "windows": [
         {
-          "id": "W585-01",
-          "workspace_task": "W585-01",
+          "id": "W586-01",
+          "workspace_task": "W586-01",
           "related_tasks": [
             "PGT-017",
-            "WP02-02",
             "WP02-03"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+          "mode": "SINGLE_CHAT",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w585-01",
-          "planned_scope_ref": "docs/development/evidence/W585-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W585-01/DELIVERY.md",
+          "branch": "codex/w586-01",
+          "planned_scope_ref": "docs/development/evidence/W586-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W586-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "CRM:PostgreSQL-Inquiry-Recovery",
-            "CRM:Inquiry-Outbox",
-            "Main:CRM-C02-outbox-dispatch",
-            "Local:PostgreSQL-Dapr-Kafka"
+            "Main:OA-Flow-Trigger-Message",
+            "Main:IAM-CurrentWriteAuthority",
+            "Main:WorkflowServiceJobs",
+            "Local:PostgreSQL-HTTP"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "4 项实测通过，零跳过。失联前原生增量捕获原制品和投递记录，停库后用独立链恢复并核对真实 C02 和 CRM Kafka 偏移，早期缺失目标保持关闭。",
-          "remaining_scope": "生产级恢复与安全重开编排、完全缺少原始写集时的隔离处置，Main 旧消息/定时/事件、财务、独立 Space Design 和全部剩余写者确认。",
-          "main_tested_source_sha": "6ef7789ef5eda9a3c42a4934fe5d14f921fe34f9",
-          "product_repository": "CP6.CRM",
-          "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "256d6ddff81aed86c06620d85f9f8ca95e2f7f3a",
-          "product_branch": "codex/w585-01",
-          "product_source_sha": "d244ecaa9f3f96801bca0cd9bc833e627547ea08",
-          "product_remote_main_sha": "a8cde86ddd863be00cd9e08b8880e95d16c02234",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/228",
-          "product_branch_disposition": "deleted-local-and-remote",
-          "product_workspace_status": "fixed-seat-detached-for-reuse",
-          "product_seat_released": true
+          "validation_summary": "36 项通过，零跳过。实际 PostgreSQL 分别覆盖密钥轮换和租户暂停的两种顺序，以及新密钥原键重放。",
+          "remaining_scope": "旧事件及定时触发、财务、独立 Space Design 和其他写者，CRM 正式恢复/重开与切换编排。",
+          "main_tested_source_sha": "042d86683dd0476fc61c98844a0f511ad98d308a"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -266227,6 +266220,80 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W585",
+        "path": "docs/development/evidence/W585-01/DELIVERY.md",
+        "baseline_sha": "fe011b9aa96fa623ed6c19472638e9097c1d1ade",
+        "registered_at": "2026-11-14T17:59:41.803420+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "补齐正式切换编排与其余写者登记和验证，再收口 PGT-017。",
+        "windows": [
+          {
+            "id": "W585-01",
+            "workspace_task": "W585-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-02",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w585-01",
+            "planned_scope_ref": "docs/development/evidence/W585-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W585-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CRM:PostgreSQL-Inquiry-Recovery",
+              "CRM:Inquiry-Outbox",
+              "Main:CRM-C02-outbox-dispatch",
+              "Local:PostgreSQL-Dapr-Kafka"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "4 项实测通过，零跳过。失联前原生增量捕获原制品和投递记录，停库后用独立链恢复并核对真实 C02 和 CRM Kafka 偏移，早期缺失目标保持关闭。",
+            "remaining_scope": "生产级恢复与安全重开编排、完全缺少原始写集时的隔离处置，Main 旧消息/定时/事件、财务、独立 Space Design 和全部剩余写者确认。",
+            "main_tested_source_sha": "6ef7789ef5eda9a3c42a4934fe5d14f921fe34f9",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "256d6ddff81aed86c06620d85f9f8ca95e2f7f3a",
+            "product_branch": "codex/w585-01",
+            "product_source_sha": "d244ecaa9f3f96801bca0cd9bc833e627547ea08",
+            "product_remote_main_sha": "a8cde86ddd863be00cd9e08b8880e95d16c02234",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/228",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1086",
+            "main_remote_main_sha": "f35479cb2acbccc094f7372802ac3c175cfdbf92"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },

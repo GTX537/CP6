@@ -1,4 +1,6 @@
 // CP6.Core/Services/Wf/FlowTriggerService.cs
+using System.Data;
+using System.Data.Common;
 using System.Security.Cryptography;
 using System.Text;
 using CP6.Core.EFDbContext;
@@ -30,6 +32,9 @@ public interface IFlowTriggerService
 
     /// <summary>Manual fire joins the request's current IAM transaction on PostgreSQL.</summary>
     Task<TriggerFireResult> FireManualAsync(Wf_FlowTrigger trigger, string? varsJson, CancellationToken ct);
+
+    Task<TriggerFireResult> FireMessageAsync(Wf_FlowTrigger trigger, string? rawKey, string idempotencyKey,
+        string bodyJson, CancellationToken ct);
 
     /// <summary>timer 扫描一轮（worker 复用；lease 语义 = RowVersion 乐观并发 + NextDueUtc 前移即抢占）。</summary>
     Task<int> ScanTimersOnceAsync(CancellationToken ct);
@@ -63,6 +68,44 @@ public class FlowTriggerService : IFlowTriggerService
         return FireCoreAsync(trigger, varsJson, trigger.TriggerType, $"{ManualKeyPrefix}{Guid.NewGuid():N}",
             authorityTransaction, ct);
     }
+
+    public async Task<TriggerFireResult> FireMessageAsync(Wf_FlowTrigger trigger, string? rawKey, string idempotencyKey,
+        string bodyJson, CancellationToken ct)
+    {
+        if (!_db.Database.IsNpgsql())
+            return await FireCoreAsync(trigger, MessageVars(trigger, bodyJson), WfTriggerType.Message, idempotencyKey, null, ct);
+
+        await using var tx = await _db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
+        await AuthenticationCompletionGateV1.AcquireAsync(_db, ct);
+        var current = await _db.Wf_FlowTriggers.SingleOrDefaultAsync(
+            t => t.Id == trigger.Id && t.TriggerType == WfTriggerType.Message, ct);
+        if (current is not { Enabled: true })
+            throw new ScopeAuthorizationExceptionV1("trigger not found", 404);
+        if (rawKey == null || !WfApiKeyHelper.Verify(rawKey, current.ApiKeyHash))
+            throw new ScopeAuthorizationExceptionV1("invalid api key", 401);
+
+        var tenant = await _db.Sys_Tenants.AsNoTracking().Where(t => t.Id == _db.CurrentTenantId)
+            .Select(t => new { t.Enable, t.ExpireDate }).SingleOrDefaultAsync(ct);
+        if (tenant is not { Enable: true } || tenant.ExpireDate <= DateTime.Now)
+            throw new ScopeAuthorizationExceptionV1("TENANT_INACTIVE", 403);
+        var result = await FireCoreAsync(current, MessageVars(current, bodyJson),
+            WfTriggerType.Message, idempotencyKey, tx, ct);
+        if (tenant.ExpireDate <= DateTime.Now)
+            throw new ScopeAuthorizationExceptionV1("TENANT_INACTIVE", 403);
+        ct.ThrowIfCancellationRequested();
+        try
+        {
+            await tx.CommitAsync(ct);
+        }
+        catch (Exception error) when (error is DbException or TimeoutException or OperationCanceledException)
+        {
+            throw new ScopeAuthorizationExceptionV1("AUTHORITY_COMMIT_UNKNOWN", inner: error);
+        }
+        return result;
+    }
+
+    private static string MessageVars(Wf_FlowTrigger trigger, string bodyJson)
+        => WfTriggerVarsMapper.FilterBySchema(bodyJson, WfTriggerConfig.ParseMessage(trigger.ConfigJson).VarsSchema);
 
     private async Task<TriggerFireResult> FireCoreAsync(Wf_FlowTrigger trigger, string? varsJson,
         int source, string idempotencyKey, IDbContextTransaction? authorityTransaction, CancellationToken ct)
@@ -105,12 +148,12 @@ public class FlowTriggerService : IFlowTriggerService
         var flowOk = await _db.Wf_FlowDefs.AnyAsync(d => d.FlowKey == trigger.FlowKey && d.Enable, ct);
         if (!flowOk) return await FailFireAsync(fire, "E-WF-023: 目标流程不存在或未启用", ct);
 
-        // ④ 第二段：SubmitAsync + 流水回填 + 水位 同一显式事务（映射表⑥，引擎原子接缝）
-        //    trigger 可能被上游 ChangeTracker.Clear 失联 → 用库内跟踪实例回写水位
-        var trackedTrigger = await _db.Wf_FlowTriggers.FirstOrDefaultAsync(t => t.Id == trigger.Id, ct) ?? trigger;
+        // The authority paths have already loaded their trigger in this transaction.
         if (authorityTransaction != null)
-            return await SubmitManualAsync(authorityTransaction, trackedTrigger, fire, varsJson, ct);
+            return await SubmitWithAuthorityAsync(authorityTransaction, trigger, fire, varsJson, ct);
 
+        // Legacy two-phase callers can pass a detached trigger.
+        var trackedTrigger = await _db.Wf_FlowTriggers.FirstOrDefaultAsync(t => t.Id == trigger.Id, ct) ?? trigger;
         try
         {
             await using var tx = await _db.Database.BeginTransactionAsync(ct);
@@ -129,10 +172,10 @@ public class FlowTriggerService : IFlowTriggerService
         }
     }
 
-    private async Task<TriggerFireResult> SubmitManualAsync(IDbContextTransaction tx, Wf_FlowTrigger trigger,
+    private async Task<TriggerFireResult> SubmitWithAuthorityAsync(IDbContextTransaction tx, Wf_FlowTrigger trigger,
         Wf_TriggerFire fire, string? varsJson, CancellationToken ct)
     {
-        const string start = "wf_manual_trigger_start";
+        const string start = "wf_trigger_start";
         await tx.CreateSavepointAsync(start, ct);
         TriggerFireResult result;
         try
@@ -140,7 +183,8 @@ public class FlowTriggerService : IFlowTriggerService
             var instance = await CompleteFireAsync(trigger, fire, varsJson, deferFollowUps: true, ct);
             result = TriggerFireResult.Ok(instance);
         }
-        catch (InvalidOperationException ex) when (ex is not (CurrentPermissionUnavailableException or IamAdministrationExceptionV1))
+        catch (InvalidOperationException ex) when (ex is not (CurrentPermissionUnavailableException or IamAdministrationExceptionV1
+            or ScopeAuthorizationExceptionV1))
         {
             // A rejected workflow can keep its admitted fire receipt. Database failures
             // propagate to the caller's transaction, including an unknown commit result.
