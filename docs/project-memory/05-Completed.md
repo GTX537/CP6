@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-14 UTC · W558 MRP 写入与撤权
+
+两序及第三次保存失败回滚均通过。旧建议、编号、净需求、Pegging 和计划数量核对完成。 [交付](../development/evidence/W558-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W557 CRM 物理恢复关闭写入
 
 备份前安装及恢复后升级两种实际 WAL 恢复通过。CRM PostgreSQL 10 项通过，两库导出两种提交顺序通过。 [交付](../development/evidence/W557-01/DELIVERY.md)
