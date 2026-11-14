@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## W565-01 · 采购检收事务
+
+采购检收应用与关联 PO 写集使用同一授权事务。PostgreSQL 18.6 采购检收与实际 IAM 撤权两种顺序通过，另四个采购 PostgreSQL 场景和八项相关组件测试通过；隔离本地发布 310 文件、建库和 HTTP 200/401。正式 PostgreSQL 26/27，原询盘 60/60。 [交付](../development/evidence/W565-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W564 Stock 普通 SQL
 
 未持根或已停用时拒绝库存写入，合法库存调整、创建、移库及原件回归通过。 [交付](../development/evidence/W564-01/DELIVERY.md)

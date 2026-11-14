@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## W565-01 · 采购检收回写
+
+采购检收应用与关联 PO 写集使用同一授权事务。PostgreSQL 18.6 采购检收与实际 IAM 撤权两种顺序通过，另四个采购 PostgreSQL 场景和八项相关组件测试通过；隔离本地发布 310 文件、建库和 HTTP 200/401。正式 PostgreSQL 26/27，原询盘 60/60。 [交付](../development/evidence/W565-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W564 Stock 数据库事务根验证
 
 四个普通写入表见证同一授权事务，暂停、V1 与 V2 Owner 回归通过。正式 PostgreSQL 26/27。 [交付](../development/evidence/W564-01/DELIVERY.md)
