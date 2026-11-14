@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 · W581-01 旧 OA 批量办理
+
+撤权先提交时两条待办未办结，首条先提交时保留其效果并拒绝第二条。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W581-01/DELIVERY.md)
+
 ## 2026-11-14 · W580-01 旧 OA 退回事务
 
 两个旧退回入口均在 IAM 栅栏内验证当前角色。提交失败可证明无外部连接器调用。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W580-01/DELIVERY.md)
