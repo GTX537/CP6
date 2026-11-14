@@ -45,6 +45,7 @@ public class AdvancedFlowController : LocalizedControllerBase
     /// <summary>加签（章07 §3）。source: before(前) / after(后)。</summary>
     [HttpPost("addsign")]
     [RequirePermission("oa-inbox", "addsign")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> AddSign([FromBody] AddSignReq r)
     {
         try
