@@ -1,9 +1,12 @@
+using System.Data.Common;
 using CP6.Core.Auth;
 using CP6.Core.Services.Pur;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Pur;
+using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Controllers.Pur;
 
@@ -92,7 +95,17 @@ public class PurchaseRequestController : ControllerBase
     [RequirePermission("pur-pr", "convert")]
     public async Task<IActionResult> Convert(string prNo)
     {
-        try { return Ok2(await _svc.ConvertToPoAsync(prNo, CurrentUser)); }
+        try
+        {
+            return Ok2(await _svc.ConvertToPoAsync(prNo, CurrentUser,
+                token => IamAdministrationHttpV1.CurrentActor(HttpContext, HttpContext.RequestServices, token, allowImpersonation: true),
+                HttpContext.RequestAborted));
+        }
+        catch (IamAdministrationExceptionV1 e) { return StatusCode(e.Status, new { code = e.Status, message = e.Message }); }
+        catch (Exception e) when (e is DbException or DbUpdateException or CurrentPermissionUnavailableException)
+        {
+            return StatusCode(503, new { code = 503, message = "AUTHORITY_FENCE_UNAVAILABLE" });
+        }
         catch (InvalidOperationException e) { return Err(e); }
     }
 }

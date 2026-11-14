@@ -42,7 +42,8 @@ public interface IPurchaseRequestService
     /// 回填各行 ConvertedPoNo。无建议供应商的行留待 RFQ（不转）。全行转出 → Converted；否则保持 Approved。
     /// </summary>
     /// <returns>新建的 PO 号列表（按供应商一供应商一张）。</returns>
-    Task<List<string>> ConvertToPoAsync(string prNo, string? userName);
+    Task<List<string>> ConvertToPoAsync(string prNo, string? userName,
+        Func<CancellationToken, Task<Guid>>? currentActor = null, CancellationToken ct = default);
 }
 
 public sealed record PurchaseRequestApprovalSnapshot(

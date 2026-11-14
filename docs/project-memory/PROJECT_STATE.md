@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 UTC · W561 采购申请分组回填事务
+
+采购单和申请行回填两种撤权顺序、实际原子回滚及余组复续通过。正式 PostgreSQL 26/27。 [交付](../development/evidence/W561-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W560 采购分组转单事务栅栏
 
 RFQ 转单的各供应商提交与最后抬头更新通过 PostgreSQL 实测。正式 PostgreSQL 26/27，PGT-017 待核销。 [交付](../development/evidence/W560-01/DELIVERY.md)
