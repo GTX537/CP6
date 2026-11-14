@@ -52,8 +52,10 @@ public interface IRfqService
     /// 回写采购价表（章06 §5）：把每条**选中**报价 Upsert 进 <see cref="SupplierPrice"/>（Source=rfq），让询价成果沉淀进价表、
     /// 下次同物料下单 <c>ResolvePriceAsync</c> 直接命中。Price=QuotedPrice、ValidFrom=今天、ValidTo=报价有效期；按 (供应商,物料,MinQty,ValidFrom) 幂等。
     /// 落选报价不回写。RFQ 不存在 → E-PUR-061。
+    /// PostgreSQL 逐笔提交前使用当前会话解析器核对写入权限。
     /// </summary>
-    Task<Rfq> WriteBackPricesAsync(string rfqNo, string? userName);
+    Task<Rfq> WriteBackPricesAsync(string rfqNo, string? userName,
+        Func<CancellationToken, Task<Guid>>? currentActor = null, CancellationToken ct = default);
 
     /// <summary>
     /// 选中报价转 PO（章06 §6）：按**选中供应商分组**（同供应商的行合一张 PO，不同行可花落不同家）调用 02 章

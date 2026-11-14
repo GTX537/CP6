@@ -1,12 +1,13 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Pub;
+using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Pur;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Pur;
 
 /// <summary>询价服务实现（RFQ，采购 章06 §2/§3）。从 PR 发起 + 邀供应商 + 收报价；比价/选定/转 PO 见后续任务。</summary>
-public class RfqService : IRfqService
+public partial class RfqService : IRfqService
 {
     private const string SeqKey = "RFQ";
 
@@ -14,13 +15,16 @@ public class RfqService : IRfqService
     private readonly ISeqService _seq;
     private readonly IPurchaseOrderService _po;
     private readonly ISupplierPriceService _price;
+    private readonly IamAdministrationV1? _authority;
 
-    public RfqService(CP6Context db, ISeqService seq, IPurchaseOrderService po, ISupplierPriceService price)
+    public RfqService(CP6Context db, ISeqService seq, IPurchaseOrderService po, ISupplierPriceService price,
+        IamAdministrationV1? authority = null)
     {
         _db = db;
         _seq = seq;
         _po = po;
         _price = price;
+        _authority = authority;
     }
 
     /// <inheritdoc />
@@ -311,8 +315,12 @@ public class RfqService : IRfqService
     }
 
     /// <inheritdoc />
-    public async Task<Rfq> WriteBackPricesAsync(string rfqNo, string? userName)
+    public async Task<Rfq> WriteBackPricesAsync(string rfqNo, string? userName,
+        Func<CancellationToken, Task<Guid>>? currentActor = null, CancellationToken ct = default)
     {
+        if (_db.Database.IsNpgsql())
+            return await WriteBackPostgreSqlAsync(rfqNo, userName, currentActor, ct);
+
         var rfq = await _db.Rfqs.FirstOrDefaultAsync(r => r.RfqNo == rfqNo && !r.IsDeleted)
                   ?? throw new InvalidOperationException("E-PUR-061"); // RFQ 不存在
 
@@ -327,24 +335,31 @@ public class RfqService : IRfqService
         foreach (var q in selected)
         {
             if (!lineItem.TryGetValue(q.LineNo, out var itemId)) continue;
-            await _price.UpsertAsync(new SupplierPrice
-            {
-                SupplierId = q.SupplierId,
-                ItemId = itemId,
-                Price = q.QuotedPrice,
-                CurrencyCd = q.CurrencyCd,
-                MinQty = 0m,
-                ValidFrom = today,
-                ValidTo = q.ValidUntil,
-                Source = "rfq",                 // ★标明来自询价（与手工维护区分）
-            }, userName);
+            await _price.UpsertAsync(FromQuote(q, itemId, today), userName);
         }
 
+        return await CompleteWritebackAsync(rfq, userName, ct);
+    }
+
+    private static SupplierPrice FromQuote(RfqQuote quote, string item, DateTime today) => new()
+    {
+        SupplierId = quote.SupplierId,
+        ItemId = item,
+        Price = quote.QuotedPrice,
+        CurrencyCd = quote.CurrencyCd,
+        MinQty = 0m,
+        ValidFrom = today,
+        ValidTo = quote.ValidUntil,
+        Source = "rfq",
+    };
+
+    private async Task<Rfq> CompleteWritebackAsync(Rfq rfq, string? userName, CancellationToken ct)
+    {
         var now = DateTime.Now;
         rfq.Modifier = userName;
         rfq.ModifyDate = now;
-        await _db.SaveChangesAsync();
-        return (await GetAsync(rfqNo))!;
+        await _db.SaveChangesAsync(ct);
+        return (await GetAsync(rfq.RfqNo))!;
     }
 
     /// <inheritdoc />
