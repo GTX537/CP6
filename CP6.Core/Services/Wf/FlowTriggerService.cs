@@ -2,8 +2,10 @@
 using System.Security.Cryptography;
 using System.Text;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Core.Services.Wf;
 
@@ -26,6 +28,9 @@ public interface IFlowTriggerService
     Task<TriggerFireResult> FireAsync(Wf_FlowTrigger trigger, string? varsJson,
                                       int source, string idempotencyKey, CancellationToken ct);
 
+    /// <summary>Manual fire joins the request's current IAM transaction on PostgreSQL.</summary>
+    Task<TriggerFireResult> FireManualAsync(Wf_FlowTrigger trigger, string? varsJson, CancellationToken ct);
+
     /// <summary>timer 扫描一轮（worker 复用；lease 语义 = RowVersion 乐观并发 + NextDueUtc 前移即抢占）。</summary>
     Task<int> ScanTimersOnceAsync(CancellationToken ct);
 }
@@ -35,6 +40,7 @@ public class FlowTriggerService : IFlowTriggerService
     /// <summary>占坑补跑宽限：FiredUtc 早于此宽限仍未回填的占坑行才补跑（避免与正在进行的第二段抢跑）</summary>
     public static readonly TimeSpan RecoveryGrace = TimeSpan.FromMinutes(2);
     private const int BatchSize = 50;
+    private const string ManualKeyPrefix = "manual:";
 
     private readonly CP6Context _db;
     private readonly IFlowEngine _engine;
@@ -45,8 +51,21 @@ public class FlowTriggerService : IFlowTriggerService
         _engine = engine;
     }
 
-    public async Task<TriggerFireResult> FireAsync(Wf_FlowTrigger trigger, string? varsJson,
+    public Task<TriggerFireResult> FireAsync(Wf_FlowTrigger trigger, string? varsJson,
                                                    int source, string idempotencyKey, CancellationToken ct)
+        => FireCoreAsync(trigger, varsJson, source, idempotencyKey, null, ct);
+
+    public Task<TriggerFireResult> FireManualAsync(Wf_FlowTrigger trigger, string? varsJson, CancellationToken ct)
+    {
+        var authorityTransaction = _db.Database.IsNpgsql()
+            ? _db.Database.CurrentTransaction ?? throw new CurrentPermissionUnavailableException()
+            : null;
+        return FireCoreAsync(trigger, varsJson, trigger.TriggerType, $"{ManualKeyPrefix}{Guid.NewGuid():N}",
+            authorityTransaction, ct);
+    }
+
+    private async Task<TriggerFireResult> FireCoreAsync(Wf_FlowTrigger trigger, string? varsJson,
+        int source, string idempotencyKey, IDbContextTransaction? authorityTransaction, CancellationToken ct)
     {
         // ① Enabled 检查（spec §3.1 顺序：先于幂等闸）
         if (!trigger.Enabled) return TriggerFireResult.Fail("触发器已停用");
@@ -68,7 +87,7 @@ public class FlowTriggerService : IFlowTriggerService
             };
             _db.Wf_TriggerFires.Add(fire);
             try { await _db.SaveChangesAsync(ct); }
-            catch (DbUpdateException)
+            catch (DbUpdateException) when (authorityTransaction == null)
             {
                 // 并发撞唯一索引：让位既有行（另一实例先占坑），转入撞键分支
                 _db.Entry(fire).State = EntityState.Detached;
@@ -89,14 +108,13 @@ public class FlowTriggerService : IFlowTriggerService
         // ④ 第二段：SubmitAsync + 流水回填 + 水位 同一显式事务（映射表⑥，引擎原子接缝）
         //    trigger 可能被上游 ChangeTracker.Clear 失联 → 用库内跟踪实例回写水位
         var trackedTrigger = await _db.Wf_FlowTriggers.FirstOrDefaultAsync(t => t.Id == trigger.Id, ct) ?? trigger;
+        if (authorityTransaction != null)
+            return await SubmitManualAsync(authorityTransaction, trackedTrigger, fire, varsJson, ct);
+
         try
         {
             await using var tx = await _db.Database.BeginTransactionAsync(ct);
-            var instanceId = await _engine.SubmitAsync(trackedTrigger.FlowKey, trackedTrigger.StarterUserId, varsJson ?? "{}");
-            fire.InstanceId = instanceId;
-            fire.Error = null;                              // 失败重试成功 → 清错
-            trackedTrigger.LastFiredUtc = DateTime.UtcNow;  // 水位
-            await _db.SaveChangesAsync(ct);
+            var instanceId = await CompleteFireAsync(trackedTrigger, fire, varsJson, deferFollowUps: false, ct);
             await tx.CommitAsync(ct);
             return TriggerFireResult.Ok(instanceId);
         }
@@ -111,6 +129,43 @@ public class FlowTriggerService : IFlowTriggerService
         }
     }
 
+    private async Task<TriggerFireResult> SubmitManualAsync(IDbContextTransaction tx, Wf_FlowTrigger trigger,
+        Wf_TriggerFire fire, string? varsJson, CancellationToken ct)
+    {
+        const string start = "wf_manual_trigger_start";
+        await tx.CreateSavepointAsync(start, ct);
+        TriggerFireResult result;
+        try
+        {
+            var instance = await CompleteFireAsync(trigger, fire, varsJson, deferFollowUps: true, ct);
+            result = TriggerFireResult.Ok(instance);
+        }
+        catch (InvalidOperationException ex) when (ex is not (CurrentPermissionUnavailableException or IamAdministrationExceptionV1))
+        {
+            // A rejected workflow can keep its admitted fire receipt. Database failures
+            // propagate to the caller's transaction, including an unknown commit result.
+            await tx.RollbackToSavepointAsync(start, ct);
+            _db.ChangeTracker.Clear();
+            var receipt = await _db.Wf_TriggerFires.SingleAsync(f => f.Id == fire.Id, ct);
+            result = await FailFireAsync(receipt, Trunc($"E-WF-024: {ex.Message}"), ct);
+        }
+        await tx.ReleaseSavepointAsync(start, ct);
+        return result;
+    }
+
+    private async Task<Guid> CompleteFireAsync(Wf_FlowTrigger trigger, Wf_TriggerFire fire,
+        string? varsJson, bool deferFollowUps, CancellationToken ct)
+    {
+        var instanceId = deferFollowUps
+            ? await _engine.SubmitWithDeferredFollowUpsAsync(trigger.FlowKey, trigger.StarterUserId, varsJson ?? "{}", ct)
+            : await _engine.SubmitAsync(trigger.FlowKey, trigger.StarterUserId, varsJson ?? "{}");
+        fire.InstanceId = instanceId;
+        fire.Error = null;
+        trigger.LastFiredUtc = DateTime.UtcNow;
+        await _db.SaveChangesAsync(ct);
+        return instanceId;
+    }
+
     public Task<int> ScanTimersOnceAsync(CancellationToken ct)
         => ScanTimersOnceAsync(DateTime.UtcNow, ct);
 
@@ -120,9 +175,14 @@ public class FlowTriggerService : IFlowTriggerService
         var processed = 0;
 
         // ── ① 补跑扫描（spec §3.2 崩溃恢复）：宽限期外仍未完成的占坑行 → 补第二段 ──
-        var staleIds = await _db.Wf_TriggerFires
+        var recoverable = _db.Wf_TriggerFires
             .Where(f => f.Source == WfTriggerType.Timer && f.InstanceId == null && f.Error == null
-                        && f.FiredUtc < nowUtc - RecoveryGrace)
+                        && f.FiredUtc < nowUtc - RecoveryGrace);
+        // A legacy manual placeholder cannot recover as a timer. It does not record
+        // the human actor whose current authority would be needed to start the flow.
+        if (_db.Database.IsNpgsql())
+            recoverable = recoverable.Where(f => !f.IdempotencyKey.StartsWith(ManualKeyPrefix));
+        var staleIds = await recoverable
             .OrderBy(f => f.FiredUtc)
             .Take(BatchSize)
             .Select(f => f.Id)

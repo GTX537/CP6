@@ -122,10 +122,10 @@ public class FlowTriggerAdminService : IFlowTriggerAdminService
         var varsJson = t.TriggerType == WfTriggerType.Timer
             ? WfTriggerConfig.ParseTimer(t.ConfigJson).VarsJson
             : "{}";
-        // 同上下文重复试发时脱钩：令 FireAsync 步④重查到带当前 RowVersion 的鲜活实例，
+        // 同上下文重复试发时脱钩：令触发服务重查到带当前 RowVersion 的鲜活实例，
         // 避免上次 LastFiredUtc 写触达后本追踪实例持旧令牌撞乐观并发（同 ScanTimersOnceAsync 第二段脱钩口径）。
         _db.Entry(t).State = EntityState.Detached;
-        return await _fire.FireAsync(t, varsJson, t.TriggerType, $"manual:{Guid.NewGuid():N}", ct);
+        return await _fire.FireManualAsync(t, varsJson, ct);
     }
 
     public async Task<List<TriggerFireListItem>> ListFiresAsync(Guid id, int take, CancellationToken ct)
