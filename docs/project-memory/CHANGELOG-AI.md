@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 · W587-01 定时触发领取与补跑原子提交
+
+租户暂停与定时写入串行。提交被数据库拒绝后原到期键可在下一轮完成。 [缺陷 #1089](https://github.com/GTX537/CP6/issues/1089) · [交付记录](../development/evidence/W587-01/DELIVERY.md)
+
 ## 2026-11-14 · W586-01 消息触发按提交时授权
 
 当密钥更换先提交时拒绝旧密钥，当租户暂停先提交时拒绝新效果。先提交消息保存原历史。 [缺陷 #1087](https://github.com/GTX537/CP6/issues/1087) · [交付记录](../development/evidence/W586-01/DELIVERY.md)
