@@ -452,9 +452,9 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         using var revokedSession = await host.Send(Projection(command with { Purpose = humanContext ? "intake:list" : "configuration:read" }, token)); Assert.Equal(HttpStatusCode.Unauthorized, revokedSession.StatusCode);
     }
 
-    private static async Task WaitConfigurationBridge(string directory, string stage)
+    private static async Task WaitConfigurationBridge(string directory, string stage, TimeSpan? duration = null)
     {
-        using var timeout = new CancellationTokenSource(TimeSpan.FromMinutes(3));
+        using var timeout = new CancellationTokenSource(duration ?? TimeSpan.FromMinutes(3));
         while (!File.Exists(Path.Combine(directory, stage)))
         {
             Assert.False(File.Exists(Path.Combine(directory, "aborted")), $"CRM fixture failed before stage {stage}.");
