@@ -79,22 +79,23 @@ public partial class FlowEngine
     }
 
     public async Task TransferAsync(Guid taskId, Guid actorId, Guid toUserId, string? comment = null,
-        bool bypassOwnership = false)
+        bool bypassOwnership = false, Guid? expectedAssigneeId = null)
     {
-        var task = await _db.Wf_FlowTasks.FirstOrDefaultAsync(t => t.Id == taskId)
-                   ?? throw new InvalidOperationException("E-WF-002");
-        if (task.Status != FlowTaskStatus.Pending) throw new InvalidOperationException("E-WF-002");
+        // 批量候选在事务前读取；待办改派共享事务根，在此重读当前归属。
+        var task = await _db.Wf_FlowTasks.FirstOrDefaultAsync(t => t.Id == taskId);
+        if (task is null || task.Status != FlowTaskStatus.Pending ||
+            (expectedAssigneeId is { } expected && task.AssigneeId != expected))
+            throw new InvalidOperationException("E-WF-002");
 
         var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId);
         if (inst is null || inst.Status != FlowInstanceStatus.Running) throw new InvalidOperationException("E-WF-002");
         RequireLegacyRuntime(inst);
 
-        // ★ 归属闸（P0 票#1）。bypassOwnership 唯一可信调用方=InboxService.BatchTransferAsync
-        //（admin 批量转单：控制器 oa-inbox:batch-transfer 闸 + AssigneeId==from 预筛已把关）。
+        // 管理员批量转单通过独立权限闸，在当前条目事务内核对原处理人。
         if (!bypassOwnership) await AssertActorMayHandleAsync(task, actorId);
 
         // 目标须同租户真实用户、且非当前处理人（同租户由全局过滤器保证；查不到=越租户/不存在）
-        var toExists = await _db.Sys_Users.AnyAsync(u => u.Id == toUserId);
+        var toExists = await _db.Sys_Users.AnyAsync(u => u.Id == toUserId && (expectedAssigneeId == null || u.Enable));
         if (!toExists || toUserId == task.AssigneeId) throw new InvalidOperationException("E-WF-002");
 
         var fromUserId = task.AssigneeId;

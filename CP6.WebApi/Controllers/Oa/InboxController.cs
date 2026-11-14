@@ -1,10 +1,13 @@
+using System.Data.Common;
 using CP6.Core.Auth;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
 using CP6.WebApi.Filters;
+using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Controllers.Oa;
 
@@ -18,6 +21,7 @@ namespace CP6.WebApi.Controllers.Oa;
 [Authorize]
 public class InboxController : LocalizedControllerBase
 {
+    private const string BatchTransferAction = "batch-transfer";
     private readonly IInboxService _inbox;
     private readonly ICurrentPermissionContext _ctx;
     private readonly IDelegateService _delegate;
@@ -224,19 +228,33 @@ public class InboxController : LocalizedControllerBase
         f is null ? null : new BatchTransferFilter(f.FlowKey, f.BeforeUtc, f.TaskIds);
 
     [HttpPost("batch-transfer")]
-    [RequirePermission("oa-inbox", "batch-transfer")]
+    [RequirePermission("oa-inbox", BatchTransferAction)]
     public async Task<IActionResult> BatchTransfer([FromBody] BatchTransferReq r)
     {
         try
         {
             var me = await CurrentUserIdAsync();   // 操作者=登录管理员本人（管理动作不走 act-as）
-            return Ok2(await _inbox.BatchTransferAsync(me, r.FromUserId, r.ToUserId, r.Comment, ToFilter(r.Filter)));
+            var authority = HttpContext.RequestServices.GetRequiredService<IamAdministrationV1>();
+            return Ok2(await _inbox.BatchTransferAsync(me, r.FromUserId, r.ToUserId, r.Comment, ToFilter(r.Filter),
+                authority.IsPostgreSql ? CommitItem : null));
+
+            Task CommitItem(Func<Task> transfer) => IamAdministrationHttpV1.ExecuteWriteAsync(
+                HttpContext, authority, $"oa-inbox:{BatchTransferAction}", async (_, _) =>
+                {
+                    await transfer();
+                    return true;
+                });
+        }
+        catch (IamAdministrationExceptionV1 e) { return StatusCode(e.Status, new { code = e.Status, message = e.Message }); }
+        catch (Exception e) when (e is DbException or DbUpdateException or CurrentPermissionUnavailableException)
+        {
+            return StatusCode(503, new { code = 503, message = "AUTHORITY_FENCE_UNAVAILABLE" });
         }
         catch (InvalidOperationException e) { return Err(e); }
     }
 
     [HttpPost("batch-transfer/preview")]
-    [RequirePermission("oa-inbox", "batch-transfer")]
+    [RequirePermission("oa-inbox", BatchTransferAction)]
     public async Task<IActionResult> BatchTransferPreview([FromBody] BatchTransferReq r)
     {
         try

@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
 using CP6.Entity.DomainModels.Sys;
 using CP6.Entity.DomainModels.Wf;
@@ -506,8 +507,12 @@ public partial class InboxService : IInboxService
 
     /// <inheritdoc/>
     public async Task<BatchTransferReport> BatchTransferAsync(
-        Guid actorId, Guid fromUserId, Guid toUserId, string? comment, BatchTransferFilter? filter = null)
+        Guid actorId, Guid fromUserId, Guid toUserId, string? comment,
+        BatchTransferFilter? filter = null, Func<Func<Task>, Task>? commitItem = null)
     {
+        if (commitItem is null && _db.Database.IsNpgsql())
+            throw new IamAdministrationExceptionV1(503, "AUTHORITY_FENCE_UNAVAILABLE");
+
         // 前置校验（入参级，400 口径，不占 E-WF 码）
         if (fromUserId == toUserId)
             throw new InvalidOperationException("oa.bt.errSameUser");
@@ -525,14 +530,20 @@ public partial class InboxService : IInboxService
         {
             try
             {
-                // 引擎动作只调用不改动：内部校验 + FormTo 双行 + history + 通知 + 单次 SaveChanges（=单条独立事务）
-                await _engine.TransferAsync(taskId, actorId, toUserId, comment, bypassOwnership: true);
+                if (commitItem is null)
+                    await Transfer();
+                else
+                    await commitItem(Transfer);
                 succeeded++;
             }
-            catch (InvalidOperationException e)                                    // 单条失败不中断后续（D3）
+            catch (InvalidOperationException e) when (e is not IamAdministrationExceptionV1 { Status: not 403 }
+                                                       and not CurrentPermissionUnavailableException)
             {
                 failed.Add(new BatchTransferItemResult(taskId, flowKey, false, e.Message));
             }
+
+            Task Transfer() => _engine.TransferAsync(taskId, actorId, toUserId, comment,
+                bypassOwnership: true, expectedAssigneeId: fromUserId);
         }
         return new BatchTransferReport(candidates.Count, succeeded, failed);
     }

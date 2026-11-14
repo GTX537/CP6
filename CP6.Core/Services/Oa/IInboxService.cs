@@ -23,7 +23,8 @@ public interface IInboxService
     Task<InboxStats> StatsAsync(Guid userId);
     // ── 表單查詢（Phase C）──
     Task<FormQueryPage> QueryAsync(Guid effectiveUserId, FormQueryFilter filter);
-    // ── 在途批量转单（wfs-inbox-ux §3）── actorId=操作者（管理员本人）；逐条独立事务（引擎 TransferAsync 内部 SaveChanges）
-    Task<BatchTransferReport> BatchTransferAsync(Guid actorId, Guid fromUserId, Guid toUserId, string? comment, BatchTransferFilter? filter = null);
+    // ── 在途批量转单（wfs-inbox-ux §3）── actorId=操作者（管理员本人）；PostgreSQL 逐条经当前权限事务提交。
+    Task<BatchTransferReport> BatchTransferAsync(Guid actorId, Guid fromUserId, Guid toUserId, string? comment,
+        BatchTransferFilter? filter = null, Func<Func<Task>, Task>? commitItem = null);
     Task<BatchTransferPreview> BatchTransferPreviewAsync(Guid fromUserId, BatchTransferFilter? filter = null);
 }
