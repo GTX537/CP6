@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 · W578-01 PGT-017 余项
+
+继续实际宿主投影发布与差量恢复、正式切换编排，以及 Main 旧 OA 退回、批量办理和触发器、财务、独立 Space Design 和剩余普通写入口。 [交付记录](../development/evidence/W578-01/DELIVERY.md)
+
 ## 2026-11-14 · W577-01 PGT-017 余项
 
 继续旧 OA 退回、批量办理及触发器，保留原动作的提交及外部执行边界。财务、独立 Space Design、其他普通写者以及缺失写集和切换仍待核销。 [交付记录](../development/evidence/W577-01/DELIVERY.md)

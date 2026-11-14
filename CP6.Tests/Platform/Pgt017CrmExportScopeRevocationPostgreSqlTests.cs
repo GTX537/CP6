@@ -16,6 +16,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         const string path = "api/iam/inquiry-scopes/71";
         const string aggregate = "permission:role:71";
         var cookies = await Login(host, h);
+        var pauseFirst = Environment.GetEnvironmentVariable("CP6_PGT017_ORDER") == "pause-first";
         var broker = regrant && Environment.GetEnvironmentVariable("CP6_PGT017_C02_KAFKA") == "1";
         using var read = await host.Send(Request(HttpMethod.Get, path, cookies));
         Assert.True(read.StatusCode == HttpStatusCode.OK, await read.Content.ReadAsStringAsync());
@@ -39,7 +40,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         await Stage("ready");
 
         Task<HttpResponseMessage> change;
-        if (Environment.GetEnvironmentVariable("CP6_PGT017_ORDER") == "pause-first")
+        if (pauseFirst)
         {
             await Stage("permission-held");
             change = Revoke();
@@ -116,7 +117,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         {
             if (broker)
             {
-                await Stage("sealed-write-denied");
+                await Stage(pauseFirst ? "sealed-write-denied" : "committed-export-preserved");
                 await SendPublication("revoked", after.Version);
             }
             await Stage("revocation-published");

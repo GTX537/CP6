@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 · W578-01 补齐 CRM 先提交的真实运输
+
+封存后、撤权更新后及重授后同一个 CRM 原导出写集摘要保持相等。两条 C02 事件使用真实 Dapr/Kafka 进入 CRM 原生 Inbox。 [交付记录](../development/evidence/W578-01/DELIVERY.md)
+
 ## 2026-11-14 · W577-01 旧撤回与父流程恢复
 
 旧 OA 撤回在 Main 现有栅栏内重验权限。真实 PostgreSQL 观测到子流程撤回和恢复凭据先提交，父流程后推进。 [交付记录](../development/evidence/W577-01/DELIVERY.md)
