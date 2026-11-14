@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 · W588-01 旧 OA 事件与后台重投
+
+事件 HTTP 和重试分别通过与租户暂停的两种 PostgreSQL 顺序，共 5 项新增用例通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W588-01/DELIVERY.md)
+
 ## 2026-11-14 · W587-01 旧 OA 定时领取与补跑
 
 定时领取、旧占位补跑与租户暂停的四种实际 PostgreSQL 顺序通过。25 个不同相关用例通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W587-01/DELIVERY.md)

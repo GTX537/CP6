@@ -165912,6 +165912,11 @@
       "at": "2026-11-14T18:36:12.998638+00:00",
       "change": "W587-01 定时领取与旧占位补跑采用 Main 共同事务，水位和流程效果原子提交，正式仍为 26/27。",
       "evidence": "docs/development/evidence/W587-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T19:07:01.836023+00:00",
+      "change": "W588-01 事件 HTTP 和存量重投采用 Main 共同事务，原事件及实际流程效果同步，正式仍为 26/27。",
+      "evidence": "docs/development/evidence/W588-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211918,10 +211923,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W587",
-      "path": "docs/development/evidence/W587-01/DELIVERY.md",
-      "baseline_sha": "ef3175ad20fffce52d3e582561dd101fe8764dc7",
-      "registered_at": "2026-11-14T18:18:47.579751+00:00",
+      "id": "W588",
+      "path": "docs/development/evidence/W588-01/DELIVERY.md",
+      "baseline_sha": "0d4225e8bff26b12cf13f3d936e260b2655d19d9",
+      "registered_at": "2026-11-14T18:45:20.211878+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211935,11 +211940,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "核对旧事件正常入口及既有可信重投事务，继续 CRM 正式恢复切换编排及全写者登记。",
+      "next_action": "核对银行按笔写入及独立 Space Design 提交边界，继续 CRM 正式恢复切换编排及全写者登记。",
       "windows": [
         {
-          "id": "W587-01",
-          "workspace_task": "W587-01",
+          "id": "W588-01",
+          "workspace_task": "W588-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -211950,23 +211955,23 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w587-01",
-          "planned_scope_ref": "docs/development/evidence/W587-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W587-01/DELIVERY.md",
+          "branch": "codex/w588-01",
+          "planned_scope_ref": "docs/development/evidence/W588-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W588-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:OA-Flow-Trigger-Timer",
+            "Main:OA-Flow-Trigger-Event",
             "Main:IAM-CurrentWriteAuthority",
-            "Main:WorkflowServiceJobs",
+            "Main:IntegrationEvent-Retry",
             "Local:PostgreSQL-HTTP"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "25 个不同实际 PostgreSQL 用例通过，零跳过。四种租户暂停与定时领取/旧占位补跑顺序，双 Worker 竞争，提交期拒绝后保留并重试原到期键。",
-          "remaining_scope": "旧事件触发、财务、独立 Space Design 和其他写者，CRM 正式恢复/重开与切换编排。",
-          "main_tested_source_sha": "f969f66b82d054f9b9d3dde8a89628ad8c046731"
+          "validation_summary": "5/5 新 PostgreSQL 用例通过。复用同产品二进制的 25 个实际 PostgreSQL 和 4 个事件分派回归，无跳过。",
+          "remaining_scope": "财务按笔提交、独立 Space Design 和全写者登记，CRM 正式恢复/重开与切换编排。",
+          "main_tested_source_sha": "5e185830dff0600414fe2034671f8c841e0b3336"
         }
       ],
       "storage": {
@@ -266356,6 +266361,68 @@
             "main_tested_source_sha": "042d86683dd0476fc61c98844a0f511ad98d308a",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1088",
             "main_remote_main_sha": "ef3175ad20fffce52d3e582561dd101fe8764dc7"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W587",
+        "path": "docs/development/evidence/W587-01/DELIVERY.md",
+        "baseline_sha": "ef3175ad20fffce52d3e582561dd101fe8764dc7",
+        "registered_at": "2026-11-14T18:18:47.579751+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "核对旧事件正常入口及既有可信重投事务，继续 CRM 正式恢复切换编排及全写者登记。",
+        "windows": [
+          {
+            "id": "W587-01",
+            "workspace_task": "W587-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w587-01",
+            "planned_scope_ref": "docs/development/evidence/W587-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W587-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:OA-Flow-Trigger-Timer",
+              "Main:IAM-CurrentWriteAuthority",
+              "Main:WorkflowServiceJobs",
+              "Local:PostgreSQL-HTTP"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "25 个不同实际 PostgreSQL 用例通过，零跳过。四种租户暂停与定时领取/旧占位补跑顺序，双 Worker 竞争，提交期拒绝后保留并重试原到期键。",
+            "remaining_scope": "旧事件触发、财务、独立 Space Design 和其他写者，CRM 正式恢复/重开与切换编排。",
+            "main_tested_source_sha": "f969f66b82d054f9b9d3dde8a89628ad8c046731",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1090",
+            "main_remote_main_sha": "0d4225e8bff26b12cf13f3d936e260b2655d19d9"
           }
         ],
         "storage": {

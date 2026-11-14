@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 · W588-01 PGT-017 余项
+
+核对财务按笔提交、独立 Space Design 和其他写者。CRM 恢复、重开和正式切换编排仍待验证。 [交付记录](../development/evidence/W588-01/DELIVERY.md)
+
 ## 2026-11-14 · W587-01 PGT-017 余项
 
 核对旧事件、财务、独立 Space Design 及其他写者。CRM 恢复、重开和正式切换编排仍待验证。 [交付记录](../development/evidence/W587-01/DELIVERY.md)
