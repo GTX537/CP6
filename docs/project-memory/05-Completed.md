@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-14 · W576-01 旧 OA 批量转交
+
+批量转交逐条持有 Main IAM PostgreSQL 事务栅栏，判定当前角色、原待办和接收人。同一条内一起提交改派、传签履历和待办通知。34 项测试及本地发布冒烟通过。 [交付记录](../development/evidence/W576-01/DELIVERY.md)
+
 ## 2026-11-14 · W575-01 旧 OA 加签
 
 旧 OA 加签接入 Main IAM PostgreSQL 事务栅栏。撤权优先时无新效果，加签优先时原任务挂起和合法效果各保存一次。30 项测试通过。 [交付记录](../development/evidence/W575-01/DELIVERY.md)

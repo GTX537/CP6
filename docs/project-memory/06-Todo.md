@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 · W576-01 PGT-017 余项
+
+继续旧 OA 撤回、退回、批量办理和触发器，再核对财务、独立 Space Design 和剩余写者。缺失写集对账、目标安全重开及切换编排仍待。 [交付记录](../development/evidence/W576-01/DELIVERY.md)
+
 ## 2026-11-14 · W575-01 PGT-017 余项
 
 优先核对旧 OA 批量、退回、撤回和触发写入，再核销财务、独立 Space Design 和其余写者。欠缺写集的对账与重新开放仍待。 [交付记录](../development/evidence/W575-01/DELIVERY.md)

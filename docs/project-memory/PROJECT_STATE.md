@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-14 · W576-01 旧 OA 批量转交
+
+隔离 PostgreSQL 实测，撤权先提交时批次两条均被拒；首条先提交时保存该条，撤权后的第二条被拒。待办在等待期间已改派时，候选旧归属被拒，其他合法条目继续。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W576-01/DELIVERY.md)
+
 ## 2026-11-14 · W575-01 旧 OA 加签事务栅栏
 
 实测基线撤权先提交后仍能新增加签任务。修复后 Main IAM 与旧 OA 加签共用 PostgreSQL 事务根。两个顺序的原任务、加签任务、审计与待办通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W575-01/DELIVERY.md)
