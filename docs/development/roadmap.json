@@ -165817,6 +165817,11 @@
       "at": "2026-11-14T06:30:58.915353+00:00",
       "change": "W568-01 补齐 Main 实际 COMMIT 回执丢失的两库原结果联验。正式 PostgreSQL 保持 26/27。",
       "evidence": "docs/development/evidence/W568-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T07:32:11.282248+00:00",
+      "change": "W569-01 修复 PostgreSQL 恢复库重复发布已登记 CRM 询盘 Outbox，正式 PostgreSQL 保持 26/27。",
+      "evidence": "docs/development/evidence/W569-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211823,10 +211828,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W568",
-      "path": "docs/development/evidence/W568-01/DELIVERY.md",
-      "baseline_sha": "e1c1e7d04af870e5573e5fd8e14a17597e9c93df",
-      "registered_at": "2026-11-14T06:25:27.305582+00:00",
+      "id": "W569",
+      "path": "docs/development/evidence/W569-01/DELIVERY.md",
+      "baseline_sha": "6511f246537f824ccb883149333c7bf5ec01e757",
+      "registered_at": "2026-11-14T07:31:16.739882+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211840,42 +211845,52 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "先在关闭的物理恢复目标上比对封存及身份水位、C02 原事件、业务回执和出站消息，保持旧实例排空条件，继续其余写者验收。",
+      "next_action": "在封闭的物理恢复目标上验证 Main 及 CRM 版本、原结果和外部消息水位差量，继续真实传输与其他写者验收。",
       "windows": [
         {
-          "id": "W568-01",
-          "workspace_task": "W568-01",
+          "id": "W569-01",
+          "workspace_task": "W569-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT",
+          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w568-01",
-          "planned_scope_ref": "docs/development/evidence/W568-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W568-01/DELIVERY.md",
+          "branch": "codex/w569-01",
+          "planned_scope_ref": "docs/development/evidence/W569-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W569-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:Iam-role-policy-receipts",
-            "CRM:registered-role-fence",
-            "Main:CRM-two-database-acceptance"
+            "CRM:registered-inquiry-store",
+            "CRM:native-outbox",
+            "CRM:PostgreSQL-physical-recovery"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "两套隔离 PostgreSQL 18.6，丢失 Main COMMIT 回执和 CRM 先提交对照，每组 Main/CRM 各一项通过，共 4 项，无跳过。",
-          "remaining_scope": "物理恢复后的 Main 权威与 CRM 封存版本、C02 已发布身份、原业务回执和消息水位对账，目标库重新开放，实际宿主运输与旧实例排空，以及 Main 的旧 OA、财务、独立 Space Design 和其余普通数据库写者。",
-          "main_tested_source_sha": "b7ae0e7891265e8988e829d8794086fa6730985f"
+          "validation_summary": "真实物理恢复基线重复发布，CRM 修复后直连发布器和托管 Worker 均拒绝恢复库派发；物理恢复回归 1 项、既有恢复 2 个场景、定向回归 20 项通过，本地发布 HTTP 200/403。",
+          "remaining_scope": "物理恢复后核对 Main 权威、CRM 封存版本、C02 已发布身份、原业务回执及外部消息水位，验收重新开放、实际 broker 和旧实例排空。Main 旧 OA、财务、独立 Space Design 及其他普通数据库写者待核销。",
+          "product_repository": "CP6.CRM",
+          "product_worktree": "D:/CP6-worktrees/dev-2",
+          "product_baseline": "f8c9a453164a1af8f0ade70ed240ac86df63ca16",
+          "product_branch": "codex/w569-01",
+          "product_source_sha": "9aa9c8127f7fdd84cec79cf73227533824b03c5e",
+          "product_remote_main_sha": "5baf07e5df5d93278adce5c9dec6f76b5b482470",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/221",
+          "product_branch_disposition": "deleted-local-and-remote",
+          "product_workspace_status": "fixed-seat-detached-for-reuse",
+          "product_seat_released": true
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -265007,6 +265022,67 @@
             "main_tested_source_sha": "64ea3f2eea76b17652a2051a61212aa798e52b74",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1060",
             "main_remote_main_sha": "e1c1e7d04af870e5573e5fd8e14a17597e9c93df"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W568",
+        "path": "docs/development/evidence/W568-01/DELIVERY.md",
+        "baseline_sha": "e1c1e7d04af870e5573e5fd8e14a17597e9c93df",
+        "registered_at": "2026-11-14T06:25:27.305582+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "先在关闭的物理恢复目标上比对封存及身份水位、C02 原事件、业务回执和出站消息，保持旧实例排空条件，继续其余写者验收。",
+        "windows": [
+          {
+            "id": "W568-01",
+            "workspace_task": "W568-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w568-01",
+            "planned_scope_ref": "docs/development/evidence/W568-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W568-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:Iam-role-policy-receipts",
+              "CRM:registered-role-fence",
+              "Main:CRM-two-database-acceptance"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "两套隔离 PostgreSQL 18.6，丢失 Main COMMIT 回执和 CRM 先提交对照，每组 Main/CRM 各一项通过，共 4 项，无跳过。",
+            "remaining_scope": "物理恢复后的 Main 权威与 CRM 封存版本、C02 已发布身份、原业务回执和消息水位对账，目标库重新开放，实际宿主运输与旧实例排空，以及 Main 的旧 OA、财务、独立 Space Design 和其余普通数据库写者。",
+            "main_tested_source_sha": "b7ae0e7891265e8988e829d8794086fa6730985f",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1061",
+            "main_remote_main_sha": "6511f246537f824ccb883149333c7bf5ec01e757"
           }
         ],
         "storage": {
