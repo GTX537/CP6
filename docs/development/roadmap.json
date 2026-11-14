@@ -165757,6 +165757,11 @@
       "at": "2026-11-14T00:20:20.699246+00:00",
       "change": "W556 采购询价逐笔价格写入接入 Main 当前授权事务根，完成两种暂停时序和部分提交回归。正式 PostgreSQL 仍 26/27。",
       "evidence": "docs/development/evidence/W556-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-14T00:58:19.543336+00:00",
+      "change": "W557 CRM 询盘栅栏绑定 PostgreSQL WAL 时间线。真实物理恢复证明旧副本保持关闭，正式 PostgreSQL 26/27。",
+      "evidence": "docs/development/evidence/W557-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211763,10 +211768,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W556",
-      "path": "docs/development/evidence/W556-01/DELIVERY.md",
-      "baseline_sha": "f07910e266f7d3b20bc64cc80e105f66a36d80c1",
-      "registered_at": "2026-11-14T00:06:43.088616+00:00",
+      "id": "W557",
+      "path": "docs/development/evidence/W557-01/DELIVERY.md",
+      "baseline_sha": "78a3312029abe26c8a90c4f0feaa563a62afefe5",
+      "registered_at": "2026-11-14T00:26:32.982653+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211780,41 +211785,52 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续按现有业务事务核对剩余 Main 写者，验证普通角色和双库时间点恢复。PGT-017 完整写者清单待核销。",
+      "next_action": "继续按现有事务核对 Main 独立写者和普通角色，随后核对两库恢复后重新开放及实际传输。PGT-017 保持 NOT_RUN。",
       "windows": [
         {
-          "id": "W556-01",
-          "workspace_task": "W556-01",
+          "id": "W557-01",
+          "workspace_task": "W557-01",
           "related_tasks": [
             "WP02-03",
+            "WP02-09",
             "PGT-017"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT",
+          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w556-01",
-          "planned_scope_ref": "docs/development/evidence/W556-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W556-01/DELIVERY.md",
+          "branch": "codex/w557-01",
+          "planned_scope_ref": "docs/development/evidence/W557-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W557-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main RFQ and supplier price table",
-            "isolated Main PostgreSQL and CP6 WebApi"
+            "CRM inquiry fence SQL and PostgreSQL WAL timeline",
+            "isolated Main and CRM PostgreSQL"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "两种 PostgreSQL 提交顺序修复后均通过。正常多报价及第二笔校验失败后重试均通过，另有 40 项既有 RFQ 和供应商价格组件回归。本地发布 310 文件，建库退出 0、存活 200、匿名管理和询价 401。",
-          "remaining_scope": "RFQ 其他入口、采购转单及收货、旧 OA、财务、MRP、独立 Space Design、Stock 普通数据库写者、Main/CRM 两库时间点恢复与真实传输采用。",
-          "main_tested_source_sha": "5c341eff66919f3121645abc5847663a8b46e96c"
+          "validation_summary": "物理恢复两种安装顺序均拒绝旧开放版本及六类封存；CRM 原生 PostgreSQL 10 项通过，真实 Main/CRM 导出两种提交顺序各 2 项通过；发布 255 文件、存活 200、匿名配置 403。",
+          "remaining_scope": "Main 独立 Space Design、旧 OA、财务、采购收货和计划、Stock 普通数据库角色，以及两库恢复重新开放、原结果和消息对账、旧宿主排空及实际传输。",
+          "product_repository": "CP6.CRM",
+          "product_worktree": "D:/CP6-worktrees/dev-2",
+          "product_baseline": "27ce9d891dc252440186b2343dae0a7013b50d59",
+          "product_branch": "codex/w557-01",
+          "product_source_sha": "d51c8d201e63e6b0ccbd74477fe44f242b216712",
+          "product_remote_main_sha": "ffeadb7e70fe0d8c03c0bdf45c4c797f08fd0506",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/218",
+          "product_branch_disposition": "deleted-local-and-remote",
+          "product_workspace_status": "fixed-seat-detached-for-reuse",
+          "product_seat_released": true
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -264216,6 +264232,66 @@
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018",
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W556",
+        "path": "docs/development/evidence/W556-01/DELIVERY.md",
+        "baseline_sha": "f07910e266f7d3b20bc64cc80e105f66a36d80c1",
+        "registered_at": "2026-11-14T00:06:43.088616+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续按现有业务事务核对剩余 Main 写者，验证普通角色和双库时间点恢复。PGT-017 完整写者清单待核销。",
+        "windows": [
+          {
+            "id": "W556-01",
+            "workspace_task": "W556-01",
+            "related_tasks": [
+              "WP02-03",
+              "PGT-017"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w556-01",
+            "planned_scope_ref": "docs/development/evidence/W556-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W556-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main RFQ and supplier price table",
+              "isolated Main PostgreSQL and CP6 WebApi"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "两种 PostgreSQL 提交顺序修复后均通过。正常多报价及第二笔校验失败后重试均通过，另有 40 项既有 RFQ 和供应商价格组件回归。本地发布 310 文件，建库退出 0、存活 200、匿名管理和询价 401。",
+            "remaining_scope": "RFQ 其他入口、采购转单及收货、旧 OA、财务、MRP、独立 Space Design、Stock 普通数据库写者、Main/CRM 两库时间点恢复与真实传输采用。",
+            "main_tested_source_sha": "5c341eff66919f3121645abc5847663a8b46e96c",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1039",
+            "main_remote_main_sha": "78a3312029abe26c8a90c4f0feaa563a62afefe5"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },

@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-14 UTC · W557 CRM 物理恢复关闭写入
+
+备份前安装及恢复后升级两种实际 WAL 恢复通过。CRM PostgreSQL 10 项通过，两库导出两种提交顺序通过。 [交付](../development/evidence/W557-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W556 逐笔价格回写
 
 暂停先提交拒绝旧会话，价格先提交保留。第二笔错误后，同一业务键重试成功且无重复价格。 [交付](../development/evidence/W556-01/DELIVERY.md)

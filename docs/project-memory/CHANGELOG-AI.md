@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-14 UTC · W557 CRM WAL 时间线
+
+原集群标识和数据库 OID 加入 WAL 时间线。已登记存储升级和恢复时保留关闭，等待可信原库来源核对。 [交付](../development/evidence/W557-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W556 询价回写并发修复
 
 每笔价格和最终询价头更新取得共同授权事务根，沿用原逐笔提交及价表业务键。 [交付](../development/evidence/W556-01/DELIVERY.md)

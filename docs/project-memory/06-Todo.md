@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 UTC · W557 PGT-017 余项
+
+独立 Space Design、旧 OA、财务、采购、计划和普通 Stock 数据库写者仍需核对。物理恢复后重新开放、两库对账和真实传输待验。 [交付](../development/evidence/W557-01/DELIVERY.md)
+
 ## 2026-11-14 UTC · W556 PGT-017 余项
 
 RFQ 其他入口、采购收货、独立 OA、财务、MRP、Space Design、普通数据库角色及双库时间点恢复仍待核对。 [交付](../development/evidence/W556-01/DELIVERY.md)
