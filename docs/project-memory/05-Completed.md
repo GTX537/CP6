@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-14 · W585-01 实际 PostgreSQL 增量链
+
+核对 PostgreSQL 自带增量、备份校验、恢复时间线、原回执和两条无重发的 Kafka 出站记录。两仓 4 项通过。 [交付记录](../development/evidence/W585-01/DELIVERY.md)
+
 ## 2026-11-14 · W584-01 旧触发器手动试发
 
 实际 PostgreSQL 验证两个提交顺序、流程失败流水、提交失败与持久派送，以及定时 Worker 不补跑旧人工占位。 [交付记录](../development/evidence/W584-01/DELIVERY.md)

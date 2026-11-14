@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-14 · W585-01 PGT-017 余项
+
+正式恢复、重开与切换需编排。继续覆盖旧消息、定时和事件、财务、独立 Space Design 与其余写者，完成共同事务登记。 [交付记录](../development/evidence/W585-01/DELIVERY.md)
+
 ## 2026-11-14 · W584-01 PGT-017 余项
 
 旧消息、事件和定时仍要核对当前权威。继续核对财务、独立 Space Design 与其他写者，同时验收 CRM 差量恢复和安全切换。 [交付记录](../development/evidence/W584-01/DELIVERY.md)
