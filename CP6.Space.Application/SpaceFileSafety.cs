@@ -248,7 +248,10 @@ public sealed record SpaceFileScanTarget(
     string DetectedContentType,
     string Extension,
     long SizeBytes,
-    string Sha256);
+    string Sha256)
+{
+    public FileSafetyResult? CompletedResult { get; init; }
+}
 
 public interface ISpaceFileScanStateStore
 {
@@ -301,6 +304,9 @@ public sealed class SpaceFileScanProcessor : ISpaceFileScanProcessor
         }
 
         var target = await _state.BeginScanAsync(lease, cancellationToken);
+        if (target.CompletedResult is { } completed)
+            return completed;
+
         var request = new FileScanRequest(
             target.TenantId,
             target.FileId,
