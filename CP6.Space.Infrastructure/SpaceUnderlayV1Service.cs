@@ -1,17 +1,18 @@
-using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using CP6.Core.Persistence;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Space.Infrastructure;
 
 public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
 {
+    private const string UploadPermission = "space:source:upload";
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
 
@@ -23,6 +24,7 @@ public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
     private readonly ISpaceFileStore _files;
     private readonly ISpaceClock _clock;
     private readonly SpaceUnderlayCalibrationOptions _calibrationOptions;
+    private readonly ISpaceDesignWriteAuthority? _writeAuthority;
 
     public SpaceUnderlayV1Service(
         SpaceContext context,
@@ -32,7 +34,8 @@ public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
         SpaceSourceCoordinator sources,
         ISpaceFileStore files,
         ISpaceClock clock,
-        SpaceUnderlayCalibrationOptions? calibrationOptions = null)
+        SpaceUnderlayCalibrationOptions? calibrationOptions = null,
+        ISpaceDesignWriteAuthority? writeAuthority = null)
     {
         _context = context;
         _execution = execution;
@@ -41,6 +44,7 @@ public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
         _sources = sources;
         _files = files;
         _clock = clock;
+        _writeAuthority = writeAuthority;
         _calibrationOptions =
             calibrationOptions ?? new SpaceUnderlayCalibrationOptions();
         if (_calibrationOptions.MinimumValidationErrorMillimeters
@@ -53,6 +57,31 @@ public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
         }
     }
 
+    private bool UseWriteAuthority => _writeAuthority is not null && _context.Database.IsNpgsql();
+
+    private async Task<IDbContextTransaction> BeginUnderlayWriteAsync(
+        CancellationToken cancellationToken,
+        string? additionalPermission = null)
+    {
+        for (var attempt = 1; ; attempt++)
+        {
+            try
+            {
+                return await SpaceDesignWriteTransaction.BeginAsync(
+                    _context, _writeAuthority, cancellationToken, additionalPermission);
+            }
+            catch (Exception error) when (UseWriteAuthority &&
+                                         DatabaseFailureClassifier.Classify(error).CanRetryTransaction)
+            {
+                if (attempt == 3)
+                    throw UnderlayConflict("The Space write authority changed concurrently.");
+            }
+        }
+    }
+
+    private Task CommitUnderlayWriteAsync(IDbContextTransaction transaction, CancellationToken cancellationToken) =>
+        SpaceDesignWriteTransaction.CommitAsync(_context, _writeAuthority, transaction, cancellationToken);
+
     public async Task<UploadSpaceUnderlayResponse> UploadAsync(
         Guid versionId,
         UploadSpaceUnderlayRequest request,
@@ -64,54 +93,19 @@ public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
         EnsureExecutionContext();
         EnsureUnderlayType(request.SourceType);
 
-        var (version, model) = await LoadWritableVersionAsync(
+        var (version, _) = await LoadWritableVersionAsync(
             versionId,
             cancellationToken);
-        var upload = await _uploads.UploadAsync(
-            new SpaceFileUploadRequest(
-                request.SourceType,
-                request.OriginalName,
-                request.DeclaredContentType,
-                SpaceFileRetentionClass.Source),
-            content,
-            cancellationToken);
+        var fileRequest = new SpaceFileUploadRequest(
+            request.SourceType,
+            request.OriginalName,
+            request.DeclaredContentType,
+            SpaceFileRetentionClass.Source);
+        var upload = UseWriteAuthority
+            ? await _uploads.UploadAsync(fileRequest, content, CompleteUnderlayFileUploadAsync, cancellationToken)
+            : await _uploads.UploadAsync(fileRequest, content, cancellationToken);
 
-        var existingSource = await _context.Sources
-            .SingleOrDefaultAsync(
-                source =>
-                    source.ModelVersionId == version.Id &&
-                    source.Sha256 == upload.File.Sha256 &&
-                    source.SourceType == request.SourceType,
-                cancellationToken);
-        SpaceModelSource source;
-        if (existingSource is not null)
-        {
-            source = existingSource;
-            if (source.State == SpaceSourceState.Rejected)
-            {
-                throw new SpaceProblemException(
-                    SpaceErrorCodes.SourceConflict,
-                    409,
-                    "The same underlay source was previously rejected.",
-                    recoveryAction: "remove-rejected-source-before-reupload");
-            }
-        }
-        else
-        {
-            source = upload.File.State == SpaceFileState.Clean
-                ? _sources.AddFileSource(
-                    version,
-                    upload.File,
-                    request.SourceType,
-                    request.OriginalName)
-                : _sources.AddPendingFileSource(
-                    version,
-                    upload.File,
-                    request.SourceType,
-                    request.OriginalName);
-            _context.Sources.Add(source);
-            await _context.SaveChangesAsync(cancellationToken);
-        }
+        var (source, reusedSource) = await RegisterUnderlaySourceAsync(version, request, upload.File, cancellationToken);
         await SynchronizeTerminalFileStateAsync(
             source,
             upload.File.Id,
@@ -133,7 +127,90 @@ public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
             jobId.HasValue
                 ? $"/api/space/design/v1/jobs/{jobId.Value:D}"
                 : null,
-            upload.Reused || existingSource is not null);
+            upload.Reused || reusedSource);
+    }
+
+    private async Task<SpaceFileUploadResult> CompleteUnderlayFileUploadAsync(
+        Func<CancellationToken, Task<SpaceFileUploadResult>> saveCatalog,
+        Func<CancellationToken, Task> publishContent,
+        CancellationToken cancellationToken)
+    {
+        await using var transaction = await BeginUnderlayWriteAsync(cancellationToken, UploadPermission);
+        var upload = await saveCatalog(cancellationToken);
+        if (!upload.Reused)
+            await publishContent(cancellationToken);
+
+        try
+        {
+            await _writeAuthority!.ConfirmSessionAsync(_context, cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+        }
+        catch
+        {
+            if (!upload.Reused)
+                await _files.DeleteAsync(upload.File.TenantId, upload.File.Id, upload.File.StorageKey, CancellationToken.None);
+            throw;
+        }
+
+        // A failed acknowledgement may follow a committed catalog row that owns this content.
+        await transaction.CommitAsync(cancellationToken);
+        return upload;
+    }
+
+    private async Task<(SpaceModelSource Source, bool Reused)> RegisterUnderlaySourceAsync(
+        SpaceModelVersion version,
+        UploadSpaceUnderlayRequest request,
+        SpaceFile file,
+        CancellationToken cancellationToken)
+    {
+        await using var transaction = UseWriteAuthority
+            ? await BeginUnderlayWriteAsync(cancellationToken, UploadPermission)
+            : null;
+        if (transaction is not null)
+        {
+            _context.ChangeTracker.Clear();
+            (version, _) = await LoadWritableVersionAsync(version.Id, cancellationToken);
+        }
+
+        var existingSource = await _context.Sources
+            .SingleOrDefaultAsync(
+                source =>
+                    source.ModelVersionId == version.Id &&
+                    source.Sha256 == file.Sha256 &&
+                    source.SourceType == request.SourceType,
+                cancellationToken);
+        SpaceModelSource source;
+        if (existingSource is not null)
+        {
+            source = existingSource;
+            if (source.State == SpaceSourceState.Rejected)
+            {
+                throw new SpaceProblemException(
+                    SpaceErrorCodes.SourceConflict,
+                    409,
+                    "The same underlay source was previously rejected.",
+                    recoveryAction: "remove-rejected-source-before-reupload");
+            }
+        }
+        else
+        {
+            source = file.State == SpaceFileState.Clean
+                ? _sources.AddFileSource(
+                    version,
+                    file,
+                    request.SourceType,
+                    request.OriginalName)
+                : _sources.AddPendingFileSource(
+                    version,
+                    file,
+                    request.SourceType,
+                    request.OriginalName);
+            _context.Sources.Add(source);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        if (transaction is not null)
+            await CommitUnderlayWriteAsync(transaction, cancellationToken);
+        return (source, existingSource is not null);
     }
 
     public async Task<SpaceFileDto> GetFileAsync(
@@ -258,10 +335,7 @@ public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
             operation,
             idempotencyKey);
 
-        await using var transaction = await _context.Database
-            .BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken);
+        await using var transaction = await BeginUnderlayWriteAsync(cancellationToken, UploadPermission);
         try
         {
             await AcquireFloorEditLockAsync(
@@ -307,7 +381,7 @@ public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                 cancellationToken);
             if (concurrentReplay is not null)
             {
-                await transaction.CommitAsync(cancellationToken);
+                await CommitUnderlayWriteAsync(transaction, cancellationToken);
                 return concurrentReplay;
             }
             EnsureUnderlayRevisions(
@@ -405,7 +479,7 @@ public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                     responseJson,
                     now));
             await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await CommitUnderlayWriteAsync(transaction, cancellationToken);
             return response;
         }
         catch (DbUpdateException)
@@ -506,10 +580,7 @@ public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                 new { SourceId = sourceId, Request = request },
                 JsonOptions));
         var keyHash = IdempotencyKeyHash(operation, idempotencyKey);
-        await using var transaction = await _context.Database
-            .BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken);
+        await using var transaction = await BeginUnderlayWriteAsync(cancellationToken, UploadPermission);
         try
         {
             await AcquireFloorEditLockAsync(
@@ -556,7 +627,7 @@ public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                 cancellationToken);
             if (concurrentReplay is not null)
             {
-                await transaction.CommitAsync(cancellationToken);
+                await CommitUnderlayWriteAsync(transaction, cancellationToken);
                 return concurrentReplay;
             }
             EnsureUnderlayRevisions(
@@ -670,7 +741,7 @@ public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                     responseJson,
                     now));
             await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await CommitUnderlayWriteAsync(transaction, cancellationToken);
             return response;
         }
         catch (SpaceUnderlayCalibrationException exception)

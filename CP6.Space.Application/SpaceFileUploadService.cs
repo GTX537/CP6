@@ -17,6 +17,11 @@ public sealed record SpaceFileUploadResult(
     bool Reused,
     Guid? ScanJobId);
 
+public delegate Task<SpaceFileUploadResult> CompleteSpaceFileUpload(
+    Func<CancellationToken, Task<SpaceFileUploadResult>> saveCatalog,
+    Func<CancellationToken, Task> publishContent,
+    CancellationToken cancellationToken);
+
 public sealed class SpaceFileUploadLimits
 {
     public const long OneMiB = 1024L * 1024L;
@@ -76,10 +81,17 @@ public sealed class SpaceFileUploadService
         _retention = retention ?? new SpaceFileRetentionOptions();
     }
 
+    public Task<SpaceFileUploadResult> UploadAsync(
+        SpaceFileUploadRequest request,
+        Stream input,
+        CancellationToken cancellationToken = default) =>
+        UploadAsync(request, input, complete: null, cancellationToken);
+
     public async Task<SpaceFileUploadResult> UploadAsync(
         SpaceFileUploadRequest request,
         Stream input,
-        CancellationToken cancellationToken = default)
+        CompleteSpaceFileUpload? complete,
+        CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(input);
@@ -119,70 +131,73 @@ public sealed class SpaceFileUploadService
                 cancellationToken);
             SpaceFileTypePolicy.ValidateSignature(expected, streamed.Signature);
 
-            var duplicate = await _catalog.FindReusableAsync(
-                _execution.TenantId,
-                streamed.Sha256,
-                request.RetentionClass,
-                cancellationToken);
-            if (duplicate is not null)
+            return complete is null
+                ? await SaveCatalogAsync(cancellationToken)
+                : await complete(SaveCatalogAsync, session.CommitAsync, cancellationToken);
+
+            async Task<SpaceFileUploadResult> SaveCatalogAsync(CancellationToken ct)
             {
-                await session.AbortAsync(cancellationToken);
-                return new SpaceFileUploadResult(
-                    duplicate,
-                    Reused: true,
-                    ScanJobId: null);
+                var duplicate = await _catalog.FindReusableAsync(
+                    _execution.TenantId,
+                    streamed.Sha256,
+                    request.RetentionClass,
+                    ct);
+                if (duplicate is not null)
+                {
+                    await session.AbortAsync(ct);
+                    return new SpaceFileUploadResult(
+                        duplicate,
+                        Reused: true,
+                        ScanJobId: null);
+                }
+
+                var now = _clock.UtcNow;
+                if (now.Kind != DateTimeKind.Utc)
+                {
+                    throw new InvalidOperationException(
+                        "The Space clock must return UTC.");
+                }
+                var file = SpaceFile.CreateUploading(
+                    fileId,
+                    _execution.TenantId,
+                    session.StorageKey,
+                    originalName,
+                    NormalizeContentType(request.DeclaredContentType),
+                    request.RetentionClass,
+                    _retention.GetRetainUntilUtc(request.RetentionClass, now));
+                file.CompleteQuarantine(
+                    expected.DetectedContentType,
+                    expected.Extension,
+                    streamed.SizeBytes,
+                    streamed.Sha256);
+
+                // The default catalog save commits its rows immediately.
+                if (complete is null)
+                    await session.CommitAsync(ct);
+
+                var enqueue = new SpaceJobEnqueueRequest(
+                    SpaceJobType.FileScan,
+                    SpaceJobSubjectType.File,
+                    file.Id,
+                    file.Sha256!,
+                    SpaceFileScanProcessor.ProcessorVersion,
+                    MaxAttempts: 5);
+                var scanJob = SpaceJob.CreateQueued(
+                    _execution.TenantId,
+                    enqueue.JobType,
+                    enqueue.SubjectType,
+                    enqueue.SubjectId,
+                    SpaceJobBusinessKey.Create(enqueue),
+                    enqueue.InputHash,
+                    enqueue.Priority,
+                    enqueue.MaxAttempts,
+                    _execution.ActorId,
+                    now,
+                    CorrelationId(),
+                    enqueue.PayloadJson);
+                await _catalog.AddQuarantinedWithScanJobAsync(file, scanJob, ct);
+                return new SpaceFileUploadResult(file, Reused: false, scanJob.Id);
             }
-
-            var now = _clock.UtcNow;
-            if (now.Kind != DateTimeKind.Utc)
-            {
-                throw new InvalidOperationException(
-                    "The Space clock must return UTC.");
-            }
-            var file = SpaceFile.CreateUploading(
-                fileId,
-                _execution.TenantId,
-                session.StorageKey,
-                originalName,
-                NormalizeContentType(request.DeclaredContentType),
-                request.RetentionClass,
-                _retention.GetRetainUntilUtc(request.RetentionClass, now));
-            file.CompleteQuarantine(
-                expected.DetectedContentType,
-                expected.Extension,
-                streamed.SizeBytes,
-                streamed.Sha256);
-
-            await session.CommitAsync(cancellationToken);
-            var enqueue = new SpaceJobEnqueueRequest(
-                SpaceJobType.FileScan,
-                SpaceJobSubjectType.File,
-                file.Id,
-                file.Sha256!,
-                SpaceFileScanProcessor.ProcessorVersion,
-                MaxAttempts: 5);
-            var scanJob = SpaceJob.CreateQueued(
-                _execution.TenantId,
-                enqueue.JobType,
-                enqueue.SubjectType,
-                enqueue.SubjectId,
-                SpaceJobBusinessKey.Create(enqueue),
-                enqueue.InputHash,
-                enqueue.Priority,
-                enqueue.MaxAttempts,
-                _execution.ActorId,
-                now,
-                CorrelationId(),
-                enqueue.PayloadJson);
-            await _catalog.AddQuarantinedWithScanJobAsync(
-                file,
-                scanJob,
-                cancellationToken);
-
-            return new SpaceFileUploadResult(
-                file,
-                Reused: false,
-                scanJob.Id);
         }
         catch
         {

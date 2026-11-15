@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 · W598-01 Space 底图写入
+
+四条底图入口已接入共同授权栅栏。14 项 PostgreSQL 场景、30 项相关单元及 98 项相关契约通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W598-01/DELIVERY.md)
+
 ## 2026-11-15 · W597-01 会计期间写入
 
 四条期间 HTTP 写入口在同一 PostgreSQL 事务检查 Main 当前权限并保持业务原子性。14 项实际 PostgreSQL 场景及 30 项回归通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W597-01/DELIVERY.md)
