@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W621-01 Space 刊发原生效果
+
+内置 WMS 与 Runtime 激活同各自原生事务核对 Main 当前租户及原作业租约。7 项实库通过，含四种时序、两次提交应答遗失和实际到期。PostgreSQL 正式矩阵仍为 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W621-01/DELIVERY.md)
+
 ## 2026-11-15 W620-01 WMS 出货财务原事件
 
 出库和 WMS／ERP 取消在原事务保存 FIN 意图，财务写与原回执在 Main 栅栏提交。16 项原生与 5 项新主线组合通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W620-01/DELIVERY.md)
