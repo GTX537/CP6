@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 · W608-01 应收和工单
+
+HTTP 剩余应收发票与收款 7 条和工单成本结转 1 条。采购及 WMS/MES 等独立消费者继续核对。 [交付记录](../development/evidence/W608-01/DELIVERY.md)
+
 ## 2026-11-15 · W607-01 CRM 切换余项
 
 继续 Kafka 与 Dapr 凭据的实际认证和持久隔离，按采用流程核对环境授权。 [交付记录](../development/evidence/W607-01/DELIVERY.md)

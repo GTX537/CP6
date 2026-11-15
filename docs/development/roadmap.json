@@ -166012,6 +166012,11 @@
       "at": "2026-11-15T12:13:40.409796+00:00",
       "change": "W607-01 CRM 两租户 C02 与 IdentityBaseline 三个写事务核对恢复库时间线，七份原写者凭据在复验中完成隔离。",
       "evidence": "docs/development/evidence/W607-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T12:19:30.628056+00:00",
+      "change": "W608-01 应付发票与付款五条写入口采用原生共同栅栏，修复实际晚失败部分写及跨租户归属。",
+      "evidence": "docs/development/evidence/W608-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212018,10 +212023,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W607",
-      "path": "docs/development/evidence/W607-01/DELIVERY.md",
+      "id": "W608",
+      "path": "docs/development/evidence/W608-01/DELIVERY.md",
       "baseline_sha": "59f379a0a11fb47a71adec340e245ab0d2c1475b",
-      "registered_at": "2026-11-15T12:13:29.905168+00:00",
+      "registered_at": "2026-11-15T11:51:47.419863+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212035,53 +212040,43 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续应付、应收、成本、Space 后台与 Kafka/Dapr 凭据隔离。PGT-017 保持 NOT_RUN",
+      "next_action": "推进应收发票与收款 7 条以及工单结转，继续 Space 匹配与后台和 CRM 传输。PGT-017 保持 NOT_RUN",
       "windows": [
         {
-          "id": "W607-01",
-          "workspace_task": "W607-01",
+          "id": "W608-01",
+          "workspace_task": "W608-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+          "mode": "SINGLE_CHAT",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w607-01",
-          "planned_scope_ref": "docs/development/evidence/W607-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W607-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "branch": "codex/w608-01",
+          "planned_scope_ref": "docs/development/evidence/W608-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W608-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "CRM:NativeIdentityIngress",
-            "CRM:IdentityBaseline",
-            "CRM:InquiryPhysicalStoreRebind",
-            "Local:TwoTenantPostgreSQLKafkaDapr"
+            "Main:FinApHttpWrites",
+            "Main:FinPaymentSettlement",
+            "Main:CurrentWriteAuthority",
+            "Local:PostgreSQL-HTTP"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "CRM 8 actual physical recovery cases, 35 standalone actual PostgreSQL identity cases, two registered tenants and seven old writer logins",
-          "remaining_scope": "Kafka and Dapr authenticated writer cutover, actual externally approved environment adoption, remaining Main finance and Space writers",
-          "product_repository": "CP6.CRM",
-          "product_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "product_baseline": "2b6092a6e63f405067da05387e223bd5d1b5ea1c",
-          "product_branch": "codex/w607-01",
-          "product_source_sha": "5d7e9b9a9222c632824cf5001dbd71a73fb016d4",
-          "product_remote_main_sha": "9c28a41c2cc402154a648933fcb5be6c32a3de4e",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/235",
-          "product_branch_disposition": "deleted-local-and-remote",
-          "product_workspace_status": "fixed-seat-detached-for-reuse",
-          "product_seat_released": true
+          "validation_summary": "28 native AP PostgreSQL scenarios, 27 components, local publish and actual HTTP 200/401",
+          "remaining_scope": "AR seven, work-order cost settlement, relevant finance workers, Space Match and execution, CRM transport cutover",
+          "main_tested_source_sha": "05b3ef627919f132d15df628f955db70afae736e"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -267757,6 +267752,78 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W607",
+        "path": "docs/development/evidence/W607-01/DELIVERY.md",
+        "baseline_sha": "59f379a0a11fb47a71adec340e245ab0d2c1475b",
+        "registered_at": "2026-11-15T12:13:29.905168+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续应付、应收、成本、Space 后台与 Kafka/Dapr 凭据隔离。PGT-017 保持 NOT_RUN",
+        "windows": [
+          {
+            "id": "W607-01",
+            "workspace_task": "W607-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w607-01",
+            "planned_scope_ref": "docs/development/evidence/W607-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W607-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CRM:NativeIdentityIngress",
+              "CRM:IdentityBaseline",
+              "CRM:InquiryPhysicalStoreRebind",
+              "Local:TwoTenantPostgreSQLKafkaDapr"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "CRM 8 actual physical recovery cases, 35 standalone actual PostgreSQL identity cases, two registered tenants and seven old writer logins",
+            "remaining_scope": "Kafka and Dapr authenticated writer cutover, actual externally approved environment adoption, remaining Main finance and Space writers",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "product_baseline": "2b6092a6e63f405067da05387e223bd5d1b5ea1c",
+            "product_branch": "codex/w607-01",
+            "product_source_sha": "5d7e9b9a9222c632824cf5001dbd71a73fb016d4",
+            "product_remote_main_sha": "9c28a41c2cc402154a648933fcb5be6c32a3de4e",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/235",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1126",
+            "main_remote_main_sha": "30956a78973f5d398a8a7a39b94cf93604da4fec"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },
