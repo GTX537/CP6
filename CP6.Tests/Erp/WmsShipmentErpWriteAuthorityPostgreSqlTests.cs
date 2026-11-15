@@ -33,7 +33,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         FenceWait staged;
         // The source rows must stay invisible while their intent insertion is blocked.
         // The relay then drops the first real COMMIT reply from the same source request.
-        await using (var relay = new StockPostgresCommitRelay(database.Port, database.Username!, 57176))
+        var relayPort = ShipmentProjectionPort("CP6_ERP_SHIPMENT_RELAY_PORT", 57176);
+        await using (var relay = new StockPostgresCommitRelay(database.Port, database.Username!, relayPort))
         {
             var forwarded = new NpgsqlConnectionStringBuilder(database.ConnectionString) { Port = relay.Port };
             await using var originalHost = await StartW643Api(h, forwarded.ConnectionString);
@@ -218,10 +219,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         return services.BuildServiceProvider();
     }
 
-    private static Task<AuthenticationApiProcess> StartW643Api(Harness h, string connection)
+    private static int ShipmentProjectionPort(string variable, int fallback) =>
+        int.TryParse(Environment.GetEnvironmentVariable(variable), out var port) ? port : fallback;
+
+    private static Task<AuthenticationApiProcess> StartW643Api(Harness h, string connection, int? requestedPort = null)
     {
         var env = IamUserAssignmentsPostgreSqlTests.IdentityEnvironment(h.Tenant);
-        env["ASPNETCORE_URLS"] = "http://127.0.0.1:57177";
+        var port = requestedPort ?? ShipmentProjectionPort("CP6_ERP_SHIPMENT_HTTP_PORT", 57177);
+        env["ASPNETCORE_URLS"] = $"http://127.0.0.1:{port}";
         env["IntegrationEvent__Enabled"] = "false";
         return AuthenticationApiProcess.Start(connection, env);
     }

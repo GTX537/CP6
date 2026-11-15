@@ -166157,6 +166157,11 @@
       "at": "2026-11-15T19:57:03.891425+00:00",
       "change": "W649-01 CRM 可回读当前授权的原配置，正式封存前 Main 持久化精确待处理意图并停发新写准入。",
       "evidence": "docs/development/evidence/W649-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T20:17:11.547075+00:00",
+      "change": "W652-01 原 ERP 迟到出库回写保留最新实际发运时间和对应出库号，实际修改时间与原数量、事件一次写入。",
+      "evidence": "docs/development/evidence/W652-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212163,10 +212168,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W649",
-      "path": "docs/development/evidence/W649-01/DELIVERY.md",
-      "baseline_sha": "1e2b294eb2f4f5a72cf903a16bac724edc74694d",
-      "registered_at": "2026-11-15T19:22:16.755196+00:00",
+      "id": "W652",
+      "path": "docs/development/evidence/W652-01/DELIVERY.md",
+      "baseline_sha": "1aa2654fcb3f14f58c608aa416c07fa7474c8824",
+      "registered_at": "2026-11-15T19:42:16.321142+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212180,52 +212185,42 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Continue the real Space pending named writer tests, ERP chronology adoption and final PGT-017 reconciliation.",
+      "next_action": "Finish named Space catalog and publish Owner write boundaries and reconcile the full registered PGT-017 writer scope.",
       "windows": [
         {
-          "id": "W649-01",
-          "workspace_task": "W649-01",
+          "id": "W652-01",
+          "workspace_task": "W652-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+          "mode": "SINGLE_CHAT",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w649-01",
-          "planned_scope_ref": "docs/development/evidence/W649-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W649-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "branch": "codex/w652-01",
+          "planned_scope_ref": "docs/development/evidence/W652-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W652-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Original Main and CRM registered inquiry tenant, scoped close_v1 login and C02 generation",
-            "Durable two-stage Main operation, current issuance and exact business replay",
-            "DEV-1 fixed seat used serially for both repositories"
+            "Original WMS physical shipments and ERP projection original event",
+            "Native confirmed ship timestamp, exact last outbound marker and independent processing audit clock",
+            "DEV-2"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "CRM 16 actual directed results on pre-adoption, Main phase 32 directed actual results including both cold start and commit acknowledgement loss, zero skipped. Native two stores and exact source-bound 310/255 release artifacts.",
-          "remaining_scope": "PGT-017 remaining named Space draft/publication writers. Requests for role, user, deadline and department use the previously verified specific authority protocols. Production configuration adoption remains separate.",
-          "main_tested_source_sha": "9d70a9e6e69e9aa9703e4b94be8de6531219fdfa",
-          "product_repository": "CP6.CRM",
-          "product_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "product_baseline": "e5a8157f20e5817f58b33242a4bd6188f1c58461",
-          "product_branch": "codex/w649-01",
-          "product_source_sha": "ed3f9e44e421eed6984a08575a8189f6fd93eab2",
-          "product_remote_main_sha": "5f09533b9168ee614a6df1f75629b39635585f86",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/238",
-          "product_branch_disposition": "deleted-local-and-remote",
-          "product_workspace_status": "fixed-seat-detached-for-reuse",
-          "product_seat_released": true
+          "validation_summary": "Four original directed native tests plus the two affected signed pause orders repassed on the combined W649 input. Zero skips. Combined 310-file native package startup returned 200/401.",
+          "remaining_scope": "Final scoped Space catalog and publish failure writer cases. Distinct first cold connections for the remaining Main revocation owner families retain their separately described runtime scope. Formal PostgreSQL 26 PASS / 1 NOT_RUN.",
+          "main_tested_source_sha": "1c3f914ae1a8459d785c1ccabda9c4ce51325117"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -269707,6 +269702,77 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W649",
+        "path": "docs/development/evidence/W649-01/DELIVERY.md",
+        "baseline_sha": "1e2b294eb2f4f5a72cf903a16bac724edc74694d",
+        "registered_at": "2026-11-15T19:22:16.755196+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Continue the real Space pending named writer tests, ERP chronology adoption and final PGT-017 reconciliation.",
+        "windows": [
+          {
+            "id": "W649-01",
+            "workspace_task": "W649-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w649-01",
+            "planned_scope_ref": "docs/development/evidence/W649-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W649-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Original Main and CRM registered inquiry tenant, scoped close_v1 login and C02 generation",
+              "Durable two-stage Main operation, current issuance and exact business replay",
+              "DEV-1 fixed seat used serially for both repositories"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "CRM 16 actual directed results on pre-adoption, Main phase 32 directed actual results including both cold start and commit acknowledgement loss, zero skipped. Native two stores and exact source-bound 310/255 release artifacts.",
+            "remaining_scope": "PGT-017 remaining named Space draft/publication writers. Requests for role, user, deadline and department use the previously verified specific authority protocols. Production configuration adoption remains separate.",
+            "main_tested_source_sha": "9d70a9e6e69e9aa9703e4b94be8de6531219fdfa",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "product_baseline": "e5a8157f20e5817f58b33242a4bd6188f1c58461",
+            "product_branch": "codex/w649-01",
+            "product_source_sha": "ed3f9e44e421eed6984a08575a8189f6fd93eab2",
+            "product_remote_main_sha": "5f09533b9168ee614a6df1f75629b39635585f86",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/238",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1174",
+            "main_remote_main_sha": "6f6b75ebf836427a2b274e8a0238afe767a33969"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },
