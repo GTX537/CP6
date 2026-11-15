@@ -166072,6 +166072,11 @@
       "at": "2026-11-15T15:20:11.090775+00:00",
       "change": "W625-01 OA 服务作业完成在 Main 共同栅栏提交凭证、续行、通知与作业终态，实测两种顺序和原作业恢复。",
       "evidence": "docs/development/evidence/W625-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T15:32:55.519264+00:00",
+      "change": "W626-01 CAD/Excel 三处后台写入在 Main 当前租户、原作业租约及真实文件边界内提交，实测六种顺序和一次应答遗失。",
+      "evidence": "docs/development/evidence/W626-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212078,10 +212083,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W625",
-      "path": "docs/development/evidence/W625-01/DELIVERY.md",
-      "baseline_sha": "cb30090c2b8d7bb91ecb7b548d4a134aff580b1c",
-      "registered_at": "2026-11-15T14:54:32.513439+00:00",
+      "id": "W626",
+      "path": "docs/development/evidence/W626-01/DELIVERY.md",
+      "baseline_sha": "5e98283b0414ad146b5566e01a5f432afff6d393",
+      "registered_at": "2026-11-15T15:15:02.450058+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212095,11 +212100,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Continue the three CAD/Excel background effects and confirm the exact target CRM C02 consumer cutover. Formal PGT-017 remains NOT_RUN.",
+      "next_action": "Continue CAD provider configuration and Apply, historical publication, cross-domain finance and CRM consumer cutover. PGT-017 remains NOT_RUN.",
       "windows": [
         {
-          "id": "W625-01",
-          "workspace_task": "W625-01",
+          "id": "W626-01",
+          "workspace_task": "W626-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212109,29 +212114,28 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w625-01",
-          "planned_scope_ref": "docs/development/evidence/W625-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W625-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w626-01",
+          "planned_scope_ref": "docs/development/evidence/W626-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W626-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Retained OA WfServiceJob completion and child-group job",
-            "Core journal, timeline, workflow history and notification outbox",
-            "Main common native root and existing service-job claim",
-            "DEV-2"
+            "CAD FinalizePreview, Excel Preflight atomic Issues and Source completion",
+            "Existing Main PostgreSQL root, accepted job lease, original private file and checkpoints",
+            "DEV-1"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "2 signed PostgreSQL timer commit orders, 52 related passes including six native cases, 3 supplementary native subflow cases, zero skips. Four historic SQLite bootstrap failures retained. Original 310-file publish verified 200/401.",
-          "remaining_scope": "Historical OA separate timeout commands and post-commit inline continuation, connector-side write boundary, Space background and historical republish, remaining financial cross-domain writers and CRM consumer cutover. No deployment.",
-          "main_tested_source_sha": "10c18a9f36adffb6270752f2c0ce30ac632e3920"
+          "validation_summary": "7 new actual PostgreSQL plus 9 native W613 regressions, 21 compatibility and 10 scoped related checks, zero skips. Local published pinned 310 files seven matching DLLs with 200/401/401.",
+          "remaining_scope": "Space actual Apply batch, CAD provider management, historical republish parent and other writers; CRM target consumer cutover active. No deployment.",
+          "main_tested_source_sha": "afc5a5f7e7aa559682768d7dd6df9ee1cab9fbc0"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -268565,6 +268569,68 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W625",
+        "path": "docs/development/evidence/W625-01/DELIVERY.md",
+        "baseline_sha": "cb30090c2b8d7bb91ecb7b548d4a134aff580b1c",
+        "registered_at": "2026-11-15T14:54:32.513439+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Continue the three CAD/Excel background effects and confirm the exact target CRM C02 consumer cutover. Formal PGT-017 remains NOT_RUN.",
+        "windows": [
+          {
+            "id": "W625-01",
+            "workspace_task": "W625-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w625-01",
+            "planned_scope_ref": "docs/development/evidence/W625-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W625-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Retained OA WfServiceJob completion and child-group job",
+              "Core journal, timeline, workflow history and notification outbox",
+              "Main common native root and existing service-job claim",
+              "DEV-2"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "2 signed PostgreSQL timer commit orders, 52 related passes including six native cases, 3 supplementary native subflow cases, zero skips. Four historic SQLite bootstrap failures retained. Original 310-file publish verified 200/401.",
+            "remaining_scope": "Historical OA separate timeout commands and post-commit inline continuation, connector-side write boundary, Space background and historical republish, remaining financial cross-domain writers and CRM consumer cutover. No deployment.",
+            "main_tested_source_sha": "10c18a9f36adffb6270752f2c0ce30ac632e3920",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1148",
+            "main_remote_main_sha": "30a4b08faeeb8ab5efd191c6c6f4c41e27f4f45e"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },
