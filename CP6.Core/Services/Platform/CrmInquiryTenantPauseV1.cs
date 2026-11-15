@@ -42,6 +42,8 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
 
     internal bool IsRegistered(Guid tenant) => bindings.ContainsKey(tenant);
 
+    internal Guid? RegisteredStore(Guid tenant) => bindings.TryGetValue(tenant, out var binding) ? binding.StoreId : null;
+
     internal async Task<(Guid Store, int Version)> ReadSuspensionBoundaryAsync(CP6Context authority, Guid tenant, CancellationToken ct)
     {
         if (!bindings.TryGetValue(tenant, out var binding))
@@ -137,22 +139,52 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
         try
         {
             await using var db = await binding.Source.OpenConnectionAsync(ct);
-            await using var tx = await db.BeginTransactionAsync(ct);
-            await using var durability = new NpgsqlCommand("SET LOCAL synchronous_commit='on'", db, tx);
-            await durability.ExecuteNonQueryAsync(ct);
-            await using var command = new NpgsqlCommand(sql, db, tx);
-            command.Parameters.AddWithValue("tenant", tenant);
-            command.Parameters.AddWithValue("store", binding.StoreId);
-            if (aggregate is not null) command.Parameters.AddWithValue("aggregate", aggregate);
-            command.Parameters.AddWithValue("version", version);
-            if (await command.ExecuteScalarAsync(ct) is not int recorded || recorded != version)
-                throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503);
-            await tx.CommitAsync(ct);
+            await AdvanceVersionAsync(db, tenant, binding.StoreId, version, sql, ct, aggregate);
         }
         catch (Exception error) when (error is NpgsqlException or TimeoutException)
         {
             throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503, error);
         }
+    }
+
+    internal async Task<NpgsqlConnection> OpenRoleSealAsync(Guid tenant, Guid store, CancellationToken ct)
+    {
+        if (!bindings.TryGetValue(tenant, out var binding) || binding.StoreId != store)
+            throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503);
+        try { return await binding.Source.OpenConnectionAsync(ct); }
+        catch (Exception error) when (error is NpgsqlException or TimeoutException)
+        { throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503, error); }
+    }
+
+    internal static async Task AdvanceConnectedRoleAsync(NpgsqlConnection connection, Guid tenant, Guid store,
+        string aggregate, int version, CancellationToken ct)
+    {
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        deadline.CancelAfter(TimeSpan.FromSeconds(8));
+        try
+        {
+            await AdvanceVersionAsync(connection, tenant, store, version,
+                "SELECT crm_inquiry_tenant_pause_v1.advance_role_v1(@tenant,@store,@aggregate,@version)", deadline.Token, aggregate);
+        }
+        catch (Exception error) when (error is NpgsqlException or TimeoutException ||
+                                      error is OperationCanceledException && !ct.IsCancellationRequested)
+        { throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503, error); }
+    }
+
+    private static async Task AdvanceVersionAsync(NpgsqlConnection db, Guid tenant, Guid store, int version, string sql,
+        CancellationToken ct, object? aggregate)
+    {
+        await using var tx = await db.BeginTransactionAsync(ct);
+        await using var durability = new NpgsqlCommand("SET LOCAL synchronous_commit='on'", db, tx);
+        await durability.ExecuteNonQueryAsync(ct);
+        await using var command = new NpgsqlCommand(sql, db, tx);
+        command.Parameters.AddWithValue("tenant", tenant);
+        command.Parameters.AddWithValue("store", store);
+        if (aggregate is not null) command.Parameters.AddWithValue("aggregate", aggregate);
+        command.Parameters.AddWithValue("version", version);
+        if (await command.ExecuteScalarAsync(ct) is not int recorded || recorded != version)
+            throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503);
+        await tx.CommitAsync(ct);
     }
 
     private static async Task<int> CurrentTenantVersionAsync(CP6Context authority, Guid tenant, CancellationToken ct)

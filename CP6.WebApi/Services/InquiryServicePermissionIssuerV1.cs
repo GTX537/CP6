@@ -78,7 +78,9 @@ public sealed class InquiryServicePermissionIssuerV1(CP6Context db, ITenantConte
                 return now;
             }
             await RequireCurrentTenant();
-            var pending = await TenantPendingSuspensionV1.ExistsAsync(db, registration.Tenant, ct);
+            var pending = await TenantPendingSuspensionV1.ExistsAsync(db, registration.Tenant, ct)
+                || await IamCrmRoleSealV1.BlocksIssuanceAsync(db, registration.Tenant, registration.Roles.ToArray(),
+                    request.SiteId, request.FormId, ct);
             if (pending && nonce is null) throw new InquiryPermissionExceptionV1(503, "inquiry_authority_unavailable");
             CrmIdentitySnapshot? serviceSource = null;
             if (registry.IdentityPublicationEnabled)

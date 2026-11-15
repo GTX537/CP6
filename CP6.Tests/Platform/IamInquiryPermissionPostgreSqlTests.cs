@@ -314,15 +314,20 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         => InquiryProducerHttp("intake:reject", humanContext: true, crossDatabasePause: true,
             revocation: Environment.GetEnvironmentVariable("CP6_PGT017_REVOKER")!);
 
+    [Pgt017MainFact]
+    public Task PGT017_Main_inquiry_scope_cold_refusal_preserves_original_CRM_configuration()
+        => InquiryProducerHttp("configuration:write", crossDatabasePause: true, coldRoleScope: true);
+
     private async Task InquiryProducerHttp(string purpose, bool humanContext=false, bool crossDatabasePause=false, string? revocation=null,
-        string? pendingPause = null)
+        string? pendingPause = null, bool coldRoleScope = false)
     {
         await using var h = await Seed(); var intake = purpose.StartsWith("intake:", StringComparison.Ordinal);
         var consent = purpose == "privacy:consent-withdraw";
         var privacy = purpose is "privacy:export" or "privacy:download";
         var humanPause = humanContext && crossDatabasePause;
-        var pair = privacy ? await GrantPrivacy(h) : consent ? await GrantConsent(h) : intake || pendingPause is not null ? await GrantIntake(h) : (await GrantInquiry(h))[0]; var options = InquiryPermissionSigningTests.Options();
+        var pair = privacy ? await GrantPrivacy(h) : consent ? await GrantConsent(h) : intake || pendingPause is not null || coldRoleScope ? await GrantIntake(h) : (await GrantInquiry(h))[0]; var options = InquiryPermissionSigningTests.Options();
         if (revocation == "user") await SeedInquiryUserRevoker(h);
+        if (coldRoleScope) await SeedCompetingScopeEditor(h);
         if (humanContext || pendingPause is not null)
         {
             (await h.Db.Sys_Users.SingleAsync(x=>x.Id==h.ActorId)).AuthenticationEpoch=Guid.NewGuid();await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
@@ -367,7 +372,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             environment[prefix + "ConnectionString"] = sealConnection.ConnectionString;
             environment[prefix + "StoreId"] = Environment.GetEnvironmentVariable("CP6_PGT017_STORE_ID")!;
         }
-        if (pendingPause is not null)
+        if (pendingPause is not null || coldRoleScope)
         {
             environment["ASPNETCORE_URLS"] = "http://127.0.0.1:" + Environment.GetEnvironmentVariable("CP6_PGT017_MAIN_HTTP_PORT");
             environment["JWT__Secret"] = CrmOidcCrypto.RandomToken() + CrmOidcCrypto.RandomToken();
@@ -375,21 +380,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         await using var pendingService = pendingPause is null ? null : await ConfigurePendingPauseService(h, options, environment);
         Task<AuthenticationApiProcess> StartHost() => AuthenticationApiProcess.Start(connection.ConnectionString, environment, allowAutoRedirect: false);
         await using var host = await StartHost();
-        var cookies = await Login(host, h); var verifier = CrmOidcCrypto.RandomToken();
-        var authorize = QueryHelpers.AddQueryString("connect/authorize", new Dictionary<string, string?> {
-            ["client_id"] = "CP6.Web", ["redirect_uri"] = redirect, ["response_type"] = "code", ["code_challenge_method"] = "S256",
-            ["code_challenge"] = CrmOidcCrypto.Challenge(verifier), ["state"] = CrmOidcCrypto.RandomToken(), ["nonce"] = CrmOidcCrypto.RandomToken(), ["scope"] = "openid profile crm" });
-        using var authorized = await host.Send(Request(HttpMethod.Get, authorize, cookies));
-        Assert.Equal(HttpStatusCode.Redirect, authorized.StatusCode); var bridge = authorized.Headers.Location!;
-        Assert.Equal(options.Issuer, bridge.GetLeftPart(UriPartial.Authority)); Assert.Equal("/api/auth/crm-authorize", bridge.AbsolutePath);
-        using var continued = await host.Send(Request(HttpMethod.Get, bridge.PathAndQuery, cookies));
-        Assert.Equal(HttpStatusCode.Redirect, continued.StatusCode); var location = continued.Headers.Location!;
-        Assert.StartsWith(redirect, location.ToString()); var code = QueryHelpers.ParseQuery(location.Query)["code"].ToString(); Assert.NotEmpty(code);
-        using var tokenRequest = new HttpRequestMessage(HttpMethod.Post, "connect/token") { Content = new FormUrlEncodedContent(new Dictionary<string, string> {
-            ["grant_type"] = "authorization_code", ["code"] = code, ["redirect_uri"] = redirect, ["code_verifier"] = verifier }) };
-        tokenRequest.Headers.Authorization = new("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes("CP6.Web:" + clientSecret)));
-        using var tokenResponse = await host.Send(tokenRequest); Assert.True(tokenResponse.StatusCode == HttpStatusCode.OK, await tokenResponse.Content.ReadAsStringAsync());
-        using var tokenBody = JsonDocument.Parse(await tokenResponse.Content.ReadAsStringAsync()); var token = tokenBody.RootElement.GetProperty("access_token").GetString()!;
+        var cookies = await Login(host, h);
+        var (token, idToken) = await Exchange(host, cookies);
         var command = new InquiryPermissionRequestV1(purpose, pair.SiteId, pair.FormId);
         var nonce=ServiceNonce(); var endpoint=humanContext?"connect/inquiry-human-context":"connect/inquiry-permission";
         HttpRequestMessage Projection(object body, string? bearer, bool secure = true)
@@ -443,7 +435,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             await File.WriteAllTextAsync(Path.Combine(bridgeDirectory, "session.json"), JsonSerializer.Serialize(new
             {
                 marker = "CP6-owned-inquiry-configuration-interop-v1", issuer = options.Issuer, origin = host.Origin.ToString(),
-                accessToken = token, idToken = tokenBody.RootElement.GetProperty("id_token").GetString(),
+                accessToken = token, idToken,
                 tenantId = h.Tenant, subjectId = h.ActorId, departmentId = h.Parent, siteId = pair.SiteId, formId = pair.FormId,
                 keyId = options.KeyId, publicKeyBase64 = options.PublicKeyBase64, activeFromUtc = options.ActiveFromUtc,
                 sourceRows = sources.Select(x => new { x.AggregateId, x.EventType, x.Version, x.PayloadSha256, x.IsDeleted, x.PayloadJson }),
@@ -455,9 +447,11 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 {
                     if (pendingPause is not null)
                         await ExercisePendingCrmTenantPause(host, StartHost, h, bridgeDirectory, command, token, pendingPause, pendingService!, sealAck, mainAck);
+                    else if (coldRoleScope)
+                        await ExercisePendingCrmInquiryScope(host, StartHost, h, bridgeDirectory, command, token, Exchange);
                     else if (revocation is not null)
                         await ExerciseInquiryUserOrSessionRevocation(host, h, bridgeDirectory, revocation,
-                            tokenBody.RootElement.GetProperty("id_token").GetString()!, cookies, clientSecret, options.Issuer);
+                            idToken, cookies, clientSecret, options.Issuer);
                     else if (humanPause) await ExerciseCrmTenantPause(host, h, bridgeDirectory, waitForCompletePause: true);
                     else await ExerciseCrmTenantPause(host, h, bridgeDirectory);
                 }
@@ -477,6 +471,27 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         }
         await h.Db.Database.ExecuteSqlInterpolatedAsync($"UPDATE public.\"CrmOidcGrant\" SET \"Revoked\"=true WHERE \"SubjectId\"={h.ActorId}");
         using var revokedSession = await host.Send(Projection(command with { Purpose = humanContext ? "intake:list" : "configuration:read" }, token)); Assert.Equal(HttpStatusCode.Unauthorized, revokedSession.StatusCode);
+
+        async Task<(string Access, string Identity)> Exchange(AuthenticationApiProcess api, Dictionary<string,string> login)
+        {
+            var verifier = CrmOidcCrypto.RandomToken();
+            var authorize = QueryHelpers.AddQueryString("connect/authorize", new Dictionary<string, string?> {
+                ["client_id"] = "CP6.Web", ["redirect_uri"] = redirect, ["response_type"] = "code", ["code_challenge_method"] = "S256",
+                ["code_challenge"] = CrmOidcCrypto.Challenge(verifier), ["state"] = CrmOidcCrypto.RandomToken(), ["nonce"] = CrmOidcCrypto.RandomToken(), ["scope"] = "openid profile crm" });
+            using var authorized = await api.Send(Request(HttpMethod.Get, authorize, login));
+            Assert.Equal(HttpStatusCode.Redirect, authorized.StatusCode); var bridge = authorized.Headers.Location!;
+            Assert.Equal(options.Issuer, bridge.GetLeftPart(UriPartial.Authority)); Assert.Equal("/api/auth/crm-authorize", bridge.AbsolutePath);
+            using var continued = await api.Send(Request(HttpMethod.Get, bridge.PathAndQuery, login));
+            Assert.Equal(HttpStatusCode.Redirect, continued.StatusCode); var location = continued.Headers.Location!;
+            Assert.StartsWith(redirect, location.ToString()); var code = QueryHelpers.ParseQuery(location.Query)["code"].ToString(); Assert.NotEmpty(code);
+            using var tokenRequest = new HttpRequestMessage(HttpMethod.Post, "connect/token") { Content = new FormUrlEncodedContent(new Dictionary<string, string> {
+                ["grant_type"] = "authorization_code", ["code"] = code, ["redirect_uri"] = redirect, ["code_verifier"] = verifier }) };
+            tokenRequest.Headers.Authorization = new("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes("CP6.Web:" + clientSecret)));
+            using var reply = await api.Send(tokenRequest);
+            Assert.Equal(HttpStatusCode.OK, reply.StatusCode);
+            using var body = JsonDocument.Parse(await reply.Content.ReadAsStringAsync());
+            return (body.RootElement.GetProperty("access_token").GetString()!, body.RootElement.GetProperty("id_token").GetString()!);
+        }
     }
 
     private static async Task WaitConfigurationBridge(string directory, string stage, TimeSpan? duration = null)

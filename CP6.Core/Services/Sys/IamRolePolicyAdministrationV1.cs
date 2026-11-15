@@ -69,14 +69,12 @@ public sealed partial class IamRolePolicyAdministrationV1(CP6Context db,IamAdmin
         // Bind the route target into the persisted fingerprint as well as the database lookup.
         var bound=new IamBoundRolePolicyCommandV1{OperationId=command.OperationId,ExpectedVersion=command.ExpectedVersion,
             ExpectedReferencesVersion=command.ExpectedReferencesVersion,Reason=command.Reason,RoleId=roleId,Mode=mode,Input=command};
-        return authority.ExecuteAsync(permission,actor,async(who,token)=>
+        return authority.RoleWriteAsync(permission,roleId,kind,bound,actor,async(who,token)=>
         {
-            var original=await authority.Original(who,kind,bound,token);if(original!=null)return original;
             if(!await db.Sys_Roles.AnyAsync(x=>x.RoleId==roleId,token))throw Error(404,"IAM_ROLE_NOT_FOUND");
-            var catalog=await Catalog(token);
+            var catalog=await RequireCatalog(token);
             if(command.ExpectedVersion!=await authority.Version(IdentityEventContracts.RoleSubject(roleId),token)
-                || command.ExpectedReferencesVersion!=await authority.ReferencesVersion(token)
-                || command.ExpectedCatalogVersion!=catalog.Version)throw Error(412,"IAM_REFERENCES_CHANGED");
+                || command.ExpectedReferencesVersion!=await authority.ReferencesVersion(token))throw Error(412,"IAM_REFERENCES_CHANGED");
             if(mode=="actions")await SetActions(roleId,command,catalog,who,token);
             if(mode=="scopes")await SetScopes(roleId,command,catalog,who,token);
             if(mode=="fields")await SetFields(roleId,command,catalog,who,token);
@@ -88,7 +86,14 @@ public sealed partial class IamRolePolicyAdministrationV1(CP6Context db,IamAdmin
             var result=new IamOperationV1(command.OperationId,kind,"COMMITTED",Version:await authority.Version(IdentityEventContracts.RoleSubject(roleId),token),
                 ReferencesVersion:await authority.ReferencesVersion(token),RoleId:roleId);
             await authority.Store(who,bound,result,token);return result;
-        },ct);
+        },ct,RequireCatalog);
+
+        async Task<IamPolicyCatalogV1> RequireCatalog(CancellationToken token)
+        {
+            var catalog=await Catalog(token);
+            if(command.ExpectedCatalogVersion!=catalog.Version)throw Error(412,"IAM_REFERENCES_CHANGED");
+            return catalog;
+        }
     }
     private async Task<IamPolicyCatalogV1> Catalog(CancellationToken ct)
     {

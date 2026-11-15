@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
@@ -53,6 +54,10 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         => ServiceContextHttp(false, privacy: true, tenantPause: true, roleRevocation: true);
 
     [Pgt017MainFact]
+    public Task PGT017_Main_role_refusal_stops_new_CRM_service_authority()
+        => ServiceContextHttp(false, privacy: true, tenantPause: true, roleRevocation: true, coldRole: true);
+
+    [Pgt017MainFact]
     public Task PGT017_Main_commit_ack_lost_after_CRM_role_seal()
         => ServiceContextHttp(false, privacy: true, tenantPause: true, roleRevocation: true, loseMainCommitAck: true);
 
@@ -78,7 +83,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
 
     private async Task ServiceContextHttp(bool retention, bool privacy = false, bool tenantPause = false,
         bool roleRevocation = false, bool serviceRevocation = false, bool shortenDeadline = false, bool departmentRevocation = false,
-        bool inquiryScopeRevocation = false, bool regrantInquiryScope = false, bool loseMainCommitAck = false)
+        bool inquiryScopeRevocation = false, bool regrantInquiryScope = false, bool loseMainCommitAck = false,
+        bool coldRole = false)
     {
         var project=Environment.GetEnvironmentVariable("CP6_CRM_CROSS_PROJECT")??throw new InvalidOperationException("Owned CRM project required; no skip");
         var output=Environment.GetEnvironmentVariable("CP6_SERVICE_CONTEXT_OUTPUT")!;var folder=Path.GetDirectoryName(output)!;
@@ -86,6 +92,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var pair = privacy ? await GrantPrivacy(h, 5) : retention && !tenantPause ? await GrantRetention(h) : await GrantIntake(h, 5);
         if (retention && tenantPause) await GrantRetention(h);
         if (roleRevocation) await SeedCrmExportPolicyEditor(h);
+        if (coldRole) await CopyRole71ForIndependentInquiry(h);
         if (departmentRevocation) await SeedDepartmentEditor(h);
         if (inquiryScopeRevocation) await GrantPolicyHttpPermissions(h);
         var nativeDirectory = regrantInquiryScope && Environment.GetEnvironmentVariable("CP6_PGT017_NATIVE_DIRECTORY") == "1";
@@ -105,6 +112,15 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         await new IdentityBootstrapService(h.Db,runtime).InitializeAsync(h.Tenant);h.Db.ChangeTracker.Clear();
         var config=ServiceRegistration(h,Guid.NewGuid());config.Oidc.Issuer=options.Issuer;
         config.Source.IdentityPublicationEnabled=true;config.Source.IdentityPublicationRevision=1;config.Source.Registrations[0].AuthenticationEpoch=Guid.NewGuid();
+        const string independentService = "w658-independent-export";
+        var independentSecret = CrmOidcCrypto.RandomToken();
+        if (coldRole)
+        {
+            config.Source.Registrations.Add(new() { ClientId = independentService, SubjectId = Guid.NewGuid(),
+                DepartmentId = h.Parent, RoleIds = [72], AuthenticationEpoch = Guid.NewGuid() });
+            config.Oidc.ServiceClients.Add(new() { ClientId = independentService, TenantId = h.Tenant, Enabled = true,
+                SecretSha256 = CrmOidcCrypto.Hash(independentSecret), AllowedScopes = ["cp6.services"] });
+        }
         var registry=new InquiryServicePrincipalRegistryV1(config.Source,config.Oidc);
         var publisherTenant=new TenantContext();await using(var db=server.Context(publisherTenant,runtime))
             await new InquiryServiceIdentityPublisherV1(db,publisherTenant,registry,runtime).PublishAsync(h.Tenant);
@@ -229,8 +245,17 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                             connection.Port = relay.Port;
                             connection.SslMode = SslMode.Disable;
                         }
-                        await using var host = await AuthenticationApiProcess.Start(connection.ConnectionString, environment);
-                        if (roleRevocation) await ExerciseCrmExportRoleRevocation(host, h, stageDirectory!, exited, relay);
+                        if (coldRole)
+                        {
+                            environment["ASPNETCORE_URLS"] = "http://127.0.0.1:" + Environment.GetEnvironmentVariable("CP6_PGT017_MAIN_HTTP_PORT");
+                            environment["JWT__Secret"] = CrmOidcCrypto.RandomToken() + CrmOidcCrypto.RandomToken();
+                        }
+                        Task<AuthenticationApiProcess> StartHost() => AuthenticationApiProcess.Start(connection.ConnectionString, environment);
+                        await using var host = await StartHost();
+                        if (roleRevocation) await ExerciseCrmExportRoleRevocation(host, h, stageDirectory!, exited, relay,
+                            coldRole ? StartHost : null, coldRole ? () => Send(command with { RequestNonce = ServiceNonce() }, ServiceBasic().ToString()) : null,
+                            coldRole ? () => Send(command with { RequestNonce = ServiceNonce() }, "Basic " +
+                                Convert.ToBase64String(Encoding.UTF8.GetBytes(independentService + ":" + independentSecret))) : null);
                         else if (departmentRevocation) await ExerciseCrmExportDepartmentRevocation(host, h, stageDirectory!, exited);
                         else if (inquiryScopeRevocation) await ExerciseCrmExportScopeRevocation(host, h, pair, stageDirectory!, exited, regrantInquiryScope,
                             ContextRuntime(h.Tenant, options.Issuer), directory);

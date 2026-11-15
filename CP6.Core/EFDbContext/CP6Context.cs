@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using CP6.Core.Services.Common;
+using CP6.Core.Services.Platform;
 using CP6.Core.Services.Sys;
 using CP6.Entity;
 using CP6.Entity.DomainModels.Sys;
@@ -33,6 +34,9 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     private readonly ITenantContext? _tenant;
     private readonly ICurrentUserAccessor? _user;
     private readonly CrmIdentityRuntime? _identity;
+
+    internal CrmInquiryTenantPauseV1? InquiryFence => _identity?.InquiryFence;
+    internal Func<Guid, string, CrmRoleSealVersionV1, InquirySiteFormScopeV1[]?, CancellationToken, Task>? WriteCrmRoleSealAsync { get; set; }
 
     // Explicit native IAM writers use this context's exact capture configuration and transaction.
     internal Task CaptureIdentitySourceAsync(Guid tenantId, string aggregate, CancellationToken ct)

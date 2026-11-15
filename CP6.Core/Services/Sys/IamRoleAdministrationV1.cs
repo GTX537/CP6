@@ -45,9 +45,14 @@ public sealed class IamRoleAdministrationV1(CP6Context db,IamAdministrationV1 au
         if(kind is not("role-create" or "role-update" or "role-delete"))throw Error(400,"IAM_OPERATION_KIND_INVALID");
         if(kind!="role-delete" && (string.IsNullOrWhiteSpace(command.RoleName)||command.RoleName.Length>100
             || command.Description?.Length>500))throw Error(400,"IAM_ROLE_INPUT_INVALID");
-        return authority.ExecuteAsync(Permission(kind),actor,async(who,token)=>
+        var permission = Permission(kind);
+        return kind == "role-update"
+            ? authority.RoleWriteAsync(permission, command.RoleId, kind, command, actor, Change, ct)
+            : authority.ExecuteAsync(permission, actor, async (who, token) =>
+                await authority.Original(who, kind, command, token) ?? await Change(who, token), ct);
+
+        async Task<IamOperationV1> Change(Guid who, CancellationToken token)
         {
-            var original=await authority.Original(who,kind,command,token);if(original!=null)return original;
             var row=await db.Sys_Roles.SingleOrDefaultAsync(x=>x.RoleId==command.RoleId,token);
             if(kind=="role-create" && row!=null)throw Error(409,"IAM_ROLE_EXISTS");
             if(kind!="role-create" && row==null)throw Error(404,"IAM_ROLE_NOT_FOUND");
@@ -81,7 +86,7 @@ public sealed class IamRoleAdministrationV1(CP6Context db,IamAdministrationV1 au
             var result=new IamOperationV1(command.OperationId,kind,"COMMITTED",Version:await authority.Version(IdentityEventContracts.RoleSubject(command.RoleId),token),
                 ReferencesVersion:await authority.ReferencesVersion(token),RoleId:command.RoleId);
             await authority.Store(who,command,result,token);return result;
-        },ct);
+        }
     }
     private async Task<IamRoleReferencesV1> References(int id,CancellationToken ct)
     {
