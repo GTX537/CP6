@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W636-01 普通库存原财务意图
+
+真实收货、盘点和普通报废之后的原财务意图可按同一事件恢复。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W636-01/DELIVERY.md)
+
 ## 2026-11-15 W634-01 Space 历史刊发父链
 
 克隆、进入验证、保存验证结果和创建子刊发受 Main 共同栅栏及原父 Job 租约保护。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W634-01/DELIVERY.md)
