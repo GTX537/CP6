@@ -107,8 +107,16 @@ builder.Services.AddScoped<CP6.WebApi.Services.ICrmOidcServiceDirectory>(service
     services.GetRequiredService<CP6.WebApi.Services.CrmOidcDirectory>());
 builder.Services.AddScoped<CP6.WebApi.Services.CrmOidcServiceTokens>();
 builder.Services.AddScoped<CP6.WebApi.Services.ICrmOidcGrantStore>(services =>
-    new CP6.WebApi.Services.SqlCrmOidcGrantStore(database, databaseConnection,
-        services.GetService<CP6.Core.Services.CrmIdentity.CrmIdentityRuntime>()));
+{
+    var identity = services.GetService<CP6.Core.Services.CrmIdentity.CrmIdentityRuntime>();
+    var fence = services.GetService<CP6.Core.Services.Platform.CrmInquiryTenantPauseV1>();
+    var seal = identity is not null && fence is not null ? new CP6.WebApi.Services.CrmOidcFamilySealV1(database, identity, fence) : null;
+    return new CP6.WebApi.Services.SqlCrmOidcGrantStore(database, databaseConnection, identity, fence, seal,
+        services.GetRequiredService<Microsoft.AspNetCore.DataProtection.IDataProtectionProvider>());
+});
+if (database.Provider == DatabaseProvider.PostgreSql && crmOidc.Enabled &&
+    builder.Configuration.GetSection("CrmInquiryTenantPause:Tenants").GetChildren().Any())
+    builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.CrmOidcFamilyLogoutRecoveryWorkerV1>();
 builder.Services.AddHealthChecks()
     .AddCheck(
         "self",

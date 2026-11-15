@@ -111,15 +111,23 @@ public sealed partial class CrmOidcController(CrmOidcOptions options, CrmOidcCry
         var sourceExpires = DateTimeOffset.FromUnixTimeSeconds(long.Parse(principal.FindFirst("exp")!.Value)).UtcDateTime;
         var raw = CrmOidcCrypto.RandomToken();
         var accessExpires = sourceExpires < now.AddMinutes(5) ? sourceExpires : now.AddMinutes(5);
-        await grants.SaveAsync(new CrmOidcGrant
+        try
         {
-            Id = Guid.NewGuid(), CodeHash = CrmOidcCrypto.Hash(raw), ClientId = client.ClientId,
-            RedirectUri = redirect, Challenge = Q("code_challenge"), Nonce = Q("nonce"),
-            SubjectId = user.Id, OrganizationId = user.TenantId, SourceJti = principal.FindFirst("jti")!.Value,
-            SourceRefreshHash = sourceRefreshHash,
-            SecurityStamp = CrmOidcDirectory.SecurityStamp(user), ExpiresAtUtc = now.AddSeconds(60),
-            SourceExpiresAtUtc = sourceExpires, AccessExpiresAtUtc = accessExpires
-        });
+            await grants.SaveAsync(new CrmOidcGrant
+            {
+                Id = Guid.NewGuid(), CodeHash = CrmOidcCrypto.Hash(raw), ClientId = client.ClientId,
+                RedirectUri = redirect, Challenge = Q("code_challenge"), Nonce = Q("nonce"),
+                SubjectId = user.Id, OrganizationId = user.TenantId, SourceJti = principal.FindFirst("jti")!.Value,
+                SourceRefreshHash = sourceRefreshHash,
+                SecurityStamp = CrmOidcDirectory.SecurityStamp(user), ExpiresAtUtc = now.AddSeconds(60),
+                SourceExpiresAtUtc = sourceExpires, AccessExpiresAtUtc = accessExpires
+            });
+        }
+        catch (CrmOidcFamilyAdmissionClosedException)
+        {
+            return Redirect(QueryHelpers.AddQueryString(redirect,
+                new Dictionary<string, string?> { ["error"] = "login_required", ["state"] = Q("state") }));
+        }
         return Redirect(QueryHelpers.AddQueryString(redirect,
             new Dictionary<string, string?> { ["code"] = raw, ["state"] = Q("state"), ["iss"] = options.Issuer }));
     }
@@ -272,12 +280,31 @@ public sealed partial class CrmOidcController(CrmOidcOptions options, CrmOidcCry
             || principal.FindFirst("tenant_id")?.Value != grant.OrganizationId.ToString()) return OAuthError("invalid_request");
         var state = form["state"].ToString();
         if (state.Length > 512) return OAuthError("invalid_request");
-        await grants.RevokeSourceFamilyAsync(grant);
+        var continuationRedirect = state.Length == 0 ? redirect : QueryHelpers.AddQueryString(redirect, "state", state);
+        var native = grants as SqlCrmOidcGrantStore;
+        var registered = native?.RequiresNativeFamilyLogout(grant.OrganizationId) == true;
+        string? rawTicket = null;
+        try
+        {
+            if (registered)
+            {
+                if (principal.FindFirst("nonce") is { } nonce && nonce.Value != grant.Nonce) return OAuthError("invalid_request");
+                rawTicket = await native!.LogoutRegisteredFamilyAsync(grant, redirect, state, continuationRedirect, HttpContext.RequestAborted);
+            }
+            else await grants.RevokeSourceFamilyAsync(grant);
+        }
+        catch (Exception error) when (error is CrmOidcFamilyLogoutUnavailableException || registered && error is System.Data.Common.DbException)
+        {
+            return OAuthError("temporarily_unavailable", StatusCodes.Status503ServiceUnavailable);
+        }
         var ttl = grant.SourceExpiresAtUtc - DateTime.UtcNow;
         if (ttl > TimeSpan.Zero) await blacklist.BlacklistAsync(grant.SourceJti, ttl);
-        var rawTicket = CrmOidcCrypto.RandomToken();
-        await grants.SaveLogoutAsync(new CrmOidcLogout { TicketHash = CrmOidcCrypto.Hash(rawTicket), GrantId = grant.Id,
-            RedirectUri = state.Length == 0 ? redirect : QueryHelpers.AddQueryString(redirect, "state", state), ExpiresAtUtc = DateTime.UtcNow.AddMinutes(1) });
+        if (rawTicket is null)
+        {
+            rawTicket = CrmOidcCrypto.RandomToken();
+            await grants.SaveLogoutAsync(new CrmOidcLogout { TicketHash = CrmOidcCrypto.Hash(rawTicket), GrantId = grant.Id,
+                RedirectUri = continuationRedirect, ExpiresAtUtc = DateTime.UtcNow.AddMinutes(1) });
+        }
         return Ok(new { logoutContinuationUri = options.Issuer + "/api/auth/crm-logout?ticket=" + rawTicket });
     }
 

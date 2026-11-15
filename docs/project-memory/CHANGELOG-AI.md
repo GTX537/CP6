@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W661-01
+
+Main 持久接受原 CRM OIDC 登录族的退出意图。现有最小 CRM 身份事务确认全部原授予版本后，Main 原族、刷新谱系、快照、Outbox 和恢复结果共同提交。[W661-01 交付](../development/evidence/W661-01/DELIVERY.md)
+
 ## 2026-11-15 W660-01
 
 Main IAM 普通用户实际变更持久封存意图，冷拒接期间限制受影响用户的新 CRM 写授权。原业务、C02、Outbox、审核、回执在最终 Main 事务提交。[W660-01 交付](../development/evidence/W660-01/DELIVERY.md)
