@@ -376,7 +376,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     private static Task<AuthenticationApiProcess> StartW620Api(Harness h, string? connection = null)
     {
         var environment = new Dictionary<string, string>(IamUserAssignmentsPostgreSqlTests.IdentityEnvironment(h.Tenant));
-        environment["ASPNETCORE_URLS"] = "http://127.0.0.1:56936";
+        var port = Environment.GetEnvironmentVariable("CP6_STOCK_FINANCE_HTTP_PORT") ?? "56936";
+        environment["ASPNETCORE_URLS"] = $"http://127.0.0.1:{port}";
         environment["IntegrationEvent__Enabled"] = "false";
         return AuthenticationApiProcess.Start(connection ?? h.Db.Database.GetConnectionString()!, environment);
     }
