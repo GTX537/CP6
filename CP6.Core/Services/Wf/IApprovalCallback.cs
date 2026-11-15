@@ -43,6 +43,16 @@ public sealed class ApprovalCallbackContext
     /// <summary>终态决策人 Sys_User.Id（末一个办理人：通过=末同意人 / 驳回=驳回人）；自动结束无人决策时为发起人。</summary>
     public Guid? DecidedById { get; init; }
 
+    // The legacy decision ID can contain the starter. The engine identifies the source separately.
+    internal ApprovalCompletionOrigin CompletionOrigin { get; init; }
+
     /// <summary>驳回理由（通过时一般为最后办理意见，可空）。</summary>
     public string? Reason { get; init; }
+}
+
+internal enum ApprovalCompletionOrigin
+{
+    None,
+    TaskApproval,
+    Continuation,
 }

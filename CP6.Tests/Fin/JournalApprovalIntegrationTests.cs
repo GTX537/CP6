@@ -29,7 +29,7 @@ public class JournalApprovalIntegrationTests
     private static (IJournalEntryService journal, IApprovalService approval, IFlowEngine engine) Build(CP6Context db)
     {
         var journal = new JournalEntryService(db, new FiscalPeriodService(db, 1), new FinSequenceService(db));
-        var dispatcher = new ApprovalDispatcher(new IApprovalCallback[] { new JournalApprovalCallback(journal) });
+        var dispatcher = new ApprovalDispatcher(new IApprovalCallback[] { new JournalApprovalCallback(journal, db) });
         var engine = new FlowEngine(db, new ApproverResolver(db), notifier: null, dispatcher: dispatcher);
         var approval = new ApprovalService(db, engine);
         return (journal, approval, engine);
