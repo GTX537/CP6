@@ -1,5 +1,7 @@
+using System.Data;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Mes;
+using CP6.Core.Services.Sys;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.BackgroundServices;
@@ -58,6 +60,14 @@ public class MachineStatusMonitor : BackgroundService
     {
         var db = sp.GetRequiredService<CP6Context>();
         var notifier = sp.GetRequiredService<IMesNotifier>();
+        await using var transaction = db.Database.IsNpgsql()
+            ? await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct)
+            : null;
+        if (transaction is not null)
+        {
+            await AuthenticationCompletionGateV1.AcquireAsync(db, ct);
+            if (!await TenantAvailableAsync()) return;
+        }
 
         // 稼働中設備
         var runningMachines = await db.Machines.AsNoTracking()
@@ -97,15 +107,27 @@ public class MachineStatusMonitor : BackgroundService
             m.Status = 0;
             m.Modifier = "MachineMonitor";
             m.ModifyDate = DateTime.Now;
-            _logger.LogInformation("設備 {Cd} アイドル検知 → 停止状態に変更", m.MachineCd);
         }
-        if (tracked.Count > 0)
+        if (tracked.Count == 0) return;
+
+        await db.SaveChangesAsync(ct);
+        if (transaction is not null)
         {
-            await db.SaveChangesAsync(ct);
-            foreach (var m in tracked)
-            {
-                try { await notifier.NotifyMachineStatusChangedAsync(m.MachineCd, 0); } catch { }
-            }
+            if (!await TenantAvailableAsync()) return;
+            await transaction.CommitAsync(ct);
+        }
+
+        foreach (var m in tracked)
+        {
+            _logger.LogInformation("設備 {Cd} アイドル検知 → 停止状態に変更", m.MachineCd);
+            try { await notifier.NotifyMachineStatusChangedAsync(m.MachineCd, 0); } catch { }
+        }
+
+        Task<bool> TenantAvailableAsync()
+        {
+            var now = DateTime.Now;
+            return db.Sys_Tenants.AsNoTracking().AnyAsync(tenant => tenant.Id == db.CurrentTenantId && tenant.Enable
+                && (tenant.ExpireDate == null || tenant.ExpireDate > now), ct);
         }
     }
 
