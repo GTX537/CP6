@@ -166152,6 +166152,11 @@
       "at": "2026-11-15T19:37:46.926226+00:00",
       "change": "W650-01 规划分支前台预约使用原规划权限的 Main 栅栏，规划目标和原克隆 Job 同处原 PostgreSQL 事务。",
       "evidence": "docs/development/evidence/W650-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T19:57:03.891425+00:00",
+      "change": "W649-01 CRM 可回读当前授权的原配置，正式封存前 Main 持久化精确待处理意图并停发新写准入。",
+      "evidence": "docs/development/evidence/W649-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212158,10 +212163,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W650",
-      "path": "docs/development/evidence/W650-01/DELIVERY.md",
-      "baseline_sha": "04db2f57646fa4fcc135836c3fe7c5177ae44dd3",
-      "registered_at": "2026-11-15T19:31:02.561188+00:00",
+      "id": "W649",
+      "path": "docs/development/evidence/W649-01/DELIVERY.md",
+      "baseline_sha": "1e2b294eb2f4f5a72cf903a16bac724edc74694d",
+      "registered_at": "2026-11-15T19:22:16.755196+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212175,42 +212180,52 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Preserve exact ERP event chronology at retry and continue the remaining scoped Space writers and the CRM native outage cutover.",
+      "next_action": "Continue the real Space pending named writer tests, ERP chronology adoption and final PGT-017 reconciliation.",
       "windows": [
         {
-          "id": "W650-01",
-          "workspace_task": "W650-01",
+          "id": "W649-01",
+          "workspace_task": "W649-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT",
+          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w650-01",
-          "planned_scope_ref": "docs/development/evidence/W650-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W650-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w649-01",
+          "planned_scope_ref": "docs/development/evidence/W649-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W649-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Signed planning reservation, original production Published snapshot, planning branch and CloneVersion Job",
-            "Main shared approval transaction before any reservation write",
-            "DEV-2"
+            "Original Main and CRM registered inquiry tenant, scoped close_v1 login and C02 generation",
+            "Durable two-stage Main operation, current issuance and exact business replay",
+            "DEV-1 fixed seat used serially for both repositories"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Four native PostgreSQL cases with both signed planning reservation orders and both actual W647 planning clone control orders. Original business repeats and published identity retained. 310 files, 200/401.",
-          "remaining_scope": "Space Draft WMS adoption, code/template writers and publication failure state; Main CRM pre-seal durable intent; the separately identified ERP retry chronology. Formal PostgreSQL remains 26 PASS / 1 NOT_RUN.",
-          "main_tested_source_sha": "a26f254e6c8fc0a1dd3776e2e7dee72804ecaf57"
+          "validation_summary": "CRM 16 actual directed results on pre-adoption, Main phase 32 directed actual results including both cold start and commit acknowledgement loss, zero skipped. Native two stores and exact source-bound 310/255 release artifacts.",
+          "remaining_scope": "PGT-017 remaining named Space draft/publication writers. Requests for role, user, deadline and department use the previously verified specific authority protocols. Production configuration adoption remains separate.",
+          "main_tested_source_sha": "9d70a9e6e69e9aa9703e4b94be8de6531219fdfa",
+          "product_repository": "CP6.CRM",
+          "product_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "product_baseline": "e5a8157f20e5817f58b33242a4bd6188f1c58461",
+          "product_branch": "codex/w649-01",
+          "product_source_sha": "ed3f9e44e421eed6984a08575a8189f6fd93eab2",
+          "product_remote_main_sha": "5f09533b9168ee614a6df1f75629b39635585f86",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/238",
+          "product_branch_disposition": "deleted-local-and-remote",
+          "product_workspace_status": "fixed-seat-detached-for-reuse",
+          "product_seat_released": true
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -269626,6 +269641,67 @@
             "main_tested_source_sha": "b7edb35bf5b0dba503831e7845832ba8c64855b6",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1171",
             "main_remote_main_sha": "04db2f57646fa4fcc135836c3fe7c5177ae44dd3"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W650",
+        "path": "docs/development/evidence/W650-01/DELIVERY.md",
+        "baseline_sha": "04db2f57646fa4fcc135836c3fe7c5177ae44dd3",
+        "registered_at": "2026-11-15T19:31:02.561188+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Preserve exact ERP event chronology at retry and continue the remaining scoped Space writers and the CRM native outage cutover.",
+        "windows": [
+          {
+            "id": "W650-01",
+            "workspace_task": "W650-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w650-01",
+            "planned_scope_ref": "docs/development/evidence/W650-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W650-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Signed planning reservation, original production Published snapshot, planning branch and CloneVersion Job",
+              "Main shared approval transaction before any reservation write",
+              "DEV-2"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Four native PostgreSQL cases with both signed planning reservation orders and both actual W647 planning clone control orders. Original business repeats and published identity retained. 310 files, 200/401.",
+            "remaining_scope": "Space Draft WMS adoption, code/template writers and publication failure state; Main CRM pre-seal durable intent; the separately identified ERP retry chronology. Formal PostgreSQL remains 26 PASS / 1 NOT_RUN.",
+            "main_tested_source_sha": "a26f254e6c8fc0a1dd3776e2e7dee72804ecaf57",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1173",
+            "main_remote_main_sha": "1aa2654fcb3f14f58c608aa416c07fa7474c8824"
           }
         ],
         "storage": {

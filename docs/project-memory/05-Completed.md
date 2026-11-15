@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-15 W649-01
+
+真两库验证首次 CRM 封存连接拒绝、Main 重启、原 CRM 回执、两种顺序及两端 COMMIT 应答丢失。 [交付](../development/evidence/W649-01/DELIVERY.md)
+
 ## 2026-11-15 W650-01
 
 规划预约和已采用的真实规划克隆处理器各通过两种提交顺序。 [交付](../development/evidence/W650-01/DELIVERY.md)
