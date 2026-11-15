@@ -19,7 +19,8 @@ public sealed class SpaceCadParseService(
     SpaceSourceCoordinator sources,
     ISpaceClock clock,
     ISpaceFileStore? files = null,
-    ISpaceDesignV1Service? design = null) : ISpaceCadParseService
+    ISpaceDesignV1Service? design = null,
+    ISpaceDesignWriteAuthority? writeAuthority = null) : ISpaceCadParseService
 {
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
@@ -38,7 +39,9 @@ public sealed class SpaceCadParseService(
         var sourceType = sourceFormat == SpaceCadSourceFormat.Dwg
             ? SpaceSourceType.Dwg
             : SpaceSourceType.Dxf;
-        var upload = await uploads.UploadAsync(
+        var uploadWrites = new SpaceSourceUploadWriteTransaction(context, writeAuthority, files);
+        var upload = await uploadWrites.UploadAsync(
+            uploads,
             new SpaceFileUploadRequest(
                 sourceType,
                 originalName,
@@ -46,36 +49,7 @@ public sealed class SpaceCadParseService(
                 SpaceFileRetentionClass.Source),
             content,
             cancellationToken);
-        var existing = await context.Sources.SingleOrDefaultAsync(
-            item =>
-                item.ModelVersionId == versionId &&
-                item.SourceType == sourceType &&
-                item.Sha256 == upload.File.Sha256,
-            cancellationToken);
-        SpaceModelSource source;
-        if (existing is not null)
-        {
-            source = existing;
-            if (source.State == SpaceSourceState.Rejected)
-                throw Conflict("The same CAD source was previously rejected.");
-        }
-        else
-        {
-            source = upload.File.State == SpaceFileState.Clean
-                ? sources.AddFileSource(
-                    version,
-                    upload.File,
-                    sourceType,
-                    upload.File.OriginalName)
-                : sources.AddPendingFileSource(
-                    version,
-                    upload.File,
-                    sourceType,
-                    upload.File.OriginalName);
-            context.Sources.Add(source);
-            await context.SaveChangesAsync(cancellationToken);
-        }
-
+        var (source, reusedSource) = await RegisterUploadedSourceAsync(version, sourceType, upload.File, uploadWrites, cancellationToken);
         await SynchronizeTerminalFileStateAsync(
             source,
             upload.File.Id,
@@ -90,7 +64,55 @@ public sealed class SpaceCadParseService(
             ToDto(source),
             scanJobId,
             scanJobId.HasValue ? $"/api/space/design/v1/jobs/{scanJobId:D}" : null,
-            upload.Reused || existing is not null);
+            upload.Reused || reusedSource);
+    }
+
+    private async Task<(SpaceModelSource Source, bool Reused)> RegisterUploadedSourceAsync(
+        SpaceModelVersion version,
+        SpaceSourceType sourceType,
+        SpaceFile file,
+        SpaceSourceUploadWriteTransaction uploadWrites,
+        CancellationToken cancellationToken)
+    {
+        await using var transaction = await uploadWrites.BeginRegistrationAsync(cancellationToken);
+        if (transaction is not null)
+        {
+            context.ChangeTracker.Clear();
+            (version, _) = await LoadWritableVersionAsync(version.Id, cancellationToken);
+        }
+
+        var existing = await context.Sources.SingleOrDefaultAsync(
+            item =>
+                item.ModelVersionId == version.Id &&
+                item.SourceType == sourceType &&
+                item.Sha256 == file.Sha256,
+            cancellationToken);
+        SpaceModelSource source;
+        if (existing is not null)
+        {
+            source = existing;
+            if (source.State == SpaceSourceState.Rejected)
+                throw Conflict("The same CAD source was previously rejected.");
+        }
+        else
+        {
+            source = file.State == SpaceFileState.Clean
+                ? sources.AddFileSource(
+                    version,
+                    file,
+                    sourceType,
+                    file.OriginalName)
+                : sources.AddPendingFileSource(
+                    version,
+                    file,
+                    sourceType,
+                    file.OriginalName);
+            context.Sources.Add(source);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        if (transaction is not null)
+            await uploadWrites.CommitRegistrationAsync(transaction, cancellationToken);
+        return (source, existing is not null);
     }
 
     public async Task<StartSpaceCadParseResponse> StartAsync(

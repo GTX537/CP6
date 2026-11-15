@@ -12,7 +12,7 @@ namespace CP6.Space.Infrastructure;
 
 public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
 {
-    private const string UploadPermission = "space:source:upload";
+    private const string UploadPermission = SpaceSourceUploadWriteTransaction.UploadPermission;
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
 
@@ -101,9 +101,9 @@ public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
             request.OriginalName,
             request.DeclaredContentType,
             SpaceFileRetentionClass.Source);
-        var upload = UseWriteAuthority
-            ? await _uploads.UploadAsync(fileRequest, content, CompleteUnderlayFileUploadAsync, cancellationToken)
-            : await _uploads.UploadAsync(fileRequest, content, cancellationToken);
+        var uploadWrites = new SpaceSourceUploadWriteTransaction(_context, _writeAuthority, _files,
+            () => UnderlayConflict("The Space write authority changed concurrently."));
+        var upload = await uploadWrites.UploadAsync(_uploads, fileRequest, content, cancellationToken);
 
         var (source, reusedSource) = await RegisterUnderlaySourceAsync(version, request, upload.File, cancellationToken);
         await SynchronizeTerminalFileStateAsync(
@@ -128,33 +128,6 @@ public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
                 ? $"/api/space/design/v1/jobs/{jobId.Value:D}"
                 : null,
             upload.Reused || reusedSource);
-    }
-
-    private async Task<SpaceFileUploadResult> CompleteUnderlayFileUploadAsync(
-        Func<CancellationToken, Task<SpaceFileUploadResult>> saveCatalog,
-        Func<CancellationToken, Task> publishContent,
-        CancellationToken cancellationToken)
-    {
-        await using var transaction = await BeginUnderlayWriteAsync(cancellationToken, UploadPermission);
-        var upload = await saveCatalog(cancellationToken);
-        if (!upload.Reused)
-            await publishContent(cancellationToken);
-
-        try
-        {
-            await _writeAuthority!.ConfirmSessionAsync(_context, cancellationToken);
-            cancellationToken.ThrowIfCancellationRequested();
-        }
-        catch
-        {
-            if (!upload.Reused)
-                await _files.DeleteAsync(upload.File.TenantId, upload.File.Id, upload.File.StorageKey, CancellationToken.None);
-            throw;
-        }
-
-        // A failed acknowledgement may follow a committed catalog row that owns this content.
-        await transaction.CommitAsync(cancellationToken);
-        return upload;
     }
 
     private async Task<(SpaceModelSource Source, bool Reused)> RegisterUnderlaySourceAsync(

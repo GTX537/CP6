@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## 2026-11-15 · W604-01 Space 处理阶段
+
+继续 CAD 准备、解析、重试、Excel 预检和匹配，以及刊发执行、WMS 投影与激活后台事务。 [交付记录](../development/evidence/W604-01/DELIVERY.md)
+
+## 2026-11-15 · W602-01 Space 余项
+
+继续核对 CAD 准备、解析、重试、Excel 预检和匹配及刊发、后台写者。 [交付记录](../development/evidence/W602-01/DELIVERY.md)
+
 ## 2026-11-15 · W601-01 PGT-017 余项
 
 CRM 所需实际审批签发、Main 封存与 C02、Kafka/Dapr 直接写者隔离及目标凭据推广继续；Main 核对 CAD/Excel、刊发和财务。 [交付记录](../development/evidence/W601-01/DELIVERY.md)

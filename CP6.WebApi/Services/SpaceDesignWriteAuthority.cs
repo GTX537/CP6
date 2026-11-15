@@ -16,13 +16,13 @@ internal sealed class SpaceDesignWriteAuthority(
     IServiceScopeFactory scopeFactory,
     ISpaceExecutionContext execution) : ISpaceDesignWriteAuthority
 {
-    public Task AuthorizeModelEditAsync(SpaceContext context, CancellationToken ct, string? additionalPermission = null)
-        => CheckAsync(context, authorize: true, additionalPermission, ct);
+    public Task AuthorizeAsync(SpaceContext context, string requiredPermission, CancellationToken ct, string? additionalPermission = null)
+        => CheckAsync(context, requiredPermission, additionalPermission, ct);
 
     public Task ConfirmSessionAsync(SpaceContext context, CancellationToken ct)
-        => CheckAsync(context, authorize: false, additionalPermission: null, ct);
+        => CheckAsync(context, requiredPermission: null, additionalPermission: null, ct);
 
-    private async Task CheckAsync(SpaceContext space, bool authorize, string? additionalPermission, CancellationToken ct)
+    private async Task CheckAsync(SpaceContext space, string? requiredPermission, string? additionalPermission, CancellationToken ct)
     {
         // Internal Space work has its own execution context. This boundary consumes the HTTP session.
         if (http.HttpContext is not { } request)
@@ -36,16 +36,16 @@ internal sealed class SpaceDesignWriteAuthority(
         {
             core.Database.SetDbConnection(space.Database.GetDbConnection(), contextOwnsConnection: false);
             await core.Database.UseTransactionAsync(space.Database.CurrentTransaction!.GetDbTransaction(), ct);
-            if (authorize)
+            if (requiredPermission is not null)
                 await AuthenticationCompletionGateV1.AcquireAsync(core, ct);
 
             var actor = await IamAdministrationHttpV1.CurrentActor(request, services, ct, allowImpersonation: true);
             if (actor != execution.ActorId)
                 throw new IamAdministrationExceptionV1(401, "REAUTH_REQUIRED");
-            if (authorize)
+            if (requiredPermission is not null)
             {
                 var current = await services.GetRequiredService<ICurrentPermissionContext>().GetAsync();
-                if (!current.ActionKeys.Contains("space:model:edit") ||
+                if (!current.ActionKeys.Contains(requiredPermission) ||
                     (additionalPermission is not null && !current.ActionKeys.Contains(additionalPermission)))
                     throw new SpaceProblemException(SpaceErrorCodes.PermissionDenied, 403,
                         "The Space request was denied.", recoveryAction: "request-access");

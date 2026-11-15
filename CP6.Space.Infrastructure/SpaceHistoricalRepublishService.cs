@@ -13,6 +13,7 @@ namespace CP6.Space.Infrastructure;
 public sealed class SpaceHistoricalRepublishService :
     ISpaceHistoricalRepublishService
 {
+    private const string RollbackPermission = "space:model:rollback";
     private static readonly JsonSerializerOptions Json =
         new(JsonSerializerDefaults.Web);
 
@@ -20,17 +21,20 @@ public sealed class SpaceHistoricalRepublishService :
     private readonly ISpaceExecutionContext _execution;
     private readonly ISpaceClock _clock;
     private readonly ISpaceDesignAccessEvaluator _access;
+    private readonly ISpaceDesignWriteAuthority? _writeAuthority;
 
     public SpaceHistoricalRepublishService(
         SpaceContext context,
         ISpaceExecutionContext execution,
         ISpaceClock clock,
-        ISpaceDesignAccessEvaluator access)
+        ISpaceDesignAccessEvaluator access,
+        ISpaceDesignWriteAuthority? writeAuthority = null)
     {
         _context = context;
         _execution = execution;
         _clock = clock;
         _access = access;
+        _writeAuthority = writeAuthority;
     }
 
     public async Task<StartSpaceHistoricalRepublishResponse> StartAsync(
@@ -59,11 +63,10 @@ public sealed class SpaceHistoricalRepublishService :
         }
 
         await using var transaction = _context.Database.IsRelational()
-            ? await _context.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken)
+            ? await SpaceDesignWriteTransaction.BeginForPermissionAsync(
+                _context, _writeAuthority, RollbackPermission, cancellationToken)
             : null;
-        var transactionCommitted = false;
+        var completingTransaction = false;
         try
         {
             var lockResource =
@@ -86,8 +89,8 @@ public sealed class SpaceHistoricalRepublishService :
                     write: true);
                 if (transaction is not null)
                 {
-                    await transaction.CommitAsync(cancellationToken);
-                    transactionCommitted = true;
+                    completingTransaction = true;
+                    await SpaceDesignWriteTransaction.CommitAsync(_context, _writeAuthority, transaction, cancellationToken);
                 }
                 return new StartSpaceHistoricalRepublishResponse(
                     await ToDtoAsync(
@@ -219,8 +222,8 @@ public sealed class SpaceHistoricalRepublishService :
             await _context.SaveChangesAsync(cancellationToken);
             if (transaction is not null)
             {
-                await transaction.CommitAsync(cancellationToken);
-                transactionCommitted = true;
+                completingTransaction = true;
+                await SpaceDesignWriteTransaction.CommitAsync(_context, _writeAuthority, transaction, cancellationToken);
             }
             return new StartSpaceHistoricalRepublishResponse(
                 await ToDtoAsync(operation.Id, cancellationToken),
@@ -228,7 +231,7 @@ public sealed class SpaceHistoricalRepublishService :
         }
         catch
         {
-            if (transaction is not null && !transactionCommitted)
+            if (transaction is not null && !completingTransaction)
                 await transaction.RollbackAsync(CancellationToken.None);
             throw;
         }

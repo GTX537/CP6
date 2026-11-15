@@ -1,5 +1,13 @@
 # AI 可读变更日志
 
+## 2026-11-15 · W604-01
+
+登记刊发提交、人工重试和历史重刊按原动作获取共同栅栏与实测双向排序。 [交付记录](../development/evidence/W604-01/DELIVERY.md)
+
+## 2026-11-15 · W602-01
+
+登记 CAD/Excel 共用文件和来源两阶段原生栅栏及已提交内容恢复。 [交付记录](../development/evidence/W602-01/DELIVERY.md)
+
 ## 2026-11-15 · W601-01
 
 登记 CRM 受信 PostgreSQL 重绑、旧凭据拒绝与连续物理恢复结果。 [交付记录](../development/evidence/W601-01/DELIVERY.md)
