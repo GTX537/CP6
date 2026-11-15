@@ -2,6 +2,7 @@ using System.Data;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Options;
+using CP6.Core.Persistence.Tenancy;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Fin;
 using CP6.Entity.DomainModels.Wms;
@@ -22,7 +23,16 @@ public partial class StockFinBridge
     {
         var relatedType = txn.RelatedType ?? "";
         if (Resolve(txn.TxnType, relatedType, txn.Qty).eventType is null) return;
-        if (!ReferenceEquals(Db, owner) || Db.Database.CurrentTransaction is null)
+        if (owner.CurrentTenantId != Db.CurrentTenantId || owner.Database.CurrentTransaction is null)
+            throw new InvalidOperationException("WMS_FIN_OWNER_TRANSACTION_REQUIRED");
+
+        if (owner is StockMovementWriteContextV1 writer)
+        {
+            var eventId = await StockMovementFinanceWriterStorageV1.StageAsync(writer, txn, ct);
+            _stagedStockMoves.Add(txn.Id, eventId);
+            return;
+        }
+        if (!ReferenceEquals(Db, owner))
             throw new InvalidOperationException("WMS_FIN_OWNER_TRANSACTION_REQUIRED");
 
         // Preserve the original inputs before PostgreSQL rounds the stock quantity and unit price to their column scales.
