@@ -165962,6 +165962,11 @@
       "at": "2026-11-15T09:19:16.318077+00:00",
       "change": "W597-01 会计期间四写入口采用共同栅栏，核对财务写者清单与 PostgreSQL 回滚、历史恢复证据。",
       "evidence": "docs/development/evidence/W597-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T09:44:12.276909+00:00",
+      "change": "W598-01 实测底图上传、标定、挂接和补偿的 Main 共用栅栏及已提交文件恢复。",
+      "evidence": "docs/development/evidence/W598-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211968,10 +211973,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W597",
-      "path": "docs/development/evidence/W597-01/DELIVERY.md",
-      "baseline_sha": "7cd756c715d5a67ecf5170e1697b2781f79ad6cd",
-      "registered_at": "2026-11-15T08:58:37.729836+00:00",
+      "id": "W598",
+      "path": "docs/development/evidence/W598-01/DELIVERY.md",
+      "baseline_sha": "922fb9ff71d66c1c69692e0234e4106564998dce",
+      "registered_at": "2026-11-15T09:10:37.017494+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211985,11 +211990,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "完成底图实际锁序和存储阶段验证，按财务写者清单及 CRM 重绑依赖推进，PGT-017 保持 NOT_RUN",
+      "next_action": "登记 CRM 旧源重启后的写者隔离，继续 CAD/Excel 与其他 Space 写者及财务路径。保持 PGT-017 NOT_RUN",
       "windows": [
         {
-          "id": "W597-01",
-          "workspace_task": "W597-01",
+          "id": "W598-01",
+          "workspace_task": "W598-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -211999,28 +212004,29 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w597-01",
-          "planned_scope_ref": "docs/development/evidence/W597-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W597-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w598-01",
+          "planned_scope_ref": "docs/development/evidence/W598-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W598-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:CoreFiscalPeriod",
+            "Main:SpaceUnderlay",
+            "Main:SpaceFileUpload",
             "Main:IAM-CurrentWriteAuthority",
             "Local:PostgreSQL-HTTP"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "14/14 PostgreSQL 18.6 HTTP，30/30 回归，310 文件本地发布及 200/401；69 条财务写声明核对",
-          "remaining_scope": "40 个财务 HTTP 写路径和后台/跨域写者、Space 底图及其他设计写者、CRM 产品级可信切换",
-          "main_tested_source_sha": "2425e6556cd387c81c68042e79f72867cfe4c1de"
+          "validation_summary": "14 项实际 PostgreSQL（12 HTTP 与 2 原生提交故障），30/30 单元，98/98 相关接口契约，310 文件本地发布及实际 200/401",
+          "remaining_scope": "CAD/Excel 等 Space 实际写者和扫描宿主、40 条剩余财务 HTTP 路径及后台写者、CRM 可信正式切换",
+          "main_tested_source_sha": "f71bfa721c4626dee962655eaae79207a1363a73"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -267050,6 +267056,67 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W597",
+        "path": "docs/development/evidence/W597-01/DELIVERY.md",
+        "baseline_sha": "7cd756c715d5a67ecf5170e1697b2781f79ad6cd",
+        "registered_at": "2026-11-15T08:58:37.729836+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "完成底图实际锁序和存储阶段验证，按财务写者清单及 CRM 重绑依赖推进，PGT-017 保持 NOT_RUN",
+        "windows": [
+          {
+            "id": "W597-01",
+            "workspace_task": "W597-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w597-01",
+            "planned_scope_ref": "docs/development/evidence/W597-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W597-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:CoreFiscalPeriod",
+              "Main:IAM-CurrentWriteAuthority",
+              "Local:PostgreSQL-HTTP"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "14/14 PostgreSQL 18.6 HTTP，30/30 回归，310 文件本地发布及 200/401；69 条财务写声明核对",
+            "remaining_scope": "40 个财务 HTTP 写路径和后台/跨域写者、Space 底图及其他设计写者、CRM 产品级可信切换",
+            "main_tested_source_sha": "2425e6556cd387c81c68042e79f72867cfe4c1de",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1108",
+            "main_remote_main_sha": "1b801e1bc15b4ea6ea077e5a293bc9d67c8fcdfd"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
             "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0

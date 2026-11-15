@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 · W598-01
+
+登记底图两级写入栅栏、暂停后恢复和物理内容提交边界，更新 Space 相关写者清单。 [交付记录](../development/evidence/W598-01/DELIVERY.md)
+
 ## 2026-11-15 · W597-01
 
 登记会计期间四写入口的 PostgreSQL 锁序、回滚和历史重复关账，并保存财务入口清单。 [交付记录](../development/evidence/W597-01/DELIVERY.md)
