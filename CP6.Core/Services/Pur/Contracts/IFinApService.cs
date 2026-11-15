@@ -40,6 +40,10 @@ public class PurApInvoiceDto
 
     /// <summary>明细行</summary>
     public List<PurApLineDto> Lines { get; set; } = new();
+
+    // The purchase Owner can prove line attribution for a pre-existing invoice.
+    internal bool OriginalPurchaseLinesAreUnambiguous { get; init; }
+    internal bool UseOriginalInvoiceDate { get; init; }
 }
 
 /// <summary>采购→财务 建应付明细行。</summary>
@@ -72,6 +76,8 @@ public class PurApResult
 
     /// <summary>应付发票号</summary>
     public string? InvoiceNo { get; init; }
+
+    internal DateTime? OriginalInvoiceDate { get; init; }
 
     /// <summary>成功。</summary>
     public static PurApResult Pass(Guid? id, string? no) => new() { Ok = true, InvoiceId = id, InvoiceNo = no };

@@ -1279,22 +1279,34 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             e.HasIndex(x => x.PoLineNo);
         });
 
-        // 三单匹配（章04）：MatchNo 唯一 + 按 PO/状态检索；行级联（业务键 MatchNo 关联）
+        // 三单匹配（章04）：PostgreSQL 的匹配号和明细归属以租户为范围。
         modelBuilder.Entity<ThreeWayMatch>(e =>
         {
-            e.HasIndex(x => x.MatchNo).IsUnique();
             e.HasIndex(x => new { x.PoNo, x.Status });
             e.HasIndex(x => x.SupplierInvoiceNo);
 
-            e.HasMany(x => x.Lines)
-                .WithOne()
-                .HasForeignKey(l => l.MatchNo)
-                .HasPrincipalKey(x => x.MatchNo)
-                .OnDelete(DeleteBehavior.Cascade);
+            var lines = e.HasMany(x => x.Lines).WithOne();
+            if (Database.IsNpgsql())
+            {
+                e.HasAlternateKey(x => new { x.TenantId, x.MatchNo })
+                    .HasName("AK_Pur_ThreeWayMatch_TenantId_MatchNo");
+                lines.HasForeignKey(l => new { l.TenantId, l.MatchNo })
+                    .HasPrincipalKey(x => new { x.TenantId, x.MatchNo })
+                    .HasConstraintName("FK_Pur_ThreeWayMatchLine_TenantId_MatchNo");
+            }
+            else
+            {
+                e.HasIndex(x => x.MatchNo).IsUnique();
+                lines.HasForeignKey(l => l.MatchNo).HasPrincipalKey(x => x.MatchNo);
+            }
+            lines.OnDelete(DeleteBehavior.Cascade);
         });
         modelBuilder.Entity<ThreeWayMatchLine>(e =>
         {
-            e.HasIndex(x => new { x.MatchNo, x.LineNo }).IsUnique().HasDatabaseName("UX_Pur_TwmLine_No");
+            var number = Database.IsNpgsql()
+                ? e.HasIndex(x => new { x.TenantId, x.MatchNo, x.LineNo })
+                : e.HasIndex(x => new { x.MatchNo, x.LineNo });
+            number.IsUnique().HasDatabaseName("UX_Pur_TwmLine_No");
         });
         // 容差配置（章04）：按供应商检索（null=全局）
         modelBuilder.Entity<MatchTolerance>(e => e.HasIndex(x => x.SupplierId));

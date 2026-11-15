@@ -43,6 +43,9 @@ public class FinApInvoiceRequest
 
     /// <summary>发票明细行</summary>
     public List<FinApInvoiceRequestLine> Lines { get; set; } = new();
+
+    internal bool OriginalPurchaseLinesAreUnambiguous { get; init; }
+    internal bool UseOriginalInvoiceDate { get; init; }
 }
 
 /// <summary>采购→AP 建票请求明细行。</summary>
@@ -78,6 +81,8 @@ public class FinApInvoiceResult
 
     /// <summary>AP 发票号</summary>
     public string? InvoiceNo { get; init; }
+
+    internal DateTime? OriginalInvoiceDate { get; init; }
 
     /// <summary>失败结果快捷构造</summary>
     public static FinApInvoiceResult Fail(string code, params object[] args)

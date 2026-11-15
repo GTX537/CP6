@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W631-01 三单匹配的采购及财务事务
+
+三条 HTTP 写者与 Main 权限、应付、凭证、原 PO 状态共用事务，实测两种提交顺序。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W631-01/DELIVERY.md)
+
 ## 2026-11-15 W630-01 CAD 提供者配置
 
 Main 根与原会话保护配置、修订和认证。实测暂停先写拒绝、仅撤管理写权限后原读仍有效，以及业务先提交的顺序。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W630-01/DELIVERY.md)

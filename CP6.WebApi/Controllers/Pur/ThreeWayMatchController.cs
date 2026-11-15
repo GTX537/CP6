@@ -1,6 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Pur;
 using CP6.Entity.DomainModels.Pur;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,6 +34,7 @@ public class ThreeWayMatchController : ControllerBase
     /// <summary>匹配一张供应商发票（容差内自动建应付，超容差挂起）。</summary>
     [HttpPost]
     [RequirePermission("pur-match", "add")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Match([FromBody] MatchInvoiceDto dto)
     {
         try { return Ok2(await _svc.MatchInvoiceAsync(dto, CurrentUser)); }
@@ -42,6 +44,7 @@ public class ThreeWayMatchController : ControllerBase
     /// <summary>人工放行挂起单（接受差异，建应付）。</summary>
     [HttpPost("{matchNo}/release")]
     [RequirePermission("pur-match", "release")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Release(string matchNo, [FromBody] MatchHandleDto? body)
     {
         try { return Ok2(await _svc.ReleaseAsync(matchNo, CurrentUser, body?.Note)); }
@@ -51,6 +54,7 @@ public class ThreeWayMatchController : ControllerBase
     /// <summary>拒绝挂起单。</summary>
     [HttpPost("{matchNo}/reject")]
     [RequirePermission("pur-match", "reject")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Reject(string matchNo, [FromBody] MatchHandleDto? body)
     {
         try { return Ok2(await _svc.RejectAsync(matchNo, CurrentUser, body?.Note)); }

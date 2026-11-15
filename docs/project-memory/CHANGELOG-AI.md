@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W631-01
+
+以 PostgreSQL 租户复合约束、原 AP 证据和本地授权事务保护三单匹配、放行及拒绝。 [交付](../development/evidence/W631-01/DELIVERY.md)
+
 ## 2026-11-15 W630-01
 
 CAD 提供者管理写入持有 Main 授权栅栏，按原逻辑保存配置修订和历史认证。 [交付](../development/evidence/W630-01/DELIVERY.md)
