@@ -197,6 +197,7 @@ builder.Services.AddSingleton(
 builder.Services.AddSpaceDesignV1Persistence(
     databaseConnection, database);
 builder.Services.AddScoped<ISpaceDesignWriteAuthority, CP6.WebApi.Services.SpaceDesignWriteAuthority>();
+builder.Services.AddScoped<ISpaceArtifactWriteAuthority, CP6.WebApi.Services.SpaceArtifactWriteAuthority>();
 var remoteCadWorker = builder.Configuration
     .GetSection(SpaceCadRemoteWorkerOptions.SectionName)
     .Get<SpaceCadRemoteWorkerOptions>();
