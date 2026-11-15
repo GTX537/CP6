@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W628-01
+
+Excel/CAD Apply 以原 Job、独立编辑租约和源文件校验持有共同事务，保留原导入结果和修订。 [交付](../development/evidence/W628-01/DELIVERY.md)
+
 ## 2026-11-15 W626-01
 
 CAD 和 Excel 后台在持有 Main 根、当前作业租约及原 File/Source 时提交新结果。 [交付](../development/evidence/W626-01/DELIVERY.md)

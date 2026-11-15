@@ -32,9 +32,10 @@ public sealed class SpaceSourceMetadataWorkerFixture : IHostingStartup
         var phase = Environment.GetEnvironmentVariable(PhaseVariable);
         services.AddScoped<ISpaceCadParseProvider, SpaceArtifactWorkerFixture.ArtifactFixtureCadProvider>();
         services.AddSingleton<IStartupFilter>(new WorkerRelay(root, tenant, phase));
-        if (Environment.GetEnvironmentVariable(FaultVariable) == "1")
+        var faultMode = Environment.GetEnvironmentVariable(FaultVariable);
+        if (faultMode is "1" or "apply")
         {
-            var fault = new IssueCommitRelay(root);
+            var fault = new NativeCommitRelay(root, faultMode);
             services.AddScoped(provider => new SpaceContext(
                 new DbContextOptionsBuilder<SpaceContext>(provider.GetRequiredService<DbContextOptions<SpaceContext>>())
                     .AddInterceptors(fault).Options,
@@ -43,20 +44,24 @@ public sealed class SpaceSourceMetadataWorkerFixture : IHostingStartup
         }
     });
 
-    private sealed class IssueCommitRelay(string root) : DbTransactionInterceptor
+    private sealed class NativeCommitRelay(string root, string mode) : DbTransactionInterceptor
     {
         private int _injected;
 
         public override async Task TransactionCommittedAsync(DbTransaction transaction, TransactionEndEventData data,
             CancellationToken cancellationToken = default)
         {
-            if (data.Context is not SpaceContext context || !context.ChangeTracker.Entries<SpaceModelIssue>().Any() ||
-                Interlocked.Exchange(ref _injected, 1) != 0)
+            if (data.Context is not SpaceContext context)
+                return;
+            var committed = mode == "apply"
+                ? context.ChangeTracker.Entries<SpaceElementCommandBatch>().Any(entry => entry.Entity.ResponseJson is not null)
+                : context.ChangeTracker.Entries<SpaceModelIssue>().Any();
+            if (!committed || Interlocked.Exchange(ref _injected, 1) != 0)
                 return;
 
             SpaceArtifactWorkerFixture.Write(root, 1, "committed", true);
             await SpaceArtifactWorkerFixture.ReadAsync<bool>(root, 1, "release", cancellationToken);
-            throw new IOException("W626 injected loss of the Excel Issues commit acknowledgement.");
+            throw new IOException("The fixture lost the Excel worker's native commit acknowledgement.");
         }
     }
 
