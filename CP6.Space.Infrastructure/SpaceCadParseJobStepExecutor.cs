@@ -180,13 +180,16 @@ public sealed class SpaceCadParseJobStepExecutor(
         var checkpoint = DeserializeCheckpoint(generateStep.CheckpointJson);
         await ValidateCheckpointArtifactsAsync(checkpoint, cancellationToken);
 
-        if (input.Source.State == SpaceSourceState.Ready)
-        {
-            input.Source.BeginParsing();
-            input.Source.MarkPreviewReady();
-            await context.SaveChangesAsync(cancellationToken);
-        }
-        else if (input.Source.State != SpaceSourceState.PreviewReady)
+        var output = new SpaceJobStepOutput(generateStep.CheckpointJson!, generateStep.OutputHash!);
+        if (input.Source.State == SpaceSourceState.PreviewReady)
+            return output;
+
+        await using var write = await SpaceArtifactWriteTransaction.BeginMetadataAsync(
+            context, execution.Lease, writeAuthority, cancellationToken);
+        var source = await write.LockMetadataSourceAsync(input.Source, input.File, cancellationToken);
+        if (source.State == SpaceSourceState.PreviewReady)
+            return output;
+        if (source.State != SpaceSourceState.Ready)
         {
             throw Failure(
                 SpaceJobFailureKind.Input,
@@ -194,9 +197,11 @@ public sealed class SpaceCadParseJobStepExecutor(
                 "The CAD source is no longer in a parseable state.");
         }
 
-        return new SpaceJobStepOutput(
-            generateStep.CheckpointJson!,
-            generateStep.OutputHash!);
+        source.BeginParsing();
+        source.MarkPreviewReady();
+        await context.SaveChangesAsync(cancellationToken);
+        await write.CommitAsync(cancellationToken);
+        return output;
     }
 
     private async Task<ParseInput> LoadInputAsync(
@@ -248,7 +253,8 @@ public sealed class SpaceCadParseJobStepExecutor(
                 "The frozen CAD parse payload is invalid.");
         }
 
-        var source = await context.Sources.SingleOrDefaultAsync(
+        var sources = context.Database.IsNpgsql() ? context.Sources.AsNoTracking() : context.Sources;
+        var source = await sources.SingleOrDefaultAsync(
             item =>
                 item.Id == payload.SourceId &&
                 item.ModelVersionId == payload.ModelVersionId,

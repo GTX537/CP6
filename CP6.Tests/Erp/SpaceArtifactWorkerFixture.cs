@@ -148,7 +148,7 @@ internal sealed class SpaceArtifactWorkerFixture(string root) : IStartupFilter
     internal sealed record ArtifactResult(Guid AttemptId, string? CheckpointJson, string? OutputHash, string? ErrorType, string? Error,
         string? Code, bool AckInjected, string[] PublishedAtFault, DateTime? ExpiryObservedAt = null);
 
-    private sealed class ArtifactFixtureCadProvider(SpaceContext context) : ISpaceCadParseProvider
+    internal sealed class ArtifactFixtureCadProvider(SpaceContext context) : ISpaceCadParseProvider
     {
         public async Task<IReadOnlyList<SpaceCadGeneratedArtifact>> GenerateAsync(SpaceCadParseProviderRequest request, Stream source, CancellationToken ct = default)
         {

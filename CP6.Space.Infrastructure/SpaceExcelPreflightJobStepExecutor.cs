@@ -13,7 +13,8 @@ public sealed class SpaceExcelPreflightJobStepExecutor(
     IServiceProvider services,
     ISpaceExcelWorkbookReader workbookReader,
     ISpaceExcelMappingService mappings,
-    SpaceExcelPreflightValidator validator)
+    SpaceExcelPreflightValidator validator,
+    ISpaceArtifactWriteAuthority? writeAuthority = null)
     : ISpaceExcelPreflightJobStepExecutor
 {
     private static readonly JsonSerializerOptions JsonOptions =
@@ -96,26 +97,19 @@ public sealed class SpaceExcelPreflightJobStepExecutor(
                     JsonOptions),
                 suggestedActionCode: finding.SuggestedActionCode))
             .ToArray();
-        var previousIssues = await context.Issues
-            .AsNoTracking()
-            .Where(issue => issue.JobId == execution.Lease.JobId)
-            .ToListAsync(cancellationToken);
-        if (previousIssues.Count == 0)
+        if (!await IssuesAlreadySavedAsync(execution.Lease.JobId, pendingIssues, cancellationToken) && pendingIssues.Length > 0)
         {
-            context.Issues.AddRange(pendingIssues);
-            await context.SaveChangesAsync(cancellationToken);
-        }
-        else if (!previousIssues.Select(IssueSignature)
-                     .OrderBy(value => value, StringComparer.Ordinal)
-                     .SequenceEqual(
-                         pendingIssues.Select(IssueSignature)
-                             .OrderBy(value => value, StringComparer.Ordinal),
-                         StringComparer.Ordinal))
-        {
-            throw Failure(
-                SpaceJobFailureKind.Bug,
-                "SPACE_EXCEL_PREFLIGHT_RETRY_MISMATCH",
-                "The immutable Excel preflight input produced different retry results.");
+            await using var write = await SpaceArtifactWriteTransaction.BeginMetadataAsync(
+                context, execution.Lease, writeAuthority, cancellationToken);
+            if (!await IssuesAlreadySavedAsync(execution.Lease.JobId, pendingIssues, cancellationToken))
+            {
+                var source = await write.LockMetadataSourceAsync(input.Source, input.File, cancellationToken);
+                if (source.State is not (SpaceSourceState.Parsing or SpaceSourceState.PreviewReady))
+                    throw InvalidSourceState();
+                context.Issues.AddRange(pendingIssues);
+                await context.SaveChangesAsync(cancellationToken);
+                await write.CommitAsync(cancellationToken);
+            }
         }
 
         var checkpoint = Checkpoint(
@@ -125,6 +119,18 @@ public sealed class SpaceExcelPreflightJobStepExecutor(
             result.ValidRowCount,
             result.Findings);
         return Output(checkpoint);
+    }
+
+    private async Task<bool> IssuesAlreadySavedAsync(Guid jobId, SpaceModelIssue[] expected, CancellationToken cancellationToken)
+    {
+        var previous = await context.Issues.AsNoTracking().Where(issue => issue.JobId == jobId).ToArrayAsync(cancellationToken);
+        if (previous.Length == 0)
+            return false;
+        if (!previous.Select(IssueSignature).Order(StringComparer.Ordinal)
+                .SequenceEqual(expected.Select(IssueSignature).Order(StringComparer.Ordinal), StringComparer.Ordinal))
+            throw Failure(SpaceJobFailureKind.Bug, "SPACE_EXCEL_PREFLIGHT_RETRY_MISMATCH",
+                "The immutable Excel preflight input produced different retry results.");
+        return true;
     }
 
     private async Task<SpaceJobStepOutput> PersistPreviewAsync(
@@ -153,22 +159,23 @@ public sealed class SpaceExcelPreflightJobStepExecutor(
                 "The Excel validation checkpoint is incomplete.");
         }
 
-        if (input.Source.State == SpaceSourceState.Parsing)
-        {
-            input.Source.MarkPreviewReady();
-            await context.SaveChangesAsync(cancellationToken);
-        }
-        else if (input.Source.State != SpaceSourceState.PreviewReady)
-        {
-            throw Failure(
-                SpaceJobFailureKind.Input,
-                SpaceErrorCodes.ExcelPreflightInvalid,
-                "The Excel source is no longer in a preflight state.");
-        }
+        var output = new SpaceJobStepOutput(validateStep.CheckpointJson, validateStep.OutputHash);
+        if (input.Source.State == SpaceSourceState.PreviewReady)
+            return output;
+        if (input.Source.State != SpaceSourceState.Parsing)
+            throw InvalidSourceState();
 
-        return new SpaceJobStepOutput(
-            validateStep.CheckpointJson,
-            validateStep.OutputHash);
+        await using var write = await SpaceArtifactWriteTransaction.BeginMetadataAsync(
+            context, execution.Lease, writeAuthority, cancellationToken);
+        var source = await write.LockMetadataSourceAsync(input.Source, input.File, cancellationToken);
+        if (source.State == SpaceSourceState.PreviewReady)
+            return output;
+        if (source.State != SpaceSourceState.Parsing)
+            throw InvalidSourceState();
+        source.MarkPreviewReady();
+        await context.SaveChangesAsync(cancellationToken);
+        await write.CommitAsync(cancellationToken);
+        return output;
     }
 
     private async Task<PreflightInput> LoadInputAsync(
@@ -187,7 +194,8 @@ public sealed class SpaceExcelPreflightJobStepExecutor(
             payload.SourceId != lease.SubjectId ||
             payload.ModelVersionId == Guid.Empty ||
             payload.MappingProfileId == Guid.Empty ||
-            payload.MappingProfileVersion <= 0)
+            payload.MappingProfileVersion <= 0 ||
+            !string.Equals(Hash(job.PayloadJson), lease.InputHash, StringComparison.Ordinal))
         {
             throw Failure(
                 SpaceJobFailureKind.Input,
@@ -195,7 +203,8 @@ public sealed class SpaceExcelPreflightJobStepExecutor(
                 "The Excel preflight Job payload is invalid.");
         }
 
-        var source = await context.Sources
+        var sources = context.Database.IsNpgsql() ? context.Sources.AsNoTracking() : context.Sources;
+        var source = await sources
             .SingleOrDefaultAsync(
                 item =>
                     item.Id == payload.SourceId &&
@@ -307,11 +316,15 @@ public sealed class SpaceExcelPreflightJobStepExecutor(
     private static SpaceJobStepOutput Output(object checkpoint)
     {
         var json = JsonSerializer.Serialize(checkpoint, JsonOptions);
-        var hash = Convert.ToHexString(
-                SHA256.HashData(Encoding.UTF8.GetBytes(json)))
-            .ToLowerInvariant();
-        return new SpaceJobStepOutput(json, hash);
+        return new SpaceJobStepOutput(json, Hash(json));
     }
+
+    private static string Hash(string value) =>
+        Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value))).ToLowerInvariant();
+
+    private static SpaceJobProcessingException InvalidSourceState() =>
+        Failure(SpaceJobFailureKind.Input, SpaceErrorCodes.ExcelPreflightInvalid,
+            "The Excel source is no longer in a preflight state.");
 
     private static string SourceReference(
         SpaceExcelPreflightFinding finding)
