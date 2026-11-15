@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 · W603-01 财务余项
+
+财务还剩预算 11 条、AP/AR 12 条和工单结转 1 条。继续验证 OA、WMS、采购、MES 与外注写者。 [交付记录](../development/evidence/W603-01/DELIVERY.md)
+
 ## 2026-11-15 · W604-01 Space 处理阶段
 
 继续 CAD 准备、解析、重试、Excel 预检和匹配，以及刊发执行、WMS 投影与激活后台事务。 [交付记录](../development/evidence/W604-01/DELIVERY.md)

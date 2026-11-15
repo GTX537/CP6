@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 · W603-01 固定资产和月末折旧
+
+十条固定资产写入口和月末折旧采用 Main 共同栅栏。财务清单 42 条采用，24 条可达写入口待接入。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W603-01/DELIVERY.md)
+
 ## 2026-11-15 · W604-01 Space 刊发写入口
 
 刊发提交、人工重试和历史重刊在各自业务事务确认当前权限。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W604-01/DELIVERY.md)
