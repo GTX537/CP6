@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Data;
 using CP6.Core.EFDbContext;
 using CP6.Core.Options;
+using CP6.Core.Services.Fin;
 using CP6.Core.Services;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Integration;
@@ -112,23 +113,35 @@ public class IntegrationEventRetryWorker : BackgroundService
             ct);
 
         var now = DateTime.UtcNow;
+        var native = db.Database.IsNpgsql();
         var due = await db.IntegrationEvents
             .Where(e =>
-                e.Status == IntegrationEventStatus.Failed &&
+                (e.Status == IntegrationEventStatus.Failed &&
                 (((e.SourceModule == SpaceSourceModule &&
                    e.Attempts >= _opts.MaxAttempts) &&
                   (e.NextRetryAt == null ||
                    e.NextRetryAt <= now)) ||
                  (e.NextRetryAt != null &&
                   e.NextRetryAt <= now &&
-                  e.Attempts < _opts.MaxAttempts)))
+                   e.Attempts < _opts.MaxAttempts))) ||
+                (native && e.Status == IntegrationEventStatus.Pending && e.Attempts == 0 && e.NextRetryAt <= now
+                 && e.SourceModule == "WMS" && e.TargetModule == "FIN"
+                 && (e.HookName == nameof(IFinBridgeHook.OnShipmentConfirmedAsync)
+                     || e.HookName == nameof(IFinBridgeHook.OnShipmentCancelledAsync))))
             .OrderBy(e => e.NextRetryAt)
             .Take(50)
             .ToListAsync(ct);
 
         foreach (var evt in due)
         {
-            if (db.Database.IsNpgsql() && IntegrationEventDispatcher.IsWfTriggerEvent(evt))
+            if (native && FinBridgeHook.IsShipmentEvent(evt))
+            {
+                db.Entry(evt).State = EntityState.Detached;
+                await ProcessShipmentFinanceEventAsync(tenantId, evt.Id, now, ct);
+                continue;
+            }
+
+            if (native && IntegrationEventDispatcher.IsWfTriggerEvent(evt))
             {
                 // Keep workflow saves and savepoint recovery away from other tracked retries.
                 await ProcessWorkflowEventAsync(tenantId, evt.Id, now, ct);
@@ -166,6 +179,17 @@ public class IntegrationEventRetryWorker : BackgroundService
             tenantId,
             ct);
         await db.SaveChangesAsync(ct);
+    }
+
+    private async Task ProcessShipmentFinanceEventAsync(Guid tenantId, Guid eventId, DateTime now, CancellationToken ct)
+    {
+        using var scope = _scopeFactory.CreateScope();
+        var sp = scope.ServiceProvider;
+        sp.GetRequiredService<ITenantContext>().CurrentTenantId = tenantId;
+        if (sp.GetRequiredService<IFinBridgeHook>() is not FinBridgeHook finance)
+            throw new InvalidOperationException("WMS_FIN_OWNER_TRANSACTION_REQUIRED");
+        if (await finance.ProcessShipmentAsync(eventId, now, _opts, ct) is { } dead)
+            await sp.GetRequiredService<IDeadLetterNotifier>().NotifyAsync(dead, ct);
     }
 
     private async Task ProcessWorkflowEventAsync(Guid tenantId, Guid eventId, DateTime now, CancellationToken ct)

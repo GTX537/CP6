@@ -265,25 +265,32 @@ public partial class OutboundService : IOutboundService
 
     internal bool OwnsCancellation(CP6Context db) => ReferenceEquals(_db,db)
         && _stock is StockMovementService stock && stock.Owns(db);
-    internal async Task CancelFromOrderAsync(string outboundNo,string userName,StockTransactionInheritanceV1 inheritance)
+    internal async Task<Guid?> CancelFromOrderAsync(string outboundNo,string userName,StockTransactionInheritanceV1 inheritance)
     {
         if(!_db.Database.IsNpgsql() || _db.Database.CurrentTransaction==null)
             throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
         using var scope=((StockMovementService)_stock).InheritTransactions(inheritance);
-        await CancelCoreAsync(outboundNo,userName,true);
+        return await CancelCoreAsync(outboundNo,userName,true);
     }
-    internal async Task PublishOrderCancellationAsync(string outboundNo,bool shipping,string actor,IReadOnlyList<StockTransaction> transactions)
+    internal async Task PublishOrderCancellationAsync(string outboundNo,bool shipping,string actor,
+        IReadOnlyList<StockTransaction> transactions,Guid? financeEvent)
     {
         foreach(var transaction in transactions)
             await ((StockMovementService)_stock).PublishCommittedCancellationAsync(transaction);
-        if(shipping) await _finBridge.OnShipmentCancelledAsync(outboundNo,actor);
+        if (!shipping) return;
+        if (_finBridge is FinBridgeHook finance)
+        {
+            if (financeEvent is Guid id) await finance.ApplyCommittedShipmentAsync(id);
+        }
+        else await _finBridge.OnShipmentCancelledAsync(outboundNo, actor);
     }
-    private async Task CancelCoreAsync(string outboundNo,string? userName,bool deferEffects)
+    private async Task<Guid?> CancelCoreAsync(string outboundNo,string? userName,bool deferEffects)
     {
         var header = await _db.OutboundOrders
             .FirstOrDefaultAsync(x => x.OutboundNo == outboundNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("WM-MSG-070");
 
+        if (deferEffects && header.Status == OutboundOrderStatus.Cancelled) return null;
         if (header.Status == OutboundOrderStatus.Completed)
             throw new InvalidOperationException("WM-MSG-043: 完了済の指示は取消不可");
 
@@ -327,11 +334,14 @@ public partial class OutboundService : IOutboundService
         //  跨模块照会せず無条件点火し、発票の有無は Fin 側で判定させる（低耦合）。B.1 の Shipping 門槛と対称。
         //  現状態機では Completed（開票済の可能性あり）は取消不可のため、実質「出荷前取消」の空振り紅冲が主だが、
         //  空振りは消費端が Skipped で吸収する。紅冲失敗は取消をブロックしない（_erpBridge 先例に倣う）。
+        if (deferEffects && header.OutboundType == OutboundType.Shipping && _finBridge is FinBridgeHook finance)
+            return await finance.StageShipmentCancellationAsync(_db, outboundNo, userName!);
         if (!deferEffects && header.OutboundType == OutboundType.Shipping)
         {
             try { await _finBridge.OnShipmentCancelledAsync(outboundNo, userName); }
             catch { /* best-effort：紅冲失敗は取消を失敗させない */ }
         }
+        return null;
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -603,13 +613,22 @@ public partial class OutboundService : IOutboundService
         //  受注售価を優先取得し、成本は工単成本単があれば消費端が実成本へ切替、無ければ EstimatedCost 回退（0=成本凭证保留）。
         if (header.OutboundType == OutboundType.Shipping)
         {
+            var nativeFinance = effects is not null ? _finBridge as FinBridgeHook : null;
             try
             {
                 var finReq = await BuildFinInvoiceRequestAsync(header, details, shippedByLine);
                 if (finReq.Lines.Count > 0)
-                    { if(effects==null) await _finBridge.OnShipmentConfirmedAsync(finReq, userName); else effects.Add(()=>_finBridge.OnShipmentConfirmedAsync(finReq,userName)); }
+                {
+                    if (nativeFinance is not null)
+                    {
+                        var id = await nativeFinance.StageShipmentConfirmationAsync(_db, finReq, userName!);
+                        effects!.Add(() => nativeFinance.ApplyCommittedShipmentAsync(id));
+                    }
+                    else if (effects == null) await _finBridge.OnShipmentConfirmedAsync(finReq, userName);
+                    else effects.Add(() => _finBridge.OnShipmentConfirmedAsync(finReq, userName));
+                }
             }
-            catch { /* best-effort：自動開票失敗は出荷確定を失敗させない */ }
+            catch when (nativeFinance is null) { /* Existing best-effort callback for the unowned path. */ }
         }
 
         return packageNo;

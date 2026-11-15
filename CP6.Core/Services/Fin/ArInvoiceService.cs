@@ -25,6 +25,8 @@ public class ArInvoiceService : IArInvoiceService
         _seq = seq;
     }
 
+    internal bool Owns(CP6Context context) => ReferenceEquals(_db, context);
+
     public Task<ArInvoice?> GetAsync(Guid id) =>
         _db.ArInvoices.Include(x => x.Lines).FirstOrDefaultAsync(x => x.Id == id);
 
@@ -179,7 +181,21 @@ public class ArInvoiceService : IArInvoiceService
     {
         // 幂等：同出货号已开票→返回既有
         var existing = await _db.ArInvoices.FirstOrDefaultAsync(x => x.ShipmentId == request.ShipmentId && !x.IsCreditMemo);
-        if (existing != null) return (FinResult.Pass(), existing.Id, existing.No);
+        if (existing != null)
+        {
+            if (!_db.Database.IsNpgsql()) return (FinResult.Pass(), existing.Id, existing.No);
+            if (existing.CustomerId != request.CustomerId || (existing.OrderId ?? "") != (request.OrderId ?? ""))
+                return (FinResult.Fail("E-FIN-303"), existing.Id, existing.No);
+            if (existing.Status != ArInvoiceStatus.Draft) return (FinResult.Pass(), existing.Id, existing.No);
+
+            // The stored draft and an already posted original leg belong to the first attempt.
+            // PostAsync and the existing engine complete the missing leg using that draft.
+            var revenue = await ShipmentVoucherAsync(existing.No, VoucherSource.AR, existing.JournalEntryId);
+            var costVoucher = await ShipmentVoucherAsync(existing.No, VoucherSource.Cost, existing.CostJournalEntryId);
+            if (ConflictingDraftVoucher(revenue, existing.JournalEntryId) || ConflictingDraftVoucher(costVoucher, existing.CostJournalEntryId))
+                return (FinResult.Fail("E-FIN-120"), existing.Id, existing.No);
+            return (await PostAsync(existing.Id, user), existing.Id, existing.No);
+        }
 
         // F3-D3 成本切真实：有来源工单且已归集成本单时，成本 = FG 单位成本 × 出货数；否则回退估算成本
         var cost = request.EstimatedCost;
@@ -212,6 +228,59 @@ public class ArInvoiceService : IArInvoiceService
         if (!created.Ok) return (created, null, null);
         var posted = await PostAsync(inv.Id, user);
         return (posted, inv.Id, inv.No);
+    }
+
+    private static bool ConflictingDraftVoucher(JournalEntry? voucher, Guid? linkedId)
+        => voucher is null ? linkedId.HasValue : voucher.Status != JournalStatus.Posted;
+
+    private async Task<JournalEntry?> ShipmentVoucherAsync(string invoiceNo, VoucherSource source, Guid? linkedId,
+        CancellationToken ct = default)
+    {
+        var original = await _db.JournalEntries.SingleOrDefaultAsync(j => j.Source == source && j.SourceDocNo == invoiceNo
+            && j.ReverseOfId == null, ct);
+        return linkedId is not null && original?.Id != linkedId ? null : original;
+    }
+
+    // Recover an original shipment cancellation without changing the manual invoice reversal contract.
+    internal async Task<FinResult> ReverseShipmentAsync(ArInvoice invoice, string user, CancellationToken ct)
+    {
+        if (invoice.Status is not (ArInvoiceStatus.Posted or ArInvoiceStatus.PartiallySettled or ArInvoiceStatus.Reversed))
+            return FinResult.Fail("E-FIN-303");
+        var revenue = await ShipmentVoucherAsync(invoice.No, VoucherSource.AR, invoice.JournalEntryId, ct);
+        if (revenue is null) return FinResult.Fail("E-FIN-130");
+        var first = await ReverseShipmentVoucherAsync(revenue, invoice.Status, user, "出货取消", ct);
+        if (!first.Ok) return first;
+
+        var cost = await ShipmentVoucherAsync(invoice.No, VoucherSource.Cost, invoice.CostJournalEntryId, ct);
+        if (cost is null && (invoice.CostJournalEntryId.HasValue || invoice.CostAmount > 0m)) return FinResult.Fail("E-FIN-130");
+        if (cost is not null)
+        {
+            var second = await ReverseShipmentVoucherAsync(cost, invoice.Status, user, "出货取消（成本结转）", ct);
+            if (!second.Ok) return second;
+        }
+        if (invoice.Status == ArInvoiceStatus.Reversed) return FinResult.Pass();
+
+        invoice.JournalEntryId = revenue.Id;
+        invoice.CostJournalEntryId = cost?.Id;
+        invoice.Status = ArInvoiceStatus.Reversed;
+        invoice.ModifyDate = DateTime.Now;
+        await _db.SaveChangesAsync(ct);
+        return FinResult.Pass();
+    }
+
+    private async Task<FinResult> ReverseShipmentVoucherAsync(JournalEntry original, ArInvoiceStatus invoiceStatus,
+        string user, string reason, CancellationToken ct)
+    {
+        if (original.Status == JournalStatus.Reversed && original.ReversedById is Guid reversalId)
+        {
+            var confirmed = await _db.JournalEntries.AnyAsync(j => j.TenantId == original.TenantId && j.Id == reversalId
+                && j.ReverseOfId == original.Id && j.Source == VoucherSource.Reversal && j.SourceDocNo == original.No
+                && j.Status == JournalStatus.Posted, ct);
+            return confirmed ? FinResult.Pass() : FinResult.Fail("E-FIN-120");
+        }
+        return original.Status == JournalStatus.Posted && invoiceStatus != ArInvoiceStatus.Reversed
+            ? await _journal.ReverseAsync(original.Id, user, reason, autoPost: true)
+            : FinResult.Fail("E-FIN-120");
     }
 
     public async Task<(FinResult Result, Guid? InvoiceId, string? No)> CreateCreditMemoAsync(FinCreditMemoRequest request, string user)
