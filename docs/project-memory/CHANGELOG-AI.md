@@ -1,5 +1,13 @@
 # AI 可读变更日志
 
+## 2026-11-15 W640-01
+
+旧 OA 到期处理、通知和原回调使用同一原生授权事务，按原版本处理并用持久作业延后外呼。 [交付](../development/evidence/W640-01/DELIVERY.md)
+
+## 2026-11-15 W639-01
+
+外注成品成本按原 `pur-subcontract:cost` 在 Main 栅栏内登记原会计凭证。 [交付](../development/evidence/W639-01/DELIVERY.md)
+
 ## 2026-11-15 W636-01
 
 普通库存流水及其财务意图共同提交，按原编号和原输入恢复总账；保留旧格式事件。 [交付](../development/evidence/W636-01/DELIVERY.md)

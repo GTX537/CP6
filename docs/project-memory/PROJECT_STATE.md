@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-11-15 W640-01 旧 OA 超时扫描
+
+每个已到期待办和实际状态在当前 Main 栅栏内重读，结束时复核真实租户有效期。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W640-01/DELIVERY.md)
+
+## 2026-11-15 W639-01 外注成品成本
+
+正式外注成本入口与 Main 当前授权同事务，已验证 200/401 两种顺序及同键原凭证。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W639-01/DELIVERY.md)
+
 ## 2026-11-15 W636-01 普通库存原财务意图
 
 真实收货、盘点和普通报废之后的原财务意图可按同一事件恢复。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W636-01/DELIVERY.md)

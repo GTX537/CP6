@@ -545,13 +545,18 @@ public partial class FlowEngine : IFlowEngine
     {
         if (ManagedRuntime && instance.Creator is ApprovalRuntimeV2 or PersonalFormRuntimeV2)
             return Deserialize((await ApprovalPublication(instance.FlowDefVersionId!.Value, ct)).Fields["SchemaJson"]!);
+        return await LoadLegacySchemaAsync(_db, instance, ct);
+    }
+
+    internal static async Task<FlowSchema> LoadLegacySchemaAsync(CP6Context db, Wf_FlowInstance instance, CancellationToken ct)
+    {
         RequireLegacyRuntime(instance);
         if (instance.FlowDefVersionId is not Guid versionId)
         {
             // A current head cannot establish what this historical instance actually executed.
             throw new InvalidOperationException("UNVERIFIED_LEGACY");
         }
-        var version = await _db.Wf_FlowDefVersions.AsNoTracking()
+        var version = await db.Wf_FlowDefVersions.AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == versionId && x.Status == WfDefinitionVersionStatus.Published, ct)
             ?? throw new InvalidOperationException("E-WF-046");
         return Deserialize(version.SchemaJson);

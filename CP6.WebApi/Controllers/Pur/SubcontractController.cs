@@ -1,5 +1,6 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Pur;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -51,6 +52,7 @@ public class SubcontractController : ControllerBase
     /// <summary>收成品成本核算（加工费 + 支給材成本并入，接财务 06）。</summary>
     [HttpPost("{poNo}/{lineNo:int}/finished-cost")]
     [RequirePermission("pur-subcontract", "cost")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> FinishedCost(string poNo, int lineNo, [FromBody] FinishedCostRequest req)
     {
         try { return Ok2(await _svc.CalcFinishedCostAsync(poNo, lineNo, req.FinishedQty, CurrentUser)); }
