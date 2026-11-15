@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W662-01
+
+部门变更在原 Main 根下保存完整 C02 前后版本，CRM 按原 Store 一个事务确认向量，Main 用原命令及 CAS 提交原状态、Outbox、审核和回执。[W662-01 交付](../development/evidence/W662-01/DELIVERY.md)
+
 ## 2026-11-15 W663-01
 
 设备状态后台在 Main 共同根内检查当前租户并提交原监控效果，事务确认后发送状态通知。[W663-01 交付](../development/evidence/W663-01/DELIVERY.md)
