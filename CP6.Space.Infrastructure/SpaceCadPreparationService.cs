@@ -1,9 +1,9 @@
-using System.Data;
 using System.Text.Json;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Space.Infrastructure;
 
@@ -15,7 +15,8 @@ public sealed class SpaceCadPreparationService(
     ISpaceCadMappingProfileCatalog profiles,
     ISpaceFileStore files,
     SpaceWorkerSandboxPolicy sandbox,
-    ISpaceClock clock) : ISpaceCadPreparationService
+    ISpaceClock clock,
+    ISpaceDesignWriteAuthority? writeAuthority = null) : ISpaceCadPreparationService
 {
     private static readonly TimeSpan Lifetime = TimeSpan.FromHours(2);
 
@@ -96,7 +97,10 @@ public sealed class SpaceCadPreparationService(
         if (request.LayerOverrides.Count > SpaceCadMappingVersions.MaximumOverrides)
             throw Invalid("CAD layer overrides exceed the supported limit.");
 
-        var scope = await LoadScopeAsync(versionId, sourceId, request, cancellationToken);
+        var scope = await ReadScopeAsync(versionId, sourceId, request.FloorLogicalId, cancellationToken);
+        if (RequiresScanSynchronization(scope))
+            scope = await SynchronizeScanAsync(versionId, sourceId, request.FloorLogicalId, cancellationToken);
+        EnsureReadyForPreparation(scope);
         var profile = await profiles.FindAsync(
             request.MappingProfileId,
             request.MappingProfileVersion,
@@ -220,18 +224,17 @@ public sealed class SpaceCadPreparationService(
                 "reduce-or-correct-cad-mapping-overrides");
         }
 
-        await using var transaction = await context.Database.BeginTransactionAsync(
-            IsolationLevel.Serializable,
-            cancellationToken);
-        var currentBaseline = await context.Versions.AsNoTracking()
-            .Where(item => item.Id == scope.Version.Id)
-            .Select(item => new { item.ContentRevision, item.ContentHash })
-            .SingleAsync(cancellationToken);
-        if (currentBaseline.ContentRevision != scope.Version.ContentRevision ||
+        await using var transaction = await BeginPreparationWriteAsync(cancellationToken);
+        var current = await ReadScopeAsync(versionId, sourceId, request.FloorLogicalId, cancellationToken);
+        EnsureReadyForPreparation(current);
+        if (current.Version.ContentRevision != scope.Version.ContentRevision ||
             !string.Equals(
-                currentBaseline.ContentHash,
+                current.Version.ContentHash,
                 scope.Version.ContentHash,
-                StringComparison.Ordinal))
+                StringComparison.Ordinal) ||
+            current.Source.Sha256 != scope.Source.Sha256 ||
+            current.File.Id != scope.File.Id ||
+            current.Floor.Revision != scope.Floor.Revision)
             throw new SpaceProblemException(
                 SpaceErrorCodes.ParseChangesetStale,
                 409,
@@ -264,7 +267,7 @@ public sealed class SpaceCadPreparationService(
             now.Add(Lifetime));
         context.CadParsePreparations.Add(row);
         await context.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
+        await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
 
         var start = new StartSpaceCadParseRequest(
             row.Id,
@@ -315,34 +318,59 @@ public sealed class SpaceCadPreparationService(
         return (result.version, result.model);
     }
 
-    private async Task<Scope> LoadScopeAsync(
+    private Task<IDbContextTransaction> BeginPreparationWriteAsync(CancellationToken cancellationToken) =>
+        SpaceDesignWriteTransaction.BeginForPermissionAsync(context, writeAuthority, SpaceDesignWriteTransaction.ModelEditPermission,
+            cancellationToken, SpaceSourceUploadWriteTransaction.UploadPermission);
+
+    private async Task<Scope> SynchronizeScanAsync(Guid versionId, Guid sourceId, Guid floorLogicalId, CancellationToken cancellationToken)
+    {
+        await using var transaction = context.Database.IsRelational()
+            ? await BeginPreparationWriteAsync(cancellationToken)
+            : null;
+        var scope = await ReadScopeAsync(versionId, sourceId, floorLogicalId, cancellationToken, trackSource: true);
+        if (RequiresScanSynchronization(scope))
+        {
+            scope.Source.CompleteFileScan(scope.File);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        if (transaction is not null)
+            await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
+        return scope;
+    }
+
+    private async Task<Scope> ReadScopeAsync(
         Guid versionId,
         Guid sourceId,
-        PreviewSpaceCadPreparationRequest request,
-        CancellationToken cancellationToken)
+        Guid floorLogicalId,
+        CancellationToken cancellationToken,
+        bool trackSource = false)
     {
         var (version, model) = await LoadVersionAsync(versionId, cancellationToken);
-        var source = await context.Sources.SingleOrDefaultAsync(
+        var sources = trackSource ? context.Sources.AsTracking() : context.Sources.AsNoTracking();
+        var source = await sources.SingleOrDefaultAsync(
             item => item.Id == sourceId && item.ModelVersionId == versionId,
             cancellationToken) ?? throw NotFound();
         var floor = await context.FloorRevisions.AsNoTracking().SingleOrDefaultAsync(
             item => item.ModelVersionId == versionId &&
-                    item.LogicalId == request.FloorLogicalId &&
+                    item.LogicalId == floorLogicalId &&
                     item.LifecycleState == SpaceLifecycleState.Active,
             cancellationToken) ?? throw Invalid("The selected Floor is not active in this Draft.");
         if (source.SourceType is not (SpaceSourceType.Dwg or SpaceSourceType.Dxf) ||
             source.FileId is null)
             throw Invalid("The selected source is not a DWG or DXF upload.");
-        var file = await context.Files.SingleOrDefaultAsync(
+        var file = await context.Files.AsNoTracking().SingleOrDefaultAsync(
             item => item.Id == source.FileId,
             cancellationToken) ?? throw NotFound();
-        if (source.State == SpaceSourceState.Scanning &&
-            file.State is SpaceFileState.Clean or SpaceFileState.Rejected)
-        {
-            source.CompleteFileScan(file);
-            await context.SaveChangesAsync(cancellationToken);
-        }
-        if (source.State is not (SpaceSourceState.Ready or SpaceSourceState.PreviewReady))
+        return new Scope(version, model, source, file, floor,
+            source.SourceType == SpaceSourceType.Dwg ? SpaceCadSourceFormat.Dwg : SpaceCadSourceFormat.Dxf);
+    }
+
+    private static bool RequiresScanSynchronization(Scope scope) =>
+        scope.Source.State == SpaceSourceState.Scanning && scope.File.State is SpaceFileState.Clean or SpaceFileState.Rejected;
+
+    private static void EnsureReadyForPreparation(Scope scope)
+    {
+        if (scope.Source.State is not (SpaceSourceState.Ready or SpaceSourceState.PreviewReady))
             throw new SpaceProblemException(
                 SpaceErrorCodes.SourceUnsafe,
                 409,
@@ -350,23 +378,14 @@ public sealed class SpaceCadPreparationService(
                 "Wait for a clean safety scan before continuing.",
                 "wait-for-source-ready",
                 retryable: true);
-        if (file.State != SpaceFileState.Clean || file.IsDeleted ||
-            !file.Sha256!.Equals(source.Sha256, StringComparison.Ordinal))
+        if (scope.File.State != SpaceFileState.Clean || scope.File.IsDeleted ||
+            !scope.File.Sha256!.Equals(scope.Source.Sha256, StringComparison.Ordinal))
             throw new SpaceProblemException(
                 SpaceErrorCodes.SourceUnsafe,
                 409,
                 "The CAD source file is not clean.",
                 recoveryAction: "wait-for-source-ready",
                 retryable: true);
-        return new Scope(
-            version,
-            model,
-            source,
-            file,
-            floor,
-            source.SourceType == SpaceSourceType.Dwg
-                ? SpaceCadSourceFormat.Dwg
-                : SpaceCadSourceFormat.Dxf);
     }
 
     private static SpaceCadFloorAssignmentV1 FloorAssignment(SpaceFloorRevision floor) =>
