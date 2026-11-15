@@ -105,24 +105,16 @@ public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
             () => UnderlayConflict("The Space write authority changed concurrently."));
         var upload = await uploadWrites.UploadAsync(_uploads, fileRequest, content, cancellationToken);
 
-        var (source, reusedSource) = await RegisterUnderlaySourceAsync(version, request, upload.File, cancellationToken);
-        await SynchronizeTerminalFileStateAsync(
-            source,
-            upload.File.Id,
-            cancellationToken);
-        var currentFile = await _context.Files
-            .AsNoTracking()
-            .SingleAsync(
-                file => file.Id == upload.File.Id,
-                cancellationToken);
+        var (source, reusedSource) = await RegisterUnderlaySourceAsync(version, request, upload.File, uploadWrites, cancellationToken);
+        var (currentFile, currentSource) = await uploadWrites.ResolveUploadResponseAsync(source, upload.File.Id, cancellationToken);
 
-        var jobId = upload.ScanJobId ??
+        var jobId = (currentFile.Id == upload.File.Id ? upload.ScanJobId : null) ??
                     await FindScanJobIdAsync(
-                        upload.File.Id,
+                        currentFile.Id,
                         cancellationToken);
         return new UploadSpaceUnderlayResponse(
             ToDto(currentFile),
-            ToDto(source),
+            ToDto(currentSource),
             jobId,
             jobId.HasValue
                 ? $"/api/space/design/v1/jobs/{jobId.Value:D}"
@@ -134,56 +126,22 @@ public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
         SpaceModelVersion version,
         UploadSpaceUnderlayRequest request,
         SpaceFile file,
+        SpaceSourceUploadWriteTransaction uploadWrites,
         CancellationToken cancellationToken)
     {
-        await using var transaction = UseWriteAuthority
-            ? await BeginUnderlayWriteAsync(cancellationToken, UploadPermission)
-            : null;
+        await using var transaction = await uploadWrites.BeginRegistrationAsync(cancellationToken);
         if (transaction is not null)
         {
             _context.ChangeTracker.Clear();
             (version, _) = await LoadWritableVersionAsync(version.Id, cancellationToken);
         }
 
-        var existingSource = await _context.Sources
-            .SingleOrDefaultAsync(
-                source =>
-                    source.ModelVersionId == version.Id &&
-                    source.Sha256 == file.Sha256 &&
-                    source.SourceType == request.SourceType,
-                cancellationToken);
-        SpaceModelSource source;
-        if (existingSource is not null)
-        {
-            source = existingSource;
-            if (source.State == SpaceSourceState.Rejected)
-            {
-                throw new SpaceProblemException(
-                    SpaceErrorCodes.SourceConflict,
-                    409,
-                    "The same underlay source was previously rejected.",
-                    recoveryAction: "remove-rejected-source-before-reupload");
-            }
-        }
-        else
-        {
-            source = file.State == SpaceFileState.Clean
-                ? _sources.AddFileSource(
-                    version,
-                    file,
-                    request.SourceType,
-                    request.OriginalName)
-                : _sources.AddPendingFileSource(
-                    version,
-                    file,
-                    request.SourceType,
-                    request.OriginalName);
-            _context.Sources.Add(source);
-            await _context.SaveChangesAsync(cancellationToken);
-        }
+        var registered = await uploadWrites.SaveSourceAsync(_sources, version, file, request.SourceType, request.OriginalName,
+            () => new SpaceProblemException(SpaceErrorCodes.SourceConflict, 409, "The same underlay source was previously rejected.",
+                recoveryAction: "remove-rejected-source-before-reupload"), cancellationToken);
         if (transaction is not null)
-            await CommitUnderlayWriteAsync(transaction, cancellationToken);
-        return (source, existingSource is not null);
+            await uploadWrites.CommitRegistrationAsync(transaction, cancellationToken);
+        return registered;
     }
 
     public async Task<SpaceFileDto> GetFileAsync(
@@ -773,28 +731,6 @@ public sealed partial class SpaceUnderlayV1Service : ISpaceUnderlayV1Service
             throw NotFound(SpaceErrorCodes.VersionNotFound, "Space version");
         EnsureWritable(result.Model);
         return (result.Version, result.Model);
-    }
-
-    private async Task SynchronizeTerminalFileStateAsync(
-        SpaceModelSource source,
-        Guid fileId,
-        CancellationToken cancellationToken)
-    {
-        if (source.State != SpaceSourceState.Scanning)
-            return;
-        var file = await _context.Files
-            .SingleAsync(
-                candidate => candidate.Id == fileId,
-                cancellationToken);
-        await _context.Entry(file).ReloadAsync(cancellationToken);
-        if (file.State is not (
-            SpaceFileState.Clean or SpaceFileState.Rejected))
-        {
-            return;
-        }
-
-        source.CompleteFileScan(file);
-        await _context.SaveChangesAsync(cancellationToken);
     }
 
     private Task<Guid?> FindScanJobIdAsync(
