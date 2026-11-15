@@ -72,6 +72,7 @@ public class ThreeWayMatchService : IThreeWayMatchService
             Creator = userName,
             CreateDate = DateTime.Now,
         };
+        if (_db.Database.IsNpgsql()) match.TenantId = _db.CurrentTenantId;
 
         var allWithin = true;
         var lineNo = 0;
@@ -98,6 +99,7 @@ public class ThreeWayMatchService : IThreeWayMatchService
 
             match.Lines.Add(new ThreeWayMatchLine
             {
+                TenantId = match.TenantId,
                 MatchNo = match.MatchNo,
                 LineNo = ++lineNo,
                 PoLineNo = poLine.LineNo,
@@ -118,9 +120,23 @@ public class ThreeWayMatchService : IThreeWayMatchService
         if (allWithin)
         {
             // 容差内 → 建 AP（填 PurchaseOrderId）
-            var ap = await BuildApAsync(po, match, invoiceDate, userName);
+            var transaction = _db.Database.CurrentTransaction;
+            const string savepoint = "purchase_match_ap";
+            if (transaction is not null) await transaction.CreateSavepointAsync(savepoint);
+            var ap = await BuildApAsync(po, poLines, match, userName, useOriginalInvoiceDate: !dto.InvoiceDate.HasValue);
+            if (transaction is not null)
+            {
+                if (!ap.Ok)
+                {
+                    // A normal suspended match keeps its own number, but no AP number, draft or journal.
+                    await transaction.RollbackToSavepointAsync(savepoint);
+                    _db.ChangeTracker.Clear();
+                }
+                await transaction.ReleaseSavepointAsync(savepoint);
+            }
             if (ap.Ok)
             {
+                match.MatchDate = ap.OriginalInvoiceDate ?? match.MatchDate;
                 match.Status = MatchStatus.Passed;
                 match.ApInvoiceId = ap.InvoiceId;
                 match.ApInvoiceNo = ap.InvoiceNo;
@@ -160,7 +176,7 @@ public class ThreeWayMatchService : IThreeWayMatchService
         var poLines = await _db.PurchaseOrderLines
             .Where(l => l.PoNo == match.PoNo && !l.IsDeleted && l.Status != 9).ToListAsync();
 
-        var ap = await BuildApAsync(po, match, match.MatchDate, userName);
+        var ap = await BuildApAsync(po, poLines, match, userName);
         if (!ap.Ok) throw new InvalidOperationException(ap.Code ?? "E-PUR-046"); // 建票失败
 
         match.Status = MatchStatus.Released;
@@ -193,22 +209,42 @@ public class ThreeWayMatchService : IThreeWayMatchService
     // ───── 私有 ─────
 
     /// <summary>建 AP（填 PurchaseOrderId + PO 冻结汇率 + 来源匹配号）。</summary>
-    private Task<PurApResult> BuildApAsync(PurchaseOrder po, ThreeWayMatch match, DateTime invoiceDate, string? userName)
-        => _finAp.CreateApInvoiceAsync(new PurApInvoiceDto
+    private async Task<PurApResult> BuildApAsync(PurchaseOrder po, List<PurchaseOrderLine> poLines,
+        ThreeWayMatch match, string? userName, bool useOriginalInvoiceDate = false)
+    {
+        var native = _db.Database.IsNpgsql();
+        // Old AP children store the item, quantity and price but have no purchase line key.
+        var items = match.Lines.Select(line => line.ItemId).Distinct().ToArray();
+        var unambiguous = native && match.Lines.All(line => poLines.Any(poLine =>
+            poLine.LineNo == line.PoLineNo && poLine.ItemId == line.ItemId))
+            && !await _db.PurchaseOrderLines.Where(line => line.PoNo == po.PoNo && !line.IsDeleted
+                && line.Status != 9 && items.Contains(line.ItemId))
+            .GroupBy(line => line.ItemId).AnyAsync(group => group.Count() > 1);
+        var ap = await _finAp.CreateApInvoiceAsync(new PurApInvoiceDto
         {
             PurchaseOrderId = po.Id,
             SupplierId = po.SupplierId,
             SupplierInvoiceNo = match.SupplierInvoiceNo,
-            InvoiceDate = invoiceDate,
-            DueDate = invoiceDate.AddDays(DueDays),
+            InvoiceDate = match.MatchDate,
+            DueDate = match.MatchDate.AddDays(DueDays),
             CurrencyCd = po.CurrencyCd,
             FxRate = po.FxRate,
             Description = $"采购三单匹配 {match.MatchNo} / PO {po.PoNo}",
+            OriginalPurchaseLinesAreUnambiguous = unambiguous,
+            UseOriginalInvoiceDate = useOriginalInvoiceDate,
             Lines = match.Lines.Select(l => new PurApLineDto
             {
                 ItemId = l.ItemId, Qty = l.Qty, UnitPrice = l.UnitPrice, TaxCodeId = l.TaxCodeId,
             }).ToList(),
         }, userName);
+
+        if (native && ap.OriginalInvoiceDate.HasValue && await _db.ThreeWayMatches.AnyAsync(existing =>
+            !existing.IsDeleted && (existing.Status == MatchStatus.Passed || existing.Status == MatchStatus.Released)
+            && (existing.ApInvoiceId == ap.InvoiceId || existing.ApInvoiceNo == ap.InvoiceNo)))
+            return PurApResult.Fail("E-PUR-043");
+
+        return ap;
+    }
 
     /// <summary>建票成功后累加 PO 行 InvoicedQty + 置 MatchStatus（收齐→2）。</summary>
     private static Task AccumulateInvoicedAsync(List<PurchaseOrderLine> poLines, ThreeWayMatch match)

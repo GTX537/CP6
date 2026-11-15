@@ -41,6 +41,8 @@ public class FinApServiceAdapter : IFinApService
             FxRate = dto.FxRate,
             PurchaseOrderId = dto.PurchaseOrderId,
             Description = dto.Description,
+            OriginalPurchaseLinesAreUnambiguous = dto.OriginalPurchaseLinesAreUnambiguous,
+            UseOriginalInvoiceDate = dto.UseOriginalInvoiceDate,
             Lines = dto.Lines.Select(l => new FinApInvoiceRequestLine
             {
                 ItemId = l.ItemId,
@@ -53,7 +55,7 @@ public class FinApServiceAdapter : IFinApService
 
         var r = await _finAp.CreateInvoiceFromPurchaseAsync(req, operatorId ?? "system");
         return r.Result.Ok
-            ? PurApResult.Pass(r.InvoiceId, r.InvoiceNo)
+            ? new PurApResult { Ok = true, InvoiceId = r.InvoiceId, InvoiceNo = r.InvoiceNo, OriginalInvoiceDate = r.OriginalInvoiceDate }
             : PurApResult.Fail(r.Result.Code ?? "E-PUR-046");
     }
 }

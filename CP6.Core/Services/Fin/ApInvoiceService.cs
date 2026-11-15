@@ -189,14 +189,16 @@ public class ApInvoiceService : IApInvoiceService, IFinAp
     // ── IFinAp（F2-D3 采购对外契约）：采购三单匹配后据匹配结果建票并过账 ──
     public async Task<FinApInvoiceResult> CreateInvoiceFromPurchaseAsync(FinApInvoiceRequest request, string operatorId)
     {
-        // 幂等：同供应商同发票号已建则返回既有，不重复
+        var native = _db.Database.IsNpgsql();
         if (!string.IsNullOrEmpty(request.SupplierInvoiceNo))
         {
-            var existing = await _db.ApInvoices.FirstOrDefaultAsync(x =>
+            var existing = await _db.ApInvoices.Include(x => x.Lines).FirstOrDefaultAsync(x =>
                 x.SupplierId == request.SupplierId &&
                 x.SupplierInvoiceNo == request.SupplierInvoiceNo && !x.IsCreditMemo);
             if (existing != null)
-                return new FinApInvoiceResult { Result = FinResult.Pass(), InvoiceId = existing.Id, InvoiceNo = existing.No };
+                return native
+                    ? await RecoverPurchaseInvoiceAsync(existing, request, operatorId)
+                    : new FinApInvoiceResult { Result = FinResult.Pass(), InvoiceId = existing.Id, InvoiceNo = existing.No };
         }
 
         var inv = new ApInvoice
@@ -225,5 +227,71 @@ public class ApInvoiceService : IApInvoiceService, IFinAp
 
         var posted = await PostAsync(inv.Id, operatorId);
         return new FinApInvoiceResult { Result = posted, InvoiceId = inv.Id, InvoiceNo = inv.No };
+    }
+
+    private async Task<FinApInvoiceResult> RecoverPurchaseInvoiceAsync(
+        ApInvoice existing, FinApInvoiceRequest request, string operatorId)
+    {
+        var duplicate = FinApInvoiceResult.Fail("E-FIN-201", request.SupplierInvoiceNo);
+        var rate = request.FxRate is > 0 ? request.FxRate.Value : 1m;
+        if (!request.OriginalPurchaseLinesAreUnambiguous || existing.PurchaseOrderId != request.PurchaseOrderId
+            || existing.CurrencyCd != request.CurrencyCd
+            || existing.FxRate != Math.Round(rate, 6, MidpointRounding.AwayFromZero)
+            || existing.Lines.Count != request.Lines.Count
+            || existing.NetAmount != existing.Lines.Sum(line => line.Amount)
+            || existing.TaxAmount != existing.Lines.Sum(line => line.TaxAmount)
+            || existing.GrossAmount != existing.NetAmount + existing.TaxAmount)
+            return duplicate;
+
+        var originalDate = request.UseOriginalInvoiceDate ? existing.InvoiceDate : request.InvoiceDate;
+        var originalDue = request.UseOriginalInvoiceDate
+            ? originalDate + (request.DueDate - request.InvoiceDate) : request.DueDate;
+        if (existing.InvoiceDate.Ticks != originalDate.Ticks - originalDate.Ticks % TimeSpan.TicksPerMicrosecond
+            || existing.DueDate.Ticks != originalDue.Ticks - originalDue.Ticks % TimeSpan.TicksPerMicrosecond)
+            return duplicate;
+
+        var index = 0;
+        foreach (var stored in existing.Lines.OrderBy(line => line.LineNo))
+        {
+            var line = request.Lines[index++];
+            if (stored.LineNo != index || stored.ItemId != line.ItemId || stored.TaxCodeId != line.TaxCodeId
+                || stored.CostCenterId != line.CostCenterId
+                || stored.Qty != Math.Round(line.Qty, 8, MidpointRounding.AwayFromZero)
+                || stored.UnitPrice != Math.Round(line.UnitPrice, 4, MidpointRounding.AwayFromZero))
+                return duplicate;
+
+            var baseAmount = Math.Round(line.Qty * line.UnitPrice, 2, MidpointRounding.AwayFromZero);
+            if (stored.Amount == baseAmount) continue;
+            // Nonrecoverable input tax was included in the stored cost rather than recorded separately.
+            if (stored.TaxCodeId is not Guid taxId || stored.TaxAmount != 0m) return duplicate;
+            var tax = await _db.TaxCodes.AsNoTracking().FirstOrDefaultAsync(code => code.Id == taxId);
+            if (tax is null || tax.Recoverable
+                || stored.Amount != baseAmount + Math.Round(baseAmount * tax.Rate, 2, MidpointRounding.AwayFromZero))
+                return duplicate;
+        }
+
+        var journal = await _db.JournalEntries.AsNoTracking().FirstOrDefaultAsync(entry =>
+            entry.Source == VoucherSource.AP && entry.SourceDocNo == existing.No);
+        if (journal is not null && (journal.Status != JournalStatus.Posted || !journal.AutoPosted
+            || journal.VoucherDate != existing.InvoiceDate)) return duplicate;
+
+        if (existing.Status == ApInvoiceStatus.Draft)
+        {
+            if (existing.JournalEntryId.HasValue && existing.JournalEntryId != journal?.Id) return duplicate;
+            // PostAsync also adopts an already committed source voucher for this original draft.
+            var posted = await PostAsync(existing.Id, operatorId);
+            if (!posted.Ok) return new FinApInvoiceResult { Result = posted };
+        }
+        else if (existing.Status is not (ApInvoiceStatus.Posted or ApInvoiceStatus.PartiallySettled or ApInvoiceStatus.Settled)
+            || journal is null || existing.JournalEntryId != journal.Id)
+        {
+            return duplicate;
+        }
+
+        return new FinApInvoiceResult
+        {
+            Result = FinResult.Pass(), InvoiceId = existing.Id, InvoiceNo = existing.No,
+            OriginalInvoiceDate = existing.InvoiceDate,
+        };
     }
 }
