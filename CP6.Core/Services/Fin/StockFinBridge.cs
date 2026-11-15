@@ -23,9 +23,9 @@ namespace CP6.Core.Services.Fin;
 /// 一律 <see cref="FinBridgeResult.Skipped"/>（带 reason）——宁跳过不误记，过账正确性优先。
 /// 金额守卫：金额=<c>|Qty×UnitPrice|</c>（方向由 PostingRule 借贷两侧表达）；单价缺失或金额&lt;=0 → Skipped（禁零额凭证）。
 /// 幂等：<c>FinBizEvent{Source=Inventory, SourceDocNo=TxnNo}</c>，引擎按 Source+SourceDocNo+Posted 查重。
-/// Best-Effort：异常握住并落 IntegrationEvent（失败可重试），不向上抛出、不阻断库存主操作。
+/// Main Core 在库存提交时保存财务意图。实际过账独立执行，失败可重试。
 /// </remarks>
-public class StockFinBridge : BridgeHookBase, IStockFinBridge
+public partial class StockFinBridge : BridgeHookBase, IStockFinBridge
 {
     private readonly IAutoVoucherEngine _engine;
 
@@ -42,33 +42,14 @@ public class StockFinBridge : BridgeHookBase, IStockFinBridge
         var payload = new { txnNo, txn?.TxnType, relatedType, txn?.Qty, txn?.UnitPrice };
         try
         {
-            var (eventType, skipReason) = Resolve(txn!.TxnType, relatedType, txn.Qty);
-            if (eventType == null)
-                return await SkipAsync(txnNo, skipReason ?? "unmapped", corrId, payload, userName);
-
-            // —— 金额守卫：|Qty×UnitPrice|；单价缺失或非正额 → 跳过（禁零额凭证）——
-            if (txn.UnitPrice is not decimal unit)
-                return await SkipAsync(txnNo, "单价缺失，无法计价过账", corrId, payload, userName);
-
-            var amount = Math.Abs(Math.Round(txn.Qty * unit, 2, MidpointRounding.AwayFromZero));
-            if (amount <= 0m)
-                return await SkipAsync(txnNo, "计价金额<=0，跳过（禁零额凭证）", corrId, payload, userName);
-
-            var evt = new FinBizEvent
-            {
-                EventType = eventType,
-                Source = VoucherSource.Inventory,
-                SourceDocNo = txnNo,   // 幂等键 (Inventory, TxnNo)
-                BizDate = txn.TxnDateTime,
-                Description = $"库存移动自动过账 {txn.TxnType}/{relatedType} {txnNo}",
-            };
-            evt.HeaderAmounts["Amount"] = amount;
+            var (evt, skipReason) = StockPosting(txn!, relatedType, txn!.Qty, txn.UnitPrice);
+            if (evt is null) return await SkipAsync(txnNo, skipReason!, corrId, payload, userName);
 
             var r = await _engine.GenerateAsync(evt);
             var status = r.Ok ? IntegrationEventStatus.Success : IntegrationEventStatus.Failed;
             await PersistEventAsync("WMS", "FIN", nameof(OnStockMovedAsync),
-                txnNo, r.Ok ? eventType : null, status, r.Ok ? null : r.Code, corrId, payload, userName);
-            if (r.Ok) Logger.LogInformation("[Stock-Fin-Bridge] 库存移动 {Txn} {Evt} → 自动过账", txnNo, eventType);
+                txnNo, r.Ok ? evt.EventType : null, status, r.Ok ? null : r.Code, corrId, payload, userName);
+            if (r.Ok) Logger.LogInformation("[Stock-Fin-Bridge] 库存移动 {Txn} {Evt} → 自动过账", txnNo, evt.EventType);
             return r.Ok ? FinBridgeResult.Ok(txnNo) : FinBridgeResult.Failed(r.Code ?? "fail");
         }
         catch (Exception ex)
@@ -78,6 +59,28 @@ public class StockFinBridge : BridgeHookBase, IStockFinBridge
                 txnNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload, userName);
             return FinBridgeResult.Failed(ex.Message);
         }
+    }
+
+    private static (FinBizEvent? Posting, string? SkipReason) StockPosting(
+        StockTransaction txn, string relatedType, decimal qty, decimal? unitPrice)
+    {
+        var (eventType, skipReason) = Resolve(txn.TxnType, relatedType, qty);
+        if (eventType is null) return (null, skipReason);
+        if (unitPrice is not decimal unit) return (null, "单价缺失，无法计价过账");
+
+        var amount = Math.Abs(Math.Round(qty * unit, 2, MidpointRounding.AwayFromZero));
+        if (amount <= 0m) return (null, "计价金额<=0，跳过（禁零额凭证）");
+
+        var posting = new FinBizEvent
+        {
+            EventType = eventType,
+            Source = VoucherSource.Inventory,
+            SourceDocNo = txn.TxnNo,
+            BizDate = txn.TxnDateTime,
+            Description = $"库存移动自动过账 {txn.TxnType}/{relatedType} {txn.TxnNo}",
+        };
+        posting.HeaderAmounts["Amount"] = amount;
+        return (posting, null);
     }
 
     private async Task<FinBridgeResult> SkipAsync(string txnNo, string reason, Guid corrId, object payload, string? userName)
