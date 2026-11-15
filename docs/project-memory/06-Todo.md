@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 W621-01 后续
+
+继续历史重刊发父作业、刊发过程写集、CAD 和 Excel 后台写入及 OA 服务作业续行核对。 [交付](../development/evidence/W621-01/DELIVERY.md)
+
 ## 2026-11-15 W620-01 后续
 
 继续跟踪 Space 后台、OA 服务作业续行、采购、库存及 MES 其他财务写者。 [交付](../development/evidence/W620-01/DELIVERY.md)

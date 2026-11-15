@@ -227,7 +227,7 @@ public sealed class SpacePublishAttempt : SpaceTenantEntity
         RequireUtc(nowUtc, nameof(nowUtc));
         Status = SpacePublishAttemptStatus.VerifyingWms;
         CurrentStep = SpacePublishStep.VerifyWms;
-        WmsCommittedAtUtc = nowUtc;
+        WmsCommittedAtUtc ??= nowUtc;
     }
 
     public void BeginActivatingRuntime()

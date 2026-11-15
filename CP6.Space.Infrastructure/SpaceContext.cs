@@ -1,3 +1,4 @@
+using CP6.Core.Persistence;
 using CP6.Space.Application;
 using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,10 @@ public sealed class SpaceContext : DbContext
     }
 
     public Guid CurrentTenantId => _execution.TenantId;
+
+    internal Task<SpaceContext> ShareTransactionAsync(DbContext owner, CancellationToken cancellationToken) =>
+        DatabaseSharedContext.CreateAsync<SpaceContext>(owner, DatabaseContextKind.Space,
+            options => new(options, _execution, _clock), cancellationToken);
 
     public DbSet<SpaceModel> Models => Set<SpaceModel>();
     public DbSet<SpaceModelVersion> Versions => Set<SpaceModelVersion>();
