@@ -1,5 +1,4 @@
 using CP6.Core.Persistence;
-using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -7,7 +6,6 @@ using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Space.Infrastructure;
 
@@ -16,7 +14,8 @@ public sealed partial class SpaceExcelCadApplyService(
     ISpaceExecutionContext execution,
     ISpaceDesignAccessEvaluator access,
     IServiceProvider services,
-    ISpaceClock clock) : ISpaceExcelCadApplyService
+    ISpaceClock clock,
+    ISpaceDesignWriteAuthority? writeAuthority = null) : ISpaceExcelCadApplyService
 {
     private const long MaximumArtifactBytes = 200L * 1024L * 1024L;
     private static readonly JsonSerializerOptions JsonOptions =
@@ -40,7 +39,6 @@ public sealed partial class SpaceExcelCadApplyService(
             versionId,
             matchJobId,
             request,
-            write: true,
             cancellationToken);
         var commandBatchId = DeterministicGuid(
             "space-excel-cad-apply-batch-v1",
@@ -72,11 +70,11 @@ public sealed partial class SpaceExcelCadApplyService(
             PayloadJson: payloadJson);
         var businessKey = SpaceJobBusinessKey.Create(enqueue);
 
-        IDbContextTransaction? transaction = context.Database.IsRelational()
-            ? await context.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken)
+        await using var transaction = context.Database.IsRelational()
+            ? await SpaceDesignWriteTransaction.BeginForPermissionAsync(
+                context, writeAuthority, SpaceDesignWriteTransaction.ModelEditPermission, cancellationToken)
             : null;
+        var committing = false;
         try
         {
             await AcquireFloorEditLockAsync(
@@ -87,8 +85,8 @@ public sealed partial class SpaceExcelCadApplyService(
                 versionId,
                 matchJobId,
                 request,
-                write: true,
-                cancellationToken);
+                cancellationToken,
+                verified: authority);
             await EnsureActiveEditLeaseAsync(
                 versionId,
                 authority.Artifact.FloorLogicalId,
@@ -107,7 +105,10 @@ public sealed partial class SpaceExcelCadApplyService(
             if (concurrentReplay is not null)
             {
                 if (transaction is not null)
-                    await transaction.CommitAsync(cancellationToken);
+                {
+                    committing = true;
+                    await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
+                }
                 return concurrentReplay;
             }
             var prior = await FindPriorApplyAsync(
@@ -166,10 +167,13 @@ public sealed partial class SpaceExcelCadApplyService(
                 now.AddDays(90)));
             await context.SaveChangesAsync(cancellationToken);
             if (transaction is not null)
-                await transaction.CommitAsync(cancellationToken);
+            {
+                committing = true;
+                await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
+            }
             return response;
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException) when (!committing)
         {
             if (transaction is not null)
                 await transaction.RollbackAsync(CancellationToken.None);
@@ -183,17 +187,6 @@ public sealed partial class SpaceExcelCadApplyService(
                 return concurrentReplay;
             throw Conflict(
                 "The Draft or confirmation ledger changed while Apply was queued.");
-        }
-        catch
-        {
-            if (transaction is not null)
-                await transaction.RollbackAsync(CancellationToken.None);
-            throw;
-        }
-        finally
-        {
-            if (transaction is not null)
-                await transaction.DisposeAsync();
         }
     }
 
@@ -281,8 +274,8 @@ public sealed partial class SpaceExcelCadApplyService(
         Guid versionId,
         Guid matchJobId,
         ConfirmSpaceExcelCadMatchRequest request,
-        bool write,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        ApplyAuthority? verified = null)
     {
         var scope = await (
                 from match in context.Jobs.AsNoTracking()
@@ -305,10 +298,7 @@ public sealed partial class SpaceExcelCadApplyService(
                 })
             .SingleOrDefaultAsync(cancellationToken)
             ?? throw NotFound();
-        if (write)
-            EnsureWritable(scope.Model);
-        else
-            EnsureReadable(scope.Model);
+        EnsureWritable(scope.Model);
         var matchPayload = DeserializeMatch(scope.Match.PayloadJson);
         if (scope.Match.Status != SpaceJobStatus.Succeeded ||
             scope.Source.SourceType != SpaceSourceType.Excel ||
@@ -346,7 +336,16 @@ public sealed partial class SpaceExcelCadApplyService(
                 "The selected authoritative Match Artifact identity is invalid.");
         }
 
-        var value = await ReadArtifactAsync(stored.File, cancellationToken);
+        if (verified is not null &&
+            (stored.File.Id != verified.File.Id ||
+             stored.File.StorageKey != verified.File.StorageKey ||
+             stored.File.SizeBytes != verified.File.SizeBytes ||
+             stored.File.Sha256 != verified.File.Sha256))
+        {
+            throw ArtifactInvalid("The authoritative Match Artifact file changed before confirmation.");
+        }
+
+        var value = verified?.Artifact ?? await ReadArtifactAsync(stored.File, cancellationToken);
         if (value.MatchJobId != matchJobId ||
             value.ModelVersionId != versionId ||
             value.ExcelSourceId != scope.Source.Id ||
@@ -364,7 +363,7 @@ public sealed partial class SpaceExcelCadApplyService(
                         item.LogicalId == value.FloorLogicalId,
                 cancellationToken)
             ?? throw NotFound();
-        return new ApplyAuthority(scope.Version, scope.Source, floor, value);
+        return new ApplyAuthority(scope.Version, scope.Source, floor, value, stored.File);
     }
 
     private static void ValidateAuthorityRevisions(
@@ -796,7 +795,8 @@ public sealed partial class SpaceExcelCadApplyService(
         SpaceModelVersion Version,
         SpaceModelSource Source,
         SpaceFloorRevision Floor,
-        SpaceExcelCadMatchArtifactV1 Artifact);
+        SpaceExcelCadMatchArtifactV1 Artifact,
+        SpaceFile File);
 
     private sealed record PriorApply(
         SpaceJob Job,
