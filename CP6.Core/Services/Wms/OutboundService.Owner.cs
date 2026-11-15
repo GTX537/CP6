@@ -64,13 +64,15 @@ public partial class OutboundService
         {
             await a.RequireOutbound(number,false,ct);RequireStockContext();
             var row=await _db.OutboundOrders.AsNoTracking().SingleAsync(o=>o.OutboundNo==number,ct);
-            if(row.Status==OutboundOrderStatus.Cancelled)return (Changed:false,Shipping:false,Actor:a.Actor);
+            if(row.Status==OutboundOrderStatus.Cancelled)return (Changed:false,Shipping:false,Actor:a.Actor,FinanceEvent:(Guid?)null);
             using var inheritance=((StockMovementService)_stock).InheritTransactions(a);
-            await RequireStoredReservation(row,false,ct);await CancelCoreAsync(number,a.Actor,true);
+            await RequireStoredReservation(row,false,ct);
+            var financeEvent=await CancelCoreAsync(number,a.Actor,true);
             transactions.AddRange(_db.ChangeTracker.Entries<StockTransaction>().Select(e=>e.Entity));
-            a.AtCommit(t=>a.RequireOutbound(number,false,t));return (Changed:true,Shipping:row.OutboundType==OutboundType.Shipping,Actor:a.Actor);
+            a.AtCommit(t=>a.RequireOutbound(number,false,t));
+            return (Changed:true,Shipping:row.OutboundType==OutboundType.Shipping,Actor:a.Actor,FinanceEvent:financeEvent);
         });
-        if(result.Changed)await PublishOrderCancellationAsync(number,result.Shipping,result.Actor,transactions);
+        if(result.Changed)await PublishOrderCancellationAsync(number,result.Shipping,result.Actor,transactions,result.FinanceEvent);
     }
     public Task StartPickingAsync(string number,string? userName)=>!_db.Database.IsNpgsql()?StartPickingCoreAsync(number,userName):
         Owner.ExecuteAsync(OperationsOwnerV1.Outbound,"pick",true,async (a,ct)=>

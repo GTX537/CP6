@@ -11,7 +11,7 @@ namespace CP6.Core.Services.Fin;
 /// <see cref="IFinBridgeHook"/> 标准实现（BridgeHookBase，Phase6 持久化）。出货确认→AR 自动开票，
 /// 出货取消→红冲。Best-Effort：异常握住并落 IntegrationEvent（失败可重试），不阻断出货主操作。
 /// </summary>
-public class FinBridgeHook : BridgeHookBase, IFinBridgeHook
+public partial class FinBridgeHook : BridgeHookBase, IFinBridgeHook
 {
     private readonly IArInvoiceService _ar;
     private readonly ICostCollectService _cost;

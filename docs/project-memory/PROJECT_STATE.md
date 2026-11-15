@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W620-01 WMS 出货财务原事件
+
+出库和 WMS／ERP 取消在原事务保存 FIN 意图，财务写与原回执在 Main 栅栏提交。16 项原生与 5 项新主线组合通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W620-01/DELIVERY.md)
+
 ## 2026-11-15 W618-01 财务凭证实际复核人
 
 旧 OA 凭证回调按实际人工复核角色核对制单账户，原人改名后的新凭证仍保持双人规则。59 项定向通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W618-01/DELIVERY.md)
