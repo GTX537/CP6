@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-15 W648-01
+
+CAD、Excel 与底图使用真实独立扫描，验证扫描先完成、暂停先提交、原被拒文件及另一次合法移除。 [交付](../development/evidence/W648-01/DELIVERY.md)
+
 ## 2026-11-15 W647-01
 
 克隆处理器的两种提交顺序、应答丢失、原取消及实际晚期回滚均已在 PostgreSQL 验证。 [交付](../development/evidence/W647-01/DELIVERY.md)

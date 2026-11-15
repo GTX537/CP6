@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 W648-01 后续
+
+继续前三路登记以外的前台规划预约、清单内 Space 写者和 Main 在 CRM 不可达时的停签恢复。 [交付](../development/evidence/W648-01/DELIVERY.md)
+
 ## 2026-11-15 W647-01 后续
 
 普通克隆采用实际生产处理器联验。现有后台未自动领取 CloneVersion；规划前台预约、上传终态及清单内其他独立写者另有状态。 [交付](../development/evidence/W647-01/DELIVERY.md)

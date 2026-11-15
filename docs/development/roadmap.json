@@ -166142,6 +166142,11 @@
       "at": "2026-11-15T18:59:13.986240+00:00",
       "change": "W647-01 普通及规划版本克隆在原租约内共用 Main 栅栏，克隆内容、目标版本及原作业状态共同提交。",
       "evidence": "docs/development/evidence/W647-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T19:27:14.399707+00:00",
+      "change": "W648-01 CAD、Excel、底图上传的扫描终态由原来源登记事务落盘，返回原 File、Source 和扫描作业。",
+      "evidence": "docs/development/evidence/W648-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212148,10 +212153,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W647",
-      "path": "docs/development/evidence/W647-01/DELIVERY.md",
-      "baseline_sha": "f978f0541252509d8a029a355bfa73977a2af69c",
-      "registered_at": "2026-11-15T18:22:41.092086+00:00",
+      "id": "W648",
+      "path": "docs/development/evidence/W648-01/DELIVERY.md",
+      "baseline_sha": "1e2b294eb2f4f5a72cf903a16bac724edc74694d",
+      "registered_at": "2026-11-15T19:03:45.782091+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212165,11 +212170,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Complete three native file source terminal bindings and record existing Space drafting writer scope. Continue CRM durable restart and replay coverage.",
+      "next_action": "Adopt the native planning reservation under Main; continue the independently adopted CRM stage and collect final writer scope.",
       "windows": [
         {
-          "id": "W647-01",
-          "workspace_task": "W647-01",
+          "id": "W648-01",
+          "workspace_task": "W648-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212180,22 +212185,22 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w647-01",
-          "planned_scope_ref": "docs/development/evidence/W647-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W647-01/DELIVERY.md",
+          "branch": "codex/w648-01",
+          "planned_scope_ref": "docs/development/evidence/W648-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W648-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Ordinary and planning version clone native processor after original lease",
-            "Original content copy, target version, job, attempt and step transaction",
+            "CAD/Excel/underlay source upload reuse and terminal file status",
+            "Main source-upload plus editor authorization, original terminal File/Job and source registration",
             "DEV-2"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "7 signed-source PostgreSQL scenarios and 2 historical controls; 3 combined W646 exact default helper native controls, all pass and zero skips. Combined 310-file local release has exact assembly hashes and real 200/401.",
-          "remaining_scope": "Hosted clone discovery and independent Space planning/source/Design business writers. CRM initial disconnect precondition pending. Formal PostgreSQL 26 PASS / 1 NOT_RUN.",
-          "main_tested_source_sha": "4314d92b39dade3bd495a19bedeef2de8a1eecbd"
+          "validation_summary": "11 actual PostgreSQL cases across CAD/Excel/underlay including both orders, rejected and concurrent authorized removal/receipt, 10 W598/W602, 6 W616 and 46 contracts. All zero skips; exact 310-file release and actual 200/401.",
+          "remaining_scope": "Planning reservation, independent Space Design/Publish state writes and Main CRM first-seal cold failure recovery. Formal PostgreSQL still 26 PASS / 1 NOT_RUN.",
+          "main_tested_source_sha": "b7edb35bf5b0dba503831e7845832ba8c64855b6"
         }
       ],
       "storage": {
@@ -269499,6 +269504,67 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W647",
+        "path": "docs/development/evidence/W647-01/DELIVERY.md",
+        "baseline_sha": "f978f0541252509d8a029a355bfa73977a2af69c",
+        "registered_at": "2026-11-15T18:22:41.092086+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Complete three native file source terminal bindings and record existing Space drafting writer scope. Continue CRM durable restart and replay coverage.",
+        "windows": [
+          {
+            "id": "W647-01",
+            "workspace_task": "W647-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w647-01",
+            "planned_scope_ref": "docs/development/evidence/W647-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W647-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Ordinary and planning version clone native processor after original lease",
+              "Original content copy, target version, job, attempt and step transaction",
+              "DEV-2"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "7 signed-source PostgreSQL scenarios and 2 historical controls; 3 combined W646 exact default helper native controls, all pass and zero skips. Combined 310-file local release has exact assembly hashes and real 200/401.",
+            "remaining_scope": "Hosted clone discovery and independent Space planning/source/Design business writers. CRM initial disconnect precondition pending. Formal PostgreSQL 26 PASS / 1 NOT_RUN.",
+            "main_tested_source_sha": "4314d92b39dade3bd495a19bedeef2de8a1eecbd",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1170",
+            "main_remote_main_sha": "1e2b294eb2f4f5a72cf903a16bac724edc74694d"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },
