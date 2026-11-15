@@ -1,4 +1,3 @@
-using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -13,7 +12,8 @@ namespace CP6.Space.Infrastructure;
 public sealed class SpaceCadMappingProfileService(
     SpaceContext context,
     ISpaceExecutionContext execution,
-    ISpaceClock clock) : ISpaceCadMappingProfileService
+    ISpaceClock clock,
+    ISpaceDesignWriteAuthority? writeAuthority = null) : ISpaceCadMappingProfileService
 {
     private const string Operation = "space.cad-mapping-profile.save";
     private const int MaximumDefinitionBytes = 1_000_000;
@@ -142,7 +142,9 @@ public sealed class SpaceCadMappingProfileService(
 
         async Task<SaveSpaceCadMappingProfileResponse> SaveOnceAsync()
         {
-            await using var transaction = await BeginTransactionAsync(cancellationToken);
+            await using var transaction = context.Database.IsRelational()
+                ? await SpaceDesignWriteTransaction.BeginAsync(context, writeAuthority, cancellationToken)
+                : null;
             try
             {
                 var concurrentReplay = await ReadReplayAsync(
@@ -152,7 +154,7 @@ public sealed class SpaceCadMappingProfileService(
                 if (concurrentReplay is not null)
                 {
                     if (transaction is not null)
-                        await transaction.CommitAsync(cancellationToken);
+                        await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
                     return concurrentReplay;
                 }
 
@@ -237,13 +239,17 @@ public sealed class SpaceCadMappingProfileService(
                     now.AddDays(90)));
                 await context.SaveChangesAsync(cancellationToken);
                 if (transaction is not null)
-                    await transaction.CommitAsync(cancellationToken);
+                    await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
                 return response;
             }
-            catch
+            catch (Exception error)
             {
                 if (transaction is not null && transaction.GetDbTransaction().Connection is not null)
+                {
                     await transaction.RollbackAsync(CancellationToken.None);
+                    if (error is SpaceProblemException)
+                        context.ChangeTracker.Clear();
+                }
                 throw;
             }
         }
@@ -508,16 +514,6 @@ public sealed class SpaceCadMappingProfileService(
         }
 
         return Hash($"{execution.TenantId:D}\n{Operation}\n{normalized}");
-    }
-
-    private async Task<IDbContextTransaction?> BeginTransactionAsync(
-        CancellationToken cancellationToken)
-    {
-        if (!context.Database.IsRelational())
-            return null;
-        return await context.Database.BeginTransactionAsync(
-            IsolationLevel.Serializable,
-            cancellationToken);
     }
 
     private Guid RequireTenant()

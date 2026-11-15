@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 W624-01 后续
+
+继续 CAD 与 Excel 后台 Source、Issues 及导入批次的提交顺序，以及历史重刊发父作业。 [交付](../development/evidence/W624-01/DELIVERY.md)
+
 ## 2026-11-15 W621-01 后续
 
 继续历史重刊发父作业、刊发过程写集、CAD 和 Excel 后台写入及 OA 服务作业续行核对。 [交付](../development/evidence/W621-01/DELIVERY.md)

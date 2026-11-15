@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-15 W624-01
+
+10 项签名 PostgreSQL 场景及 16 项映射回归通过，保留原版本、行版本、操作者与原回执。 [交付](../development/evidence/W624-01/DELIVERY.md)
+
 ## 2026-11-15 W621-01
 
 实测内置 WMS 和版本激活保留先提交的原业务结果，暂停后可从原 WMS 回执和版本指针继续恢复。 [交付](../development/evidence/W621-01/DELIVERY.md)
