@@ -2,6 +2,7 @@ using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Fin;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,6 +40,7 @@ public class BudgetController : ControllerBase
 
     [HttpPost]
     [RequirePermission("fin-budget", "add")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Create([FromBody] Budget dto)
     {
         var r = await _svc.CreateBudgetAsync(dto, CurrentUser);
@@ -47,11 +49,13 @@ public class BudgetController : ControllerBase
 
     [HttpPut("{id:guid}")]
     [RequirePermission("fin-budget", "edit")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateBudgetReq req)
         => Fin(await _svc.UpdateBudgetAsync(id, req.Name, req.Description));
 
     [HttpPost("{id:guid}/deactivate")]
     [RequirePermission("fin-budget", "edit")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Deactivate(Guid id)
         => Fin(await _svc.DeactivateBudgetAsync(id));
 
@@ -64,6 +68,7 @@ public class BudgetController : ControllerBase
 
     [HttpPost("{id:guid}/versions")]
     [RequirePermission("fin-budget", "add")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> CreateVersion(Guid id, [FromBody] CreateVersionReq req)
     {
         var r = await _svc.CreateVersionAsync(id, req.Name, CurrentUser, req.CopyFromVersionId, req.CopyFromActualFiscalYear);
@@ -72,11 +77,13 @@ public class BudgetController : ControllerBase
 
     [HttpPut("versions/{vid:guid}")]
     [RequirePermission("fin-budget", "edit")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> UpdateVersion(Guid vid, [FromBody] UpdateVersionReq req)
         => Fin(await _svc.UpdateVersionAsync(vid, req.Name, req.ControlMode, req.ControlBasis));
 
     [HttpPost("versions/{vid:guid}/submit")]
     [RequirePermission("fin-budget", "submit")]
+    [CurrentWriteAuthority(RollbackOnFailure = true, ResumeWorkflowAfterCommit = true)]
     public async Task<IActionResult> Submit(Guid vid)
     {
         var userId = await CurrentUserIdAsync();
@@ -85,11 +92,13 @@ public class BudgetController : ControllerBase
 
     [HttpPost("versions/{vid:guid}/activate")]
     [RequirePermission("fin-budget", "activate")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Activate(Guid vid)
         => Fin(await _svc.ActivateAsync(vid));
 
     [HttpDelete("versions/{vid:guid}")]
     [RequirePermission("fin-budget", "delete")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> DeleteVersion(Guid vid)
         => Fin(await _svc.DeleteVersionAsync(vid));
 

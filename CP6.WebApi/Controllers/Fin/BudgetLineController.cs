@@ -1,5 +1,6 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,6 +43,7 @@ public class BudgetLineController : ControllerBase
 
     [HttpPost]
     [RequirePermission("fin-budget", "edit")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Upsert([FromBody] BudgetLineDto dto)
     {
         if (dto.VersionRowVersion is not { Length: > 0 })
@@ -51,6 +53,7 @@ public class BudgetLineController : ControllerBase
 
     [HttpDelete("{lineId:guid}")]
     [RequirePermission("fin-budget", "edit")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Delete(
         Guid lineId,
         [FromQuery] string? lineRowVersion,
@@ -72,6 +75,7 @@ public class BudgetLineController : ControllerBase
 
     [HttpPost("import/confirm")]
     [RequirePermission("fin-budget", "import")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> ImportConfirm(
         [FromQuery] Guid versionId,
         [FromQuery] string? versionRowVersion,

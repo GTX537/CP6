@@ -92,7 +92,9 @@ public partial class FlowEngine : IFlowEngine
         AddHistory(inst.Id, first.Id, starterId, "submit", null);
 
         var previouslyDeferred = DeferSynchronousWebApi;
-        DeferSynchronousWebApi = previouslyDeferred || deferFollowUps
+        var deferUntilCommit = deferFollowUps || (_db.Database.IsNpgsql() && _db.Database.CurrentTransaction != null
+            && businessRef?.BizType == "A5_Budget");
+        DeferSynchronousWebApi = previouslyDeferred || deferUntilCommit
             || (_db.Database.IsNpgsql() && businessRef?.BizType is "PUR_PR" or "PUR_PO");
         try
         {
@@ -100,7 +102,7 @@ public partial class FlowEngine : IFlowEngine
             await EnterNodeAsync(inst, schema, first, root);
             await DispatchIfFinishedAsync(inst, starterId, null);
             await _db.SaveChangesAsync(ct);
-            if (!deferFollowUps)
+            if (!deferUntilCommit)
                 await FastPathSubFlowResumeAsync(ct);
         }
         finally { DeferSynchronousWebApi = previouslyDeferred; }
