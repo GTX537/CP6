@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 · W604-01 Space 刊发写入口
+
+刊发提交、人工重试和历史重刊在各自业务事务确认当前权限。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W604-01/DELIVERY.md)
+
 ## 2026-11-15 · W602-01 CAD 和 Excel 上传
 
 两条上传入口的目录及来源写入采用 Main 原生栅栏。实测双向提交、撤上传权和原文件恢复。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W602-01/DELIVERY.md)

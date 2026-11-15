@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-15 · W604-01 刊发与历史重刊
+
+实际签名请求按相同原生锁见证业务、暂停和撤销重刊权的提交顺序，同键回读原结果。 [交付记录](../development/evidence/W604-01/DELIVERY.md)
+
 ## 2026-11-15 · W602-01 CAD 和 Excel 文件登记
 
 DXF/XLSX 通过实际 HTTP，文件先提交后的原字节、原 File/Job 和唯一来源经 PostgreSQL 回读。 [交付记录](../development/evidence/W602-01/DELIVERY.md)
