@@ -1,5 +1,7 @@
+using System.Data;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,14 +42,67 @@ public class WfTimeoutService : IWfTimeoutService
         _notifier = notifier ?? new NullWfNotifier();
     }
 
-    public async Task<int> ScanOnceAsync(DateTime now, CancellationToken ct = default)
+    public Task<int> ScanOnceAsync(DateTime now, CancellationToken ct = default)
+        => _db.Database.IsNpgsql() ? ScanPostgreSqlAsync(now, ct) : ScanLegacyAsync(now, ct);
+
+    private IQueryable<Wf_FlowTask> DueTasks(DateTime now) => _db.Wf_FlowTasks
+        .Where(t => t.Status == FlowTaskStatus.Pending && t.DueAt != null && t.DueAt <= now && !t.TimeoutHandled)
+        .Where(t => !_db.Wf_FlowInstances.Any(i => i.Id == t.InstanceId && (i.Creator == FlowEngine.ApprovalRuntimeV2 || i.Creator == FlowEngine.PersonalFormRuntimeV2)));
+
+    private async Task<int> ScanPostgreSqlAsync(DateTime now, CancellationToken ct)
     {
-        var due = await _db.Wf_FlowTasks
-            .Where(t => t.Status == FlowTaskStatus.Pending && t.DueAt != null && t.DueAt <= now && !t.TimeoutHandled)
-            .Where(t => !_db.Wf_FlowInstances.Any(i => i.Id == t.InstanceId && (i.Creator == FlowEngine.ApprovalRuntimeV2 || i.Creator == FlowEngine.PersonalFormRuntimeV2)))
-            .OrderBy(t => t.DueAt)
-            .Take(100)
-            .ToListAsync(ct);
+        var candidates = await DueTasks(now).OrderBy(t => t.DueAt).Take(100).Select(t => t.Id).ToListAsync(ct);
+        var handled = 0;
+        foreach (var taskId in candidates)
+            if (await ProcessPostgreSqlAsync(taskId, now, ct)) handled++;
+        return handled;
+    }
+
+    private async Task<bool> ProcessPostgreSqlAsync(Guid taskId, DateTime now, CancellationToken ct)
+    {
+        // The scan owns this context. Re-read the candidate and tenant after acquiring the Main root.
+        _db.ChangeTracker.Clear();
+        await using var transaction = await _db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
+        try
+        {
+            await AuthenticationCompletionGateV1.AcquireAsync(_db, ct);
+            var tenantId = _db.CurrentTenantId;
+            var tenant = await _db.Sys_Tenants.AsNoTracking().Where(t => t.Id == tenantId)
+                .Select(t => new { t.Enable, t.ExpireDate }).SingleOrDefaultAsync(ct);
+            if (tenant is not { Enable: true } || tenant.ExpireDate <= DateTime.Now)
+                return false;
+
+            var task = await DueTasks(now).SingleOrDefaultAsync(t => t.Id == taskId && t.TenantId == tenantId, ct);
+            if (task is null) return false;
+            var instance = await _db.Wf_FlowInstances.SingleOrDefaultAsync(i => i.Id == task.InstanceId && i.TenantId == tenantId, ct);
+            var handled = false;
+            if (instance is { Status: FlowInstanceStatus.Running })
+            {
+                var schema = await FlowEngine.LoadLegacySchemaAsync(_db, instance, ct);
+                var node = schema.Nodes.FirstOrDefault(n => n.Id == task.NodeId);
+                await ApplyTimeoutAsync(task, instance, node, now, postgres: true, ct);
+                handled = true;
+            }
+            else
+            {
+                task.TimeoutHandled = true;
+            }
+
+            await _db.SaveChangesAsync(ct);
+            // The scan time selects due tasks. Tenant expiry uses the current wall clock after the last write.
+            if (tenant.ExpireDate <= DateTime.Now) return false;
+            await transaction.CommitAsync(ct);
+            return handled;
+        }
+        finally
+        {
+            _db.ChangeTracker.Clear();
+        }
+    }
+
+    private async Task<int> ScanLegacyAsync(DateTime now, CancellationToken ct)
+    {
+        var due = await DueTasks(now).OrderBy(t => t.DueAt).Take(100).ToListAsync(ct);
 
         var schemaCache = new Dictionary<string, FlowSchema>();
         int handled = 0;
@@ -57,55 +112,60 @@ public class WfTimeoutService : IWfTimeoutService
             if (inst is null || inst.Status != FlowInstanceStatus.Running) { task.TimeoutHandled = true; continue; }
 
             var node = NodeOf(schemaCache, inst.FlowKey, task.NodeId);
-            var action = (node?.TimeoutAction ?? string.Empty).Trim().ToLowerInvariant();
-
-            switch (action)
-            {
-                case "remind":   // 软：催办 + 顺延 DueAt（可重复，不置 Handled）
-                    await _notifier.TodoCreatedAsync(task.AssigneeId, inst.Id, task.Id, inst.FlowKey);
-                    task.DueAt = now.AddHours(node!.TimeoutHours is int h && h > 0 ? h : 24);
-                    break;
-
-                case "approve":  // 硬：系统自动同意（ActAsync 幂等推进会签/流转）
-                    await _engine.ActAsync(task.Id, SystemActor, approve: true, "超时自动同意");
-                    task.TimeoutHandled = true;
-                    break;
-
-                case "reject":   // 硬：系统自动驳回
-                    await _engine.ActAsync(task.Id, SystemActor, approve: false, "超时自动驳回");
-                    task.TimeoutHandled = true;
-                    break;
-
-                case "escalate": // 硬：升级给 EscalateTo（换 assignee + 双痕），原人不再持有
-                    if (node!.EscalateTo is Guid up)
-                    {
-                        _db.Wf_FlowHistories.Add(new Wf_FlowHistory
-                        {
-                            Id = Guid.NewGuid(), InstanceId = inst.Id, NodeId = task.NodeId,
-                            ActorId = up, Action = "escalate", Comment = $"超时升级：{task.AssigneeId} → {up}",
-                        });
-                        task.AssigneeId = up;
-                        task.DueAt = null;   // 升级后清限时，避免再触发
-                        await _notifier.TodoCreatedAsync(up, inst.Id, task.Id, inst.FlowKey);
-                    }
-                    task.TimeoutHandled = true;
-                    break;
-
-                case "erroredge": // 硬：审批超时走失败边（infra ②），委托引擎节点级清场+路由；置 Handled 防反复扫
-                                  // （action 已 ToLowerInvariant → 匹配小写 "erroredge"，对齐既有 case 约定）
-                    await _engine.TimeoutAdvanceErrorEdgeAsync(task.Id, SystemActor, ct);
-                    task.TimeoutHandled = true;
-                    break;
-
-                default:         // 无有效动作配置 → 标记，避免反复扫
-                    task.TimeoutHandled = true;
-                    break;
-            }
+            await ApplyTimeoutAsync(task, inst, node, now, postgres: false, ct);
             handled++;
         }
 
         await _db.SaveChangesAsync(ct);
         return handled;
+    }
+
+    private async Task ApplyTimeoutAsync(Wf_FlowTask task, Wf_FlowInstance inst, FlowNode? node, DateTime now,
+        bool postgres, CancellationToken ct)
+    {
+        var action = (node?.TimeoutAction ?? string.Empty).Trim().ToLowerInvariant();
+        switch (action)
+        {
+            case "remind":
+                await _notifier.TodoCreatedAsync(task.AssigneeId, inst.Id, task.Id, inst.FlowKey);
+                task.DueAt = now.AddHours(node!.TimeoutHours is int hours && hours > 0 ? hours : 24);
+                break;
+
+            case "approve":
+            case "reject":
+                var approve = action == "approve";
+                var comment = approve ? "超时自动同意" : "超时自动驳回";
+                if (postgres)
+                    await _engine.ActAsAsync(task.Id, SystemActor, onBehalfOf: null, approve, comment);
+                else
+                    await _engine.ActAsync(task.Id, SystemActor, approve, comment);
+                task.TimeoutHandled = true;
+                break;
+
+            case "escalate":
+                if (node!.EscalateTo is Guid target)
+                {
+                    _db.Wf_FlowHistories.Add(new Wf_FlowHistory
+                    {
+                        Id = Guid.NewGuid(), InstanceId = inst.Id, NodeId = task.NodeId,
+                        ActorId = target, Action = "escalate", Comment = $"超时升级：{task.AssigneeId} → {target}",
+                    });
+                    task.AssigneeId = target;
+                    task.DueAt = null;
+                    await _notifier.TodoCreatedAsync(target, inst.Id, task.Id, inst.FlowKey);
+                }
+                task.TimeoutHandled = true;
+                break;
+
+            case "erroredge":
+                await _engine.TimeoutAdvanceErrorEdgeAsync(task.Id, SystemActor, ct);
+                task.TimeoutHandled = true;
+                break;
+
+            default:
+                task.TimeoutHandled = true;
+                break;
+        }
     }
 
     private FlowSchema? NodeOf_Schema(Dictionary<string, FlowSchema> cache, string flowKey)

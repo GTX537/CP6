@@ -166112,6 +166112,11 @@
       "at": "2026-11-15T17:20:17.401352+00:00",
       "change": "W639-01 外注成品成本采用 Main 权限根，按原来源保存一次凭证与原金额，实测暂停两种顺序。",
       "evidence": "docs/development/evidence/W639-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T17:49:16.211915+00:00",
+      "change": "W640-01 旧 OA 到期待办持有 Main 根并核对原版本及最终有效期，保留原流程、预算回写和通知，并延后连接器。",
+      "evidence": "docs/development/evidence/W640-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212118,10 +212123,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W639",
-      "path": "docs/development/evidence/W639-01/DELIVERY.md",
-      "baseline_sha": "659268457855db0f8eb547acefddd45d10296ab7",
-      "registered_at": "2026-11-15T17:09:06.115929+00:00",
+      "id": "W640",
+      "path": "docs/development/evidence/W640-01/DELIVERY.md",
+      "baseline_sha": "2cae251e90fecc2cd6d49e0297c8c71a51624d25",
+      "registered_at": "2026-11-15T17:25:01.939080+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212135,11 +212140,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Finish W640 legacy OA and W642 restricted inventory finance, continue writer reconciliation.",
+      "next_action": "Use the next DEV-2 scope for the native subflow parent continuation.",
       "windows": [
         {
-          "id": "W639-01",
-          "workspace_task": "W639-01",
+          "id": "W640-01",
+          "workspace_task": "W640-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212150,22 +212155,22 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w639-01",
-          "planned_scope_ref": "docs/development/evidence/W639-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W639-01/DELIVERY.md",
+          "branch": "codex/w640-01",
+          "planned_scope_ref": "docs/development/evidence/W640-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W640-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Subcontract original finished-cost request and source voucher identity",
-            "Existing Main current permission root and original GL sequence",
+            "Legacy due workflow timeout escalation, decision and error edge",
+            "Main root, original published workflow, native expiry and durable callback/Outbox",
             "DEV-2"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Two actual signed Main/PostgreSQL races and 25 existing subcontract component tests passed, zero skips. 310 local hashes, three matching DLLs, 200/401.",
-          "remaining_scope": "W642 restricted stock finance, OA legacy timeout and original inline subflow. Formal PostgreSQL 26 PASS / 1 NOT_RUN.",
-          "main_tested_source_sha": "4b633310fc5e2dcf24fbddde8c4cd77740feb3b1"
+          "validation_summary": "15 targeted cases passed, zero skips, including four native signed orderings, late expiry, deferred connector and existing authority checks. Three unrelated historical SQLite initialization failures reproduced on earlier intact runtime. 310 local hashes, seven identical DLLs and 200/401/200.",
+          "remaining_scope": "W641 post-commit parent continuation and W643 ERP shipment projection. Formal PostgreSQL 26 PASS / 1 NOT_RUN.",
+          "main_tested_source_sha": "427c38c46119d5957598270a15fcea889c98ca13"
         }
       ],
       "storage": {
@@ -269103,6 +269108,67 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W639",
+        "path": "docs/development/evidence/W639-01/DELIVERY.md",
+        "baseline_sha": "659268457855db0f8eb547acefddd45d10296ab7",
+        "registered_at": "2026-11-15T17:09:06.115929+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Finish W640 legacy OA and W642 restricted inventory finance, continue writer reconciliation.",
+        "windows": [
+          {
+            "id": "W639-01",
+            "workspace_task": "W639-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w639-01",
+            "planned_scope_ref": "docs/development/evidence/W639-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W639-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Subcontract original finished-cost request and source voucher identity",
+              "Existing Main current permission root and original GL sequence",
+              "DEV-2"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Two actual signed Main/PostgreSQL races and 25 existing subcontract component tests passed, zero skips. 310 local hashes, three matching DLLs, 200/401.",
+            "remaining_scope": "W642 restricted stock finance, OA legacy timeout and original inline subflow. Formal PostgreSQL 26 PASS / 1 NOT_RUN.",
+            "main_tested_source_sha": "4b633310fc5e2dcf24fbddde8c4cd77740feb3b1",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1162",
+            "main_remote_main_sha": "2cae251e90fecc2cd6d49e0297c8c71a51624d25"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },

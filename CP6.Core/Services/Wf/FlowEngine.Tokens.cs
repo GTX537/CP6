@@ -216,7 +216,10 @@ public partial class FlowEngine
         var instance = await (from t in _db.Wf_FlowTasks join i in _db.Wf_FlowInstances on t.InstanceId equals i.Id where t.Id == taskId select i).SingleOrDefaultAsync(ct);
         if (instance == null) return;
         RequireLegacyRuntime(instance);
-        await TimeoutErrorKernel(taskId, actorId, ct);
+        var defer = DeferSynchronousWebApi;
+        DeferSynchronousWebApi = defer || (_db.Database.IsNpgsql() && _db.Database.CurrentTransaction is not null);
+        try { await TimeoutErrorKernel(taskId, actorId, ct); }
+        finally { DeferSynchronousWebApi = defer; }
     }
     private async Task TimeoutErrorKernel(Guid taskId, Guid actorId, CancellationToken ct)
     {
