@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 · W607-01
+
+登记 CRM 原生恢复目标门禁、双租户原回执与七个原写者隔离。 [交付记录](../development/evidence/W607-01/DELIVERY.md)
+
 ## 2026-11-15 · W606-01
 
 登记预算、XLSX、A5 送审与 Main 共同栅栏实际 PostgreSQL 验证。 [交付记录](../development/evidence/W606-01/DELIVERY.md)
