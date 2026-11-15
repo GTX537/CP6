@@ -40,20 +40,38 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
             bindings.Add(tenant, (storeId, NpgsqlDataSource.Create(connection)));
     }
 
-    internal async Task SetEnabledAsync(CP6Context authority, Guid tenant, bool enable, CancellationToken ct)
+    internal bool IsRegistered(Guid tenant) => bindings.ContainsKey(tenant);
+
+    internal async Task<(Guid Store, int Version)> ReadSuspensionBoundaryAsync(CP6Context authority, Guid tenant, CancellationToken ct)
+    {
+        if (!bindings.TryGetValue(tenant, out var binding))
+            throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503);
+        RequireIdentityCapture(authority, tenant);
+        return (binding.StoreId, await CurrentTenantVersionAsync(authority, tenant, ct));
+    }
+
+    internal async Task CloseSuspensionAsync(CP6Context authority, Guid tenant, Guid store, int version, CancellationToken ct)
+    {
+        if (await ReadSuspensionBoundaryAsync(authority, tenant, ct) != (store, version))
+            throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503);
+        await SetBoundaryAsync(bindings[tenant], tenant, version, "SELECT crm_inquiry_tenant_pause_v1.close_v1(@tenant,@store,@version)", ct);
+    }
+
+    internal async Task ReopenAsync(CP6Context authority, Guid tenant, CancellationToken ct)
     {
         if (!bindings.TryGetValue(tenant, out var binding)) return;
-        RequireIdentityCapture(authority, tenant);
-        var version = await CurrentTenantVersionAsync(authority, tenant, ct);
+        var (_, version) = await ReadSuspensionBoundaryAsync(authority, tenant, ct);
         if (version == int.MaxValue)
             throw new TenantManagementExceptionV1("TENANT_REVISION_EXHAUSTED", 422);
 
         // The source tenant is still disabled when reserving a reactivation version. Main
         // cannot issue for that version until it commits the activation and its C02 snapshot.
-        var boundary = enable ? version + 1 : version;
-        var sql = enable
-            ? "SELECT crm_inquiry_tenant_pause_v1.reopen_v1(@tenant,@store,@version)"
-            : "SELECT crm_inquiry_tenant_pause_v1.close_v1(@tenant,@store,@version)";
+        await SetBoundaryAsync(binding, tenant, version + 1, "SELECT crm_inquiry_tenant_pause_v1.reopen_v1(@tenant,@store,@version)", ct);
+    }
+
+    private static async Task SetBoundaryAsync((Guid StoreId, NpgsqlDataSource Source) binding, Guid tenant,
+        int boundary, string sql, CancellationToken ct)
+    {
         try
         {
             // The CRM commit is a prerequisite. A lost acknowledgement permits repeating the

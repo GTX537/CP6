@@ -12,6 +12,8 @@ public partial class TenantAdminService
 {
     internal static byte[] ManagementBytes<T>(T value) => JsonSerializer.SerializeToUtf8Bytes(value);
     private static byte[] ManagementKey(string operation) => SHA256.HashData(ManagementBytes(operation));
+    private static byte[] SuspensionOperationHash(string operation, bool legacy)
+        => legacy ? SHA256.HashData(ManagementBytes(new { LegacySuspension = operation })) : ManagementKey(operation);
     internal static void ManagementOperation(string operation)
     {
         if (string.IsNullOrEmpty(operation)) throw new TenantManagementExceptionV1("TENANT_OPERATION_REQUIRED", 400);
@@ -24,7 +26,7 @@ public partial class TenantAdminService
     {
         if (id == Guid.Empty) throw new TenantManagementExceptionV1("TENANT_ID_REQUIRED", 400);
     }
-    private async Task<T> ManagementTransaction<T>(bool write, TenantManagementSessionV1 currentSession,
+    private async Task<T> ManagementTransaction<T>(bool write, TenantManagementSessionV1? currentSession,
         Func<PlatformAdminAuthorization.Actor, CancellationToken, Task<T>> body, CancellationToken ct)
     {
         if (!_db.Database.IsNpgsql() || _db.Database.CurrentTransaction != null || _db.ChangeTracker.HasChanges()
@@ -36,14 +38,14 @@ public partial class TenantAdminService
         {
             await _db.Database.ExecuteSqlRawAsync("SET LOCAL lock_timeout='10s'", ct);
             await AuthenticationCompletionGateV1.AcquireAsync(_db, ct);
-            var session = await currentSession.CurrentActor(ct);
+            var session = currentSession is null ? (Guid?)null : await currentSession.CurrentActor(ct);
             var actor = await PlatformAdminAuthorization.RequireAsync(_db, _http?.HttpContext?.User, ct, lockActor: true);
-            if (session != actor.Id) throw new TenantManagementExceptionV1("REAUTH_REQUIRED", 401);
+            if (session is { } subject && subject != actor.Id) throw new TenantManagementExceptionV1("REAUTH_REQUIRED", 401);
             var authorizedUntil = await _db.Sys_Tenants.AsNoTracking().Where(x => x.Id == actor.TenantId).Select(x => x.ExpireDate).SingleAsync(ct);
             var result = await body(actor, ct);
             // The shared gate holds DB authority through commit. Check external logout/clock,
             // without rejecting session invalidation deliberately caused by our own effect.
-            await currentSession.Complete(ct);
+            if (currentSession is not null) await currentSession.Complete(ct);
             if (authorizedUntil <= DateTime.Now) throw new TenantManagementExceptionV1("REAUTH_REQUIRED", 401);
             ct.ThrowIfCancellationRequested(); committing = true; await tx.CommitAsync(ct);
             return result;
@@ -69,10 +71,10 @@ public partial class TenantAdminService
         public byte[] Operation { get; set; } = []; public byte[] Input { get; set; } = [];
         public Guid Actor { get; set; } public Guid ActorTenant { get; set; } public byte[] Result { get; set; } = [];
     }
-    private Task<ManagementSaved?> ManagementOriginal(Guid id, string operation, CancellationToken ct)
+    private Task<ManagementSaved?> ManagementOriginal(Guid id, string operation, CancellationToken ct, bool legacy = false)
         => _db.Database.SqlQuery<ManagementSaved>($"""
             SELECT operation_bytes AS "Operation", input_bytes AS "Input", actor_id AS "Actor",actor_tenant AS "ActorTenant",result_bytes AS "Result"
-            FROM cp6_tenant_management_v1.commands WHERE tenant_id={id} AND operation_hash={ManagementKey(operation)}
+            FROM cp6_tenant_management_v1.commands WHERE tenant_id={id} AND operation_hash={SuspensionOperationHash(operation, legacy)}
             """).SingleOrDefaultAsync(ct);
     private static TenantManagementReceiptV1 ManagementReceipt(ManagementSaved saved, PlatformAdminAuthorization.Actor actor, string operation, byte[]? input)
     {
@@ -92,39 +94,74 @@ public partial class TenantAdminService
         return ManagementTransaction<TenantManagementReceiptV1?>(false, currentSession, async (actor, token) =>
         {
             var original = await ManagementOriginal(id, operation, token);
-            return original == null ? null : ManagementReceipt(original, actor, operation, null);
+            if (original is not null) return ManagementReceipt(original, actor, operation, null);
+            var pending = await TenantPendingSuspensionV1.ReadAsync(_db, id, token);
+            if (pending is { Legacy: false } && pending.Operation.AsSpan().SequenceEqual(ManagementBytes(operation)))
+            {
+                RequireSuspensionActor(pending, actor);
+                throw new TenantManagementExceptionV1("TENANT_OUTCOME_UNKNOWN", 503);
+            }
+            return null;
         }, ct);
     }
-    public Task<TenantManagementReceiptV1> ExecuteManagementAsync(Guid id, TenantManagementCommandV1 command, TenantManagementSessionV1 currentSession, CancellationToken ct = default)
+    public async Task<TenantManagementReceiptV1> ExecuteManagementAsync(Guid id, TenantManagementCommandV1 command, TenantManagementSessionV1 currentSession, CancellationToken ct = default)
     {
         ManagementTargetId(id); ManagementOperation(command.OperationRef);
         if (command.ExpectedRevision <= 0 || command.Kind is not ("update" or "suspend" or "reactivate")
             || (command.Kind == "update") != (command.Configuration != null))
             throw new TenantManagementExceptionV1("TENANT_COMMAND_INVALID", 400);
         var input = ManagementBytes(command);
-        return ManagementTransaction(true, currentSession, async (actor, token) =>
+        var outcome = await ManagementTransaction<TenantManagementReceiptV1?>(true, currentSession, async (actor, token) =>
         {
             var original = await ManagementOriginal(id, command.OperationRef, token);
             if (original != null) return ManagementReceipt(original, actor, command.OperationRef, input);
-            var current = await ManagementSnapshot(id, token) ?? throw new TenantManagementExceptionV1("TENANT_NOT_FOUND", 404);
-            if (current.Revision != command.ExpectedRevision) throw new TenantManagementExceptionV1("TENANT_VERSION_CHANGED", 412);
-            if (current.Revision == long.MaxValue) throw new TenantManagementExceptionV1("TENANT_REVISION_EXHAUSTED", 422);
-            if (command.Configuration is { } config)
+            var current = await RequireManagementRevision(id, command.ExpectedRevision, token);
+            if (command.Kind == "suspend")
             {
-                ValidateManagementConfiguration(config);
-                await UpdateCoreAsync(id, config.Name, config.ExpireDate, config.Remark, config.TimeZoneId, actor, token);
+                var pending = await TenantPendingSuspensionV1.ReadAsync(_db, id, token);
+                if (pending is not null)
+                {
+                    RequireSuspensionIntent(pending, command, input, actor, legacy: false);
+                    return null;
+                }
+                if (current.Enable && _crmPause?.IsRegistered(id) == true)
+                {
+                    var boundary = await _crmPause.ReadSuspensionBoundaryAsync(_db, id, token);
+                    await StageSuspension(id, command, input, actor, boundary, legacy: false, token);
+                    return null;
+                }
             }
-            else await SetEnableAsync(id, command.Kind == "reactivate",
-                command.Kind == "reactivate" ? SecurityEventType.TenantReactivated : SecurityEventType.TenantSuspended, actor, token);
-            var snapshot = (await ManagementSnapshot(id, token))!;
-            var at = await _db.Database.SqlQueryRaw<DateTimeOffset>("SELECT clock_timestamp() AS \"Value\"").SingleAsync(token);
-            var result = new TenantManagementReceiptV1(command.OperationRef, command.Kind, snapshot, at);
-            await _db.Database.ExecuteSqlInterpolatedAsync($"""
-                INSERT INTO cp6_tenant_management_v1.commands(tenant_id,operation_hash,operation_bytes,input_bytes,actor_id,actor_tenant,result_bytes)
-                VALUES({id},{ManagementKey(command.OperationRef)},{ManagementBytes(command.OperationRef)},{input},{actor.Id},{actor.TenantId},{ManagementBytes(result)})
-                """, token);
-            return result;
+            return await CommitManagementCommand(id, command, input, actor, null, legacy: false, token);
         }, ct);
+        return outcome ?? await CompleteStagedSuspension(id, command, input, legacy: false, currentSession, ct);
+    }
+
+    private async Task<TenantManagementSnapshotV1> RequireManagementRevision(Guid id, long expected, CancellationToken ct)
+    {
+        var current = await ManagementSnapshot(id, ct) ?? throw new TenantManagementExceptionV1("TENANT_NOT_FOUND", 404);
+        if (current.Revision != expected) throw new TenantManagementExceptionV1("TENANT_VERSION_CHANGED", 412);
+        if (current.Revision == long.MaxValue) throw new TenantManagementExceptionV1("TENANT_REVISION_EXHAUSTED", 422);
+        return current;
+    }
+
+    private async Task<TenantManagementReceiptV1> CommitManagementCommand(Guid id, TenantManagementCommandV1 command, byte[] input,
+        PlatformAdminAuthorization.Actor actor, TenantPendingSuspensionV1? pending, bool legacy, CancellationToken ct)
+    {
+        if (command.Configuration is { } config)
+        {
+            ValidateManagementConfiguration(config);
+            await UpdateCoreAsync(id, config.Name, config.ExpireDate, config.Remark, config.TimeZoneId, actor, ct);
+        }
+        else await SetEnableAsync(id, command.Kind == "reactivate",
+            command.Kind == "reactivate" ? SecurityEventType.TenantReactivated : SecurityEventType.TenantSuspended, actor, ct, pending);
+        var snapshot = (await ManagementSnapshot(id, ct))!;
+        var at = await _db.Database.SqlQueryRaw<DateTimeOffset>("SELECT clock_timestamp() AS \"Value\"").SingleAsync(ct);
+        var result = new TenantManagementReceiptV1(command.OperationRef, command.Kind, snapshot, at);
+        await _db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO cp6_tenant_management_v1.commands(tenant_id,operation_hash,operation_bytes,input_bytes,actor_id,actor_tenant,result_bytes)
+            VALUES({id},{SuspensionOperationHash(command.OperationRef, legacy)},{ManagementBytes(command.OperationRef)},{input},{actor.Id},{actor.TenantId},{ManagementBytes(result)})
+            """, ct);
+        return result;
     }
     private static void ValidateManagementConfiguration(TenantConfigurationV1 config)
     {

@@ -156,6 +156,7 @@ public partial class TenantAdminService : ITenantAdminService
         PlatformAdminAuthorization.Actor? actor, CancellationToken cancellationToken)
     {
         var t = await CurrentTargetAsync(id, cancellationToken);
+        await RequireNoPendingSuspension(id, cancellationToken);
         // E-T2：TimeZoneId 保存前校验（E-WF-028 家族）。空串/空白 → 清空（沿用 app 默认）；
         // 非空且不可解析（既非 IANA 亦非 Windows id）→ 拒绝保存，不落任一字段。
         var normalizedTz = string.IsNullOrWhiteSpace(timeZoneId) ? null : timeZoneId.Trim();
@@ -176,16 +177,32 @@ public partial class TenantAdminService : ITenantAdminService
     }
 
     public Task SuspendAsync(Guid id, CancellationToken cancellationToken = default)
-        => MutateAsync((actor, ct) => SetEnableAsync(id, false, SecurityEventType.TenantSuspended, actor, ct), cancellationToken);
+        => _db.Database.IsNpgsql() && _crmPause?.IsRegistered(id) == true
+            ? SuspendRegisteredLegacyAsync(id, cancellationToken)
+            : MutateAsync((actor, ct) => SetEnableAsync(id, false, SecurityEventType.TenantSuspended, actor, ct), cancellationToken);
 
     public Task ReactivateAsync(Guid id, CancellationToken cancellationToken = default)
         => MutateAsync((actor, ct) => SetEnableAsync(id, true, SecurityEventType.TenantReactivated, actor, ct), cancellationToken);
 
-    private async Task SetEnableAsync(Guid id, bool enable, SecurityEventType evt, PlatformAdminAuthorization.Actor? actor, CancellationToken cancellationToken)
+    private async Task SetEnableAsync(Guid id, bool enable, SecurityEventType evt, PlatformAdminAuthorization.Actor? actor,
+        CancellationToken cancellationToken, TenantPendingSuspensionV1? pending = null)
     {
         var t = await CurrentTargetAsync(id, cancellationToken);
-        if (_crmPause is not null && _db.Database.IsNpgsql() && t.Enable != enable)
-            await _crmPause.SetEnabledAsync(_db, id, enable, cancellationToken);
+        if (pending is not null)
+        {
+            if (_crmPause is null) throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503);
+            await _crmPause.CloseSuspensionAsync(_db, id, pending.Store, pending.SourceVersion, cancellationToken);
+            await TenantPendingSuspensionV1.ClearAsync(_db, id, cancellationToken);
+        }
+        else
+        {
+            await RequireNoPendingSuspension(id, cancellationToken);
+            if (_db.Database.IsNpgsql() && _crmPause?.IsRegistered(id) == true && t.Enable != enable)
+            {
+                if (!enable) throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503);
+                await _crmPause.ReopenAsync(_db, id, cancellationToken);
+            }
+        }
         t.Enable = enable;
         StageManagementAudit(evt, t, actor);
         await SaveManagementChangesAsync(cancellationToken);

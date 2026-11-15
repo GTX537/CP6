@@ -55,6 +55,12 @@ public sealed partial class InquiryPermissionIssuerV1(CP6Context db, InquiryPerm
         var subject = await currentBearer(db, ct) ?? throw new InquiryPermissionExceptionV1(401, "invalid_token");
         if (subject.TenantId == Guid.Empty || subject.SubjectId == Guid.Empty || subject.SessionId == Guid.Empty || db.CurrentTenantId != subject.TenantId)
             throw new InquiryPermissionExceptionV1(401, "invalid_token");
+        var needsFence = nonce is null
+            ? request.Purpose is "configuration:write" or "configuration:preview" or "configuration:activate"
+            : request.Purpose is "intake:release" or "intake:reject" or "privacy:consent-withdraw" or "privacy:export" or "privacy:download";
+        var readOnly = request.Purpose is "configuration:read" or "intake:list" or "intake:detail";
+        var pending = !readOnly && await TenantPendingSuspensionV1.ExistsAsync(db, subject.TenantId, ct);
+        if (pending && !needsFence) throw new InquiryPermissionExceptionV1(503, "inquiry_authority_unavailable");
         var permissions = await new PermissionAggregator(db).BuildAsync(subject.SubjectId, ct);
         if (permissions.UserId != subject.SubjectId || required.Any(x => !permissions.ActionKeys.Contains(x)))
             throw new InquiryPermissionExceptionV1(403, "insufficient_scope");
@@ -84,10 +90,7 @@ public sealed partial class InquiryPermissionIssuerV1(CP6Context db, InquiryPerm
         var expires = new[] { now.AddMinutes(5), subject.ExpiresAtUtc, final.ExpiresAtUtc }.Min();
         var result = signing.Sign(subject, request, facts, now, expires);
         if (source is not null) result = signing.SignHumanContext(result, nonce!, source, identityRuntime!.ContractBundleSha256, request, now, expires);
-        var needsFence = nonce is null
-            ? request.Purpose is "configuration:write" or "configuration:preview" or "configuration:activate"
-            : request.Purpose is "intake:release" or "intake:reject" or "privacy:consent-withdraw" or "privacy:export" or "privacy:download";
-        var fence = tenantPause is not null && needsFence
+        var fence = tenantPause is not null && needsFence && !pending
             ? await tenantPause.ReadBindingAsync(db, subject.TenantId, ct) : null;
         ct.ThrowIfCancellationRequested(); await tx.CommitAsync(ct);
         return new(result, fence);

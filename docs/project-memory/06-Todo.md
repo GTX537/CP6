@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 W649-01 后续
+
+继续已登记 Space 采纳、编码、模板和刊发失败写入，汇总正式事务栅栏验收。使用隔离凭据与模拟租户。 [交付](../development/evidence/W649-01/DELIVERY.md)
+
 ## 2026-11-15 W650-01 后续
 
 继续 Space 草稿采纳、编码和模板登记、刊发失败终态，及 Main 对 CRM 封存前网络故障的恢复。 [交付](../development/evidence/W650-01/DELIVERY.md)
