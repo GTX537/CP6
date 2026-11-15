@@ -1,6 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,6 +27,7 @@ public class ApMasterController : ControllerBase
 
     [HttpPost("bank-account")]
     [RequirePermission("fin-ap-payment", "bank")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> CreateBank([FromBody] BankAccount bank)
     {
         try { return Ok2(new { id = await _svc.CreateBankAccountAsync(bank, CurrentUser) }); }
@@ -38,6 +40,7 @@ public class ApMasterController : ControllerBase
 
     [HttpPost("tax-code")]
     [RequirePermission("fin-ap-payment", "tax")]
+    [CurrentWriteAuthority]
     public async Task<IActionResult> CreateTax([FromBody] TaxCode tax)
     {
         try { return Ok2(new { id = await _svc.CreateTaxCodeAsync(tax, CurrentUser) }); }

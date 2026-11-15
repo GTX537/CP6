@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 · W600-01 财务写者余项
+
+69 条写声明中，32 条采用共同栅栏，34 条可写入口待采用。继续实际验证后台和跨域财务、Space 与 CRM。 [交付记录](../development/evidence/W600-01/DELIVERY.md)
+
 ## 2026-11-15 · W599-01 PGT-017 余项
 
 需要 CRM 产品重绑与可信控制面隔离，覆盖 Main 封存、C02 和目标专属身份。Main 继续核对 CAD/Excel、刊发等 Space 写者及剩余财务。 [交付记录](../development/evidence/W599-01/DELIVERY.md)

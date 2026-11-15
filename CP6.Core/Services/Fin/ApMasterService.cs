@@ -21,6 +21,12 @@ public class ApMasterService : IApMasterService
     {
         if (await _db.BankAccounts.AnyAsync(b => b.Code == bank.Code))
             throw new InvalidOperationException("E-FIN-230");   // 银行账户编码重复
+        if (_db.Database.IsNpgsql())
+        {
+            if (!await _db.GlAccounts.AnyAsync(account => account.Id == bank.GlAccountId))
+                throw new InvalidOperationException("E-FIN-003");
+            bank.TenantId = _db.CurrentTenantId;
+        }
         bank.Id = bank.Id == Guid.Empty ? Guid.NewGuid() : bank.Id;
         bank.Creator = user;
         bank.CreateDate = DateTime.Now;
@@ -40,6 +46,8 @@ public class ApMasterService : IApMasterService
     {
         if (await _db.TaxCodes.AnyAsync(t => t.Code == tax.Code))
             throw new InvalidOperationException("E-FIN-231");   // 税码重复
+        if (_db.Database.IsNpgsql())
+            tax.TenantId = _db.CurrentTenantId;
         tax.Id = tax.Id == Guid.Empty ? Guid.NewGuid() : tax.Id;
         tax.Creator = user;
         tax.CreateDate = DateTime.Now;
