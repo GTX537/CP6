@@ -73,7 +73,7 @@ public sealed partial class SqlCrmOidcGrantStore
         """;
 
     internal SqlCrmOidcGrantStore(DatabaseOptions database, string connectionString, CrmIdentityRuntime? identity, CrmInquiryTenantPauseV1? fence,
-        ICrmOidcFamilySealV1 familySeal, IDataProtectionProvider protection) : this(database, connectionString, identity)
+        ICrmOidcFamilySealV1? familySeal, IDataProtectionProvider protection) : this(database, connectionString, identity)
     {
         _storeFence = fence;
         _familySeal = familySeal;
