@@ -166092,6 +166092,11 @@
       "at": "2026-11-15T16:32:04.528861+00:00",
       "change": "W630-01 CAD 提供者配置、历史修订、认证及幂等结果在 Main 专属写权限事务内提交，实测暂停、撤权和业务先提交。",
       "evidence": "docs/development/evidence/W630-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T16:35:32.895217+00:00",
+      "change": "W631-01 三单匹配、新放行及拒绝共用 Main 权限栅栏，修复同号码多租户与采购和财务部分提交，按原凭证续办。",
+      "evidence": "docs/development/evidence/W631-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212098,10 +212103,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W630",
-      "path": "docs/development/evidence/W630-01/DELIVERY.md",
-      "baseline_sha": "3bc198ff25d14ddf98a397089303afdbfefe03a3",
-      "registered_at": "2026-11-15T16:14:48.698891+00:00",
+      "id": "W631",
+      "path": "docs/development/evidence/W631-01/DELIVERY.md",
+      "baseline_sha": "4de40010bbf87fba4c6fc9f9d8f32bc05dd07447",
+      "registered_at": "2026-11-15T16:03:45.683916+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212115,11 +212120,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Integrate W631 and continue historical republish and native stock finance recovery.",
+      "next_action": "Continue independent Space historical parent and inventory financial intent. Verify remaining late authority writers.",
       "windows": [
         {
-          "id": "W630-01",
-          "workspace_task": "W630-01",
+          "id": "W631-01",
+          "workspace_task": "W631-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212129,28 +212134,28 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w630-01",
-          "planned_scope_ref": "docs/development/evidence/W630-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W630-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w631-01",
+          "planned_scope_ref": "docs/development/evidence/W631-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W631-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "CAD provider capability, certification, revisions and original receipt",
-            "Main actual permission and original session final check, serializable PostgreSQL",
-            "DEV-2"
+            "Purchase invoice three-way Match, Release and Reject",
+            "Existing Main native transaction, original AP and journal, PO lines/state and tenant-scoped migration",
+            "DEV-1"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "4 native permission/ordering checks and 23 provider compatibility checks passed, zero skips. 310 local hashes, 7 identical DLLs and HTTP 200/401/200.",
-          "remaining_scope": "Procurement three-way match #1152, historical republish parent stages, original stock finance retry, subcontract finished-cost and OA late writers. Formal PostgreSQL 26 PASS / 1 NOT_RUN. No deployment.",
-          "main_tested_source_sha": "701b7af875c811a84bb18eb58eacd407d2d49808"
+          "validation_summary": "29 targeted tests passed, zero skips. All three native route orders, two tenants with identical match numbers, exact historical AP and final actual rollback, old directory migration and local 310 hashes, seven matching DLLs and 200/401.",
+          "remaining_scope": "W634 historical republication parent Job, W636 original stock finance retry #1156, subcontract finished-cost and remaining OA timeout writers. Formal PostgreSQL 26 PASS / 1 NOT_RUN.",
+          "main_tested_source_sha": "55f431199063da6b52b9e4de0788e95c46f3256e"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -268838,6 +268843,67 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/dev-2",
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W630",
+        "path": "docs/development/evidence/W630-01/DELIVERY.md",
+        "baseline_sha": "3bc198ff25d14ddf98a397089303afdbfefe03a3",
+        "registered_at": "2026-11-15T16:14:48.698891+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Integrate W631 and continue historical republish and native stock finance recovery.",
+        "windows": [
+          {
+            "id": "W630-01",
+            "workspace_task": "W630-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w630-01",
+            "planned_scope_ref": "docs/development/evidence/W630-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W630-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CAD provider capability, certification, revisions and original receipt",
+              "Main actual permission and original session final check, serializable PostgreSQL",
+              "DEV-2"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "4 native permission/ordering checks and 23 provider compatibility checks passed, zero skips. 310 local hashes, 7 identical DLLs and HTTP 200/401/200.",
+            "remaining_scope": "Procurement three-way match #1152, historical republish parent stages, original stock finance retry, subcontract finished-cost and OA late writers. Formal PostgreSQL 26 PASS / 1 NOT_RUN. No deployment.",
+            "main_tested_source_sha": "701b7af875c811a84bb18eb58eacd407d2d49808",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1155",
+            "main_remote_main_sha": "951f06374945137a13fb4dd35101bfaf53de8cd3"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
             "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
