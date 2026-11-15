@@ -1,5 +1,4 @@
 using CP6.Core.Persistence;
-using System.Data;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
@@ -12,7 +11,8 @@ public sealed class SpaceEditLeaseService(
     ISpaceExecutionContext execution,
     ISpaceClock clock,
     ISpaceDesignAccessEvaluator access,
-    ISpaceCorrelationContext? correlation = null) : ISpaceEditLeaseService
+    ISpaceCorrelationContext? correlation = null,
+    ISpaceDesignWriteAuthority? writeAuthority = null) : ISpaceEditLeaseService
 {
     private static readonly TimeSpan LeaseDuration = TimeSpan.FromSeconds(90);
 
@@ -58,9 +58,7 @@ public sealed class SpaceEditLeaseService(
             throw Invalid("clientInstanceId", "A non-empty identity is required.");
 
         EnsureExecutionContext();
-        await using var transaction = await context.Database.BeginTransactionAsync(
-            IsolationLevel.Serializable,
-            cancellationToken);
+        await using var transaction = await SpaceDesignWriteTransaction.BeginAsync(context, writeAuthority, cancellationToken);
         await AcquireFloorEditLockAsync(
             versionId,
             floorLogicalId,
@@ -116,7 +114,7 @@ public sealed class SpaceEditLeaseService(
         try
         {
             await context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
         }
         catch (DbUpdateException exception) when (!context.Database.IsNpgsql() || !IsPostgreSqlTransactionFailure(exception))
         {
@@ -150,9 +148,7 @@ public sealed class SpaceEditLeaseService(
         RequireLeaseId(leaseId);
         RequireClientInstanceId(request.ClientInstanceId);
         EnsureExecutionContext();
-        await using var transaction = await context.Database.BeginTransactionAsync(
-            IsolationLevel.Serializable,
-            cancellationToken);
+        await using var transaction = await SpaceDesignWriteTransaction.BeginAsync(context, writeAuthority, cancellationToken);
         await AcquireFloorEditLockAsync(
             versionId,
             floorLogicalId,
@@ -186,7 +182,7 @@ public sealed class SpaceEditLeaseService(
         try
         {
             await context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -214,9 +210,7 @@ public sealed class SpaceEditLeaseService(
         RequireLeaseId(leaseId);
         RequireClientInstanceId(request.ClientInstanceId);
         EnsureExecutionContext();
-        await using var transaction = await context.Database.BeginTransactionAsync(
-            IsolationLevel.Serializable,
-            cancellationToken);
+        await using var transaction = await SpaceDesignWriteTransaction.BeginAsync(context, writeAuthority, cancellationToken);
         await AcquireFloorEditLockAsync(
             versionId,
             floorLogicalId,
@@ -248,7 +242,7 @@ public sealed class SpaceEditLeaseService(
         try
         {
             await context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -278,9 +272,8 @@ public sealed class SpaceEditLeaseService(
             throw Invalid("reason", "A takeover reason of at most 500 characters is required.");
 
         EnsureExecutionContext();
-        await using var transaction = await context.Database.BeginTransactionAsync(
-            IsolationLevel.Serializable,
-            cancellationToken);
+        await using var transaction = await SpaceDesignWriteTransaction.BeginAsync(context, writeAuthority, cancellationToken,
+            additionalPermission: "space:model:lease:takeover");
         await AcquireFloorEditLockAsync(
             versionId,
             floorLogicalId,
@@ -335,7 +328,7 @@ public sealed class SpaceEditLeaseService(
         try
         {
             await context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
         }
         catch (DbUpdateConcurrencyException)
         {
