@@ -1,6 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -57,6 +58,7 @@ public class CostController : ControllerBase
     /// <summary>完工结转（料工费→WIP→FG 凭证，置 Settled）。</summary>
     [HttpPost("{workOrderNo}/settle")]
     [RequirePermission("fin-cost", "settle")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Settle(string workOrderNo)
         => Fin(await _settle.SettleAsync(workOrderNo, CurrentUser));
 
