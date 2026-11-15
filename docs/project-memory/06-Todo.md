@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 · W612-01 后台写者余项
+
+继续财务跨域及后台、Space 制品和刊发激活、CRM 发件箱的受控传输结转。 [交付记录](../development/evidence/W612-01/DELIVERY.md)
+
 ## 2026-11-15 · W610-01 财务后续
 
 实际验证工单成本结转和 WMS、采购、MES 等后台或跨域财务写者。 [交付记录](../development/evidence/W610-01/DELIVERY.md)
