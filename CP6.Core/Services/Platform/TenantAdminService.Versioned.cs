@@ -12,7 +12,7 @@ public partial class TenantAdminService
 {
     internal static byte[] ManagementBytes<T>(T value) => JsonSerializer.SerializeToUtf8Bytes(value);
     private static byte[] ManagementKey(string operation) => SHA256.HashData(ManagementBytes(operation));
-    private static byte[] SuspensionOperationHash(string operation, bool legacy)
+    private static byte[] ManagementOperationHash(string operation, bool legacy)
         => legacy ? SHA256.HashData(ManagementBytes(new { LegacySuspension = operation })) : ManagementKey(operation);
     internal static void ManagementOperation(string operation)
     {
@@ -74,7 +74,7 @@ public partial class TenantAdminService
     private Task<ManagementSaved?> ManagementOriginal(Guid id, string operation, CancellationToken ct, bool legacy = false)
         => _db.Database.SqlQuery<ManagementSaved>($"""
             SELECT operation_bytes AS "Operation", input_bytes AS "Input", actor_id AS "Actor",actor_tenant AS "ActorTenant",result_bytes AS "Result"
-            FROM cp6_tenant_management_v1.commands WHERE tenant_id={id} AND operation_hash={SuspensionOperationHash(operation, legacy)}
+            FROM cp6_tenant_management_v1.commands WHERE tenant_id={id} AND operation_hash={ManagementOperationHash(operation, legacy)}
             """).SingleOrDefaultAsync(ct);
     private static TenantManagementReceiptV1 ManagementReceipt(ManagementSaved saved, PlatformAdminAuthorization.Actor actor, string operation, byte[]? input)
     {
@@ -98,7 +98,7 @@ public partial class TenantAdminService
             var pending = await TenantPendingSuspensionV1.ReadAsync(_db, id, token);
             if (pending is { Legacy: false } && pending.Operation.AsSpan().SequenceEqual(ManagementBytes(operation)))
             {
-                RequireSuspensionActor(pending, actor);
+                RequirePendingActor(pending, actor);
                 throw new TenantManagementExceptionV1("TENANT_OUTCOME_UNKNOWN", 503);
             }
             return null;
@@ -116,24 +116,30 @@ public partial class TenantAdminService
             var original = await ManagementOriginal(id, command.OperationRef, token);
             if (original != null) return ManagementReceipt(original, actor, command.OperationRef, input);
             var current = await RequireManagementRevision(id, command.ExpectedRevision, token);
-            if (command.Kind == "suspend")
+            var pending = await TenantPendingSuspensionV1.ReadAsync(_db, id, token);
+            if (pending is not null)
             {
-                var pending = await TenantPendingSuspensionV1.ReadAsync(_db, id, token);
-                if (pending is not null)
-                {
-                    RequireSuspensionIntent(pending, command, input, actor, legacy: false);
-                    return null;
-                }
-                if (current.Enable && _crmPause?.IsRegistered(id) == true)
-                {
-                    var boundary = await _crmPause.ReadSuspensionBoundaryAsync(_db, id, token);
-                    await StageSuspension(id, command, input, actor, boundary, legacy: false, token);
-                    return null;
-                }
+                RequirePendingIntent(pending, command, input, actor, legacy: false);
+                return null;
+            }
+
+            (Guid Store, int Version)? boundary = null;
+            if (command.Configuration is { } config)
+            {
+                ValidateManagementConfiguration(config);
+                _ = NormalizeManagementTimeZone(config.TimeZoneId);
+                boundary = await DeadlineBoundaryForUpdate(current, config.ExpireDate, token);
+            }
+            else if (command.Kind == "suspend" && current.Enable && _crmPause?.IsRegistered(id) == true)
+                boundary = await _crmPause.ReadSuspensionBoundaryAsync(_db, id, token);
+            if (boundary is { } source)
+            {
+                await StageManagementIntent(id, command, input, actor, source, legacy: false, token);
+                return null;
             }
             return await CommitManagementCommand(id, command, input, actor, null, legacy: false, token);
         }, ct);
-        return outcome ?? await CompleteStagedSuspension(id, command, input, legacy: false, currentSession, ct);
+        return outcome ?? await CompleteStagedManagement(id, command, input, legacy: false, currentSession, ct);
     }
 
     private async Task<TenantManagementSnapshotV1> RequireManagementRevision(Guid id, long expected, CancellationToken ct)
@@ -148,10 +154,7 @@ public partial class TenantAdminService
         PlatformAdminAuthorization.Actor actor, TenantPendingSuspensionV1? pending, bool legacy, CancellationToken ct)
     {
         if (command.Configuration is { } config)
-        {
-            ValidateManagementConfiguration(config);
-            await UpdateCoreAsync(id, config.Name, config.ExpireDate, config.Remark, config.TimeZoneId, actor, ct);
-        }
+            await UpdateCoreAsync(id, config.Name, config.ExpireDate, config.Remark, config.TimeZoneId, actor, ct, pending);
         else await SetEnableAsync(id, command.Kind == "reactivate",
             command.Kind == "reactivate" ? SecurityEventType.TenantReactivated : SecurityEventType.TenantSuspended, actor, ct, pending);
         var snapshot = (await ManagementSnapshot(id, ct))!;
@@ -159,7 +162,7 @@ public partial class TenantAdminService
         var result = new TenantManagementReceiptV1(command.OperationRef, command.Kind, snapshot, at);
         await _db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_tenant_management_v1.commands(tenant_id,operation_hash,operation_bytes,input_bytes,actor_id,actor_tenant,result_bytes)
-            VALUES({id},{SuspensionOperationHash(command.OperationRef, legacy)},{ManagementBytes(command.OperationRef)},{input},{actor.Id},{actor.TenantId},{ManagementBytes(result)})
+            VALUES({id},{ManagementOperationHash(command.OperationRef, legacy)},{ManagementBytes(command.OperationRef)},{input},{actor.Id},{actor.TenantId},{ManagementBytes(result)})
             """, ct);
         return result;
     }
