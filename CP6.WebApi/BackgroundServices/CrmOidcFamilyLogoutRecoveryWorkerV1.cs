@@ -1,0 +1,41 @@
+using System.Data.Common;
+using CP6.WebApi.Services;
+
+namespace CP6.WebApi.BackgroundServices;
+
+internal sealed class CrmOidcFamilyLogoutRecoveryWorkerV1(IServiceScopeFactory scopes,
+    ILogger<CrmOidcFamilyLogoutRecoveryWorkerV1> logger) : BackgroundService
+{
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(5));
+        var after = Guid.Empty;
+        while (await timer.WaitForNextTickAsync(stoppingToken))
+        {
+            try
+            {
+                using var scope = scopes.CreateScope();
+                if (scope.ServiceProvider.GetRequiredService<ICrmOidcGrantStore>() is not SqlCrmOidcGrantStore store) return;
+                var batch = await store.ReadPendingFamilyLogoutsAsync(after, stoppingToken);
+                foreach (var accepted in batch)
+                {
+                    try
+                    {
+                        await store.CompleteAcceptedFamilyAsync(accepted, stoppingToken);
+                    }
+                    catch (Exception error) when (error is CrmOidcFamilyLogoutUnavailableException or DbException)
+                    {
+                        logger.LogWarning("CRM OIDC logout remains pending for tenant {TenantId}, browser family {FamilyId}",
+                            accepted.TenantId, accepted.FamilyId);
+                    }
+                    after = accepted.FamilyId;
+                }
+                if (batch.Count < 32) after = Guid.Empty;
+            }
+            catch (DbException)
+            {
+                logger.LogWarning("Could not enumerate accepted CRM OIDC family logouts");
+            }
+        }
+    }
+}

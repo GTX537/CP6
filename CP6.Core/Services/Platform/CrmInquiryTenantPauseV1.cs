@@ -14,6 +14,7 @@ public sealed class CrmInquiryTenantPauseBindingV1
 /// <summary>Records authority changes in the registered CRM store before the Main source commits.</summary>
 public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
 {
+    private const string AdvanceIdentitySql = "SELECT crm_inquiry_tenant_pause_v1.advance_identity_v1(@tenant,@store,@aggregate,@version)";
     private readonly Dictionary<Guid, (Guid StoreId, NpgsqlDataSource Source)> bindings = [];
 
     public CrmInquiryTenantPauseV1(IReadOnlyDictionary<Guid, CrmInquiryTenantPauseBindingV1> configuration)
@@ -123,7 +124,7 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
     internal Task AdvanceIdentityAsync(Guid tenant, string aggregate, int version, bool role, CancellationToken ct)
         => AdvanceVersionAsync(tenant, version, role
             ? "SELECT crm_inquiry_tenant_pause_v1.advance_role_v1(@tenant,@store,@aggregate,@version)"
-            : "SELECT crm_inquiry_tenant_pause_v1.advance_identity_v1(@tenant,@store,@aggregate,@version)", ct, aggregate);
+            : AdvanceIdentitySql, ct, aggregate);
 
     internal Task AdvanceDeadlineAsync(Guid tenant, int version, CancellationToken ct)
         => AdvanceVersionAsync(tenant, version,
@@ -163,8 +164,25 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
 
     internal static Task AdvanceConnectedIdentityAsync(NpgsqlConnection connection, Guid tenant, Guid store,
         string aggregate, int version, CancellationToken ct)
-        => AdvanceConnectedVersionAsync(connection, tenant, store, aggregate, version,
-            "SELECT crm_inquiry_tenant_pause_v1.advance_identity_v1(@tenant,@store,@aggregate,@version)", ct);
+        => AdvanceConnectedVersionAsync(connection, tenant, store, aggregate, version, AdvanceIdentitySql, ct);
+
+    internal static async Task AdvanceConnectedIdentitiesAsync(NpgsqlConnection connection, Guid tenant, Guid store,
+        IReadOnlyList<(string Aggregate, int Version)> advances, CancellationToken ct)
+    {
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        deadline.CancelAfter(TimeSpan.FromSeconds(8));
+        try
+        {
+            await using var tx = await connection.BeginTransactionAsync(deadline.Token);
+            await SetCommitDurabilityAsync(connection, tx, deadline.Token);
+            foreach (var (aggregate, version) in advances)
+                await AdvanceVersionInTransactionAsync(connection, tx, tenant, store, version, AdvanceIdentitySql, deadline.Token, aggregate);
+            await tx.CommitAsync(deadline.Token);
+        }
+        catch (Exception error) when (error is NpgsqlException or TimeoutException ||
+                                      error is OperationCanceledException && !ct.IsCancellationRequested)
+        { throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503, error); }
+    }
 
     private static async Task AdvanceConnectedVersionAsync(NpgsqlConnection connection, Guid tenant, Guid store,
         string aggregate, int version, string sql, CancellationToken ct)
@@ -184,8 +202,20 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
         CancellationToken ct, object? aggregate)
     {
         await using var tx = await db.BeginTransactionAsync(ct);
+        await SetCommitDurabilityAsync(db, tx, ct);
+        await AdvanceVersionInTransactionAsync(db, tx, tenant, store, version, sql, ct, aggregate);
+        await tx.CommitAsync(ct);
+    }
+
+    private static async Task SetCommitDurabilityAsync(NpgsqlConnection db, NpgsqlTransaction tx, CancellationToken ct)
+    {
         await using var durability = new NpgsqlCommand("SET LOCAL synchronous_commit='on'", db, tx);
         await durability.ExecuteNonQueryAsync(ct);
+    }
+
+    private static async Task AdvanceVersionInTransactionAsync(NpgsqlConnection db, NpgsqlTransaction tx, Guid tenant, Guid store,
+        int version, string sql, CancellationToken ct, object? aggregate)
+    {
         await using var command = new NpgsqlCommand(sql, db, tx);
         command.Parameters.AddWithValue("tenant", tenant);
         command.Parameters.AddWithValue("store", store);
@@ -193,7 +223,6 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
         command.Parameters.AddWithValue("version", version);
         if (await command.ExecuteScalarAsync(ct) is not int recorded || recorded != version)
             throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503);
-        await tx.CommitAsync(ct);
     }
 
     private static async Task<int> CurrentTenantVersionAsync(CP6Context authority, Guid tenant, CancellationToken ct)
