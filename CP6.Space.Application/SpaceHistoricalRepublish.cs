@@ -20,7 +20,10 @@ public sealed record SpaceHistoricalRepublishPublishContext(
     Guid RepublishId,
     Guid HistoricalVersionId,
     string Reason,
-    Guid RequestedBy);
+    Guid RequestedBy)
+{
+    public SpaceJobLease? ParentLease { get; init; }
+}
 
 public interface ISpaceHistoricalRepublishPublishStarter
 {
