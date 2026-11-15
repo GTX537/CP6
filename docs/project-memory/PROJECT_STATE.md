@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 · W602-01 CAD 和 Excel 上传
+
+两条上传入口的目录及来源写入采用 Main 原生栅栏。实测双向提交、撤上传权和原文件恢复。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W602-01/DELIVERY.md)
+
 ## 2026-11-15 · W601-01 CRM 受信重绑
 
 CRM PR #233 由远端主线采用。双租户隔离物理恢复 8 项通过，含原生时间线与回执、目标专属凭据和后继时间线拒绝旧批准。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W601-01/DELIVERY.md)
