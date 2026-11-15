@@ -12269,6 +12269,9 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                         .HasColumnType("bpchar")
                         .UseCollation("cp6_ci_as_provider_v1");
 
+                    b.Property<Guid?>("MakerUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Modifier")
                         .HasMaxLength(100)
                         .HasColumnType("bpchar")

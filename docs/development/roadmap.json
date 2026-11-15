@@ -166047,6 +166047,11 @@
       "at": "2026-11-15T13:59:02.292857+00:00",
       "change": "W614-01 CRM 从物理恢复重绑继续采用目标专用的签名 Outbox 传输。旧 PostgreSQL 及 Dapr/Kafka 写身份拒绝，核对原回执、消息及位点。",
       "evidence": "docs/development/evidence/W614-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T14:25:54.178048+00:00",
+      "change": "W618-01 修复 OA 财务凭证用 GUID 和文本误判同一制单账户，实际历史、新凭证、改名、代办、超时和定时作业回归通过。",
+      "evidence": "docs/development/evidence/W618-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212053,10 +212058,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W614",
-      "path": "docs/development/evidence/W614-01/DELIVERY.md",
+      "id": "W618",
+      "path": "docs/development/evidence/W618-01/DELIVERY.md",
       "baseline_sha": "000d68fbe58ac1a2db2804668c9aac3c5fc860a1",
-      "registered_at": "2026-11-15T13:58:27.359480+00:00",
+      "registered_at": "2026-11-15T13:52:39.879228+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212070,53 +212075,42 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Continue actual publication effect verification, OA actor repair and WMS finance delivery. PGT-017 remains NOT_RUN until all applicable writer evidence is complete.",
+      "next_action": "Complete native WMS Finance delivery and actual Space WMS/Runtime publication repair, then verify remaining CAD/Excel/rerun and ancillary writers. PGT-017 remains NOT_RUN.",
       "windows": [
         {
-          "id": "W614-01",
-          "workspace_task": "W614-01",
+          "id": "W618-01",
+          "workspace_task": "W618-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+          "mode": "SINGLE_CHAT",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w614-01",
-          "planned_scope_ref": "docs/development/evidence/W614-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W614-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "branch": "codex/w618-01",
+          "planned_scope_ref": "docs/development/evidence/W618-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W618-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "CRM physical target and signed transport adoption roster for 12 registered roots",
-            "PostgreSQL native Outbox receipt and exact per-tenant target role",
-            "authenticated Dapr separation and Kafka principal/offset readback",
-            "DEV-1"
+            "legacy OA FinJournalPost and manual Journal current human checker",
+            "PostgreSQL Core additive nullable UUID and native authorization transaction",
+            "DEV-2"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "1 physical gate + 15 focused native CRM regressions + 1 complete two-tenant PostgreSQL 18.6/Dapr 1.18.2/Kafka 4.3.1 physical adoption, zero skips; 12 registered roots, exact original replay, old-role denial, and physical successor closed.",
-          "remaining_scope": "Second successful transport activation, live approval issuer/deployment and independent C02 transport adoption are outside the mixed batch. Main Space remaining backend and Finance background proofs remain open.",
-          "product_repository": "CP6.CRM",
-          "product_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "product_baseline": "9c28a41c2cc402154a648933fcb5be6c32a3de4e",
-          "product_branch": "codex/w614-01",
-          "product_source_sha": "1d73c3135544e6c9a9d901a67f9acc14216a4275",
-          "product_remote_main_sha": "cebdcc838563ccb824fd25252a4fc4c80d8dc463",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/236",
-          "product_branch_disposition": "deleted-local-and-remote",
-          "product_workspace_status": "fixed-seat-detached-for-reuse",
-          "product_seat_released": true
+          "validation_summary": "59 actual targeted cases pass, 9 new native and 6 existing authorization orders; signed direct and OA snapshots, real timeout and timer continuation, 310 hash local tested publish 200/401, zero skips.",
+          "remaining_scope": "For name-only history without durable original account after rename, subflow-only/parallel vote provenance and native WfServiceJobService pause ordering need separate evidence. WMS FIN, Space publish and other background effects remain active.",
+          "main_tested_source_sha": "c20d45ac2ca8aee1281d1e7a38e820ca15ab0047"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -268233,6 +268227,78 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W614",
+        "path": "docs/development/evidence/W614-01/DELIVERY.md",
+        "baseline_sha": "000d68fbe58ac1a2db2804668c9aac3c5fc860a1",
+        "registered_at": "2026-11-15T13:58:27.359480+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Continue actual publication effect verification, OA actor repair and WMS finance delivery. PGT-017 remains NOT_RUN until all applicable writer evidence is complete.",
+        "windows": [
+          {
+            "id": "W614-01",
+            "workspace_task": "W614-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w614-01",
+            "planned_scope_ref": "docs/development/evidence/W614-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W614-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CRM physical target and signed transport adoption roster for 12 registered roots",
+              "PostgreSQL native Outbox receipt and exact per-tenant target role",
+              "authenticated Dapr separation and Kafka principal/offset readback",
+              "DEV-1"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "1 physical gate + 15 focused native CRM regressions + 1 complete two-tenant PostgreSQL 18.6/Dapr 1.18.2/Kafka 4.3.1 physical adoption, zero skips; 12 registered roots, exact original replay, old-role denial, and physical successor closed.",
+            "remaining_scope": "Second successful transport activation, live approval issuer/deployment and independent C02 transport adoption are outside the mixed batch. Main Space remaining backend and Finance background proofs remain open.",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "product_baseline": "9c28a41c2cc402154a648933fcb5be6c32a3de4e",
+            "product_branch": "codex/w614-01",
+            "product_source_sha": "1d73c3135544e6c9a9d901a67f9acc14216a4275",
+            "product_remote_main_sha": "cebdcc838563ccb824fd25252a4fc4c80d8dc463",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/236",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1140",
+            "main_remote_main_sha": "34e21cb4fa715ebd08978b3fe3e9b03dbf1971cc"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },

@@ -20,7 +20,11 @@ public class ApprovalDispatcher
     /// 实例终态分发。<paramref name="decidedBy"/> = 末一个办理人（作业务可追溯/复核人来源）。
     /// 回调与引擎共享 DbContext，调用方须在最终 SaveChanges 前调用以保证原子（回调抛异常→整体回滚）。
     /// </summary>
-    public async Task OnInstanceFinishedAsync(Wf_FlowInstance inst, bool approved, Guid? decidedBy, string? reason)
+    public Task OnInstanceFinishedAsync(Wf_FlowInstance inst, bool approved, Guid? decidedBy, string? reason)
+        => OnInstanceFinishedAsync(inst, approved, decidedBy, reason, ApprovalCompletionOrigin.None);
+
+    internal async Task OnInstanceFinishedAsync(Wf_FlowInstance inst, bool approved, Guid? decidedBy, string? reason,
+        ApprovalCompletionOrigin origin)
     {
         FlowEngine.RequireLegacyRuntime(inst);
         if (string.IsNullOrEmpty(inst.BizType)) return;   // OA 原生表单，无业务回调
@@ -35,6 +39,7 @@ public class ApprovalDispatcher
             InstanceId = inst.Id,
             StarterId = inst.StarterId,
             DecidedById = decidedBy,
+            CompletionOrigin = origin,
             Reason = reason,
         };
 

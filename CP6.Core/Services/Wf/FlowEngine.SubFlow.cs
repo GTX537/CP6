@@ -159,7 +159,7 @@ public partial class FlowEngine
                 }
 
                 inst.ModifyDate = DateTime.Now;   // ★ 写触达父行 → RowVersion 乐观并发（恰一次闸，仿 ActOnceAsync Task6/Fix4）
-                await DispatchIfFinishedAsync(inst, inst.StarterId, null);   // 错误处置可打出终态；父自身是子实例时递归入队（孙 subFlow）
+                await DispatchIfFinishedAsync(inst, inst.StarterId, null, ApprovalCompletionOrigin.Continuation);
                 await _db.SaveChangesAsync(ct);
                 return;
             }

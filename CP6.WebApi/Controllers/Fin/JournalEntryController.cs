@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Fin;
@@ -27,6 +28,10 @@ public class JournalEntryController : ControllerBase
     }
 
     private string CurrentUser => User?.Identity?.Name ?? "anonymous";
+    // CurrentWriteAuthority has already validated this subject inside the PostgreSQL transaction.
+    private Guid? CurrentUserId => _db.Database.IsNpgsql()
+        ? Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub")!)
+        : null;
     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
     private IActionResult Fin(FinResult r) => r.Ok ? Ok2() : BadRequest(new { code = 400, message = r.Code, args = r.Args });
 
@@ -54,7 +59,7 @@ public class JournalEntryController : ControllerBase
             foreach (var line in entry.Lines)
                 line.TenantId = tenantId;
         }
-        return Ok2(new { id = await _svc.CreateDraftAsync(entry, CurrentUser) });
+        return Ok2(new { id = await _svc.CreateDraftAsync(entry, CurrentUser, CurrentUserId) });
     }
 
     [HttpPost("{id}/submit")]
@@ -66,7 +71,7 @@ public class JournalEntryController : ControllerBase
     [HttpPost("{id}/post")]
     [RequirePermission("fin-journal", "post")]
     [CurrentWriteAuthority]
-    public async Task<IActionResult> Post(Guid id) => Fin(await _svc.PostAsync(id, CurrentUser));
+    public async Task<IActionResult> Post(Guid id) => Fin(await _svc.PostAsync(id, CurrentUser, CurrentUserId));
 
     [HttpPost("{id}/reject")]
     [RequirePermission("fin-journal", "reject")]
@@ -78,7 +83,7 @@ public class JournalEntryController : ControllerBase
     [RequirePermission("fin-journal", "reverse")]
     [CurrentWriteAuthority]
     public async Task<IActionResult> Reverse(Guid id, [FromBody] ReasonReq r)
-        => Fin(await _svc.ReverseAsync(id, CurrentUser, r.Reason, autoPost: false));
+        => Fin(await _svc.ReverseAsync(id, CurrentUser, r.Reason, autoPost: false, makerUserId: CurrentUserId));
 
     public record ReasonReq(string Reason);
 }

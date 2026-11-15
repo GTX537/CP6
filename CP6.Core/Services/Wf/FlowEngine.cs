@@ -303,7 +303,8 @@ public partial class FlowEngine : IFlowEngine
         }
         if (!ManagedDecision)
         {
-            await DispatchIfFinishedAsync(inst, actorId, comment);
+            var origin = approve ? ApprovalCompletionOrigin.TaskApproval : ApprovalCompletionOrigin.None;
+            await DispatchIfFinishedAsync(inst, actorId, comment, origin);
             await _db.SaveChangesAsync();
         }
     }
@@ -312,7 +313,8 @@ public partial class FlowEngine : IFlowEngine
     /// 若实例已达终态（通过/驳回），调终态分发器反向回调业务。<b>必须在最终 SaveChangesAsync 之前调用</b>：
     /// 回调与本引擎共享 scoped DbContext，回调若抛异常则流程终态与业务变更一并不落库（原子，OA2-D5）。
     /// </summary>
-    private async Task DispatchIfFinishedAsync(Wf_FlowInstance inst, Guid decidedBy, string? reason)
+    private async Task DispatchIfFinishedAsync(Wf_FlowInstance inst, Guid decidedBy, string? reason,
+        ApprovalCompletionOrigin origin = ApprovalCompletionOrigin.None)
     {
         RequireLegacyRuntime(inst);
         // ★ 子流程第一段（spec D5）：子终态窗口内只原子入队唤醒凭据（Withdrawn 走 TaskCenterService.WithdrawAsync 的对称钩子）
@@ -322,13 +324,13 @@ public partial class FlowEngine : IFlowEngine
         if (inst.Status == FlowInstanceStatus.Approved)
         {
             if (!string.Equals(inst.BizType, "SFS", StringComparison.OrdinalIgnoreCase))
-                await _dispatcher.OnInstanceFinishedAsync(inst, approved: true, decidedBy, reason: null);
+                await _dispatcher.OnInstanceFinishedAsync(inst, approved: true, decidedBy, reason: null, origin);
             await _notifier.FlowApprovedAsync(inst.StarterId, inst.Id, inst.FlowKey);   // ★ D-1 N-T5
         }
         else if (inst.Status == FlowInstanceStatus.Rejected)
         {
             if (!string.Equals(inst.BizType, "SFS", StringComparison.OrdinalIgnoreCase))
-                await _dispatcher.OnInstanceFinishedAsync(inst, approved: false, decidedBy, reason);
+                await _dispatcher.OnInstanceFinishedAsync(inst, approved: false, decidedBy, reason, origin);
             await _notifier.FlowRejectedAsync(inst.StarterId, inst.Id, inst.FlowKey, reason);   // ★ D-1 N-T5
         }
     }
@@ -435,7 +437,7 @@ public partial class FlowEngine : IFlowEngine
                 }
 
                 await AdvanceToken(inst, schema, token);   // 沿成功边（跳 IsError）
-                await DispatchIfFinishedAsync(inst, inst.StarterId, null);
+                await DispatchIfFinishedAsync(inst, inst.StarterId, null, ApprovalCompletionOrigin.Continuation);
                 await _db.SaveChangesAsync();
                 await FastPathSubFlowResumeAsync();   // ★ 子流程 fast path（服务任务恢复触达子终态时收敛；内部吞并发冲突不触外层重试）
                 return;
@@ -476,7 +478,7 @@ public partial class FlowEngine : IFlowEngine
                 else
                     Suspend(inst, node, "服务任务失败:" + reason);
 
-                await DispatchIfFinishedAsync(inst, inst.StarterId, reason);
+                await DispatchIfFinishedAsync(inst, inst.StarterId, reason, ApprovalCompletionOrigin.Continuation);
                 await _db.SaveChangesAsync();
                 await FastPathSubFlowResumeAsync();   // ★ 子流程 fast path（服务任务失败路由触达子终态时收敛；同上）
                 return;

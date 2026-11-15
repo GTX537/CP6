@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,7 +37,7 @@ public class JournalEntryService : IJournalEntryService
         return await q.OrderByDescending(x => x.VoucherDate).ThenByDescending(x => x.No).ToListAsync();
     }
 
-    public async Task<Guid> CreateDraftAsync(JournalEntry entry, string makerId)
+    public async Task<Guid> CreateDraftAsync(JournalEntry entry, string makerId, Guid? makerUserId = null)
     {
         entry.Id = entry.Id == Guid.Empty ? Guid.NewGuid() : entry.Id;
         entry.Status = JournalStatus.Draft;
@@ -51,6 +52,8 @@ public class JournalEntryService : IJournalEntryService
         entry.Creator = makerId;
         entry.CreateDate = DateTime.Now;
         _db.JournalEntries.Add(entry);
+        if (_db.Database.IsNpgsql())
+            _db.Entry(entry).Property<Guid?>(CorePostgreSqlModelConfiguration.JournalMakerUserId).CurrentValue = makerUserId;
         await _db.SaveChangesAsync();
         return entry.Id;
     }
@@ -70,12 +73,12 @@ public class JournalEntryService : IJournalEntryService
         return FinResult.Pass();
     }
 
-    public async Task<FinResult> PostAsync(Guid entryId, string checkerId)
+    public async Task<FinResult> PostAsync(Guid entryId, string checkerId, Guid? checkerUserId = null)
     {
         var e = await GetAsync(entryId);
         if (e == null) return FinResult.Fail("E-FIN-130");
         if (e.Status != JournalStatus.PendingReview) return FinResult.Fail("E-FIN-110");
-        if (e.MakerId == checkerId) return FinResult.Fail("E-FIN-111");          // ★ maker-checker 铁则
+        if (!await CanCheckAsync(e, checkerId, checkerUserId)) return FinResult.Fail("E-FIN-111");
         if (await IsYearClosedAsync(e.PeriodId)) return FinResult.Fail("E-FIN-404");     // ★ 年度锁定（先于月结锁期判，给独立码）
         if (!await _period.IsOpenAsync(e.PeriodId)) return FinResult.Fail("E-FIN-112");  // ★ 锁期保护
 
@@ -94,6 +97,22 @@ public class JournalEntryService : IJournalEntryService
         e.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();
         return FinResult.Pass();
+    }
+
+    private async Task<bool> CanCheckAsync(JournalEntry entry, string checkerId, Guid? checkerUserId)
+    {
+        if (!_db.Database.IsNpgsql()) return entry.MakerId != checkerId;
+        if (checkerUserId == Guid.Empty) return false;
+        var maker = _db.Entry(entry).Property<Guid?>(CorePostgreSqlModelConfiguration.JournalMakerUserId).CurrentValue;
+        if (maker is Guid makerUserId) return checkerUserId.HasValue && makerUserId != checkerUserId.Value;
+
+        // Legacy makers are stored as display names or account IDs. Keep their text and
+        // compare it with the actual checker's account in this tenant.
+        if (entry.MakerId == checkerId) return false;
+        if (checkerUserId is not Guid checker) return true;
+        if (entry.MakerId == checker.ToString("D")) return false;
+        return await _db.Sys_Users.AsNoTracking().Where(user => user.Id == checker)
+            .Select(user => (bool?)(user.UserName != entry.MakerId)).SingleOrDefaultAsync() == true;
     }
 
     public async Task<FinResult> AutoPostAsync(JournalEntry entry)
@@ -141,7 +160,7 @@ public class JournalEntryService : IJournalEntryService
         return FinResult.Pass();
     }
 
-    public async Task<FinResult> ReverseAsync(Guid entryId, string makerId, string reason, bool autoPost = false)
+    public async Task<FinResult> ReverseAsync(Guid entryId, string makerId, string reason, bool autoPost = false, Guid? makerUserId = null)
     {
         var origin = await GetAsync(entryId);
         if (origin == null) return FinResult.Fail("E-FIN-130");
@@ -191,6 +210,8 @@ public class JournalEntryService : IJournalEntryService
         origin.Status = JournalStatus.Reversed;
         origin.ModifyDate = now;
         _db.JournalEntries.Add(reversal);
+        if (!autoPost && _db.Database.IsNpgsql())
+            _db.Entry(reversal).Property<Guid?>(CorePostgreSqlModelConfiguration.JournalMakerUserId).CurrentValue = makerUserId;
         await _db.SaveChangesAsync();
         return FinResult.Pass();
     }
