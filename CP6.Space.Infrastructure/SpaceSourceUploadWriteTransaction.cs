@@ -1,6 +1,7 @@
 using CP6.Core.Persistence;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
+using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -32,10 +33,92 @@ internal sealed class SpaceSourceUploadWriteTransaction(
     }
 
     internal async Task<IDbContextTransaction?> BeginRegistrationAsync(CancellationToken cancellationToken) =>
-        UsesAuthority ? await BeginAuthorizedAsync(cancellationToken) : null;
+        context.Database.IsNpgsql() ? await BeginAuthorizedAsync(cancellationToken) : null;
 
     internal Task CommitRegistrationAsync(IDbContextTransaction transaction, CancellationToken cancellationToken) =>
         SpaceDesignWriteTransaction.CommitAsync(context, authority, transaction, cancellationToken);
+
+    internal async Task<(SpaceModelSource Source, bool Reused)> SaveSourceAsync(
+        SpaceSourceCoordinator sources, SpaceModelVersion version, SpaceFile uploadedFile, SpaceSourceType type,
+        string displayName, Func<SpaceProblemException> rejectedSource, CancellationToken cancellationToken)
+    {
+        var postgres = context.Database.IsNpgsql();
+        var candidates = context.Sources.Where(source => source.ModelVersionId == version.Id &&
+            source.Sha256 == uploadedFile.Sha256 && source.SourceType == type);
+        var source = await (postgres ? candidates.AsNoTracking() : candidates).SingleOrDefaultAsync(cancellationToken);
+        if (source?.State == SpaceSourceState.Rejected)
+            throw rejectedSource();
+        if (source is not null && source.State != SpaceSourceState.Scanning)
+            return (source, true);
+
+        var currentFile = uploadedFile;
+        if (postgres)
+        {
+            // FileScan locks a file before updating its Sources. The existing Source owns its original FileId.
+            var fileId = source is null ? uploadedFile.Id : source.FileId
+                ?? throw new InvalidOperationException("A scanning source requires its original file.");
+            currentFile = await SpaceFileReferenceLock.LoadAsync(context, version.TenantId, fileId,
+                includeDeleted: false, cancellationToken)
+                ?? throw new SpaceProblemException(SpaceErrorCodes.FileNotFound, 404, "The source file was not found.");
+            if (source is not null)
+            {
+                var sourceId = source.Id;
+                source = await context.Sources.FromSqlInterpolated($"""
+                    SELECT s.* FROM public."Space_ModelSource" s
+                    WHERE s."TenantId" = {version.TenantId} AND s."Id" = {sourceId}
+                    FOR UPDATE
+                    """).SingleAsync(cancellationToken);
+            }
+        }
+
+        var reused = source is not null;
+        if (source is null)
+        {
+            // An upload can carry its original quarantined snapshot after FileScan has rejected the catalog row.
+            source = currentFile.State == SpaceFileState.Clean
+                ? sources.AddFileSource(version, currentFile, type, displayName)
+                : sources.AddPendingFileSource(version,
+                    currentFile.State == SpaceFileState.Rejected ? uploadedFile : currentFile, type, displayName);
+            context.Sources.Add(source);
+        }
+
+        var completedScan = postgres && source.State == SpaceSourceState.Scanning &&
+            currentFile.State is SpaceFileState.Clean or SpaceFileState.Rejected;
+        if (completedScan)
+            source.CompleteFileScan(currentFile);
+        if (!reused || completedScan)
+            await context.SaveChangesAsync(cancellationToken);
+        return (source, reused);
+    }
+
+    internal async Task<(SpaceFile File, SpaceModelSource Source)> ResolveUploadResponseAsync(
+        SpaceModelSource source, Guid uploadedFileId, CancellationToken cancellationToken)
+    {
+        if (!context.Database.IsNpgsql())
+        {
+            // Preserve the existing completion path for other providers.
+            if (source.State == SpaceSourceState.Scanning)
+            {
+                var file = await context.Files.SingleAsync(item => item.Id == uploadedFileId, cancellationToken);
+                await context.Entry(file).ReloadAsync(cancellationToken);
+                if (file.State is SpaceFileState.Clean or SpaceFileState.Rejected)
+                {
+                    source.CompleteFileScan(file);
+                    await context.SaveChangesAsync(cancellationToken);
+                }
+            }
+            return (await context.Files.AsNoTracking().SingleAsync(item => item.Id == uploadedFileId, cancellationToken), source);
+        }
+
+        var originalFileId = source.FileId ?? throw new InvalidOperationException("A registered upload source requires its original file.");
+        var registration = context.Sources.AsNoTracking().Where(item => item.TenantId == source.TenantId && item.Id == source.Id);
+        var current = await (from file in context.Files.AsNoTracking()
+                             where file.TenantId == source.TenantId && file.Id == originalFileId
+                             from registered in registration.DefaultIfEmpty()
+                             select new { File = file, Source = registered }).SingleAsync(cancellationToken);
+        // A later authorized removal can hide the current row after the original registration committed.
+        return (current.File, current.Source ?? source);
+    }
 
     private async Task<SpaceFileUploadResult> CompleteFileAsync(
         ISpaceFileStore fileStore,

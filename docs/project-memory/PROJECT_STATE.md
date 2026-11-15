@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W648-01 上传来源的扫描终态
+
+三条签名上传在原来源登记使用 Main 共同根，复用实际扫描和原文件对象。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W648-01/DELIVERY.md)
+
 ## 2026-11-15 W647-01 原生版本克隆
 
 普通与规划版本的克隆处理器使用 Main 共同事务，正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W647-01/DELIVERY.md)

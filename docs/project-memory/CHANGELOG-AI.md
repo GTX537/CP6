@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W648-01
+
+原上传登记读取当前真实扫描结论，在共同事务提交来源与版本，保留原文件、字节和扫描作业。 [交付](../development/evidence/W648-01/DELIVERY.md)
+
 ## 2026-11-15 W647-01
 
 已持原租约的普通与规划 CloneVersion 将原写集绑定在同一 Main PostgreSQL 事务。 [交付](../development/evidence/W647-01/DELIVERY.md)
