@@ -38,6 +38,7 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     internal CrmInquiryTenantPauseV1? InquiryFence => _identity?.InquiryFence;
     internal Func<Guid, string, CrmRoleSealVersionV1, InquirySiteFormScopeV1[]?, CancellationToken, Task>? WriteCrmRoleSealAsync { get; set; }
     internal Action<Guid, Guid, CrmUserSealAdvanceV1>? CaptureCrmUserSeal { get; set; }
+    internal Action<Guid, CrmDepartmentSealAdvanceV1>? CaptureCrmDepartmentSeal { get; set; }
 
     // Explicit native IAM writers use this context's exact capture configuration and transaction.
     internal Task CaptureIdentitySourceAsync(Guid tenantId, string aggregate, CancellationToken ct)

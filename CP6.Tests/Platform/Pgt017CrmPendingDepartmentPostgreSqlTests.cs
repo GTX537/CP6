@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -33,11 +34,31 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     [Pgt017MainFact]
     public async Task PGT017_registered_department_seal_cold_refusal_and_original_recovery()
     {
-        var move = Environment.GetEnvironmentVariable("CP6_W662_DEPT_MODE") == "move";
+        var mode = Environment.GetEnvironmentVariable("CP6_W662_DEPT_MODE");
+        var move = mode == "move";
+        var leader = mode == "leader";
+        var control = mode == "control";
+        var checkIssuance = !move && !leader && !control;
         await using var h = await Seed();
         var pair = await GrantPrivacy(h, 4);
+        if (checkIssuance) await GrantRetention(h);
         await SeedDepartmentEditor(h);
+        if (control)
+        {
+            var menuId = await h.Db.Sys_Menus.Where(menu => menu.MenuKey == "pub-dept").Select(menu => menu.MenuId).SingleAsync();
+            h.Db.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = 71, MenuId = menuId, ActionCode = "add" });
+            await h.Db.SaveChangesAsync();
+            h.Db.ChangeTracker.Clear();
+        }
         await CopyRole71ForIndependentInquiry(h);
+        if (checkIssuance)
+        {
+            var leadMenu = await h.Db.Sys_Menus.Where(menu => menu.MenuKey == "crm-lead").Select(menu => menu.MenuId).SingleAsync();
+            h.Db.Sys_RoleActions.Remove(await h.Db.Sys_RoleActions.SingleAsync(action =>
+                action.RoleId == 72 && action.MenuId == leadMenu && action.ActionCode == "edit"));
+            var actor = await h.Db.Sys_Users.SingleAsync(user => user.Id == h.ActorId);
+            actor.AuthenticationEpoch = Guid.NewGuid();
+        }
         var unrelated = Guid.NewGuid();
         var destination = Guid.NewGuid();
         const string otherEditor = "w662-independent-editor";
@@ -141,6 +162,20 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         environment["CrmOidc__Issuer"] = options.Issuer;
         environment["ASPNETCORE_URLS"] = "http://127.0.0.1:" + Environment.GetEnvironmentVariable("CP6_PGT017_MAIN_HTTP_PORT");
         environment["JWT__Secret"] = CrmOidcCrypto.RandomToken() + CrmOidcCrypto.RandomToken();
+        const string oidcSecret = "owned-w662-oidc-client";
+        const string redirect = "https://crm.cp6.test/callback";
+        if (checkIssuance)
+        {
+            environment["CrmOidc__Clients__0__SecretSha256"] = CrmOidcCrypto.Hash(oidcSecret);
+            environment["CrmOidc__Clients__0__RedirectUris__0"] = redirect;
+            environment["CrmOidc__TrustedTokenProxyAddresses__0"] = "127.0.0.1";
+            environment["InquiryPermissionSigning__Enabled"] = "true";
+            environment["InquiryPermissionSigning__Issuer"] = options.Issuer;
+            environment["InquiryPermissionSigning__KeyId"] = options.KeyId;
+            environment["InquiryPermissionSigning__PrivateKeyBase64"] = options.PrivateKeyBase64;
+            environment["InquiryPermissionSigning__PublicKeyBase64"] = options.PublicKeyBase64;
+            environment["InquiryPermissionSigning__ActiveFromUtc"] = options.ActiveFromUtc.ToString("O");
+        }
         var prefix = $"CrmInquiryTenantPause__Tenants__{h.Tenant:D}__";
         environment[prefix + "ConnectionString"] = sealEndpoint.ConnectionString;
         environment[prefix + "StoreId"] = store.ToString("D");
@@ -153,20 +188,23 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             mainEndpoint.Port = mainRelay.Port;
             mainEndpoint.SslMode = SslMode.Disable;
         }
-        Task<AuthenticationApiProcess> Start() => AuthenticationApiProcess.Start(mainEndpoint.ConnectionString, environment);
+        Task<AuthenticationApiProcess> Start() => AuthenticationApiProcess.Start(mainEndpoint.ConnectionString, environment, allowAutoRedirect: false);
 
         await using var host = await Start();
         var login = await Login(host, h);
         var otherLogin = await Login(host, h, userName: otherEditor);
+        var human = checkIssuance ? await Exchange(host, login) : null;
+        var independentHuman = checkIssuance ? await Exchange(host, otherLogin) : null;
         const string route = "api/iam/departments";
         using var editorResponse = await host.Send(Request(HttpMethod.Get, route + "/editor", login));
         Assert.True(editorResponse.StatusCode == HttpStatusCode.OK, await editorResponse.Content.ReadAsStringAsync());
         var editor = (await editorResponse.Content.ReadFromJsonAsync<IamDepartmentEditorV1>())!;
         Assert.Equal(h.ActorId, editor.ActorId);
         var department = Assert.Single(editor.Departments, item => item.Id == h.Parent);
-        var kind = move ? "dept-move" : "dept-update";
+        var kind = move ? "dept-move" : leader ? "dept-leader" : "dept-update";
         var operationId = Guid.NewGuid();
-        var writePath = $"{route}/{h.Parent:D}" + (move ? "/move" : "");
+        var subroute = move ? "/move" : leader ? "/leader" : "";
+        var writePath = $"{route}/{h.Parent:D}" + subroute;
         var operationPath = $"{route}/operations/{operationId:D}?kind={kind}";
         const string reason = "W662 simulated original department action";
         using var previewResponse = move ? await host.Send(Request(HttpMethod.Get, $"{route}/{h.Parent:D}/preview?parentId={destination:D}", login)) : null;
@@ -177,15 +215,15 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         {
             OperationId = operationId, Id = h.Parent, Reason = reason, ExpectedVersion = department.Version,
             ExpectedTreeVersion = editor.TreeVersion, ExpectedReferencesVersion = editor.ReferencesVersion,
-            PreviewVersion = preview?.PreviewVersion, ParentId = destination
+            PreviewVersion = preview?.PreviewVersion, ParentId = move ? destination : null, LeaderId = leader ? h.ActorId : null
         };
         var disable = new DeptDto
         {
             OperationId = operationId, Reason = reason, ExpectedVersion = department.Version, ExpectedTreeVersion = editor.TreeVersion,
             ExpectedReferencesVersion = editor.ReferencesVersion, DeptCode = department.DeptCode, DeptName = department.DeptName,
-            ParentId = department.ParentId, LeaderId = department.LeaderId, Sort = department.Sort, Enable = false
+            ParentId = department.ParentId, LeaderId = department.LeaderId, Sort = department.Sort, Enable = control && department.Enable
         };
-        object originalInput = move ? input : disable;
+        object originalInput = move || leader ? input : disable;
         var departments = new[] { h.Parent, h.Child, unrelated, destination };
         var aggregates = departments.Select(id => $"department:{id:D}").ToArray();
         var before = await State();
@@ -195,6 +233,15 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var beforeIndependent = await ReadIssue(independent, independentSecret, unrelated);
         RequireFence(beforeAffected);
         RequireFence(beforeIndependent);
+        var openFence = $"{store:D}/1";
+        if (checkIssuance)
+        {
+            Assert.Equal(openFence, await HumanFence(host, human!, "privacy:export", h.Child));
+            Assert.Equal(openFence, await HumanFence(host, independentHuman!, "privacy:export", unrelated));
+            Assert.Equal(openFence, await ServiceFence(affected, ServiceSecret, "privacy:retention-worker"));
+            Assert.Equal(openFence, await ServiceFence(independent, independentSecret, "privacy:retention-worker"));
+            Assert.Equal(openFence, await ServiceFence(independent, independentSecret, "public:receive"));
+        }
 
         await SealLogin(false);
         try
@@ -203,6 +250,48 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             {
                 var failure = await Assert.ThrowsAsync<PostgresException>(() => denied.OpenAsync());
                 Assert.Equal(PostgresErrorCodes.InvalidAuthorizationSpecification, failure.SqlState);
+            }
+            if (control)
+            {
+                using var same = await Write(host);
+                Assert.True(same.StatusCode == HttpStatusCode.OK, await same.Content.ReadAsStringAsync());
+                var sameReceipt = (await same.Content.ReadFromJsonAsync<IamOperationV1>())!;
+                Assert.Equal((operationId, "COMMITTED"), (sameReceipt.OperationId, sameReceipt.State));
+                Assert.Null(await Pending());
+                using var initial = JsonDocument.Parse(before);
+                using var unchanged = JsonDocument.Parse(await State());
+                Assert.Equal(initial.RootElement.GetProperty("Departments").GetRawText(), unchanged.RootElement.GetProperty("Departments").GetRawText());
+                Assert.Equal(initial.RootElement.GetProperty("Generation").GetInt64(), unchanged.RootElement.GetProperty("Generation").GetInt64());
+                Assert.Equal(1, unchanged.RootElement.GetProperty("Audit").GetInt32());
+                Assert.Equal(1, unchanged.RootElement.GetProperty("Receipts").GetInt32());
+
+                var create = new DeptDto
+                {
+                    OperationId = Guid.NewGuid(), ExpectedVersion = "absent", ExpectedTreeVersion = sameReceipt.TreeVersion,
+                    ExpectedReferencesVersion = sameReceipt.ReferencesVersion, Reason = "W662 simulated ordinary new department",
+                    DeptCode = "W662-NEW", DeptName = "New department", ParentId = unrelated, Enable = true
+                };
+                using var createdResponse = await host.Send(Request(HttpMethod.Post, route, login, create));
+                Assert.True(createdResponse.StatusCode == HttpStatusCode.OK, await createdResponse.Content.ReadAsStringAsync());
+                var createdReceipt = (await createdResponse.Content.ReadFromJsonAsync<IamOperationV1>())!;
+                Assert.Equal((create.OperationId, "dept-create", "COMMITTED"), (createdReceipt.OperationId, createdReceipt.Kind, createdReceipt.State));
+                var id = createdReceipt.EntityId!.Value;
+                var row = await h.Db.Sys_Depts.AsNoTracking().SingleAsync(item => item.Id == id);
+                Assert.Equal((h.Tenant, create.DeptCode, (Guid?)unrelated, $"/{unrelated:D}/{id:D}/", true),
+                    (row.TenantId, row.DeptCode, row.ParentId, row.Path, row.Enable));
+                var aggregate = $"department:{id:D}";
+                Assert.Equal(1, await h.Db.CrmIdentitySnapshots.Where(item => item.TenantId == h.Tenant && item.AggregateId == aggregate)
+                    .Select(item => item.Version).SingleAsync());
+                Assert.Equal(1, await h.Db.Database.SqlQuery<int>($"""
+                    SELECT count(*)::integer AS "Value" FROM crm_identity."Cp6_OutboxMessage"
+                    WHERE "TenantId"={h.Tenant} AND "AggregateId"={aggregate}
+                    """).SingleAsync());
+                using var alias = await host.Send(Request(HttpMethod.Post, "api/pub/dept", login, create));
+                Assert.Equal(HttpStatusCode.OK, alias.StatusCode);
+                Assert.Equal(createdReceipt, await alias.Content.ReadFromJsonAsync<IamOperationV1>());
+                Assert.Equal(floors, await Floors());
+                await Save("department-original-controls.json", new { Same = sameReceipt, Created = createdReceipt, row.Path, Floors = await Floors() });
+                return;
             }
             using var failed = await Write(host);
             Assert.Equal(HttpStatusCode.ServiceUnavailable, failed.StatusCode);
@@ -219,6 +308,24 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             var coldAffected = await ReadIssue(affected, ServiceSecret, h.Child);
             var coldIndependent = await ReadIssue(independent, independentSecret, unrelated);
             RequireFence(coldIndependent);
+            object? extraIssuance = null;
+            if (checkIssuance)
+            {
+                var affectedHuman = await HumanFence(host, human!, "privacy:export", h.Child);
+                var healthyHuman = await HumanFence(host, independentHuman!, "privacy:export", unrelated);
+                var readFence = await HumanFence(host, human!, "intake:list", h.Child);
+                var review = await ServiceFence(affected, ServiceSecret, "privacy:retention-worker");
+                var maintenance = await ServiceFence(independent, independentSecret, "privacy:retention-worker");
+                var pendingPublic = await ServiceFence(independent, independentSecret, "public:receive");
+                Assert.Null(affectedHuman);
+                Assert.Equal(openFence, healthyHuman);
+                Assert.Null(readFence);
+                Assert.Null(review);
+                Assert.Equal(openFence, maintenance);
+                Assert.Null(pendingPublic);
+                extraIssuance = new { AffectedHumanFence = affectedHuman, IndependentHumanFence = healthyHuman,
+                    OriginalReadStatus = 200, ReviewFence = review, MaintenanceFence = maintenance, PublicFence = pendingPublic };
+            }
             await Save("department-cold.json", new
             {
                 Operation = original, Actor = h.ActorId, Tenant = h.Tenant, Store = store, NativeSqlState = "28000",
@@ -226,7 +333,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 Source = originalInput,
                 Before = before, Cold = cold, Floors = coldFloors, MainPid = host.ProcessId,
                 Affected = new { affected.SubjectId, affected.DepartmentId, Before = beforeAffected, Cold = coldAffected },
-                Independent = new { independent.SubjectId, independent.DepartmentId, Before = beforeIndependent, Cold = coldIndependent }
+                Independent = new { independent.SubjectId, independent.DepartmentId, Before = beforeIndependent, Cold = coldIndependent },
+                ExtraIssuance = extraIssuance
             });
             Assert.Null(coldAffected.Fence);
             var staged = await Pending();
@@ -258,6 +366,11 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             Assert.Equal(original, await stillWaiting.Content.ReadFromJsonAsync<IamOperationV1>());
             Assert.Null((await ReadIssue(affected, ServiceSecret, h.Child)).Fence);
             RequireFence(await ReadIssue(independent, independentSecret, unrelated));
+            if (checkIssuance)
+            {
+                Assert.Null(await HumanFence(restarted, human!, "privacy:export", h.Child));
+                Assert.Equal(openFence, await HumanFence(restarted, independentHuman!, "privacy:export", unrelated));
+            }
             Assert.Equal(before, await State());
             Assert.Equal(coldFloors, await Floors());
             Assert.Equal(staged, await Pending());
@@ -273,6 +386,26 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             using var competing = await restarted.Send(Request(method, writePath, login, changed));
             await RequireError(competing, HttpStatusCode.Conflict, "IAM_CRM_DEPARTMENT_SEAL_PENDING");
             Assert.Equal(staged, await Pending());
+
+            if (Environment.GetEnvironmentVariable("CP6_W662_STALE_BEFORE_SEAL") == "1")
+            {
+                var other = await RenameUnrelated(restarted);
+                using var stale = await Write(restarted);
+                await RequireError(stale, HttpStatusCode.PreconditionFailed, "IAM_REFERENCES_CHANGED");
+                Assert.Equal(before, await State());
+                Assert.Equal(floors, await Floors());
+                Assert.Equal(staged, await Pending());
+                using var close = await restarted.Send(Request(HttpMethod.Post, $"{route}/operations/{operationId:D}/close?kind={kind}", login));
+                Assert.Equal(HttpStatusCode.OK, close.StatusCode);
+                var closed = (await close.Content.ReadFromJsonAsync<IamOperationV1>())!;
+                Assert.Equal((operationId, "CLOSED"), (closed.OperationId, closed.State));
+                Assert.Null(await Pending());
+                using var replayClosed = await Write(restarted);
+                await RequireError(replayClosed, HttpStatusCode.Conflict, "IAM_OPERATION_CLOSED");
+                RequireFence(await ReadIssue(affected, ServiceSecret, h.Child));
+                await Save("department-stale-before-seal.json", new { Original = original, Other = other, Closed = closed, Floors = await Floors() });
+                return;
+            }
 
             await SealLogin(true);
             if (crmRelay is not null)
@@ -294,22 +427,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 await Save("department-remote-ack.json", new { Original = original, Main = before, Floors = await Floors(), Pending = started });
                 if (Environment.GetEnvironmentVariable("CP6_W662_STALE_AFTER_ACK") == "1")
                 {
-                    using var fresh = await restarted.Send(Request(HttpMethod.Get, route + "/editor", login));
-                    var current = (await fresh.Content.ReadFromJsonAsync<IamDepartmentEditorV1>())!;
-                    var unchanged = Assert.Single(current.Departments, item => item.Id == unrelated);
-                    var rename = new DeptDto
-                    {
-                        OperationId = Guid.NewGuid(), Reason = "W662 independent simulated display name change", ExpectedVersion = unchanged.Version,
-                        ExpectedTreeVersion = current.TreeVersion, ExpectedReferencesVersion = current.ReferencesVersion,
-                        DeptCode = unchanged.DeptCode, DeptName = "Independent renamed department", ParentId = unchanged.ParentId,
-                        LeaderId = unchanged.LeaderId, Sort = unchanged.Sort, Enable = unchanged.Enable
-                    };
-                    using var renamed = await restarted.Send(Request(HttpMethod.Put, $"{route}/{unrelated:D}", login, rename));
-                    Assert.True(renamed.StatusCode == HttpStatusCode.OK, await renamed.Content.ReadAsStringAsync());
-                    var otherReceipt = (await renamed.Content.ReadFromJsonAsync<IamOperationV1>())!;
-                    Assert.Equal((rename.OperationId, "COMMITTED"), (otherReceipt.OperationId, otherReceipt.State));
-                    Assert.NotEqual(current.TreeVersion, otherReceipt.TreeVersion);
-                    Assert.NotEqual(current.ReferencesVersion, otherReceipt.ReferencesVersion);
+                    var otherReceipt = await RenameUnrelated(restarted);
                     using var stale = await Write(restarted);
                     await RequireError(stale, HttpStatusCode.ServiceUnavailable, "IAM_OPERATION_UNKNOWN");
                     using var unresolved = await restarted.Send(Request(HttpMethod.Get, operationPath, login));
@@ -381,11 +499,16 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 else Assert.Equal(beforeRows[i].GetRawText(), afterRows[i].GetRawText());
             }
             Assert.Equal(floors.Skip(committed), afterFloors.Skip(committed));
-            Assert.Equal(move, afterRows[0].GetProperty("Enabled").GetBoolean());
+            Assert.Equal(move || leader, afterRows[0].GetProperty("Enabled").GetBoolean());
             if (move)
             {
                 Assert.Equal(destination, afterRows[0].GetProperty("Parent").GetGuid());
                 Assert.Equal($"/{destination:D}/{h.Parent:D}/{h.Child:D}/", afterRows[1].GetProperty("Path").GetString());
+                RequireFence(await ReadIssue(affected, ServiceSecret, h.Child));
+            }
+            else if (leader)
+            {
+                Assert.Equal(h.ActorId, afterRows[0].GetProperty("Leader").GetGuid());
                 RequireFence(await ReadIssue(affected, ServiceSecret, h.Child));
             }
             else
@@ -411,20 +534,25 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         {
             var method = move ? HttpMethod.Post : HttpMethod.Put;
             if (!legacy) return api.Send(Request(method, writePath, login, originalInput));
-            var path = $"api/pub/dept/{h.Parent:D}" + (move ? "/move" : "");
+            var path = $"api/pub/dept/{h.Parent:D}" + subroute;
             object body = move ? new DeptController.MoveReq(destination)
             {
                 OperationId = operationId, Reason = reason, ExpectedVersion = input.ExpectedVersion, ExpectedTreeVersion = input.ExpectedTreeVersion,
                 ExpectedReferencesVersion = input.ExpectedReferencesVersion, PreviewVersion = input.PreviewVersion
+            } : leader ? new DeptController.LeaderReq(input.LeaderId)
+            {
+                OperationId = operationId, Reason = reason, ExpectedVersion = input.ExpectedVersion, ExpectedTreeVersion = input.ExpectedTreeVersion,
+                ExpectedReferencesVersion = input.ExpectedReferencesVersion
             } : disable;
             return api.Send(Request(method, path, login, body));
         }
 
-        async Task<HttpResponseMessage> Issue(string client, string secret)
+        async Task<HttpResponseMessage> Issue(string client, string secret, string purpose = "privacy:export")
         {
-            using var request = new HttpRequestMessage(HttpMethod.Post, "/connect/inquiry-service-context-v2")
+            var path = purpose == "privacy:export" ? "/connect/inquiry-service-context-v2" : "/connect/inquiry-service-context";
+            using var request = new HttpRequestMessage(HttpMethod.Post, path)
             {
-                Content = JsonContent.Create(new InquiryServiceContextRequestV1("privacy:export", pair.SiteId, pair.FormId, ServiceNonce()))
+                Content = JsonContent.Create(new InquiryServiceContextRequestV1(purpose, pair.SiteId, pair.FormId, ServiceNonce()))
             };
             request.Headers.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{client}:{secret}")));
             return await http.SendAsync(request);
@@ -450,6 +578,87 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
 
         void RequireFence(DepartmentSealIssuedProjection issued) => Assert.Equal($"{store:D}/1", issued.Fence);
 
+        async Task<IamOperationV1> RenameUnrelated(AuthenticationApiProcess api)
+        {
+            using var fresh = await api.Send(Request(HttpMethod.Get, route + "/editor", login));
+            Assert.Equal(HttpStatusCode.OK, fresh.StatusCode);
+            var current = (await fresh.Content.ReadFromJsonAsync<IamDepartmentEditorV1>())!;
+            var unchanged = Assert.Single(current.Departments, item => item.Id == unrelated);
+            var rename = new DeptDto
+            {
+                OperationId = Guid.NewGuid(), Reason = "W662 independent simulated display name change", ExpectedVersion = unchanged.Version,
+                ExpectedTreeVersion = current.TreeVersion, ExpectedReferencesVersion = current.ReferencesVersion,
+                DeptCode = unchanged.DeptCode, DeptName = "Independent renamed department", ParentId = unchanged.ParentId,
+                LeaderId = unchanged.LeaderId, Sort = unchanged.Sort, Enable = unchanged.Enable
+            };
+            using var renamed = await api.Send(Request(HttpMethod.Put, $"{route}/{unrelated:D}", login, rename));
+            Assert.True(renamed.StatusCode == HttpStatusCode.OK, await renamed.Content.ReadAsStringAsync());
+            var receipt = (await renamed.Content.ReadFromJsonAsync<IamOperationV1>())!;
+            Assert.Equal((rename.OperationId, "COMMITTED"), (receipt.OperationId, receipt.State));
+            Assert.NotEqual(current.TreeVersion, receipt.TreeVersion);
+            Assert.NotEqual(current.ReferencesVersion, receipt.ReferencesVersion);
+            Assert.Equal(rename.DeptName, await h.Db.Sys_Depts.Where(row => row.Id == unrelated).Select(row => row.DeptName).SingleAsync());
+            return receipt;
+        }
+
+        async Task<string?> ServiceFence(InquiryServicePrincipalRegistrationV1 registration, string secret, string purpose)
+        {
+            using var response = await Issue(registration.ClientId, secret, purpose);
+            var raw = await response.Content.ReadAsStringAsync();
+            Assert.True(response.StatusCode == HttpStatusCode.OK, raw);
+            var signed = JsonNode.Parse(raw)!.AsObject();
+            Assert.True(ContextSignature(signed, options.PublicKeyBase64));
+            Assert.Equal(purpose, signed["purpose"]!.GetValue<string>());
+            Assert.Equal(registration.SubjectId, signed["subjectId"]!.GetValue<Guid>());
+            return response.Headers.TryGetValues("X-CP6-Inquiry-Tenant-Fence", out var values) ? Assert.Single(values) : null;
+        }
+
+        async Task<string?> HumanFence(AuthenticationApiProcess api, string access, string purpose, Guid departmentId)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Post, "connect/inquiry-human-context")
+            {
+                Content = JsonContent.Create(new InquiryHumanContextRequestV1(purpose, pair.SiteId, pair.FormId, ServiceNonce()))
+            };
+            request.Headers.Authorization = new("Bearer", access);
+            request.Headers.Add("X-Forwarded-Proto", "https");
+            using var response = await api.Send(request);
+            var raw = await response.Content.ReadAsStringAsync();
+            Assert.True(response.StatusCode == HttpStatusCode.OK, raw);
+            var signed = JsonNode.Parse(raw)!.AsObject();
+            Assert.True(ContextSignature(signed, options.PublicKeyBase64, InquiryPermissionSigningKeyV1.HumanContextVersion));
+            using var permission = JsonDocument.Parse(signed["permissionJson"]!.GetValue<string>());
+            Assert.Equal(purpose, permission.RootElement.GetProperty("purpose").GetString());
+            Assert.Equal(departmentId, Assert.Single(permission.RootElement.GetProperty("managedDepartmentIds").EnumerateArray()).GetGuid());
+            return response.Headers.TryGetValues("X-CP6-Inquiry-Tenant-Fence", out var values) ? Assert.Single(values) : null;
+        }
+
+        async Task<string> Exchange(AuthenticationApiProcess api, Dictionary<string, string> cookies)
+        {
+            var verifier = CrmOidcCrypto.RandomToken();
+            var query = QueryHelpers.AddQueryString("connect/authorize", new Dictionary<string, string?>
+            {
+                ["client_id"] = "CP6.Web", ["redirect_uri"] = redirect, ["response_type"] = "code", ["code_challenge_method"] = "S256",
+                ["code_challenge"] = CrmOidcCrypto.Challenge(verifier), ["state"] = CrmOidcCrypto.RandomToken(),
+                ["nonce"] = CrmOidcCrypto.RandomToken(), ["scope"] = "openid profile crm"
+            });
+            using var entry = await api.Send(Request(HttpMethod.Get, query, cookies));
+            Assert.Equal(HttpStatusCode.Redirect, entry.StatusCode);
+            using var approved = await api.Send(Request(HttpMethod.Get, entry.Headers.Location!.PathAndQuery, cookies));
+            Assert.Equal(HttpStatusCode.Redirect, approved.StatusCode);
+            var code = QueryHelpers.ParseQuery(approved.Headers.Location!.Query)["code"].ToString();
+            Assert.NotEmpty(code);
+            using var exchange = new HttpRequestMessage(HttpMethod.Post, "connect/token")
+            {
+                Content = new FormUrlEncodedContent(new Dictionary<string, string>
+                { ["grant_type"] = "authorization_code", ["code"] = code, ["redirect_uri"] = redirect, ["code_verifier"] = verifier })
+            };
+            exchange.Headers.Authorization = new("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes("CP6.Web:" + oidcSecret)));
+            using var response = await api.Send(exchange);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            using var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            return payload.RootElement.GetProperty("access_token").GetString()!;
+        }
+
         Task<string?> Pending() => h.Db.Database.SqlQuery<string?>($"""
             SELECT jsonb_build_object('Root',department_id,'Actor',actor_id,'Store',store_id,'Kind',kind,
                 'Started',seal_started,'Seals',source_seals)::text AS "Value"
@@ -459,7 +668,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Task<string> State() => h.Db.Database.SqlQuery<string>($"""
             SELECT jsonb_build_object('Departments', (
                 SELECT jsonb_agg(jsonb_build_object('Id', d."Id", 'Parent', d."ParentId", 'Path', d."Path",
-                    'Enabled', d."Enable", 'Version', s."Version", 'Payload', s."PayloadSha256",
+                    'Enabled', d."Enable", 'Leader', d."LeaderId", 'Version', s."Version", 'Payload', s."PayloadSha256",
                     'Outbox', (SELECT count(*) FROM crm_identity_priority."Cp6_OutboxMessage"
                                WHERE "TenantId"={h.Tenant} AND "AggregateId"=s."AggregateId" COLLATE "C") +
                               (SELECT count(*) FROM crm_identity."Cp6_OutboxMessage"

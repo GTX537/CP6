@@ -1,5 +1,6 @@
 using System.Data;
 using System.Text;
+using System.Text.Json;
 using CP6.Entity.DomainModels.Sys;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
@@ -109,6 +110,13 @@ public sealed class InquiryServicePermissionIssuerV1(CP6Context db, ITenantConte
                 : request.Purpose == InquiryRetentionPermissionSourceV1.Purpose ? await InquiryRetentionPermissionSourceV1.ReadAsync(db,registration,ct)
                 : await InquiryServicePermissionSourceV1.ReadAsync(db, registration, request,
                 (captureCatalog ?? AuthorizationCatalogV1.Capture)(), ct);
+            if (!pending && request.Purpose != InquiryRetentionPermissionSourceV1.Purpose)
+            {
+                // CRM owns the default department for the public attempt and submission.
+                pending = await IamCrmDepartmentSealV1.BlocksIssuanceAsync(db, registration.Tenant, registration.Department,
+                    facts?.Departments ?? [], request.Purpose == "public:receive", null, ct);
+                if (pending && nonce is null) throw new InquiryPermissionExceptionV1(503, "inquiry_authority_unavailable");
+            }
             var issued = await RequireCurrentTenant();
             var expiry = issued.AddMinutes(5);
             var tenantExpiry = await db.Sys_Tenants.Where(x => x.Id == registration.Tenant).Select(x => x.ExpireDate).SingleAsync(ct);
@@ -124,6 +132,13 @@ public sealed class InquiryServicePermissionIssuerV1(CP6Context db, ITenantConte
                     || x.PayloadSha256 != IdentityEventContracts.Hash(Encoding.UTF8.GetBytes(x.PayloadJson))
                     || x.EventType is not (IdentityEventContracts.PermissionChanged or IdentityEventContracts.PermissionChangedV2 or IdentityEventContracts.PermissionChangedV3)))
                     throw new InquiryPermissionExceptionV1(503, "inquiry_service_role_source_unavailable");
+                if (!pending && request.Purpose == InquiryRetentionPermissionSourceV1.Purpose)
+                {
+                    var review = ReviewGrants(roles, request.SiteId, request.FormId);
+                    var targets = review.Where(grant => grant.Scope == 4).SelectMany(grant => grant.DeptIds).Distinct().ToArray();
+                    pending = await IamCrmDepartmentSealV1.BlocksIssuanceAsync(db, registration.Tenant, registration.Department,
+                        targets, review.Any(grant => grant.Scope == 5), review.Any(grant => grant.Scope == 3) ? registration.Department : null, ct);
+                }
                 result = signing.SignServiceContext(result, nonce, registration, serviceSource!, roles, identityRuntime!.ContractBundleSha256, request, issued, expiry,contextVersion);
             }
             var fence = tenantPause is not null && nonce is not null && !pending
@@ -132,5 +147,30 @@ public sealed class InquiryServicePermissionIssuerV1(CP6Context db, ITenantConte
             return new(result ?? throw new InquiryPermissionExceptionV1(503,"inquiry_authority_unavailable"), fence);
         }
         finally { tenant.CurrentTenantId = previousTenant; }
+    }
+
+    // Ordinary retention uses the service's department only. Review expiry also writes an eligible row's department.
+    private static List<IdentityGrant> ReviewGrants(CrmIdentitySnapshot[] roles, Guid site, Guid form)
+    {
+        var grants = new List<IdentityGrant>();
+        var pair = new InquirySiteFormScopeV1(site, form);
+        var permitted = false;
+        foreach (var row in roles.Where(row => !row.IsDeleted))
+        {
+            if (row.EventType == IdentityEventContracts.PermissionChangedV3)
+            {
+                var role = JsonSerializer.Deserialize<PermissionIdentityDataV3>(row.PayloadJson, IdentityEventContracts.Json)!;
+                if (!role.Enabled) continue;
+                permitted |= role.SiteFormScopes.Contains(pair);
+                grants.AddRange(role.Grants.Where(grant => grant.Resource == "crm-lead" && grant.Action == "edit"));
+            }
+            else
+            {
+                var role = JsonSerializer.Deserialize<PermissionIdentityData>(row.PayloadJson, IdentityEventContracts.Json)!;
+                if (role.Enabled)
+                    grants.AddRange(role.Grants.Where(grant => grant.Resource == "crm-lead" && grant.Action == "edit"));
+            }
+        }
+        return permitted ? grants : [];
     }
 }

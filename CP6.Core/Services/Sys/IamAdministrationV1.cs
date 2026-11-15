@@ -84,6 +84,10 @@ public sealed partial class IamAdministrationV1(CP6Context db, ICurrentPermissio
     }
 
     public async Task<IamOperationV1?> Original(Guid actor, string kind, IamCommandV1 command, CancellationToken ct)
+        => (await ReadOriginal(actor, kind, command, ct)).Receipt;
+
+    private async Task<(IamOperationV1? Receipt, IamCrmDepartmentSealV1? Department)> ReadOriginal(
+        Guid actor, string kind, IamCommandV1 command, CancellationToken ct)
     {
         var row = await Operation(command.OperationId,ct);
         if (row == null)
@@ -92,13 +96,15 @@ public sealed partial class IamAdministrationV1(CP6Context db, ICurrentPermissio
             pending?.RequireOwner(actor, kind);
             var userSeal = await IamCrmUserSealV1.ReadAsync(db, db.CurrentTenantId, command.OperationId, ct);
             userSeal?.RequireOwner(actor, kind);
-            return null;
+            var departmentSeal = await IamCrmDepartmentSealV1.ReadAsync(db, db.CurrentTenantId, command.OperationId, ct);
+            departmentSeal?.RequireOwner(actor, kind);
+            return (null, departmentSeal);
         }
         RequireOwner(row,actor,kind);
         if (row.State == "CLOSED") throw Error(409,"IAM_OPERATION_CLOSED");
         if (row.RequestProtected == null || fingerprint.Unprotect(row.RequestProtected) != AuthenticationPolicyServiceV1.Hash((object)command))
             throw Error(409,"IAM_OPERATION_INPUT_CONFLICT");
-        return JsonSerializer.Deserialize<IamOperationV1>(row.ResultJson)!;
+        return (JsonSerializer.Deserialize<IamOperationV1>(row.ResultJson)!, null);
     }
 
     public Task Store(Guid actor, IamCommandV1? command, IamOperationV1 result, CancellationToken ct)
@@ -136,6 +142,17 @@ public sealed partial class IamAdministrationV1(CP6Context db, ICurrentPermissio
                     if (userSeal.SealStarted) throw Error(503, "IAM_OPERATION_UNKNOWN");
                     await RequireSealDurability(token);
                     await userSeal.RemoveAsync(db, db.CurrentTenantId, token);
+                }
+            }
+            var departmentSeal = await IamCrmDepartmentSealV1.ReadAsync(db, db.CurrentTenantId, id, token);
+            if (departmentSeal is not null)
+            {
+                departmentSeal.RequireOwner(who, kind);
+                if (close)
+                {
+                    if (departmentSeal.SealStarted) throw Error(503, "IAM_OPERATION_UNKNOWN");
+                    await RequireSealDurability(token);
+                    await departmentSeal.RemoveAsync(db, db.CurrentTenantId, token);
                 }
             }
             var result = new IamOperationV1(id,kind,close ? "CLOSED" : "UNKNOWN");

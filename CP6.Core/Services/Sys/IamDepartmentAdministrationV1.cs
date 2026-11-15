@@ -63,6 +63,9 @@ public sealed class IamDepartmentAdministrationV1(CP6Context db,IamAdministratio
             if(string.IsNullOrWhiteSpace(command.DeptCode)||command.DeptCode.Length>50||string.IsNullOrWhiteSpace(command.DeptName)||command.DeptName.Length>100)
                 throw Error(400,"IAM_DEPARTMENT_INPUT_INVALID");
         }
+        if (kind is "dept-update" or "dept-move" or "dept-leader")
+            return authority.DepartmentWriteAsync(kind, command, actor, Write, ct);
+
         return authority.ExecuteAsync(Permission(kind), actor, async (who, token) =>
         {
             var original = await authority.Original(who, kind, command, token);
