@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W625-01 OA 服务作业完成
+
+凭证续行、流程事实、通知和作业终态在 Main 当前租户与原租约下提交。两种实际顺序通过，暂停后保留原作业。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W625-01/DELIVERY.md)
+
 ## 2026-11-15 W624-01 Space 映射配置授权
 
 CAD 与 Excel 两个保存入口已接入 Main 共同栅栏。创建、更新实测暂停两种顺序并补签名撤权验证。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W624-01/DELIVERY.md)
