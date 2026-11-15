@@ -25,6 +25,7 @@ public class PeriodCloseService : IPeriodCloseService
     private readonly IAssetDepreciationService? _deprec;
     private readonly IJournalEntryService? _journal;
     private readonly ILogger<PeriodCloseService>? _logger;
+    private bool HasPostgreSqlTransaction => _db.Database.IsNpgsql() && _db.Database.CurrentTransaction is not null;
 
     public PeriodCloseService(CP6Context db, IFiscalPeriodService periods, ITrialBalanceService trial,
         IFxRevaluationService? reval = null, IAssetDepreciationService? deprec = null,
@@ -190,7 +191,7 @@ public class PeriodCloseService : IPeriodCloseService
                 {
                     VoucherDate = carryDate,
                     Source = VoucherSource.Carryover,
-                    SourceDocNo = $"{yearTag}-RE",
+                    SourceDocNo = await AvailableCarryoverSourceAsync($"{yearTag}-RE"),
                     Description = $"{fiscalYear} 年度净利结转未分配利润（重试补投 3103 残额）",
                 };
                 if (profit3103Net < 0m)   // 3103 贷余（净利）→ 3103 借 / 3104 贷
@@ -211,7 +212,11 @@ public class PeriodCloseService : IPeriodCloseService
             }
             finally
             {
-                if (!recovered) { lastPeriod.Status = PeriodStatus.Closed; await _db.SaveChangesAsync(); }
+                if (!recovered && !HasPostgreSqlTransaction)
+                {
+                    lastPeriod.Status = PeriodStatus.Closed;
+                    await _db.SaveChangesAsync();
+                }
             }
 
             _logger?.LogWarning(
@@ -226,8 +231,7 @@ public class PeriodCloseService : IPeriodCloseService
 
         // ★ 年结凭证须落财年末期（已 Closed）：由年结进程暂开该期承接结转分录，过账后再连同全年锁 YearClosed。
         //   仍走 AutoPostAsync（借贷平衡/科目合法性兜底），不绕过校验。
-        //   ★ 终审 Important#2：暂开→投凭证→锁年 全段包 try/finally，AutoPostAsync 抛异常（非 Fail 返回）
-        //     时 finally 恢复末期 Closed，避免末期泄漏 Open。
+        //   PostgreSQL 请求事务失败时回滚全部写入。独立调用失败仍恢复期末 Closed。
         lastPeriod.Status = PeriodStatus.Open;
         await _db.SaveChangesAsync();
 
@@ -240,7 +244,7 @@ public class PeriodCloseService : IPeriodCloseService
             {
                 VoucherDate = carryDate,
                 Source = VoucherSource.Carryover,
-                SourceDocNo = yearTag,
+                SourceDocNo = await AvailableCarryoverSourceAsync(yearTag),
                 Description = $"{fiscalYear} 年度损益结转（结转本年利润）",
             };
             decimal clrDebit = 0m, clrCredit = 0m;
@@ -263,7 +267,7 @@ public class PeriodCloseService : IPeriodCloseService
             // profitNet==0（损益相抵）→ 无 3103 行，v1 借贷自平
 
             var r1 = await _journal.AutoPostAsync(v1);
-            if (!r1.Ok) return r1;   // finally 恢复末期 Closed
+            if (!r1.Ok) return r1;
 
             // 凭证二：3103 → 3104（仅当存在净损益）
             if (profitNet != 0m)
@@ -272,7 +276,7 @@ public class PeriodCloseService : IPeriodCloseService
                 {
                     VoucherDate = carryDate,
                     Source = VoucherSource.Carryover,
-                    SourceDocNo = $"{yearTag}-RE",
+                    SourceDocNo = await AvailableCarryoverSourceAsync($"{yearTag}-RE"),
                     Description = $"{fiscalYear} 年度净利结转未分配利润",
                 };
                 if (profitNet > 0m)   // 净利：3103 借 / 3104 贷
@@ -286,7 +290,7 @@ public class PeriodCloseService : IPeriodCloseService
                     v2.Lines.Add(new JournalLine { AccountId = retained.Id, Debit = -profitNet });
                 }
                 var r2 = await _journal.AutoPostAsync(v2);
-                if (!r2.Ok) return r2;   // finally 恢复末期 Closed（v1 保持 Posted；重试走空财年残额补投分支）
+                if (!r2.Ok) return r2;
             }
 
             // 全年 12 期锁 YearClosed
@@ -295,7 +299,11 @@ public class PeriodCloseService : IPeriodCloseService
         }
         finally
         {
-            if (!yearLocked) { lastPeriod.Status = PeriodStatus.Closed; await _db.SaveChangesAsync(); }
+            if (!yearLocked && !HasPostgreSqlTransaction)
+            {
+                lastPeriod.Status = PeriodStatus.Closed;
+                await _db.SaveChangesAsync();
+            }
         }
 
         _logger?.LogInformation(
@@ -328,14 +336,18 @@ public class PeriodCloseService : IPeriodCloseService
         //   → 净效果=多冲一次（损益翻倍、3104 残值）。改为：**原两张年结凭证保持 Posted**，另投一张反向
         //   Carryover 凭证（YC-{fy}-REOPEN）经 AutoPostAsync 过账；原+反向同计 → 损益余额恢复原值、
         //   3103/3104 归零，再年结读到正确损益不翻倍。
-        //   幂等自查重：按「本财年全部 YC-{fy}* 结转凭证（含历史 REOPEN）的每科目净额」取负——
+        //   按本财年全部结转凭证（含历次反年结）的每科目净额取负。
         //   close→reopen 反复循环时历史轮次已互抵，只冲最后一轮净效果；净额全 0（空财年）→ 不产生凭证仅解锁。
         var yearTag = $"YC-{fiscalYear}";
+        var relatedSource = $"{yearTag}-";
+        var repeatedSource = $"{yearTag}#";
         var carryNet = await (from l in _db.JournalLines
                               join e in _db.JournalEntries on l.EntryId equals e.Id
                               where e.Status == JournalStatus.Posted
                                     && e.Source == VoucherSource.Carryover
-                                    && e.SourceDocNo != null && e.SourceDocNo.StartsWith(yearTag)
+                                    && e.SourceDocNo != null && (e.SourceDocNo == yearTag
+                                        || e.SourceDocNo.StartsWith(relatedSource)
+                                        || e.SourceDocNo.StartsWith(repeatedSource))
                               group new { l.Debit, l.Credit } by l.AccountId into g
                               select new { AccountId = g.Key, Net = g.Sum(x => x.Debit) - g.Sum(x => x.Credit) })
                              .ToListAsync();
@@ -344,8 +356,7 @@ public class PeriodCloseService : IPeriodCloseService
         if (toNegate.Count > 0)
         {
             // 反向凭证须落财年末期（当前 YearClosed）：暂开末期承接，仍走 AutoPostAsync（借贷平衡/科目兜底）。
-            // ★ 终审 Important#2：暂开→投凭证段包 try/finally，AutoPostAsync 抛异常（非 Fail 返回）时
-            //   finally 恢复末期 YearClosed，避免末期泄漏 Open。
+            // PostgreSQL 请求事务失败时回滚全部写入。独立调用失败仍恢复期末 YearClosed。
             var lastPeriod = periods[^1];
             lastPeriod.Status = PeriodStatus.Open;
             await _db.SaveChangesAsync();
@@ -357,7 +368,7 @@ public class PeriodCloseService : IPeriodCloseService
                 {
                     VoucherDate = lastPeriod.PeriodEnd,
                     Source = VoucherSource.Carryover,
-                    SourceDocNo = $"{yearTag}-REOPEN",
+                    SourceDocNo = await AvailableCarryoverSourceAsync($"{yearTag}-REOPEN"),
                     Description = $"{fiscalYear} 反年结（反向冲销年结结转，原年结凭证保持已过账）",
                 };
                 foreach (var b in toNegate)
@@ -366,12 +377,16 @@ public class PeriodCloseService : IPeriodCloseService
                     else rv.Lines.Add(new JournalLine { AccountId = b.AccountId, Debit = -b.Net });
                 }
                 var rr = await _journal.AutoPostAsync(rv);
-                if (!rr.Ok) return rr;   // finally 恢复末期 YearClosed
+                if (!rr.Ok) return rr;
                 posted = true;
             }
             finally
             {
-                if (!posted) { lastPeriod.Status = PeriodStatus.YearClosed; await _db.SaveChangesAsync(); }
+                if (!posted && !HasPostgreSqlTransaction)
+                {
+                    lastPeriod.Status = PeriodStatus.YearClosed;
+                    await _db.SaveChangesAsync();
+                }
             }
         }
 
@@ -389,6 +404,18 @@ public class PeriodCloseService : IPeriodCloseService
             "会计年度反年结 FY={FY} by {User} —— 危险动作（改历史，反向冲销 {Cnt} 科目净额 + 12 期回 Closed）",
             fiscalYear, userId, toNegate.Count);
         return FinResult.Pass();
+    }
+
+    private async Task<string> AvailableCarryoverSourceAsync(string source)
+    {
+        if (!_db.Database.IsNpgsql()) return source;
+
+        // Historic vouchers stay Posted. Resolve each repeat against the database's unique source comparison.
+        var posted = _db.JournalEntries.Where(e => e.Source == VoucherSource.Carryover && e.Status == JournalStatus.Posted);
+        var candidate = source;
+        for (var ordinal = 2; await posted.AnyAsync(e => e.SourceDocNo == candidate); ordinal++)
+            candidate = $"{source}#{ordinal}";
+        return candidate;
     }
 
     /// <summary>将财年全部期间置 YearClosed（年度锁定）。</summary>
