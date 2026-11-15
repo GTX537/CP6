@@ -3,6 +3,7 @@ using System.Data;
 using CP6.Core.EFDbContext;
 using CP6.Core.Persistence;
 using CP6.Core.Services.CrmIdentity;
+using CP6.Core.Services.Platform;
 using System.Data.Common;
 
 namespace CP6.WebApi.Services;
@@ -48,28 +49,37 @@ public interface ICrmOidcGrantStore
 }
 
 /// <summary>Durable cross-replica one-use codes. All bindings participate in the atomic SQL update.</summary>
-public sealed class SqlCrmOidcGrantStore(DatabaseOptions database, string connectionString, CrmIdentityRuntime? identity = null) : ICrmOidcGrantStore
+public sealed partial class SqlCrmOidcGrantStore : ICrmOidcGrantStore
 {
-    private readonly DatabaseOptions _database = database ?? throw new ArgumentNullException(nameof(database));
-    private readonly DatabaseConnectionFactory _connections = new(database);
+    private readonly DatabaseOptions _database;
+    private readonly DatabaseConnectionFactory _connections;
+    private readonly string _connectionString;
+    private readonly CrmIdentityRuntime? _identity;
+    private readonly CrmInquiryTenantPauseV1? _storeFence;
     private bool IsPostgreSql => _database.Provider == DatabaseProvider.PostgreSql;
+
+    public SqlCrmOidcGrantStore(DatabaseOptions database, string connectionString, CrmIdentityRuntime? identity = null)
+    {
+        _database = database ?? throw new ArgumentNullException(nameof(database));
+        _connections = new(database);
+        _connectionString = connectionString;
+        _identity = identity;
+        _storeFence = identity?.InquiryFence;
+    }
 
     public SqlCrmOidcGrantStore(string connectionString, CrmIdentityRuntime? identity = null)
         : this(new(DatabaseProvider.SqlServer), connectionString, identity) { }
 
     public async Task SaveAsync(CrmOidcGrant grant)
     {
-        await using var db = _connections.Create(connectionString);
-        await db.ExecuteAsync(IsPostgreSql ? """
-            DELETE FROM public."CrmOidcGrant" WHERE "Id" IN (
-              SELECT "Id" FROM public."CrmOidcGrant"
-              WHERE "AccessExpiresAtUtc"<clock_timestamp()-INTERVAL '24 hours' LIMIT 100);
-            INSERT INTO public."CrmOidcGrant"
-              ("Id","CodeHash","ClientId","RedirectUri","Challenge","Nonce","SubjectId","OrganizationId","SourceJti","SourceRefreshHash","SecurityStamp",
-               "ExpiresAtUtc","SourceExpiresAtUtc","AccessExpiresAtUtc","Consumed","Revoked")
-            VALUES (@Id,@CodeHash,@ClientId,@RedirectUri,@Challenge,@Nonce,@SubjectId,@OrganizationId,@SourceJti,@SourceRefreshHash,@SecurityStamp,
-               @ExpiresAtUtc,@SourceExpiresAtUtc,@AccessExpiresAtUtc,false,false)
-            """ : """
+        if (IsPostgreSql)
+        {
+            await SavePostgreSqlGrantAsync(grant);
+            return;
+        }
+
+        await using var db = _connections.Create(_connectionString);
+        await db.ExecuteAsync("""
             DELETE TOP(100) FROM dbo.CrmOidcGrant WHERE AccessExpiresAtUtc<DATEADD(day,-1,SYSUTCDATETIME());
             INSERT INTO dbo.CrmOidcGrant
               (Id,CodeHash,ClientId,RedirectUri,Challenge,Nonce,SubjectId,OrganizationId,SourceJti,SourceRefreshHash,SecurityStamp,
@@ -80,7 +90,7 @@ public sealed class SqlCrmOidcGrantStore(DatabaseOptions database, string connec
     }
     public async Task<CrmOidcGrant?> ConsumeAsync(string hash, string clientId, string redirectUri, string challenge)
     {
-        await using var db = _connections.Create(connectionString);
+        await using var db = _connections.Create(_connectionString);
         // PostgreSQL bpchar equality has SQL's padded comparison semantics. Only the redirect's
         // existing DATALENGTH contract needs its raw stored text, including any trailing spaces.
         return await db.QuerySingleOrDefaultAsync<CrmOidcGrant>(IsPostgreSql ? """
@@ -101,7 +111,7 @@ public sealed class SqlCrmOidcGrantStore(DatabaseOptions database, string connec
     }
     public async Task<CrmOidcGrant?> FindSessionAsync(Guid id)
     {
-        await using var db = _connections.Create(connectionString);
+        await using var db = _connections.Create(_connectionString);
         return await db.QuerySingleOrDefaultAsync<CrmOidcGrant>(IsPostgreSql ? """
             SELECT * FROM public."CrmOidcGrant" WHERE "Id"=@id AND "Consumed" AND NOT "Revoked"
               AND "AccessExpiresAtUtc">clock_timestamp() AND "SourceExpiresAtUtc">clock_timestamp()
@@ -112,7 +122,7 @@ public sealed class SqlCrmOidcGrantStore(DatabaseOptions database, string connec
     }
     public async Task RevokeAsync(Guid id)
     {
-        await using var db = _connections.Create(connectionString);
+        await using var db = _connections.Create(_connectionString);
         await db.OpenAsync();
         await using var transaction = await db.BeginTransactionAsync();
         var grants = await db.QueryAsync<CrmOidcGrant>(IsPostgreSql
@@ -124,7 +134,7 @@ public sealed class SqlCrmOidcGrantStore(DatabaseOptions database, string connec
 
     public async Task<CrmOidcGrant?> FindForLogoutAsync(Guid id)
     {
-        await using var db = _connections.Create(connectionString);
+        await using var db = _connections.Create(_connectionString);
         return await db.QuerySingleOrDefaultAsync<CrmOidcGrant>(
             IsPostgreSql
                 ? "SELECT * FROM public.\"CrmOidcGrant\" WHERE \"Id\"=@id AND \"Consumed\" AND \"AccessExpiresAtUtc\">clock_timestamp()-INTERVAL '24 hours'"
@@ -133,6 +143,9 @@ public sealed class SqlCrmOidcGrantStore(DatabaseOptions database, string connec
 
     public async Task RevokeSourceFamilyAsync(CrmOidcGrant grant)
     {
+        if (RequiresNativeFamilyLogout(grant.OrganizationId))
+            throw new CrmOidcFamilyLogoutUnavailableException();
+
         for (var attempt = 0; ; attempt++)
         {
             try
@@ -152,7 +165,7 @@ public sealed class SqlCrmOidcGrantStore(DatabaseOptions database, string connec
 
     private async Task RevokeSourceFamilyOnceAsync(CrmOidcGrant grant)
     {
-        await using var db = _connections.Create(connectionString);
+        await using var db = _connections.Create(_connectionString);
         await db.OpenAsync();
         // The token-to-family association is immutable. Resolve it without locking a refresh row.
         var familyId = await db.QuerySingleOrDefaultAsync<Guid?>(IsPostgreSql ? """
@@ -179,6 +192,10 @@ public sealed class SqlCrmOidcGrantStore(DatabaseOptions database, string connec
                 WHERE Id=@familyId AND UserId=@SubjectId AND TenantId=@OrganizationId
                 """, new { familyId, grant.SubjectId, grant.OrganizationId }, transaction);
             if (boundFamily == null) throw new InvalidOperationException("Invalid original browser authentication family.");
+            if (IsPostgreSql && await db.ExecuteScalarAsync<bool>("""
+                SELECT EXISTS(SELECT 1 FROM cp6_authentication_v1.crm_oidc_family_logouts_v1
+                WHERE tenant_id=@OrganizationId AND family_id=@familyId AND completed_at_utc IS NULL)
+                """, new { familyId, grant.OrganizationId }, transaction)) throw new CrmOidcFamilyLogoutUnavailableException();
             if (IsPostgreSql)
                 await db.ExecuteAsync("""
                 UPDATE public."Sys_BrowserSessions"
@@ -214,10 +231,10 @@ public sealed class SqlCrmOidcGrantStore(DatabaseOptions database, string connec
 
     private async Task AppendRevocationsAsync(DbConnection connection, DbTransaction transaction, IEnumerable<CrmOidcGrant> revoked)
     {
-        if (identity is null) return;
+        if (_identity is null) return;
         await using var context = await DatabaseSharedContext.CreateAsync<CP6Context>(_database,
             connection, transaction, DatabaseContextKind.Core, options => new(options));
-        var writer = new IdentitySnapshotWriter(context, identity);
+        var writer = new IdentitySnapshotWriter(context, _identity);
         foreach (var grant in revoked.OrderBy(x => x.OrganizationId).ThenBy(x => x.Id))
             await writer.RevokeTokenAsync(grant.OrganizationId, grant.Id.ToString("D"), $"user:{grant.SubjectId:D}",
                 new DateTimeOffset(DateTime.SpecifyKind(grant.AccessExpiresAtUtc, DateTimeKind.Utc)));
@@ -226,10 +243,8 @@ public sealed class SqlCrmOidcGrantStore(DatabaseOptions database, string connec
 
     public async Task SaveLogoutAsync(CrmOidcLogout ticket)
     {
-        await using var db = _connections.Create(connectionString);
-        await db.ExecuteAsync(IsPostgreSql ? """
-            DELETE FROM public."CrmOidcLogout" WHERE "TicketHash" IN (
-              SELECT "TicketHash" FROM public."CrmOidcLogout" WHERE "ExpiresAtUtc"<clock_timestamp() LIMIT 100);
+        await using var db = _connections.Create(_connectionString);
+        await db.ExecuteAsync(IsPostgreSql ? PgCleanupTickets + """
             INSERT INTO public."CrmOidcLogout"("TicketHash","GrantId","RedirectUri","ExpiresAtUtc")
             VALUES(@TicketHash,@GrantId,@RedirectUri,@ExpiresAtUtc)
             """ : """
@@ -241,7 +256,7 @@ public sealed class SqlCrmOidcGrantStore(DatabaseOptions database, string connec
 
     public async Task<CrmOidcLogout?> ConsumeLogoutAsync(string hash)
     {
-        await using var db = _connections.Create(connectionString);
+        await using var db = _connections.Create(_connectionString);
         return await db.QuerySingleOrDefaultAsync<CrmOidcLogout>(IsPostgreSql ? """
             DELETE FROM public."CrmOidcLogout"
             WHERE "TicketHash"=CAST(@hash AS bpchar) AND "ExpiresAtUtc">clock_timestamp()
