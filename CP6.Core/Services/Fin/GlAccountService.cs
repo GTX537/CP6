@@ -38,6 +38,11 @@ public class GlAccountService : IGlAccountService
         if (await _db.GlAccounts.AnyAsync(x => x.Code == a.Code))
             throw new InvalidOperationException("E-FIN-001");        // 科目编码已存在
 
+        if (_db.Database.IsNpgsql())
+        {
+            await RequireParentAsync(a.ParentId);
+            a.TenantId = _db.CurrentTenantId;
+        }
         a.Id = a.Id == Guid.Empty ? Guid.NewGuid() : a.Id;
         a.Creator = user;
         a.CreateDate = DateTime.Now;
@@ -50,6 +55,8 @@ public class GlAccountService : IGlAccountService
     {
         var e = await _db.GlAccounts.FindAsync(id)
                 ?? throw new InvalidOperationException("E-FIN-003");  // 科目不存在
+        if (_db.Database.IsNpgsql() && e.ParentId != a.ParentId)
+            await RequireParentAsync(a.ParentId);
         // Code / StandardScheme 只读（建后被凭证引用，不可改）
         e.Name = a.Name;
         e.Type = a.Type;
@@ -66,6 +73,12 @@ public class GlAccountService : IGlAccountService
         e.Modifier = user;
         e.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();
+    }
+
+    private async Task RequireParentAsync(Guid? parentId)
+    {
+        if (parentId is Guid id && id != Guid.Empty && !await _db.GlAccounts.AnyAsync(x => x.Id == id))
+            throw new InvalidOperationException("E-FIN-003");
     }
 
     public async Task DeactivateAsync(Guid id, string? user)
