@@ -9,6 +9,7 @@ using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Space.Infrastructure;
 
@@ -40,6 +41,7 @@ public sealed class SpaceDesignV1Service :
     private readonly SpaceVersionCloneCoordinator _clone;
     private readonly SpaceSourceCoordinator _sources;
     private readonly ISpaceLocationCodeRuleProvider _codingRules;
+    private readonly ISpaceDesignWriteAuthority? _writeAuthority;
 
     public SpaceDesignV1Service(
         SpaceContext context,
@@ -49,7 +51,8 @@ public sealed class SpaceDesignV1Service :
         ISpaceDesignAccessEvaluator access,
         SpaceVersionCloneCoordinator clone,
         SpaceSourceCoordinator sources,
-        ISpaceLocationCodeRuleProvider? codingRules = null)
+        ISpaceLocationCodeRuleProvider? codingRules = null,
+        ISpaceDesignWriteAuthority? writeAuthority = null)
     {
         _context = context;
         _execution = execution;
@@ -59,6 +62,44 @@ public sealed class SpaceDesignV1Service :
         _clone = clone;
         _sources = sources;
         _codingRules = codingRules ?? EmptySpaceLocationCodeRuleProvider.Instance;
+        _writeAuthority = writeAuthority;
+    }
+
+    private async Task<IDbContextTransaction> BeginModelEditAsync(CancellationToken ct)
+    {
+        if (!_context.Database.IsNpgsql() || _writeAuthority is null)
+            return await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
+
+        // PostgreSQL can abort at the root when an earlier holder changed its row.
+        // Only retry admission here, before the Owner has made any changes.
+        for (var attempt = 1; ; attempt++)
+        {
+            var tx = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
+            try
+            {
+                await _writeAuthority.AuthorizeModelEditAsync(_context, ct);
+                return tx;
+            }
+            catch (Exception error) when (DatabaseFailureClassifier.Classify(error).CanRetryTransaction)
+            {
+                await tx.DisposeAsync();
+                if (attempt == 3)
+                    throw Conflict(SpaceErrorCodes.ConcurrencyConflict, "The Space write authority changed concurrently.",
+                        "reload-current-resource");
+            }
+            catch
+            {
+                await tx.DisposeAsync();
+                throw;
+            }
+        }
+    }
+
+    private async Task CommitModelEditAsync(IDbContextTransaction tx, CancellationToken ct)
+    {
+        if (_context.Database.IsNpgsql() && _writeAuthority is not null)
+            await _writeAuthority.ConfirmSessionAsync(_context, ct);
+        await tx.CommitAsync(ct);
     }
 
     private sealed class EmptySpaceLocationCodeRuleProvider :
@@ -300,10 +341,7 @@ public sealed class SpaceDesignV1Service :
         if (replay is not null)
             return replay;
 
-        await using var transaction = await _context.Database
-            .BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken);
+        await using var transaction = await BeginModelEditAsync(cancellationToken);
         try
         {
             await AcquireVersionFloorInitializationLockAsync(
@@ -316,7 +354,7 @@ public sealed class SpaceDesignV1Service :
                 cancellationToken);
             if (replay is not null)
             {
-                await transaction.CommitAsync(cancellationToken);
+                await CommitModelEditAsync(transaction, cancellationToken);
                 return replay;
             }
 
@@ -392,7 +430,7 @@ public sealed class SpaceDesignV1Service :
                     JsonSerializer.Serialize(response, JsonOptions),
                     HttpCreated));
             await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await CommitModelEditAsync(transaction, cancellationToken);
             return response;
         }
         catch
@@ -731,10 +769,7 @@ public sealed class SpaceDesignV1Service :
             $"{versionId:D}\n{floorLogicalId:D}\n" +
             JsonSerializer.Serialize(request, JsonOptions));
 
-        await using var transaction = await _context.Database
-            .BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken);
+        await using var transaction = await BeginModelEditAsync(cancellationToken);
         try
         {
             await AcquireFloorEditLockAsync(
@@ -775,7 +810,7 @@ public sealed class SpaceDesignV1Service :
                 if (completedReplay is not null &&
                     completedReplay.VersionContentRevision == version.ContentRevision)
                 {
-                    await transaction.CommitAsync(cancellationToken);
+                    await CommitModelEditAsync(transaction, cancellationToken);
                     return completedReplay;
                 }
                 throw Conflict(
@@ -802,7 +837,7 @@ public sealed class SpaceDesignV1Service :
                 if (completedReplay is not null &&
                     completedReplay.FloorRevision == floor.Revision)
                 {
-                    await transaction.CommitAsync(cancellationToken);
+                    await CommitModelEditAsync(transaction, cancellationToken);
                     return completedReplay;
                 }
                 throw Conflict(
@@ -819,7 +854,7 @@ public sealed class SpaceDesignV1Service :
                 cancellationToken);
             if (concurrentReplay is not null)
             {
-                await transaction.CommitAsync(cancellationToken);
+                await CommitModelEditAsync(transaction, cancellationToken);
                 return concurrentReplay;
             }
 
@@ -1180,7 +1215,7 @@ public sealed class SpaceDesignV1Service :
                 version.ContentRevision,
                 JsonSerializer.Serialize(response, JsonOptions));
             await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await CommitModelEditAsync(transaction, cancellationToken);
             return response;
         }
         catch (DbUpdateException)
@@ -1262,10 +1297,7 @@ public sealed class SpaceDesignV1Service :
             : $"layout\n{versionId:D}\n{floorLogicalId:D}\n" +
               $"{requestHashBinding}\n{serializedRequest}");
 
-        await using var transaction = await _context.Database
-            .BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken);
+        await using var transaction = await BeginModelEditAsync(cancellationToken);
         try
         {
             await AcquireFloorEditLockAsync(
@@ -1315,7 +1347,7 @@ public sealed class SpaceDesignV1Service :
                     completedReplay.VersionContentRevision ==
                         version.ContentRevision)
                 {
-                    await transaction.CommitAsync(cancellationToken);
+                    await CommitModelEditAsync(transaction, cancellationToken);
                     return completedReplay;
                 }
 
@@ -1342,7 +1374,7 @@ public sealed class SpaceDesignV1Service :
                 cancellationToken);
             if (concurrentReplay is not null)
             {
-                await transaction.CommitAsync(cancellationToken);
+                await CommitModelEditAsync(transaction, cancellationToken);
                 return concurrentReplay;
             }
 
@@ -1985,7 +2017,7 @@ public sealed class SpaceDesignV1Service :
                 version.ContentRevision,
                 JsonSerializer.Serialize(response, JsonOptions));
             await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await CommitModelEditAsync(transaction, cancellationToken);
             return response;
         }
         catch (DbUpdateException)
@@ -2425,10 +2457,7 @@ public sealed class SpaceDesignV1Service :
         if (replay is not null)
             return replay;
 
-        await using var transaction = await _context.Database
-            .BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken);
+        await using var transaction = await BeginModelEditAsync(cancellationToken);
         try
         {
             var concurrentReplay = await ReadAssetReplayAsync(
@@ -2438,7 +2467,7 @@ public sealed class SpaceDesignV1Service :
                 cancellationToken);
             if (concurrentReplay is not null)
             {
-                await transaction.CommitAsync(cancellationToken);
+                await CommitModelEditAsync(transaction, cancellationToken);
                 return concurrentReplay;
             }
 
@@ -2457,7 +2486,7 @@ public sealed class SpaceDesignV1Service :
                     JsonSerializer.Serialize(response, JsonOptions),
                     HttpCreated));
             await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await CommitModelEditAsync(transaction, cancellationToken);
             return response;
         }
         catch (DbUpdateException)
