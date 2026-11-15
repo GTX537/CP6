@@ -90,6 +90,8 @@ public sealed partial class IamAdministrationV1(CP6Context db, ICurrentPermissio
         {
             var pending = await IamCrmRoleSealV1.ReadAsync(db, db.CurrentTenantId, command.OperationId, ct);
             pending?.RequireOwner(actor, kind);
+            var userSeal = await IamCrmUserSealV1.ReadAsync(db, db.CurrentTenantId, command.OperationId, ct);
+            userSeal?.RequireOwner(actor, kind);
             return null;
         }
         RequireOwner(row,actor,kind);
@@ -121,8 +123,19 @@ public sealed partial class IamAdministrationV1(CP6Context db, ICurrentPermissio
                 {
                     // The connector has not sent a seal until the separate started marker commits.
                     if (pending.SealStarted) throw Error(503, "IAM_OPERATION_UNKNOWN");
-                    await RequireRoleSealDurability(token);
+                    await RequireSealDurability(token);
                     await pending.RemoveAsync(db, db.CurrentTenantId, token);
+                }
+            }
+            var userSeal = await IamCrmUserSealV1.ReadAsync(db, db.CurrentTenantId, id, token);
+            if (userSeal is not null)
+            {
+                userSeal.RequireOwner(who, kind);
+                if (close)
+                {
+                    if (userSeal.SealStarted) throw Error(503, "IAM_OPERATION_UNKNOWN");
+                    await RequireSealDurability(token);
+                    await userSeal.RemoveAsync(db, db.CurrentTenantId, token);
                 }
             }
             var result = new IamOperationV1(id,kind,close ? "CLOSED" : "UNKNOWN");

@@ -64,9 +64,13 @@ public sealed class IamUserAdministrationV1(CP6Context db,IamAdministrationV1 au
         if (kind != "user-org" && (input.RoleIds == null || input.RoleIds.Length>100)) throw Error(400,"IAM_ROLE_SET_REQUIRED");
         if (input.Email?.Length>100) throw Error(400,"IAM_USER_INPUT_INVALID");
         var command=input with { RoleIds=input.RoleIds?.Distinct().Order().ToArray() };
-        return authority.ExecuteAsync(Permission(kind),actor,async (who,token) =>
+        return create
+            ? authority.ExecuteAsync(Permission(kind), actor, async (who, token) =>
+                await authority.Original(who, kind, command, token) ?? await Write(who, token), ct)
+            : authority.UserWriteAsync(kind, command, actor, Write, ct);
+
+        async Task<IamOperationV1> Write(Guid who, CancellationToken token)
         {
-            var original=await authority.Original(who,kind,command,token); if(original!=null)return original;
             var user=create ? new Sys_User { Id=Guid.NewGuid(),TenantId=db.CurrentTenantId,IsPlatformAdmin=false,MustChangePassword=true } : await User(command.Id!.Value,token);
             var version=create ? "absent" : await authority.Version("user:"+user.Id.ToString("D"),token);
             if (command.ExpectedVersion!=version || command.ExpectedReferencesVersion!=await authority.ReferencesVersion(token)) throw Error(412,"IAM_REFERENCES_CHANGED");
@@ -107,7 +111,7 @@ public sealed class IamUserAdministrationV1(CP6Context db,IamAdministrationV1 au
             var result=new IamOperationV1(command.OperationId,kind,"COMMITTED",user.Id,
                 await authority.Version("user:"+user.Id.ToString("D"),token),await authority.ReferencesVersion(token));
             await authority.Store(who,command,result,token);return result;
-        },ct);
+        }
     }
 
     private async Task<Sys_User> User(Guid id,CancellationToken ct)

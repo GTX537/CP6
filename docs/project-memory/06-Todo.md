@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 W660-01 后续验收
+
+PGT-017 接续验证 OIDC 精确会话族退出及运行时恢复、部门层次和全局 MenuKey 对注册 CRM 授权来源的影响。正式状态仍为 26 PASS / 1 NOT_RUN。[W660-01 交付](../development/evidence/W660-01/DELIVERY.md)
+
 ## 2026-11-15 W659-01 后续
 
 继续普通用户及浏览器原族首次封存恢复，正式 PGT-017 待全部登记入口验证。 [交付](../development/evidence/W659-01/DELIVERY.md)
