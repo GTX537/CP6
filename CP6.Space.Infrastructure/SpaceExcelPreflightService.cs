@@ -17,7 +17,9 @@ public sealed class SpaceExcelPreflightService(
     SpaceFileUploadService uploads,
     SpaceSourceCoordinator sources,
     ISpaceExcelMappingService mappings,
-    ISpaceClock clock) : ISpaceExcelPreflightService
+    ISpaceClock clock,
+    ISpaceFileStore? files = null,
+    ISpaceDesignWriteAuthority? writeAuthority = null) : ISpaceExcelPreflightService
 {
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
@@ -34,7 +36,9 @@ public sealed class SpaceExcelPreflightService(
         var (version, _) = await LoadWritableVersionAsync(
             versionId,
             cancellationToken);
-        var upload = await uploads.UploadAsync(
+        var uploadWrites = new SpaceSourceUploadWriteTransaction(context, writeAuthority, files);
+        var upload = await uploadWrites.UploadAsync(
+            uploads,
             new SpaceFileUploadRequest(
                 SpaceSourceType.Excel,
                 originalName,
@@ -42,41 +46,7 @@ public sealed class SpaceExcelPreflightService(
                 SpaceFileRetentionClass.Source),
             content,
             cancellationToken);
-
-        var existing = await context.Sources.SingleOrDefaultAsync(
-            source =>
-                source.ModelVersionId == version.Id &&
-                source.Sha256 == upload.File.Sha256 &&
-                source.SourceType == SpaceSourceType.Excel,
-            cancellationToken);
-        SpaceModelSource source;
-        if (existing is not null)
-        {
-            source = existing;
-            if (source.State == SpaceSourceState.Rejected)
-            {
-                throw Conflict(
-                    "The same Excel source was previously rejected.",
-                    "remove-rejected-source-before-reupload");
-            }
-        }
-        else
-        {
-            source = upload.File.State == SpaceFileState.Clean
-                ? sources.AddFileSource(
-                    version,
-                    upload.File,
-                    SpaceSourceType.Excel,
-                    upload.File.OriginalName)
-                : sources.AddPendingFileSource(
-                    version,
-                    upload.File,
-                    SpaceSourceType.Excel,
-                    upload.File.OriginalName);
-            context.Sources.Add(source);
-            await context.SaveChangesAsync(cancellationToken);
-        }
-
+        var (source, reusedSource) = await RegisterUploadedSourceAsync(version, upload.File, uploadWrites, cancellationToken);
         await SynchronizeTerminalFileStateAsync(
             source,
             upload.File.Id,
@@ -93,7 +63,58 @@ public sealed class SpaceExcelPreflightService(
             scanJobId.HasValue
                 ? $"/api/space/design/v1/jobs/{scanJobId.Value:D}"
                 : null,
-            upload.Reused || existing is not null);
+            upload.Reused || reusedSource);
+    }
+
+    private async Task<(SpaceModelSource Source, bool Reused)> RegisterUploadedSourceAsync(
+        SpaceModelVersion version,
+        SpaceFile file,
+        SpaceSourceUploadWriteTransaction uploadWrites,
+        CancellationToken cancellationToken)
+    {
+        await using var transaction = await uploadWrites.BeginRegistrationAsync(cancellationToken);
+        if (transaction is not null)
+        {
+            context.ChangeTracker.Clear();
+            (version, _) = await LoadWritableVersionAsync(version.Id, cancellationToken);
+        }
+
+        var existing = await context.Sources.SingleOrDefaultAsync(
+            source =>
+                source.ModelVersionId == version.Id &&
+                source.Sha256 == file.Sha256 &&
+                source.SourceType == SpaceSourceType.Excel,
+            cancellationToken);
+        SpaceModelSource source;
+        if (existing is not null)
+        {
+            source = existing;
+            if (source.State == SpaceSourceState.Rejected)
+            {
+                throw Conflict(
+                    "The same Excel source was previously rejected.",
+                    "remove-rejected-source-before-reupload");
+            }
+        }
+        else
+        {
+            source = file.State == SpaceFileState.Clean
+                ? sources.AddFileSource(
+                    version,
+                    file,
+                    SpaceSourceType.Excel,
+                    file.OriginalName)
+                : sources.AddPendingFileSource(
+                    version,
+                    file,
+                    SpaceSourceType.Excel,
+                    file.OriginalName);
+            context.Sources.Add(source);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        if (transaction is not null)
+            await uploadWrites.CommitRegistrationAsync(transaction, cancellationToken);
+        return (source, existing is not null);
     }
 
     public async Task<StartSpaceExcelPreflightResponse> StartAsync(
