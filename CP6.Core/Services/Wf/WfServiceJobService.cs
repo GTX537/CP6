@@ -107,18 +107,12 @@ public sealed class WfServiceJobService : IWfServiceJobService
                 {
                     if (await CommitClaimAsync(job, async current =>
                     {
-                        var payload = SubFlowResumePayload.Parse(current.ActionRefJson);
-                        if (payload is null)
+                        if (!await _engine.TryCompleteSubFlowResumeAsync(current, ct, nowUtc))
                         {
                             current.Status = ServiceJobStatus.Failed;
                             current.LastError = Trunc("E-WF-025 subFlowResume 载荷非法");
+                            current.CompletedAtUtc = nowUtc;
                         }
-                        else
-                        {
-                            await _engine.CheckSubFlowGroupAsync(payload.ParentTokenId, ct);
-                            current.Status = ServiceJobStatus.Succeeded;
-                        }
-                        current.CompletedAtUtc = nowUtc;
                         return true;
                     }, ct)) processed++;
                     continue;
@@ -209,10 +203,7 @@ public sealed class WfServiceJobService : IWfServiceJobService
             if (tenant is not { Enable: true } || tenant.ExpireDate <= DateTime.Now)
                 return false;
 
-            var job = await _db.Wf_ServiceJobs.FromSqlInterpolated($"""
-                SELECT j.* FROM public."Wf_ServiceJob" AS j
-                WHERE j."TenantId" = {tenantId} AND j."Id" = {claimed.Id} FOR UPDATE
-                """).SingleOrDefaultAsync(ct);
+            var job = await LockJobAsync(_db, claimed.Id, ct);
             // PostgreSQL stores timestamps to microsecond precision.
             if (job is null || job.Status != ServiceJobStatus.Running || job.LockedBy != claimed.LockedBy
                 || job.LockedAtUtc?.Ticks / 10 != claimed.LockedAtUtc?.Ticks / 10
@@ -232,6 +223,12 @@ public sealed class WfServiceJobService : IWfServiceJobService
             _db.ChangeTracker.Clear();
         }
     }
+
+    internal static Task<Wf_ServiceJob?> LockJobAsync(CP6Context db, Guid jobId, CancellationToken ct) =>
+        db.Wf_ServiceJobs.FromSqlInterpolated($"""
+            SELECT j.* FROM public."Wf_ServiceJob" AS j
+            WHERE j."TenantId" = {db.CurrentTenantId} AND j."Id" = {jobId} FOR UPDATE
+            """).SingleOrDefaultAsync(ct);
 
     private async Task<bool> CompleteAsync(Wf_ServiceJob job, ServiceTaskResult? result, DateTime nowUtc, CancellationToken ct)
     {
