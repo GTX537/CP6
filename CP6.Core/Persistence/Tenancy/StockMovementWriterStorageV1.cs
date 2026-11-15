@@ -24,6 +24,13 @@ internal static class StockMovementWriterStorageV1
     internal static async Task InstallAsync(NpgsqlConnection connection, NpgsqlTransaction transaction,
         Guid readInstallationId, IReadOnlyCollection<TenantLoginV1> writers, CancellationToken ct = default)
     {
+        var roles = await InstallMovementLayoutAsync(connection, transaction, readInstallationId, writers, ct);
+        await StockMovementFinanceWriterStorageV1.InstallAfterMovementAsync(connection, transaction, writers, roles, ct);
+    }
+
+    internal static async Task<string> InstallMovementLayoutAsync(NpgsqlConnection connection, NpgsqlTransaction transaction,
+        Guid readInstallationId, IReadOnlyCollection<TenantLoginV1> writers, CancellationToken ct = default)
+    {
         var bindings = writers.ToArray();
         var roles = await StockWriteAuthorityFenceV1.PrepareInstallAsync(connection, transaction, readInstallationId,
             bindings, requireFence: true, ct);
@@ -165,6 +172,8 @@ internal static class StockMovementWriterStorageV1
             GRANT EXECUTE ON FUNCTION cp6_stock_movement_writer_v1.record_department(uuid,uuid,uuid,uuid),
                 cp6_stock_movement_writer_v1.record_audit(uuid,uuid,text,timestamp,timestamp,jsonb) TO {{roles}};
             """);
+
+        return roles;
 
         async Task Execute(string sql)
         {
