@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 · W612-01 工单成本结转
+
+正式财务清单的 40 条待接入 HTTP 写入口均有 PostgreSQL 证据。现有 66 条采用共同栅栏、2 条只读、1 条在写前拒绝。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W612-01/DELIVERY.md)
+
 ## 2026-11-15 · W610-01 应收发票和收款
 
 七条应收写入口使用 Main 原生事务。财务清单 65 条已接入，工单成本结转一条待验证。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W610-01/DELIVERY.md)
