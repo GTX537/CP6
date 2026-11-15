@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W626-01
+
+CAD 和 Excel 后台在持有 Main 根、当前作业租约及原 File/Source 时提交新结果。 [交付](../development/evidence/W626-01/DELIVERY.md)
+
 ## 2026-11-15 W625-01
 
 OA 服务作业完成复用 Main 根和原租约，凭证、流程、通知与终态共用 PostgreSQL 事务。 [交付](../development/evidence/W625-01/DELIVERY.md)

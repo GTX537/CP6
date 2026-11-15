@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 W626-01 后续
+
+继续真实 Excel/CAD Apply 批次、CAD 提供者配置、历史刊发父作业和 CRM 消费交接。 [交付](../development/evidence/W626-01/DELIVERY.md)
+
 ## 2026-11-15 W625-01 后续
 
 核对独立 OA 超时动作、提交后子流程内联路径、连接器目标效果以及 Space 和 CRM 剩余正式验收。 [交付](../development/evidence/W625-01/DELIVERY.md)

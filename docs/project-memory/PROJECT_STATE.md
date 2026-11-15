@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W626-01 CAD 与 Excel 后台预览
+
+CAD 预览完成与 Excel 校验问题、预览完成采用共同栅栏。7 项实库覆盖提交顺序和原问题记录恢复。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W626-01/DELIVERY.md)
+
 ## 2026-11-15 W625-01 OA 服务作业完成
 
 凭证续行、流程事实、通知和作业终态在 Main 当前租户与原租约下提交。两种实际顺序通过，暂停后保留原作业。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W625-01/DELIVERY.md)

@@ -1,6 +1,7 @@
 using System.Data;
 using CP6.Core.Persistence;
 using CP6.Space.Application;
+using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -16,7 +17,7 @@ public interface ISpaceArtifactWriteAuthority
 internal sealed class SpaceArtifactWriteTransaction(
     SpaceContext context,
     SpaceJobLease lease,
-    ISpaceFileStore files,
+    ISpaceFileStore? files,
     IDbContextTransaction? transaction,
     ISpaceArtifactWriteAuthority? authority,
     DateTime? expiresAt,
@@ -25,8 +26,18 @@ internal sealed class SpaceArtifactWriteTransaction(
     private readonly List<(Guid FileId, string StorageKey)> _published = [];
     private bool _preservePublished;
 
+    internal static Task<SpaceArtifactWriteTransaction> BeginMetadataAsync(SpaceContext context, SpaceJobLease lease,
+        ISpaceArtifactWriteAuthority? authority, CancellationToken cancellationToken)
+    {
+        if (context.Database.IsNpgsql() && authority is null)
+            throw new SpaceJobProcessingException(SpaceJobFailureKind.Resource, SpaceErrorCodes.JobProcessorUnavailable,
+                "Main authority is unavailable for the source processing write.");
+
+        return BeginAsync(context, lease, null, authority, cancellationToken);
+    }
+
     internal static async Task<SpaceArtifactWriteTransaction> BeginAsync(SpaceContext context, SpaceJobLease lease,
-        ISpaceFileStore files, ISpaceArtifactWriteAuthority? authority, CancellationToken cancellationToken)
+        ISpaceFileStore? files, ISpaceArtifactWriteAuthority? authority, CancellationToken cancellationToken)
     {
         if (!context.Database.IsRelational())
             return new(context, lease, files, null, null, null, null);
@@ -67,8 +78,47 @@ internal sealed class SpaceArtifactWriteTransaction(
 
     internal async Task PublishAsync(Guid fileId, ISpaceQuarantineWriteSession session, CancellationToken cancellationToken)
     {
+        if (files is null)
+            throw new InvalidOperationException("Artifact publication requires private file storage.");
         await session.CommitAsync(cancellationToken);
         _published.Add((fileId, session.StorageKey));
+    }
+
+    internal async Task<SpaceModelSource> LockMetadataSourceAsync(SpaceModelSource input, SpaceFile inputFile,
+        CancellationToken cancellationToken)
+    {
+        if (!context.Database.IsNpgsql())
+            return input;
+
+        // The preceding step may have tracked these rows. Lock and read the current
+        // file before its source, in the same order as the file-state owner.
+        context.ChangeTracker.Clear();
+        var file = await SpaceFileReferenceLock.LoadAsync(context, lease.TenantId, inputFile.Id, includeDeleted: false, cancellationToken);
+        if (file is not { State: SpaceFileState.Clean } || file.Sha256 != inputFile.Sha256 ||
+            file.StorageKey != inputFile.StorageKey || file.SizeBytes != inputFile.SizeBytes)
+        {
+            throw new SpaceJobProcessingException(SpaceJobFailureKind.Security, SpaceErrorCodes.SourceUnsafe,
+                "The current source file is not clean or no longer matches the Job input.");
+        }
+
+        var source = await context.Sources.FromSqlInterpolated($"""
+            SELECT s.* FROM public."Space_ModelSource" AS s
+            WHERE s."TenantId" = {lease.TenantId} AND s."Id" = {input.Id}
+            FOR UPDATE
+            """).SingleOrDefaultAsync(cancellationToken);
+        if (source is null)
+            throw new SpaceJobProcessingException(SpaceJobFailureKind.Input, SpaceErrorCodes.SourceNotFound,
+                "The source is no longer available.");
+        if (source.ModelVersionId != input.ModelVersionId || source.SourceType != input.SourceType ||
+            source.FileId != file.Id || source.Sha256 != input.Sha256 || source.ParserVersion != input.ParserVersion ||
+            source.MappingProfileId != input.MappingProfileId || source.MappingProfileVersion != input.MappingProfileVersion ||
+            source.Unit != input.Unit || source.ScaleToMillimeters != input.ScaleToMillimeters || source.TransformJson != input.TransformJson)
+        {
+            throw new SpaceJobProcessingException(SpaceJobFailureKind.Input, SpaceErrorCodes.SourceUnsafe,
+                "The current source no longer matches the Job input.");
+        }
+
+        return source;
     }
 
     internal async Task CommitAsync(CancellationToken cancellationToken)
@@ -95,7 +145,7 @@ internal sealed class SpaceArtifactWriteTransaction(
         catch (Exception)
         {
             throw new SpaceJobProcessingException(SpaceJobFailureKind.Transient, "SPACE_ARTIFACT_COMMIT_UNKNOWN",
-                "The artifact commit outcome is unknown. A later Job attempt recovers its persisted output.");
+                "The Job write commit outcome is unknown. A later Job attempt recovers its persisted output.");
         }
     }
 
@@ -114,7 +164,7 @@ internal sealed class SpaceArtifactWriteTransaction(
                 {
                     try
                     {
-                        await files.DeleteAsync(lease.TenantId, fileId, storageKey, CancellationToken.None);
+                        await files!.DeleteAsync(lease.TenantId, fileId, storageKey, CancellationToken.None);
                     }
                     catch
                     {
@@ -128,6 +178,9 @@ internal sealed class SpaceArtifactWriteTransaction(
     private static async Task VerifyLeaseAsync(SpaceContext context, SpaceJob job, SpaceJobLease lease,
         CancellationToken cancellationToken)
     {
+        if (job.JobType != lease.JobType || job.SubjectType != lease.SubjectType || job.SubjectId != lease.SubjectId ||
+            job.InputHash != lease.InputHash || job.AttemptCount != lease.AttemptNo)
+            throw new SpaceJobLeaseLostException("The Job no longer matches this worker lease.");
         job.EnsureLease(lease.AttemptId, lease.WorkerId, await DatabaseUtcClock.ReadUtcNowAsync(context, cancellationToken));
         if (job.CancellationRequestedAtUtc.HasValue)
             throw new SpaceJobProcessingException(SpaceJobFailureKind.Transient, "SPACE_ARTIFACT_JOB_CANCEL_PENDING",
