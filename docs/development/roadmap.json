@@ -166037,6 +166037,11 @@
       "at": "2026-11-15T13:20:03.052758+00:00",
       "change": "W613-01 CAD 解析和 Excel/CAD 匹配制品取得 Main 共同根。九项原生并发、故障、到期及原结果恢复通过。",
       "evidence": "docs/development/evidence/W613-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T13:49:03.367410+00:00",
+      "change": "W616-01 独立 FileScan 的开始及结果事务取得 Main 共同根。11 个原生场景复核两种暂停顺序、到期和原结果恢复。",
+      "evidence": "docs/development/evidence/W616-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212043,10 +212048,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W613",
-      "path": "docs/development/evidence/W613-01/DELIVERY.md",
-      "baseline_sha": "c116b38b63388e6e743f058fcba6ddfc4a5c6387",
-      "registered_at": "2026-11-15T12:54:27.008421+00:00",
+      "id": "W616",
+      "path": "docs/development/evidence/W616-01/DELIVERY.md",
+      "baseline_sha": "7e0b771d894de182b94b95888ee4c07e6c5d585f",
+      "registered_at": "2026-11-15T13:26:03.662127+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212060,11 +212065,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Continue the Space file-safety worker and current Finance background and CRM work. PGT-017 remains NOT_RUN until all applicable writers and native evidence are reconciled.",
+      "next_action": "Continue publication effects, linked OA voucher identity, WMS finance retries and CRM direct product adoption, retaining formal PGT-017 NOT_RUN until all native evidence is reconciled.",
       "windows": [
         {
-          "id": "W613-01",
-          "workspace_task": "W613-01",
+          "id": "W616-01",
+          "workspace_task": "W616-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212075,22 +212080,22 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w613-01",
-          "planned_scope_ref": "docs/development/evidence/W613-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W613-01/DELIVERY.md",
+          "branch": "codex/w616-01",
+          "planned_scope_ref": "docs/development/evidence/W616-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W616-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "CAD parse GenerateArtifacts and Excel/CAD MatchPreview native File and Artifact writes",
-            "CP6 Main and Space shared PostgreSQL transaction root",
+            "isolated Space FileScan Begin/Finish and its File, Source, Job/Attempt rows",
+            "CP6 Main shared PostgreSQL authority and existing file lock",
             "DEV-2"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "PostgreSQL 18.6 actual Main with CAD/Match processors and actual private bytes: 9 native orders, rollback, expiry and ack recovery; 106 contracts, 31 related, zero skips; 310 signed-input local publish hashes and 200/401/401",
-          "remaining_scope": "CAD Source finalization, file safety, Excel preflight and apply, historical publish, WMS and runtime activation, Finance cross-module/background and CRM full target Outbox adoption retain separate verification.",
-          "main_tested_source_sha": "aa02a4dd42e5d7f42201d240460b7dc7003b0395"
+          "validation_summary": "11 actual PostgreSQL 18.6 scanner transaction and recovery cases, zero skips; 102 contracts, 10 related native project cases, 8 unit; 310 local publish hashes, actual HTTP 200/401",
+          "remaining_scope": "CAD Source finalization, Excel preflight and Apply, historical publish and runtime WMS activation; Finance background WMS retry and old OA identity issue; CRM target-specific transport adoption. FileScan deploy and real engine qualification are separate from local business acceptance.",
+          "main_tested_source_sha": "4bedb0ba4fd9fbe09bc580f5802541c526ab1007"
         }
       ],
       "storage": {
@@ -268090,6 +268095,67 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W613",
+        "path": "docs/development/evidence/W613-01/DELIVERY.md",
+        "baseline_sha": "c116b38b63388e6e743f058fcba6ddfc4a5c6387",
+        "registered_at": "2026-11-15T12:54:27.008421+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Continue the Space file-safety worker and current Finance background and CRM work. PGT-017 remains NOT_RUN until all applicable writers and native evidence are reconciled.",
+        "windows": [
+          {
+            "id": "W613-01",
+            "workspace_task": "W613-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w613-01",
+            "planned_scope_ref": "docs/development/evidence/W613-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W613-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CAD parse GenerateArtifacts and Excel/CAD MatchPreview native File and Artifact writes",
+              "CP6 Main and Space shared PostgreSQL transaction root",
+              "DEV-2"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "PostgreSQL 18.6 actual Main with CAD/Match processors and actual private bytes: 9 native orders, rollback, expiry and ack recovery; 106 contracts, 31 related, zero skips; 310 signed-input local publish hashes and 200/401/401",
+            "remaining_scope": "CAD Source finalization, file safety, Excel preflight and apply, historical publish, WMS and runtime activation, Finance cross-module/background and CRM full target Outbox adoption retain separate verification.",
+            "main_tested_source_sha": "aa02a4dd42e5d7f42201d240460b7dc7003b0395",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1135",
+            "main_remote_main_sha": "7e0b771d894de182b94b95888ee4c07e6c5d585f"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },

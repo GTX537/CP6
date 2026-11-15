@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W616-01 Space 独立文件扫描
+
+文件扫描开始和完成在原生 PostgreSQL 写事务核对 Main 当前租户与持久租约。11 项实测覆盖暂停的两种顺序、到期、取消和回包丢失。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W616-01/DELIVERY.md)
+
 ## 2026-11-15 W613-01 Space 制品后台
 
 CAD 解析与 Excel/CAD 匹配的 File/Artifact 采用 Main 共同根。两个作业均实测租户暂停的两种原生提交顺序及真实提交应答丢失，Match 另测提交前到期。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W613-01/DELIVERY.md)
