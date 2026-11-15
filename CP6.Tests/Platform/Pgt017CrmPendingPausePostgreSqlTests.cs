@@ -22,6 +22,14 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     public Task PGT017_legacy_pause_retains_original_when_first_CRM_connection_fails()
         => InquiryProducerHttp("configuration:write", crossDatabasePause: true, pendingPause: "legacy");
 
+    [Pgt017MainFact]
+    public Task PGT017_versioned_deadline_retains_original_when_first_CRM_connection_fails()
+        => InquiryProducerHttp("configuration:write", crossDatabasePause: true, pendingPause: "deadline-versioned");
+
+    [Pgt017MainFact]
+    public Task PGT017_legacy_deadline_retains_original_when_first_CRM_connection_fails()
+        => InquiryProducerHttp("configuration:write", crossDatabasePause: true, pendingPause: "deadline-legacy");
+
     private async Task<PendingPauseServiceProbe> ConfigurePendingPauseService(Harness target, InquiryPermissionSigningOptionsV1 options,
         Dictionary<string, string> environment)
     {
@@ -90,8 +98,14 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         using var current = await host.Send(Request(HttpMethod.Get, management, manager));
         Assert.Equal(HttpStatusCode.OK, current.StatusCode);
         var initial = (await current.Content.ReadFromJsonAsync<TenantManagementSnapshotV1>())!;
-        var command = new TenantManagementCommandV1("pgt017-pending-pause", initial.Revision, "suspend", null);
-        var legacy = mode == "legacy";
+        var deadline = mode is "deadline-versioned" or "deadline-legacy";
+        var legacy = mode is "legacy" or "deadline-legacy";
+        var changedExpiry = DateTime.SpecifyKind(DateTime.Today.AddDays(-1).AddTicks(1234560), DateTimeKind.Unspecified);
+        var update = new TenantConfigurationV1(legacy ? string.Concat(Enumerable.Repeat("\U0001F69A", 100)) : "deadline updated",
+            legacy ? changedExpiry.AddTicks(7) : changedExpiry, "original deadline request ", "UTC");
+        var command = deadline
+            ? new TenantManagementCommandV1("pgt017-pending-deadline", initial.Revision, "update", update)
+            : new TenantManagementCommandV1("pgt017-pending-pause", initial.Revision, "suspend", null);
         var before = await Effects();
         var seal = new NpgsqlConnectionStringBuilder(Environment.GetEnvironmentVariable("CP6_PGT017_SEAL_CONNECTION"));
         await using var crm = new NpgsqlConnection(Environment.GetEnvironmentVariable("CP6_PGT017_CRM_OBSERVER"));
@@ -100,7 +114,12 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Assert.Equal(seal.Database, crm.Database);
         Assert.Equal(crm.Port, seal.Port);
         Assert.Equal("w649_main_seal", seal.Username);
-        var closedBefore = await ClosedVersion();
+        var boundaryBefore = await BoundaryVersion();
+        var sourceVersion = await target.Db.CrmIdentitySnapshots.Where(row =>
+                row.TenantId == target.Tenant && row.AggregateId == "tenant:" + target.Tenant.ToString("D"))
+            .Select(row => row.Version).SingleAsync();
+        var boundaryAfter = deadline ? sourceVersion + 1 : boundaryBefore + 1;
+        var receiverBefore = deadline ? await ReceiverRevision() : 0L;
         using var originalPermission = await Project(host, permission with { Purpose = "intake:release" });
         Assert.Equal(HttpStatusCode.OK, originalPermission.StatusCode);
         using var originalService = await ServiceProject(host);
@@ -112,10 +131,18 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             await using var denied = new NpgsqlConnection(seal.ConnectionString);
             var loginFailure = await Assert.ThrowsAsync<PostgresException>(() => denied.OpenAsync());
             Assert.Equal(PostgresErrorCodes.InvalidAuthorizationSpecification, loginFailure.SqlState);
-            using var failed = await Suspend(host, manager);
+            if (deadline && !legacy)
+            {
+                using var invalid = await Apply(host, manager, update with { TimeZoneId = "CP6/not-a-time-zone" });
+                Assert.Equal(HttpStatusCode.BadRequest, invalid.StatusCode);
+                Assert.Equal("E-WF-028", await Error(invalid));
+                Assert.Equal("", await Intent());
+                Assert.Equal(before, await Effects());
+            }
+            using var failed = await Apply(host, manager);
             Assert.Equal(HttpStatusCode.ServiceUnavailable, failed.StatusCode);
             Assert.Equal("AUTHORITY_FENCE_UNAVAILABLE", await Error(failed));
-            Assert.Equal(closedBefore, await ClosedVersion());
+            Assert.Equal(boundaryBefore, await BoundaryVersion());
             Assert.Equal(before, await Effects());
             await RequireNoNewFence(host);
             await RequirePendingRead(host, manager);
@@ -124,7 +151,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             Assert.Equal(admin.ActorId, pending.RootElement.GetProperty("actor_id").GetGuid());
             Assert.Equal(initial.Revision, pending.RootElement.GetProperty("expected_revision").GetInt64());
             Assert.Equal(Guid.Parse(Environment.GetEnvironmentVariable("CP6_PGT017_STORE_ID")!), pending.RootElement.GetProperty("store_id").GetGuid());
-            Assert.Equal(closedBefore + 1, pending.RootElement.GetProperty("source_version").GetInt32());
+            Assert.Equal(sourceVersion, pending.RootElement.GetProperty("source_version").GetInt32());
             Assert.Equal(legacy, pending.RootElement.GetProperty("is_legacy").GetBoolean());
 
             var pid = host.ProcessId;
@@ -142,30 +169,46 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             using var other = await restarted.Send(Request(HttpMethod.Post, management + "/commands", currentManager,
                 command with { OperationRef = "other-pause" }));
             Assert.Equal(HttpStatusCode.Conflict, other.StatusCode);
-            using var wrongActor = await Suspend(restarted, otherManager);
+            using var wrongActor = await Apply(restarted, otherManager);
             Assert.Equal(HttpStatusCode.Forbidden, wrongActor.StatusCode);
             using var reactivation = await restarted.Send(Request(HttpMethod.Post, path + "/reactivate", currentManager));
             Assert.Equal(HttpStatusCode.Conflict, reactivation.StatusCode);
             using var changed = await restarted.Send(Request(HttpMethod.Put, path, currentManager,
                 new { Name = "conflicting revision", Expire = initial.ExpireDate }));
             Assert.Equal(HttpStatusCode.Conflict, changed.StatusCode);
+            if (deadline)
+            {
+                var differentInput = update with { Remark = "different request" };
+                using var conflict = await Apply(restarted, currentManager, differentInput);
+                Assert.Equal(HttpStatusCode.Conflict, conflict.StatusCode);
+                Assert.Equal("TENANT_OPERATION_CONFLICT", await Error(conflict));
+                if (!legacy)
+                {
+                    using var stale = await restarted.Send(Request(HttpMethod.Post, management + "/commands", currentManager,
+                        command with { ExpectedRevision = initial.Revision + 1 }));
+                    Assert.Equal(HttpStatusCode.PreconditionFailed, stale.StatusCode);
+                    Assert.Equal("TENANT_VERSION_CHANGED", await Error(stale));
+                }
+            }
             var native = await Assert.ThrowsAsync<PostgresException>(() => target.Db.Database.ExecuteSqlInterpolatedAsync($"""
                 UPDATE public."Sys_Tenants" SET "Enable"=false WHERE "Id"={target.Tenant}
                 """));
             Assert.Equal("TENANT_SUSPENSION_PENDING", native.MessageText);
             Assert.Equal(before, await Effects());
-            Assert.Equal(closedBefore, await ClosedVersion());
+            Assert.Equal(boundaryBefore, await BoundaryVersion());
             Assert.Equal(originalIntent, await Intent());
 
             await SealLogin(true);
             if (sealAck is not null)
             {
                 sealAck.Arm();
-                using var unconfirmed = await Suspend(restarted, currentManager);
+                using var unconfirmed = await Apply(restarted, currentManager);
                 await sealAck.Dropped.WaitAsync(TimeSpan.FromSeconds(8));
                 Assert.Equal(HttpStatusCode.ServiceUnavailable, unconfirmed.StatusCode);
                 Assert.Equal("AUTHORITY_FENCE_UNAVAILABLE", await Error(unconfirmed));
-                Assert.Equal(closedBefore + 1, await ClosedVersion());
+                Assert.Equal(boundaryAfter, await BoundaryVersion());
+                if (deadline)
+                    Assert.Equal(receiverBefore + 1, await ReceiverRevision());
                 Assert.Equal(before, await Effects());
                 Assert.Equal(originalIntent, await Intent());
                 await RequirePendingRead(restarted, currentManager);
@@ -182,7 +225,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 Assert.Equal(1, await hold.ExecuteScalarAsync());
                 await using var observer = new NpgsqlConnection(target.Db.Database.GetConnectionString());
                 await observer.OpenAsync();
-                var completion = Suspend(restarted, currentManager);
+                var completion = Apply(restarted, currentManager);
                 try
                 {
                     await WaitForMainBlock(observer, barrier.ProcessID, "%UPDATE%Sys_Tenants%", completion);
@@ -193,43 +236,142 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 await mainAck.Dropped.WaitAsync(TimeSpan.FromSeconds(8));
                 Assert.Equal(HttpStatusCode.ServiceUnavailable, unconfirmed.StatusCode);
                 Assert.Equal("TENANT_OUTCOME_UNKNOWN", await Error(unconfirmed));
-                using var known = await restarted.Send(Request(HttpMethod.Post, management + "/commands/read", currentManager, new { command.OperationRef }));
+                var committed = await Effects();
+                using var known = legacy
+                    ? await Apply(restarted, currentManager)
+                    : await restarted.Send(Request(HttpMethod.Post, management + "/commands/read", currentManager, new { command.OperationRef }));
                 Assert.Equal(HttpStatusCode.OK, known.StatusCode);
                 receipt = await known.Content.ReadAsStringAsync();
+                Assert.Equal(committed, await Effects());
             }
             else
             {
-                using var completed = await Suspend(restarted, currentManager);
+                using var completed = await Apply(restarted, currentManager);
                 Assert.True(completed.StatusCode == HttpStatusCode.OK, await completed.Content.ReadAsStringAsync());
                 receipt = await completed.Content.ReadAsStringAsync();
             }
             var after = await Effects();
             Assert.NotEqual(before, after);
-            Assert.Equal(closedBefore + 1, await ClosedVersion());
+            Assert.Equal(boundaryAfter, await BoundaryVersion());
             Assert.Equal("", await Intent());
             using var final = await restarted.Send(Request(HttpMethod.Get, management, currentManager));
             Assert.Equal(HttpStatusCode.OK, final.StatusCode);
-            var disabled = (await final.Content.ReadFromJsonAsync<TenantManagementSnapshotV1>())!;
-            Assert.False(disabled.Enable);
-            Assert.Equal(initial.Revision + 1, disabled.Revision);
-            using var replay = await Suspend(restarted, currentManager);
+            var result = (await final.Content.ReadFromJsonAsync<TenantManagementSnapshotV1>())!;
+            Assert.Equal(deadline, result.Enable);
+            Assert.Equal(initial.Revision + 1, result.Revision);
+            if (deadline)
+            {
+                Assert.Equal((update.Name, (DateTime?)changedExpiry, update.Remark, update.TimeZoneId),
+                    (result.TenantName, result.ExpireDate, result.Remark, result.TimeZoneId));
+                Assert.Equal(receiverBefore + 1, await ReceiverRevision());
+                using var beforeJson = JsonDocument.Parse(before);
+                using var afterJson = JsonDocument.Parse(after);
+                var old = beforeJson.RootElement;
+                var currentEffects = afterJson.RootElement;
+                Assert.NotEqual(old[1].GetGuid(), currentEffects[1].GetGuid());
+                Assert.Equal(old[3].GetInt32() + 1, currentEffects[3].GetInt32());
+                Assert.Equal(old[4].GetInt32() + 1, currentEffects[4].GetInt32());
+                Assert.Equal(sourceVersion + 1, currentEffects[5].GetInt32());
+                Assert.Equal(old[6].GetInt32(), currentEffects[6].GetInt32());
+                Assert.Equal(old[7].GetInt32() + 1, currentEffects[7].GetInt32());
+            }
+            using var replay = await Apply(restarted, currentManager);
             Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
             Assert.Equal(receipt, await replay.Content.ReadAsStringAsync());
-            if (legacy)
+            if (legacy && !deadline)
             {
-                using var alreadyDisabled = await Suspend(restarted, otherManager);
+                using var alreadyDisabled = await Apply(restarted, otherManager);
                 Assert.Equal(HttpStatusCode.OK, alreadyDisabled.StatusCode);
                 Assert.Equal(receipt, await alreadyDisabled.Content.ReadAsStringAsync());
             }
             Assert.Equal(after, await Effects());
             await File.WriteAllTextAsync(Path.Combine(bridge, "paused"), "PASS");
             await WaitConfigurationBridge(bridge, "finished");
+            if (deadline)
+            {
+                // A new request at the same PostgreSQL timestamp can still update other fields during
+                // a seal-connection outage. The legacy request uses different raw 100ns input.
+                await SealLogin(false);
+                var noDeadlineChange = update with
+                {
+                    ExpireDate = legacy ? changedExpiry.AddTicks(3) : changedExpiry,
+                    Remark = "same persisted deadline",
+                };
+                using var noEffect = legacy
+                    ? await Apply(restarted, currentManager, noDeadlineChange)
+                    : await restarted.Send(Request(HttpMethod.Post, management + "/commands", currentManager,
+                        new TenantManagementCommandV1("pgt017-same-deadline", result.Revision, "update", noDeadlineChange)));
+                Assert.Equal(HttpStatusCode.OK, noEffect.StatusCode);
+                Assert.Equal("", await Intent());
+                Assert.Equal(boundaryAfter, await BoundaryVersion());
+                var noDeadlineEffect = await Effects();
+                using var sameBefore = JsonDocument.Parse(after);
+                using var sameAfter = JsonDocument.Parse(noDeadlineEffect);
+                Assert.Equal(sameBefore.RootElement[1].GetGuid(), sameAfter.RootElement[1].GetGuid());
+                Assert.Equal(sameBefore.RootElement[5].GetInt32(), sameAfter.RootElement[5].GetInt32());
+                Assert.Equal(sameBefore.RootElement[7].GetInt32(), sameAfter.RootElement[7].GetInt32());
+                var receiverAfter = await ReceiverRevision();
+                Assert.Equal(receiverBefore + 1, receiverAfter);
+
+                TenantManagementSnapshotV1? cleared = null;
+                TenantManagementSnapshotV1? disabledUpdate = null;
+                if (!legacy)
+                {
+                    await SealLogin(true);
+                    var clear = new TenantManagementCommandV1("pgt017-clear-deadline", sameAfter.RootElement[2].GetInt64(), "update",
+                        noDeadlineChange with { ExpireDate = null });
+                    cleared = await ExecuteCommand(clear);
+                    Assert.True(cleared.Enable);
+                    Assert.Null(cleared.ExpireDate);
+                    Assert.Equal(boundaryAfter + 1, await BoundaryVersion());
+                    Assert.Equal(receiverBefore + 2, await ReceiverRevision());
+
+                    var blocked = await ExecuteCommand(new("pgt017-suspend-before-deadline-update", cleared.Revision, "suspend", null));
+                    Assert.False(blocked.Enable);
+                    var closedRevision = await ReceiverRevision();
+                    var closedThrough = await ClosedDeadlineBoundary();
+                    Assert.Equal(boundaryAfter + 1, closedThrough);
+                    await SealLogin(false);
+                    disabledUpdate = await ExecuteCommand(new("pgt017-update-disabled-deadline", blocked.Revision, "update",
+                        noDeadlineChange with { ExpireDate = changedExpiry.AddDays(10) }));
+                    Assert.False(disabledUpdate.Enable);
+                    Assert.Equal(changedExpiry.AddDays(10), disabledUpdate.ExpireDate);
+                    Assert.Equal(closedThrough, await ClosedDeadlineBoundary());
+                    Assert.Equal(closedRevision, await ReceiverRevision());
+                    Assert.Equal("", await Intent());
+                }
+
+                async Task<TenantManagementSnapshotV1> ExecuteCommand(TenantManagementCommandV1 commandToRun)
+                {
+                    using var response = await restarted.Send(Request(HttpMethod.Post, management + "/commands", currentManager, commandToRun));
+                    Assert.True(response.StatusCode == HttpStatusCode.OK, await response.Content.ReadAsStringAsync());
+                    return (await response.Content.ReadFromJsonAsync<TenantManagementReceiptV1>())!.Snapshot;
+                }
+
+                await File.WriteAllTextAsync(Path.Combine(bridge, mode + "-facts.json"), JsonSerializer.Serialize(new
+                {
+                    Initial = initial, Result = result, Requested = update, SourceVersion = sourceVersion, BoundaryBefore = boundaryBefore,
+                    BoundaryAfter = boundaryAfter, ReceiverBefore = receiverBefore, ReceiverAfter = receiverAfter,
+                    Intent = originalIntent, Before = before, After = after, SameDeadline = noDeadlineEffect,
+                    Cleared = cleared, DisabledUpdate = disabledUpdate,
+                    PreviousPid = pid, RecoveredPid = restarted.ProcessId, CrmAcknowledgementLost = sealAck is not null,
+                    MainAcknowledgementLost = mainAck is not null,
+                }));
+            }
         }
         finally { await SealLogin(true); }
 
-        Task<HttpResponseMessage> Suspend(AuthenticationApiProcess api, Dictionary<string, string> cookies) => legacy
-            ? api.Send(Request(HttpMethod.Post, path + "/suspend", cookies))
-            : api.Send(Request(HttpMethod.Post, management + "/commands", cookies, command));
+        Task<HttpResponseMessage> Apply(AuthenticationApiProcess api, Dictionary<string, string> cookies, TenantConfigurationV1? differentInput = null)
+        {
+            if (!legacy)
+                return api.Send(Request(HttpMethod.Post, management + "/commands", cookies,
+                    differentInput is null ? command : command with { Configuration = differentInput }));
+            if (!deadline)
+                return api.Send(Request(HttpMethod.Post, path + "/suspend", cookies));
+            var input = differentInput ?? update;
+            return api.Send(Request(HttpMethod.Put, path, cookies,
+                new { input.Name, Expire = input.ExpireDate, input.Remark, input.TimeZoneId }));
+        }
 
         async Task RequireNoNewFence(AuthenticationApiProcess api)
         {
@@ -285,11 +427,32 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         static async Task<string?> Error(HttpResponseMessage response)
             => (await response.Content.ReadFromJsonAsync<System.Text.Json.JsonElement>()).GetProperty("code").GetString();
 
-        async Task<int> ClosedVersion()
+        async Task<int> BoundaryVersion()
         {
-            await using var query = new NpgsqlCommand("SELECT closed_through FROM crm_inquiry_tenant_pause_v1.fences WHERE tenant_id=@tenant", crm);
+            await using var query = new NpgsqlCommand(deadline
+                ? "SELECT reopened_at FROM crm_inquiry_tenant_pause_v1.fences WHERE tenant_id=@tenant"
+                : "SELECT closed_through FROM crm_inquiry_tenant_pause_v1.fences WHERE tenant_id=@tenant", crm);
             query.Parameters.AddWithValue("tenant", target.Tenant);
             return Assert.IsType<int>(await query.ExecuteScalarAsync());
+        }
+
+        async Task<int> ClosedDeadlineBoundary()
+        {
+            await using var query = new NpgsqlCommand("""
+                SELECT closed_through FROM crm_inquiry_tenant_pause_v1.fences
+                WHERE tenant_id=@tenant AND reopened_at IS NULL
+                """, crm);
+            query.Parameters.AddWithValue("tenant", target.Tenant);
+            return Assert.IsType<int>(await query.ExecuteScalarAsync());
+        }
+
+        async Task<long> ReceiverRevision()
+        {
+            await using var query = new NpgsqlCommand("""
+                SELECT "Revision" FROM crm_auth."IdentityFenceV1" WHERE "TenantId"=@tenant
+                """, crm);
+            query.Parameters.AddWithValue("tenant", target.Tenant);
+            return Assert.IsType<long>(await query.ExecuteScalarAsync());
         }
 
         async Task SealLogin(bool enabled)

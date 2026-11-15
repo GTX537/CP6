@@ -346,7 +346,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         environment["InquiryPermissionSigning__PublicKeyBase64"] = options.PublicKeyBase64;
         environment["InquiryPermissionSigning__ActiveFromUtc"] = options.ActiveFromUtc.ToString("O");
         var connection = new NpgsqlConnectionStringBuilder(h.Db.Database.GetConnectionString());
-        await using var mainAck = pendingPause == "versioned" ? new StockPostgresCommitRelay(connection.Port, connection.Username!,
+        await using var mainAck = pendingPause is "versioned" or "deadline-versioned" or "deadline-legacy" ? new StockPostgresCommitRelay(connection.Port, connection.Username!,
             int.Parse(Environment.GetEnvironmentVariable("CP6_PGT017_MAIN_ACK_PORT")!)) : null;
         if (mainAck is not null)
         {
@@ -354,7 +354,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             connection.SslMode = SslMode.Disable;
         }
         var sealConnection = new NpgsqlConnectionStringBuilder(Environment.GetEnvironmentVariable("CP6_PGT017_SEAL_CONNECTION"));
-        await using var sealAck = pendingPause == "versioned" ? new StockPostgresCommitRelay(sealConnection.Port, sealConnection.Username!,
+        await using var sealAck = pendingPause is "versioned" or "deadline-versioned" or "deadline-legacy" ? new StockPostgresCommitRelay(sealConnection.Port, sealConnection.Username!,
             int.Parse(Environment.GetEnvironmentVariable("CP6_PGT017_CRM_ACK_PORT")!)) : null;
         if (sealAck is not null)
         {
