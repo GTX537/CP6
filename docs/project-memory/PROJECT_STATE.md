@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W641-01 旧 OA 父流程续行
+
+通过原已提交工作项和当前 Main 栅栏处理父流程、原记录及 Outbox。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W641-01/DELIVERY.md)
+
 ## 2026-11-15 W643-01 出库到 ERP 的原回写
 
 原真实出库、回写意图、ERP 同事务结果及暂停两序和未知应答恢复均已核对。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W643-01/DELIVERY.md)

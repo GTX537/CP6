@@ -62,9 +62,13 @@ public class TaskController : ControllerBase
         }
         catch (InvalidOperationException e) { return Err(e); }
 
-        // The parent may run callbacks or external tasks. Resume from the committed work item.
+        // The original withdrawal has committed. The same work item recovers an interrupted continuation.
         try { await _svc.ResumeAfterWithdrawalAsync(); }
-        catch (InvalidOperationException e) { return Err(e); }
+        catch (Exception error) when (error is DbException or DbUpdateException or InvalidOperationException)
+        {
+            HttpContext.RequestServices.GetRequiredService<ILogger<TaskController>>()
+                .LogWarning(error, "Committed withdrawal {InstanceId} did not return a continuation result.", id);
+        }
         return Ok2();
     }
 }
