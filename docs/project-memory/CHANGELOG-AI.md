@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 · W610-01
+
+登记应收七条原生写栅栏、同租户归属、晚失败及原红字凭证恢复。 [交付记录](../development/evidence/W610-01/DELIVERY.md)
+
 ## 2026-11-15 · W609-01
 
 登记 Excel/CAD 匹配启动、确认和补偿的共同栅栏与原键回读。 [交付记录](../development/evidence/W609-01/DELIVERY.md)

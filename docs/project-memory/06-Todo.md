@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 · W610-01 财务后续
+
+实际验证工单成本结转和 WMS、采购、MES 等后台或跨域财务写者。 [交付记录](../development/evidence/W610-01/DELIVERY.md)
+
 ## 2026-11-15 · W609-01 Space 后台余项
 
 继续制品提交应答恢复、映射、实际 Scan/Apply、刊发执行和 WMS 激活。 [交付记录](../development/evidence/W609-01/DELIVERY.md)
