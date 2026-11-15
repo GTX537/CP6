@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 W650-01 后续
+
+继续 Space 草稿采纳、编码和模板登记、刊发失败终态，及 Main 对 CRM 封存前网络故障的恢复。 [交付](../development/evidence/W650-01/DELIVERY.md)
+
 ## 2026-11-15 W648-01 后续
 
 继续前三路登记以外的前台规划预约、清单内 Space 写者和 Main 在 CRM 不可达时的停签恢复。 [交付](../development/evidence/W648-01/DELIVERY.md)
