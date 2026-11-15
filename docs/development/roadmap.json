@@ -166192,6 +166192,11 @@
       "at": "2026-11-15T22:59:03.776763+00:00",
       "change": "W661-01 将原 CRM OIDC 登录族的 Main 已接受退出持久保存，实际 CRM 受理共享原生事务门，支持原族跨重启及双库应答遗失恢复；正式 26 PASS / 1 NOT_RUN。",
       "evidence": "docs/development/evidence/W661-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T23:18:34.913238+00:00",
+      "change": "W663-01 为实际设备状态监控加入 Main PostgreSQL 共同根，验证业务先与暂停先两序并保持原设备并发版本，正式 26 PASS / 1 NOT_RUN。",
+      "evidence": "docs/development/evidence/W663-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212198,10 +212203,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W661",
-      "path": "docs/development/evidence/W661-01/DELIVERY.md",
-      "baseline_sha": "d1694c06a7947c139791971e93f3bc0ffb24d0bb",
-      "registered_at": "2026-11-15T21:51:58.186550+00:00",
+      "id": "W663",
+      "path": "docs/development/evidence/W663-01/DELIVERY.md",
+      "baseline_sha": "b6f31a5c393b5040854db2ee94a8602e9e1b9e20",
+      "registered_at": "2026-11-15T23:03:23.966668+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212215,11 +212220,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "完成已启动的部门撤权恢复与故障验收，接续补齐剩余登记权威和后台写者。",
+      "next_action": "按剩余已确认写者继续，先完成在途部门验收和准备全局菜单的真实多目标基线。",
       "windows": [
         {
-          "id": "W661-01",
-          "workspace_task": "W661-01",
+          "id": "W663-01",
+          "workspace_task": "W663-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212230,26 +212235,26 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w661-01",
-          "planned_scope_ref": "docs/development/evidence/W661-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W661-01/DELIVERY.md",
+          "branch": "codex/w663-01",
+          "planned_scope_ref": "docs/development/evidence/W663-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W663-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "CP6 PostgreSQL authentication root and CRM OIDC family recovery",
-            "Exact Main signer, C02 token writer, and registered CRM native identity transaction",
+            "CP6 actual MachineStatusMonitor and Main PostgreSQL authentication root",
+            "M_Machine original worker state and signed tenant pause",
             "DEV-2 / 57260-57279"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "PostgreSQL 18.6 实际 Main/CRM，37 项通过、零跳过。真实 BFF、首次专用连接拒绝与 Main 重启、各库真实 COMMIT 应答遗失、实际受理两序、同源续票及既有未登记流。375 文件源码绑定本地发布，原生新库迁移、HTTP 200/200/401。",
+          "validation_summary": "两种真实 Main PostgreSQL 18.6 提交顺序和原设备写并发回归三项通过、无跳过。真实基线两序失败。310 文件本地发布，三入口程序集匹配，新库启动及 HTTP 200/401。",
           "remaining_scope": [
-            "部门变更和全局 MenuKey 的实际权威恢复",
-            "普通网页及原生会话终止、凭证变更新写签发",
-            "剩余后台写者和 PGT-017 按完整实际清单正式核对"
+            "W662 已启动的部门原命令恢复与人类/服务签发",
+            "全局菜单多 Store 扇出及普通 Web 退出等现行会话/凭证权威",
+            "PGT-017 按完整已登记真实写者正式复核"
           ],
-          "main_tested_source_sha": "8e418614ba0bfe35f758353778ff3b7429fc7fef"
+          "main_tested_source_sha": "660e5f853228805ca49c2f5c956cead63f094d2c"
         }
       ],
       "storage": {
@@ -270177,6 +270182,71 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W661",
+        "path": "docs/development/evidence/W661-01/DELIVERY.md",
+        "baseline_sha": "d1694c06a7947c139791971e93f3bc0ffb24d0bb",
+        "registered_at": "2026-11-15T21:51:58.186550+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "完成已启动的部门撤权恢复与故障验收，接续补齐剩余登记权威和后台写者。",
+        "windows": [
+          {
+            "id": "W661-01",
+            "workspace_task": "W661-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w661-01",
+            "planned_scope_ref": "docs/development/evidence/W661-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W661-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CP6 PostgreSQL authentication root and CRM OIDC family recovery",
+              "Exact Main signer, C02 token writer, and registered CRM native identity transaction",
+              "DEV-2 / 57260-57279"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "PostgreSQL 18.6 实际 Main/CRM，37 项通过、零跳过。真实 BFF、首次专用连接拒绝与 Main 重启、各库真实 COMMIT 应答遗失、实际受理两序、同源续票及既有未登记流。375 文件源码绑定本地发布，原生新库迁移、HTTP 200/200/401。",
+            "remaining_scope": [
+              "部门变更和全局 MenuKey 的实际权威恢复",
+              "普通网页及原生会话终止、凭证变更新写签发",
+              "剩余后台写者和 PGT-017 按完整实际清单正式核对"
+            ],
+            "main_tested_source_sha": "8e418614ba0bfe35f758353778ff3b7429fc7fef",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1181",
+            "main_remote_main_sha": "b6f31a5c393b5040854db2ee94a8602e9e1b9e20"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },
