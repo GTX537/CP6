@@ -165942,6 +165942,11 @@
       "at": "2026-11-15T06:30:19.088470+00:00",
       "change": "W593-01 将 Space Design 楼层、元素、布局和资产事务接入 Main 权限栅栏，实测 9 个 PostgreSQL 竞争场景；正式仍为 26/27。",
       "evidence": "docs/development/evidence/W593-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T08:39:03.327260+00:00",
+      "change": "W594-01 来源挂接及移除、编辑租约取得/续约/释放/接管共 6 路径采用 Main 当前事务权限，正式仍为 26/27。",
+      "evidence": "docs/development/evidence/W594-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211948,10 +211953,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W593",
-      "path": "docs/development/evidence/W593-01/DELIVERY.md",
-      "baseline_sha": "15dbd1adb872b31e0f11fd2d75d0e8d839d7176b",
-      "registered_at": "2026-11-15T06:14:14.214538+00:00",
+      "id": "W594",
+      "path": "docs/development/evidence/W594-01/DELIVERY.md",
+      "baseline_sha": "af3ea2a8aa9fa6b3f7c06b5247fc8cbc42ddcaca",
+      "registered_at": "2026-11-15T08:21:22.345055+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211965,11 +211970,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "沿 Space 原事务继续核对来源、租约、版本与模板等入口，并推进 CRM 多租户恢复和切换。",
+      "next_action": "在版本真实预留、模板启动和回执阶段继续接到已有栅栏，并收录财务写者调查的实际分组和证据。",
       "windows": [
         {
-          "id": "W593-01",
-          "workspace_task": "W593-01",
+          "id": "W594-01",
+          "workspace_task": "W594-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -211980,22 +211985,23 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w593-01",
-          "planned_scope_ref": "docs/development/evidence/W593-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W593-01/DELIVERY.md",
+          "branch": "codex/w594-01",
+          "planned_scope_ref": "docs/development/evidence/W594-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W594-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:SpaceDesignV1",
+            "Main:SpaceDesignV1-Source",
+            "Main:SpaceDesignV1-EditLease",
             "Main:IAM-CurrentWriteAuthority",
             "Local:PostgreSQL-HTTP"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "68/68，9 项实际 PostgreSQL、59 项相关组件。楼层、元素、布局和资产均通过双向竞争，单独角色动作撤销无新效果。本地 310 个文件哈希及 HTTP 核验。",
-          "remaining_scope": "Space 其余实际写者、财务和全量写者清单，CRM 全登记租户对账及受控恢复切换。",
-          "main_tested_source_sha": "d03b1f7c381286e6e70abc8f88381a9bb7108297"
+          "validation_summary": "82/82，23 项实际 PostgreSQL、59 项组件。6 路径两种提交顺序及上传和接管的第二项动作权限撤销通过。310 文件 SHA-256 和发布冒烟。",
+          "remaining_scope": "Space 版本、模板内部租约及其他来源/底图、剩余财务和全写者登记；CRM 多租户完整恢复与受控切换。",
+          "main_tested_source_sha": "be633749701eade262129f80f2dc70f8f5b7108d"
         }
       ],
       "storage": {
@@ -266771,6 +266777,67 @@
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018",
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W593",
+        "path": "docs/development/evidence/W593-01/DELIVERY.md",
+        "baseline_sha": "15dbd1adb872b31e0f11fd2d75d0e8d839d7176b",
+        "registered_at": "2026-11-15T06:14:14.214538+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "沿 Space 原事务继续核对来源、租约、版本与模板等入口，并推进 CRM 多租户恢复和切换。",
+        "windows": [
+          {
+            "id": "W593-01",
+            "workspace_task": "W593-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w593-01",
+            "planned_scope_ref": "docs/development/evidence/W593-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W593-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:SpaceDesignV1",
+              "Main:IAM-CurrentWriteAuthority",
+              "Local:PostgreSQL-HTTP"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "68/68，9 项实际 PostgreSQL、59 项相关组件。楼层、元素、布局和资产均通过双向竞争，单独角色动作撤销无新效果。本地 310 个文件哈希及 HTTP 核验。",
+            "remaining_scope": "Space 其余实际写者、财务和全量写者清单，CRM 全登记租户对账及受控恢复切换。",
+            "main_tested_source_sha": "d03b1f7c381286e6e70abc8f88381a9bb7108297",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1101",
+            "main_remote_main_sha": "af3ea2a8aa9fa6b3f7c06b5247fc8cbc42ddcaca"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },
