@@ -442,7 +442,8 @@ public partial class FlowEngine : IFlowEngine
                 await FastPathSubFlowResumeAsync();   // ★ 子流程 fast path（服务任务恢复触达子终态时收敛；内部吞并发冲突不触外层重试）
                 return;
             }
-            catch (DbUpdateConcurrencyException) when (attempt < 2)
+            catch (DbUpdateConcurrencyException) when (attempt < 2
+                && (!_db.Database.IsNpgsql() || _db.Database.CurrentTransaction is null))
             {
                 foreach (var e in _db.ChangeTracker.Entries().ToList()) await e.ReloadAsync();
             }
@@ -483,7 +484,8 @@ public partial class FlowEngine : IFlowEngine
                 await FastPathSubFlowResumeAsync();   // ★ 子流程 fast path（服务任务失败路由触达子终态时收敛；同上）
                 return;
             }
-            catch (DbUpdateConcurrencyException) when (attempt < 2)
+            catch (DbUpdateConcurrencyException) when (attempt < 2
+                && (!_db.Database.IsNpgsql() || _db.Database.CurrentTransaction is null))
             {
                 foreach (var e in _db.ChangeTracker.Entries().ToList()) await e.ReloadAsync();
             }
