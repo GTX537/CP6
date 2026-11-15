@@ -3305,7 +3305,10 @@ public sealed class SpaceDesignV1Service :
                     new SpaceVersionCloneRequest(
                         model.Id,
                         name,
-                        OperationId(keyHash)),
+                        OperationId(keyHash))
+                    {
+                        ExpectedSourceVersionId = normalizedRequest.BasedOnVersionId,
+                    },
                     cancellationToken);
                 startedVersionId = started.ModelVersionId;
                 startedJobId = started.JobId;
@@ -3386,6 +3389,9 @@ public sealed class SpaceDesignV1Service :
                      .ThenBy(candidate => candidate.Key))
         {
             _context.ChangeTracker.Clear();
+            var floorKey = $"template-floor:{versionKeyHash}:{templateFloor.Key}";
+            if (Encoding.UTF8.GetByteCount(floorKey) > 128)
+                floorKey = $"template-floor-hash:{Hash(floorKey)}";
             var existingFloor = await _context.FloorRevisions
                 .AsNoTracking()
                 .SingleOrDefaultAsync(
@@ -3409,17 +3415,21 @@ public sealed class SpaceDesignV1Service :
                         templateFloor.Elevation,
                         templateFloor.Height,
                         contentRevision),
-                    $"template-floor:{versionKeyHash}:{templateFloor.Key}",
+                    floorKey,
                     cancellationToken);
                 floorLogicalId = floorResult.Floor.Revision.LogicalId;
             }
             else
             {
+                var floorOperation = $"create-floor:{versionId:D}";
+                var receipt = await FindIdempotencyAsync(floorOperation, IdempotencyKeyHash(floorOperation, floorKey),
+                    cancellationToken);
                 if (existingFloor.Level != templateFloor.Level ||
                     existingFloor.Name != templateFloor.Name ||
                     existingFloor.Elevation != templateFloor.Elevation ||
                     existingFloor.Height != templateFloor.Height ||
-                    existingFloor.Revision != 1)
+                    receipt is null ||
+                    Deserialize<CreateSpaceFloorResponse>(receipt.ResponseJson).Floor.Revision.LogicalId != existingFloor.LogicalId)
                 {
                     throw Conflict(
                         SpaceErrorCodes.WarehouseTemplateProposalStale,
@@ -3439,9 +3449,16 @@ public sealed class SpaceDesignV1Service :
                     cancellationToken);
             if (completedBatch is not null)
             {
+                var floorRevision = await _context.FloorRevisions.AsNoTracking()
+                    .Where(candidate => candidate.ModelVersionId == versionId && candidate.LogicalId == floorLogicalId)
+                    .Select(candidate => candidate.Revision)
+                    .SingleAsync(cancellationToken);
                 if (completedBatch.ModelVersionId != versionId ||
                     completedBatch.FloorLogicalId != floorLogicalId ||
-                    completedBatch.ResponseJson is null)
+                    completedBatch.AppliedBy != _execution.ActorId ||
+                    completedBatch.ResponseJson is null ||
+                    completedBatch.ResultFloorRevision != 1 ||
+                    floorRevision != 1)
                 {
                     throw Conflict(
                         SpaceErrorCodes.IdempotencyConflict,
@@ -3450,6 +3467,10 @@ public sealed class SpaceDesignV1Service :
                 }
                 continue;
             }
+            if (existingFloor is not null && existingFloor.Revision != 0)
+                throw Conflict(SpaceErrorCodes.WarehouseTemplateProposalStale,
+                    "A partially initialized template floor was changed before retry.",
+                    "abandon-draft-and-create-again");
 
             var clientInstanceId = OperationId(Hash(
                 $"template-client\n{versionKeyHash}\n{templateFloor.Key}"));
@@ -3471,7 +3492,6 @@ public sealed class SpaceDesignV1Service :
                         select new
                         {
                             Version = version.ContentRevision,
-                            Floor = floor.Revision,
                         })
                     .SingleAsync(cancellationToken);
                 await ApplyWarehouseTemplateFloorAsync(
@@ -3487,8 +3507,8 @@ public sealed class SpaceDesignV1Service :
                         commandBatchId,
                         clientInstanceId,
                         lease.LeaseId,
-                        revisions.Floor,
-                        revisions.Version),
+                        ExpectedFloorRevision: 0,
+                        ExpectedContentRevision: revisions.Version),
                     cancellationToken);
             }
             finally
@@ -3510,7 +3530,10 @@ public sealed class SpaceDesignV1Service :
         CancellationToken cancellationToken)
     {
         _context.ChangeTracker.Clear();
-        var now = RequireUtcNow();
+        await using var transaction = _context.Database.IsNpgsql() ? await BeginModelEditAsync(cancellationToken) : null;
+        if (transaction is not null)
+            await AcquireFloorEditLockAsync(versionId, floorLogicalId, cancellationToken);
+        var now = transaction is not null ? await ReadAuthoritativeUtcNowAsync(cancellationToken) : RequireUtcNow();
         var lease = await _context.EditLeases.SingleOrDefaultAsync(
             candidate => candidate.ModelVersionId == versionId &&
                          candidate.FloorLogicalId == floorLogicalId,
@@ -3561,6 +3584,8 @@ public sealed class SpaceDesignV1Service :
         }
 
         await _context.SaveChangesAsync(cancellationToken);
+        if (transaction is not null)
+            await CommitModelEditAsync(transaction, cancellationToken);
         return lease;
     }
 
@@ -3574,6 +3599,9 @@ public sealed class SpaceDesignV1Service :
         try
         {
             _context.ChangeTracker.Clear();
+            await using var transaction = _context.Database.IsNpgsql() ? await BeginModelEditAsync(cancellationToken) : null;
+            if (transaction is not null)
+                await AcquireFloorEditLockAsync(versionId, floorLogicalId, cancellationToken);
             var lease = await _context.EditLeases.SingleOrDefaultAsync(
                 candidate => candidate.ModelVersionId == versionId &&
                              candidate.FloorLogicalId == floorLogicalId,
@@ -3588,12 +3616,18 @@ public sealed class SpaceDesignV1Service :
                 leaseId,
                 _execution.ActorId,
                 clientInstanceId,
-                RequireUtcNow());
+                transaction is not null ? await ReadAuthoritativeUtcNowAsync(cancellationToken) : RequireUtcNow());
             await _context.SaveChangesAsync(cancellationToken);
+            if (transaction is not null)
+                await CommitModelEditAsync(transaction, cancellationToken);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             // The five-minute lease expires safely if the request is cancelled.
+        }
+        catch (SpaceProblemException exception) when (exception.StatusCode is 401 or 403)
+        {
+            // A revoked session cannot release the lease. The original owner can resume with a fresh session.
         }
         catch (DbUpdateException)
         {
@@ -6688,6 +6722,7 @@ public sealed class SpaceDesignV1Service :
         CreateSpaceVersionResponse response,
         CancellationToken cancellationToken)
     {
+        await using var transaction = _context.Database.IsNpgsql() ? await BeginModelEditAsync(cancellationToken) : null;
         _context.IdempotencyRecords.Add(
             NewIdempotencyRecord(
                 operation,
@@ -6700,10 +6735,14 @@ public sealed class SpaceDesignV1Service :
         try
         {
             await _context.SaveChangesAsync(cancellationToken);
+            if (transaction is not null)
+                await CommitModelEditAsync(transaction, cancellationToken);
             return response;
         }
         catch (DbUpdateException)
         {
+            if (transaction is not null)
+                await transaction.RollbackAsync(CancellationToken.None);
             _context.ChangeTracker.Clear();
             var replay = await ReadVersionReplayAsync(
                 operation,
