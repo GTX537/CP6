@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 · W610-01 应收发票和收款
+
+七条应收写入口使用 Main 原生事务。财务清单 65 条已接入，工单成本结转一条待验证。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W610-01/DELIVERY.md)
+
 ## 2026-11-15 · W609-01 Excel/CAD 匹配与补偿
 
 三条可写入口采用 Main 原生共同栅栏。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W609-01/DELIVERY.md)

@@ -39,6 +39,7 @@ public class ReceiptService : IReceiptService
         var bank = await _db.BankAccounts.FirstOrDefaultAsync(b => b.Id == receipt.BankAccountId);
         if (bank == null) return FinResult.Fail("E-FIN-310");
 
+        if (_db.Database.IsNpgsql()) receipt.TenantId = _db.CurrentTenantId;
         receipt.Id = receipt.Id == Guid.Empty ? Guid.NewGuid() : receipt.Id;
         receipt.No = await _seq.NextAsync(SeqKey, receipt.ReceiptDate);
         if (receipt.FxRate <= 0m) receipt.FxRate = 1m;
@@ -89,7 +90,10 @@ public class ReceiptService : IReceiptService
                 inv.ModifyDate = DateTime.Now;
             }
             if (s.DiffJournalEntryId is Guid djid)
-                await _journal.ReverseAsync(djid, user, $"撤销收款 {rcp.No} 差额冲销", autoPost: true);
+            {
+                var diff = await _journal.ReverseAsync(djid, user, $"撤销收款 {rcp.No} 差额冲销", autoPost: true);
+                if (!diff.Ok && _db.Database.IsNpgsql()) return diff;
+            }
             _db.ArSettlements.Remove(s);
         }
         rcp.SettledAmount = 0m;
