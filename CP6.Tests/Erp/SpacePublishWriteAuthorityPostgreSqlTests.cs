@@ -307,8 +307,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         }
         await using (var worker = SpaceDesignContext(writer.Db.Database.GetConnectionString()!, execution))
         {
-            var leases = new EfSpaceJobLeaseStore(worker, clock);
-            var runner = new SpaceJobProcessorRunner(leases, [new SpaceValidationJobProcessor(worker, clock, profiles, engine)]);
+            await using var ledger = SpaceDesignContext(writer.Db.Database.GetConnectionString()!, execution);
+            await using var authority = ValidationMainServices(writer.Db.Database.GetConnectionString()!);
+            var processor = new SpaceValidationJobProcessor(worker, clock, profiles, engine,
+                authority.GetRequiredService<ISpaceArtifactWriteAuthority>());
+            var runner = new SpaceJobProcessorRunner(new EfSpaceJobLeaseStore(ledger, clock), [processor]);
             Assert.True(await runner.RunNextAsync(SpaceJobType.Validate, "w604-fixture-validation"));
         }
         using var previewResponse = await host.Send(OperationsRequest(actor, HttpMethod.Get,
