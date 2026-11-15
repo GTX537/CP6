@@ -27,7 +27,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     }
 
     private static async Task ExerciseCrmExportRoleRevocation(AuthenticationApiProcess host, Harness h, string bridge,
-        Task childExited, StockPostgresCommitRelay? mainCommitRelay)
+        Task childExited, StockPostgresCommitRelay? mainCommitRelay, Func<Task<AuthenticationApiProcess>>? startHost = null,
+        Func<Task<HttpResponseMessage>>? project = null, Func<Task<HttpResponseMessage>>? independentProject = null)
     {
         const string path = "api/iam/role-policies/actions/71";
         var cookies = await Login(host, h);
@@ -50,7 +51,10 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var before = await Read();
         Assert.True(before.Granted);
         await Stage("ready");
+        await using var restarted = startHost is null ? null : await ExerciseColdRoleRefusal(project!, startHost);
+        if (restarted is not null) host = restarted;
         Task<HttpResponseMessage> change;
+        long? crmRevisionAfterUnconfirmedSeal = null;
         if (Environment.GetEnvironmentVariable("CP6_PGT017_ORDER") == "pause-first")
         {
             await Stage("permission-held");
@@ -126,10 +130,14 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Assert.Equal(1, after.CurrentOutbox);
         Assert.Equal(1, after.Audit);
         Assert.Equal(1, after.Receipts);
+        if (crmRevisionAfterUnconfirmedSeal is { } earlierRevision)
+            Assert.Equal(earlierRevision + 1, await CrmIdentityRevision());
         using var replay = await Revoke();
         Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
         Assert.Equal(receipt, await replay.Content.ReadFromJsonAsync<IamOperationV1>());
         Assert.Equal(after, await Read());
+        if (crmRevisionAfterUnconfirmedSeal is { } sealedRevision)
+            Assert.Equal(sealedRevision + 1, await CrmIdentityRevision());
         if (mainCommitRelay is null)
         {
             await File.WriteAllTextAsync(Path.Combine(bridge, "paused"), "PASS");
@@ -137,6 +145,83 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         }
 
         Task<HttpResponseMessage> Revoke() => host.Send(Request(HttpMethod.Put, path, cookies, command));
+
+        async Task<AuthenticationApiProcess> ExerciseColdRoleRefusal(Func<Task<HttpResponseMessage>> issue,
+            Func<Task<AuthenticationApiProcess>> restart)
+        {
+            using var originalProjection = await issue();
+            Assert.Equal(HttpStatusCode.OK, originalProjection.StatusCode);
+            Assert.True(originalProjection.Headers.Contains("X-CP6-Inquiry-Tenant-Fence"));
+
+            var seal = new NpgsqlConnectionStringBuilder(Environment.GetEnvironmentVariable("CP6_PGT017_SEAL_CONNECTION"));
+            await using var crm = new NpgsqlConnection(Environment.GetEnvironmentVariable("CP6_PGT017_CRM_OBSERVER"));
+            await crm.OpenAsync();
+            Assert.Equal("127.0.0.1", seal.Host);
+            Assert.Equal(crm.Port, seal.Port);
+            Assert.Equal(crm.Database, seal.Database);
+            Assert.Equal("w658_main_seal", seal.Username);
+            var floor = await CrmRoleFloor();
+            await SetSealLogin(false);
+            AuthenticationApiProcess? next = null;
+            try
+            {
+                await using var denied = new NpgsqlConnection(seal.ConnectionString);
+                var refusal = await Assert.ThrowsAsync<PostgresException>(() => denied.OpenAsync());
+                Assert.Equal(PostgresErrorCodes.InvalidAuthorizationSpecification, refusal.SqlState);
+                using var failed = await Revoke();
+                Assert.Equal(HttpStatusCode.ServiceUnavailable, failed.StatusCode);
+                Assert.Contains("AUTHORITY_FENCE_UNAVAILABLE", await failed.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+                Assert.Equal(before, await Read());
+                Assert.Equal(floor, await CrmRoleFloor());
+                await RequireStoppedIssuance();
+                await RequireOriginalCas(host);
+
+                var originalPid = host.ProcessId;
+                await host.StopAsync();
+                next = await restart();
+                Assert.NotEqual(originalPid, next.ProcessId);
+                await RequireStoppedIssuance();
+                await RequireOriginalCas(next);
+                using var pending = await next.Send(Request(HttpMethod.Get,
+                    $"api/iam/role-policies/operations/{command.OperationId:D}?kind=role-policy-actions", cookies));
+                Assert.Equal(HttpStatusCode.OK, pending.StatusCode);
+                Assert.Equal("UNKNOWN", (await pending.Content.ReadFromJsonAsync<IamOperationV1>())!.State);
+                return next;
+            }
+            catch
+            {
+                if (next is not null) await next.DisposeAsync();
+                throw;
+            }
+            finally { await SetSealLogin(true); }
+
+            async Task RequireStoppedIssuance()
+            {
+                using var response = await issue();
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.False(response.Headers.Contains("X-CP6-Inquiry-Tenant-Fence"),
+                    "First CRM seal login refusal left the old role eligible for new CRM effects.");
+                using var independent = await independentProject!();
+                Assert.Equal(HttpStatusCode.OK, independent.StatusCode);
+                Assert.True(independent.Headers.Contains("X-CP6-Inquiry-Tenant-Fence"));
+            }
+
+            async Task RequireOriginalCas(AuthenticationApiProcess api)
+            {
+                using var read = await api.Send(Request(HttpMethod.Get, "api/iam/role-policies/actions/editor?roleId=71", cookies));
+                Assert.Equal(HttpStatusCode.OK, read.StatusCode);
+                var current = (await read.Content.ReadFromJsonAsync<IamRolePolicyEditorV1>())!;
+                Assert.Equal(command.ExpectedVersion, current.Version);
+                Assert.Equal(command.ExpectedReferencesVersion, current.ReferencesVersion);
+                Assert.Equal(command.ExpectedCatalogVersion, current.Catalog.Version);
+            }
+
+            async Task SetSealLogin(bool enabled)
+            {
+                await using var alter = new NpgsqlCommand(enabled ? "ALTER ROLE w658_main_seal LOGIN" : "ALTER ROLE w658_main_seal NOLOGIN", crm);
+                await alter.ExecuteNonQueryAsync();
+            }
+        }
 
         async Task AbortAfterSeal()
         {
@@ -188,6 +273,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 $"api/iam/role-policies/operations/{command.OperationId:D}?kind=role-policy-actions", cookies));
             Assert.True(pending.StatusCode == HttpStatusCode.OK, await pending.Content.ReadAsStringAsync());
             Assert.Equal("UNKNOWN", (await pending.Content.ReadFromJsonAsync<IamOperationV1>())!.State);
+
+            await RequireUnconfirmedSeal();
         }
 
         async Task LoseCrmCommitAcknowledgement()
@@ -251,6 +338,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 $"api/iam/role-policies/operations/{command.OperationId:D}?kind=role-policy-actions", cookies));
             Assert.True(pending.StatusCode == HttpStatusCode.OK, await pending.Content.ReadAsStringAsync());
             Assert.Equal("UNKNOWN", (await pending.Content.ReadFromJsonAsync<IamOperationV1>())!.State);
+            await RequireUnconfirmedSeal();
 
             async Task Reload(string expected)
             {
@@ -268,11 +356,31 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             await using var db = new NpgsqlConnection(Environment.GetEnvironmentVariable("CP6_PGT017_CRM_OBSERVER"));
             await db.OpenAsync();
             await using var floor = new NpgsqlCommand("""
-                SELECT minimum_version FROM crm_inquiry_tenant_pause_v1.role_fences
-                WHERE tenant_id=@tenant AND aggregate_id='permission:role:71'
+                SELECT COALESCE((SELECT minimum_version FROM crm_inquiry_tenant_pause_v1.role_fences
+                    WHERE tenant_id=@tenant AND aggregate_id='permission:role:71'), 0)
                 """, db);
             floor.Parameters.AddWithValue("tenant", h.Tenant);
             return (int)(await floor.ExecuteScalarAsync())!;
+        }
+
+        async Task<long> CrmIdentityRevision()
+        {
+            await using var db = new NpgsqlConnection(Environment.GetEnvironmentVariable("CP6_PGT017_CRM_OBSERVER"));
+            await db.OpenAsync();
+            await using var revision = new NpgsqlCommand("""
+                SELECT "Revision"::bigint FROM crm_auth."IdentityFenceV1" WHERE "TenantId"=@tenant
+                """, db);
+            revision.Parameters.AddWithValue("tenant", h.Tenant);
+            return (long)(await revision.ExecuteScalarAsync())!;
+        }
+
+        async Task RequireUnconfirmedSeal()
+        {
+            var operation = $"api/iam/role-policies/operations/{command.OperationId:D}/close?kind=role-policy-actions";
+            using var close = await host.Send(Request(HttpMethod.Post, operation, cookies));
+            Assert.Equal(HttpStatusCode.ServiceUnavailable, close.StatusCode);
+            Assert.Contains("IAM_OPERATION_UNKNOWN", await close.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+            crmRevisionAfterUnconfirmedSeal = await CrmIdentityRevision();
         }
 
         async Task Stage(string marker)

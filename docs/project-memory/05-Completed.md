@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-15 W658-01
+
+五个角色和范围入口采用原操作持久意图。Main 42、CRM 6 项通过。 [交付](../development/evidence/W658-01/DELIVERY.md)
+
 ## 2026-11-15 W654-01
 
 WMS 目录与几何、位置编码及两种模板写入，15 个原生和 66 个相关契约通过。 [交付](../development/evidence/W654-01/DELIVERY.md)

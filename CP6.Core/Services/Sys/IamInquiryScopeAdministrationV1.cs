@@ -41,10 +41,9 @@ public sealed class IamInquiryScopeAdministrationV1(CP6Context db, IamAdministra
             .ThenBy(x => x.FormId.ToString("D"), StringComparer.Ordinal).ToArray();
         var bound = new BoundCommand { OperationId = command.OperationId, ExpectedVersion = command.ExpectedVersion,
             ExpectedReferencesVersion = command.ExpectedReferencesVersion, Reason = command.Reason, RoleId = roleId, SiteForms = pairs };
-        return authority.ExecuteAsync("pub-data-scope:edit", actor, async (who, token) =>
+        return authority.RoleWriteAsync("pub-data-scope:edit", roleId, Kind, bound, actor, async (who, token) =>
         {
             await CheckReadyAsync(db, token);
-            var prior = await authority.Original(who, Kind, bound, token); if (prior is not null) return prior;
             var role = await db.Sys_Roles.AsNoTracking().SingleOrDefaultAsync(x => x.RoleId == roleId, token)
                 ?? throw Error(404, "IAM_ROLE_NOT_FOUND");
             if (!role.Enable && pairs.Length != 0) throw Error(409, "IAM_ROLE_DISABLED");
