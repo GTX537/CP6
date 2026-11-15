@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W641-01
+
+旧 OA 已提交子流程用 Main 同根事务收敛原父流程和原 Pending 作业。 [交付](../development/evidence/W641-01/DELIVERY.md)
+
 ## 2026-11-15 W643-01
 
 原 WMS→ERP 回写通过同租户原出库、原事件和 Main 根可靠完成。 [交付](../development/evidence/W643-01/DELIVERY.md)

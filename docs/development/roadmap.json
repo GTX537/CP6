@@ -166127,6 +166127,11 @@
       "at": "2026-11-15T18:10:50.457616+00:00",
       "change": "W643-01 原 WMS 出库在同事务保存 ERP 回写意图，由持 Main 根的 Worker 原子写订单、明细和原回执，实测两种提交顺序。",
       "evidence": "docs/development/evidence/W643-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T18:16:37.399388+00:00",
+      "change": "W641-01 普通旧 OA 父流程沿用已提交原凭据，父流转、原作业及 Outbox 同次提交，实测两序和原提交应答遗失。",
+      "evidence": "docs/development/evidence/W641-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212133,10 +212138,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W643",
-      "path": "docs/development/evidence/W643-01/DELIVERY.md",
-      "baseline_sha": "db6c58fd89006524201d2578b6ffc890525e0712",
-      "registered_at": "2026-11-15T17:55:24.494133+00:00",
+      "id": "W641",
+      "path": "docs/development/evidence/W641-01/DELIVERY.md",
+      "baseline_sha": "4df0a3a4253eb05a22af259e14ca9817ef24857d",
+      "registered_at": "2026-11-15T17:52:24.081891+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212150,11 +212155,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Complete the W641 adoption and reconcile the full formal PGT-017 writer evidence.",
+      "next_action": "Complete Space's current validation and ordinary clone transaction boundaries and reconcile writer evidence.",
       "windows": [
         {
-          "id": "W643-01",
-          "workspace_task": "W643-01",
+          "id": "W641-01",
+          "workspace_task": "W641-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212164,28 +212169,28 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w643-01",
-          "planned_scope_ref": "docs/development/evidence/W643-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W643-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "branch": "codex/w641-01",
+          "planned_scope_ref": "docs/development/evidence/W641-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W641-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Actual WMS shipment producer, native ERP original event/result and source quantity",
-            "Main native root on the exact current ERP projection and retained recoveries",
-            "DEV-1"
+            "Committed legacy OA child receipt, exact Pending original continuation and parent writes",
+            "Current Main native job transaction, persisted connector identity and Outbox",
+            "DEV-2"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Three native shipment projection cases including both orders and native producer ACK loss, four W620 native controls, eleven component cases. 310 files, three identical tested DLLs and local HTTP 200/401.",
-          "remaining_scope": "W641 original already-accepted OA parent continuation and final writer reconciliation; formal PostgreSQL remains 26 PASS / 1 NOT_RUN.",
-          "main_tested_source_sha": "7f3684dcfae18867eba8bccfa2025179e72f8567"
+          "validation_summary": "4 W641 native cases including both actual signed orders, parent COMMIT-ACK loss and nested original jobs; 24 relevant native and component regressions. 310 published hashes and 200/401.",
+          "remaining_scope": "W646 normal Space validation request and worker, W647 normal Published-to-Draft clone. Formal PostgreSQL still 26 PASS / 1 NOT_RUN.",
+          "main_tested_source_sha": "9e0618898a822ab9036a5ffa94c9f4b4563beb7d"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -269296,6 +269301,67 @@
             "main_tested_source_sha": "e60ab2f5f9884f2f7e92b14e3e896a1cf240104e",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1166",
             "main_remote_main_sha": "db6c58fd89006524201d2578b6ffc890525e0712"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W643",
+        "path": "docs/development/evidence/W643-01/DELIVERY.md",
+        "baseline_sha": "db6c58fd89006524201d2578b6ffc890525e0712",
+        "registered_at": "2026-11-15T17:55:24.494133+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Complete the W641 adoption and reconcile the full formal PGT-017 writer evidence.",
+        "windows": [
+          {
+            "id": "W643-01",
+            "workspace_task": "W643-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w643-01",
+            "planned_scope_ref": "docs/development/evidence/W643-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W643-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Actual WMS shipment producer, native ERP original event/result and source quantity",
+              "Main native root on the exact current ERP projection and retained recoveries",
+              "DEV-1"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Three native shipment projection cases including both orders and native producer ACK loss, four W620 native controls, eleven component cases. 310 files, three identical tested DLLs and local HTTP 200/401.",
+            "remaining_scope": "W641 original already-accepted OA parent continuation and final writer reconciliation; formal PostgreSQL remains 26 PASS / 1 NOT_RUN.",
+            "main_tested_source_sha": "7f3684dcfae18867eba8bccfa2025179e72f8567",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1167",
+            "main_remote_main_sha": "62c33fb35f3d5ae01c751a8cfd6b00995b11530e"
           }
         ],
         "storage": {
