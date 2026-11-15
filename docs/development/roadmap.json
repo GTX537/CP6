@@ -165982,6 +165982,11 @@
       "at": "2026-11-15T10:25:45.841309+00:00",
       "change": "W601-01 同步 CRM 原生受信重绑、目标凭据隔离、原回执恢复和后继时间线实测。",
       "evidence": "docs/development/evidence/W601-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T10:44:12.073731+00:00",
+      "change": "W602-01 CAD/Excel 文件登记与来源写入采用共同栅栏，验证两种提交顺序、单独撤上传权及中断恢复。",
+      "evidence": "docs/development/evidence/W602-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211988,10 +211993,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W601",
-      "path": "docs/development/evidence/W601-01/DELIVERY.md",
+      "id": "W602",
+      "path": "docs/development/evidence/W602-01/DELIVERY.md",
       "baseline_sha": "84dabbe3881b5cf75a66ba62b77a4365c5b3a467",
-      "registered_at": "2026-11-15T10:25:19.944386+00:00",
+      "registered_at": "2026-11-15T10:19:53.039835+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212005,56 +212010,43 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续 CAD/Excel 上传及固定资产和月末折旧实测。正式 PGT-017 保持 NOT_RUN",
+      "next_action": "推进刊发与历史重刊 HTTP 提交栅栏，同时核对固定资产及月末 Worker。PGT-017 保持 NOT_RUN",
       "windows": [
         {
-          "id": "W601-01",
-          "workspace_task": "W601-01",
+          "id": "W602-01",
+          "workspace_task": "W602-01",
           "related_tasks": [
             "PGT-017",
-            "PGT-021",
-            "PGT-022",
             "WP02-03"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+          "mode": "SINGLE_CHAT",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w601-01",
-          "planned_scope_ref": "docs/development/evidence/W601-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W601-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w602-01",
+          "planned_scope_ref": "docs/development/evidence/W602-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W602-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "CRM:InquiryStoreRebind",
-            "CRM:PostgreSQLTimelineAndRoster",
-            "CRM:TargetWriterIdentity",
-            "Main:Authority",
-            "Kafka:OriginalWatermarks"
+            "Main:SpaceCADExcelUpload",
+            "Main:SpaceSourceUploadWriteTransaction",
+            "Main:IAM-CurrentWriteAuthority",
+            "Local:PostgreSQL-HTTP"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "CRM PR #233 actual final 8/8 zero skipped. Authorized target timeline and durable receipt, both real dropped commit replies, old credentials rejected both endpoints, successor 503",
-          "remaining_scope": "实际批准签发与持续隔离，Main 封存、C02、Kafka/Dapr 全写者和目标密钥推广。Main 写者继续",
-          "product_repository": "CP6.CRM",
-          "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "8f650ced6b186fae4119a4d93d6859d7fa995df8",
-          "product_branch": "codex/w601-01",
-          "product_source_sha": "a62176c9eb11255c9f6e1f7f81775482b52d63e8",
-          "product_remote_main_sha": "2b6092a6e63f405067da05387e223bd5d1b5ea1c",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/233",
-          "product_branch_disposition": "deleted-local-and-remote",
-          "product_workspace_status": "fixed-seat-detached-for-reuse",
-          "product_seat_released": true
+          "validation_summary": "8 actual PostgreSQL/Kestrel owner scenarios, 2 native commit boundary, 104 contracts, 25 units, local publish 200/401",
+          "remaining_scope": "CAD/Excel non-upload writers, scan and artifact workers, Space publish/retry/republish, finance and trusted CRM cutover",
+          "main_tested_source_sha": "a144feffe66079826a5e8ddacef11409904100bd"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/dev-2",
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -267345,6 +267337,81 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W601",
+        "path": "docs/development/evidence/W601-01/DELIVERY.md",
+        "baseline_sha": "84dabbe3881b5cf75a66ba62b77a4365c5b3a467",
+        "registered_at": "2026-11-15T10:25:19.944386+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续 CAD/Excel 上传及固定资产和月末折旧实测。正式 PGT-017 保持 NOT_RUN",
+        "windows": [
+          {
+            "id": "W601-01",
+            "workspace_task": "W601-01",
+            "related_tasks": [
+              "PGT-017",
+              "PGT-021",
+              "PGT-022",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w601-01",
+            "planned_scope_ref": "docs/development/evidence/W601-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W601-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CRM:InquiryStoreRebind",
+              "CRM:PostgreSQLTimelineAndRoster",
+              "CRM:TargetWriterIdentity",
+              "Main:Authority",
+              "Kafka:OriginalWatermarks"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "CRM PR #233 actual final 8/8 zero skipped. Authorized target timeline and durable receipt, both real dropped commit replies, old credentials rejected both endpoints, successor 503",
+            "remaining_scope": "实际批准签发与持续隔离，Main 封存、C02、Kafka/Dapr 全写者和目标密钥推广。Main 写者继续",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "8f650ced6b186fae4119a4d93d6859d7fa995df8",
+            "product_branch": "codex/w601-01",
+            "product_source_sha": "a62176c9eb11255c9f6e1f7f81775482b52d63e8",
+            "product_remote_main_sha": "2b6092a6e63f405067da05387e223bd5d1b5ea1c",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/233",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1114",
+            "main_remote_main_sha": "8c6709c7c6c5d8f9270c106a4fa1ff032c9c23bd"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2",
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },
