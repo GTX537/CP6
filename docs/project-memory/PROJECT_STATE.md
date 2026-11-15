@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 · W606-01 预算和审批
+
+预算 11 条采用 Main 原生事务，累计财务 53 条已接入、13 条可达入口待验收。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W606-01/DELIVERY.md)
+
 ## 2026-11-15 · W605-01 CAD 准备、解析和 Excel 预检
 
 五条业务入口和 CAD 扫描状态回填采用 Main 的共同写栅栏。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W605-01/DELIVERY.md)
