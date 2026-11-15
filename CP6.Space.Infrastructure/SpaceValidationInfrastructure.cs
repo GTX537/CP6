@@ -1,4 +1,4 @@
-using System.Data;
+using System.Data.Common;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -56,6 +56,8 @@ public sealed class DefaultSpaceValidationProfileProvider :
 
 public sealed class SpaceValidationService : ISpaceValidationService
 {
+    private const string ValidationPermission = "space:model:validate";
+    private const int MaximumAttempts = 3;
     private readonly SpaceContext _context;
     private readonly ISpaceExecutionContext _execution;
     private readonly ISpaceClock _clock;
@@ -63,6 +65,7 @@ public sealed class SpaceValidationService : ISpaceValidationService
     private readonly ISpaceValidationProfileProvider _profiles;
     private readonly SpaceValidationEngine _engine;
     private readonly EfSpaceValidationSnapshotReader _snapshots;
+    private readonly ISpaceDesignWriteAuthority? _writeAuthority;
 
     public SpaceValidationService(
         SpaceContext context,
@@ -70,7 +73,8 @@ public sealed class SpaceValidationService : ISpaceValidationService
         ISpaceClock clock,
         ISpaceDesignAccessEvaluator access,
         ISpaceValidationProfileProvider profiles,
-        SpaceValidationEngine engine)
+        SpaceValidationEngine engine,
+        ISpaceDesignWriteAuthority? writeAuthority = null)
     {
         _context = context;
         _execution = execution;
@@ -79,6 +83,7 @@ public sealed class SpaceValidationService : ISpaceValidationService
         _profiles = profiles;
         _engine = engine;
         _snapshots = new EfSpaceValidationSnapshotReader(context);
+        _writeAuthority = writeAuthority;
     }
 
     public async Task<CreateSpaceValidationResponse> RequestValidationAsync(
@@ -108,13 +113,18 @@ public sealed class SpaceValidationService : ISpaceValidationService
             }
         }
 
-        const int maximumAttempts = 3;
         for (var attempt = 1; ; attempt++)
         {
             cancellationToken.ThrowIfCancellationRequested();
             try
             {
-                return await RequestValidationAttemptAsync(versionId, cancellationToken);
+                var result = await RequestValidationAttemptAsync(versionId, cancellationToken);
+                if (result is not null)
+                    return result;
+                if (attempt >= MaximumAttempts)
+                    throw new SpaceProblemException(SpaceErrorCodes.ConcurrencyConflict, 409,
+                        "The version changed while preparing validation.", retryable: true);
+                _context.ChangeTracker.Clear();
             }
             catch (Exception exception) when (relational &&
                 DatabaseFailureClassifier.Classify(exception).CanRetryTransaction)
@@ -124,38 +134,19 @@ public sealed class SpaceValidationService : ISpaceValidationService
                 if (_context.Database.CurrentTransaction is not null)
                     throw new InvalidOperationException("Validation recovery requires the failed transaction to be disposed first.", exception);
                 _context.ChangeTracker.Clear();
-                if (attempt >= maximumAttempts)
+                if (attempt >= MaximumAttempts)
                     throw;
             }
         }
     }
 
-    private async Task<CreateSpaceValidationResponse> RequestValidationAttemptAsync(
+    private async Task<CreateSpaceValidationResponse?> RequestValidationAttemptAsync(
         Guid versionId,
         CancellationToken cancellationToken)
     {
-        await using var transaction = _context.Database.IsRelational()
-            ? await _context.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken)
-            : null;
-        var lockResource =
-            $"CP6:Space:Validation:{_execution.TenantId:D}:{versionId:D}";
-        if (!await SpaceResourceLocks.TryAcquireTransactionAsync(
-                _context, lockResource, 15000, cancellationToken))
-            throw new InvalidOperationException("SPACE_VALIDATION_LOCK_UNAVAILABLE");
-        var scope = await RequireScopeAsync(versionId, cancellationToken);
-        _access.EnsureSiteAccess(scope.Model.SiteId, write: true);
-        if (scope.Version.Status is not (
-                SpaceVersionStatus.Draft or
-                SpaceVersionStatus.Ready or
-                SpaceVersionStatus.Validating))
-        {
-            throw Conflict(
-                SpaceErrorCodes.VersionStateInvalid,
-                $"Version state {scope.Version.Status} cannot start or reuse validation.",
-                "wait-for-version-state");
-        }
+        var observed = await RequireScopeAsync(versionId, cancellationToken, tracked: false);
+        _access.EnsureSiteAccess(observed.Model.SiteId, write: true);
+        EnsureEligibleVersion(observed.Version);
         var correlationId =
             _execution is ISpaceCorrelationContext correlation &&
             correlation.CorrelationId != Guid.Empty
@@ -163,14 +154,26 @@ public sealed class SpaceValidationService : ISpaceValidationService
                 : Guid.NewGuid();
         var profile = await _profiles.GetProfileAsync(
             _execution.TenantId,
-            scope.Model.SiteId,
+            observed.Model.SiteId,
             correlationId,
             cancellationToken);
         var snapshot = await _snapshots.ReadAsync(
-            scope.Model,
-            scope.Version,
+            observed.Model,
+            observed.Version,
             cancellationToken);
         var contentHash = _engine.ComputeContentHash(snapshot);
+
+        await using var transaction = _context.Database.IsRelational()
+            ? await SpaceDesignWriteTransaction.BeginForPermissionAsync(
+                _context, _writeAuthority, ValidationPermission, cancellationToken)
+            : null;
+        await SpaceValidationWriteScope.AcquireAsync(_context, _execution.TenantId, versionId, cancellationToken);
+        _context.ChangeTracker.Clear();
+        var scope = await RequireScopeAsync(versionId, cancellationToken);
+        EnsureEligibleVersion(scope.Version);
+        if (!await SpaceValidationWriteScope.MatchesAsync(_context, scope.Model, scope.Version,
+                observed.Model.CurrentPublishedVersionId, snapshot, cancellationToken))
+            return null;
 
         var existing = await _context.ValidationRuns
             .Where(run =>
@@ -188,7 +191,7 @@ public sealed class SpaceValidationService : ISpaceValidationService
             BindReusableResult(scope.Version, existing);
             await _context.SaveChangesAsync(cancellationToken);
             if (transaction is not null)
-                await transaction.CommitAsync(cancellationToken);
+                await SpaceDesignWriteTransaction.CommitAsync(_context, _writeAuthority, transaction, cancellationToken);
             return new CreateSpaceValidationResponse(
                 await ToDtoAsync(existing, cancellationToken),
                 Reused: true);
@@ -250,7 +253,7 @@ public sealed class SpaceValidationService : ISpaceValidationService
         _context.AddRange(job, run);
         await _context.SaveChangesAsync(cancellationToken);
         if (transaction is not null)
-            await transaction.CommitAsync(cancellationToken);
+            await SpaceDesignWriteTransaction.CommitAsync(_context, _writeAuthority, transaction, cancellationToken);
         return new CreateSpaceValidationResponse(
             await ToDtoAsync(run, cancellationToken),
             Reused: false);
@@ -382,9 +385,11 @@ public sealed class SpaceValidationService : ISpaceValidationService
     private async Task<(SpaceModel Model, SpaceModelVersion Version)>
         RequireScopeAsync(
             Guid versionId,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken,
+            bool tracked = true)
     {
-        var version = await _context.Versions
+        var versions = tracked ? _context.Versions : _context.Versions.AsNoTracking();
+        var version = await versions
             .SingleOrDefaultAsync(
                 candidate => candidate.Id == versionId,
                 cancellationToken);
@@ -394,10 +399,19 @@ public sealed class SpaceValidationService : ISpaceValidationService
                 SpaceErrorCodes.VersionNotFound,
                 "The model version was not found.");
         }
-        var model = await _context.Models.SingleAsync(
+        var model = await _context.Models.AsNoTracking().SingleAsync(
             candidate => candidate.Id == version.ModelId,
             cancellationToken);
         return (model, version);
+    }
+
+    private static void EnsureEligibleVersion(SpaceModelVersion version)
+    {
+        if (version.Status is not (SpaceVersionStatus.Draft or SpaceVersionStatus.Ready or SpaceVersionStatus.Validating))
+        {
+            throw Conflict(SpaceErrorCodes.VersionStateInvalid,
+                $"Version state {version.Status} cannot start or reuse validation.", "wait-for-version-state");
+        }
     }
 
     private void EnsureExecutionContext()
@@ -472,18 +486,21 @@ public sealed class SpaceValidationJobProcessor : ISpaceJobProcessor
     private readonly ISpaceValidationProfileProvider _profiles;
     private readonly SpaceValidationEngine _engine;
     private readonly EfSpaceValidationSnapshotReader _snapshots;
+    private readonly ISpaceArtifactWriteAuthority? _writeAuthority;
 
     public SpaceValidationJobProcessor(
         SpaceContext context,
         ISpaceClock clock,
         ISpaceValidationProfileProvider profiles,
-        SpaceValidationEngine engine)
+        SpaceValidationEngine engine,
+        ISpaceArtifactWriteAuthority? writeAuthority = null)
     {
         _context = context;
         _clock = clock;
         _profiles = profiles;
         _engine = engine;
         _snapshots = new EfSpaceValidationSnapshotReader(context);
+        _writeAuthority = writeAuthority;
     }
 
     public SpaceJobType JobType => SpaceJobType.Validate;
@@ -508,90 +525,92 @@ public sealed class SpaceValidationJobProcessor : ISpaceJobProcessor
                 "The validation Job contains an unknown step.");
         }
 
-        var run = await _context.ValidationRuns.SingleOrDefaultAsync(
-                      candidate =>
-                          candidate.JobId == execution.Lease.JobId &&
-                          candidate.ModelVersionId ==
-                          execution.Lease.SubjectId,
-                      cancellationToken)
-                  ?? throw new SpaceJobProcessingException(
-                      SpaceJobFailureKind.Input,
-                      SpaceErrorCodes.ValidationNotFound,
-                      "The ValidationRun for the Job was not found.");
-
-        if (run.Status == SpaceValidationStatus.Failed)
+        try
         {
-            throw new SpaceJobProcessingException(
-                SpaceJobFailureKind.Input,
-                run.FailureCode ?? SpaceErrorCodes.ValidationStale,
-                run.FailureSummary ??
-                "The ValidationRun previously failed.");
+            return await ExecuteValidationAsync(execution.Lease, cancellationToken);
         }
-        if (run.IsTerminal)
-            return Output(run);
+        catch (SpaceJobProcessingException error) when (error.ErrorCode == "SPACE_ARTIFACT_COMMIT_UNKNOWN")
+        {
+            try
+            {
+                var saved = await ReadRunAsync(execution.Lease, CancellationToken.None, tracked: false);
+                if (ReadTerminal(saved) is { } recovered)
+                    return recovered;
+            }
+            catch (DbException readError) when (readError.IsTransient)
+            {
+                // The original Job can resolve the committed state on a later attempt.
+            }
+            throw;
+        }
+    }
 
-        var version = await _context.Versions.SingleAsync(
-            candidate => candidate.Id == run.ModelVersionId,
-            cancellationToken);
-        var model = await _context.Models.SingleAsync(
-            candidate => candidate.Id == version.ModelId,
-            cancellationToken);
+    private async Task<SpaceJobStepOutput> ExecuteValidationAsync(SpaceJobLease lease, CancellationToken cancellationToken)
+    {
+        var run = await ReadRunAsync(lease, cancellationToken, tracked: false);
+        if (ReadTerminal(run) is { } completed)
+            return completed;
+        var (_, model, version) = await LoadScopeAsync(run, cancellationToken, tracked: false);
         var profile = await _profiles.GetProfileAsync(
             run.TenantId,
             model.SiteId,
             run.CorrelationId,
             cancellationToken);
-        if (!string.Equals(
-                profile.AdapterId,
-                run.AdapterId,
-                StringComparison.Ordinal) ||
-            !string.Equals(
-                profile.CapabilityHash,
-                run.CapabilityHash,
-                StringComparison.OrdinalIgnoreCase))
+        if (!MatchesProfile(run, profile))
+            return await CompleteAsync(lease, null, "The WMS capability profile changed.", cancellationToken);
+
+        if (run.Status == SpaceValidationStatus.Queued)
         {
-            await FailStaleAsync(
-                run,
-                version,
-                "The WMS capability profile changed.",
-                cancellationToken);
-            throw Stale(run);
+            (run, model, version) = await StartAsync(lease, cancellationToken);
+            if (ReadTerminal(run) is { } startedElsewhere)
+                return startedElsewhere;
         }
 
+        var snapshot = await _snapshots.ReadAsync(model, version, cancellationToken);
+        var result = _engine.Validate(snapshot, profile);
+        return await CompleteAsync(lease, new(snapshot, result, profile, model.CurrentPublishedVersionId),
+            "The model content changed after validation was queued.", cancellationToken);
+    }
+
+    private async Task<ValidationScope> StartAsync(SpaceJobLease lease, CancellationToken cancellationToken)
+    {
+        await using var write = await SpaceArtifactWriteTransaction.BeginMetadataAsync(
+            _context, lease, _writeAuthority, cancellationToken);
+        var state = await ReadWriteScopeAsync(lease, cancellationToken);
+        var (run, _, version) = state;
         if (run.Status == SpaceValidationStatus.Queued)
         {
             if (version.Status != SpaceVersionStatus.Validating)
             {
-                await FailStaleAsync(
-                    run,
-                    version,
-                    "The model version left the validating state.",
-                    cancellationToken);
+                await FailStaleAsync(state, write, "The model version left the validating state.", cancellationToken);
                 throw Stale(run);
             }
             run.Start(RequireUtcNow());
             await _context.SaveChangesAsync(cancellationToken);
+            await write.CommitAsync(cancellationToken);
         }
+        return state;
+    }
 
-        var snapshot = await _snapshots.ReadAsync(
-            model,
-            version,
-            cancellationToken);
-        var result = _engine.Validate(snapshot, profile);
-        if (version.Status != SpaceVersionStatus.Validating ||
-            version.ContentRevision != run.ContentRevision ||
-            !string.Equals(
-                result.ContentHash,
-                run.ContentHash,
-                StringComparison.OrdinalIgnoreCase))
+    private async Task<SpaceJobStepOutput> CompleteAsync(SpaceJobLease lease, ValidationCalculation? calculation,
+        string staleReason, CancellationToken cancellationToken)
+    {
+        await using var write = await SpaceArtifactWriteTransaction.BeginMetadataAsync(
+            _context, lease, _writeAuthority, cancellationToken);
+        var state = await ReadWriteScopeAsync(lease, cancellationToken);
+        var (run, model, version) = state;
+        if (ReadTerminal(run) is { } completed)
+            return completed;
+        if (calculation is null || version.Status != SpaceVersionStatus.Validating ||
+            version.ContentRevision != run.ContentRevision || !MatchesProfile(run, calculation.Profile) ||
+            !string.Equals(calculation.Result.ContentHash, run.ContentHash, StringComparison.OrdinalIgnoreCase) ||
+            !await SpaceValidationWriteScope.MatchesAsync(_context, model, version, calculation.PublishedVersionId,
+                calculation.Snapshot, cancellationToken))
         {
-            await FailStaleAsync(
-                run,
-                version,
-                "The model content changed after validation was queued.",
-                cancellationToken);
+            await FailStaleAsync(state, write, staleReason, cancellationToken);
             throw Stale(run);
         }
+        var result = calculation.Result;
 
         var existingIssueCount = await _context.Issues
             .CountAsync(
@@ -605,11 +624,6 @@ public sealed class SpaceValidationJobProcessor : ISpaceJobProcessor
                 "A non-terminal ValidationRun already contains issues.");
         }
 
-        await using var transaction = _context.Database.IsRelational()
-            ? await _context.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken)
-            : null;
         foreach (var candidate in result.Issues)
         {
             _context.Issues.Add(
@@ -655,23 +669,55 @@ public sealed class SpaceValidationJobProcessor : ISpaceJobProcessor
             version.CompleteValidationWithErrors();
         }
         await _context.SaveChangesAsync(cancellationToken);
-        if (transaction is not null)
-            await transaction.CommitAsync(cancellationToken);
+        await write.CommitAsync(cancellationToken);
         return Output(run);
     }
 
     private async Task FailStaleAsync(
-        SpaceValidationRun run,
-        SpaceModelVersion version,
+        ValidationScope state,
+        SpaceArtifactWriteTransaction write,
         string summary,
         CancellationToken cancellationToken)
     {
-        if (!run.IsTerminal)
-            run.Fail(SpaceErrorCodes.ValidationStale, summary, RequireUtcNow());
+        var (run, _, version) = state;
+        run.Fail(SpaceErrorCodes.ValidationStale, summary, RequireUtcNow());
         if (version.Status == SpaceVersionStatus.Validating)
             version.CompleteValidationWithErrors();
         await _context.SaveChangesAsync(cancellationToken);
+        await write.CommitAsync(cancellationToken);
     }
+
+    private async Task<ValidationScope> ReadWriteScopeAsync(SpaceJobLease lease, CancellationToken cancellationToken)
+    {
+        await SpaceValidationWriteScope.AcquireAsync(_context, lease.TenantId, lease.SubjectId, cancellationToken);
+        _context.ChangeTracker.Clear();
+        var run = await ReadRunAsync(lease, cancellationToken, tracked: true);
+        return await LoadScopeAsync(run, cancellationToken, tracked: true);
+    }
+
+    private async Task<SpaceValidationRun> ReadRunAsync(SpaceJobLease lease, CancellationToken cancellationToken, bool tracked)
+    {
+        var runs = tracked ? _context.ValidationRuns : _context.ValidationRuns.AsNoTracking();
+        return await runs.SingleOrDefaultAsync(candidate => candidate.TenantId == lease.TenantId &&
+            candidate.JobId == lease.JobId && candidate.ModelVersionId == lease.SubjectId, cancellationToken)
+            ?? throw new SpaceJobProcessingException(SpaceJobFailureKind.Input, SpaceErrorCodes.ValidationNotFound,
+                "The ValidationRun for the Job was not found.");
+    }
+
+    private async Task<ValidationScope> LoadScopeAsync(SpaceValidationRun run, CancellationToken cancellationToken, bool tracked)
+    {
+        var versions = tracked ? _context.Versions : _context.Versions.AsNoTracking();
+        var version = await versions.SingleAsync(candidate => candidate.Id == run.ModelVersionId, cancellationToken);
+        var model = await _context.Models.AsNoTracking().SingleAsync(candidate => candidate.Id == version.ModelId, cancellationToken);
+        return new(run, model, version);
+    }
+
+    private static bool MatchesProfile(SpaceValidationRun run, SpaceValidationProfile profile) =>
+        string.Equals(profile.AdapterId, run.AdapterId, StringComparison.Ordinal) &&
+        string.Equals(profile.CapabilityHash, run.CapabilityHash, StringComparison.OrdinalIgnoreCase);
+
+    private static SpaceJobStepOutput? ReadTerminal(SpaceValidationRun run) =>
+        run.Status == SpaceValidationStatus.Failed ? throw Stale(run) : run.IsTerminal ? Output(run) : null;
 
     private static SpaceJobProcessingException Stale(
         SpaceValidationRun run) =>
@@ -707,6 +753,44 @@ public sealed class SpaceValidationJobProcessor : ISpaceJobProcessor
             throw new InvalidOperationException(
                 "The Space clock must return UTC.");
         return now;
+    }
+
+    private sealed record ValidationScope(SpaceValidationRun Run, SpaceModel Model, SpaceModelVersion Version);
+    private sealed record ValidationCalculation(SpaceValidationSnapshot Snapshot, SpaceValidationEngineResult Result,
+        SpaceValidationProfile Profile, Guid? PublishedVersionId);
+}
+
+internal static class SpaceValidationWriteScope
+{
+    internal static async Task AcquireAsync(SpaceContext context, Guid tenantId, Guid versionId, CancellationToken cancellationToken)
+    {
+        var resource = $"CP6:Space:Validation:{tenantId:D}:{versionId:D}";
+        if (!await SpaceResourceLocks.TryAcquireTransactionAsync(context, resource, 15000, cancellationToken))
+            throw new InvalidOperationException("SPACE_VALIDATION_LOCK_UNAVAILABLE");
+    }
+
+    internal static async Task<bool> MatchesAsync(SpaceContext context, SpaceModel model, SpaceModelVersion version,
+        Guid? publishedVersionId, SpaceValidationSnapshot snapshot, CancellationToken cancellationToken)
+    {
+        if (version.Id != snapshot.ModelVersionId || version.ModelId != snapshot.ModelId ||
+            version.ContentRevision != snapshot.ContentRevision || model.SiteId != snapshot.SiteId ||
+            model.CurrentPublishedVersionId != publishedVersionId)
+            return false;
+
+        // These inputs can change independently of the version's content revision.
+        var assetIds = snapshot.Elements.Where(value => value.ModelAssetId.HasValue)
+            .Select(value => value.ModelAssetId!.Value).Distinct().ToArray();
+        var dependencies = await EfSpaceValidationSnapshotReader.ReadDependenciesAsync(context, version.Id, assetIds, cancellationToken);
+        return SameItems(snapshot.Sources, dependencies.Sources) && SameItems(snapshot.AssetVersions, dependencies.Assets) &&
+               SameItems(snapshot.ExistingIssues, dependencies.Issues);
+    }
+
+    private static bool SameItems<T>(IReadOnlyCollection<T> expected, IReadOnlyCollection<T> current) where T : notnull
+    {
+        if (expected.Count != current.Count)
+            return false;
+        var counts = expected.GroupBy(value => value).ToDictionary(group => group.Key, group => group.Count());
+        return current.GroupBy(value => value).All(group => counts.GetValueOrDefault(group.Key) == group.Count());
     }
 }
 
@@ -781,28 +865,12 @@ internal sealed class EfSpaceValidationSnapshotReader
                     .OrderBy(value => value.Namespace, StringComparer.Ordinal)
                     .ThenBy(value => value.Key, StringComparer.Ordinal)
                     .ToArray());
-        var sources = await _context.Sources
-            .AsNoTracking()
-            .Where(value => value.ModelVersionId == version.Id)
-            .ToArrayAsync(cancellationToken);
         var assetIds = elements
             .Where(value => value.ModelAssetId.HasValue)
             .Select(value => value.ModelAssetId!.Value)
             .Distinct()
             .ToArray();
-        var assetVersions = assetIds.Length == 0
-            ? []
-            : await _context.AssetVersions
-                .AsNoTracking()
-                .Where(value => assetIds.Contains(value.Id))
-                .ToArrayAsync(cancellationToken);
-        var existingIssues = await _context.Issues
-            .AsNoTracking()
-            .Where(issue =>
-                issue.ModelVersionId == version.Id &&
-                issue.ValidationRunId == null &&
-                issue.Status == SpaceIssueStatus.Open)
-            .ToArrayAsync(cancellationToken);
+        var (sources, assetVersions, existingIssues) = await ReadDependenciesAsync(_context, version.Id, assetIds, cancellationToken);
         var publishedLocations =
             model.CurrentPublishedVersionId.HasValue &&
             model.CurrentPublishedVersionId.Value != version.Id
@@ -907,40 +975,15 @@ internal sealed class EfSpaceValidationSnapshotReader
                     value.LinkedLogicalId,
                     attributesByElement.GetValueOrDefault(value.Id) ?? []))
                 .ToArray(),
-            sources.Select(value => new SpaceValidationSource(
-                    value.Id,
-                    value.SourceType,
-                    value.Sha256,
-                    value.State,
-                    value.Unit,
-                    value.ScaleToMillimeters))
-                .ToArray(),
-            assetVersions.Select(value => new SpaceValidationAssetVersion(
-                    value.Id,
-                    value.Scope,
-                    value.OwnerTenantId,
-                    value.Status))
-                .ToArray(),
+            sources,
+            assetVersions,
             publishedLocations.Select(value =>
                     new SpaceValidationPublishedLocation(
                         value.LogicalId,
                         value.LocationCode,
                         value.ExternalBindingState))
                 .ToArray(),
-            existingIssues.Select(value => new SpaceValidationExistingIssue(
-                    value.Severity,
-                    value.Category,
-                    value.Code,
-                    value.SourceId,
-                    value.SourceRef,
-                    value.TargetLogicalId,
-                    value.FieldPath,
-                    value.MessageArgsJson,
-                    value.SuggestedActionCode,
-                    value.GenerationRunId,
-                    value.GenerationProposalId,
-                    value.EvidenceJson))
-                .ToArray(),
+            existingIssues,
             locationBindings.Select(value =>
                     new SpaceValidationLocationBinding(
                         value.LocationLogicalId,
@@ -958,6 +1001,24 @@ internal sealed class EfSpaceValidationSnapshotReader
                         value.Value,
                         value.Unit))
                 .ToArray());
+    }
+
+    internal static async Task<(SpaceValidationSource[] Sources, SpaceValidationAssetVersion[] Assets, SpaceValidationExistingIssue[] Issues)>
+        ReadDependenciesAsync(SpaceContext context, Guid versionId, Guid[] assetIds, CancellationToken cancellationToken)
+    {
+        var sources = await context.Sources.AsNoTracking().Where(value => value.ModelVersionId == versionId)
+            .Select(value => new SpaceValidationSource(value.Id, value.SourceType, value.Sha256, value.State,
+                value.Unit, value.ScaleToMillimeters)).ToArrayAsync(cancellationToken);
+        var assets = assetIds.Length == 0 ? [] : await context.AssetVersions.AsNoTracking()
+            .Where(value => assetIds.Contains(value.Id))
+            .Select(value => new SpaceValidationAssetVersion(value.Id, value.Scope, value.OwnerTenantId, value.Status))
+            .ToArrayAsync(cancellationToken);
+        var issues = await context.Issues.AsNoTracking()
+            .Where(value => value.ModelVersionId == versionId && value.ValidationRunId == null && value.Status == SpaceIssueStatus.Open)
+            .Select(value => new SpaceValidationExistingIssue(value.Severity, value.Category, value.Code, value.SourceId,
+                value.SourceRef, value.TargetLogicalId, value.FieldPath, value.MessageArgsJson, value.SuggestedActionCode,
+                value.GenerationRunId, value.GenerationProposalId, value.EvidenceJson)).ToArrayAsync(cancellationToken);
+        return (sources, assets, issues);
     }
 
     private static SpaceValidationRevisionRef Ref(
