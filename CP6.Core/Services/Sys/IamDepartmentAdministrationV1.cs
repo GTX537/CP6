@@ -63,9 +63,14 @@ public sealed class IamDepartmentAdministrationV1(CP6Context db,IamAdministratio
             if(string.IsNullOrWhiteSpace(command.DeptCode)||command.DeptCode.Length>50||string.IsNullOrWhiteSpace(command.DeptName)||command.DeptName.Length>100)
                 throw Error(400,"IAM_DEPARTMENT_INPUT_INVALID");
         }
-        return authority.ExecuteAsync(Permission(kind),actor,async(who,token)=>
+        return authority.ExecuteAsync(Permission(kind), actor, async (who, token) =>
         {
-            var original=await authority.Original(who,kind,command,token);if(original!=null)return original;
+            var original = await authority.Original(who, kind, command, token);
+            return original ?? await Write(who, token);
+        }, ct);
+
+        async Task<IamOperationV1> Write(Guid who, CancellationToken token)
+        {
             var all=await Departments(token);var row=create?new Sys_Dept{Id=Guid.NewGuid(),TenantId=db.CurrentTenantId}:RequireDepartment(command.Id!.Value,all);
             var version=create?"absent":await authority.Version("dept:"+row.Id.ToString("D"),token);
             if(version!=command.ExpectedVersion || command.ExpectedTreeVersion!=await authority.Version("tree",token)
@@ -111,7 +116,7 @@ public sealed class IamDepartmentAdministrationV1(CP6Context db,IamAdministratio
             authority.Audit(who,command.OperationId,kind,command.Reason!,row.Id);await db.SaveChangesAsync(token);
             var result=new IamOperationV1(command.OperationId,kind,"COMMITTED",row.Id,await authority.Version("dept:"+row.Id.ToString("D"),token),await authority.ReferencesVersion(token),await authority.Version("tree",token));
             await authority.Store(who,command,result,token);return result;
-        },ct);
+        }
     }
     private async Task<IamDepartmentPreviewV1> Preview(Guid id,Guid? parent,Dictionary<Guid,Sys_Dept> all,CancellationToken ct)
     {

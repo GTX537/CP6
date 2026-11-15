@@ -13,6 +13,7 @@ using CP6.Core.Services.Platform;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
 using CP6.Entity.DTOs.Sys;
+using CP6.Tests.Erp;
 using CP6.WebApi.Controllers.Sys;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Builder;
@@ -39,9 +40,16 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         await CopyRole71ForIndependentInquiry(h);
         var unrelated = Guid.NewGuid();
         var destination = Guid.NewGuid();
+        const string otherEditor = "w662-independent-editor";
         h.Db.Sys_Depts.AddRange(
             new Sys_Dept { Id = unrelated, DeptCode = "W662-U", DeptName = "Unrelated department", Path = $"/{unrelated:D}/", Enable = true },
             new Sys_Dept { Id = destination, DeptCode = "W662-D", DeptName = "Move destination", Path = $"/{destination:D}/", Enable = true });
+        h.Db.Sys_Users.Add(new Sys_User
+        {
+            UserName = otherEditor, Enable = true, DeptId = unrelated, RoleId = 72,
+            Password = (await h.Db.Sys_Users.AsNoTracking().SingleAsync(x => x.Id == h.ActorId)).Password,
+            AuthenticationEpoch = Guid.NewGuid()
+        });
         foreach (var row in await h.Db.Sys_RoleDataScopes.Where(x =>
             (x.RoleId == 71 || x.RoleId == 72) && (x.ResourceKey == "crm-lead" || x.ResourceKey == "crm-privacy")).ToListAsync())
         {
@@ -62,9 +70,13 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         await using var crm = new NpgsqlConnection(Environment.GetEnvironmentVariable("CP6_PGT017_CRM_OBSERVER"));
         await crm.OpenAsync();
         await InstallDepartmentSealFixture(crm, seal, h.Tenant, store);
+        var crmAck = Environment.GetEnvironmentVariable("CP6_W662_CRM_ACK_PORT");
+        await using var crmRelay = crmAck is null ? null : new StockPostgresCommitRelay(seal.Port, seal.Username!, int.Parse(crmAck));
+        var sealEndpoint = new NpgsqlConnectionStringBuilder(seal.ConnectionString);
+        if (crmRelay is not null) sealEndpoint.Port = crmRelay.Port;
         await using var binding = new CrmInquiryTenantPauseV1(new Dictionary<Guid, CrmInquiryTenantPauseBindingV1>
         {
-            [h.Tenant] = new() { StoreId = store, ConnectionString = seal.ConnectionString }
+            [h.Tenant] = new() { StoreId = store, ConnectionString = sealEndpoint.ConnectionString }
         });
 
         var services = ServiceRegistration(h, Guid.NewGuid());
@@ -130,12 +142,22 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         environment["ASPNETCORE_URLS"] = "http://127.0.0.1:" + Environment.GetEnvironmentVariable("CP6_PGT017_MAIN_HTTP_PORT");
         environment["JWT__Secret"] = CrmOidcCrypto.RandomToken() + CrmOidcCrypto.RandomToken();
         var prefix = $"CrmInquiryTenantPause__Tenants__{h.Tenant:D}__";
-        environment[prefix + "ConnectionString"] = seal.ConnectionString;
+        environment[prefix + "ConnectionString"] = sealEndpoint.ConnectionString;
         environment[prefix + "StoreId"] = store.ToString("D");
-        Task<AuthenticationApiProcess> Start() => AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, environment);
+        var mainConnection = h.Db.Database.GetConnectionString()!;
+        var mainEndpoint = new NpgsqlConnectionStringBuilder(mainConnection);
+        var mainAck = Environment.GetEnvironmentVariable("CP6_W662_MAIN_ACK_PORT");
+        await using var mainRelay = mainAck is null ? null : new StockPostgresCommitRelay(mainEndpoint.Port, mainEndpoint.Username!, int.Parse(mainAck));
+        if (mainRelay is not null)
+        {
+            mainEndpoint.Port = mainRelay.Port;
+            mainEndpoint.SslMode = SslMode.Disable;
+        }
+        Task<AuthenticationApiProcess> Start() => AuthenticationApiProcess.Start(mainEndpoint.ConnectionString, environment);
 
         await using var host = await Start();
         var login = await Login(host, h);
+        var otherLogin = await Login(host, h, userName: otherEditor);
         const string route = "api/iam/departments";
         using var editorResponse = await host.Send(Request(HttpMethod.Get, route + "/editor", login));
         Assert.True(editorResponse.StatusCode == HttpStatusCode.OK, await editorResponse.Content.ReadAsStringAsync());
@@ -207,6 +229,25 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 Independent = new { independent.SubjectId, independent.DepartmentId, Before = beforeIndependent, Cold = coldIndependent }
             });
             Assert.Null(coldAffected.Fence);
+            var staged = await Pending();
+            Assert.NotNull(staged);
+            using var stagedJson = JsonDocument.Parse(staged);
+            var values = stagedJson.RootElement;
+            Assert.Equal((h.Parent, h.ActorId, store, kind, false), (values.GetProperty("Root").GetGuid(), values.GetProperty("Actor").GetGuid(),
+                values.GetProperty("Store").GetGuid(), values.GetProperty("Kind").GetString(), values.GetProperty("Started").GetBoolean()));
+            var committed = move ? 2 : 1;
+            var originalTargets = values.GetProperty("Seals").EnumerateArray().ToDictionary(value => value.GetProperty("departmentId").GetGuid());
+            Assert.Equal(departments.Take(committed).Order(), originalTargets.Keys.Order());
+            using var beforeJson = JsonDocument.Parse(before);
+            var beforeRows = beforeJson.RootElement.GetProperty("Departments");
+            var expectedFloors = floors.ToArray();
+            for (var i = 0; i < committed; i++)
+            {
+                var expected = originalTargets[departments[i]];
+                expectedFloors[i] = beforeRows[i].GetProperty("Version").GetInt32() + 1;
+                Assert.Equal(expectedFloors[i], expected.GetProperty("version").GetInt32());
+                Assert.Equal(beforeRows[i].GetProperty("Payload").GetString(), expected.GetProperty("predecessorHash").GetString());
+            }
 
             var pid = host.ProcessId;
             await host.StopAsync();
@@ -219,22 +260,113 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             RequireFence(await ReadIssue(independent, independentSecret, unrelated));
             Assert.Equal(before, await State());
             Assert.Equal(coldFloors, await Floors());
+            Assert.Equal(staged, await Pending());
+
+            var method = move ? HttpMethod.Post : HttpMethod.Put;
+            using var wrongActor = await restarted.Send(Request(method, writePath, otherLogin, originalInput));
+            await RequireError(wrongActor, HttpStatusCode.Forbidden, "IAM_OPERATION_OWNER_MISMATCH");
+            var changed = JsonSerializer.SerializeToNode(originalInput)!.AsObject();
+            changed["Reason"] = "W662 simulated altered repeat";
+            using var wrongInput = await restarted.Send(Request(method, writePath, login, changed));
+            await RequireError(wrongInput, HttpStatusCode.Conflict, "IAM_OPERATION_INPUT_CONFLICT");
+            changed["OperationId"] = Guid.NewGuid();
+            using var competing = await restarted.Send(Request(method, writePath, login, changed));
+            await RequireError(competing, HttpStatusCode.Conflict, "IAM_CRM_DEPARTMENT_SEAL_PENDING");
+            Assert.Equal(staged, await Pending());
 
             await SealLogin(true);
-            using var retried = await Write(restarted);
-            Assert.True(retried.StatusCode == HttpStatusCode.OK, await retried.Content.ReadAsStringAsync());
-            var receipt = (await retried.Content.ReadFromJsonAsync<IamOperationV1>())!;
+            if (crmRelay is not null)
+            {
+                crmRelay.Arm();
+                using var unconfirmed = await Write(restarted);
+                await crmRelay.Dropped.WaitAsync(TimeSpan.FromSeconds(10));
+                await RequireError(unconfirmed, HttpStatusCode.ServiceUnavailable, "AUTHORITY_FENCE_UNAVAILABLE");
+                Assert.Equal(before, await State());
+                Assert.Equal(expectedFloors, await Floors());
+                using var close = await restarted.Send(Request(HttpMethod.Post, $"{route}/operations/{operationId:D}/close?kind={kind}", login));
+                await RequireError(close, HttpStatusCode.ServiceUnavailable, "IAM_OPERATION_UNKNOWN");
+                Assert.Null((await ReadIssue(affected, ServiceSecret, h.Child)).Fence);
+                RequireFence(await ReadIssue(independent, independentSecret, unrelated));
+                var started = Assert.IsType<string>(await Pending());
+                using var startedJson = JsonDocument.Parse(started);
+                Assert.True(startedJson.RootElement.GetProperty("Started").GetBoolean());
+                Assert.Equal(values.GetProperty("Seals").GetRawText(), startedJson.RootElement.GetProperty("Seals").GetRawText());
+                await Save("department-remote-ack.json", new { Original = original, Main = before, Floors = await Floors(), Pending = started });
+                if (Environment.GetEnvironmentVariable("CP6_W662_STALE_AFTER_ACK") == "1")
+                {
+                    using var fresh = await restarted.Send(Request(HttpMethod.Get, route + "/editor", login));
+                    var current = (await fresh.Content.ReadFromJsonAsync<IamDepartmentEditorV1>())!;
+                    var unchanged = Assert.Single(current.Departments, item => item.Id == unrelated);
+                    var rename = new DeptDto
+                    {
+                        OperationId = Guid.NewGuid(), Reason = "W662 independent simulated display name change", ExpectedVersion = unchanged.Version,
+                        ExpectedTreeVersion = current.TreeVersion, ExpectedReferencesVersion = current.ReferencesVersion,
+                        DeptCode = unchanged.DeptCode, DeptName = "Independent renamed department", ParentId = unchanged.ParentId,
+                        LeaderId = unchanged.LeaderId, Sort = unchanged.Sort, Enable = unchanged.Enable
+                    };
+                    using var renamed = await restarted.Send(Request(HttpMethod.Put, $"{route}/{unrelated:D}", login, rename));
+                    Assert.True(renamed.StatusCode == HttpStatusCode.OK, await renamed.Content.ReadAsStringAsync());
+                    var otherReceipt = (await renamed.Content.ReadFromJsonAsync<IamOperationV1>())!;
+                    Assert.Equal((rename.OperationId, "COMMITTED"), (otherReceipt.OperationId, otherReceipt.State));
+                    Assert.NotEqual(current.TreeVersion, otherReceipt.TreeVersion);
+                    Assert.NotEqual(current.ReferencesVersion, otherReceipt.ReferencesVersion);
+                    using var stale = await Write(restarted);
+                    await RequireError(stale, HttpStatusCode.ServiceUnavailable, "IAM_OPERATION_UNKNOWN");
+                    using var unresolved = await restarted.Send(Request(HttpMethod.Get, operationPath, login));
+                    Assert.Equal(original, await unresolved.Content.ReadFromJsonAsync<IamOperationV1>());
+                    Assert.Equal(before, await State());
+                    Assert.Equal(expectedFloors, await Floors());
+                    Assert.Equal(started, await Pending());
+                    RequireFence(await ReadIssue(independent, independentSecret, unrelated));
+                    await Save("department-stale-after-ack.json", new { Original = original, Other = otherReceipt, Floors = await Floors(), Pending = started });
+                    return;
+                }
+            }
+
+            IamOperationV1 receipt;
+            if (mainRelay is null)
+            {
+                using var retried = await Write(restarted);
+                Assert.True(retried.StatusCode == HttpStatusCode.OK, await retried.Content.ReadAsStringAsync());
+                receipt = (await retried.Content.ReadFromJsonAsync<IamOperationV1>())!;
+            }
+            else
+            {
+                await using var holder = new NpgsqlConnection(mainConnection);
+                await holder.OpenAsync();
+                await using var transaction = await holder.BeginTransactionAsync();
+                await using var hold = new NpgsqlCommand("""
+                    SELECT 1 FROM public."Sys_Dept" WHERE "TenantId"=@tenant AND "Id"=@department FOR UPDATE
+                    """, holder, transaction);
+                hold.Parameters.AddWithValue("tenant", h.Tenant);
+                hold.Parameters.AddWithValue("department", h.Parent);
+                Assert.Equal(1, await hold.ExecuteScalarAsync());
+                await using var observer = new NpgsqlConnection(mainConnection);
+                await observer.OpenAsync();
+                var completing = Write(restarted);
+                try
+                {
+                    await WaitForMainBlock(observer, holder.ProcessID, "%UPDATE%Sys_Dept%", completing);
+                    Assert.Equal(before, await State());
+                    mainRelay.Arm();
+                }
+                finally { await transaction.RollbackAsync(); }
+                using var unconfirmed = await completing;
+                await mainRelay.Dropped.WaitAsync(TimeSpan.FromSeconds(10));
+                await RequireError(unconfirmed, HttpStatusCode.ServiceUnavailable, "IAM_OPERATION_UNKNOWN");
+                using var recovered = await restarted.Send(Request(HttpMethod.Get, operationPath, login));
+                Assert.Equal(HttpStatusCode.OK, recovered.StatusCode);
+                receipt = (await recovered.Content.ReadFromJsonAsync<IamOperationV1>())!;
+            }
             Assert.Equal((operationId, kind, "COMMITTED", (Guid?)h.Parent), (receipt.OperationId, receipt.Kind, receipt.State, receipt.EntityId));
+            Assert.Null(await Pending());
             var after = await State();
             var afterFloors = await Floors();
             using var afterJson = JsonDocument.Parse(after);
-            using var beforeJson = JsonDocument.Parse(before);
-            var committed = move ? 2 : 1;
             Assert.Equal(beforeJson.RootElement.GetProperty("Generation").GetInt64() + committed,
                 afterJson.RootElement.GetProperty("Generation").GetInt64());
             Assert.Equal(1, afterJson.RootElement.GetProperty("Audit").GetInt32());
             Assert.Equal(1, afterJson.RootElement.GetProperty("Receipts").GetInt32());
-            var beforeRows = beforeJson.RootElement.GetProperty("Departments");
             var afterRows = afterJson.RootElement.GetProperty("Departments");
             for (var i = 0; i < departments.Length; i++)
             {
@@ -243,6 +375,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                     var version = beforeRows[i].GetProperty("Version").GetInt32() + 1;
                     Assert.Equal(version, afterRows[i].GetProperty("Version").GetInt32());
                     Assert.Equal(version, afterFloors[i]);
+                    Assert.Equal(originalTargets[departments[i]].GetProperty("successorHash").GetString(), afterRows[i].GetProperty("Payload").GetString());
                     Assert.Equal(beforeRows[i].GetProperty("Outbox").GetInt32() + 1, afterRows[i].GetProperty("Outbox").GetInt32());
                 }
                 else Assert.Equal(beforeRows[i].GetRawText(), afterRows[i].GetRawText());
@@ -269,7 +402,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             Assert.Equal(receipt, await replay.Content.ReadFromJsonAsync<IamOperationV1>());
             Assert.Equal(after, await State());
             Assert.Equal(afterFloors, await Floors());
-            await Save("department-recovery.json", new { Receipt = receipt, After = after, Floors = afterFloors, RestartPid = restarted.ProcessId });
+            await Save("department-recovery.json", new { Receipt = receipt, After = after, Floors = afterFloors, RestartPid = restarted.ProcessId,
+                RemoteCommitAckLost = crmRelay is not null, MainCommitAckLost = mainRelay is not null });
         }
         finally { await SealLogin(true); }
 
@@ -316,6 +450,12 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
 
         void RequireFence(DepartmentSealIssuedProjection issued) => Assert.Equal($"{store:D}/1", issued.Fence);
 
+        Task<string?> Pending() => h.Db.Database.SqlQuery<string?>($"""
+            SELECT jsonb_build_object('Root',department_id,'Actor',actor_id,'Store',store_id,'Kind',kind,
+                'Started',seal_started,'Seals',source_seals)::text AS "Value"
+            FROM cp6_authentication_v1.pending_crm_department_seals WHERE tenant_id={h.Tenant} AND operation_id={operationId}
+            """).SingleOrDefaultAsync();
+
         Task<string> State() => h.Db.Database.SqlQuery<string>($"""
             SELECT jsonb_build_object('Departments', (
                 SELECT jsonb_agg(jsonb_build_object('Id', d."Id", 'Parent', d."ParentId", 'Path', d."Path",
@@ -355,6 +495,14 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
 
         static Task Save(string file, object evidence) => File.WriteAllTextAsync(
             Path.Combine(Environment.GetEnvironmentVariable("CP6_PGT017_BRIDGE")!, file), JsonSerializer.Serialize(evidence));
+
+        static async Task RequireError(HttpResponseMessage response, HttpStatusCode status, string code)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.True(response.StatusCode == status, $"Expected {(int)status}, got {(int)response.StatusCode}: {content}");
+            using var json = JsonDocument.Parse(content);
+            Assert.Equal(code, json.RootElement.GetProperty("code").GetString());
+        }
     }
 
     private sealed record DepartmentSealIssuedProjection(int Status, Guid ManagedDepartment, string? Fence);
