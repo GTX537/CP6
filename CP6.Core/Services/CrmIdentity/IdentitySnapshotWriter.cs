@@ -181,6 +181,18 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
         var envelope = IdentityEventContracts.Create(tenant, aggregate, version, type, data,
             runtime.Options.Tenants[tenant], command, command, runtime.Clock);
         if (!runtime.Validator.Validate(envelope).IsValid) throw new InvalidOperationException("C02_IDENTITY_CONTRACT_INVALID");
+        var payloadHash = IdentityEventContracts.Hash(Encoding.UTF8.GetBytes(payload));
+        if (db.Database.IsNpgsql() && previous is not null && value is DepartmentIdentityData department)
+        {
+            if (db.CaptureCrmDepartmentSeal is { } captureDepartment)
+                captureDepartment(tenant, new CrmDepartmentSealAdvanceV1(department.DeptId, version, previous.PayloadSha256, payloadHash));
+            else if (runtime.InquiryFence is { } departmentFence && departmentFence.IsRegistered(tenant))
+            {
+                if (await IamCrmDepartmentSealV1.ConflictsAsync(db, tenant, [department.DeptId], cancellationToken).ConfigureAwait(false))
+                    throw IamAdministrationV1.Error(409, "IAM_CRM_DEPARTMENT_SEAL_PENDING");
+                await departmentFence.AdvanceDepartmentAsync(tenant, department.DeptId, version, cancellationToken).ConfigureAwait(false);
+            }
+        }
         if (db.Database.IsNpgsql() && runtime.InquiryFence is { } fence)
         {
             var role = IdentityEventContracts.IsPermissionChanged(type);
@@ -226,8 +238,6 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
                     throw IamAdministrationV1.Error(409, "IAM_CRM_USER_SEAL_PENDING");
                 await fence.AdvanceIdentityAsync(tenant, aggregate, version, role, cancellationToken).ConfigureAwait(false);
             }
-            if (previous is not null && value is DepartmentIdentityData department)
-                await fence.AdvanceDepartmentAsync(tenant, department.DeptId, version, cancellationToken).ConfigureAwait(false);
             if (previous is { IsDeleted: false } && value is TenantIdentityData { Enabled: true } currentTenant)
             {
                 var oldTenant = JsonSerializer.Deserialize<TenantIdentityData>(previous.PayloadJson, IdentityEventContracts.Json)!;
@@ -239,7 +249,7 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
         snapshot.Version = version;
         snapshot.EventType = type;
         snapshot.PayloadJson = payload;
-        snapshot.PayloadSha256 = IdentityEventContracts.Hash(Encoding.UTF8.GetBytes(payload));
+        snapshot.PayloadSha256 = payloadHash;
         snapshot.IsDeleted = deleted;
         snapshot.UpdatedAtUtc = runtime.Clock.GetUtcNow();
         if (previous is null) db.CrmIdentitySnapshots.Add(snapshot);
