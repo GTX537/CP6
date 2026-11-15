@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 W646-01 后续
+
+继续普通克隆、上传扫描终态、清单内独立 Space 写者及 CRM 首次封存连接失败时的待处理停签。 [交付](../development/evidence/W646-01/DELIVERY.md)
+
 ## 2026-11-15 W641-01 后续
 
 按最终写者清单继续 Space 普通校验及普通 Published→Draft 克隆的后台栅栏。 [交付](../development/evidence/W641-01/DELIVERY.md)
