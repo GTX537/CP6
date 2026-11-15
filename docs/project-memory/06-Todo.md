@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 W628-01 后续
+
+继续历史刊发父作业、CAD 提供者管理、采购及库存财务写者和 CRM 消费交接。 [交付](../development/evidence/W628-01/DELIVERY.md)
+
 ## 2026-11-15 W626-01 后续
 
 继续真实 Excel/CAD Apply 批次、CAD 提供者配置、历史刊发父作业和 CRM 消费交接。 [交付](../development/evidence/W626-01/DELIVERY.md)

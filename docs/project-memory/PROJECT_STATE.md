@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W628-01 Excel/CAD 实际导入
+
+实际 Apply 批次采用 Main、原 Job 和编辑租约，实测暂停两种顺序及自然到期回滚。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W628-01/DELIVERY.md)
+
 ## 2026-11-15 W626-01 CAD 与 Excel 后台预览
 
 CAD 预览完成与 Excel 校验问题、预览完成采用共同栅栏。7 项实库覆盖提交顺序和原问题记录恢复。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W626-01/DELIVERY.md)
