@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 W616-01 后续
+
+继续核对 CAD 来源最终化、Excel 预检和后台 Apply、刊发后台、WMS 激活、CRM 目标传输及财务跨域后台。 [交付](../development/evidence/W616-01/DELIVERY.md)
+
 ## 2026-11-15 W613-01 后续
 
 继续核对文件扫描、CAD 来源最终化、Excel 预检与后台 Apply、刊发后台及 WMS 激活、财务跨域后台和 CRM 目标传输身份。PGT-017 待全部当前写者证明。 [交付](../development/evidence/W613-01/DELIVERY.md)

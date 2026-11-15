@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W616-01
+
+独立 FileScan 状态提交按当前租户与 Job 租约排序。实际完成已提交但应答中断时，原尝试可读取原结论。 [交付](../development/evidence/W616-01/DELIVERY.md)
+
 ## 2026-11-15 W613-01
 
 Space 的 CAD 与 Excel/CAD 匹配制品在业务连接中核对当前租户和持久 Job 租约及取消状态。提交回包未知可按原 Job 恢复已提交 File/Artifact。 [交付](../development/evidence/W613-01/DELIVERY.md)

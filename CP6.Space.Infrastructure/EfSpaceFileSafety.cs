@@ -1,13 +1,19 @@
 using System.Data;
 using System.Text.Json;
+using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
+using CP6.Core.Services.Common;
+using CP6.Core.Services.Sys;
 using CP6.Space.Application;
 using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Space.Infrastructure;
 
 public sealed class EfSpaceFileScanStateStore : ISpaceFileScanStateStore
 {
+    private const string TenantInactiveCode = "SPACE_FILE_SCAN_TENANT_INACTIVE";
     private readonly SpaceContext _context;
     private readonly ISpaceClock _clock;
 
@@ -25,71 +31,40 @@ public sealed class EfSpaceFileScanStateStore : ISpaceFileScanStateStore
     {
         EnsureFileScanLease(lease);
         _context.ChangeTracker.Clear();
-        await using var transaction = await _context.Database
-            .BeginTransactionAsync(
-                IsolationLevel.ReadCommitted,
-                cancellationToken);
+        if (await ReadCompletedScanAsync(lease, cancellationToken) is { } completed)
+            return completed;
+
         try
         {
-            var now = RequireUtcNow();
-            var (job, attempt) = await LoadLeaseAsync(
-                lease,
-                now,
-                cancellationToken);
-            var file = await _context.Files.SingleOrDefaultAsync(
-                           candidate => candidate.Id == lease.SubjectId,
-                           cancellationToken)
-                       ?? throw LeaseLost();
-            if (!string.Equals(
-                    file.Sha256,
-                    lease.InputHash,
-                    StringComparison.OrdinalIgnoreCase))
-            {
-                throw new SpaceJobStateException(
-                    "The file content no longer matches the scan Job input.");
-            }
-            if (job.CancellationRequestedAtUtc.HasValue)
-            {
-                if (file.State == SpaceFileState.Scanning)
-                    file.DeferScan("SPACE_FILE_QUARANTINED");
-                job.AcknowledgeCancellation(
-                    lease.AttemptId,
-                    lease.WorkerId,
-                    now);
-                attempt.Cancel(now);
-                await _context.SaveChangesAsync(cancellationToken);
-                await transaction.CommitAsync(cancellationToken);
-                throw new OperationCanceledException(
-                    "The file-safety Job cancellation was acknowledged.");
-            }
+            return await BeginOwnedScanAsync(lease, cancellationToken);
+        }
+        catch (Exception error) when (MayHaveCompleted(error))
+        {
+            if (await ReadCompletedScanAsync(lease, cancellationToken) is { } raced)
+                return raced;
+            throw;
+        }
+    }
 
-            file.BeginScanning();
-            await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
-            return new SpaceFileScanTarget(
-                file.TenantId,
-                file.Id,
-                file.StorageKey,
-                file.OriginalName,
-                file.DetectedContentType ??
-                throw new SpaceFileStateException(
-                    "A quarantined file requires a detected content type."),
-                file.Extension ??
-                throw new SpaceFileStateException(
-                    "A quarantined file requires an extension."),
-                file.SizeBytes,
-                file.Sha256!);
-        }
-        catch (OperationCanceledException)
-            when (!cancellationToken.IsCancellationRequested)
+    private async Task<SpaceFileScanTarget> BeginOwnedScanAsync(SpaceJobLease lease, CancellationToken cancellationToken)
+    {
+        var (transaction, tenantExpiry) = await BeginWriteAsync(cancellationToken);
+        await using var owned = transaction;
+        var scan = await LoadLiveScanAsync(lease, cancellationToken);
+        if (scan.Job.CancellationRequestedAtUtc.HasValue)
         {
-            throw;
+            if (scan.File.State == SpaceFileState.Scanning)
+                scan.File.DeferScan("SPACE_FILE_QUARANTINED");
+            scan.Job.AcknowledgeCancellation(lease.AttemptId, lease.WorkerId, scan.NowUtc);
+            scan.Attempt.Cancel(scan.NowUtc);
+            await SaveAndCommitAsync(transaction, tenantExpiry, scan.LeaseExpiresAtUtc, cancellationToken);
+            throw ScanCancelled();
         }
-        catch
-        {
-            await transaction.RollbackAsync(CancellationToken.None);
-            throw;
-        }
+
+        var target = ToTarget(scan.File);
+        scan.File.BeginScanning();
+        await SaveAndCommitAsync(transaction, tenantExpiry, scan.LeaseExpiresAtUtc, cancellationToken);
+        return target;
     }
 
     public async Task FinishScanAsync(
@@ -100,150 +75,246 @@ public sealed class EfSpaceFileScanStateStore : ISpaceFileScanStateStore
         ArgumentNullException.ThrowIfNull(result);
         EnsureFileScanLease(lease);
         _context.ChangeTracker.Clear();
-        await using var transaction = await _context.Database
-            .BeginTransactionAsync(
-                IsolationLevel.ReadCommitted,
-                cancellationToken);
+        if (await RecoverFinishAsync(lease, result, cancellationToken))
+            return;
+
         try
         {
-            var now = RequireUtcNow();
-            var (job, attempt) = await LoadLeaseAsync(
-                lease,
-                now,
-                cancellationToken);
-            var file = await _context.Files.SingleOrDefaultAsync(
-                           candidate => candidate.Id == lease.SubjectId,
-                           cancellationToken)
-                       ?? throw LeaseLost();
-            if (file.State != SpaceFileState.Scanning)
-            {
-                throw new SpaceFileStateException(
-                    "Only a scanning file can accept a safety result.");
-            }
+            await FinishOwnedScanAsync(lease, result, cancellationToken);
+        }
+        catch (Exception error) when (MayHaveCompleted(error))
+        {
+            if (!await RecoverFinishAsync(lease, result, cancellationToken))
+                throw;
+        }
+    }
 
-            if (job.CancellationRequestedAtUtc.HasValue)
+    private async Task FinishOwnedScanAsync(SpaceJobLease lease, FileSafetyResult result, CancellationToken cancellationToken)
+    {
+        var (transaction, tenantExpiry) = await BeginWriteAsync(cancellationToken);
+        await using var owned = transaction;
+        var scan = await LoadLiveScanAsync(lease, cancellationToken);
+        var (job, attempt, file, now, leaseExpiry) = scan;
+        if (file.State != SpaceFileState.Scanning)
+            throw new SpaceFileStateException("Only a scanning file can accept a safety result.");
+
+        if (job.CancellationRequestedAtUtc.HasValue)
+        {
+            file.DeferScan("SPACE_FILE_QUARANTINED", result.ScanEngine, result.SignatureVersion);
+            job.AcknowledgeCancellation(lease.AttemptId, lease.WorkerId, now);
+            attempt.Cancel(now);
+        }
+        else if (result.Disposition == FileSafetyDisposition.Safe)
+        {
+            if (result.FailureKind.HasValue)
+                throw new ArgumentException("A safe result cannot include a failure classification.", nameof(result));
+
+            file.MarkClean(result.ScanEngine, result.SignatureVersion, result.ResultCode);
+            job.Complete(lease.AttemptId, lease.WorkerId, now, JsonSerializer.Serialize(new
             {
-                file.DeferScan(
-                    "SPACE_FILE_QUARANTINED",
-                    result.ScanEngine,
-                    result.SignatureVersion);
-                job.AcknowledgeCancellation(
-                    lease.AttemptId,
-                    lease.WorkerId,
-                    now);
-                attempt.Cancel(now);
-            }
-            else if (result.Disposition == FileSafetyDisposition.Safe)
+                fileId = file.Id,
+                resultCode = result.ResultCode,
+                scanEngine = result.ScanEngine,
+                signatureVersion = result.SignatureVersion,
+                sanitizedSummary = result.SanitizedSummary,
+            }));
+            attempt.Succeed(now);
+            await CompletePendingSourcesAsync(file, cancellationToken);
+        }
+        else
+        {
+            var kind = result.FailureKind ??
+                throw new ArgumentException("A non-safe result requires a failure classification.", nameof(result));
+            if (result.Disposition == FileSafetyDisposition.Rejected)
             {
-                if (result.FailureKind.HasValue)
-                {
-                    throw new ArgumentException(
-                        "A safe result cannot include a failure classification.",
-                        nameof(result));
-                }
-                file.MarkClean(
-                    result.ScanEngine,
-                    result.SignatureVersion,
-                    result.ResultCode);
-                job.Complete(
-                    lease.AttemptId,
-                    lease.WorkerId,
-                    now,
-                    JsonSerializer.Serialize(
-                        new
-                        {
-                            fileId = file.Id,
-                            resultCode = result.ResultCode,
-                            scanEngine = result.ScanEngine,
-                            signatureVersion = result.SignatureVersion,
-                        }));
-                attempt.Succeed(now);
-                await CompletePendingSourcesAsync(
-                    file,
-                    cancellationToken);
+                file.Reject(result.ResultCode, result.ScanEngine, result.SignatureVersion);
+                await CompletePendingSourcesAsync(file, cancellationToken);
             }
             else
             {
-                var failureKind = result.FailureKind ??
-                                  throw new ArgumentException(
-                                      "A non-safe result requires a failure classification.",
-                                      nameof(result));
-                if (result.Disposition == FileSafetyDisposition.Rejected)
-                {
-                    file.Reject(
-                        result.ResultCode,
-                        result.ScanEngine,
-                        result.SignatureVersion);
-                    await CompletePendingSourcesAsync(
-                        file,
-                        cancellationToken);
-                }
-                else
-                {
-                    file.DeferScan(
-                        result.ResultCode,
-                        result.ScanEngine,
-                        result.SignatureVersion);
-                }
-
-                var decision = SpaceJobRetryPolicy.DecideAutomatic(
-                    failureKind,
-                    job.AttemptCount,
-                    job.MaxAttempts,
-                    now);
-                job.Fail(
-                    lease.AttemptId,
-                    lease.WorkerId,
-                    failureKind,
-                    result.ResultCode,
-                    result.SanitizedSummary,
-                    decision,
-                    now);
-                attempt.Fail(
-                    failureKind,
-                    result.ResultCode,
-                    result.SanitizedSummary,
-                    now);
+                file.DeferScan(result.ResultCode, result.ScanEngine, result.SignatureVersion);
             }
 
-            await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            var decision = SpaceJobRetryPolicy.DecideAutomatic(kind, job.AttemptCount, job.MaxAttempts, now);
+            job.Fail(lease.AttemptId, lease.WorkerId, kind, result.ResultCode, result.SanitizedSummary, decision, now);
+            attempt.Fail(kind, result.ResultCode, result.SanitizedSummary, now);
         }
-        catch (DbUpdateConcurrencyException exception)
+
+        await SaveAndCommitAsync(transaction, tenantExpiry, leaseExpiry, cancellationToken);
+    }
+
+    private async Task<bool> RecoverFinishAsync(SpaceJobLease lease, FileSafetyResult result, CancellationToken cancellationToken)
+    {
+        if (await ReadCompletedScanAsync(lease, cancellationToken) is not { CompletedResult: { } committed })
+            return false;
+
+        var canonical = result with
         {
-            await transaction.RollbackAsync(CancellationToken.None);
-            _context.ChangeTracker.Clear();
-            throw LeaseLost(exception);
+            ResultCode = result.ResultCode.Trim(),
+            ScanEngine = result.ScanEngine.Trim(),
+            SignatureVersion = result.SignatureVersion.Trim(),
+            SanitizedSummary = result.Disposition == FileSafetyDisposition.Safe ? result.SanitizedSummary : result.SanitizedSummary.Trim(),
+        };
+        if (committed != canonical)
+            throw new SpaceJobStateException("A different file-safety result already committed for this attempt.");
+        return true;
+    }
+
+    private static bool MayHaveCompleted(Exception error) => error is SpaceJobLeaseLostException or
+        SpaceJobProcessingException { ErrorCode: TenantInactiveCode };
+
+    private async Task<(IDbContextTransaction Transaction, DateTime? TenantExpiry)> BeginWriteAsync(CancellationToken cancellationToken)
+    {
+        var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+        try
+        {
+            if (!_context.Database.IsNpgsql())
+                return (transaction, null);
+
+            var tenantId = _context.CurrentTenantId;
+            var tenantContext = new TenantContext { CurrentTenantId = tenantId };
+            await using var core = await DatabaseSharedContext.CreateAsync<CP6Context>(_context, DatabaseContextKind.Core,
+                options => new(options, tenantContext), cancellationToken);
+            await AuthenticationCompletionGateV1.AcquireAsync(core, cancellationToken);
+            var tenant = await core.Sys_Tenants.AsNoTracking().Where(row => row.Id == tenantId)
+                .Select(row => new { row.Enable, row.ExpireDate }).SingleOrDefaultAsync(cancellationToken);
+            if (tenant is not { Enable: true } || tenant.ExpireDate <= DateTime.Now)
+                throw TenantInactive();
+
+            return (transaction, tenant.ExpireDate);
         }
         catch
         {
-            await transaction.RollbackAsync(CancellationToken.None);
+            await transaction.DisposeAsync();
             throw;
         }
     }
 
-    private async Task<(SpaceJob Job, SpaceJobAttempt Attempt)> LoadLeaseAsync(
-        SpaceJobLease lease,
-        DateTime nowUtc,
+    private async Task SaveAndCommitAsync(IDbContextTransaction transaction, DateTime? tenantExpiry, DateTime leaseExpiry,
         CancellationToken cancellationToken)
     {
-        if (_context.CurrentTenantId != lease.TenantId)
-            throw LeaseLost();
-        var job = await _context.Jobs.SingleOrDefaultAsync(
-                      candidate => candidate.Id == lease.JobId,
-                      cancellationToken)
-                  ?? throw LeaseLost();
-        job.EnsureLease(lease.AttemptId, lease.WorkerId, nowUtc);
-        var attempt = await _context.JobAttempts.SingleOrDefaultAsync(
-                          candidate =>
-                              candidate.Id == lease.AttemptId &&
-                              candidate.JobId == lease.JobId &&
-                              candidate.Outcome ==
-                              SpaceJobAttemptOutcome.Running,
-                          cancellationToken)
-                      ?? throw LeaseLost();
-        return (job, attempt);
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException error)
+        {
+            _context.ChangeTracker.Clear();
+            throw LeaseLost(error);
+        }
+
+        if (_context.Database.IsNpgsql())
+        {
+            if (leaseExpiry <= await DatabaseUtcClock.ReadUtcNowAsync(_context, cancellationToken))
+                throw LeaseLost();
+            if (tenantExpiry <= DateTime.Now)
+                throw TenantInactive();
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+        try
+        {
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch (Exception) when (_context.Database.IsNpgsql())
+        {
+            throw new SpaceJobProcessingException(SpaceJobFailureKind.Transient, "SPACE_FILE_SCAN_COMMIT_UNKNOWN",
+                "The file-safety commit outcome is unknown. The original attempt can recover its persisted state.");
+        }
     }
+
+    private async Task<LiveScan> LoadLiveScanAsync(SpaceJobLease lease, CancellationToken cancellationToken)
+    {
+        var postgres = _context.Database.IsNpgsql();
+        var job = await ScanJobs(lease, lockForWrite: postgres).SingleOrDefaultAsync(cancellationToken)
+            ?? throw LeaseLost();
+        var attempt = await ScanAttempts(lease).SingleOrDefaultAsync(
+            row => row.Outcome == SpaceJobAttemptOutcome.Running, cancellationToken) ?? throw LeaseLost();
+        var file = await (postgres
+            ? SpaceFileReferenceLock.LoadAsync(_context, lease.TenantId, lease.SubjectId, includeDeleted: false, cancellationToken)
+            : _context.Files.SingleOrDefaultAsync(row => row.Id == lease.SubjectId, cancellationToken))
+            ?? throw LeaseLost();
+
+        var now = postgres ? await DatabaseUtcClock.ReadUtcNowAsync(_context, cancellationToken) : RequireUtcNow();
+        job.EnsureLease(lease.AttemptId, lease.WorkerId, now);
+        if (!string.Equals(file.Sha256, lease.InputHash, StringComparison.OrdinalIgnoreCase))
+            throw new SpaceJobStateException("The file content no longer matches the scan Job input.");
+        return new(job, attempt, file, now, job.LockExpiresAtUtc!.Value);
+    }
+
+    private IQueryable<SpaceJob> ScanJobs(SpaceJobLease lease, bool lockForWrite = false)
+    {
+        var jobs = lockForWrite
+            ? _context.Jobs.FromSqlInterpolated($"""
+                SELECT * FROM "Space_Job"
+                WHERE "TenantId" = {lease.TenantId} AND "Id" = {lease.JobId}
+                FOR UPDATE
+                """)
+            : _context.Jobs;
+        return jobs.Where(row => row.Id == lease.JobId &&
+            row.JobType == SpaceJobType.FileScan && row.SubjectType == SpaceJobSubjectType.File &&
+            row.SubjectId == lease.SubjectId && row.InputHash == lease.InputHash &&
+            row.AttemptCount == lease.AttemptNo);
+    }
+
+    private IQueryable<SpaceJobAttempt> ScanAttempts(SpaceJobLease lease) => _context.JobAttempts.Where(
+        row => row.Id == lease.AttemptId && row.JobId == lease.JobId && row.AttemptNo == lease.AttemptNo &&
+            row.WorkerId == lease.WorkerId && row.InputHash == lease.InputHash);
+
+    private async Task<SpaceFileScanTarget?> ReadCompletedScanAsync(SpaceJobLease lease, CancellationToken cancellationToken)
+    {
+        var state = await (
+            from job in ScanJobs(lease).AsNoTracking()
+            join attempt in ScanAttempts(lease).AsNoTracking() on job.Id equals attempt.JobId
+            join storedFile in _context.Files.AsNoTracking() on job.SubjectId equals storedFile.Id
+            where attempt.Outcome != SpaceJobAttemptOutcome.Running && storedFile.Sha256 == job.InputHash
+            select new { Job = job, Attempt = attempt, File = storedFile }).SingleOrDefaultAsync(cancellationToken);
+        if (state is null)
+            return null;
+
+        var file = state.File;
+        var jobStatus = state.Job.Status;
+        if (state.Attempt.Outcome == SpaceJobAttemptOutcome.Cancelled && jobStatus == SpaceJobStatus.Cancelled)
+            throw ScanCancelled();
+
+        FileSafetyResult? result = null;
+        if (state.Attempt.Outcome == SpaceJobAttemptOutcome.Succeeded &&
+            jobStatus == SpaceJobStatus.Succeeded && file.State == SpaceFileState.Clean)
+        {
+            result = FileSafetyResult.Clean(file.ScanEngine!, file.SignatureVersion!, file.ScanResultCode!);
+            if (state.Job.ResultSummaryJson is { } summary)
+            {
+                using var document = JsonDocument.Parse(summary);
+                if (document.RootElement.TryGetProperty("sanitizedSummary", out var saved))
+                    result = result with { SanitizedSummary = saved.GetString()! };
+            }
+        }
+        else if (state.Attempt.Outcome == SpaceJobAttemptOutcome.Failed &&
+            file.ScanEngine is { } engine && file.SignatureVersion is { } signature)
+        {
+            var disposition = (file.State, jobStatus) switch
+            {
+                (SpaceFileState.Rejected, SpaceJobStatus.Failed) => FileSafetyDisposition.Rejected,
+                (SpaceFileState.Quarantined, SpaceJobStatus.Queued or SpaceJobStatus.DeadLetter) => FileSafetyDisposition.Deferred,
+                _ => (FileSafetyDisposition?)null,
+            };
+            if (disposition is { } completed)
+                result = new FileSafetyResult(completed, state.Attempt.ErrorCode!, engine, signature,
+                    state.Attempt.FailureKind, state.Attempt.SanitizedError!);
+        }
+
+        return result is null ? null : ToTarget(file) with { CompletedResult = result };
+    }
+
+    private static SpaceFileScanTarget ToTarget(SpaceFile file) => new(
+        file.TenantId,
+        file.Id,
+        file.StorageKey,
+        file.OriginalName,
+        file.DetectedContentType ?? throw new SpaceFileStateException("A quarantined file requires a detected content type."),
+        file.Extension ?? throw new SpaceFileStateException("A quarantined file requires an extension."),
+        file.SizeBytes,
+        file.Sha256!);
 
     private async Task CompletePendingSourcesAsync(
         SpaceFile file,
@@ -258,9 +329,10 @@ public sealed class EfSpaceFileScanStateStore : ISpaceFileScanStateStore
             source.CompleteFileScan(file);
     }
 
-    private static void EnsureFileScanLease(SpaceJobLease lease)
+    private void EnsureFileScanLease(SpaceJobLease lease)
     {
         if (lease.TenantId == Guid.Empty ||
+            lease.TenantId != _context.CurrentTenantId ||
             lease.JobType != SpaceJobType.FileScan ||
             lease.SubjectType != SpaceJobSubjectType.File ||
             lease.SubjectId == Guid.Empty)
@@ -284,6 +356,15 @@ public sealed class EfSpaceFileScanStateStore : ISpaceFileScanStateStore
             ? new SpaceJobLeaseLostException(message)
             : new SpaceJobLeaseLostException(message, inner);
     }
+
+    private static OperationCanceledException ScanCancelled() =>
+        new("The file-safety Job cancellation was acknowledged.");
+
+    private static SpaceJobProcessingException TenantInactive() =>
+        new(SpaceJobFailureKind.Transient, TenantInactiveCode,
+            "The tenant is paused or expired. The file-safety Job can retry when the tenant is active.");
+
+    private sealed record LiveScan(SpaceJob Job, SpaceJobAttempt Attempt, SpaceFile File, DateTime NowUtc, DateTime LeaseExpiresAtUtc);
 }
 
 public sealed class EfSpaceFileRetentionStore : ISpaceFileRetentionStore
