@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 · W596-01 Space 版本预留与模板初始化
+
+四种版本创建模式的预留和回执加入 Main 当前授权栅栏。真实 PostgreSQL 29 项及相关单元 14 项通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W596-01/DELIVERY.md)
+
 ## 2026-11-15 · W594-01 Space 来源和编辑租约
 
 6 条写入口采用同一 PostgreSQL 事务检查 Main 当前授权，本轮 82 项通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W594-01/DELIVERY.md)

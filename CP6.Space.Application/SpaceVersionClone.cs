@@ -15,7 +15,10 @@ public static class SpaceBlankVersionContract
 public sealed record SpaceVersionCloneRequest(
     Guid ModelId,
     string Name,
-    Guid OperationId);
+    Guid OperationId)
+{
+    public Guid? ExpectedSourceVersionId { get; init; }
+}
 
 public sealed record SpaceVersionCloneStartResult(
     Guid ModelVersionId,
