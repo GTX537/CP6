@@ -166062,6 +166062,11 @@
       "at": "2026-11-15T14:50:49.081969+00:00",
       "change": "W621-01 以 Main 共同栅栏核对 Space 刊发的 WMS 和版本激活事务，实测两种提交顺序、两处未知提交与自然到期。",
       "evidence": "docs/development/evidence/W621-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T15:10:09.324978+00:00",
+      "change": "W624-01 已让 CAD 与 Excel 映射配置创建和更新采用共同栅栏，实测暂停、撤权、原版本和回放。",
+      "evidence": "docs/development/evidence/W624-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212068,10 +212073,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W621",
-      "path": "docs/development/evidence/W621-01/DELIVERY.md",
-      "baseline_sha": "7d596bea19d20e8757b6cfff09ed43e1c4ea5b0a",
-      "registered_at": "2026-11-15T14:30:10.827073+00:00",
+      "id": "W624",
+      "path": "docs/development/evidence/W624-01/DELIVERY.md",
+      "baseline_sha": "6374d7692574f41ccaeb123334f22151e8fe02a0",
+      "registered_at": "2026-11-15T14:45:59.536589+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212085,11 +212090,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Continue signed CAD and Excel mapping writes (W624) and retained workflow service-job continuation. Formal PGT-017 remains NOT_RUN.",
+      "next_action": "Continue CAD and Excel finalization/issue effects and the retained workflow worker. Formal PGT-017 remains NOT_RUN.",
       "windows": [
         {
-          "id": "W621-01",
-          "workspace_task": "W621-01",
+          "id": "W624-01",
+          "workspace_task": "W624-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212099,29 +212104,28 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w621-01",
-          "planned_scope_ref": "docs/development/evidence/W621-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W621-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w624-01",
+          "planned_scope_ref": "docs/development/evidence/W624-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W624-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Space built-in WMS bins and original publish operation receipt",
-            "Space Runtime projections and version pointer",
-            "Main PostgreSQL common final write root and Space Job lease",
-            "DEV-2"
+            "Space CAD and Excel mapping profile headers, immutable versions and original receipts",
+            "Main current space:model:edit and final signed session with native save owner",
+            "DEV-1"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "7 native PostgreSQL passes, 55 focused unit passes and 29 related passes, zero skips. Coverage includes four commit orders, two original COMMIT acknowledgement losses and actual runtime expiry. Original local product publish 310 files and 200/401; eight affected paths unchanged after incorporating W620.",
-          "remaining_scope": "Historical republish parent and saga checkpoints, mapping profiles, CAD/Excel later background writes, retained OA workflow continuation, inventory and procurement finance follow-ups remain separately open. Final-attempt pause follows existing manual recovery policy. No deployment.",
-          "main_tested_source_sha": "27f95b7c39b58b8627d3c5f63bfdbb19cb8387d8"
+          "validation_summary": "10 signed native PostgreSQL passes, 16 focused mapping passes including four native controls, zero skips. Original source publication verified 310 hashes with 200/401/401, all three task code paths unchanged after W621.",
+          "remaining_scope": "CAD and Excel later worker source, issue and import-batch effects, historical republish parent and independently active workflow and finance writers. No deployment.",
+          "main_tested_source_sha": "eefc892a5c4a4a2dc22902db48e9039e93495367"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -268432,6 +268436,68 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W621",
+        "path": "docs/development/evidence/W621-01/DELIVERY.md",
+        "baseline_sha": "7d596bea19d20e8757b6cfff09ed43e1c4ea5b0a",
+        "registered_at": "2026-11-15T14:30:10.827073+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Continue signed CAD and Excel mapping writes (W624) and retained workflow service-job continuation. Formal PGT-017 remains NOT_RUN.",
+        "windows": [
+          {
+            "id": "W621-01",
+            "workspace_task": "W621-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w621-01",
+            "planned_scope_ref": "docs/development/evidence/W621-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W621-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Space built-in WMS bins and original publish operation receipt",
+              "Space Runtime projections and version pointer",
+              "Main PostgreSQL common final write root and Space Job lease",
+              "DEV-2"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "7 native PostgreSQL passes, 55 focused unit passes and 29 related passes, zero skips. Coverage includes four commit orders, two original COMMIT acknowledgement losses and actual runtime expiry. Original local product publish 310 files and 200/401; eight affected paths unchanged after incorporating W620.",
+            "remaining_scope": "Historical republish parent and saga checkpoints, mapping profiles, CAD/Excel later background writes, retained OA workflow continuation, inventory and procurement finance follow-ups remain separately open. Final-attempt pause follows existing manual recovery policy. No deployment.",
+            "main_tested_source_sha": "27f95b7c39b58b8627d3c5f63bfdbb19cb8387d8",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1145",
+            "main_remote_main_sha": "cb30090c2b8d7bb91ecb7b548d4a134aff580b1c"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },
