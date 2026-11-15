@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W620-01
+
+WMS 与 ERP 出货财务按同一原事件恢复，在母业务提交后经 Main 当前权威写入发票与原结果。 [交付](../development/evidence/W620-01/DELIVERY.md)
+
 ## 2026-11-15 W618-01
 
 PostgreSQL 新手工凭证内部保存制单账户 UUID，旧 OA 用真实同意人核对，原公开文本字段继续展示。 [交付](../development/evidence/W618-01/DELIVERY.md)

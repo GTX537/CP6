@@ -18,4 +18,12 @@ PostgreSQL 的 WMS 出库、直接取消和 ERP 已授权级联子取消在原 O
 - 实际 Ship 返回 200，原配货转 Completed。直接 WMS 取消和 ERP 级联取消均保留库存释放和无发票 `SKIPPED`。正常重试保留原事件 Id、相关号、payload、操作者及租户。出库完成后，普通取消仍返回 409 和 `OUTBOUND_RESERVATION_INCONSISTENT`。独立连接在实际事件插入被阻塞时观察到库存和事件均未提交，释放后又在首条财务采番阻塞时读取已提交的库存及同一 Pending 原行。
 - 本机协议夹具分别截断已提交出库和已提交财务的 PostgreSQL COMMIT 确认。真实出库请求返回 `OPERATIONS_OUTCOME_UNKNOWN`，原 Pending 行与库存均已持久化。到期 Worker 恢复同一个原行及原生产者，财务确认丢失后再次运行维持一次发票和一次事件。错误出库号被拒绝，其他 hook 的 Pending 行保持原状。
 
-失败调度和运行制品在 `D:/CP6-test-artifacts/W620-01`。本轮验证使用登记时的 Main 基线，W618 后续 Journal 与 PostgreSQL 模型的组合验证由集成窗口执行。全部本轮夹具已停止。Actions 与部署均为零。
+失败调度和运行制品在 `D:/CP6-test-artifacts/W620-01`。基线定向验证使用源码 `60ce0663c4b9096f3b8a84d56a6e786d0044fb75`。各轮真实失败、运行制品及停止凭据保存在同一隔离目录。
+
+## 主线组合验证
+
+在包含 W618 凭证 UUID 和 PostgreSQL 模型的组合源码 `e305cfb0c94b23517b311d7e80129089ed286864` 上，实际复核历史草稿与部分反冲恢复，以及实际 Ship、WMS 取消、ERP 取消。**5 项通过，零跳过**。保留原先 16 项 PostgreSQL、57 项组件通过及 4 项 SQLite 夹具启动失败的各自范围。
+
+本地发布 310 文件 SHA-256，三份受测运行程序集逐字节一致，实际存活 200、匿名出货写 401。读取了同一组合数据库中的凭证迁移。所有关联进程均停止。 [组合 TRX](D:/CP6-test-artifacts/W620-01/integrated-schema/results.trx) · [发布检查](D:/CP6-test-artifacts/W620-01/publish-smoke.json)
+
+本批覆盖 WMS 出货确认、取消和原财务事件。库存自动凭证、MES 成本、采购和 Space 剩余后台写者仍按各自范围验证。正式 PostgreSQL **26 PASS / 1 NOT_RUN**。Actions 和部署均为零。 [正式矩阵](../../acceptance/postgresql-tenancy.json#L646)
