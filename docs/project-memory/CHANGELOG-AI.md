@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W656-01
+
+刊发失败业务终态和人工对账重开由原 Job、当前租户及同一 Main 原生写事务共同核准。 [交付](../development/evidence/W656-01/DELIVERY.md)
+
 ## 2026-11-15 W652-01
 
 ERP 按更晚实物确认时点更新最近发运，原作业幂等和修改审计保留。 [交付](../development/evidence/W652-01/DELIVERY.md)

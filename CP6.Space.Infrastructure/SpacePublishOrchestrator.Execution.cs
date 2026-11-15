@@ -1,3 +1,4 @@
+using System.Data.Common;
 using System.Text.Json;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
@@ -9,6 +10,8 @@ namespace CP6.Space.Infrastructure;
 
 public sealed partial class SpacePublishOrchestrator
 {
+    private const string WmsBatchRejectedSummary = "WMS rejected the publish batch and proved zero effect.";
+
     public async Task<SpaceJobStepOutput> ExecuteAsync(
         SpaceJobStepExecution execution,
         CancellationToken cancellationToken = default)
@@ -107,18 +110,20 @@ public sealed partial class SpacePublishOrchestrator
             cancellationToken);
         if (HasCommittedRuntime(attempt, target, model))
             return await RecoverCommittedRuntimeAsync(execution, attempt, target, model);
-        if (target.Status == SpaceVersionStatus.ReconciliationRequired)
+        if (target.Status == SpaceVersionStatus.Publishing && attempt.CurrentStep == SpacePublishStep.ApplyWms &&
+            await ReadPersistedWmsRejectionAsync(attempt.Id, cancellationToken) is { } rejectedCode)
         {
-            if (execution.Lease.JobType != SpaceJobType.Reconcile)
-            {
-                throw Processing(
-                    SpaceJobFailureKind.Input,
-                    SpaceErrorCodes.PublishRetryNotAllowed,
-                    "A reconciliation-required version needs a manual recovery Job.");
-            }
-            target.ResumePublishingAfterReconciliation();
+            return await FailNoEffectAsync(execution, attempt, target, rejectedCode, WmsBatchRejectedSummary, cancellationToken);
         }
-        else if (target.Status != SpaceVersionStatus.Publishing)
+        var resumeReconciliation = target.Status == SpaceVersionStatus.ReconciliationRequired;
+        if (resumeReconciliation && execution.Lease.JobType != SpaceJobType.Reconcile)
+        {
+            throw Processing(
+                SpaceJobFailureKind.Input,
+                SpaceErrorCodes.PublishRetryNotAllowed,
+                "A reconciliation-required version needs a manual recovery Job.");
+        }
+        if (!resumeReconciliation && target.Status != SpaceVersionStatus.Publishing)
         {
             throw Processing(
                 SpaceJobFailureKind.Input,
@@ -126,34 +131,7 @@ public sealed partial class SpacePublishOrchestrator
                 "The target version left the active publishing state.");
         }
 
-        if (execution.Lease.AttemptNo > 1 && attempt.Status is
-            SpacePublishAttemptStatus.ApplyingWms or SpacePublishAttemptStatus.ActivatingRuntime)
-        {
-            // A replacement lease can arrive before the previous worker recorded the outcome.
-            // The normal batch/status path below resolves the original operation key.
-            attempt.WaitForRetry(attempt.CurrentStep, SpaceErrorCodes.JobLeaseLost,
-                "The previous worker lease ended before the publish outcome was recorded.");
-        }
-        attempt.BeginPreflight();
-        await AppendAuditAsync(
-            attempt,
-            execution.Lease.JobId,
-            batchId: null,
-            SpacePublishAuditEventType.ProcessingStarted,
-            JobEventKey(execution, "start"),
-            "The publish worker acquired the Job and started processing.",
-            errorCode: null,
-            JsonSerializer.Serialize(
-                new
-                {
-                    execution.Lease.AttemptNo,
-                    execution.Lease.WorkerId,
-                    execution.Lease.JobType,
-                    plan.PlanHash,
-                },
-                Json),
-            cancellationToken);
-        await _context.SaveChangesAsync(CancellationToken.None);
+        await BeginPublishPreflightAsync(execution, attempt, target, plan, resumeReconciliation, cancellationToken);
 
         var warehouse = await _warehouses.ResolveAsync(
                             attempt.SiteId,
@@ -536,7 +514,7 @@ public sealed partial class SpacePublishOrchestrator
                     target,
                     result.Items.FirstOrDefault()?.ErrorCode ??
                     SpaceErrorCodes.WmsUnavailable,
-                    "WMS rejected the publish batch and proved zero effect.",
+                    WmsBatchRejectedSummary,
                     cancellationToken);
             }
             if (assessment.Kind == SpaceWmsBatchAssessmentKind.FailedNoEffect)
@@ -903,6 +881,59 @@ public sealed partial class SpacePublishOrchestrator
             summary);
     }
 
+    private async Task BeginPublishPreflightAsync(SpaceJobStepExecution execution, SpacePublishAttempt attempt,
+        SpaceModelVersion target, SpacePublishPlan plan, bool resumeReconciliation, CancellationToken cancellationToken)
+    {
+        var lease = execution.Lease;
+        await using var write = resumeReconciliation
+            ? await SpaceArtifactWriteTransaction.BeginMetadataAsync(_context, lease, _jobWriteAuthority, cancellationToken)
+            : null;
+        if (resumeReconciliation)
+        {
+            if (_context.Database.IsNpgsql())
+            {
+                var status = attempt.Status;
+                var step = attempt.CurrentStep;
+                var modelId = target.ModelId;
+                var attemptEntry = _context.Entry(attempt);
+                var targetEntry = _context.Entry(target);
+                await attemptEntry.ReloadAsync(cancellationToken);
+                await targetEntry.ReloadAsync(cancellationToken);
+                if (attemptEntry.State == EntityState.Detached || targetEntry.State == EntityState.Detached ||
+                    attempt.Status != status || attempt.CurrentStep != step || attempt.JobId != lease.JobId ||
+                    attempt.PublishPlanId != plan.Id || attempt.TargetVersionId != target.Id || target.ModelId != modelId ||
+                    target.Status != SpaceVersionStatus.ReconciliationRequired)
+                {
+                    throw Processing(SpaceJobFailureKind.Input, SpaceErrorCodes.PublishJobMismatch,
+                        "The recovery Job no longer matches the current publish attempt and reconciliation target.");
+                }
+            }
+            target.ResumePublishingAfterReconciliation();
+        }
+
+        if (lease.AttemptNo > 1 && attempt.Status is (SpacePublishAttemptStatus.Preflighting or
+            SpacePublishAttemptStatus.ApplyingWms or SpacePublishAttemptStatus.ActivatingRuntime))
+        {
+            // The previous lease may end before its outcome is saved. Resume with the original operation key.
+            attempt.WaitForRetry(attempt.CurrentStep, SpaceErrorCodes.JobLeaseLost,
+                "The previous worker lease ended before the publish outcome was recorded.");
+        }
+        attempt.BeginPreflight();
+        await AppendAuditAsync(
+            attempt,
+            lease.JobId,
+            batchId: null,
+            SpacePublishAuditEventType.ProcessingStarted,
+            JobEventKey(execution, "start"),
+            "The publish worker acquired the Job and started processing.",
+            errorCode: null,
+            JsonSerializer.Serialize(new { lease.AttemptNo, lease.WorkerId, lease.JobType, plan.PlanHash }, Json),
+            cancellationToken);
+        await _context.SaveChangesAsync(write is null ? CancellationToken.None : cancellationToken);
+        if (write is not null)
+            await write.CommitAsync(cancellationToken);
+    }
+
     private async Task<SpaceJobStepOutput> FailNoEffectAsync(
         SpaceJobStepExecution execution,
         SpacePublishAttempt attempt,
@@ -911,20 +942,96 @@ public sealed partial class SpacePublishOrchestrator
         string summary,
         CancellationToken cancellationToken)
     {
-        target.ReturnToReadyBeforeExternalCommit();
-        attempt.FailNoEffect(errorCode, summary, RequireUtcNow());
-        await AppendAuditAsync(
-            attempt,
-            execution.Lease.JobId,
-            batchId: null,
-            SpacePublishAuditEventType.FailedNoEffect,
-            JobEventKey(execution, $"failed-no-effect:{errorCode}"),
-            summary,
-            errorCode,
-            JsonSerializer.Serialize(new { externalEffect = false }, Json),
-            cancellationToken);
-        await _context.SaveChangesAsync(CancellationToken.None);
-        return Output(attempt);
+        var lease = execution.Lease;
+        var planId = attempt.PublishPlanId;
+        var targetId = target.Id;
+        var modelId = target.ModelId;
+        var status = attempt.Status;
+        var step = attempt.CurrentStep;
+        var boundAttempt = _context.PublishAttempts.Where(value =>
+            value.Id == lease.SubjectId && value.JobId == lease.JobId &&
+            value.PublishPlanId == planId && value.TargetVersionId == targetId);
+
+        try
+        {
+            await using var write = await SpaceArtifactWriteTransaction.BeginMetadataAsync(
+                _context, lease, _jobWriteAuthority, cancellationToken);
+            if (_context.Database.IsNpgsql())
+            {
+                // The external observation and any original batch receipt are already settled.
+                // Read the current business rows after acquiring Main and verifying the Job.
+                _context.ChangeTracker.Clear();
+                attempt = await boundAttempt.SingleOrDefaultAsync(cancellationToken)
+                    ?? throw Processing(SpaceJobFailureKind.Input, SpaceErrorCodes.PublishJobMismatch,
+                        "The current publish attempt no longer matches the Job and its target.");
+                if (attempt.Status == SpacePublishAttemptStatus.FailedNoEffect)
+                    return Output(attempt);
+                target = await _context.Versions.SingleOrDefaultAsync(
+                        value => value.Id == targetId && value.ModelId == modelId, cancellationToken)
+                    ?? throw Processing(SpaceJobFailureKind.Input, SpaceErrorCodes.PublishJobMismatch,
+                        "The current publish target no longer matches the attempt.");
+                if (attempt.Status != status || attempt.CurrentStep != step || target.Status != SpaceVersionStatus.Publishing)
+                    throw Processing(SpaceJobFailureKind.Input, SpaceErrorCodes.PublishJobMismatch,
+                        "The attempt or version left the active publish step.");
+            }
+
+            target.ReturnToReadyBeforeExternalCommit();
+            attempt.FailNoEffect(errorCode, summary, RequireUtcNow());
+            await AppendAuditAsync(
+                attempt,
+                lease.JobId,
+                batchId: null,
+                SpacePublishAuditEventType.FailedNoEffect,
+                JobEventKey(execution, $"failed-no-effect:{errorCode}"),
+                summary,
+                errorCode,
+                JsonSerializer.Serialize(new { externalEffect = false }, Json),
+                cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+            await write.CommitAsync(cancellationToken);
+            return Output(attempt);
+        }
+        catch (SpaceJobProcessingException error) when (error.ErrorCode == "SPACE_ARTIFACT_COMMIT_UNKNOWN")
+        {
+            try
+            {
+                var saved = await boundAttempt.AsNoTracking().SingleOrDefaultAsync(CancellationToken.None);
+                if (saved?.Status == SpacePublishAttemptStatus.FailedNoEffect)
+                    return Output(saved);
+            }
+            catch (DbException readError) when (readError.IsTransient)
+            {
+                // The original Job can resolve the outcome on its next attempt.
+            }
+            throw;
+        }
+    }
+
+    private async Task<string?> ReadPersistedWmsRejectionAsync(Guid attemptId, CancellationToken cancellationToken)
+    {
+        var batches = await _context.PublishBatches.AsNoTracking()
+            .Where(value => value.AttemptId == attemptId)
+            .OrderBy(value => value.BatchNo)
+            .ToArrayAsync(cancellationToken);
+        if (batches.Any(value => value.Status is not (SpacePublishBatchStatus.Pending or SpacePublishBatchStatus.FailedNoEffect)))
+            return null;
+
+        foreach (var batch in batches.Where(value => value.Status == SpacePublishBatchStatus.FailedNoEffect))
+        {
+            // This result was assessed against the immutable request before the batch and receipts were committed.
+            // A status poll or a retryable NotApplied result does not carry an all-Rejected receipt.
+            var result = JsonSerializer.Deserialize<SpaceWmsBatchResult>(batch.ResultJson!, Json);
+            if (result?.Items is not { Count: > 0 } || !result.Items.All(value => value.Outcome == SpaceWmsItemOutcome.Rejected))
+                continue;
+            if (result.OperationKey != batch.OperationKey ||
+                !string.Equals(result.PayloadHash, batch.PayloadHash, StringComparison.OrdinalIgnoreCase))
+            {
+                throw Processing(SpaceJobFailureKind.Security, SpaceErrorCodes.PublishJobMismatch,
+                    "The persisted WMS rejection no longer matches the original batch.");
+            }
+            return result.Items[0].ErrorCode ?? SpaceErrorCodes.WmsUnavailable;
+        }
+        return null;
     }
 
     private async Task<int> ResolveReconciliationIssuesAsync(

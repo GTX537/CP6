@@ -166162,6 +166162,11 @@
       "at": "2026-11-15T20:17:11.547075+00:00",
       "change": "W652-01 原 ERP 迟到出库回写保留最新实际发运时间和对应出库号，实际修改时间与原数量、事件一次写入。",
       "evidence": "docs/development/evidence/W652-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T20:41:58.263649+00:00",
+      "change": "W656-01 Space 刊发无外部效果终态和人工 Reconcile 重开共用 Main 当前事务栅栏与原作业租约。",
+      "evidence": "docs/development/evidence/W656-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212168,10 +212173,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W652",
-      "path": "docs/development/evidence/W652-01/DELIVERY.md",
-      "baseline_sha": "1aa2654fcb3f14f58c608aa416c07fa7474c8824",
-      "registered_at": "2026-11-15T19:42:16.321142+00:00",
+      "id": "W656",
+      "path": "docs/development/evidence/W656-01/DELIVERY.md",
+      "baseline_sha": "6f6b75ebf836427a2b274e8a0238afe767a33969",
+      "registered_at": "2026-11-15T20:06:09.854144+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212185,11 +212190,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Finish named Space catalog and publish Owner write boundaries and reconcile the full registered PGT-017 writer scope.",
+      "next_action": "Adopt the remaining Space catalog writers and verify exact Main cross-CRM scoped cold-first authorities.",
       "windows": [
         {
-          "id": "W652-01",
-          "workspace_task": "W652-01",
+          "id": "W656-01",
+          "workspace_task": "W656-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212199,28 +212204,28 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w652-01",
-          "planned_scope_ref": "docs/development/evidence/W652-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W652-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w656-01",
+          "planned_scope_ref": "docs/development/evidence/W656-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W656-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Original WMS physical shipments and ERP projection original event",
-            "Native confirmed ship timestamp, exact last outbound marker and independent processing audit clock",
-            "DEV-2"
+            "Space original publish, Reconcile Job lease and Main authentication root",
+            "PostgreSQL 18.6 local with signed acceptance and original physical WMS/Runtime",
+            "DEV-1"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Four original directed native tests plus the two affected signed pause orders repassed on the combined W649 input. Zero skips. Combined 310-file native package startup returned 200/401.",
-          "remaining_scope": "Final scoped Space catalog and publish failure writer cases. Distinct first cold connections for the remaining Main revocation owner families retain their separately described runtime scope. Formal PostgreSQL 26 PASS / 1 NOT_RUN.",
-          "main_tested_source_sha": "1c3f914ae1a8459d785c1ccabda9c4ce51325117"
+          "validation_summary": "Three no-effect write paths each both native orders with one true COMMIT ACK loss, final representative 3-case regression, manual safely reopened Reconcile both native signed orders, seven contracts, zero skip. Source-bound 310 file active startup 200/401.",
+          "remaining_scope": "Task W654 closes seven catalog write entries after native verification. Further tracked cross-CRM revoked-owner cold-first cases apply to additional Main authority families. Formal PostgreSQL 26 PASS / 1 NOT_RUN.",
+          "main_tested_source_sha": "3461d4575d989e70bc784519e084c528f3a60d36"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -269773,6 +269778,67 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W652",
+        "path": "docs/development/evidence/W652-01/DELIVERY.md",
+        "baseline_sha": "1aa2654fcb3f14f58c608aa416c07fa7474c8824",
+        "registered_at": "2026-11-15T19:42:16.321142+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Finish named Space catalog and publish Owner write boundaries and reconcile the full registered PGT-017 writer scope.",
+        "windows": [
+          {
+            "id": "W652-01",
+            "workspace_task": "W652-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w652-01",
+            "planned_scope_ref": "docs/development/evidence/W652-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W652-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Original WMS physical shipments and ERP projection original event",
+              "Native confirmed ship timestamp, exact last outbound marker and independent processing audit clock",
+              "DEV-2"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Four original directed native tests plus the two affected signed pause orders repassed on the combined W649 input. Zero skips. Combined 310-file native package startup returned 200/401.",
+            "remaining_scope": "Final scoped Space catalog and publish failure writer cases. Distinct first cold connections for the remaining Main revocation owner families retain their separately described runtime scope. Formal PostgreSQL 26 PASS / 1 NOT_RUN.",
+            "main_tested_source_sha": "1c3f914ae1a8459d785c1ccabda9c4ce51325117",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1175",
+            "main_remote_main_sha": "aaf872ec8f87b6566bcda1a7ac4b6c521f90f373"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },
