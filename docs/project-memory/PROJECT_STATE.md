@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W654-01 Space 目录写权限
+
+7 个正常入口均实测两种 PostgreSQL 顺序，继续登记跨库首次连接故障范围。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W654-01/DELIVERY.md)
+
 ## 2026-11-15 W656-01 Space 刊发后台
 
 无外部效果终态和人工重开均实测业务先与暂停先。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W656-01/DELIVERY.md)

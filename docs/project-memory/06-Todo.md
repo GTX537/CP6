@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 W654-01 后续
+
+完成已登记的 CRM 权威首次连接故障恢复后，再收口 PGT-017。 [交付](../development/evidence/W654-01/DELIVERY.md)
+
 ## 2026-11-15 W656-01 后续
 
 继续七条 Space 目录写入口，补齐跨库撤权登记写者首次连接故障范围。 [交付](../development/evidence/W656-01/DELIVERY.md)
