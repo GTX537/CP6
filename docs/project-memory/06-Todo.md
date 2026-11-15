@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 · W599-01 PGT-017 余项
+
+需要 CRM 产品重绑与可信控制面隔离，覆盖 Main 封存、C02 和目标专属身份。Main 继续核对 CAD/Excel、刊发等 Space 写者及剩余财务。 [交付记录](../development/evidence/W599-01/DELIVERY.md)
+
 ## 2026-11-15 · W598-01 Space 底图之外
 
 继续核对 CAD/Excel 文件、后台任务、刊发和其它 Design 写入口，以及剩余财务和 CRM 产品级切换。 [交付记录](../development/evidence/W598-01/DELIVERY.md)

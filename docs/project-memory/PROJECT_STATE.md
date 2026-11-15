@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 · W599-01 CRM 原库重启隔离
+
+CRM PR #232 已合入，8 项隔离原生用例通过。原端点重启后原 API 和两个发布者凭据保持拒绝，完整恢复目标两租户一致且公开就绪恢复。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W599-01/DELIVERY.md)
+
 ## 2026-11-15 · W598-01 Space 底图写入
 
 四条底图入口已接入共同授权栅栏。14 项 PostgreSQL 场景、30 项相关单元及 98 项相关契约通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W598-01/DELIVERY.md)
