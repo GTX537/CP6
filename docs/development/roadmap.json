@@ -166017,6 +166017,11 @@
       "at": "2026-11-15T12:19:30.628056+00:00",
       "change": "W608-01 应付发票与付款五条写入口采用原生共同栅栏，修复实际晚失败部分写及跨租户归属。",
       "evidence": "docs/development/evidence/W608-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T12:43:03.583016+00:00",
+      "change": "W609-01 Excel/CAD 匹配启动、确认和补偿采用 Main 共同原生栅栏，原任务及补偿回执实测复用。",
+      "evidence": "docs/development/evidence/W609-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212023,10 +212028,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W608",
-      "path": "docs/development/evidence/W608-01/DELIVERY.md",
-      "baseline_sha": "59f379a0a11fb47a71adec340e245ab0d2c1475b",
-      "registered_at": "2026-11-15T11:51:47.419863+00:00",
+      "id": "W609",
+      "path": "docs/development/evidence/W609-01/DELIVERY.md",
+      "baseline_sha": "30956a78973f5d398a8a7a39b94cf93604da4fec",
+      "registered_at": "2026-11-15T12:16:32.730719+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212040,11 +212045,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "推进应收发票与收款 7 条以及工单结转，继续 Space 匹配与后台和 CRM 传输。PGT-017 保持 NOT_RUN",
+      "next_action": "推进 CAD/Excel 后台制品写入与恢复及财务结转，继续正式 PGT-017",
       "windows": [
         {
-          "id": "W608-01",
-          "workspace_task": "W608-01",
+          "id": "W609-01",
+          "workspace_task": "W609-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212054,29 +212059,29 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w608-01",
-          "planned_scope_ref": "docs/development/evidence/W608-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W608-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w609-01",
+          "planned_scope_ref": "docs/development/evidence/W609-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W609-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:FinApHttpWrites",
-            "Main:FinPaymentSettlement",
-            "Main:CurrentWriteAuthority",
+            "Main:SpaceExcelCadMatch",
+            "Main:SpaceExcelCadApplyCompensation",
+            "Main:IAM-CurrentWriteAuthority",
             "Local:PostgreSQL-HTTP"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "28 native AP PostgreSQL scenarios, 27 components, local publish and actual HTTP 200/401",
-          "remaining_scope": "AR seven, work-order cost settlement, relevant finance workers, Space Match and execution, CRM transport cutover",
-          "main_tested_source_sha": "05b3ef627919f132d15df628f955db70afae736e"
+          "validation_summary": "6 signed native PostgreSQL owner cases, 103 contracts, 15 scoped service cases and exact local HTTP 200/401",
+          "remaining_scope": "Space background artifact recovery and worker pause, Excel mapping and WMS activation, remaining AR and work-order cost, CRM transport product adoption",
+          "main_tested_source_sha": "643c8ad8ec72204e71ac56d26d517c764a8a12a3"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -267824,6 +267829,68 @@
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018",
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W608",
+        "path": "docs/development/evidence/W608-01/DELIVERY.md",
+        "baseline_sha": "59f379a0a11fb47a71adec340e245ab0d2c1475b",
+        "registered_at": "2026-11-15T11:51:47.419863+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "推进应收发票与收款 7 条以及工单结转，继续 Space 匹配与后台和 CRM 传输。PGT-017 保持 NOT_RUN",
+        "windows": [
+          {
+            "id": "W608-01",
+            "workspace_task": "W608-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w608-01",
+            "planned_scope_ref": "docs/development/evidence/W608-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W608-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:FinApHttpWrites",
+              "Main:FinPaymentSettlement",
+              "Main:CurrentWriteAuthority",
+              "Local:PostgreSQL-HTTP"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "28 native AP PostgreSQL scenarios, 27 components, local publish and actual HTTP 200/401",
+            "remaining_scope": "AR seven, work-order cost settlement, relevant finance workers, Space Match and execution, CRM transport cutover",
+            "main_tested_source_sha": "05b3ef627919f132d15df628f955db70afae736e",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1127",
+            "main_remote_main_sha": "0e105d267b5a1b4ce15a545e5bd1e632f6e7ec19"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },
