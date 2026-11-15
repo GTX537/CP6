@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-15 · W597-01 月期与年度关闭/重开
+
+实际验证暂停和业务两种提交顺序、年结角色撤权、晚失败回滚、历史残额恢复和再次年结。 [交付记录](../development/evidence/W597-01/DELIVERY.md)
+
 ## 2026-11-15 · W595-01 CRM PostgreSQL 恢复演练
 
 实际 PostgreSQL 与 Kafka、Dapr，7 项跨仓恢复场景及 6 项相关回归通过，零跳过。 [交付记录](../development/evidence/W595-01/DELIVERY.md)

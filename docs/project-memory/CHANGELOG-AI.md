@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 · W597-01
+
+登记会计期间四写入口的 PostgreSQL 锁序、回滚和历史重复关账，并保存财务入口清单。 [交付记录](../development/evidence/W597-01/DELIVERY.md)
+
 ## 2026-11-15 · W595-01
 
 登记 CRM 全量失败关闭、增量物理恢复及全租户本地重绑证据，保持正式切换和 PGT-017 的当前状态。 [交付记录](../development/evidence/W595-01/DELIVERY.md)

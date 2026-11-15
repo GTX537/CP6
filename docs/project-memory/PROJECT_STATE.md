@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 · W597-01 会计期间写入
+
+四条期间 HTTP 写入口在同一 PostgreSQL 事务检查 Main 当前权限并保持业务原子性。14 项实际 PostgreSQL 场景及 30 项回归通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W597-01/DELIVERY.md)
+
 ## 2026-11-15 · W595-01 CRM 全登记租户恢复
 
 CRM PR #231 已由远端主线采用。完整增量本地恢复后两个登记租户和 Kafka 对账通过，缺失写集的全量候选保持关闭。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W595-01/DELIVERY.md)
