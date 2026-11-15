@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 · W601-01 PGT-017 余项
+
+CRM 所需实际审批签发、Main 封存与 C02、Kafka/Dapr 直接写者隔离及目标凭据推广继续；Main 核对 CAD/Excel、刊发和财务。 [交付记录](../development/evidence/W601-01/DELIVERY.md)
+
 ## 2026-11-15 · W600-01 财务写者余项
 
 69 条写声明中，32 条采用共同栅栏，34 条可写入口待采用。继续实际验证后台和跨域财务、Space 与 CRM。 [交付记录](../development/evidence/W600-01/DELIVERY.md)
