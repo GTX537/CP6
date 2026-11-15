@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W660-01 普通用户撤权恢复
+
+签名 Main 的版本化和兼容用户入口在首次请求 CRM 前持久登记同一用户的原操作，两库真实丢失 COMMIT 回执均按原键恢复。PGT-017 维持 26 项通过、1 项待验。[W660-01 交付](../development/evidence/W660-01/DELIVERY.md)
+
 ## 2026-11-15 W659-01 租户期限原操作
 
 两个原期限入口的断连、恢复及两种 PostgreSQL 顺序均实测。与 W658 组合复测通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W659-01/DELIVERY.md)

@@ -98,7 +98,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 }
                 Assert.Equal(before, await Read());
             }
-            finally { await File.WriteAllTextAsync(Path.Combine(bridge, "release-owner"), "PASS"); }
+            finally { await PublishSignal("release-owner"); }
         }
         using var result = await change;
         Assert.True(result.StatusCode == HttpStatusCode.OK, await result.Content.ReadAsStringAsync());
@@ -119,8 +119,16 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         if (!sessionOnly) Assert.Equal(await result.Content.ReadFromJsonAsync<IamOperationV1>(),
             await replay.Content.ReadFromJsonAsync<IamOperationV1>());
         Assert.Equal(after, await Read());
-        await File.WriteAllTextAsync(Path.Combine(bridge, "paused"), "PASS");
+        await PublishSignal("paused");
         await WaitConfigurationBridge(bridge, "finished");
+
+        async Task PublishSignal(string stage)
+        {
+            var ready = Path.Combine(bridge, stage);
+            var temporary = ready + ".tmp";
+            await File.WriteAllTextAsync(temporary, "PASS");
+            File.Move(temporary, ready);
+        }
 
         Task<HttpResponseMessage> Revoke()
         {

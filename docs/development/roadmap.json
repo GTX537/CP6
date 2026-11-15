@@ -166182,6 +166182,11 @@
       "at": "2026-11-15T21:47:40.458921+00:00",
       "change": "W659-01 版本化与旧 PUT 的显式期限改为按原命令耐久停发新写，原期限及双库封存提交确认可恢复。",
       "evidence": "docs/development/evidence/W659-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T22:23:52.463934+00:00",
+      "change": "W660-01 在 Main 用户资料、角色、组织与旧改密实际入口持久登记原用户封存，冷拒期间阻新写签发，以原原生两库回执恢复。正式 26 PASS / 1 NOT_RUN。",
+      "evidence": "docs/development/evidence/W660-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212188,10 +212193,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W659",
-      "path": "docs/development/evidence/W659-01/DELIVERY.md",
-      "baseline_sha": "382328801d062080426c97b5f9fdf1d87ed957c2",
-      "registered_at": "2026-11-15T21:00:06.940749+00:00",
+      "id": "W660",
+      "path": "docs/development/evidence/W660-01/DELIVERY.md",
+      "baseline_sha": "65b0cd7ccef2f23822f26bdecfec6df1348963e6",
+      "registered_at": "2026-11-15T21:39:30.968026+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212205,11 +212210,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Complete exact user and session recovery, then remaining native Main departmental and role fanout boundaries before recording overall acceptance.",
+      "next_action": "保留 PGT-017 NOT_RUN，接续 W661 OIDC 精确会话族退出，再推进部门和全局菜单实际 C02 来源。",
       "windows": [
         {
-          "id": "W659-01",
-          "workspace_task": "W659-01",
+          "id": "W660-01",
+          "workspace_task": "W660-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212219,28 +212224,32 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w659-01",
-          "planned_scope_ref": "docs/development/evidence/W659-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W659-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w660-01",
+          "planned_scope_ref": "docs/development/evidence/W660-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W660-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Enabled tenant exact CRM deadline predecessor and legacy plus versioned management",
-            "PostgreSQL 18.6 fixed store, original C02 and real commit acknowledgements",
-            "DEV-2"
+            "CP6 runtime and PostgreSQL C02 user-seal authority",
+            "Main IAM current-user signer and native test fixture",
+            "DEV-1 / 57240-57259"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Both original HTTP paths tested cold and both database acknowledgement failures. Actual CRM owner-first and expiry-update-first. Thirty-four affected Main and two W649 baseline checks. Combined upon adopting W658, four actual two-store paths 8/8, zero skips. Exact 310-file output 200/401/401, both actual migrations.",
-          "remaining_scope": "Ordinary existing-user cold restoration W660 active. Browser-family including CRM local logout recovery, registered department and actual MenuKey fanout remain. Formal PGT-017 NOT_RUN.",
-          "main_tested_source_sha": "d559b5fb81af281a4c621953d315520c16e44290"
+          "validation_summary": "PostgreSQL 18.6 两库及实际签名 Main，24 项实测通过、零跳过。实测四个旧/版本化别名，原 Main/CRM 两种提交顺序，以及真实 CRM/Main COMMIT 应答丢失后的原 operation 恢复。已测 13 文件与最新 W659 集成内容一致，310 文件当地发布清单及原生启动。",
+          "remaining_scope": [
+            "OIDC 浏览器精确会话族退出及运行时恢复",
+            "部门层次、全局 MenuKey 的实际 C02 来源及冷封存恢复",
+            "PGT-017 按完整已登记所有者要求复核和收口"
+          ],
+          "main_tested_source_sha": "1b53220b8f4e73626ce86487409ab972b40a6ff0"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -270037,6 +270046,67 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W659",
+        "path": "docs/development/evidence/W659-01/DELIVERY.md",
+        "baseline_sha": "382328801d062080426c97b5f9fdf1d87ed957c2",
+        "registered_at": "2026-11-15T21:00:06.940749+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Complete exact user and session recovery, then remaining native Main departmental and role fanout boundaries before recording overall acceptance.",
+        "windows": [
+          {
+            "id": "W659-01",
+            "workspace_task": "W659-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w659-01",
+            "planned_scope_ref": "docs/development/evidence/W659-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W659-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Enabled tenant exact CRM deadline predecessor and legacy plus versioned management",
+              "PostgreSQL 18.6 fixed store, original C02 and real commit acknowledgements",
+              "DEV-2"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Both original HTTP paths tested cold and both database acknowledgement failures. Actual CRM owner-first and expiry-update-first. Thirty-four affected Main and two W649 baseline checks. Combined upon adopting W658, four actual two-store paths 8/8, zero skips. Exact 310-file output 200/401/401, both actual migrations.",
+            "remaining_scope": "Ordinary existing-user cold restoration W660 active. Browser-family including CRM local logout recovery, registered department and actual MenuKey fanout remain. Formal PGT-017 NOT_RUN.",
+            "main_tested_source_sha": "d559b5fb81af281a4c621953d315520c16e44290",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1179",
+            "main_remote_main_sha": "d1694c06a7947c139791971e93f3bc0ffb24d0bb"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },

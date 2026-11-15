@@ -184,7 +184,8 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
         if (db.Database.IsNpgsql() && runtime.InquiryFence is { } fence)
         {
             var role = IdentityEventContracts.IsPermissionChanged(type);
-            var versionedSource = role || IdentityEventContracts.IsUserChanged(type) || type == IdentityEventContracts.ServicePrincipalChanged;
+            var userSource = IdentityEventContracts.IsUserChanged(type);
+            var versionedSource = role || userSource || type == IdentityEventContracts.ServicePrincipalChanged;
             var browserRevocation = IdentityEventContracts.IsTokenRevoked(type) &&
                 data["subjectId"]!.GetValue<string>().StartsWith("user:", StringComparison.Ordinal);
             if (role && previous is not null && fence.IsRegistered(tenant))
@@ -206,8 +207,25 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
                     await fence.AdvanceIdentityAsync(tenant, aggregate, version, role: true, cancellationToken).ConfigureAwait(false);
                 }
             }
+            else if (fence.IsRegistered(tenant) && db.CaptureCrmUserSeal is { } captureUser &&
+                     (browserRevocation || userSource && previous is not null))
+            {
+                var (subject, intent) = value switch
+                {
+                    UserIdentityData user => (user.UserId, UserSealIntent(data)),
+                    TokenRevokedIdentityData token => (Guid.Parse(token.SubjectId[5..]), payload),
+                    _ => throw new InvalidOperationException("C02_USER_SEAL_SOURCE_INVALID"),
+                };
+                captureUser(tenant, subject, new CrmUserSealAdvanceV1(aggregate, version, previous?.EventType,
+                    previous?.PayloadSha256, type, IdentityEventContracts.Hash(Encoding.UTF8.GetBytes(intent))));
+            }
             else if (browserRevocation || previous is not null && versionedSource)
+            {
+                if (userSource && fence.IsRegistered(tenant) && await IamCrmUserSealV1.ExistsAsync(
+                        db, tenant, ((UserIdentityData)value).UserId, cancellationToken).ConfigureAwait(false))
+                    throw IamAdministrationV1.Error(409, "IAM_CRM_USER_SEAL_PENDING");
                 await fence.AdvanceIdentityAsync(tenant, aggregate, version, role, cancellationToken).ConfigureAwait(false);
+            }
             if (previous is not null && value is DepartmentIdentityData department)
                 await fence.AdvanceDepartmentAsync(tenant, department.DeptId, version, cancellationToken).ConfigureAwait(false);
             if (previous is { IsDeleted: false } && value is TenantIdentityData { Enabled: true } currentTenant)
@@ -236,6 +254,17 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
             DatabaseContextKind.IdentityPriority, options => new(options), cancellationToken).ConfigureAwait(false);
         new Cp6OutboxStore<IdentityMessagingContext>(queue, runtime.Validator, runtime.Clock).Enqueue(envelope);
         await queue.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static string UserSealIntent(JsonObject data)
+    {
+        // The original protected IAM command and predecessor identify the credential change.
+        // Compare the stable projection without replaying a preview's epoch or password timestamps.
+        var intent = (JsonObject)data.DeepClone();
+        intent.Remove("authenticationEpoch");
+        intent.Remove("validAfterUtc");
+        intent.Remove("passwordExpiresAtUtc");
+        return intent.ToJsonString(IdentityEventContracts.Json);
     }
 
     private async Task<CrmIdentitySnapshot?> LoadLockedAsync(Guid tenant, string aggregate, CancellationToken cancellationToken)
