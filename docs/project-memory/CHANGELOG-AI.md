@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W646-01
+
+Space 普通校验按当前人类权限和原后台租约，保护版本、运行和问题记录。 [交付](../development/evidence/W646-01/DELIVERY.md)
+
 ## 2026-11-15 W641-01
 
 旧 OA 已提交子流程用 Main 同根事务收敛原父流程和原 Pending 作业。 [交付](../development/evidence/W641-01/DELIVERY.md)

@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W646-01 普通 Space 版本校验
+
+签名校验请求与实际 Validate 处理器采用 Main 事务栅栏。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W646-01/DELIVERY.md)
+
 ## 2026-11-15 W641-01 旧 OA 父流程续行
 
 通过原已提交工作项和当前 Main 栅栏处理父流程、原记录及 Outbox。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W641-01/DELIVERY.md)
