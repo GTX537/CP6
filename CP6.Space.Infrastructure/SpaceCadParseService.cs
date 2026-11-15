@@ -50,18 +50,12 @@ public sealed class SpaceCadParseService(
             content,
             cancellationToken);
         var (source, reusedSource) = await RegisterUploadedSourceAsync(version, sourceType, upload.File, uploadWrites, cancellationToken);
-        await SynchronizeTerminalFileStateAsync(
-            source,
-            upload.File.Id,
-            cancellationToken);
-        var currentFile = await context.Files.AsNoTracking().SingleAsync(
-            item => item.Id == upload.File.Id,
-            cancellationToken);
-        var scanJobId = upload.ScanJobId ??
-            await FindScanJobIdAsync(upload.File.Id, cancellationToken);
+        var (currentFile, currentSource) = await uploadWrites.ResolveUploadResponseAsync(source, upload.File.Id, cancellationToken);
+        var scanJobId = (currentFile.Id == upload.File.Id ? upload.ScanJobId : null) ??
+            await FindScanJobIdAsync(currentFile.Id, cancellationToken);
         return new UploadSpaceCadSourceResponse(
             ToDto(currentFile),
-            ToDto(source),
+            ToDto(currentSource),
             scanJobId,
             scanJobId.HasValue ? $"/api/space/design/v1/jobs/{scanJobId:D}" : null,
             upload.Reused || reusedSource);
@@ -81,38 +75,11 @@ public sealed class SpaceCadParseService(
             (version, _) = await LoadWritableVersionAsync(version.Id, cancellationToken);
         }
 
-        var existing = await context.Sources.SingleOrDefaultAsync(
-            item =>
-                item.ModelVersionId == version.Id &&
-                item.SourceType == sourceType &&
-                item.Sha256 == file.Sha256,
-            cancellationToken);
-        SpaceModelSource source;
-        if (existing is not null)
-        {
-            source = existing;
-            if (source.State == SpaceSourceState.Rejected)
-                throw Conflict("The same CAD source was previously rejected.");
-        }
-        else
-        {
-            source = file.State == SpaceFileState.Clean
-                ? sources.AddFileSource(
-                    version,
-                    file,
-                    sourceType,
-                    file.OriginalName)
-                : sources.AddPendingFileSource(
-                    version,
-                    file,
-                    sourceType,
-                    file.OriginalName);
-            context.Sources.Add(source);
-            await context.SaveChangesAsync(cancellationToken);
-        }
+        var registered = await uploadWrites.SaveSourceAsync(sources, version, file, sourceType, file.OriginalName,
+            () => Conflict("The same CAD source was previously rejected."), cancellationToken);
         if (transaction is not null)
             await uploadWrites.CommitRegistrationAsync(transaction, cancellationToken);
-        return (source, existing is not null);
+        return registered;
     }
 
     public async Task<StartSpaceCadParseResponse> StartAsync(
@@ -2002,23 +1969,6 @@ public sealed class SpaceCadParseService(
             throw Invalid(
                 "CAD coordinate metadata does not match the source and confirmation.");
         }
-    }
-
-    private async Task SynchronizeTerminalFileStateAsync(
-        SpaceModelSource source,
-        Guid fileId,
-        CancellationToken cancellationToken)
-    {
-        if (source.State != SpaceSourceState.Scanning)
-            return;
-        var file = await context.Files.SingleAsync(
-            item => item.Id == fileId,
-            cancellationToken);
-        await context.Entry(file).ReloadAsync(cancellationToken);
-        if (file.State is not (SpaceFileState.Clean or SpaceFileState.Rejected))
-            return;
-        source.CompleteFileScan(file);
-        await context.SaveChangesAsync(cancellationToken);
     }
 
     private Task<Guid?> FindScanJobIdAsync(
