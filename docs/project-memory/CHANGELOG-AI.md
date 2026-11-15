@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W663-01
+
+设备状态后台在 Main 共同根内检查当前租户并提交原监控效果，事务确认后发送状态通知。[W663-01 交付](../development/evidence/W663-01/DELIVERY.md)
+
 ## 2026-11-15 W661-01
 
 Main 持久接受原 CRM OIDC 登录族的退出意图。现有最小 CRM 身份事务确认全部原授予版本后，Main 原族、刷新谱系、快照、Outbox 和恢复结果共同提交。[W661-01 交付](../development/evidence/W661-01/DELIVERY.md)

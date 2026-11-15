@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W663-01 设备状态监控事务栅栏
+
+实际设备状态监控与 Main 租户暂停已共用 PostgreSQL 事务根，三项实测通过。PGT-017 保持 26 PASS / 1 NOT_RUN。[W663-01 交付](../development/evidence/W663-01/DELIVERY.md)
+
 ## 2026-11-15 W661-01 CRM 浏览器退出恢复
 
 真实 CRM 网页退出、Main 重启和两库分别丢失提交应答均按原登录族实测通过。正式 PGT-017 仍待登记的部门等权威写者完成。[W661-01 交付](../development/evidence/W661-01/DELIVERY.md)
