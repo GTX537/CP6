@@ -8,15 +8,16 @@ namespace CP6.Tests.Erp;
 // A loopback-only PostgreSQL fixture. Drop exactly one acknowledged COMMIT from the selected LOGIN.
 internal sealed class StockPostgresCommitRelay : IAsyncDisposable
 {
-    private readonly TcpListener listener = new(IPAddress.Loopback, 0);
+    private readonly TcpListener listener;
     private readonly CancellationTokenSource stopping = new();
     private readonly TaskCompletionSource dropped = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly List<Task> connections = [];
     private readonly Task accepting;
     private int armed;
 
-    internal StockPostgresCommitRelay(int postgresPort, string login)
+    internal StockPostgresCommitRelay(int postgresPort, string login, int listenPort = 0)
     {
+        listener = new TcpListener(IPAddress.Loopback, listenPort);
         listener.Start();
         accepting = AcceptAsync(postgresPort, login);
     }

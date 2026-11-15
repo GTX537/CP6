@@ -59,7 +59,7 @@ public partial class OrderCancelBridgeHook
         private readonly (Guid Outbound,Guid WorkOrder)[] edges;
         private readonly string actor;
         private readonly StockTransactionInheritanceV1 inheritance;
-        private readonly List<(string Number,bool Shipping,List<StockTransaction> Transactions)> notifications=[];
+        private readonly List<(string Number,bool Shipping,List<StockTransaction> Transactions,Guid? FinanceEvent)> notifications=[];
         internal OwnedCascade(OrderCancelBridgeHook owner,List<WorkOrder> workOrders,List<OutboundOrder> outbounds,
             (Guid Outbound,Guid WorkOrder)[] edges,string actor,StockTransactionInheritanceV1 inheritance)
         {this.owner=owner;this.workOrders=workOrders;this.outbounds=outbounds;this.edges=edges;this.actor=actor;this.inheritance=inheritance;}
@@ -76,6 +76,7 @@ public partial class OrderCancelBridgeHook
             {
                 var row=outbounds[i];var probe=ops[i];if(!probe.AutoCancellable || probe.Cancelled==true)continue;
                 var prior=db.ChangeTracker.Entries<StockTransaction>().Select(e=>e.Entity.Id).ToHashSet();
+                Guid? financeEvent = null;
                 var succeeded=await AttemptAsync(async()=>
                 {
                     var details=await db.OutboundOrderDetails.AsNoTracking().Where(d=>d.OutboundNo==row.OutboundNo && !d.IsDeleted).OrderBy(d=>d.Id).ToListAsync();
@@ -97,11 +98,11 @@ public partial class OrderCancelBridgeHook
                             new NpgsqlParameter("tenant",db.CurrentTenantId),new NpgsqlParameter("id",release.Key)).AsNoTracking().SingleAsync();
                         if(locked.AllocatedQty<release.Value)throw new InvalidOperationException("CANCEL_ALLOCATION_INVALID");
                     }
-                    await ((OutboundService)owner._outboundService).CancelFromOrderAsync(row.OutboundNo,actor,inheritance);
+                    financeEvent = await ((OutboundService)owner._outboundService).CancelFromOrderAsync(row.OutboundNo,actor,inheritance);
                 });
                 probe.Cancelled=succeeded;probe.Message=succeeded?"Cancelled":"CANCEL_CHILD_FAILED";
                 if(succeeded)notifications.Add((row.OutboundNo,row.OutboundType==OutboundType.Shipping,
-                    db.ChangeTracker.Entries<StockTransaction>().Where(e=>!prior.Contains(e.Entity.Id)).Select(e=>e.Entity).ToList()));
+                    db.ChangeTracker.Entries<StockTransaction>().Where(e=>!prior.Contains(e.Entity.Id)).Select(e=>e.Entity).ToList(),financeEvent));
             }
             for(int i=0;i<workOrders.Count;i++)
             {
@@ -147,7 +148,7 @@ public partial class OrderCancelBridgeHook
         internal async Task PublishCommittedAsync()
         {
             foreach(var item in notifications)
-                try {await ((OutboundService)owner._outboundService).PublishOrderCancellationAsync(item.Number,item.Shipping,actor,item.Transactions);}
+                try {await ((OutboundService)owner._outboundService).PublishOrderCancellationAsync(item.Number,item.Shipping,actor,item.Transactions,item.FinanceEvent);}
                 catch(Exception error){owner._logger.LogError(error,"Order cancellation notification failed after confirmed commit for {Number}",item.Number);}
         }
     }
