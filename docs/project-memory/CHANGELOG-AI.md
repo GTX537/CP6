@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 · W608-01
+
+登记应付发票和付款五条 HTTP 入口、原生锁序、差额凭证反冲和业务回滚。 [交付记录](../development/evidence/W608-01/DELIVERY.md)
+
 ## 2026-11-15 · W607-01
 
 登记 CRM 原生恢复目标门禁、双租户原回执与七个原写者隔离。 [交付记录](../development/evidence/W607-01/DELIVERY.md)

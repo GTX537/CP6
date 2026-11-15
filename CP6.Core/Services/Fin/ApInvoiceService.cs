@@ -33,7 +33,10 @@ public class ApInvoiceService : IApInvoiceService, IFinAp
         return await q.OrderByDescending(x => x.InvoiceDate).ThenByDescending(x => x.No).ToListAsync();
     }
 
-    public async Task<FinResult> CreateAsync(ApInvoice invoice, string user)
+    public Task<FinResult> CreateAsync(ApInvoice invoice, string user) =>
+        WriteDraftAsync(invoice, user, validateLinks: true);
+
+    private async Task<FinResult> WriteDraftAsync(ApInvoice invoice, string user, bool validateLinks)
     {
         // 防重：同供应商同发票号（红字/空号不约束，与过滤唯一索引一致）
         if (!string.IsNullOrEmpty(invoice.SupplierInvoiceNo) && !invoice.IsCreditMemo)
@@ -52,6 +55,13 @@ public class ApInvoiceService : IApInvoiceService, IFinAp
         var taxes = taxIds.Count == 0
             ? new Dictionary<Guid, TaxCode>()
             : await _db.TaxCodes.Where(t => taxIds.Contains(t.Id)).ToDictionaryAsync(t => t.Id);
+
+        var native = _db.Database.IsNpgsql();
+        if (native && validateLinks)
+        {
+            var links = await ValidateDraftLinksAsync(invoice, taxes);
+            if (!links.Ok) return links;
+        }
 
         decimal net = 0m, tax = 0m;
         foreach (var line in invoice.Lines)
@@ -73,6 +83,12 @@ public class ApInvoiceService : IApInvoiceService, IFinAp
         invoice.TaxAmount = tax;
         invoice.GrossAmount = net + tax;
 
+        if (native)
+        {
+            invoice.TenantId = _db.CurrentTenantId;
+            invoice.JournalEntryId = null;
+        }
+
         invoice.Id = invoice.Id == Guid.Empty ? Guid.NewGuid() : invoice.Id;
         invoice.No = await _seq.NextAsync(SeqKey, invoice.InvoiceDate);
         invoice.Status = ApInvoiceStatus.Draft;
@@ -83,6 +99,7 @@ public class ApInvoiceService : IApInvoiceService, IFinAp
         var n = 1;
         foreach (var line in invoice.Lines)
         {
+            if (native) line.TenantId = invoice.TenantId;
             line.InvoiceId = invoice.Id;
             if (line.LineNo == 0) line.LineNo = n;
             n++;
@@ -98,6 +115,10 @@ public class ApInvoiceService : IApInvoiceService, IFinAp
         var inv = await _db.ApInvoices.Include(x => x.Lines).FirstOrDefaultAsync(x => x.Id == invoiceId);
         if (inv == null) return FinResult.Fail("E-FIN-202");
         if (inv.Status != ApInvoiceStatus.Draft) return FinResult.Fail("E-FIN-203");
+
+        // Posting copies the draft's dimension onto a new journal line.
+        if (_db.Database.IsNpgsql() && !await OwnsCostCentersAsync(inv.Lines))
+            return FinResult.Fail("E-FIN-206");
 
         var evt = new FinBizEvent
         {
@@ -130,6 +151,39 @@ public class ApInvoiceService : IApInvoiceService, IFinAp
         inv.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();
         return FinResult.Pass();
+    }
+
+    private async Task<FinResult> ValidateDraftLinksAsync(ApInvoice invoice, IReadOnlyDictionary<Guid, TaxCode> taxes)
+    {
+        if (invoice.Lines.Any(line => line.TaxCodeId is Guid id && id != Guid.Empty && !taxes.ContainsKey(id)))
+            return FinResult.Fail("E-FIN-205");
+        if (!await OwnsCostCentersAsync(invoice.Lines))
+            return FinResult.Fail("E-FIN-206");
+        if (invoice.PurchaseOrderId is Guid purchase && purchase != Guid.Empty
+            && !await _db.PurchaseOrders.AnyAsync(order => order.Id == purchase))
+            return FinResult.Fail("E-PUR-027");
+        if (invoice.OriginInvoiceId is Guid origin && origin != Guid.Empty
+            && !await _db.ApInvoices.AnyAsync(existing => existing.Id == origin))
+            return FinResult.Fail("E-FIN-202");
+
+        var accounts = invoice.Lines.Select(line => line.ExpenseAccountId).Where(id => id != Guid.Empty).Distinct().ToArray();
+        if (accounts.Length != 0)
+        {
+            var owned = await _db.GlAccounts.Where(account => accounts.Contains(account.Id)).Select(account => account.Id).ToListAsync();
+            if (owned.Count != accounts.Length)
+            {
+                var index = invoice.Lines.FindIndex(line => line.ExpenseAccountId != Guid.Empty && !owned.Contains(line.ExpenseAccountId));
+                var lineNo = invoice.Lines[index].LineNo;
+                return FinResult.Fail("E-FIN-108", lineNo == 0 ? index + 1 : lineNo);
+            }
+        }
+        return FinResult.Pass();
+    }
+
+    private async Task<bool> OwnsCostCentersAsync(IReadOnlyList<ApInvoiceLine> lines)
+    {
+        var centers = lines.Select(line => line.CostCenterId.GetValueOrDefault()).Where(id => id != Guid.Empty).Distinct().ToArray();
+        return centers.Length == 0 || await _db.CostCenters.CountAsync(center => centers.Contains(center.Id)) == centers.Length;
     }
 
     // ── IFinAp（F2-D3 采购对外契约）：采购三单匹配后据匹配结果建票并过账 ──
@@ -166,7 +220,7 @@ public class ApInvoiceService : IApInvoiceService, IFinAp
             }).ToList(),
         };
 
-        var created = await CreateAsync(inv, operatorId);
+        var created = await WriteDraftAsync(inv, operatorId, validateLinks: false);
         if (!created.Ok) return new FinApInvoiceResult { Result = created };
 
         var posted = await PostAsync(inv.Id, operatorId);

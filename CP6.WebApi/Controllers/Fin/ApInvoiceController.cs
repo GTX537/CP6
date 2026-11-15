@@ -1,6 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,6 +45,7 @@ public class ApInvoiceController : ControllerBase
     /// <summary>录入草稿（含红字 IsCreditMemo）。返回新 Id。</summary>
     [HttpPost]
     [RequirePermission("fin-ap-invoice", "add")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Create([FromBody] ApInvoice invoice)
     {
         var r = await _svc.CreateAsync(invoice, CurrentUser);
@@ -53,6 +55,7 @@ public class ApInvoiceController : ControllerBase
     /// <summary>过账（生成凭证）。</summary>
     [HttpPost("{id}/post")]
     [RequirePermission("fin-ap-invoice", "post")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Post(Guid id) => Fin(await _svc.PostAsync(id, CurrentUser));
 
     /// <summary>账龄（按供应商分桶，本位币）。</summary>
