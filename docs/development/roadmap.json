@@ -166097,6 +166097,11 @@
       "at": "2026-11-15T16:35:32.895217+00:00",
       "change": "W631-01 三单匹配、新放行及拒绝共用 Main 权限栅栏，修复同号码多租户与采购和财务部分提交，按原凭证续办。",
       "evidence": "docs/development/evidence/W631-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T17:05:35.390751+00:00",
+      "change": "W634-01 历史刊发父作业克隆、验证和实际创建子刊发时校验 Main 与原租约，子计划、尝试、审计和父关联同事务。",
+      "evidence": "docs/development/evidence/W634-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212103,10 +212108,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W631",
-      "path": "docs/development/evidence/W631-01/DELIVERY.md",
-      "baseline_sha": "4de40010bbf87fba4c6fc9f9d8f32bc05dd07447",
-      "registered_at": "2026-11-15T16:03:45.683916+00:00",
+      "id": "W634",
+      "path": "docs/development/evidence/W634-01/DELIVERY.md",
+      "baseline_sha": "951f06374945137a13fb4dd35101bfaf53de8cd3",
+      "registered_at": "2026-11-15T16:34:57.033478+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212120,11 +212125,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Continue independent Space historical parent and inventory financial intent. Verify remaining late authority writers.",
+      "next_action": "Finish native inventory finance and remaining subcontract and workflow background writers.",
       "windows": [
         {
-          "id": "W631-01",
-          "workspace_task": "W631-01",
+          "id": "W634-01",
+          "workspace_task": "W634-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212134,28 +212139,28 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w631-01",
-          "planned_scope_ref": "docs/development/evidence/W631-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W631-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "branch": "codex/w634-01",
+          "planned_scope_ref": "docs/development/evidence/W634-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W634-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Purchase invoice three-way Match, Release and Reject",
-            "Existing Main native transaction, original AP and journal, PO lines/state and tenant-scoped migration",
-            "DEV-1"
+            "Space historical republish parent clone, validation start and final snapshot, child Plan/Attempt/Job, linked original ref and audit",
+            "Main native transaction fence, actual WMS/runtime child replay and original parent Job lease",
+            "DEV-2"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "29 targeted tests passed, zero skips. All three native route orders, two tenants with identical match numbers, exact historical AP and final actual rollback, old directory migration and local 310 hashes, seven matching DLLs and 200/401.",
-          "remaining_scope": "W634 historical republication parent Job, W636 original stock finance retry #1156, subcontract finished-cost and remaining OA timeout writers. Formal PostgreSQL 26 PASS / 1 NOT_RUN.",
-          "main_tested_source_sha": "55f431199063da6b52b9e4de0788e95c46f3256e"
+          "validation_summary": "9 native parent tests, 8 native W604 foreground tests, 7 W621 physical child tests, and 11 targeted controls passed, zero skips. Native row xmin proves parent reference and all child records share original transaction.",
+          "remaining_scope": "Core inventory finance #1156 and restricted finance writer recovery, subcontract finished-cost and OA legacy timeout or inline follow-up. Formal PostgreSQL 26 PASS / 1 NOT_RUN. No deployment.",
+          "main_tested_source_sha": "c193ce8c0f87c34780ccea0717f34cdd72c52d61"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -268905,6 +268910,67 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W631",
+        "path": "docs/development/evidence/W631-01/DELIVERY.md",
+        "baseline_sha": "4de40010bbf87fba4c6fc9f9d8f32bc05dd07447",
+        "registered_at": "2026-11-15T16:03:45.683916+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Continue independent Space historical parent and inventory financial intent. Verify remaining late authority writers.",
+        "windows": [
+          {
+            "id": "W631-01",
+            "workspace_task": "W631-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w631-01",
+            "planned_scope_ref": "docs/development/evidence/W631-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W631-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Purchase invoice three-way Match, Release and Reject",
+              "Existing Main native transaction, original AP and journal, PO lines/state and tenant-scoped migration",
+              "DEV-1"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "29 targeted tests passed, zero skips. All three native route orders, two tenants with identical match numbers, exact historical AP and final actual rollback, old directory migration and local 310 hashes, seven matching DLLs and 200/401.",
+            "remaining_scope": "W634 historical republication parent Job, W636 original stock finance retry #1156, subcontract finished-cost and remaining OA timeout writers. Formal PostgreSQL 26 PASS / 1 NOT_RUN.",
+            "main_tested_source_sha": "55f431199063da6b52b9e4de0788e95c46f3256e",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1157",
+            "main_remote_main_sha": "881765c45537d166228d7b6236ac696e18529b75"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },
