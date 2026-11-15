@@ -1,5 +1,4 @@
 using CP6.Core.Persistence;
-using System.Data;
 using System.Text;
 using System.Text.Json;
 using CP6.Space.Application;
@@ -27,8 +26,7 @@ public sealed partial class SpaceUnderlayV1Service
         var requestHash = Hash(JsonSerializer.Serialize(request, JsonOptions));
         var keyHash = IdempotencyKeyHash(operation, idempotencyKey);
 
-        await using var transaction = await _context.Database
-            .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+        await using var transaction = await BeginUnderlayWriteAsync(cancellationToken);
         try
         {
             await AcquireFloorEditLockAsync(
@@ -72,7 +70,7 @@ public sealed partial class SpaceUnderlayV1Service
                 cancellationToken);
             if (replay is not null)
             {
-                await transaction.CommitAsync(cancellationToken);
+                await CommitUnderlayWriteAsync(transaction, cancellationToken);
                 return replay;
             }
             EnsureUnderlayRevisions(
@@ -179,7 +177,7 @@ public sealed partial class SpaceUnderlayV1Service
                 responseJson,
                 now));
             await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await CommitUnderlayWriteAsync(transaction, cancellationToken);
             return response;
         }
         catch (DbUpdateException)
