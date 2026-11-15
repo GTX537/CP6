@@ -18227,14 +18227,9 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                         .HasName("PK_Pur_ThreeWayMatch")
                         .HasAnnotation("CP6:OriginalName", "PK_Pur_ThreeWayMatch");
 
-                    b.HasAlternateKey("MatchNo")
-                        .HasName("AK_Pur_ThreeWayMatch_MatchNo")
-                        .HasAnnotation("CP6:OriginalName", "AK_Pur_ThreeWayMatch_MatchNo");
-
-                    b.HasIndex("MatchNo")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Pur_ThreeWayMatch_MatchNo")
-                        .HasAnnotation("CP6:OriginalName", "IX_Pur_ThreeWayMatch_MatchNo");
+                    b.HasAlternateKey("TenantId", "MatchNo")
+                        .HasName("AK_Pur_ThreeWayMatch_TenantId_MatchNo")
+                        .HasAnnotation("CP6:OriginalName", "AK_Pur_ThreeWayMatch_TenantId_MatchNo");
 
                     b.HasIndex("SupplierInvoiceNo")
                         .HasDatabaseName("IX_Pur_ThreeWayMatch_SupplierInvoiceNo")
@@ -18363,10 +18358,6 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                     b.HasKey("Id")
                         .HasName("PK_Pur_ThreeWayMatchLine")
                         .HasAnnotation("CP6:OriginalName", "PK_Pur_ThreeWayMatchLine");
-
-                    b.HasIndex("MatchNo")
-                        .HasDatabaseName("IX_Pur_ThreeWayMatchLine_MatchNo")
-                        .HasAnnotation("CP6:OriginalName", "IX_Pur_ThreeWayMatchLine_MatchNo");
 
                     b.HasIndex("TenantId", "MatchNo", "LineNo")
                         .IsUnique()
@@ -35537,12 +35528,12 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                 {
                     b.HasOne("CP6.Entity.DomainModels.Pur.ThreeWayMatch", null)
                         .WithMany("Lines")
-                        .HasForeignKey("MatchNo")
-                        .HasPrincipalKey("MatchNo")
+                        .HasForeignKey("TenantId", "MatchNo")
+                        .HasPrincipalKey("TenantId", "MatchNo")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_Pur_ThreeWayMatchLine_Pur_ThreeWayMatch_MatchNo")
-                        .HasAnnotation("CP6:OriginalName", "FK_Pur_ThreeWayMatchLine_Pur_ThreeWayMatch_MatchNo");
+                        .HasConstraintName("FK_Pur_ThreeWayMatchLine_TenantId_MatchNo")
+                        .HasAnnotation("CP6:OriginalName", "FK_Pur_ThreeWayMatchLine_TenantId_MatchNo");
                 });
 
             modelBuilder.Entity("CP6.Entity.DomainModels.Wf.Wf_FlowDefVersion", b =>
