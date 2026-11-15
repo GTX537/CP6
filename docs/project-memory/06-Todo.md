@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 · W607-01 CRM 切换余项
+
+继续 Kafka 与 Dapr 凭据的实际认证和持久隔离，按采用流程核对环境授权。 [交付记录](../development/evidence/W607-01/DELIVERY.md)
+
 ## 2026-11-15 · W606-01 财务剩余入口
 
 余应付 5、应收 7、工单结转 1，继续核对采购、WMS、MES 和独立后台审批。 [交付记录](../development/evidence/W606-01/DELIVERY.md)

@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 · W607-01 CRM 恢复目标身份写者
+
+登记真实双租户已验证的物理时间线门禁和七份旧凭据隔离。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W607-01/DELIVERY.md)
+
 ## 2026-11-15 · W606-01 预算和审批
 
 预算 11 条采用 Main 原生事务，累计财务 53 条已接入、13 条可达入口待验收。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W606-01/DELIVERY.md)
