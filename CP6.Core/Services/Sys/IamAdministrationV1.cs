@@ -23,7 +23,7 @@ public sealed record IamOperationV1(Guid OperationId, string Kind, string State,
     string? Version = null, string? ReferencesVersion = null, string? TreeVersion = null, int? RoleId = null);
 
 /// <summary>Main's existing authentication root serializes actual reference writers and current authorization.</summary>
-public sealed class IamAdministrationV1(CP6Context db, ICurrentPermissionContext permissions, IDataProtectionProvider protection)
+public sealed partial class IamAdministrationV1(CP6Context db, ICurrentPermissionContext permissions, IDataProtectionProvider protection)
 {
     private readonly IDataProtector fingerprint = protection.CreateProtector("CP6.Iam.Administration.Request.V1");
     public bool IsPostgreSql => db.Database.IsNpgsql();
@@ -85,7 +85,13 @@ public sealed class IamAdministrationV1(CP6Context db, ICurrentPermissionContext
 
     public async Task<IamOperationV1?> Original(Guid actor, string kind, IamCommandV1 command, CancellationToken ct)
     {
-        var row = await Operation(command.OperationId,ct); if (row == null) return null;
+        var row = await Operation(command.OperationId,ct);
+        if (row == null)
+        {
+            var pending = await IamCrmRoleSealV1.ReadAsync(db, db.CurrentTenantId, command.OperationId, ct);
+            pending?.RequireOwner(actor, kind);
+            return null;
+        }
         RequireOwner(row,actor,kind);
         if (row.State == "CLOSED") throw Error(409,"IAM_OPERATION_CLOSED");
         if (row.RequestProtected == null || fingerprint.Unprotect(row.RequestProtected) != AuthenticationPolicyServiceV1.Hash((object)command))
@@ -107,6 +113,18 @@ public sealed class IamAdministrationV1(CP6Context db, ICurrentPermissionContext
         {
             var row = await Operation(id,token);
             if (row != null) { RequireOwner(row,who,kind); return JsonSerializer.Deserialize<IamOperationV1>(row.ResultJson)!; }
+            var pending = await IamCrmRoleSealV1.ReadAsync(db, db.CurrentTenantId, id, token);
+            if (pending is not null)
+            {
+                pending.RequireOwner(who, kind);
+                if (close)
+                {
+                    // The connector has not sent a seal until the separate started marker commits.
+                    if (pending.SealStarted) throw Error(503, "IAM_OPERATION_UNKNOWN");
+                    await RequireRoleSealDurability(token);
+                    await pending.RemoveAsync(db, db.CurrentTenantId, token);
+                }
+            }
             var result = new IamOperationV1(id,kind,close ? "CLOSED" : "UNKNOWN");
             if (close)
             {

@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W658-01 角色与询盘范围原操作
+
+真实首次连接拒绝、重启、两种提交顺序和 CRM 确认丢失已验证。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W658-01/DELIVERY.md)
+
 ## 2026-11-15 W654-01 Space 目录写权限
 
 7 个正常入口均实测两种 PostgreSQL 顺序，继续登记跨库首次连接故障范围。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W654-01/DELIVERY.md)

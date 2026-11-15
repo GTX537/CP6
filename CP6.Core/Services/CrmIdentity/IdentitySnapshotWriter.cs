@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using CP6.Core.EFDbContext;
 using CP6.Core.Persistence;
+using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
 using CP6.Platform.EntityFramework;
 using Dapper;
@@ -186,7 +187,26 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
             var versionedSource = role || IdentityEventContracts.IsUserChanged(type) || type == IdentityEventContracts.ServicePrincipalChanged;
             var browserRevocation = IdentityEventContracts.IsTokenRevoked(type) &&
                 data["subjectId"]!.GetValue<string>().StartsWith("user:", StringComparison.Ordinal);
-            if (browserRevocation || previous is not null && versionedSource)
+            if (role && previous is not null && fence.IsRegistered(tenant))
+            {
+                if (db.WriteCrmRoleSealAsync is { } writeSeal)
+                {
+                    var sealVersion = new CrmRoleSealVersionV1(previous.Version, previous.EventType, previous.PayloadSha256,
+                        type, IdentityEventContracts.Hash(Encoding.UTF8.GetBytes(payload)));
+                    var removedScopes = previous.EventType == IdentityEventContracts.PermissionChangedV3 && value is PermissionIdentityDataV3 roleData
+                        ? JsonSerializer.Deserialize<PermissionIdentityDataV3>(previous.PayloadJson, IdentityEventContracts.Json)!
+                            .SiteFormScopes.Except(roleData.SiteFormScopes).ToArray() : null;
+                    await writeSeal(tenant, aggregate, sealVersion, removedScopes, cancellationToken).ConfigureAwait(false);
+                }
+                else
+                {
+                    if (IdentityEventContracts.TryRoleSubject(aggregate[11..], out var roleId) &&
+                        await IamCrmRoleSealV1.ReadAsync(db, tenant, Guid.Empty, cancellationToken, roleId).ConfigureAwait(false) is not null)
+                        throw IamAdministrationV1.Error(409, "IAM_CRM_ROLE_SEAL_PENDING");
+                    await fence.AdvanceIdentityAsync(tenant, aggregate, version, role: true, cancellationToken).ConfigureAwait(false);
+                }
+            }
+            else if (browserRevocation || previous is not null && versionedSource)
                 await fence.AdvanceIdentityAsync(tenant, aggregate, version, role, cancellationToken).ConfigureAwait(false);
             if (previous is not null && value is DepartmentIdentityData department)
                 await fence.AdvanceDepartmentAsync(tenant, department.DeptId, version, cancellationToken).ConfigureAwait(false);

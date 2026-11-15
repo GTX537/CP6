@@ -166172,6 +166172,11 @@
       "at": "2026-11-15T20:53:32.301214+00:00",
       "change": "W654-01 Space WMS 收录、绑定、布位、编码和两种模板目录写入采用 Main 当前事务栅栏。",
       "evidence": "docs/development/evidence/W654-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T21:35:19.606015+00:00",
+      "change": "W658-01 角色和询盘范围原操作先耐久记录待确认，首次封存连接拒绝时停发实际受影响的新写许可；业务与原回执一次提交。",
+      "evidence": "docs/development/evidence/W658-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212178,10 +212183,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W654",
-      "path": "docs/development/evidence/W654-01/DELIVERY.md",
-      "baseline_sha": "aaf872ec8f87b6566bcda1a7ac4b6c521f90f373",
-      "registered_at": "2026-11-15T20:30:50.007149+00:00",
+      "id": "W658",
+      "path": "docs/development/evidence/W658-01/DELIVERY.md",
+      "baseline_sha": "39923b3e5ce0f328591609e7af266c5c48aee1e9",
+      "registered_at": "2026-11-15T20:48:51.287302+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212195,11 +212200,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Finish scoped CRM cold original-operation recovery for each remaining registered Main authority family, then consolidate acceptance.",
+      "next_action": "Continue ordinary existing-user CRM first-seal restoration, then other affected registered Main owners. Verify combined original deadline adoption.",
       "windows": [
         {
-          "id": "W654-01",
-          "workspace_task": "W654-01",
+          "id": "W658-01",
+          "workspace_task": "W658-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212209,28 +212214,28 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w654-01",
-          "planned_scope_ref": "docs/development/evidence/W654-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W654-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w658-01",
+          "planned_scope_ref": "docs/development/evidence/W658-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W658-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Seven signed Space Design/WMS catalog business entries",
-            "Original native PG Main gate, version/source/floor lease and template receipt",
-            "DEV-2"
+            "Five original Main role/inquiry scope mutations and their current claimant restrictions",
+            "CRM original W649 service and native C02 receivers",
+            "DEV-1"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "Fourteen actual signed PostgreSQL order runs and single integration action revocation, 66 contract tests, zero skips. 310 local package with three matching source blobs, seven matching DLLs, liveness 200 and two 401s.",
-          "remaining_scope": "Registered finance, background, Space upload and publish writer evidence adopted separately. First-seal cold CRM coverage still active for Role policies and relevant remaining Main authority families. PGT-017 NOT_RUN.",
-          "main_tested_source_sha": "2e561230d7d1a7cd20d02930eb8c7d7dedee13ec"
+          "validation_summary": "42 native/targeted Main and six CRM executions, actual first dedicated login refusal, Main restart, scoped retained original, both signed role/scope orders, and real CRM commit ACK loss. Zero skips. 310 exact package, fresh migration 0, liveness 200 and anonymous 401.",
+          "remaining_scope": "W659 verified original deadline and needs shared fixture and client combined regression before protected adoption. Ordinary existing-user, browser-family, department and relevant cross-tenant menu cold intents remain in tracked Main scope. PGT-017 NOT_RUN.",
+          "main_tested_source_sha": "3d8500b93159fce224bfd58b7e7008b1acbe42ca"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -269905,6 +269910,67 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W654",
+        "path": "docs/development/evidence/W654-01/DELIVERY.md",
+        "baseline_sha": "aaf872ec8f87b6566bcda1a7ac4b6c521f90f373",
+        "registered_at": "2026-11-15T20:30:50.007149+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Finish scoped CRM cold original-operation recovery for each remaining registered Main authority family, then consolidate acceptance.",
+        "windows": [
+          {
+            "id": "W654-01",
+            "workspace_task": "W654-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w654-01",
+            "planned_scope_ref": "docs/development/evidence/W654-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W654-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Seven signed Space Design/WMS catalog business entries",
+              "Original native PG Main gate, version/source/floor lease and template receipt",
+              "DEV-2"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Fourteen actual signed PostgreSQL order runs and single integration action revocation, 66 contract tests, zero skips. 310 local package with three matching source blobs, seven matching DLLs, liveness 200 and two 401s.",
+            "remaining_scope": "Registered finance, background, Space upload and publish writer evidence adopted separately. First-seal cold CRM coverage still active for Role policies and relevant remaining Main authority families. PGT-017 NOT_RUN.",
+            "main_tested_source_sha": "2e561230d7d1a7cd20d02930eb8c7d7dedee13ec",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1177",
+            "main_remote_main_sha": "382328801d062080426c97b5f9fdf1d87ed957c2"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },
