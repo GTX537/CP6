@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W613-01
+
+Space 的 CAD 与 Excel/CAD 匹配制品在业务连接中核对当前租户和持久 Job 租约及取消状态。提交回包未知可按原 Job 恢复已提交 File/Artifact。 [交付](../development/evidence/W613-01/DELIVERY.md)
+
 ## 2026-11-15 · W612-01
 
 登记工单成本结转的共同事务及 40 条待接入财务 HTTP 写入口的实际证据。 [交付记录](../development/evidence/W612-01/DELIVERY.md)

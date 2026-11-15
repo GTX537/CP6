@@ -166032,6 +166032,11 @@
       "at": "2026-11-15T13:00:30.307820+00:00",
       "change": "W612-01 工单成本结转采用 Main 共同原生栅栏，累计完成原待接入的 40 条可达财务 HTTP 写入口。",
       "evidence": "docs/development/evidence/W612-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T13:20:03.052758+00:00",
+      "change": "W613-01 CAD 解析和 Excel/CAD 匹配制品取得 Main 共同根。九项原生并发、故障、到期及原结果恢复通过。",
+      "evidence": "docs/development/evidence/W613-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212038,10 +212043,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W612",
-      "path": "docs/development/evidence/W612-01/DELIVERY.md",
-      "baseline_sha": "16fa3360ad30371882519ca2d530553381a8caae",
-      "registered_at": "2026-11-15T12:46:31.427051+00:00",
+      "id": "W613",
+      "path": "docs/development/evidence/W613-01/DELIVERY.md",
+      "baseline_sha": "c116b38b63388e6e743f058fcba6ddfc4a5c6387",
+      "registered_at": "2026-11-15T12:54:27.008421+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212055,11 +212060,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "财务 40 条可达 HTTP 余项已覆盖，继续后台、Space 和 CRM 真实写者。PGT-017 保持 NOT_RUN",
+      "next_action": "Continue the Space file-safety worker and current Finance background and CRM work. PGT-017 remains NOT_RUN until all applicable writers and native evidence are reconciled.",
       "windows": [
         {
-          "id": "W612-01",
-          "workspace_task": "W612-01",
+          "id": "W613-01",
+          "workspace_task": "W613-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212069,28 +212074,28 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w612-01",
-          "planned_scope_ref": "docs/development/evidence/W612-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W612-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "branch": "codex/w613-01",
+          "planned_scope_ref": "docs/development/evidence/W613-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W613-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:FinCostSettle",
-            "Main:CurrentWriteAuthority",
-            "Local:PostgreSQL-HTTP"
+            "CAD parse GenerateArtifacts and Excel/CAD MatchPreview native File and Artifact writes",
+            "CP6 Main and Space shared PostgreSQL transaction root",
+            "DEV-2"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "7 actual signed PostgreSQL/Kestrel scenarios, 4 original native orders, 5 cost components, 310 hashes and actual local 200/401",
-          "remaining_scope": "Finance background and cross-domain writers, Space processing artifacts/maps/activation, CRM exact application Outbox transport activation",
-          "main_tested_source_sha": "9c655dc7fe0ca4887e880a00cf1bf094f7618ad1"
+          "validation_summary": "PostgreSQL 18.6 actual Main with CAD/Match processors and actual private bytes: 9 native orders, rollback, expiry and ack recovery; 106 contracts, 31 related, zero skips; 310 signed-input local publish hashes and 200/401/401",
+          "remaining_scope": "CAD Source finalization, file safety, Excel preflight and apply, historical publish, WMS and runtime activation, Finance cross-module/background and CRM full target Outbox adoption retain separate verification.",
+          "main_tested_source_sha": "aa02a4dd42e5d7f42201d240460b7dc7003b0395"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -268024,6 +268029,67 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W612",
+        "path": "docs/development/evidence/W612-01/DELIVERY.md",
+        "baseline_sha": "16fa3360ad30371882519ca2d530553381a8caae",
+        "registered_at": "2026-11-15T12:46:31.427051+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "财务 40 条可达 HTTP 余项已覆盖，继续后台、Space 和 CRM 真实写者。PGT-017 保持 NOT_RUN",
+        "windows": [
+          {
+            "id": "W612-01",
+            "workspace_task": "W612-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w612-01",
+            "planned_scope_ref": "docs/development/evidence/W612-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W612-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:FinCostSettle",
+              "Main:CurrentWriteAuthority",
+              "Local:PostgreSQL-HTTP"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "7 actual signed PostgreSQL/Kestrel scenarios, 4 original native orders, 5 cost components, 310 hashes and actual local 200/401",
+            "remaining_scope": "Finance background and cross-domain writers, Space processing artifacts/maps/activation, CRM exact application Outbox transport activation",
+            "main_tested_source_sha": "9c655dc7fe0ca4887e880a00cf1bf094f7618ad1",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1133",
+            "main_remote_main_sha": "e0adaf01e72a6c004a1b45cba2f02d7ccc588767"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },
