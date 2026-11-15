@@ -1,4 +1,3 @@
-using System.Data;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
@@ -17,6 +16,7 @@ public sealed partial class SpacePublishOrchestrator :
     ISpaceHistoricalRepublishPublishStarter,
     ISpacePublishJobExecutor
 {
+    private const string PublishPermission = "space:model:publish";
     private static readonly JsonSerializerOptions Json =
         new(JsonSerializerDefaults.Web);
 
@@ -30,6 +30,7 @@ public sealed partial class SpacePublishOrchestrator :
     private readonly SpacePublishPlanEngine _planEngine;
     private readonly EfSpacePublishSnapshotReader _snapshots;
     private readonly ILogger<SpacePublishOrchestrator> _logger;
+    private readonly ISpaceDesignWriteAuthority? _writeAuthority;
 
     public SpacePublishOrchestrator(
         SpaceContext context,
@@ -40,7 +41,8 @@ public sealed partial class SpacePublishOrchestrator :
         ISpaceWmsAdapter adapter,
         ISpaceRuntimeMaterializer runtime,
         SpacePublishPlanEngine planEngine,
-        ILogger<SpacePublishOrchestrator>? logger = null)
+        ILogger<SpacePublishOrchestrator>? logger = null,
+        ISpaceDesignWriteAuthority? writeAuthority = null)
     {
         _context = context;
         _execution = execution;
@@ -52,6 +54,7 @@ public sealed partial class SpacePublishOrchestrator :
         _planEngine = planEngine;
         _snapshots = new EfSpacePublishSnapshotReader(context);
         _logger = logger ?? NullLogger<SpacePublishOrchestrator>.Instance;
+        _writeAuthority = writeAuthority;
     }
 
     public Task<CreateSpacePublishAttemptResponse> StartAsync(
@@ -250,11 +253,11 @@ public sealed partial class SpacePublishOrchestrator :
 
         var plannedContentRevision = target.ContentRevision;
 
+        var authority = historicalContext is null ? _writeAuthority : null;
         SpacePublishAttempt attempt;
         await using (var transaction =
-                     await _context.Database.BeginTransactionAsync(
-                         IsolationLevel.Serializable,
-                         cancellationToken))
+                     await SpaceDesignWriteTransaction.BeginForPermissionAsync(
+                         _context, authority, PublishPermission, cancellationToken))
         {
             var concurrentReplay = await _context.PublishAttempts
                 .SingleOrDefaultAsync(
@@ -283,7 +286,7 @@ public sealed partial class SpacePublishOrchestrator :
                         request,
                         cancellationToken);
                 }
-                await transaction.CommitAsync(cancellationToken);
+                await SpaceDesignWriteTransaction.CommitAsync(_context, authority, transaction, cancellationToken);
                 return new CreateSpacePublishAttemptResponse(
                     await ToDtoAsync(
                         concurrentReplay.Id,
@@ -470,7 +473,7 @@ public sealed partial class SpacePublishOrchestrator :
             }
             target.BeginPublishing();
             await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await SpaceDesignWriteTransaction.CommitAsync(_context, authority, transaction, cancellationToken);
         }
 
         return new CreateSpacePublishAttemptResponse(
@@ -568,10 +571,8 @@ public sealed partial class SpacePublishOrchestrator :
                           "The publish attempt was not found.");
         _access.EnsureSiteAccess(visible.SiteId, write: true);
 
-        await using var transaction =
-            await _context.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken);
+        await using var transaction = await SpaceDesignWriteTransaction.BeginForPermissionAsync(
+            _context, _writeAuthority, PublishPermission, cancellationToken);
         var replay = await _context.PublishAuditEvents
             .AsNoTracking()
             .SingleOrDefaultAsync(
@@ -581,7 +582,7 @@ public sealed partial class SpacePublishOrchestrator :
                 cancellationToken);
         if (replay is not null)
         {
-            await transaction.CommitAsync(cancellationToken);
+            await SpaceDesignWriteTransaction.CommitAsync(_context, _writeAuthority, transaction, cancellationToken);
             return new RetrySpacePublishAttemptResponse(
                 await ToDtoAsync(attemptId, cancellationToken),
                 IdempotentReplay: true);
@@ -710,7 +711,7 @@ public sealed partial class SpacePublishOrchestrator :
                 Json),
             cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
+        await SpaceDesignWriteTransaction.CommitAsync(_context, _writeAuthority, transaction, cancellationToken);
         return new RetrySpacePublishAttemptResponse(
             await ToDtoAsync(attempt.Id, cancellationToken),
             IdempotentReplay: false);
