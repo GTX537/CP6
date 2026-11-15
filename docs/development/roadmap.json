@@ -165947,6 +165947,11 @@
       "at": "2026-11-15T08:39:03.327260+00:00",
       "change": "W594-01 来源挂接及移除、编辑租约取得/续约/释放/接管共 6 路径采用 Main 当前事务权限，正式仍为 26/27。",
       "evidence": "docs/development/evidence/W594-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T09:04:24.983912+00:00",
+      "change": "W596-01 校验 Space 版本预留、模板内部租约与原键恢复。PGT-017 保持 NOT_RUN。",
+      "evidence": "docs/development/evidence/W596-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211953,10 +211958,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W594",
-      "path": "docs/development/evidence/W594-01/DELIVERY.md",
-      "baseline_sha": "af3ea2a8aa9fa6b3f7c06b5247fc8cbc42ddcaca",
-      "registered_at": "2026-11-15T08:21:22.345055+00:00",
+      "id": "W596",
+      "path": "docs/development/evidence/W596-01/DELIVERY.md",
+      "baseline_sha": "7cd756c715d5a67ecf5170e1697b2781f79ad6cd",
+      "registered_at": "2026-11-15T08:42:32.416694+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211970,11 +211975,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "在版本真实预留、模板启动和回执阶段继续接到已有栅栏，并收录财务写者调查的实际分组和证据。",
+      "next_action": "登记已验证的 CRM 全租户恢复结果，同步核对会计期间、底图等写者；保持 PGT-017 NOT_RUN",
       "windows": [
         {
-          "id": "W594-01",
-          "workspace_task": "W594-01",
+          "id": "W596-01",
+          "workspace_task": "W596-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -211985,23 +211990,23 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w594-01",
-          "planned_scope_ref": "docs/development/evidence/W594-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W594-01/DELIVERY.md",
+          "branch": "codex/w596-01",
+          "planned_scope_ref": "docs/development/evidence/W596-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W596-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:SpaceDesignV1-Source",
-            "Main:SpaceDesignV1-EditLease",
+            "Main:SpaceDesignV1-VersionReservation",
+            "Main:SpaceDesignV1-TemplateInitialization",
             "Main:IAM-CurrentWriteAuthority",
             "Local:PostgreSQL-HTTP"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "82/82，23 项实际 PostgreSQL、59 项组件。6 路径两种提交顺序及上传和接管的第二项动作权限撤销通过。310 文件 SHA-256 和发布冒烟。",
-          "remaining_scope": "Space 版本、模板内部租约及其他来源/底图、剩余财务和全写者登记；CRM 多租户完整恢复与受控切换。",
-          "main_tested_source_sha": "be633749701eade262129f80f2dc70f8f5b7108d"
+          "validation_summary": "29/29 隔离 PostgreSQL 18.6 与实际 Kestrel、14/14 相关 Space 单元回归；本地 310 文件 SHA-256 和 200/401",
+          "remaining_scope": "底图、CAD/Excel、刊发与规划等 Space 独立写者、剩余财务与完整登记；CRM 全登记恢复的跨仓台账和正式切换边界",
+          "main_tested_source_sha": "b75c83d1ded887d8de0c1664accf892db5dde4f7"
         }
       ],
       "storage": {
@@ -266833,6 +266838,68 @@
             "main_tested_source_sha": "d03b1f7c381286e6e70abc8f88381a9bb7108297",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1101",
             "main_remote_main_sha": "af3ea2a8aa9fa6b3f7c06b5247fc8cbc42ddcaca"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W594",
+        "path": "docs/development/evidence/W594-01/DELIVERY.md",
+        "baseline_sha": "af3ea2a8aa9fa6b3f7c06b5247fc8cbc42ddcaca",
+        "registered_at": "2026-11-15T08:21:22.345055+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "在版本真实预留、模板启动和回执阶段继续接到已有栅栏，并收录财务写者调查的实际分组和证据。",
+        "windows": [
+          {
+            "id": "W594-01",
+            "workspace_task": "W594-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w594-01",
+            "planned_scope_ref": "docs/development/evidence/W594-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W594-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:SpaceDesignV1-Source",
+              "Main:SpaceDesignV1-EditLease",
+              "Main:IAM-CurrentWriteAuthority",
+              "Local:PostgreSQL-HTTP"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "82/82，23 项实际 PostgreSQL、59 项组件。6 路径两种提交顺序及上传和接管的第二项动作权限撤销通过。310 文件 SHA-256 和发布冒烟。",
+            "remaining_scope": "Space 版本、模板内部租约及其他来源/底图、剩余财务和全写者登记；CRM 多租户完整恢复与受控切换。",
+            "main_tested_source_sha": "be633749701eade262129f80f2dc70f8f5b7108d",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1103",
+            "main_remote_main_sha": "7cd756c715d5a67ecf5170e1697b2781f79ad6cd"
           }
         ],
         "storage": {

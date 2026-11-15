@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 · W596-01
+
+保存版本预留、模板楼层、内部租约、布局和回执的实际 PostgreSQL 竞争与恢复证据。确认还需独立验证刊发、文件相关写者和剩余财务。 [交付记录](../development/evidence/W596-01/DELIVERY.md)
+
 ## 2026-11-15 · W594-01 Space 来源和租约共享提交授权
 
 来源双权限及接管双权限在等待后都重查。来源移除仍保留文件，暂停和业务提交顺序已验。 [缺陷 #1102](https://github.com/GTX537/CP6/issues/1102) · [交付记录](../development/evidence/W594-01/DELIVERY.md)
