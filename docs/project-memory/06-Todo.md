@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 W618-01 后续
+
+继续验证 WfServiceJobService 后台续行与暂停顺序、仅子流程投票归属、财务跨域后台和 Space 刊发后台。 [交付](../development/evidence/W618-01/DELIVERY.md)
+
 ## 2026-11-15 W614-01 后续
 
 刊发与 WMS 写入、CAD 来源、Excel 后台、财务 OA 和 WMS 财务重试继续验证。CRM 实际使用部署及后续传输轮换另验。 [交付](../development/evidence/W614-01/DELIVERY.md)
