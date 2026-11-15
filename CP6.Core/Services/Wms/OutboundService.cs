@@ -597,16 +597,22 @@ public partial class OutboundService : IOutboundService
             });
         }
 
+        var projectOrder = header.OutboundType == OutboundType.Shipping && !string.IsNullOrWhiteSpace(header.WebOrderNo);
+        var nativeErp = effects is not null ? _erpBridge as ErpBridgeHook : null;
+        var erpIntent = projectOrder && nativeErp is not null
+            ? nativeErp.StageShipmentProjection(_db, header, userName) : (Guid?)null;
+
         await _db.SaveChangesAsync();
 
         try { if(effects==null) await _notifier.NotifyOutboundShippedAsync(outboundNo, packageNo); else effects.Add(()=>_notifier.NotifyOutboundShippedAsync(outboundNo,packageNo)); }
         catch { /* best-effort */ }
 
-        // WMS→ERP 接缝：出荷区分の出庫確定 → 受注へ出荷実績を回写（best-effort）
-        if (header.OutboundType == OutboundType.Shipping && !string.IsNullOrWhiteSpace(header.WebOrderNo))
+        if (erpIntent is Guid projectionId)
+            effects!.Add(() => nativeErp!.ApplyCommittedShipmentProjectionAsync(projectionId));
+        else if (projectOrder)
         {
             try { if(effects==null) await _erpBridge.OnShipmentConfirmedAsync(outboundNo, userName); else effects.Add(()=>_erpBridge.OnShipmentConfirmedAsync(outboundNo,userName)); }
-            catch { /* best-effort：回写失敗は出荷確定を失敗させない */ }
+            catch { /* Existing best-effort callback for the unowned path. */ }
         }
 
         // WMS→FIN 接缝：出荷区分の出庫確定 → AR 自動開票（幂等 ShipmentId=出庫号、best-effort）

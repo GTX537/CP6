@@ -8,6 +8,7 @@ using CP6.Core.Services.Common;
 using CP6.Core.Services.Integration;
 using CP6.Core.Services.Space.Observability;
 using CP6.Core.Services.Sys;
+using CP6.Core.Services.Wms;
 using CP6.Entity.DomainModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -115,9 +116,12 @@ public class IntegrationEventRetryWorker : BackgroundService
         var now = DateTime.UtcNow;
         var native = db.Database.IsNpgsql();
         var stockFinanceEnabled = native && sp.GetService<IStockFinBridge>() is StockFinBridge;
+        var shipmentProjectionEnabled = native && sp.GetService<IErpBridgeHook>() is ErpBridgeHook;
         var due = await db.IntegrationEvents
             .Where(e => !native || stockFinanceEnabled || e.SourceModule != "WMS" || e.TargetModule != "FIN"
                 || e.HookName != nameof(IStockFinBridge.OnStockMovedAsync))
+            .Where(e => !native || shipmentProjectionEnabled || e.SourceModule != "WMS" || e.TargetModule != "ERP"
+                || e.HookName != nameof(IErpBridgeHook.OnShipmentConfirmedAsync))
             .Where(e =>
                 (e.Status == IntegrationEventStatus.Failed &&
                 (((e.SourceModule == SpaceSourceModule &&
@@ -128,10 +132,12 @@ public class IntegrationEventRetryWorker : BackgroundService
                   e.NextRetryAt <= now &&
                    e.Attempts < _opts.MaxAttempts))) ||
                 (native && e.Status == IntegrationEventStatus.Pending && e.Attempts == 0 && e.NextRetryAt <= now
-                 && e.SourceModule == "WMS" && e.TargetModule == "FIN"
-                 && (e.HookName == nameof(IFinBridgeHook.OnShipmentConfirmedAsync)
-                     || e.HookName == nameof(IFinBridgeHook.OnShipmentCancelledAsync)
-                     || (stockFinanceEnabled && e.HookName == nameof(IStockFinBridge.OnStockMovedAsync)))))
+                 && e.SourceModule == "WMS"
+                 && ((e.TargetModule == "FIN" && (e.HookName == nameof(IFinBridgeHook.OnShipmentConfirmedAsync)
+                       || e.HookName == nameof(IFinBridgeHook.OnShipmentCancelledAsync)
+                       || (stockFinanceEnabled && e.HookName == nameof(IStockFinBridge.OnStockMovedAsync))))
+                     || (shipmentProjectionEnabled && e.TargetModule == "ERP"
+                         && e.HookName == nameof(IErpBridgeHook.OnShipmentConfirmedAsync)))))
             .OrderBy(e => e.NextRetryAt)
             .Take(50)
             .ToListAsync(ct);
@@ -142,6 +148,13 @@ public class IntegrationEventRetryWorker : BackgroundService
             {
                 db.Entry(evt).State = EntityState.Detached;
                 await ProcessShipmentFinanceEventAsync(tenantId, evt.Id, now, ct);
+                continue;
+            }
+
+            if (native && ErpBridgeHook.IsShipmentProjectionEvent(evt))
+            {
+                db.Entry(evt).State = EntityState.Detached;
+                await ProcessErpShipmentEventAsync(tenantId, evt.Id, now, ct);
                 continue;
             }
 
@@ -200,6 +213,17 @@ public class IntegrationEventRetryWorker : BackgroundService
         if (sp.GetRequiredService<IFinBridgeHook>() is not FinBridgeHook finance)
             throw new InvalidOperationException("WMS_FIN_OWNER_TRANSACTION_REQUIRED");
         if (await finance.ProcessShipmentAsync(eventId, now, _opts, ct) is { } dead)
+            await sp.GetRequiredService<IDeadLetterNotifier>().NotifyAsync(dead, ct);
+    }
+
+    private async Task ProcessErpShipmentEventAsync(Guid tenantId, Guid eventId, DateTime now, CancellationToken ct)
+    {
+        using var scope = _scopeFactory.CreateScope();
+        var sp = scope.ServiceProvider;
+        sp.GetRequiredService<ITenantContext>().CurrentTenantId = tenantId;
+        if (sp.GetRequiredService<IErpBridgeHook>() is not ErpBridgeHook erp)
+            throw new InvalidOperationException("WMS_ERP_OWNER_TRANSACTION_REQUIRED");
+        if (await erp.ProcessShipmentProjectionAsync(eventId, now, _opts, ct) is { } dead)
             await sp.GetRequiredService<IDeadLetterNotifier>().NotifyAsync(dead, ct);
     }
 

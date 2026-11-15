@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 W643-01 后续
+
+完成 W641 OA 父续行采用并核对正式 PGT-017 全部登记写者。 [交付](../development/evidence/W643-01/DELIVERY.md)
+
 ## 2026-11-15 W642-01 后续
 
 继续旧 OA 父流程和 ERP 出库回写 #1163 的事务，完成写者清单。 [交付](../development/evidence/W642-01/DELIVERY.md)
