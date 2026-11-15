@@ -282,6 +282,8 @@ public static class I18nFinScreenSeed
         new Sys_Lang { LangKey = "E-FIN-202", ZhCN = "发票不存在", ZhTW = "發票不存在", En = "Invoice not found", Ja = "請求書が存在しません", Ko = "청구서가 없습니다" },
         new Sys_Lang { LangKey = "E-FIN-203", ZhCN = "只有草稿能过账", ZhTW = "只有草稿能過帳", En = "Only drafts can be posted", Ja = "下書きのみ記帳できます", Ko = "임시만 전기할 수 있습니다" },
         new Sys_Lang { LangKey = "E-FIN-204", ZhCN = "发票无明细行", ZhTW = "發票無明細行", En = "Invoice has no lines", Ja = "請求書に明細がありません", Ko = "청구서에 명세가 없습니다" },
+        new Sys_Lang { LangKey = "E-FIN-205", ZhCN = "税码不存在", ZhTW = "稅碼不存在", En = "Tax code not found", Ja = "税コードが見つかりません", Ko = "세금 코드를 찾을 수 없습니다" },
+        new Sys_Lang { LangKey = "E-FIN-206", ZhCN = "成本中心不存在", ZhTW = "成本中心不存在", En = "Cost center not found", Ja = "コストセンターが見つかりません", Ko = "원가 센터를 찾을 수 없습니다" },
         new Sys_Lang { LangKey = "E-FIN-210", ZhCN = "银行账户不存在", ZhTW = "銀行帳戶不存在", En = "Bank account not found", Ja = "銀行口座が存在しません", Ko = "은행 계좌가 없습니다" },
         new Sys_Lang { LangKey = "E-FIN-211", ZhCN = "付款单不存在", ZhTW = "付款單不存在", En = "Payment not found", Ja = "支払が存在しません", Ko = "지급이 없습니다" },
         new Sys_Lang { LangKey = "E-FIN-212", ZhCN = "只有已过账付款能撤销/核销", ZhTW = "只有已過帳付款能撤銷/核銷", En = "Only posted payments can be reversed/settled", Ja = "記帳済みの支払のみ取消/消込できます", Ko = "전기된 지급만 취소/소멸할 수 있습니다" },
