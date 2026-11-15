@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 · W601-01 CRM 受信重绑
+
+CRM PR #233 由远端主线采用。双租户隔离物理恢复 8 项通过，含原生时间线与回执、目标专属凭据和后继时间线拒绝旧批准。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W601-01/DELIVERY.md)
+
 ## 2026-11-15 · W600-01 财务科目及应付主数据
 
 六条入口采用 Main 的原生事务栅栏。21 项实际 PostgreSQL 场景及 30 项相关回归通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W600-01/DELIVERY.md)

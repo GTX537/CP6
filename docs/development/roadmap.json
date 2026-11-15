@@ -165977,6 +165977,11 @@
       "at": "2026-11-15T10:17:20.725352+00:00",
       "change": "W600-01 登记六条财务主数据写入的共同栅栏、两种提交顺序及同租户关系验证。",
       "evidence": "docs/development/evidence/W600-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T10:25:45.841309+00:00",
+      "change": "W601-01 同步 CRM 原生受信重绑、目标凭据隔离、原回执恢复和后继时间线实测。",
+      "evidence": "docs/development/evidence/W601-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211983,10 +211988,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W600",
-      "path": "docs/development/evidence/W600-01/DELIVERY.md",
-      "baseline_sha": "753feb85cb11f259cdbbbd2483db7a804992319c",
-      "registered_at": "2026-11-15T09:55:42.465912+00:00",
+      "id": "W601",
+      "path": "docs/development/evidence/W601-01/DELIVERY.md",
+      "baseline_sha": "84dabbe3881b5cf75a66ba62b77a4365c5b3a467",
+      "registered_at": "2026-11-15T10:25:19.944386+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212000,43 +212005,56 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "连续核对固定资产、预算与往来写者。Space CAD/Excel 批次和 CRM 受信重绑分别继续。保持 PGT-017 NOT_RUN",
+      "next_action": "继续 CAD/Excel 上传及固定资产和月末折旧实测。正式 PGT-017 保持 NOT_RUN",
       "windows": [
         {
-          "id": "W600-01",
-          "workspace_task": "W600-01",
+          "id": "W601-01",
+          "workspace_task": "W601-01",
           "related_tasks": [
             "PGT-017",
+            "PGT-021",
+            "PGT-022",
             "WP02-03"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT",
+          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w600-01",
-          "planned_scope_ref": "docs/development/evidence/W600-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W600-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "branch": "codex/w601-01",
+          "planned_scope_ref": "docs/development/evidence/W601-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W601-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:FinGlAccount",
-            "Main:FinApMaster",
-            "Main:IAM-CurrentWriteAuthority",
-            "Local:PostgreSQL-HTTP"
+            "CRM:InquiryStoreRebind",
+            "CRM:PostgreSQLTimelineAndRoster",
+            "CRM:TargetWriterIdentity",
+            "Main:Authority",
+            "Kafka:OriginalWatermarks"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "21 PostgreSQL 18.6 HTTP 场景和 30 相关回归零跳过。六入口采用共同栅栏。310 文件本地发布与 HTTP 200/401",
-          "remaining_scope": "34 条财务 HTTP 写路径和后台、跨域财务写者，Space CAD/Excel 与刊发，CRM 可信正式切换",
-          "main_tested_source_sha": "8976536757af208a337a8db244b99c2c12d74501"
+          "validation_summary": "CRM PR #233 actual final 8/8 zero skipped. Authorized target timeline and durable receipt, both real dropped commit replies, old credentials rejected both endpoints, successor 503",
+          "remaining_scope": "实际批准签发与持续隔离，Main 封存、C02、Kafka/Dapr 全写者和目标密钥推广。Main 写者继续",
+          "product_repository": "CP6.CRM",
+          "product_worktree": "D:/CP6-worktrees/dev-2",
+          "product_baseline": "8f650ced6b186fae4119a4d93d6859d7fa995df8",
+          "product_branch": "codex/w601-01",
+          "product_source_sha": "a62176c9eb11255c9f6e1f7f81775482b52d63e8",
+          "product_remote_main_sha": "2b6092a6e63f405067da05387e223bd5d1b5ea1c",
+          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/233",
+          "product_branch_disposition": "deleted-local-and-remote",
+          "product_workspace_status": "fixed-seat-detached-for-reuse",
+          "product_seat_released": true
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/dev-2",
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -267265,6 +267283,68 @@
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018",
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W600",
+        "path": "docs/development/evidence/W600-01/DELIVERY.md",
+        "baseline_sha": "753feb85cb11f259cdbbbd2483db7a804992319c",
+        "registered_at": "2026-11-15T09:55:42.465912+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "连续核对固定资产、预算与往来写者。Space CAD/Excel 批次和 CRM 受信重绑分别继续。保持 PGT-017 NOT_RUN",
+        "windows": [
+          {
+            "id": "W600-01",
+            "workspace_task": "W600-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w600-01",
+            "planned_scope_ref": "docs/development/evidence/W600-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W600-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:FinGlAccount",
+              "Main:FinApMaster",
+              "Main:IAM-CurrentWriteAuthority",
+              "Local:PostgreSQL-HTTP"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "21 PostgreSQL 18.6 HTTP 场景和 30 相关回归零跳过。六入口采用共同栅栏。310 文件本地发布与 HTTP 200/401",
+            "remaining_scope": "34 条财务 HTTP 写路径和后台、跨域财务写者，Space CAD/Excel 与刊发，CRM 可信正式切换",
+            "main_tested_source_sha": "8976536757af208a337a8db244b99c2c12d74501",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1113",
+            "main_remote_main_sha": "84dabbe3881b5cf75a66ba62b77a4365c5b3a467"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },
