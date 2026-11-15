@@ -312,10 +312,14 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
             throw;
         }
     }
+    internal async Task StopAsync()
+    {
+        if (!process.HasExited) process.Kill(entireProcessTree: true);
+        await process.WaitForExitAsync();
+    }
     public async ValueTask DisposeAsync()
     {
-        client.Dispose(); if (!process.HasExited) process.Kill(entireProcessTree: true);
-        await process.WaitForExitAsync(); process.Dispose();
+        client.Dispose(); await StopAsync(); process.Dispose();
         saveLog();
     }
 }

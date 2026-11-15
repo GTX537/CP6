@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W649-01 CRM 首次封存连接故障
+
+受保护公开签发使用当前服务准入。Main 两个暂停入口持久保存原意图，两库按精确原操作恢复。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W649-01/DELIVERY.md)
+
 ## 2026-11-15 W650-01 规划分支预约
 
 使用原签名规划权限和 Main 栅栏保存规划分支、目标版本与原克隆 Job。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W650-01/DELIVERY.md)

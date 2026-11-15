@@ -8,6 +8,7 @@ using CP6.Core.Persistence;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
+using CP6.Tests.Erp;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
@@ -313,15 +314,16 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         => InquiryProducerHttp("intake:reject", humanContext: true, crossDatabasePause: true,
             revocation: Environment.GetEnvironmentVariable("CP6_PGT017_REVOKER")!);
 
-    private async Task InquiryProducerHttp(string purpose, bool humanContext=false, bool crossDatabasePause=false, string? revocation=null)
+    private async Task InquiryProducerHttp(string purpose, bool humanContext=false, bool crossDatabasePause=false, string? revocation=null,
+        string? pendingPause = null)
     {
         await using var h = await Seed(); var intake = purpose.StartsWith("intake:", StringComparison.Ordinal);
         var consent = purpose == "privacy:consent-withdraw";
         var privacy = purpose is "privacy:export" or "privacy:download";
         var humanPause = humanContext && crossDatabasePause;
-        var pair = privacy ? await GrantPrivacy(h) : consent ? await GrantConsent(h) : intake ? await GrantIntake(h) : (await GrantInquiry(h))[0]; var options = InquiryPermissionSigningTests.Options();
+        var pair = privacy ? await GrantPrivacy(h) : consent ? await GrantConsent(h) : intake || pendingPause is not null ? await GrantIntake(h) : (await GrantInquiry(h))[0]; var options = InquiryPermissionSigningTests.Options();
         if (revocation == "user") await SeedInquiryUserRevoker(h);
-        if(humanContext)
+        if (humanContext || pendingPause is not null)
         {
             (await h.Db.Sys_Users.SingleAsync(x=>x.Id==h.ActorId)).AuthenticationEpoch=Guid.NewGuid();await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
             await new IdentityBootstrapService(h.Db,ContextRuntime(h.Tenant,options.Issuer)).InitializeAsync(h.Tenant);h.Db.ChangeTracker.Clear();
@@ -343,13 +345,36 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         environment["InquiryPermissionSigning__PrivateKeyBase64"] = options.PrivateKeyBase64;
         environment["InquiryPermissionSigning__PublicKeyBase64"] = options.PublicKeyBase64;
         environment["InquiryPermissionSigning__ActiveFromUtc"] = options.ActiveFromUtc.ToString("O");
+        var connection = new NpgsqlConnectionStringBuilder(h.Db.Database.GetConnectionString());
+        await using var mainAck = pendingPause == "versioned" ? new StockPostgresCommitRelay(connection.Port, connection.Username!,
+            int.Parse(Environment.GetEnvironmentVariable("CP6_PGT017_MAIN_ACK_PORT")!)) : null;
+        if (mainAck is not null)
+        {
+            connection.Port = mainAck.Port;
+            connection.SslMode = SslMode.Disable;
+        }
+        var sealConnection = new NpgsqlConnectionStringBuilder(Environment.GetEnvironmentVariable("CP6_PGT017_SEAL_CONNECTION"));
+        await using var sealAck = pendingPause == "versioned" ? new StockPostgresCommitRelay(sealConnection.Port, sealConnection.Username!,
+            int.Parse(Environment.GetEnvironmentVariable("CP6_PGT017_CRM_ACK_PORT")!)) : null;
+        if (sealAck is not null)
+        {
+            sealConnection.Port = sealAck.Port;
+            sealConnection.SslMode = SslMode.Disable;
+        }
         if (crossDatabasePause)
         {
             var prefix = $"CrmInquiryTenantPause__Tenants__{h.Tenant:D}__";
-            environment[prefix + "ConnectionString"] = Environment.GetEnvironmentVariable("CP6_PGT017_SEAL_CONNECTION")!;
+            environment[prefix + "ConnectionString"] = sealConnection.ConnectionString;
             environment[prefix + "StoreId"] = Environment.GetEnvironmentVariable("CP6_PGT017_STORE_ID")!;
         }
-        await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, environment, allowAutoRedirect: false);
+        if (pendingPause is not null)
+        {
+            environment["ASPNETCORE_URLS"] = "http://127.0.0.1:" + Environment.GetEnvironmentVariable("CP6_PGT017_MAIN_HTTP_PORT");
+            environment["JWT__Secret"] = CrmOidcCrypto.RandomToken() + CrmOidcCrypto.RandomToken();
+        }
+        await using var pendingService = pendingPause is null ? null : await ConfigurePendingPauseService(h, options, environment);
+        Task<AuthenticationApiProcess> StartHost() => AuthenticationApiProcess.Start(connection.ConnectionString, environment, allowAutoRedirect: false);
+        await using var host = await StartHost();
         var cookies = await Login(host, h); var verifier = CrmOidcCrypto.RandomToken();
         var authorize = QueryHelpers.AddQueryString("connect/authorize", new Dictionary<string, string?> {
             ["client_id"] = "CP6.Web", ["redirect_uri"] = redirect, ["response_type"] = "code", ["code_challenge_method"] = "S256",
@@ -428,7 +453,9 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             {
                 try
                 {
-                    if (revocation is not null)
+                    if (pendingPause is not null)
+                        await ExercisePendingCrmTenantPause(host, StartHost, h, bridgeDirectory, command, token, pendingPause, pendingService!, sealAck, mainAck);
+                    else if (revocation is not null)
                         await ExerciseInquiryUserOrSessionRevocation(host, h, bridgeDirectory, revocation,
                             tokenBody.RootElement.GetProperty("id_token").GetString()!, cookies, clientSecret, options.Issuer);
                     else if (humanPause) await ExerciseCrmTenantPause(host, h, bridgeDirectory, waitForCompletePause: true);
