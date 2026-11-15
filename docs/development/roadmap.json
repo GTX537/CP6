@@ -165957,6 +165957,11 @@
       "at": "2026-11-15T09:07:36.202418+00:00",
       "change": "W595-01 引用 CRM 全登记租户恢复对账和隔离切换实测，未更改正式状态或部署。",
       "evidence": "docs/development/evidence/W595-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T09:19:16.318077+00:00",
+      "change": "W597-01 会计期间四写入口采用共同栅栏，核对财务写者清单与 PostgreSQL 回滚、历史恢复证据。",
+      "evidence": "docs/development/evidence/W597-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211963,10 +211968,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W595",
-      "path": "docs/development/evidence/W595-01/DELIVERY.md",
-      "baseline_sha": "a75441d68d35b6cbdbe92de020ce485fc63f6521",
-      "registered_at": "2026-11-15T09:07:00.625638+00:00",
+      "id": "W597",
+      "path": "docs/development/evidence/W597-01/DELIVERY.md",
+      "baseline_sha": "7cd756c715d5a67ecf5170e1697b2781f79ad6cd",
+      "registered_at": "2026-11-15T08:58:37.729836+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -211980,55 +211985,41 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续验证财务期间和 Space 底图写者，核对产品重绑及部署控制面的真实依赖，PGT-017 保持 NOT_RUN",
+      "next_action": "完成底图实际锁序和存储阶段验证，按财务写者清单及 CRM 重绑依赖推进，PGT-017 保持 NOT_RUN",
       "windows": [
         {
-          "id": "W595-01",
-          "workspace_task": "W595-01",
+          "id": "W597-01",
+          "workspace_task": "W597-01",
           "related_tasks": [
             "PGT-017",
-            "PGT-021",
-            "PGT-022",
             "WP02-03"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+          "mode": "SINGLE_CHAT",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w595-01",
-          "planned_scope_ref": "docs/development/evidence/W595-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W595-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "branch": "codex/w597-01",
+          "planned_scope_ref": "docs/development/evidence/W597-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W597-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "CRM:InquiryOwner",
-            "CRM:AllRegisteredTenants",
-            "CRM:PostgreSQLPhysicalRestore",
-            "Main:Authority",
-            "Kafka:OriginalWatermarks"
+            "Main:CoreFiscalPeriod",
+            "Main:IAM-CurrentWriteAuthority",
+            "Local:PostgreSQL-HTTP"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "采用 CRM PR #231，最终 7/7、相关回归 6/6；两个登记租户和 Kafka 原字节一致；全量缺失写集拒绝，完整增量本地重绑后恢复",
-          "remaining_scope": "正式切换的外部写者隔离和审批、受控重绑产品入口、其余 Space 与财务写者",
-          "product_repository": "CP6.CRM",
-          "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "14062739ffa66e1664744595e59427508d7d982b",
-          "product_branch": "codex/w595-01",
-          "product_source_sha": "d1ee854c0a9688ff9b32f96d6152ea4d53695504",
-          "product_remote_main_sha": "6a69fb14bc7508b4833ca8a833a8b094fbdb05a0",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/231",
-          "product_branch_disposition": "deleted-local-and-remote",
-          "product_workspace_status": "fixed-seat-detached-for-reuse",
-          "product_seat_released": true
+          "validation_summary": "14/14 PostgreSQL 18.6 HTTP，30/30 回归，310 文件本地发布及 200/401；69 条财务写声明核对",
+          "remaining_scope": "40 个财务 HTTP 写路径和后台/跨域写者、Space 底图及其他设计写者、CRM 产品级可信切换",
+          "main_tested_source_sha": "2425e6556cd387c81c68042e79f72867cfe4c1de"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018",
           "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
@@ -266985,6 +266976,81 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W595",
+        "path": "docs/development/evidence/W595-01/DELIVERY.md",
+        "baseline_sha": "a75441d68d35b6cbdbe92de020ce485fc63f6521",
+        "registered_at": "2026-11-15T09:07:00.625638+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续验证财务期间和 Space 底图写者，核对产品重绑及部署控制面的真实依赖，PGT-017 保持 NOT_RUN",
+        "windows": [
+          {
+            "id": "W595-01",
+            "workspace_task": "W595-01",
+            "related_tasks": [
+              "PGT-017",
+              "PGT-021",
+              "PGT-022",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w595-01",
+            "planned_scope_ref": "docs/development/evidence/W595-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W595-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CRM:InquiryOwner",
+              "CRM:AllRegisteredTenants",
+              "CRM:PostgreSQLPhysicalRestore",
+              "Main:Authority",
+              "Kafka:OriginalWatermarks"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "采用 CRM PR #231，最终 7/7、相关回归 6/6；两个登记租户和 Kafka 原字节一致；全量缺失写集拒绝，完整增量本地重绑后恢复",
+            "remaining_scope": "正式切换的外部写者隔离和审批、受控重绑产品入口、其余 Space 与财务写者",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "14062739ffa66e1664744595e59427508d7d982b",
+            "product_branch": "codex/w595-01",
+            "product_source_sha": "d1ee854c0a9688ff9b32f96d6152ea4d53695504",
+            "product_remote_main_sha": "6a69fb14bc7508b4833ca8a833a8b094fbdb05a0",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/231",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1106",
+            "main_remote_main_sha": "922fb9ff71d66c1c69692e0234e4106564998dce"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },
