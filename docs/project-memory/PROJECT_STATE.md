@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W627-01 CRM 的 C02 消费及后继库采用
+
+两租户目标组从 30 接续到 33，封存和身份投影版本各为 8。后继库第二次签名采用后对两租户各发布一条原待处理消息。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W627-01/DELIVERY.md)
+
 ## 2026-11-15 W628-01 Excel/CAD 实际导入
 
 实际 Apply 批次采用 Main、原 Job 和编辑租约，实测暂停两种顺序及自然到期回滚。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W628-01/DELIVERY.md)
