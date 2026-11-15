@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 · W609-01 Space 后台余项
+
+继续制品提交应答恢复、映射、实际 Scan/Apply、刊发执行和 WMS 激活。 [交付记录](../development/evidence/W609-01/DELIVERY.md)
+
 ## 2026-11-15 · W608-01 应收和工单
 
 HTTP 剩余应收发票与收款 7 条和工单成本结转 1 条。采购及 WMS/MES 等独立消费者继续核对。 [交付记录](../development/evidence/W608-01/DELIVERY.md)

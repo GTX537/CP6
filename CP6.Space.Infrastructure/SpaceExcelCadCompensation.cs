@@ -1,11 +1,9 @@
-using System.Data;
 using System.Text;
 using System.Text.Json;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Space.Infrastructure;
 
@@ -31,11 +29,11 @@ public sealed partial class SpaceExcelCadApplyService
         var keyHash = IdempotencyKeyHash(operation, idempotencyKey);
         var requestHash = Hash(JsonSerializer.Serialize(request, JsonOptions));
 
-        IDbContextTransaction? transaction = context.Database.IsRelational()
-            ? await context.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken)
+        await using var transaction = context.Database.IsRelational()
+            ? await SpaceDesignWriteTransaction.BeginForPermissionAsync(
+                context, writeAuthority, SpaceDesignWriteTransaction.ModelEditPermission, cancellationToken)
             : null;
+        var committing = false;
         try
         {
             var input = await LoadCompensationInputAsync(
@@ -66,7 +64,10 @@ public sealed partial class SpaceExcelCadApplyService
             if (replay is not null)
             {
                 if (transaction is not null)
-                    await transaction.CommitAsync(cancellationToken);
+                {
+                    committing = true;
+                    await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
+                }
                 return replay;
             }
 
@@ -174,26 +175,18 @@ public sealed partial class SpaceExcelCadApplyService
                 now.AddDays(90)));
             await context.SaveChangesAsync(cancellationToken);
             if (transaction is not null)
-                await transaction.CommitAsync(cancellationToken);
+            {
+                committing = true;
+                await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
+            }
             return response;
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException) when (!committing)
         {
             if (transaction is not null)
                 await transaction.RollbackAsync(CancellationToken.None);
             throw CompensationConflict(
                 "The reversible Excel/CAD state changed concurrently.");
-        }
-        catch
-        {
-            if (transaction is not null)
-                await transaction.RollbackAsync(CancellationToken.None);
-            throw;
-        }
-        finally
-        {
-            if (transaction is not null)
-                await transaction.DisposeAsync();
         }
     }
 

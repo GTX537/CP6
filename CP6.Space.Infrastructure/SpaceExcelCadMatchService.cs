@@ -1,4 +1,3 @@
-using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -6,7 +5,6 @@ using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Space.Infrastructure;
 
@@ -16,7 +14,8 @@ public sealed class SpaceExcelCadMatchService(
     ISpaceDesignAccessEvaluator access,
     ISpaceCursorCodec cursorCodec,
     IServiceProvider services,
-    ISpaceClock clock) : ISpaceExcelCadMatchService
+    ISpaceClock clock,
+    ISpaceDesignWriteAuthority? writeAuthority = null) : ISpaceExcelCadMatchService
 {
     private const string CursorResource = "excel-cad-match-rows";
     private const long MaximumArtifactBytes = 200L * 1024L * 1024L;
@@ -66,11 +65,11 @@ public sealed class SpaceExcelCadMatchService(
         if (replay is not null)
             return replay;
 
-        IDbContextTransaction? transaction = context.Database.IsRelational()
-            ? await context.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken)
+        await using var transaction = context.Database.IsRelational()
+            ? await SpaceDesignWriteTransaction.BeginForPermissionAsync(
+                context, writeAuthority, SpaceDesignWriteTransaction.ModelEditPermission, cancellationToken)
             : null;
+        var committing = false;
         try
         {
             var concurrentReplay = await ReadReplayAsync(
@@ -81,7 +80,10 @@ public sealed class SpaceExcelCadMatchService(
             if (concurrentReplay is not null)
             {
                 if (transaction is not null)
-                    await transaction.CommitAsync(cancellationToken);
+                {
+                    committing = true;
+                    await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
+                }
                 return concurrentReplay;
             }
 
@@ -127,10 +129,13 @@ public sealed class SpaceExcelCadMatchService(
                 now.AddDays(90)));
             await context.SaveChangesAsync(cancellationToken);
             if (transaction is not null)
-                await transaction.CommitAsync(cancellationToken);
+            {
+                committing = true;
+                await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
+            }
             return response;
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException) when (!committing)
         {
             if (transaction is not null)
                 await transaction.RollbackAsync(CancellationToken.None);
@@ -145,17 +150,6 @@ public sealed class SpaceExcelCadMatchService(
             throw Conflict(
                 "The model or authoritative inputs changed while matching was queued.",
                 "reload-match-inputs");
-        }
-        catch
-        {
-            if (transaction is not null)
-                await transaction.RollbackAsync(CancellationToken.None);
-            throw;
-        }
-        finally
-        {
-            if (transaction is not null)
-                await transaction.DisposeAsync();
         }
     }
 
