@@ -20,6 +20,8 @@ public class BudgetService : IBudgetService
     {
         if (await _db.Budgets.AnyAsync(b => b.FiscalYear == dto.FiscalYear))
             return FinResult<Budget>.Fail("E-A5-BUDGET-001", dto.FiscalYear);
+        if (_db.Database.IsNpgsql())
+            dto.TenantId = _db.CurrentTenantId;
         var now = DateTime.Now;
         var seq = await _seq.NextAsync("BUD", now);
         dto.No = $"BUD-{dto.FiscalYear}-{seq.Split('-').Last()}";
@@ -62,6 +64,9 @@ public class BudgetService : IBudgetService
     {
         var budget = await _db.Budgets.FindAsync(budgetId);
         if (budget == null) return FinResult<BudgetVersion>.Fail("E-A5-BUDGET-404");
+        if (_db.Database.IsNpgsql() && copyFromVersionId is Guid source && source != Guid.Empty
+            && !await _db.BudgetVersions.AnyAsync(v => v.Id == source))
+            return FinResult<BudgetVersion>.Fail("E-A5-VERSION-404");
         var maxNo = await _db.BudgetVersions.Where(v => v.BudgetId == budgetId)
             .Select(v => (int?)v.VersionNo).MaxAsync() ?? 0;
         var v = new BudgetVersion
@@ -73,7 +78,10 @@ public class BudgetService : IBudgetService
         _db.BudgetVersions.Add(v);
         await _db.SaveChangesAsync();
         if (copyFromVersionId.HasValue || copyFromActualFiscalYear.HasValue)
-            await CopyIntoAsync(v.Id, copyFromVersionId, copyFromActualFiscalYear);
+        {
+            var copied = await CopyIntoAsync(v.Id, copyFromVersionId, copyFromActualFiscalYear);
+            if (!copied.Ok) return FinResult<BudgetVersion>.Fail(copied.Code!, copied.Args);
+        }
         return FinResult<BudgetVersion>.Pass(v);
     }
 
@@ -112,22 +120,31 @@ public class BudgetService : IBudgetService
         var total = await _db.BudgetLines.Where(l => l.VersionId == versionId).SumAsync(l => l.AnnualAmount);
         var budget = await _db.Budgets.FindAsync(v.BudgetId);
         if (budget == null) return FinResult.Fail("E-A5-BUDGET-404");
+        var pendingId = _db.Database.IsNpgsql() && _db.Database.CurrentTransaction != null ? Guid.NewGuid() : (Guid?)null;
+        if (pendingId is Guid plannedInstance)
+            StageApproval(plannedInstance);
         Guid instanceId;
         try
         {
             instanceId = await _approval.SubmitAsync("A5_Budget", versionId.ToString(), userId,
-                new { fiscalYear = budget.FiscalYear, versionNo = v.VersionNo, totalAmount = total });
+                new { fiscalYear = budget.FiscalYear, versionNo = v.VersionNo, totalAmount = total }, pendingId);
         }
         catch (InvalidOperationException)   // OA 防重：同 (bizType,bizId) 已有 Running 实例
         {
             return FinResult.Fail("E-A5-VERSION-003");
         }
-        v.Status = BudgetVersionStatus.PendingApproval;
-        v.ApprovalInstanceId = instanceId;
-        v.ApprovalRef = instanceId.ToString();
-        v.SubmittedAt = DateTime.Now; v.SubmittedBy = userName;
+        if (pendingId == null) StageApproval(instanceId);
         await _db.SaveChangesAsync();
         return FinResult.Pass();
+
+        void StageApproval(Guid id)
+        {
+            v.Status = BudgetVersionStatus.PendingApproval;
+            v.ApprovalInstanceId = id;
+            v.ApprovalRef = id.ToString();
+            v.SubmittedAt = DateTime.Now;
+            v.SubmittedBy = userName;
+        }
     }
 
     public async Task<FinResult> ActivateAsync(Guid versionId)
@@ -163,11 +180,20 @@ public class BudgetService : IBudgetService
     }
 
     // ── C-2 实现 ──
-    internal async Task CopyIntoAsync(Guid targetVersionId, Guid? fromVersionId, int? fromActualFiscalYear)
+    internal async Task<FinResult> CopyIntoAsync(Guid targetVersionId, Guid? fromVersionId, int? fromActualFiscalYear)
     {
         if (fromVersionId.HasValue)
         {
             var srcLines = await _db.BudgetLines.AsNoTracking().Where(l => l.VersionId == fromVersionId.Value).ToListAsync();
+            if (_db.Database.IsNpgsql() && srcLines.Count > 0)
+            {
+                var accounts = srcLines.Select(l => l.AccountId).Distinct().ToArray();
+                if (await _db.GlAccounts.CountAsync(a => accounts.Contains(a.Id)) != accounts.Length)
+                    return FinResult.Fail("E-A5-LINE-002");
+                var centers = srcLines.Select(l => l.CostCenterId).OfType<Guid>().Where(id => id != Guid.Empty).Distinct().ToArray();
+                if (centers.Length > 0 && await _db.CostCenters.CountAsync(c => centers.Contains(c.Id)) != centers.Length)
+                    return FinResult.Fail("E-A5-LINE-005");
+            }
             var srcIds = srcLines.Select(l => l.Id).ToList();
             var srcPeriods = await _db.BudgetLinePeriods.AsNoTracking().Where(p => srcIds.Contains(p.BudgetLineId)).ToListAsync();
             foreach (var sl in srcLines)
@@ -186,20 +212,19 @@ public class BudgetService : IBudgetService
             }
             await _db.SaveChangesAsync();
         }
-        if (fromActualFiscalYear.HasValue)
-        {
-            await CopyFromActualAsync(targetVersionId, fromActualFiscalYear.Value);
-        }
+        return fromActualFiscalYear.HasValue
+            ? await CopyFromActualAsync(targetVersionId, fromActualFiscalYear.Value)
+            : FinResult.Pass();
     }
 
     // F-2 实现（上年实际聚合回填）。
-    internal virtual async Task CopyFromActualAsync(Guid targetVersionId, int sourceFiscalYear)
+    internal virtual async Task<FinResult> CopyFromActualAsync(Guid targetVersionId, int sourceFiscalYear)
     {
         var agg = await new BudgetReportService(_db).AggregateActualByBucketAsync(sourceFiscalYear);
         var lineSvc = new BudgetLineService(_db);
         foreach (var (key, periods) in agg)
         {
-            await lineSvc.UpsertLineAsync(new BudgetLineDto
+            var copied = await lineSvc.UpsertLineAsync(new BudgetLineDto
             {
                 VersionId = targetVersionId,
                 AccountId = key.Item1,
@@ -210,6 +235,8 @@ public class BudgetService : IBudgetService
                 Periods = periods,
                 AnnualAmount = periods.Sum(),
             });
+            if (_db.Database.IsNpgsql() && !copied.Ok) return copied;
         }
+        return FinResult.Pass();
     }
 }

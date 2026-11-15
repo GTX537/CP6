@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 · W606-01 财务剩余入口
+
+余应付 5、应收 7、工单结转 1，继续核对采购、WMS、MES 和独立后台审批。 [交付记录](../development/evidence/W606-01/DELIVERY.md)
+
 ## 2026-11-15 · W605-01 CAD/Excel 余项
 
 继续映射、匹配、确认和后台物理制品事务，以及刊发执行、WMS 投影与激活。 [交付记录](../development/evidence/W605-01/DELIVERY.md)

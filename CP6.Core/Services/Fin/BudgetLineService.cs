@@ -36,6 +36,8 @@ public class BudgetLineService : IBudgetLineService
 
         if (line == null)
         {
+            if (_db.Database.IsNpgsql() && ccKey != Guid.Empty && !await _db.CostCenters.AnyAsync(c => c.Id == ccKey))
+                return FinResult.Fail("E-A5-LINE-005");
             line = new BudgetLine
             {
                 VersionId = dto.VersionId,
@@ -50,7 +52,7 @@ public class BudgetLineService : IBudgetLineService
         {
             // Optimistic concurrency: tell EF the client's last-read RowVersion so the UPDATE gains
             // WHERE RowVersion = @original — throws DbUpdateConcurrencyException on stale reads.
-            // NOTE: EF Core InMemory provider IGNORES concurrency tokens; this only fires on SQL Server.
+            // Relational providers enforce the original token in the UPDATE.
             _db.Entry(line).Property(nameof(BudgetLine.RowVersion)).OriginalValue = dto.RowVersion;
         }
 

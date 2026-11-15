@@ -3,6 +3,7 @@ using System.Runtime.ExceptionServices;
 using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Sys;
+using CP6.Core.Services.Wf;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -18,6 +19,7 @@ public sealed class CurrentWriteAuthorityAttribute : Attribute, IAsyncActionFilt
 {
     public bool ChangesAuthentication { get; set; }
     public bool RollbackOnFailure { get; set; }
+    public bool ResumeWorkflowAfterCommit { get; set; }
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
@@ -51,14 +53,27 @@ public sealed class CurrentWriteAuthorityAttribute : Attribute, IAsyncActionFilt
         catch (RejectedWrite)
         {
             // The authority transaction rolled back. Keep the action's original result.
+            return;
         }
         catch (IamAdministrationExceptionV1 error)
         {
             Fail(error.Status, error.Message);
+            return;
         }
         catch (Exception error) when (error is DbException or DbUpdateException or CurrentPermissionUnavailableException)
         {
             Fail(503, "AUTHORITY_FENCE_UNAVAILABLE");
+            return;
+        }
+
+        if (ResumeWorkflowAfterCommit)
+        {
+            try { await services.GetRequiredService<FlowEngine>().FastPathSubFlowResumeAsync(http.RequestAborted); }
+            catch (Exception error) when (error is DbException or DbUpdateException or InvalidOperationException)
+            {
+                services.GetRequiredService<ILogger<CurrentWriteAuthorityAttribute>>()
+                    .LogWarning(error, "Committed workflow follow-up could not resume inline. The persisted job remains available.");
+            }
         }
 
         // These existing actions accept a validated impersonation session.

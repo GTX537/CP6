@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 · W606-01
+
+登记预算、XLSX、A5 送审与 Main 共同栅栏实际 PostgreSQL 验证。 [交付记录](../development/evidence/W606-01/DELIVERY.md)
+
 ## 2026-11-15 · W605-01
 
 登记 CAD/Excel 五条处理入口、准备阶段扫描回填和原生提交顺序。 [交付记录](../development/evidence/W605-01/DELIVERY.md)
