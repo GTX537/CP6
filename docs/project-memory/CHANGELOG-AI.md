@@ -1,5 +1,13 @@
 # AI 可读变更日志
 
+## 2026-11-15 W630-01
+
+CAD 提供者管理写入持有 Main 授权栅栏，按原逻辑保存配置修订和历史认证。 [交付](../development/evidence/W630-01/DELIVERY.md)
+
+## 2026-11-15 W627-01
+
+补录 CRM 目标消费者、原消费组和后继库第二次签名采用的真实 PostgreSQL、Kafka 与 Dapr 读回。 [交付](../development/evidence/W627-01/DELIVERY.md)
+
 ## 2026-11-15 W628-01
 
 Excel/CAD Apply 以原 Job、独立编辑租约和源文件校验持有共同事务，保留原导入结果和修订。 [交付](../development/evidence/W628-01/DELIVERY.md)

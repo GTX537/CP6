@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## 2026-11-15 W630-01 后续
+
+继续采购三单匹配、历史刊发父作业、库存财务重试及 OA 剩余写者。 [交付](../development/evidence/W630-01/DELIVERY.md)
+
+## 2026-11-15 W627-01 后续
+
+继续 Main 采购三单匹配 #1152、CAD 提供者配置、历史刊发父作业和其余后台写者的事务验收。 [交付](../development/evidence/W627-01/DELIVERY.md)
+
 ## 2026-11-15 W628-01 后续
 
 继续历史刊发父作业、CAD 提供者管理、采购及库存财务写者和 CRM 消费交接。 [交付](../development/evidence/W628-01/DELIVERY.md)

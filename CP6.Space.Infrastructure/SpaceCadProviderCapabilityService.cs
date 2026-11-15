@@ -16,7 +16,8 @@ public sealed class SpaceCadProviderCapabilityService(
     ISpaceExecutionContext execution,
     ISpaceDesignAccessEvaluator access,
     ISpaceCadProviderRegistry registry,
-    ISpaceClock clock) : ISpaceCadProviderCapabilityService
+    ISpaceClock clock,
+    ISpaceDesignWriteAuthority? writeAuthority = null) : ISpaceCadProviderCapabilityService
 {
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
@@ -97,9 +98,8 @@ public sealed class SpaceCadProviderCapabilityService(
             return replay with { IdempotentReplay = true };
 
         await using IDbContextTransaction? transaction = context.Database.IsRelational()
-            ? await context.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken)
+            ? await SpaceDesignWriteTransaction.BeginAsync(context, writeAuthority, cancellationToken,
+                requiredPermission: "space:model:provider:manage")
             : null;
         try
         {
@@ -112,7 +112,7 @@ public sealed class SpaceCadProviderCapabilityService(
             if (concurrentReplay is not null)
             {
                 if (transaction is not null)
-                    await transaction.CommitAsync(cancellationToken);
+                    await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
                 return concurrentReplay with { IdempotentReplay = true };
             }
 
@@ -183,7 +183,7 @@ public sealed class SpaceCadProviderCapabilityService(
                 now.AddDays(365)));
             await context.SaveChangesAsync(cancellationToken);
             if (transaction is not null)
-                await transaction.CommitAsync(cancellationToken);
+                await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
             return response;
         }
         catch
