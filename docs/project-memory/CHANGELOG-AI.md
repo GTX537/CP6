@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W642-01
+
+受限库存存储使用固定 PostgreSQL 函数写财务原意图，复用原消费和升级角色。 [交付](../development/evidence/W642-01/DELIVERY.md)
+
 ## 2026-11-15 W640-01
 
 旧 OA 到期处理、通知和原回调使用同一原生授权事务，按原版本处理并用持久作业延后外呼。 [交付](../development/evidence/W640-01/DELIVERY.md)
