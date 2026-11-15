@@ -19,15 +19,18 @@ public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
     private readonly SpaceContext _context;
     private readonly ISpaceExecutionContext _execution;
     private readonly ISpaceClock _clock;
+    private readonly ISpaceDesignWriteAuthority? _writeAuthority;
 
     public EfSpaceVersionCloneStore(
         SpaceContext context,
         ISpaceExecutionContext execution,
-        ISpaceClock clock)
+        ISpaceClock clock,
+        ISpaceDesignWriteAuthority? writeAuthority = null)
     {
         _context = context;
         _execution = execution;
         _clock = clock;
+        _writeAuthority = writeAuthority;
     }
 
     public async Task<SpaceVersionCloneStartResult> StartAsync(
@@ -146,15 +149,13 @@ public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
         SpaceBlankVersionRequest request,
         CancellationToken cancellationToken)
     {
-        await using var transaction = await _context.Database.BeginTransactionAsync(
-            IsolationLevel.Serializable,
-            cancellationToken);
+        await using var transaction = await SpaceDesignWriteTransaction.BeginAsync(_context, _writeAuthority, cancellationToken);
         try
         {
             var existing = await FindExistingBlankAsync(request, cancellationToken);
             if (existing is not null)
             {
-                await transaction.CommitAsync(cancellationToken);
+                await SpaceDesignWriteTransaction.CommitAsync(_context, _writeAuthority, transaction, cancellationToken);
                 return existing;
             }
 
@@ -233,7 +234,7 @@ public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
             _context.Jobs.Add(job);
             _context.JobAttempts.Add(jobAttempt);
             await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await SpaceDesignWriteTransaction.CommitAsync(_context, _writeAuthority, transaction, cancellationToken);
             return BlankResult(target, job, reused: false);
         }
         catch
@@ -307,15 +308,13 @@ public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
         SpaceVersionCloneRequest request,
         CancellationToken cancellationToken)
     {
-        await using var transaction = await _context.Database.BeginTransactionAsync(
-            IsolationLevel.Serializable,
-            cancellationToken);
+        await using var transaction = await SpaceDesignWriteTransaction.BeginAsync(_context, _writeAuthority, cancellationToken);
         try
         {
             var existing = await FindExistingAsync(request, cancellationToken);
             if (existing is not null)
             {
-                await transaction.CommitAsync(cancellationToken);
+                await SpaceDesignWriteTransaction.CommitAsync(_context, _writeAuthority, transaction, cancellationToken);
                 return existing;
             }
 
@@ -334,6 +333,8 @@ public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
                 throw new SpaceVersionStateException(
                     "A current Published version is required before cloning.");
             }
+            if (request.ExpectedSourceVersionId is { } expectedSource && model.CurrentPublishedVersionId != expectedSource)
+                throw new SpaceVersionConflictException("The current Published version changed before cloning.");
 
             var source = await _context.Versions.SingleAsync(
                 version => version.Id == model.CurrentPublishedVersionId.Value,
@@ -391,7 +392,7 @@ public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
             _context.Versions.Add(target);
             _context.Jobs.Add(job);
             await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await SpaceDesignWriteTransaction.CommitAsync(_context, _writeAuthority, transaction, cancellationToken);
             return Result(target, job, reused: false);
         }
         catch
@@ -415,7 +416,8 @@ public sealed class EfSpaceVersionCloneStore : ISpaceVersionCloneStore
         if (version is null)
             return null;
         if (!string.Equals(version.Name, request.Name, StringComparison.Ordinal) ||
-            !version.BasedOnVersionId.HasValue)
+            !version.BasedOnVersionId.HasValue ||
+            (request.ExpectedSourceVersionId is { } source && version.BasedOnVersionId != source))
         {
             throw new SpaceVersionConflictException(
                 "The clone operation ID was already used with different input.");
