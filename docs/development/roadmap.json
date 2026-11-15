@@ -166087,6 +166087,11 @@
       "at": "2026-11-15T16:12:09.635693+00:00",
       "change": "W627-01 已验证两租户实际 CRM 目标消费组接续和后继库第二次签名采用，原回执及待处理消息身份保留。",
       "evidence": "docs/development/evidence/W627-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T16:32:04.528861+00:00",
+      "change": "W630-01 CAD 提供者配置、历史修订、认证及幂等结果在 Main 专属写权限事务内提交，实测暂停、撤权和业务先提交。",
+      "evidence": "docs/development/evidence/W630-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212093,10 +212098,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W627",
-      "path": "docs/development/evidence/W627-01/DELIVERY.md",
-      "baseline_sha": "4de40010bbf87fba4c6fc9f9d8f32bc05dd07447",
-      "registered_at": "2026-11-15T16:12:02.247646+00:00",
+      "id": "W630",
+      "path": "docs/development/evidence/W630-01/DELIVERY.md",
+      "baseline_sha": "3bc198ff25d14ddf98a397089303afdbfefe03a3",
+      "registered_at": "2026-11-15T16:14:48.698891+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212110,51 +212115,41 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Continue three-way match recovery, CAD provider settings and historical publication. Formal PGT-017 remains NOT_RUN.",
+      "next_action": "Integrate W631 and continue historical republish and native stock finance recovery.",
       "windows": [
         {
-          "id": "W627-01",
-          "workspace_task": "W627-01",
+          "id": "W630-01",
+          "workspace_task": "W630-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+          "mode": "SINGLE_CHAT",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w627-01",
-          "planned_scope_ref": "docs/development/evidence/W627-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W627-01/DELIVERY.md",
+          "branch": "codex/w630-01",
+          "planned_scope_ref": "docs/development/evidence/W630-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W630-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Two registered CRM tenants and native C02 group handoff",
-            "Original broker offsets and later physical Outbox adoption",
+            "CAD provider capability, certification, revisions and original receipt",
+            "Main actual permission and original session final check, serializable PostgreSQL",
             "DEV-2"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "7 actual C02 cases and one real successor adoption passed, zero skips. Actual PostgreSQL, authenticated Kafka and Dapr, exact original outcomes and two Main authority events. Main record only.",
-          "remaining_scope": "Main procurement #1152, CAD provider management #1150, historical republish parent and other financial/worker transaction writers remain. Real deployment environment credentials and approval are a separate adoption state.",
-          "product_repository": "CP6.CRM",
-          "product_worktree": "D:/CP6-worktrees/dev-2",
-          "product_baseline": "cebdcc838563ccb824fd25252a4fc4c80d8dc463",
-          "product_branch": "codex/w627-01",
-          "product_source_sha": "2cbe688316b4df17b93229d654288dfb6d699f78",
-          "product_remote_main_sha": "e5a8157f20e5817f58b33242a4bd6188f1c58461",
-          "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/237",
-          "product_branch_disposition": "deleted-local-and-remote",
-          "product_workspace_status": "fixed-seat-detached-for-reuse",
-          "product_seat_released": true
+          "validation_summary": "4 native permission/ordering checks and 23 provider compatibility checks passed, zero skips. 310 local hashes, 7 identical DLLs and HTTP 200/401/200.",
+          "remaining_scope": "Procurement three-way match #1152, historical republish parent stages, original stock finance retry, subcontract finished-cost and OA late writers. Formal PostgreSQL 26 PASS / 1 NOT_RUN. No deployment.",
+          "main_tested_source_sha": "701b7af875c811a84bb18eb58eacd407d2d49808"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/dev-2",
           "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
@@ -268773,6 +268768,77 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W627",
+        "path": "docs/development/evidence/W627-01/DELIVERY.md",
+        "baseline_sha": "4de40010bbf87fba4c6fc9f9d8f32bc05dd07447",
+        "registered_at": "2026-11-15T16:12:02.247646+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Continue three-way match recovery, CAD provider settings and historical publication. Formal PGT-017 remains NOT_RUN.",
+        "windows": [
+          {
+            "id": "W627-01",
+            "workspace_task": "W627-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL_CROSS_REPOSITORY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w627-01",
+            "planned_scope_ref": "docs/development/evidence/W627-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W627-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Two registered CRM tenants and native C02 group handoff",
+              "Original broker offsets and later physical Outbox adoption",
+              "DEV-2"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "7 actual C02 cases and one real successor adoption passed, zero skips. Actual PostgreSQL, authenticated Kafka and Dapr, exact original outcomes and two Main authority events. Main record only.",
+            "remaining_scope": "Main procurement #1152, CAD provider management #1150, historical republish parent and other financial/worker transaction writers remain. Real deployment environment credentials and approval are a separate adoption state.",
+            "product_repository": "CP6.CRM",
+            "product_worktree": "D:/CP6-worktrees/dev-2",
+            "product_baseline": "cebdcc838563ccb824fd25252a4fc4c80d8dc463",
+            "product_branch": "codex/w627-01",
+            "product_source_sha": "2cbe688316b4df17b93229d654288dfb6d699f78",
+            "product_remote_main_sha": "e5a8157f20e5817f58b33242a4bd6188f1c58461",
+            "product_pull_request": "https://github.com/GTX537/CP6.CRM/pull/237",
+            "product_branch_disposition": "deleted-local-and-remote",
+            "product_workspace_status": "fixed-seat-detached-for-reuse",
+            "product_seat_released": true,
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1154",
+            "main_remote_main_sha": "3bc198ff25d14ddf98a397089303afdbfefe03a3"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2",
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },
