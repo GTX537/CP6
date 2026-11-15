@@ -2079,23 +2079,16 @@ public sealed class SpaceDesignV1Service :
         ArgumentNullException.ThrowIfNull(request);
         EnsureExecutionContext();
         EnsureInternalEditor();
-        var model = await FindModelByVersionAsync(versionId, cancellationToken);
-        EnsureWritable(model);
-        await EnsureActiveEditLeaseAsync(
-            versionId,
-            floorLogicalId,
-            request.LeaseId,
-            request.ClientInstanceId,
-            cancellationToken);
         ValidateCodingApplyRequest(request);
         var requestHash = Hash(
             $"location-coding\n{versionId:D}\n{floorLogicalId:D}\n" +
             JsonSerializer.Serialize(request, JsonOptions));
 
-        await using var transaction = await _context.Database
-            .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+        await using var transaction = await BeginModelEditAsync(cancellationToken);
         try
         {
+            var model = await FindModelByVersionAsync(versionId, cancellationToken);
+            EnsureWritable(model);
             await AcquireFloorEditLockAsync(
                 versionId,
                 floorLogicalId,
@@ -2141,7 +2134,7 @@ public sealed class SpaceDesignV1Service :
                     replay.FloorRevision == floor.Revision &&
                     replay.VersionContentRevision == version.ContentRevision)
                 {
-                    await transaction.CommitAsync(cancellationToken);
+                    await CommitModelEditAsync(transaction, cancellationToken);
                     return replay;
                 }
                 throw Conflict(
@@ -2156,7 +2149,7 @@ public sealed class SpaceDesignV1Service :
                 cancellationToken);
             if (concurrentReplay is not null)
             {
-                await transaction.CommitAsync(cancellationToken);
+                await CommitModelEditAsync(transaction, cancellationToken);
                 return concurrentReplay;
             }
 
@@ -2279,7 +2272,13 @@ public sealed class SpaceDesignV1Service :
                 version.ContentRevision,
                 JsonSerializer.Serialize(response, JsonOptions));
             await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await EnsureActiveEditLeaseAsync(
+                versionId,
+                floorLogicalId,
+                request.LeaseId,
+                request.ClientInstanceId,
+                cancellationToken);
+            await CommitModelEditAsync(transaction, cancellationToken);
             return response;
         }
         catch (DbUpdateException)
@@ -2567,11 +2566,17 @@ public sealed class SpaceDesignV1Service :
         return result;
     }
 
-    public async Task<CreateTenantSpaceWarehouseTemplateResponse>
-        CreateTenantWarehouseTemplateAsync(
-            CreateTenantSpaceWarehouseTemplateRequest request,
-            string idempotencyKey,
-            CancellationToken cancellationToken = default)
+    public Task<CreateTenantSpaceWarehouseTemplateResponse> CreateTenantWarehouseTemplateAsync(
+        CreateTenantSpaceWarehouseTemplateRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken = default)
+        => CreateTenantWarehouseTemplateCoreAsync(request, idempotencyKey, cancellationToken);
+
+    private async Task<CreateTenantSpaceWarehouseTemplateResponse> CreateTenantWarehouseTemplateCoreAsync(
+        CreateTenantSpaceWarehouseTemplateRequest request,
+        string idempotencyKey,
+        CancellationToken cancellationToken,
+        (Guid VersionId, long ContentRevision)? draftSource = null)
     {
         ArgumentNullException.ThrowIfNull(request);
         EnsureExecutionContext();
@@ -2637,8 +2642,7 @@ public sealed class SpaceDesignV1Service :
         if (replay is not null)
             return replay;
 
-        await using var transaction = await _context.Database
-            .BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+        await using var transaction = await BeginModelEditAsync(cancellationToken);
         try
         {
             var concurrentReplay = await ReadWarehouseTemplateReplayAsync(
@@ -2648,9 +2652,12 @@ public sealed class SpaceDesignV1Service :
                 cancellationToken);
             if (concurrentReplay is not null)
             {
-                await transaction.CommitAsync(cancellationToken);
+                await CommitModelEditAsync(transaction, cancellationToken);
                 return concurrentReplay;
             }
+
+            if (draftSource is { } source)
+                await EnsureCurrentDraftTemplateSourceAsync(source.VersionId, source.ContentRevision, cancellationToken);
 
             _context.WarehouseTemplates.Add(template);
             _context.WarehouseTemplateVersions.Add(version);
@@ -2666,7 +2673,7 @@ public sealed class SpaceDesignV1Service :
                     JsonSerializer.Serialize(response, JsonOptions),
                     HttpCreated));
             await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await CommitModelEditAsync(transaction, cancellationToken);
             return response;
         }
         catch (DbUpdateException)
@@ -2735,7 +2742,7 @@ public sealed class SpaceDesignV1Service :
                 "preview-draft-template-again");
         }
 
-        return await CreateTenantWarehouseTemplateAsync(
+        return await CreateTenantWarehouseTemplateCoreAsync(
             new CreateTenantSpaceWarehouseTemplateRequest(
                 request.TemplateCode,
                 request.Name,
@@ -2746,23 +2753,13 @@ public sealed class SpaceDesignV1Service :
                 plan.Aisles,
                 plan.Racks),
             idempotencyKey,
-            cancellationToken);
+            cancellationToken,
+            draftSource: (versionId, request.ExpectedContentRevision));
     }
 
-    private async Task<DraftWarehouseTemplatePlan>
-        BuildDraftWarehouseTemplatePlanAsync(
-            Guid versionId,
-            long expectedContentRevision,
-            CancellationToken cancellationToken)
+    private async Task EnsureCurrentDraftTemplateSourceAsync(
+        Guid versionId, long expectedContentRevision, CancellationToken cancellationToken)
     {
-        EnsureExecutionContext();
-        EnsureInternalEditor();
-        if (versionId == Guid.Empty || expectedContentRevision < 0)
-        {
-            throw Invalid(
-                "draftTemplate",
-                "A Draft version and non-negative content revision are required.");
-        }
         var model = await FindModelByVersionAsync(versionId, cancellationToken);
         EnsureWritable(model);
         var version = await _context.Versions.AsNoTracking().SingleAsync(
@@ -2783,6 +2780,23 @@ public sealed class SpaceDesignV1Service :
                 "The Draft changed before its template preview could be sealed.",
                 "reload-design-project");
         }
+    }
+
+    private async Task<DraftWarehouseTemplatePlan>
+        BuildDraftWarehouseTemplatePlanAsync(
+            Guid versionId,
+            long expectedContentRevision,
+            CancellationToken cancellationToken)
+    {
+        EnsureExecutionContext();
+        EnsureInternalEditor();
+        if (versionId == Guid.Empty || expectedContentRevision < 0)
+        {
+            throw Invalid(
+                "draftTemplate",
+                "A Draft version and non-negative content revision are required.");
+        }
+        await EnsureCurrentDraftTemplateSourceAsync(versionId, expectedContentRevision, cancellationToken);
 
         var floors = await _context.FloorRevisions.AsNoTracking()
             .Where(candidate => candidate.ModelVersionId == versionId &&

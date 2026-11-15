@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W654-01
+
+七个前台 Space 目录写入口复用 Main 当前事务栅栏与原版本、租约、回执。 [交付](../development/evidence/W654-01/DELIVERY.md)
+
 ## 2026-11-15 W656-01
 
 刊发失败业务终态和人工对账重开由原 Job、当前租户及同一 Main 原生写事务共同核准。 [交付](../development/evidence/W656-01/DELIVERY.md)

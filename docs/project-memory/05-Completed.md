@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-15 W654-01
+
+WMS 目录与几何、位置编码及两种模板写入，15 个原生和 66 个相关契约通过。 [交付](../development/evidence/W654-01/DELIVERY.md)
+
 ## 2026-11-15 W656-01
 
 三条刊发无外部效果写路、一次实际 COMMIT 回包丢失及人工 Reconcile 重开通过定向 PostgreSQL 验证。 [交付](../development/evidence/W656-01/DELIVERY.md)

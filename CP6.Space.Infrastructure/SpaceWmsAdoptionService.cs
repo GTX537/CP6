@@ -1,4 +1,3 @@
-using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -33,6 +32,7 @@ public sealed class SpaceWmsAdoptionService : ISpaceWmsAdoptionService
     private readonly ISpaceCursorCodec _cursorCodec;
     private readonly ISpaceWmsAdapter _adapter;
     private readonly ISpaceWarehouseResolver _warehouses;
+    private readonly ISpaceDesignWriteAuthority? _writeAuthority;
 
     public SpaceWmsAdoptionService(
         SpaceContext context,
@@ -41,7 +41,8 @@ public sealed class SpaceWmsAdoptionService : ISpaceWmsAdoptionService
         ISpaceDesignAccessEvaluator access,
         ISpaceCursorCodec cursorCodec,
         ISpaceWmsAdapter adapter,
-        ISpaceWarehouseResolver warehouses)
+        ISpaceWarehouseResolver warehouses,
+        ISpaceDesignWriteAuthority? writeAuthority = null)
     {
         _context = context;
         _execution = execution;
@@ -50,6 +51,7 @@ public sealed class SpaceWmsAdoptionService : ISpaceWmsAdoptionService
         _cursorCodec = cursorCodec;
         _adapter = adapter;
         _warehouses = warehouses;
+        _writeAuthority = writeAuthority;
     }
 
     public async Task<RefreshSpaceWmsAdoptionResponse> RefreshAsync(
@@ -125,7 +127,16 @@ public sealed class SpaceWmsAdoptionService : ISpaceWmsAdoptionService
         var dataSource = catalog.Source.DataSourceId;
 
         await using var transaction = await BeginTransactionAsync(
-            cancellationToken);
+            cancellationToken, additionalPermission: "space:integration:manage");
+        scope = await LoadScopeAsync(versionId, write: true, cancellationToken);
+        var currentWarehouse = await ResolveWarehouseAsync(scope.Model.SiteId, cancellationToken);
+        if (currentWarehouse != warehouse)
+        {
+            throw Conflict(
+                SpaceErrorCodes.ConcurrencyConflict,
+                "The warehouse changed during the WMS catalog refresh.",
+                "retry-wms-refresh");
+        }
         var existing = await _context.WmsAdoptions
             .Where(value =>
                 value.SiteId == scope.Model.SiteId &&
@@ -183,7 +194,7 @@ public sealed class SpaceWmsAdoptionService : ISpaceWmsAdoptionService
             cancellationToken);
         await SaveChangesAsync(cancellationToken);
         if (transaction is not null)
-            await transaction.CommitAsync(cancellationToken);
+            await SpaceDesignWriteTransaction.CommitAsync(_context, _writeAuthority, transaction, cancellationToken);
 
         var states = await BuildStatesAsync(
             scope.Version.Id,
@@ -303,14 +314,14 @@ public sealed class SpaceWmsAdoptionService : ISpaceWmsAdoptionService
     {
         ArgumentNullException.ThrowIfNull(request);
         EnsureExecutionContext();
+        await using var transaction = await BeginTransactionAsync(cancellationToken);
         var scope = await LoadScopeAsync(
             versionId,
             write: true,
-            cancellationToken);
+            cancellationToken,
+            trackVersion: true);
         EnsureEditable(scope.Version);
 
-        await using var transaction = await BeginTransactionAsync(
-            cancellationToken);
         var adoption = await FindAdoptionAsync(
             scope.Model.SiteId,
             adoptionId,
@@ -428,7 +439,7 @@ public sealed class SpaceWmsAdoptionService : ISpaceWmsAdoptionService
             cancellationToken);
         await SaveChangesAsync(cancellationToken);
         if (transaction is not null)
-            await transaction.CommitAsync(cancellationToken);
+            await SpaceDesignWriteTransaction.CommitAsync(_context, _writeAuthority, transaction, cancellationToken);
         return await BuildCommandResponseAsync(
             scope.Version,
             [adoption.Id],
@@ -461,13 +472,13 @@ public sealed class SpaceWmsAdoptionService : ISpaceWmsAdoptionService
                 "select-unique-locations");
         }
 
+        await using var transaction = await BeginTransactionAsync(cancellationToken);
         var scope = await LoadScopeAsync(
             versionId,
             write: true,
-            cancellationToken);
+            cancellationToken,
+            trackVersion: true);
         EnsureEditable(scope.Version);
-        await using var transaction = await BeginTransactionAsync(
-            cancellationToken);
 
         var adoptionIds = items.Select(value => value.AdoptionId).ToArray();
         var adoptions = await _context.WmsAdoptions
@@ -553,7 +564,7 @@ public sealed class SpaceWmsAdoptionService : ISpaceWmsAdoptionService
             cancellationToken);
         await SaveChangesAsync(cancellationToken);
         if (transaction is not null)
-            await transaction.CommitAsync(cancellationToken);
+            await SpaceDesignWriteTransaction.CommitAsync(_context, _writeAuthority, transaction, cancellationToken);
         return await BuildCommandResponseAsync(
             scope.Version,
             adoptionIds,
@@ -954,13 +965,15 @@ public sealed class SpaceWmsAdoptionService : ISpaceWmsAdoptionService
     private async Task<Scope> LoadScopeAsync(
         Guid versionId,
         bool write,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        bool trackVersion = false)
     {
-        var result = await (
-                from version in _context.Versions
-                join model in _context.Models on version.ModelId equals model.Id
-                where version.Id == versionId
-                select new Scope(version, model))
+        var query =
+            from version in _context.Versions
+            join model in _context.Models on version.ModelId equals model.Id
+            where version.Id == versionId
+            select new Scope(version, model);
+        var result = await (trackVersion ? query.AsTracking() : query.AsNoTracking())
             .SingleOrDefaultAsync(cancellationToken);
         if (result is null)
         {
@@ -1038,13 +1051,14 @@ public sealed class SpaceWmsAdoptionService : ISpaceWmsAdoptionService
     }
 
     private async Task<IDbContextTransaction?> BeginTransactionAsync(
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        string? additionalPermission = null)
     {
         if (!_context.Database.IsRelational())
             return null;
-        return await _context.Database.BeginTransactionAsync(
-            IsolationLevel.Serializable,
-            cancellationToken);
+
+        return await SpaceDesignWriteTransaction.BeginForPermissionAsync(_context, _writeAuthority,
+            SpaceDesignWriteTransaction.ModelEditPermission, cancellationToken, additionalPermission);
     }
 
     private void EnsureExecutionContext()
