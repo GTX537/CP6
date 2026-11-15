@@ -1,4 +1,3 @@
-using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -13,13 +12,15 @@ public sealed class SpacePlanningScenarioService(
     SpaceContext context,
     ISpaceExecutionContext execution,
     ISpaceClock clock,
-    ISpaceDesignAccessEvaluator access)
+    ISpaceDesignAccessEvaluator access,
+    ISpaceDesignWriteAuthority? writeAuthority = null)
     : ISpacePlanningScenarioService
 {
     public const string DefinitionVersion = "space-planning-scenario-v1";
     public const string CloneProcessorVersion =
         SpaceVersionCloneContract.ProcessorVersion;
     public const int MaximumListItems = 100;
+    private const string CreatePermission = "space:planning:scenario:create";
 
     private static readonly JsonSerializerOptions Json =
         new(JsonSerializerDefaults.Web);
@@ -68,9 +69,8 @@ public sealed class SpacePlanningScenarioService(
         }
 
         await using var transaction = context.Database.IsRelational()
-            ? await context.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken)
+            ? await SpaceDesignWriteTransaction.BeginForPermissionAsync(
+                context, writeAuthority, CreatePermission, cancellationToken)
             : null;
         try
         {
@@ -81,7 +81,7 @@ public sealed class SpacePlanningScenarioService(
             if (existing is not null)
             {
                 if (transaction is not null)
-                    await transaction.CommitAsync(cancellationToken);
+                    await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
                 return await DuplicateAsync(
                     existing,
                     siteId,
@@ -178,7 +178,7 @@ public sealed class SpacePlanningScenarioService(
             context.PlanningScenarioBranches.Add(branch);
             await context.SaveChangesAsync(cancellationToken);
             if (transaction is not null)
-                await transaction.CommitAsync(cancellationToken);
+                await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
             return new CreateSpacePlanningScenarioBranchResponse(
                 "Created",
                 await GetBranchCoreAsync(

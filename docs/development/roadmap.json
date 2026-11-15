@@ -166147,6 +166147,11 @@
       "at": "2026-11-15T19:27:14.399707+00:00",
       "change": "W648-01 CAD、Excel、底图上传的扫描终态由原来源登记事务落盘，返回原 File、Source 和扫描作业。",
       "evidence": "docs/development/evidence/W648-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T19:37:46.926226+00:00",
+      "change": "W650-01 规划分支前台预约使用原规划权限的 Main 栅栏，规划目标和原克隆 Job 同处原 PostgreSQL 事务。",
+      "evidence": "docs/development/evidence/W650-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212153,10 +212158,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W648",
-      "path": "docs/development/evidence/W648-01/DELIVERY.md",
-      "baseline_sha": "1e2b294eb2f4f5a72cf903a16bac724edc74694d",
-      "registered_at": "2026-11-15T19:03:45.782091+00:00",
+      "id": "W650",
+      "path": "docs/development/evidence/W650-01/DELIVERY.md",
+      "baseline_sha": "04db2f57646fa4fcc135836c3fe7c5177ae44dd3",
+      "registered_at": "2026-11-15T19:31:02.561188+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212170,11 +212175,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Adopt the native planning reservation under Main; continue the independently adopted CRM stage and collect final writer scope.",
+      "next_action": "Preserve exact ERP event chronology at retry and continue the remaining scoped Space writers and the CRM native outage cutover.",
       "windows": [
         {
-          "id": "W648-01",
-          "workspace_task": "W648-01",
+          "id": "W650-01",
+          "workspace_task": "W650-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212185,22 +212190,22 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w648-01",
-          "planned_scope_ref": "docs/development/evidence/W648-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W648-01/DELIVERY.md",
+          "branch": "codex/w650-01",
+          "planned_scope_ref": "docs/development/evidence/W650-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W650-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "CAD/Excel/underlay source upload reuse and terminal file status",
-            "Main source-upload plus editor authorization, original terminal File/Job and source registration",
+            "Signed planning reservation, original production Published snapshot, planning branch and CloneVersion Job",
+            "Main shared approval transaction before any reservation write",
             "DEV-2"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "11 actual PostgreSQL cases across CAD/Excel/underlay including both orders, rejected and concurrent authorized removal/receipt, 10 W598/W602, 6 W616 and 46 contracts. All zero skips; exact 310-file release and actual 200/401.",
-          "remaining_scope": "Planning reservation, independent Space Design/Publish state writes and Main CRM first-seal cold failure recovery. Formal PostgreSQL still 26 PASS / 1 NOT_RUN.",
-          "main_tested_source_sha": "b7edb35bf5b0dba503831e7845832ba8c64855b6"
+          "validation_summary": "Four native PostgreSQL cases with both signed planning reservation orders and both actual W647 planning clone control orders. Original business repeats and published identity retained. 310 files, 200/401.",
+          "remaining_scope": "Space Draft WMS adoption, code/template writers and publication failure state; Main CRM pre-seal durable intent; the separately identified ERP retry chronology. Formal PostgreSQL remains 26 PASS / 1 NOT_RUN.",
+          "main_tested_source_sha": "a26f254e6c8fc0a1dd3776e2e7dee72804ecaf57"
         }
       ],
       "storage": {
@@ -269560,6 +269565,67 @@
             "main_tested_source_sha": "4314d92b39dade3bd495a19bedeef2de8a1eecbd",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1170",
             "main_remote_main_sha": "1e2b294eb2f4f5a72cf903a16bac724edc74694d"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W648",
+        "path": "docs/development/evidence/W648-01/DELIVERY.md",
+        "baseline_sha": "1e2b294eb2f4f5a72cf903a16bac724edc74694d",
+        "registered_at": "2026-11-15T19:03:45.782091+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Adopt the native planning reservation under Main; continue the independently adopted CRM stage and collect final writer scope.",
+        "windows": [
+          {
+            "id": "W648-01",
+            "workspace_task": "W648-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w648-01",
+            "planned_scope_ref": "docs/development/evidence/W648-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W648-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CAD/Excel/underlay source upload reuse and terminal file status",
+              "Main source-upload plus editor authorization, original terminal File/Job and source registration",
+              "DEV-2"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "11 actual PostgreSQL cases across CAD/Excel/underlay including both orders, rejected and concurrent authorized removal/receipt, 10 W598/W602, 6 W616 and 46 contracts. All zero skips; exact 310-file release and actual 200/401.",
+            "remaining_scope": "Planning reservation, independent Space Design/Publish state writes and Main CRM first-seal cold failure recovery. Formal PostgreSQL still 26 PASS / 1 NOT_RUN.",
+            "main_tested_source_sha": "b7edb35bf5b0dba503831e7845832ba8c64855b6",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1171",
+            "main_remote_main_sha": "04db2f57646fa4fcc135836c3fe7c5177ae44dd3"
           }
         ],
         "storage": {
