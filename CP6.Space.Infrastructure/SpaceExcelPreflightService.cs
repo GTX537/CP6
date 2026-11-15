@@ -1,4 +1,3 @@
-using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -167,9 +166,8 @@ public sealed class SpaceExcelPreflightService(
             return replay;
 
         IDbContextTransaction? transaction = context.Database.IsRelational()
-            ? await context.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken)
+            ? await SpaceDesignWriteTransaction.BeginForPermissionAsync(context, writeAuthority, SpaceDesignWriteTransaction.ModelEditPermission,
+                cancellationToken, SpaceSourceUploadWriteTransaction.UploadPermission)
             : null;
         try
         {
@@ -181,10 +179,15 @@ public sealed class SpaceExcelPreflightService(
             if (concurrentReplay is not null)
             {
                 if (transaction is not null)
-                    await transaction.CommitAsync(cancellationToken);
+                    await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
                 return concurrentReplay;
             }
 
+            if (transaction is not null)
+            {
+                context.ChangeTracker.Clear();
+                await LoadWritableVersionAsync(versionId, cancellationToken);
+            }
             var source = await context.Sources.SingleOrDefaultAsync(
                 item =>
                     item.Id == sourceId &&
@@ -250,7 +253,7 @@ public sealed class SpaceExcelPreflightService(
                 now.AddDays(90)));
             await context.SaveChangesAsync(cancellationToken);
             if (transaction is not null)
-                await transaction.CommitAsync(cancellationToken);
+                await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
             return response;
         }
         catch (DbUpdateException)

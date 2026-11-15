@@ -15,8 +15,10 @@ public interface ISpaceDesignWriteAuthority
 
 internal static class SpaceDesignWriteTransaction
 {
+    internal const string ModelEditPermission = "space:model:edit";
+
     internal static async Task<IDbContextTransaction> BeginAsync(SpaceContext context, ISpaceDesignWriteAuthority? authority,
-        CancellationToken cancellationToken, string? additionalPermission = null, string requiredPermission = "space:model:edit")
+        CancellationToken cancellationToken, string? additionalPermission = null, string requiredPermission = ModelEditPermission)
     {
         var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
         try
@@ -33,13 +35,13 @@ internal static class SpaceDesignWriteTransaction
     }
 
     internal static async Task<IDbContextTransaction> BeginForPermissionAsync(SpaceContext context, ISpaceDesignWriteAuthority? authority,
-        string requiredPermission, CancellationToken cancellationToken)
+        string requiredPermission, CancellationToken cancellationToken, string? additionalPermission = null)
     {
         for (var attempt = 1; ; attempt++)
         {
             try
             {
-                return await BeginAsync(context, authority, cancellationToken, requiredPermission: requiredPermission);
+                return await BeginAsync(context, authority, cancellationToken, additionalPermission, requiredPermission);
             }
             catch (Exception error) when (authority is not null && context.Database.IsNpgsql() &&
                                           DatabaseFailureClassifier.Classify(error).CanRetryTransaction)
