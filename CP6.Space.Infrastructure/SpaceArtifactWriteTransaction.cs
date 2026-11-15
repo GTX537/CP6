@@ -21,23 +21,28 @@ internal sealed class SpaceArtifactWriteTransaction(
     IDbContextTransaction? transaction,
     ISpaceArtifactWriteAuthority? authority,
     DateTime? expiresAt,
-    SpaceJob? currentJob) : IAsyncDisposable
+    SpaceJob? currentJob,
+    bool completingJob = false) : IAsyncDisposable
 {
     private readonly List<(Guid FileId, string StorageKey)> _published = [];
+    private readonly DateTime? _completionLeaseExpiry = completingJob ? currentJob?.LockExpiresAtUtc : null;
     private bool _preservePublished;
 
+    internal SpaceJob? CompletionJob => completingJob ? currentJob : null;
+
     internal static Task<SpaceArtifactWriteTransaction> BeginMetadataAsync(SpaceContext context, SpaceJobLease lease,
-        ISpaceArtifactWriteAuthority? authority, CancellationToken cancellationToken)
+        ISpaceArtifactWriteAuthority? authority, CancellationToken cancellationToken, bool completingJob = false)
     {
         if (context.Database.IsNpgsql() && authority is null)
             throw new SpaceJobProcessingException(SpaceJobFailureKind.Resource, SpaceErrorCodes.JobProcessorUnavailable,
                 "Main authority is unavailable for the source processing write.");
 
-        return BeginAsync(context, lease, null, authority, cancellationToken);
+        return BeginAsync(context, lease, null, authority, cancellationToken, completingJob);
     }
 
     internal static async Task<SpaceArtifactWriteTransaction> BeginAsync(SpaceContext context, SpaceJobLease lease,
-        ISpaceFileStore? files, ISpaceArtifactWriteAuthority? authority, CancellationToken cancellationToken)
+        ISpaceFileStore? files, ISpaceArtifactWriteAuthority? authority, CancellationToken cancellationToken,
+        bool completingJob = false)
     {
         if (!context.Database.IsRelational())
             return new(context, lease, files, null, null, null, null);
@@ -45,21 +50,29 @@ internal sealed class SpaceArtifactWriteTransaction(
         var main = context.Database.IsNpgsql() ? authority : null;
         for (var attempt = 1; ; attempt++)
         {
-            var tx = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+            var isolation = completingJob ? IsolationLevel.ReadCommitted : IsolationLevel.Serializable;
+            var tx = await context.Database.BeginTransactionAsync(isolation, cancellationToken);
             try
             {
                 if (main is null)
                     return new(context, lease, files, tx, null, null, null);
 
                 var expiry = await main.AuthorizeTenantAsync(context, cancellationToken);
-                var job = await context.Jobs.FromSqlInterpolated($"""
-                    SELECT j.* FROM public."Space_Job" AS j
-                    WHERE j."TenantId" = {lease.TenantId} AND j."Id" = {lease.JobId}
-                    FOR SHARE
-                    """).AsNoTracking().SingleOrDefaultAsync(cancellationToken)
+                var jobs = completingJob
+                    ? context.Jobs.FromSqlInterpolated($"""
+                        SELECT j.* FROM public."Space_Job" AS j
+                        WHERE j."TenantId" = {lease.TenantId} AND j."Id" = {lease.JobId}
+                        FOR UPDATE
+                        """)
+                    : context.Jobs.FromSqlInterpolated($"""
+                        SELECT j.* FROM public."Space_Job" AS j
+                        WHERE j."TenantId" = {lease.TenantId} AND j."Id" = {lease.JobId}
+                        FOR SHARE
+                        """).AsNoTracking();
+                var job = await jobs.SingleOrDefaultAsync(cancellationToken)
                     ?? throw new SpaceJobLeaseLostException("The artifact Job is no longer available.");
-                await VerifyLeaseAsync(context, job, lease, cancellationToken);
-                return new(context, lease, files, tx, main, expiry, job);
+                await VerifyLeaseAsync(context, job, lease, cancellationToken, completingJob);
+                return new(context, lease, files, tx, main, expiry, job, completingJob);
             }
             catch (Exception error) when (main is not null && DatabaseFailureClassifier.Classify(error).CanRetryTransaction)
             {
@@ -131,7 +144,12 @@ internal sealed class SpaceArtifactWriteTransaction(
 
         if (currentJob is not null)
         {
-            var now = await VerifyLeaseAsync(context, currentJob, lease, cancellationToken);
+            // Completion already changed the exclusively locked Job and released its lease in the same transaction.
+            var now = completingJob
+                ? await DatabaseUtcClock.ReadUtcNowAsync(context, cancellationToken)
+                : await VerifyLeaseAsync(context, currentJob, lease, cancellationToken);
+            if (completingJob && _completionLeaseExpiry!.Value <= now)
+                throw new SpaceJobLeaseLostException("The Job lease expired before commit.");
             authority!.ConfirmTenantExpiry(expiresAt);
             confirmDeadline?.Invoke(now);
         }
@@ -177,14 +195,14 @@ internal sealed class SpaceArtifactWriteTransaction(
     }
 
     private static async Task<DateTime> VerifyLeaseAsync(SpaceContext context, SpaceJob job, SpaceJobLease lease,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken, bool completingJob = false)
     {
         if (job.JobType != lease.JobType || job.SubjectType != lease.SubjectType || job.SubjectId != lease.SubjectId ||
             job.InputHash != lease.InputHash || job.AttemptCount != lease.AttemptNo)
             throw new SpaceJobLeaseLostException("The Job no longer matches this worker lease.");
         var now = await DatabaseUtcClock.ReadUtcNowAsync(context, cancellationToken);
         job.EnsureLease(lease.AttemptId, lease.WorkerId, now);
-        if (job.CancellationRequestedAtUtc.HasValue)
+        if (!completingJob && job.CancellationRequestedAtUtc.HasValue)
             throw new SpaceJobProcessingException(SpaceJobFailureKind.Transient, "SPACE_ARTIFACT_JOB_CANCEL_PENDING",
                 "The artifact Job has a pending cancellation.");
         return now;
