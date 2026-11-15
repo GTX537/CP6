@@ -94,7 +94,10 @@ public partial class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
                 return ShipmentProjectionResult.Failed("ERP_SHIPMENT_OUTCOME_UNKNOWN");
         }
 
-        var appliedAt = original is null ? DateTime.Now : outbound.ModifyDate ?? DateTime.Now;
+        var projectedAt = DateTime.Now;
+        var confirmedAt = original is null ? projectedAt : outbound.ModifyDate;
+        bool ShouldRecordShipmentDate(DateTime? previous) => original is null
+            || confirmedAt is DateTime date && (previous is not DateTime last || date > last);
 
         // Keep the order bridge allocation policy for multiple lines sharing a product.
         foreach (var group in shipped.GroupBy(row => row.ProductCd))
@@ -111,10 +114,13 @@ public partial class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
 
                 line.ShippedQty = already + applied;
                 line.ShipStatus = (ordered > 0 && line.ShippedQty >= ordered) ? 9 : 5;
-                line.LastShipDate = appliedAt;
-                line.LastOutboundNo = outboundNo;
+                if (ShouldRecordShipmentDate(line.LastShipDate))
+                {
+                    line.LastShipDate = confirmedAt;
+                    line.LastOutboundNo = outboundNo;
+                }
                 line.Modifier = userName;
-                line.ModifyDate = appliedAt;
+                line.ModifyDate = projectedAt;
                 remaining -= applied;
             }
         }
@@ -122,9 +128,10 @@ public partial class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
         var allShipped = lines.All(line => line.ShipStatus == 9);
         var anyShipped = lines.Any(line => line.ShipStatus >= 5);
         order.ShipStatus = allShipped ? 9 : (anyShipped ? 5 : order.ShipStatus);
-        order.ActualShipDate = appliedAt;
+        if (ShouldRecordShipmentDate(order.ActualShipDate))
+            order.ActualShipDate = confirmedAt;
         order.Modifier = userName;
-        order.ModifyDate = appliedAt;
+        order.ModifyDate = projectedAt;
         return new(IntegrationEventStatus.Success, orderNo, null, order.ShipStatus);
     }
 

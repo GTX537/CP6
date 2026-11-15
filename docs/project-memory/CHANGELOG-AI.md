@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W652-01
+
+ERP 按更晚实物确认时点更新最近发运，原作业幂等和修改审计保留。 [交付](../development/evidence/W652-01/DELIVERY.md)
+
 ## 2026-11-15 W649-01
 
 Main 与 CRM 通过原封存确认完成同一个暂停操作。待确认期间保留合法原回执并关闭新写准入。 [交付](../development/evidence/W649-01/DELIVERY.md)

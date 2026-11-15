@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W652-01 ERP 出库回写时序
+
+处理晚到的原事件时保留较新的实际发运时间及对应出库号。组合 Main 暂停两种顺序均已验证。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W652-01/DELIVERY.md)
+
 ## 2026-11-15 W649-01 CRM 首次封存连接故障
 
 受保护公开签发使用当前服务准入。Main 两个暂停入口持久保存原意图，两库按精确原操作恢复。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W649-01/DELIVERY.md)
