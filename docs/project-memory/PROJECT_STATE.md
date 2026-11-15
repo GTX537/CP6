@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 · W605-01 CAD 准备、解析和 Excel 预检
+
+五条业务入口和 CAD 扫描状态回填采用 Main 的共同写栅栏。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W605-01/DELIVERY.md)
+
 ## 2026-11-15 · W603-01 固定资产和月末折旧
 
 十条固定资产写入口和月末折旧采用 Main 共同栅栏。财务清单 42 条采用，24 条可达写入口待接入。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W603-01/DELIVERY.md)

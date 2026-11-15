@@ -165997,6 +165997,11 @@
       "at": "2026-11-15T11:12:46.325808+00:00",
       "change": "W603-01 固定资产十条写入口及月末折旧采用共同原生栅栏，补事务失败回滚和当前租户引用。",
       "evidence": "docs/development/evidence/W603-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T11:36:45.909825+00:00",
+      "change": "W605-01 CAD 准备、状态回填、解析启动、取消和重试及 Excel 预检采用共同原生栅栏。",
+      "evidence": "docs/development/evidence/W605-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212003,10 +212008,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W603",
-      "path": "docs/development/evidence/W603-01/DELIVERY.md",
-      "baseline_sha": "8c6709c7c6c5d8f9270c106a4fa1ff032c9c23bd",
-      "registered_at": "2026-11-15T10:30:33.899294+00:00",
+      "id": "W605",
+      "path": "docs/development/evidence/W605-01/DELIVERY.md",
+      "baseline_sha": "c2b2e8bb7f04171f98681efc9b54e84e81569f23",
+      "registered_at": "2026-11-15T11:12:15.749064+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212020,11 +212025,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续预算 11 条、AP/AR 12 条和工单结转 1 条，核对其余后台写者。正式 PGT-017 保持 NOT_RUN",
+      "next_action": "推进 Excel 匹配、确认和 CAD/Excel 后台，并继续预算和往来财务写者。PGT-017 保持 NOT_RUN",
       "windows": [
         {
-          "id": "W603-01",
-          "workspace_task": "W603-01",
+          "id": "W605-01",
+          "workspace_task": "W605-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212034,29 +212039,29 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w603-01",
-          "planned_scope_ref": "docs/development/evidence/W603-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W603-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w605-01",
+          "planned_scope_ref": "docs/development/evidence/W605-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W605-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:FinAssetWrites",
-            "Main:AssetDepreciationWorker",
-            "Main:CurrentWriteAuthority",
+            "Main:SpaceCadPrepareParse",
+            "Main:SpaceExcelPreflight",
+            "Main:IAM-CurrentWriteAuthority",
             "Local:PostgreSQL-HTTP"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "42 native PostgreSQL asset and worker cases, 26 related tests, local publish 200/401",
-          "remaining_scope": "24 reachable finance HTTP write routes, other financial workers, CAD/Excel and publication execution, CRM full transport retirement",
-          "main_tested_source_sha": "344f3007ea4d97d36360171c0e47081cae717ced"
+          "validation_summary": "14 actual signed PostgreSQL/Kestrel cases, 9 scoped integration tests, 104 contracts, local publish 200/401",
+          "remaining_scope": "Space Excel matching and confirmations, mapping and CAD provider writers, background artifact and WMS publication phases, unfinished finance and CRM transport isolation",
+          "main_tested_source_sha": "f7ca7d65949f98b86f4cb842dc0bfebcf69a8708"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -267546,6 +267551,68 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W603",
+        "path": "docs/development/evidence/W603-01/DELIVERY.md",
+        "baseline_sha": "8c6709c7c6c5d8f9270c106a4fa1ff032c9c23bd",
+        "registered_at": "2026-11-15T10:30:33.899294+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续预算 11 条、AP/AR 12 条和工单结转 1 条，核对其余后台写者。正式 PGT-017 保持 NOT_RUN",
+        "windows": [
+          {
+            "id": "W603-01",
+            "workspace_task": "W603-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w603-01",
+            "planned_scope_ref": "docs/development/evidence/W603-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W603-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:FinAssetWrites",
+              "Main:AssetDepreciationWorker",
+              "Main:CurrentWriteAuthority",
+              "Local:PostgreSQL-HTTP"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "42 native PostgreSQL asset and worker cases, 26 related tests, local publish 200/401",
+            "remaining_scope": "24 reachable finance HTTP write routes, other financial workers, CAD/Excel and publication execution, CRM full transport retirement",
+            "main_tested_source_sha": "344f3007ea4d97d36360171c0e47081cae717ced",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1120",
+            "main_remote_main_sha": "a541aa9a4f27c989f292afb45154d76ec7366211"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },

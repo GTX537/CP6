@@ -137,9 +137,8 @@ public sealed class SpaceCadParseService(
             return replay with { IdempotentReplay = true };
 
         IDbContextTransaction? transaction = context.Database.IsRelational()
-            ? await context.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken)
+            ? await SpaceDesignWriteTransaction.BeginForPermissionAsync(context, writeAuthority, SpaceDesignWriteTransaction.ModelEditPermission,
+                cancellationToken, SpaceSourceUploadWriteTransaction.UploadPermission)
             : null;
         try
         {
@@ -153,7 +152,7 @@ public sealed class SpaceCadParseService(
             if (concurrentReplay is not null)
             {
                 if (transaction is not null)
-                    await transaction.CommitAsync(cancellationToken);
+                    await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
                 return concurrentReplay with { IdempotentReplay = true };
             }
 
@@ -249,7 +248,7 @@ public sealed class SpaceCadParseService(
                     RequireUtcNow());
                 await context.SaveChangesAsync(cancellationToken);
                 if (transaction is not null)
-                    await transaction.CommitAsync(cancellationToken);
+                    await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
                 return activeResponse;
             }
 
@@ -279,7 +278,7 @@ public sealed class SpaceCadParseService(
             AddIdempotency(operation, keyHash, requestHash, response, now);
             await context.SaveChangesAsync(cancellationToken);
             if (transaction is not null)
-                await transaction.CommitAsync(cancellationToken);
+                await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
             return response;
         }
         catch (DbUpdateException)
@@ -1516,6 +1515,10 @@ public sealed class SpaceCadParseService(
         CancellationToken cancellationToken = default)
     {
         EnsureExecutionContext();
+        await using var transaction = writeAuthority is not null && context.Database.IsNpgsql()
+            ? await SpaceDesignWriteTransaction.BeginForPermissionAsync(context, writeAuthority, SpaceDesignWriteTransaction.ModelEditPermission,
+                cancellationToken)
+            : null;
         var input = await LoadReadableAsync(
             versionId,
             sourceId,
@@ -1525,6 +1528,8 @@ public sealed class SpaceCadParseService(
         access.EnsureSiteAccess(input.Model.SiteId, write: true);
         input.Job.RequestCancellation(execution.ActorId, RequireUtcNow());
         await context.SaveChangesAsync(cancellationToken);
+        if (transaction is not null)
+            await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
         return Action(input.Job, versionId, sourceId);
     }
 
@@ -1559,9 +1564,7 @@ public sealed class SpaceCadParseService(
             return replay with { IdempotentReplay = true };
 
         IDbContextTransaction? transaction = context.Database.IsRelational()
-            ? await context.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken)
+            ? await SpaceDesignWriteTransaction.BeginAsync(context, writeAuthority, cancellationToken)
             : null;
         try
         {
@@ -1576,7 +1579,7 @@ public sealed class SpaceCadParseService(
             if (concurrentReplay is not null)
             {
                 if (transaction is not null)
-                    await transaction.CommitAsync(cancellationToken);
+                    await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
                 return concurrentReplay with { IdempotentReplay = true };
             }
 
@@ -1617,7 +1620,7 @@ public sealed class SpaceCadParseService(
                 RequireUtcNow());
             await context.SaveChangesAsync(cancellationToken);
             if (transaction is not null)
-                await transaction.CommitAsync(cancellationToken);
+                await SpaceDesignWriteTransaction.CommitAsync(context, writeAuthority, transaction, cancellationToken);
             return response;
         }
         catch (Exception exception) when (
