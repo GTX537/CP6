@@ -39,6 +39,7 @@ public class PaymentService : IPaymentService
         var bank = await _db.BankAccounts.FirstOrDefaultAsync(b => b.Id == payment.BankAccountId);
         if (bank == null) return FinResult.Fail("E-FIN-210");
 
+        if (_db.Database.IsNpgsql()) payment.TenantId = _db.CurrentTenantId;
         payment.Id = payment.Id == Guid.Empty ? Guid.NewGuid() : payment.Id;
         payment.No = await _seq.NextAsync(SeqKey, payment.PayDate);
         if (payment.FxRate <= 0m) payment.FxRate = 1m;
@@ -89,7 +90,10 @@ public class PaymentService : IPaymentService
                 inv.ModifyDate = DateTime.Now;
             }
             if (s.DiffJournalEntryId is Guid djid)
-                await _journal.ReverseAsync(djid, user, $"撤销付款 {p.No} 差额冲销", autoPost: true);
+            {
+                var diff = await _journal.ReverseAsync(djid, user, $"撤销付款 {p.No} 差额冲销", autoPost: true);
+                if (!diff.Ok && _db.Database.IsNpgsql()) return diff;
+            }
             _db.ApSettlements.Remove(s);
         }
         p.SettledAmount = 0m;
