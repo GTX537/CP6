@@ -352,6 +352,7 @@ public static class I18nFinScreenSeed
         new Sys_Lang { LangKey = "E-FIN-302", ZhCN = "应收发票不存在", ZhTW = "應收發票不存在", En = "AR invoice not found", Ja = "売掛請求書が存在しません", Ko = "매출 청구서가 없습니다" },
         new Sys_Lang { LangKey = "E-FIN-303", ZhCN = "发票状态不允许此操作", ZhTW = "發票狀態不允許此操作", En = "Invoice status does not allow this operation", Ja = "請求書の状態がこの操作を許可しません", Ko = "청구서 상태가 이 작업을 허용하지 않습니다" },
         new Sys_Lang { LangKey = "E-FIN-304", ZhCN = "应收发票无明细行", ZhTW = "應收發票無明細行", En = "AR invoice has no lines", Ja = "売掛請求書に明細がありません", Ko = "매출 청구서에 명세가 없습니다" },
+        new Sys_Lang { LangKey = "E-FIN-305", ZhCN = "销售退货单不存在", ZhTW = "銷售退貨單不存在", En = "Sales credit note not found", Ja = "売上返品伝票が存在しません", Ko = "판매 반품 전표를 찾을 수 없습니다" },
         new Sys_Lang { LangKey = "E-FIN-310", ZhCN = "银行账户不存在", ZhTW = "銀行帳戶不存在", En = "Bank account not found", Ja = "銀行口座が存在しません", Ko = "은행 계좌가 없습니다" },
         new Sys_Lang { LangKey = "E-FIN-311", ZhCN = "收款单不存在", ZhTW = "收款單不存在", En = "Receipt not found", Ja = "入金が存在しません", Ko = "입금이 없습니다" },
         new Sys_Lang { LangKey = "E-FIN-312", ZhCN = "只有已过账收款能撤销/核销", ZhTW = "只有已過帳收款能撤銷/核銷", En = "Only posted receipts can be reversed/settled", Ja = "記帳済みの入金のみ取消/消込できます", Ko = "전기된 입금만 취소/소멸할 수 있습니다" },

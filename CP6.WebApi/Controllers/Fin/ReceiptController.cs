@@ -1,6 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,6 +43,7 @@ public class ReceiptController : ControllerBase
     /// <summary>收款过账（IsAdvance=true 走预收账款）。返回新 Id。</summary>
     [HttpPost]
     [RequirePermission("fin-ar-receipt", "add")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Receive([FromBody] Receipt receipt)
     {
         var r = await _svc.ReceiveAsync(receipt, CurrentUser);
@@ -51,12 +53,14 @@ public class ReceiptController : ControllerBase
     /// <summary>撤销收款（解核销→红冲）。</summary>
     [HttpPost("{id}/reverse")]
     [RequirePermission("fin-ar-receipt", "reverse")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Reverse(Guid id, [FromBody] ReasonReq r)
         => Fin(await _svc.ReverseReceiptAsync(id, CurrentUser, r.Reason));
 
     /// <summary>核销：把本收款应用到若干发票（可带销售折扣）。</summary>
     [HttpPost("{id}/settle")]
     [RequirePermission("fin-ar-receipt", "settle")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Settle(Guid id, [FromBody] SettleReq req)
         => Fin(await _settle.SettleAsync(id, req.Applies, CurrentUser));
 

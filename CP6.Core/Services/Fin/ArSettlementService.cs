@@ -51,6 +51,11 @@ public class ArSettlementService : IArSettlementService
             var fxDiff = Math.Round(a.AppliedAmount * (receipt.FxRate - inv.FxRate), 2, MidpointRounding.AwayFromZero);
             // 销售折扣（本位币）按发票记账汇率折算
             var discBase = Math.Round(a.DiscountAmount * inv.FxRate, 2, MidpointRounding.AwayFromZero);
+            // A zero discount generates no journal line to validate this stored account.
+            if (discBase == 0m && _db.Database.IsNpgsql()
+                && a.DiscountAccountId is Guid account && account != Guid.Empty
+                && !await _db.GlAccounts.AnyAsync(gl => gl.Id == account))
+                return FinResult.Fail("E-FIN-003");
 
             Guid? diffEntryId = null;
             var diffType = SettlementDiffType.None;
