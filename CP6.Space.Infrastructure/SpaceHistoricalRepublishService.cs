@@ -1,4 +1,4 @@
-using System.Data;
+using System.Data.Common;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
@@ -472,6 +472,7 @@ public sealed class SpaceHistoricalRepublishJobExecutor :
     private readonly ISpacePublishPreviewService _preview;
     private readonly ISpaceHistoricalRepublishPublishStarter _publish;
     private readonly EfSpaceValidationSnapshotReader _validationSnapshots;
+    private readonly ISpaceArtifactWriteAuthority? _writeAuthority;
 
     public SpaceHistoricalRepublishJobExecutor(
         SpaceContext context,
@@ -480,7 +481,8 @@ public sealed class SpaceHistoricalRepublishJobExecutor :
         ISpaceValidationProfileProvider profiles,
         SpaceValidationEngine validationEngine,
         ISpacePublishPreviewService preview,
-        ISpaceHistoricalRepublishPublishStarter publish)
+        ISpaceHistoricalRepublishPublishStarter publish,
+        ISpaceArtifactWriteAuthority? writeAuthority = null)
     {
         _context = context;
         _clock = clock;
@@ -489,430 +491,345 @@ public sealed class SpaceHistoricalRepublishJobExecutor :
         _validationEngine = validationEngine;
         _preview = preview;
         _publish = publish;
+        _writeAuthority = writeAuthority;
         _validationSnapshots = new EfSpaceValidationSnapshotReader(context);
     }
 
-    public Task<SpaceJobStepOutput> ExecuteAsync(
+    public async Task<SpaceJobStepOutput> ExecuteAsync(
         SpaceJobStepExecution execution,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(execution);
         EnsureLease(execution.Lease);
-        return execution.StepCode switch
+        try
         {
-            SpaceHistoricalRepublishJobSteps.CloneHistoricalSnapshot =>
-                CloneHistoricalSnapshotAsync(execution, cancellationToken),
-            SpaceHistoricalRepublishJobSteps.ValidateHistoricalSnapshot =>
-                ValidateHistoricalSnapshotAsync(execution, cancellationToken),
-            SpaceHistoricalRepublishJobSteps.QueuePublish =>
-                QueuePublishAsync(execution, cancellationToken),
-            _ => throw Processing(
-                SpaceJobFailureKind.Bug,
-                SpaceErrorCodes.JobProcessorFailed,
-                "The historical republish Job contains an unknown step."),
-        };
+            return await (execution.StepCode switch
+            {
+                SpaceHistoricalRepublishJobSteps.CloneHistoricalSnapshot =>
+                    CloneHistoricalSnapshotAsync(execution.Lease, cancellationToken),
+                SpaceHistoricalRepublishJobSteps.ValidateHistoricalSnapshot =>
+                    ValidateHistoricalSnapshotAsync(execution.Lease, cancellationToken),
+                SpaceHistoricalRepublishJobSteps.QueuePublish =>
+                    QueuePublishAsync(execution.Lease, cancellationToken),
+                _ => throw Processing(SpaceJobFailureKind.Bug, SpaceErrorCodes.JobProcessorFailed,
+                    "The historical republish Job contains an unknown step."),
+            });
+        }
+        catch (SpaceJobProcessingException exception) when (exception.ErrorCode == "SPACE_ARTIFACT_COMMIT_UNKNOWN")
+        {
+            try
+            {
+                var state = await LoadStateAsync(execution.Lease, CancellationToken.None);
+                var recovered = execution.StepCode switch
+                {
+                    SpaceHistoricalRepublishJobSteps.CloneHistoricalSnapshot
+                        when state.Operation.Status != SpaceHistoricalRepublishStatus.Requested =>
+                        await ReadClonedSnapshotAsync(state, CancellationToken.None),
+                    SpaceHistoricalRepublishJobSteps.ValidateHistoricalSnapshot
+                        when state.Operation.ValidationRunId.HasValue =>
+                        await ReadValidationAsync(state.Operation, CancellationToken.None),
+                    SpaceHistoricalRepublishJobSteps.QueuePublish
+                        when state.Operation.PublishAttemptId.HasValue =>
+                        QueueOutput(state.Operation, (await FindChildAsync(state, CancellationToken.None))!),
+                    _ => null,
+                };
+                if (recovered is not null)
+                    return recovered;
+            }
+            catch (DbException readError) when (readError.IsTransient)
+            {
+                // Leave the durable outcome to the Job retry when readback is unavailable.
+            }
+            throw;
+        }
     }
 
-    private async Task<SpaceJobStepOutput> CloneHistoricalSnapshotAsync(
-        SpaceJobStepExecution execution,
-        CancellationToken cancellationToken)
+    private async Task<SpaceJobStepOutput> CloneHistoricalSnapshotAsync(SpaceJobLease lease, CancellationToken cancellationToken)
     {
-        _context.ChangeTracker.Clear();
-        var state = await LoadStateAsync(execution.Lease, cancellationToken);
+        var state = await LoadStateAsync(lease, cancellationToken);
         if (state.Operation.Status != SpaceHistoricalRepublishStatus.Requested)
-        {
-            var existingCounts = await _cloner.CloneSnapshotAsync(
-                CloneRequest(state),
-                cancellationToken);
-            return Output(
-                new
-                {
-                    state.Operation.Id,
-                    state.Operation.HistoricalVersionId,
-                    state.Operation.TargetVersionId,
-                    counts = existingCounts,
-                    reused = true,
-                });
-        }
+            return await ReadClonedSnapshotAsync(state, cancellationToken);
+        if (state.Target.Status == SpaceVersionStatus.Failed)
+            throw CloneBaseChanged();
 
-        if (state.Model.CurrentPublishedVersionId !=
-            state.Operation.ExpectedPublishedVersionId)
+        await using var write = await SpaceArtifactWriteTransaction.BeginMetadataAsync(
+            _context, lease, _writeAuthority, cancellationToken);
+        state = await LoadStateAsync(lease, cancellationToken);
+        if (state.Operation.Status != SpaceHistoricalRepublishStatus.Requested)
+            return await ReadClonedSnapshotAsync(state, cancellationToken);
+        if (state.Target.Status == SpaceVersionStatus.Failed)
+            throw CloneBaseChanged();
+        EnsureActiveDraft(state);
+        if (state.Model.CurrentPublishedVersionId != state.Operation.ExpectedPublishedVersionId)
         {
             state.Target.FailInitialization();
             state.Model.ReleaseFailedClone(state.Target);
-            await _context.SaveChangesAsync(CancellationToken.None);
-            throw Processing(
-                SpaceJobFailureKind.Input,
-                SpaceErrorCodes.PublishedVersionChanged,
-                "The Published version changed before the historical snapshot was cloned.");
+            await _context.SaveChangesAsync(cancellationToken);
+            await write.CommitAsync(cancellationToken);
+            throw CloneBaseChanged();
         }
 
-        await using var transaction = _context.Database.IsRelational()
-            ? await _context.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken)
-            : null;
-        var transactionCommitted = false;
-        try
-        {
-            var counts = await _cloner.CloneSnapshotAsync(
-                CloneRequest(state),
-                cancellationToken);
-            state.Target.CompleteInitialization(
-                state.Historical.ContentRevision);
-            state.Operation.MarkSnapshotCloned();
-            await _context.SaveChangesAsync(cancellationToken);
-            if (transaction is not null)
-            {
-                await transaction.CommitAsync(cancellationToken);
-                transactionCommitted = true;
-            }
-            return Output(
-                new
-                {
-                    state.Operation.Id,
-                    state.Operation.HistoricalVersionId,
-                    state.Operation.TargetVersionId,
-                    state.Historical.ContentHash,
-                    counts,
-                    reused = false,
-                });
-        }
-        catch
-        {
-            if (transaction is not null && !transactionCommitted)
-                await transaction.RollbackAsync(CancellationToken.None);
-            throw;
-        }
+        var counts = await _cloner.CloneSnapshotAsync(CloneRequest(state), cancellationToken);
+        state.Target.CompleteInitialization(state.Historical.ContentRevision);
+        state.Operation.MarkSnapshotCloned();
+        await _context.SaveChangesAsync(cancellationToken);
+        await write.CommitAsync(cancellationToken);
+        return CloneOutput(state, counts, reused: false);
     }
 
-    private async Task<SpaceJobStepOutput> ValidateHistoricalSnapshotAsync(
-        SpaceJobStepExecution execution,
-        CancellationToken cancellationToken)
+    private async Task<SpaceJobStepOutput> ReadClonedSnapshotAsync(RepublishState state, CancellationToken cancellationToken)
     {
-        _context.ChangeTracker.Clear();
-        var state = await LoadStateAsync(execution.Lease, cancellationToken);
+        if (state.Target.Status == SpaceVersionStatus.Initializing)
+            throw Processing(SpaceJobFailureKind.Bug, SpaceErrorCodes.VersionStateInvalid,
+                "The historical clone checkpoint does not match the initialized target.");
+        var counts = await EfSpaceVersionCloneProcessor.CountSnapshotAsync(_context, state.Target.Id, cancellationToken);
+        return CloneOutput(state, counts, reused: true);
+    }
+
+    private static SpaceJobStepOutput CloneOutput(RepublishState state, SpaceVersionCloneCounts counts, bool reused) =>
+        Output(new { state.Operation.Id, state.Operation.HistoricalVersionId, state.Operation.TargetVersionId,
+            state.Historical.ContentHash, counts, reused });
+
+    private static SpaceJobProcessingException CloneBaseChanged() =>
+        Processing(SpaceJobFailureKind.Input, SpaceErrorCodes.PublishedVersionChanged,
+            "The Published version changed before the historical snapshot was cloned.");
+
+    private async Task<SpaceJobStepOutput> ValidateHistoricalSnapshotAsync(SpaceJobLease lease, CancellationToken cancellationToken)
+    {
+        var state = await LoadStateAsync(lease, cancellationToken);
         if (state.Operation.ValidationRunId.HasValue)
-        {
-            var existing = await _context.ValidationRuns
-                .AsNoTracking()
-                .SingleAsync(
-                    value =>
-                        value.Id == state.Operation.ValidationRunId.Value,
-                    cancellationToken);
-            if (existing.Status == SpaceValidationStatus.Blocked)
-            {
-                throw Processing(
-                    SpaceJobFailureKind.Input,
-                    SpaceErrorCodes.ValidationBlocked,
-                    "The historical snapshot is blocked by current validation rules.");
-            }
-            if (existing.Status != SpaceValidationStatus.Passed)
-            {
-                throw Processing(
-                    SpaceJobFailureKind.Bug,
-                    SpaceErrorCodes.JobProcessorFailed,
-                    "The historical republish references a non-terminal validation.");
-            }
-            return ValidationOutput(state.Operation.Id, existing, reused: true);
-        }
-        if (state.Operation.Status !=
-            SpaceHistoricalRepublishStatus.SnapshotCloned)
-        {
-            throw Processing(
-                SpaceJobFailureKind.Input,
-                SpaceErrorCodes.VersionStateInvalid,
-                "The historical snapshot has not completed cloning.");
-        }
-        if (state.Model.CurrentPublishedVersionId !=
-            state.Operation.ExpectedPublishedVersionId)
-        {
-            throw Processing(
-                SpaceJobFailureKind.Input,
-                SpaceErrorCodes.PublishedVersionChanged,
-                "The Published version changed before rollback validation.");
-        }
+            return await ReadValidationAsync(state.Operation, cancellationToken);
+        EnsureValidationPhase(state);
+
         if (state.Target.Status == SpaceVersionStatus.Draft)
         {
-            state.Target.BeginValidation();
-            await _context.SaveChangesAsync(cancellationToken);
-        }
-        else if (state.Target.Status != SpaceVersionStatus.Validating)
-        {
-            throw Processing(
-                SpaceJobFailureKind.Input,
-                SpaceErrorCodes.VersionStateInvalid,
-                "The historical clone cannot enter validation from its current state.");
+            await using var start = await SpaceArtifactWriteTransaction.BeginMetadataAsync(
+                _context, lease, _writeAuthority, cancellationToken);
+            state = await LoadStateAsync(lease, cancellationToken);
+            if (state.Operation.ValidationRunId.HasValue)
+                return await ReadValidationAsync(state.Operation, cancellationToken);
+            EnsureValidationPhase(state);
+            if (state.Target.Status == SpaceVersionStatus.Draft)
+            {
+                state.Target.BeginValidation();
+                await _context.SaveChangesAsync(cancellationToken);
+                await start.CommitAsync(cancellationToken);
+            }
         }
 
-        var contentRevision = state.Target.ContentRevision;
         var profile = await _profiles.GetProfileAsync(
-            state.Operation.TenantId,
-            state.Operation.SiteId,
-            state.Operation.CorrelationId,
-            cancellationToken);
-        var snapshot = await _validationSnapshots.ReadAsync(
-            state.Model,
-            state.Target,
-            cancellationToken);
+            state.Operation.TenantId, state.Operation.SiteId, state.Operation.CorrelationId, cancellationToken);
+        var snapshot = await _validationSnapshots.ReadAsync(state.Model, state.Target, cancellationToken);
         var result = _validationEngine.Validate(snapshot, profile);
 
-        _context.ChangeTracker.Clear();
-        await using var transaction = _context.Database.IsRelational()
-            ? await _context.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken)
-            : null;
-        var blocked = false;
-        var transactionCommitted = false;
-        SpaceValidationRun? run = null;
-        try
-        {
-            var operation = await _context.HistoricalRepublishes
-                .SingleAsync(
-                    value => value.Id == execution.Lease.SubjectId,
-                    cancellationToken);
-            var target = await _context.Versions.SingleAsync(
-                value => value.Id == operation.TargetVersionId,
-                cancellationToken);
-            var model = await _context.Models.SingleAsync(
-                value => value.Id == operation.ModelId,
-                cancellationToken);
-            if (operation.ValidationRunId.HasValue)
-            {
-                run = await _context.ValidationRuns.SingleAsync(
-                    value => value.Id == operation.ValidationRunId.Value,
-                    cancellationToken);
-            }
-            else
-            {
-                if (model.CurrentPublishedVersionId !=
-                        operation.ExpectedPublishedVersionId ||
-                    target.Status != SpaceVersionStatus.Validating ||
-                    target.ContentRevision != contentRevision ||
-                    !string.Equals(
-                        result.ContentHash,
-                        _validationEngine.ComputeContentHash(snapshot),
-                        StringComparison.OrdinalIgnoreCase))
-                {
-                    if (target.Status == SpaceVersionStatus.Validating)
-                        target.CompleteValidationWithErrors();
-                    await _context.SaveChangesAsync(cancellationToken);
-                    if (transaction is not null)
-                    {
-                        await transaction.CommitAsync(cancellationToken);
-                        transactionCommitted = true;
-                    }
-                    throw Processing(
-                        SpaceJobFailureKind.Input,
-                        SpaceErrorCodes.ValidationStale,
-                        "The rollback target or Published pointer changed during validation.");
-                }
+        await using var finish = await SpaceArtifactWriteTransaction.BeginMetadataAsync(
+            _context, lease, _writeAuthority, cancellationToken);
+        state = await LoadStateAsync(lease, cancellationToken);
+        if (state.Operation.ValidationRunId.HasValue)
+            return await ReadValidationAsync(state.Operation, cancellationToken);
 
-                var now = RequireUtcNow();
-                run = SpaceValidationRun.CreateQueued(
-                    operation.TenantId,
-                    target.Id,
-                    target.ContentRevision,
-                    result.ContentHash,
-                    SpaceValidationRuleSet.Version,
-                    profile.AdapterId,
-                    profile.CapabilityHash,
-                    operation.RequestedBy,
-                    now,
-                    operation.JobId,
-                    operation.CorrelationId);
-                run.Start(now);
-                foreach (var candidate in result.Issues)
-                {
-                    _context.Issues.Add(
-                        SpaceModelIssue.Create(
-                            run.TenantId,
-                            run.ModelVersionId,
-                            candidate.SourceId,
-                            run.JobId,
-                            candidate.Severity,
-                            candidate.Code,
-                            candidate.SourceRef,
-                            candidate.TargetLogicalId,
-                            candidate.MessageArgsJson,
-                            candidate.SuggestedActionCode,
-                            candidate.GenerationRunId,
-                            candidate.GenerationProposalId,
-                            run.Id,
-                            candidate.Category,
-                            candidate.FieldPath,
-                            candidate.EvidenceJson));
-                }
-                if (result.BlockingCount == 0)
-                {
-                    run.Pass(
-                        result.BlockingCount,
-                        result.WarningCount,
-                        result.InfoCount,
-                        now);
-                    target.MarkReady(
-                        result.ContentHash,
-                        SpaceValidationRuleSet.Version,
-                        profile.CapabilityHash);
-                    operation.MarkValidationPassed(run.Id);
-                }
-                else
-                {
-                    run.Block(
-                        result.BlockingCount,
-                        result.WarningCount,
-                        result.InfoCount,
-                        now);
-                    target.CompleteValidationWithErrors();
-                    operation.MarkValidationBlocked(run.Id);
-                    blocked = true;
-                }
-                _context.ValidationRuns.Add(run);
+        var (operation, model, _, target) = state;
+        if (operation.Status != SpaceHistoricalRepublishStatus.SnapshotCloned ||
+            model.ActiveDraftVersionId != target.Id ||
+            model.CurrentPublishedVersionId != operation.ExpectedPublishedVersionId ||
+            target.Status != SpaceVersionStatus.Validating ||
+            target.Id != snapshot.ModelVersionId ||
+            target.ContentRevision != snapshot.ContentRevision)
+        {
+            if (operation.Status == SpaceHistoricalRepublishStatus.SnapshotCloned &&
+                target.Status == SpaceVersionStatus.Validating && target.Id == snapshot.ModelVersionId)
+            {
+                target.CompleteValidationWithErrors();
                 await _context.SaveChangesAsync(cancellationToken);
+                await finish.CommitAsync(cancellationToken);
             }
-            if (transaction is not null)
-            {
-                await transaction.CommitAsync(cancellationToken);
-                transactionCommitted = true;
-            }
-        }
-        catch
-        {
-            if (transaction is not null && !transactionCommitted)
-                await transaction.RollbackAsync(CancellationToken.None);
-            throw;
+            throw Processing(SpaceJobFailureKind.Input, SpaceErrorCodes.ValidationStale,
+                "The rollback target or Published pointer changed during validation.");
         }
 
-        if (blocked || run!.Status == SpaceValidationStatus.Blocked)
+        var now = RequireUtcNow();
+        var run = SpaceValidationRun.CreateQueued(
+            operation.TenantId, target.Id, target.ContentRevision, result.ContentHash, SpaceValidationRuleSet.Version,
+            profile.AdapterId, profile.CapabilityHash, operation.RequestedBy, now, operation.JobId, operation.CorrelationId);
+        run.Start(now);
+        foreach (var candidate in result.Issues)
         {
-            throw Processing(
-                SpaceJobFailureKind.Input,
-                SpaceErrorCodes.ValidationBlocked,
-                "The historical snapshot is blocked by current validation rules.");
+            _context.Issues.Add(SpaceModelIssue.Create(
+                run.TenantId, run.ModelVersionId, candidate.SourceId, run.JobId, candidate.Severity, candidate.Code,
+                candidate.SourceRef, candidate.TargetLogicalId, candidate.MessageArgsJson, candidate.SuggestedActionCode,
+                candidate.GenerationRunId, candidate.GenerationProposalId, run.Id, candidate.Category, candidate.FieldPath,
+                candidate.EvidenceJson));
         }
-        return ValidationOutput(
-            execution.Lease.SubjectId,
-            run,
-            reused: false);
+        if (result.BlockingCount == 0)
+        {
+            run.Pass(result.BlockingCount, result.WarningCount, result.InfoCount, now);
+            target.MarkReady(result.ContentHash, SpaceValidationRuleSet.Version, profile.CapabilityHash);
+            operation.MarkValidationPassed(run.Id);
+        }
+        else
+        {
+            run.Block(result.BlockingCount, result.WarningCount, result.InfoCount, now);
+            target.CompleteValidationWithErrors();
+            operation.MarkValidationBlocked(run.Id);
+        }
+        _context.ValidationRuns.Add(run);
+        await _context.SaveChangesAsync(cancellationToken);
+        await finish.CommitAsync(cancellationToken);
+        return ValidationOutput(operation.Id, run, reused: false);
     }
 
-    private async Task<SpaceJobStepOutput> QueuePublishAsync(
-        SpaceJobStepExecution execution,
-        CancellationToken cancellationToken)
+    private async Task<SpaceJobStepOutput> ReadValidationAsync(SpaceHistoricalRepublish operation, CancellationToken cancellationToken)
     {
-        _context.ChangeTracker.Clear();
-        var state = await LoadStateAsync(execution.Lease, cancellationToken);
-        if (state.Operation.PublishAttemptId.HasValue)
+        var run = await _context.ValidationRuns.AsNoTracking()
+            .SingleAsync(value => value.Id == operation.ValidationRunId, cancellationToken);
+        return ValidationOutput(operation.Id, run, reused: true);
+    }
+
+    private static void EnsureActiveDraft(RepublishState state)
+    {
+        if (state.Model.ActiveDraftVersionId != state.Target.Id)
+            throw Processing(SpaceJobFailureKind.Input, SpaceErrorCodes.VersionStateInvalid,
+                "The historical clone no longer owns its draft reservation.");
+    }
+
+    private static void EnsureValidationPhase(RepublishState state)
+    {
+        EnsureActiveDraft(state);
+        if (state.Operation.Status != SpaceHistoricalRepublishStatus.SnapshotCloned ||
+            state.Target.Status is not (SpaceVersionStatus.Draft or SpaceVersionStatus.Validating))
         {
-            var existing = await _context.PublishAttempts
-                .AsNoTracking()
-                .SingleAsync(
-                    value =>
-                        value.Id == state.Operation.PublishAttemptId.Value,
-                    cancellationToken);
-            return Output(
-                new
-                {
-                    state.Operation.Id,
-                    publishAttemptId = existing.Id,
-                    status = existing.Status.ToString(),
-                    reused = true,
-                });
+            throw Processing(SpaceJobFailureKind.Input, SpaceErrorCodes.VersionStateInvalid,
+                "The historical clone cannot enter validation from its current state.");
         }
-        if (state.Operation.Status !=
-                SpaceHistoricalRepublishStatus.ValidationPassed ||
+        if (state.Model.CurrentPublishedVersionId != state.Operation.ExpectedPublishedVersionId)
+            throw Processing(SpaceJobFailureKind.Input, SpaceErrorCodes.PublishedVersionChanged,
+                "The Published version changed before rollback validation.");
+    }
+
+    private async Task<SpaceJobStepOutput> QueuePublishAsync(SpaceJobLease lease, CancellationToken cancellationToken)
+    {
+        var state = await LoadStateAsync(lease, cancellationToken);
+        var child = await FindChildAsync(state, cancellationToken);
+        if (child is not null)
+        {
+            if (!state.Operation.PublishAttemptId.HasValue)
+            {
+                // Recover an older child commit where only the parent's link is missing.
+                await using var write = await SpaceArtifactWriteTransaction.BeginMetadataAsync(
+                    _context, lease, _writeAuthority, cancellationToken);
+                state = await LoadStateAsync(lease, cancellationToken);
+                child = await FindChildAsync(state, cancellationToken) ?? throw HistoricalChildConflict();
+                if (!state.Operation.PublishAttemptId.HasValue)
+                {
+                    state.Operation.MarkPublishQueued(child.AttemptId);
+                    await _context.SaveChangesAsync(cancellationToken);
+                    await write.CommitAsync(cancellationToken);
+                }
+            }
+            return QueueOutput(state.Operation, child);
+        }
+
+        EnsureActiveDraft(state);
+        if (state.Operation.Status != SpaceHistoricalRepublishStatus.ValidationPassed ||
             !state.Operation.ValidationRunId.HasValue ||
             state.Target.Status != SpaceVersionStatus.Ready)
         {
-            throw Processing(
-                SpaceJobFailureKind.Input,
-                SpaceErrorCodes.ValidationBlocked,
+            throw Processing(SpaceJobFailureKind.Input, SpaceErrorCodes.ValidationBlocked,
                 "The historical clone does not have a passed current validation.");
         }
-        if (state.Model.CurrentPublishedVersionId !=
-            state.Operation.ExpectedPublishedVersionId)
-        {
-            throw Processing(
-                SpaceJobFailureKind.Input,
-                SpaceErrorCodes.PublishedVersionChanged,
+        if (state.Model.CurrentPublishedVersionId != state.Operation.ExpectedPublishedVersionId)
+            throw Processing(SpaceJobFailureKind.Input, SpaceErrorCodes.PublishedVersionChanged,
                 "The Published version changed before the rollback publish was queued.");
-        }
-        var validation = await _context.ValidationRuns
-            .AsNoTracking()
-            .SingleAsync(
-                value => value.Id == state.Operation.ValidationRunId.Value,
-                cancellationToken);
-        if (validation.Status != SpaceValidationStatus.Passed)
-        {
-            throw Processing(
-                SpaceJobFailureKind.Input,
-                SpaceErrorCodes.ValidationBlocked,
-                "The rollback validation did not pass.");
-        }
-        var preview = await _preview.GetPreviewAsync(
-            state.Target.Id,
-            floorLogicalId: null,
-            objectType: null,
-            action: null,
-            impactCode: null,
-            includeNoOp: false,
-            limit: 1,
-            cursor: null,
-            cancellationToken);
-        if (!preview.Publishable)
-        {
-            throw Processing(
-                SpaceJobFailureKind.Input,
-                SpaceErrorCodes.ValidationBlocked,
-                "The rollback publish plan contains blocking impact.");
-        }
-        if (preview.ValidationWarningCount > 0)
-        {
-            throw Processing(
-                SpaceJobFailureKind.Input,
-                SpaceErrorCodes.PublishWarningAcknowledgementRequired,
-                "The rollback validation contains Warnings. Open the " +
-                "generated Ready version in publish preview and confirm " +
-                "the bound Warning set before publishing.");
-        }
 
+        var validation = await _context.ValidationRuns.AsNoTracking()
+            .SingleAsync(value => value.Id == state.Operation.ValidationRunId.Value, cancellationToken);
+        if (validation.Status != SpaceValidationStatus.Passed)
+            throw Processing(SpaceJobFailureKind.Input, SpaceErrorCodes.ValidationBlocked, "The rollback validation did not pass.");
+
+        var preview = await _preview.GetPreviewAsync(
+            state.Target.Id, floorLogicalId: null, objectType: null, action: null, impactCode: null,
+            includeNoOp: false, limit: 1, cursor: null, cancellationToken);
+        if (!preview.Publishable)
+            throw Processing(SpaceJobFailureKind.Input, SpaceErrorCodes.ValidationBlocked,
+                "The rollback publish plan contains blocking impact.");
+        if (preview.ValidationWarningCount > 0)
+            throw Processing(SpaceJobFailureKind.Input, SpaceErrorCodes.PublishWarningAcknowledgementRequired,
+                "The rollback validation contains Warnings. Open the generated Ready version in publish preview and confirm the bound Warning set before publishing.");
+
+        var operation = state.Operation;
         var publish = await _publish.StartHistoricalRepublishAsync(
             state.Target.Id,
             new CreateSpacePublishAttemptRequest(
-                state.Operation.ExpectedPublishedVersionId,
-                validation.Id,
-                preview.PlanHash,
-                state.Operation.ApprovalReference),
-            $"historical-republish:{state.Operation.Id:N}",
+                operation.ExpectedPublishedVersionId, validation.Id, preview.PlanHash, operation.ApprovalReference),
+            ChildKey(operation.Id),
             new SpaceHistoricalRepublishPublishContext(
-                state.Operation.Id,
-                state.Operation.HistoricalVersionId,
-                state.Operation.Reason,
-                state.Operation.RequestedBy),
+                operation.Id, operation.HistoricalVersionId, operation.Reason, operation.RequestedBy)
+            { ParentLease = lease },
             cancellationToken);
-
-        _context.ChangeTracker.Clear();
-        var operation = await _context.HistoricalRepublishes.SingleAsync(
-            value => value.Id == state.Operation.Id,
-            cancellationToken);
-        operation.MarkPublishQueued(publish.Attempt.Id);
-        await _context.SaveChangesAsync(CancellationToken.None);
-        return Output(
-            new
-            {
-                operation.Id,
-                publishAttemptId = publish.Attempt.Id,
-                publishJobId = publish.Attempt.JobId,
-                publish.Attempt.PlanHash,
-                publish.IdempotentReplay,
-            });
+        return Output(new { operation.Id, publishAttemptId = publish.Attempt.Id,
+            publishJobId = publish.Attempt.JobId, publish.Attempt.PlanHash, publish.IdempotentReplay });
     }
+
+    private async Task<HistoricalChild?> FindChildAsync(RepublishState state, CancellationToken cancellationToken)
+    {
+        var operation = state.Operation;
+        var key = ChildKey(operation.Id);
+        var attempt = await _context.PublishAttempts.AsNoTracking()
+            .SingleOrDefaultAsync(value => value.BusinessIdempotencyKey == key, cancellationToken);
+        if (attempt is null)
+            return operation.PublishAttemptId.HasValue ? throw HistoricalChildConflict() : null;
+
+        if (operation.Status is not (SpaceHistoricalRepublishStatus.ValidationPassed or SpaceHistoricalRepublishStatus.PublishQueued) ||
+            operation.PublishAttemptId is { } linked && linked != attempt.Id ||
+            attempt.SiteId != operation.SiteId || attempt.TargetVersionId != operation.TargetVersionId ||
+            attempt.BaseVersionId != operation.ExpectedPublishedVersionId || attempt.RequestedBy != operation.RequestedBy)
+            throw HistoricalChildConflict();
+
+        var plan = await _context.PublishPlans.AsNoTracking().SingleAsync(value => value.Id == attempt.PublishPlanId, cancellationToken);
+        var audit = await _context.PublishAuditEvents.AsNoTracking()
+            .SingleOrDefaultAsync(value => value.AttemptId == attempt.Id &&
+                value.EventType == SpacePublishAuditEventType.HistoricalRepublishQueued, cancellationToken);
+        if (audit is null || audit.ActorId != operation.RequestedBy ||
+            plan.TargetVersionId != operation.TargetVersionId || plan.SiteId != operation.SiteId ||
+            plan.BaseVersionId != operation.ExpectedPublishedVersionId || plan.ValidationRunId != operation.ValidationRunId)
+            throw HistoricalChildConflict();
+
+        var evidence = JsonSerializer.Deserialize<HistoricalChildEvidence>(audit.EvidenceJson, Json);
+        var request = new CreateSpacePublishAttemptRequest(
+            operation.ExpectedPublishedVersionId, plan.ValidationRunId, plan.PlanHash, operation.ApprovalReference);
+        if (evidence != new HistoricalChildEvidence(operation.Id, operation.HistoricalVersionId,
+                operation.ExpectedPublishedVersionId, operation.TargetVersionId, plan.ValidationRunId, operation.Reason) ||
+            attempt.RequestHash != SpacePublishOrchestrator.RequestHash(operation.TargetVersionId, request))
+            throw HistoricalChildConflict();
+
+        var originalJob = await _context.Jobs.AsNoTracking().SingleAsync(value => value.Id == audit.JobId, cancellationToken);
+        if (originalJob.JobType != SpaceJobType.Publish || originalJob.SubjectType != SpaceJobSubjectType.PublishAttempt ||
+            originalJob.SubjectId != attempt.Id || originalJob.InputHash != plan.PlanHash ||
+            originalJob.RequestedBy != operation.RequestedBy)
+            throw HistoricalChildConflict();
+
+        return new HistoricalChild(attempt.Id, originalJob.Id, plan.PlanHash);
+    }
+
+    private static string ChildKey(Guid id) => $"historical-republish:{id:N}";
+
+    private static SpaceJobProcessingException HistoricalChildConflict() =>
+        Processing(SpaceJobFailureKind.Security, SpaceErrorCodes.IdempotencyConflict,
+            "The stored historical publish child does not match its original request.");
+
+    private static SpaceJobStepOutput QueueOutput(SpaceHistoricalRepublish operation, HistoricalChild child) =>
+        Output(new { operation.Id, publishAttemptId = child.AttemptId, publishJobId = child.JobId,
+            child.PlanHash, idempotentReplay = true });
+
+    private sealed record HistoricalChild(Guid AttemptId, Guid JobId, string PlanHash);
+
+    private sealed record HistoricalChildEvidence(Guid RepublishId, Guid HistoricalVersionId, Guid ExpectedPublishedVersionId,
+        Guid TargetVersionId, Guid ValidationRunId, string Reason);
 
     private async Task<RepublishState> LoadStateAsync(
         SpaceJobLease lease,
         CancellationToken cancellationToken)
     {
+        _context.ChangeTracker.Clear();
         var operation = await _context.HistoricalRepublishes
                             .SingleOrDefaultAsync(
                                 value => value.Id == lease.SubjectId,
@@ -941,6 +858,7 @@ public sealed class SpaceHistoricalRepublishJobExecutor :
             target.ModelId != model.Id ||
             target.BasedOnVersionId != historical.Id ||
             target.CloneOperationId != operation.Id ||
+            target.Purpose != SpaceModelVersionPurpose.Production ||
             historical.Purpose != SpaceModelVersionPurpose.Production ||
             historical.Status != SpaceVersionStatus.Superseded ||
             string.IsNullOrWhiteSpace(historical.ContentHash))
@@ -967,8 +885,15 @@ public sealed class SpaceHistoricalRepublishJobExecutor :
     private static SpaceJobStepOutput ValidationOutput(
         Guid republishId,
         SpaceValidationRun run,
-        bool reused) =>
-        Output(
+        bool reused)
+    {
+        if (run.Status == SpaceValidationStatus.Blocked)
+            throw Processing(SpaceJobFailureKind.Input, SpaceErrorCodes.ValidationBlocked,
+                "The historical snapshot is blocked by current validation rules.");
+        if (run.Status != SpaceValidationStatus.Passed)
+            throw Processing(SpaceJobFailureKind.Bug, SpaceErrorCodes.JobProcessorFailed,
+                "The historical republish references a non-terminal validation.");
+        return Output(
             new
             {
                 republishId,
@@ -980,6 +905,7 @@ public sealed class SpaceHistoricalRepublishJobExecutor :
                 run.InfoCount,
                 reused,
             });
+    }
 
     private static SpaceJobStepOutput Output<T>(T value)
     {

@@ -31,6 +31,7 @@ public sealed partial class SpacePublishOrchestrator :
     private readonly EfSpacePublishSnapshotReader _snapshots;
     private readonly ILogger<SpacePublishOrchestrator> _logger;
     private readonly ISpaceDesignWriteAuthority? _writeAuthority;
+    private readonly ISpaceArtifactWriteAuthority? _historicalWriteAuthority;
 
     public SpacePublishOrchestrator(
         SpaceContext context,
@@ -42,7 +43,8 @@ public sealed partial class SpacePublishOrchestrator :
         ISpaceRuntimeMaterializer runtime,
         SpacePublishPlanEngine planEngine,
         ILogger<SpacePublishOrchestrator>? logger = null,
-        ISpaceDesignWriteAuthority? writeAuthority = null)
+        ISpaceDesignWriteAuthority? writeAuthority = null,
+        ISpaceArtifactWriteAuthority? historicalWriteAuthority = null)
     {
         _context = context;
         _execution = execution;
@@ -55,6 +57,7 @@ public sealed partial class SpacePublishOrchestrator :
         _snapshots = new EfSpacePublishSnapshotReader(context);
         _logger = logger ?? NullLogger<SpacePublishOrchestrator>.Instance;
         _writeAuthority = writeAuthority;
+        _historicalWriteAuthority = historicalWriteAuthority;
     }
 
     public Task<CreateSpacePublishAttemptResponse> StartAsync(
@@ -98,6 +101,13 @@ public sealed partial class SpacePublishOrchestrator :
         var requestHash = RequestHash(versionId, request);
         var correlationId = CorrelationId();
         var requestedBy = historicalContext?.RequestedBy ?? _execution.ActorId;
+        var parentLease = historicalContext?.ParentLease;
+        if (parentLease is not null &&
+            (parentLease.JobType != SpaceJobType.HistoricalRepublish ||
+             parentLease.SubjectType != SpaceJobSubjectType.HistoricalRepublish ||
+             parentLease.SubjectId != historicalContext!.RepublishId ||
+             parentLease.TenantId != _execution.TenantId))
+            throw new SpaceJobLeaseLostException("The publish request does not belong to the historical republish Job.");
 
         var replay = await _context.PublishAttempts
             .AsNoTracking()
@@ -252,13 +262,24 @@ public sealed partial class SpacePublishOrchestrator :
         }
 
         var plannedContentRevision = target.ContentRevision;
-
         var authority = historicalContext is null ? _writeAuthority : null;
+        if (historicalContext is not null && parentLease is null && _context.Database.IsNpgsql())
+            throw new SpaceJobLeaseLostException("A current historical republish Job is required to queue publishing.");
+
         SpacePublishAttempt attempt;
-        await using (var transaction =
-                     await SpaceDesignWriteTransaction.BeginForPermissionAsync(
-                         _context, authority, PublishPermission, cancellationToken))
+        await using (var workerWrite = parentLease is not null
+                         ? await SpaceArtifactWriteTransaction.BeginMetadataAsync(
+                             _context, parentLease, _historicalWriteAuthority, cancellationToken)
+                         : null)
+        await using (var transaction = workerWrite is null
+                         ? await SpaceDesignWriteTransaction.BeginForPermissionAsync(
+                             _context, authority, PublishPermission, cancellationToken)
+                         : null)
         {
+            Task CommitAsync() => workerWrite is null
+                ? SpaceDesignWriteTransaction.CommitAsync(_context, authority, transaction!, cancellationToken)
+                : workerWrite.CommitAsync(cancellationToken);
+
             var concurrentReplay = await _context.PublishAttempts
                 .SingleOrDefaultAsync(
                     value =>
@@ -286,7 +307,7 @@ public sealed partial class SpacePublishOrchestrator :
                         request,
                         cancellationToken);
                 }
-                await SpaceDesignWriteTransaction.CommitAsync(_context, authority, transaction, cancellationToken);
+                await CommitAsync();
                 return new CreateSpacePublishAttemptResponse(
                     await ToDtoAsync(
                         concurrentReplay.Id,
@@ -472,8 +493,9 @@ public sealed partial class SpacePublishOrchestrator :
                         queuedAudit.EventHash));
             }
             target.BeginPublishing();
+            historicalRepublish?.MarkPublishQueued(attempt.Id);
             await _context.SaveChangesAsync(cancellationToken);
-            await SpaceDesignWriteTransaction.CommitAsync(_context, authority, transaction, cancellationToken);
+            await CommitAsync();
         }
 
         return new CreateSpacePublishAttemptResponse(
@@ -532,9 +554,11 @@ public sealed partial class SpacePublishOrchestrator :
             operation.ExpectedPublishedVersionId !=
             request.ExpectedPublishedVersionId ||
             operation.ValidationRunId != validation.Id ||
+            context.ParentLease is { } lease && operation.JobId != lease.JobId ||
             operation.Status != SpaceHistoricalRepublishStatus.ValidationPassed ||
             operation.RequestedBy != context.RequestedBy ||
             !string.Equals(operation.Reason, context.Reason, StringComparison.Ordinal) ||
+            model.ActiveDraftVersionId != target.Id ||
             target.BasedOnVersionId != operation.HistoricalVersionId ||
             target.CloneOperationId != operation.Id)
         {
@@ -1439,7 +1463,7 @@ public sealed partial class SpacePublishOrchestrator :
         return normalized;
     }
 
-    private static string RequestHash(
+    internal static string RequestHash(
         Guid versionId,
         CreateSpacePublishAttemptRequest request) =>
         Hash(string.Join(
