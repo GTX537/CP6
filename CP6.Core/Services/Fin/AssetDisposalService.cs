@@ -49,6 +49,8 @@ public sealed class AssetDisposalService : IAssetDisposalService
         var period = await _db.FiscalPeriods.FindAsync(d.FiscalPeriodId);
         if (period == null || period.Status != PeriodStatus.Open) return FinResult.Fail("FA007");
         if ((d.Proceeds > 0m || d.DisposalExpense > 0m) && d.ReceiptBankAccountId == null) return FinResult.Fail("FA010");
+        if (_db.Database.IsNpgsql() && d.ReceiptBankAccountId is Guid bankAccountId
+            && !await _db.GlAccounts.AnyAsync(a => a.Id == bankAccountId)) return FinResult.Fail("FA010");
 
         d.OriginalValue = card.OriginalValue;
         d.AccumulatedDepreciation = card.AccumulatedDepreciation;
@@ -60,6 +62,17 @@ public sealed class AssetDisposalService : IAssetDisposalService
         d.ClearingAccountId = clearing.Value;
         d.GainLossAccountId = gainLoss.Value;
 
+        if (_db.Database.IsNpgsql())
+        {
+            d.TenantId = _db.CurrentTenantId;
+            d.PriorStatus = null;
+            d.JournalEntryId = null;
+            d.FinalDeprecEntryId = null;
+            d.ConfirmedAt = null;
+            d.ConfirmedBy = null;
+            d.ReversedAt = null;
+            d.ReversedBy = null;
+        }
         d.Id = d.Id == Guid.Empty ? Guid.NewGuid() : d.Id;
         d.No = await _seq.NextAsync("FAD", d.DisposalDate);
         d.Status = AssetDisposalStatus.Draft;
@@ -125,7 +138,7 @@ public sealed class AssetDisposalService : IAssetDisposalService
 
         var fin = await _deprec.AccrueDisposalFinalAsync(card.Id, d.FiscalPeriodId, userId);
         if (!fin.Ok) return FinResult.Fail(fin.Code ?? "FA006");
-        if (!fin.Skipped) d.FinalDeprecEntryId = fin.DeprecEntryId;
+        if (_db.Database.IsNpgsql() || !fin.Skipped) d.FinalDeprecEntryId = fin.DeprecEntryId;
 
         card = await _db.AssetCards.FindAsync(d.AssetCardId);
         d.AccumulatedDepreciation = card!.AccumulatedDepreciation;

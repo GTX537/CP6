@@ -2,6 +2,7 @@ using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -44,20 +45,24 @@ public class AssetDepreciationController : ControllerBase
 
     [HttpPost("run")]
     [RequirePermission("fin-asset-deprec", "run")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Run([FromQuery] Guid periodId)
         => Fin(await _svc.RunAsync(periodId, CurrentUser, DepreciationRunMode.Manual));
 
     [HttpPut("entry/{entryId}/workload")]
     [RequirePermission("fin-asset-deprec", "run")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> SetWorkload(Guid entryId, [FromBody] WorkloadReq r)
         => Fin(await _svc.SetWorkloadAsync(entryId, r.Workload));
 
     [HttpPost("{runId}/post")]
     [RequirePermission("fin-asset-deprec", "post")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Post(Guid runId) => Fin(await _svc.PostAsync(runId, CurrentUser));
 
     [HttpPost("{runId}/reverse")]
     [RequirePermission("fin-asset-deprec", "reverse")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Reverse(Guid runId, [FromBody] ReasonReq r)
         => Fin(await _svc.ReverseAsync(runId, CurrentUser, r.Reason));
 }

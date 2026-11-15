@@ -1,5 +1,7 @@
+using System.Data;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Fin;
+using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,10 +15,11 @@ public class AssetDepreciationWorker : BackgroundService
     private static readonly TimeSpan Interval = TimeSpan.FromHours(24);
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<AssetDepreciationWorker> _logger;
+    private readonly TimeProvider _clock;
 
-    public AssetDepreciationWorker(IServiceScopeFactory scopeFactory, ILogger<AssetDepreciationWorker> logger)
+    public AssetDepreciationWorker(IServiceScopeFactory scopeFactory, ILogger<AssetDepreciationWorker> logger, TimeProvider? clock = null)
     {
-        _scopeFactory = scopeFactory; _logger = logger;
+        _scopeFactory = scopeFactory; _logger = logger; _clock = clock ?? TimeProvider.System;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -35,14 +38,27 @@ public class AssetDepreciationWorker : BackgroundService
         finally { _logger.LogInformation("固定资产折旧 worker 停止"); }
     }
 
-    public async Task ProcessOnceAsync(CancellationToken ct = default)
+    public Task ProcessOnceAsync(CancellationToken ct = default) => ProcessOnceAsync(_clock.GetLocalNow().Date, ct);
+
+    internal async Task ProcessOnceAsync(DateTime today, CancellationToken ct = default)
     {
         await TenantScopeRunner.ForEachTenantAsync(_scopeFactory, async (sp, tenantId, c) =>
         {
-            var db = sp.GetRequiredService<CP6Context>();
-            var dep = sp.GetRequiredService<IAssetDepreciationService>();
-            var today = DateTime.Today;
             if (today.Day != DateTime.DaysInMonth(today.Year, today.Month)) return;
+
+            var db = sp.GetRequiredService<CP6Context>();
+            await using var transaction = db.Database.IsNpgsql()
+                ? await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, c)
+                : null;
+            DateTime? expiresAt = null;
+            if (transaction != null)
+            {
+                await AuthenticationCompletionGateV1.AcquireAsync(db, c);
+                var tenant = await db.Sys_Tenants.AsNoTracking().Where(t => t.Id == tenantId)
+                    .Select(t => new { t.Enable, t.ExpireDate }).SingleOrDefaultAsync(c);
+                if (tenant is not { Enable: true } || tenant.ExpireDate <= _clock.GetLocalNow().DateTime) return;
+                expiresAt = tenant.ExpireDate;
+            }
 
             var period = await db.FiscalPeriods.FirstOrDefaultAsync(
                 p => p.Year == today.Year && p.Month == today.Month && p.Status == PeriodStatus.Open, c);
@@ -52,9 +68,26 @@ public class AssetDepreciationWorker : BackgroundService
                 && r.RunMode != DepreciationRunMode.DisposalFinal && r.Status != DepreciationRunStatus.Reversed, c);
             if (batchExists) return;
 
+            var dep = sp.GetRequiredService<IAssetDepreciationService>();
             var r = await dep.RunAsync(period.Id, "worker", DepreciationRunMode.Worker);
-            if (r.Ok) _logger.LogInformation("[AssetDeprec] 租户 {Tenant} {Ym} 已备折旧草稿待复核", tenantId, $"{period.Year}-{period.Month:D2}");
-            else _logger.LogWarning("[AssetDeprec] 租户 {Tenant} 备草稿失败：{Code}", tenantId, r.Code);
+            if (!r.Ok)
+            {
+                _logger.LogWarning("[AssetDeprec] 租户 {Tenant} 备草稿失败：{Code}", tenantId, r.Code);
+                return;
+            }
+
+            if (transaction != null)
+            {
+                c.ThrowIfCancellationRequested();
+                if (expiresAt <= _clock.GetLocalNow().DateTime) return;
+                try { await transaction.CommitAsync(c); }
+                catch (Exception error)
+                {
+                    // The next scan first checks for the committed batch for this period.
+                    throw new InvalidOperationException("ASSET_DEPRECIATION_COMMIT_UNKNOWN", error);
+                }
+            }
+            _logger.LogInformation("[AssetDeprec] 租户 {Tenant} {Ym} 已备折旧草稿待复核", tenantId, $"{period.Year}-{period.Month:D2}");
         }, _logger, ct);
     }
 }

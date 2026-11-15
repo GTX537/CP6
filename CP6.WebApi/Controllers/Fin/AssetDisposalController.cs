@@ -1,6 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,6 +33,7 @@ public class AssetDisposalController : ControllerBase
 
     [HttpPost]
     [RequirePermission("fin-asset-disposal", "add")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Create([FromBody] AssetDisposal d)
     {
         var r = await _svc.CreateAsync(d, CurrentUser);
@@ -40,10 +42,12 @@ public class AssetDisposalController : ControllerBase
 
     [HttpPost("{id}/confirm")]
     [RequirePermission("fin-asset-disposal", "confirm")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Confirm(Guid id) => Fin(await _svc.ConfirmAsync(id, CurrentUser));
 
     [HttpPost("{id}/reverse")]
     [RequirePermission("fin-asset-disposal", "reverse")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Reverse(Guid id, [FromBody] ReasonReq r)
         => Fin(await _svc.ReverseAsync(id, CurrentUser, r.Reason));
 }

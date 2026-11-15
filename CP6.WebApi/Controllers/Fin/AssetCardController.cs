@@ -2,6 +2,7 @@ using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
+using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -39,10 +40,16 @@ public class AssetCardController : ControllerBase
 
     [HttpPost]
     [RequirePermission("fin-asset-card", "add")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Create([FromBody] AssetCard card)
     {
         var cat = await _db.AssetCategories.FindAsync(card.CategoryId);
         if (cat == null) return Fin(FinResult.Fail("FA001"));
+        if (_db.Database.IsNpgsql())
+        {
+            if (!await HasValidNewLinksAsync(card)) return Fin(FinResult.Fail("FA001"));
+            card.TenantId = _db.CurrentTenantId;
+        }
         card.Id = Guid.NewGuid();
         card.AssetNo = await _seq.NextAsync("FA", card.AcquisitionDate);
         if (card.UsefulLifeMonths <= 0) card.UsefulLifeMonths = cat.DefaultUsefulLifeMonths;
@@ -62,10 +69,12 @@ public class AssetCardController : ControllerBase
 
     [HttpPut("{id}")]
     [RequirePermission("fin-asset-card", "edit")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Update(Guid id, [FromBody] AssetCard card)
     {
         var e = await _db.AssetCards.FindAsync(id);
         if (e == null) return Fin(FinResult.Fail("FA006"));
+        if (_db.Database.IsNpgsql() && !await HasValidNewLinksAsync(card, e)) return Fin(FinResult.Fail("FA001"));
         e.CostCenterId = card.CostCenterId; e.MachineId = card.MachineId; e.DeptId = card.DeptId;
         e.Custodian = card.Custodian; e.Location = card.Location; e.Remarks = card.Remarks;
         e.DeprecExpenseAccountId = card.DeprecExpenseAccountId;
@@ -75,6 +84,7 @@ public class AssetCardController : ControllerBase
 
     [HttpPost("{id}/activate")]
     [RequirePermission("fin-asset-card", "activate")]
+    [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Activate(Guid id)
     {
         var e = await _db.AssetCards.FindAsync(id);
@@ -88,4 +98,23 @@ public class AssetCardController : ControllerBase
     [HttpGet("{id}/schedule")]
     [RequirePermission("fin-asset-card", "view")]
     public async Task<IActionResult> Schedule(Guid id) => Ok2(await _dep.GetScheduleAsync(id));
+
+    private async Task<bool> HasValidNewLinksAsync(AssetCard card, AssetCard? existing = null)
+    {
+        if (NewLink(card.DeprecExpenseAccountId, existing?.DeprecExpenseAccountId) is Guid expenseAccount
+            && !await _db.GlAccounts.AnyAsync(a => a.Id == expenseAccount)) return false;
+        if (NewLink(card.CostCenterId, existing?.CostCenterId) is Guid center
+            && !await _db.CostCenters.AnyAsync(c => c.Id == center)) return false;
+        if (NewLink(card.DeptId, existing?.DeptId) is Guid department
+            && !await _db.Sys_Depts.AnyAsync(d => d.Id == department)) return false;
+        if (NewLink(card.MachineId, existing?.MachineId) is not Guid machine) return true;
+
+        // Cost-center aliases historically supplied the machine dimension before a MES row existed.
+        var alias = machine.ToString();
+        return await _db.Machines.AnyAsync(m => m.Id == machine)
+            || await _db.CostCenters.AnyAsync(c => c.LinkMachineId == alias);
+    }
+
+    private static Guid? NewLink(Guid? next, Guid? existing) =>
+        next is Guid id && id != Guid.Empty && id != existing ? id : null;
 }
