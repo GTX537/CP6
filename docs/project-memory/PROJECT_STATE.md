@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W613-01 Space 制品后台
+
+CAD 解析与 Excel/CAD 匹配的 File/Artifact 采用 Main 共同根。两个作业均实测租户暂停的两种原生提交顺序及真实提交应答丢失，Match 另测提交前到期。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W613-01/DELIVERY.md)
+
 ## 2026-11-15 · W612-01 工单成本结转
 
 正式财务清单的 40 条待接入 HTTP 写入口均有 PostgreSQL 证据。现有 66 条采用共同栅栏、2 条只读、1 条在写前拒绝。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W612-01/DELIVERY.md)

@@ -19,7 +19,10 @@ namespace CP6.Tests.Erp
     public sealed class SpaceCadFixtureHostingStartup : IHostingStartup
     {
         public void Configure(IWebHostBuilder builder) => builder.ConfigureServices(services =>
-            services.AddScoped<ISpaceCadPreparationProvider, FixturePreparationProvider>());
+        {
+            services.AddScoped<ISpaceCadPreparationProvider, FixturePreparationProvider>();
+            SpaceArtifactWorkerFixture.Configure(services);
+        });
 
         private sealed class FixturePreparationProvider(SpaceContext context) : ISpaceCadPreparationProvider
         {

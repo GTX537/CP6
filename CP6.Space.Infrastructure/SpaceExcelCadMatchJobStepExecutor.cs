@@ -1,4 +1,3 @@
-using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -6,7 +5,6 @@ using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Space.Infrastructure;
 
@@ -14,7 +12,8 @@ public sealed class SpaceExcelCadMatchJobStepExecutor(
     SpaceContext context,
     IServiceProvider services,
     ISpaceExcelWorkbookReader workbookReader,
-    ISpaceExcelMappingService mappings)
+    ISpaceExcelMappingService mappings,
+    ISpaceArtifactWriteAuthority? writeAuthority = null)
     : ISpaceExcelCadMatchJobStepExecutor
 {
     private const long MaximumArtifactBytes = 200L * 1024L * 1024L;
@@ -175,76 +174,42 @@ public sealed class SpaceExcelCadMatchJobStepExecutor(
         }
         var sha256 = Hash(bytes);
 
-        IDbContextTransaction? transaction = context.Database.IsRelational()
-            ? await context.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken)
-            : null;
-        (Guid FileId, string StorageKey)? committed = null;
-        try
-        {
-            var file = context.Files.Local.FirstOrDefault(item =>
+        await using var write = await SpaceArtifactWriteTransaction.BeginAsync(
+            context, lease, files, writeAuthority, cancellationToken);
+        var file = context.Files.Local.FirstOrDefault(item =>
+                       item.Sha256 == sha256 &&
+                       item.RetentionClass == SpaceFileRetentionClass.Artifact &&
+                       item.State == SpaceFileState.Clean) ??
+                   await context.Files.SingleOrDefaultAsync(
+                       item =>
                            item.Sha256 == sha256 &&
                            item.RetentionClass == SpaceFileRetentionClass.Artifact &&
-                           item.State == SpaceFileState.Clean) ??
-                       await context.Files.SingleOrDefaultAsync(
-                           item =>
-                               item.Sha256 == sha256 &&
-                               item.RetentionClass == SpaceFileRetentionClass.Artifact &&
-                               item.State == SpaceFileState.Clean,
-                           cancellationToken);
-            if (file is null)
-            {
-                file = await PersistFileAsync(
-                    lease.TenantId,
-                    bytes,
-                    sha256,
-                    writes,
-                    cancellationToken);
-                committed = (file.Id, file.StorageKey);
-                context.Files.Add(file);
-            }
-
-            var artifact = SpaceArtifact.Create(
+                           item.State == SpaceFileState.Clean,
+                       cancellationToken);
+        if (file is null)
+        {
+            file = await PersistFileAsync(
                 lease.TenantId,
-                input.Payload.ModelVersionId,
-                input.ExcelSource,
-                file,
-                SpaceArtifactType.ExcelCadMatchPreview,
-                SpaceExcelCadMatchArtifactVersions.ArtifactSchema);
-            artifact.AttachToJob(input.Job);
-            context.Artifacts.Add(artifact);
-            await context.SaveChangesAsync(cancellationToken);
-            if (transaction is not null)
-                await transaction.CommitAsync(cancellationToken);
-            return Output(Checkpoint(artifact, file, value));
+                bytes,
+                sha256,
+                writes,
+                write,
+                cancellationToken);
+            context.Files.Add(file);
         }
-        catch
-        {
-            if (transaction is not null)
-                await transaction.RollbackAsync(CancellationToken.None);
-            if (committed.HasValue)
-            {
-                try
-                {
-                    await files.DeleteAsync(
-                        lease.TenantId,
-                        committed.Value.FileId,
-                        committed.Value.StorageKey,
-                        CancellationToken.None);
-                }
-                catch
-                {
-                    // Retention cleanup remains the fallback for orphaned objects.
-                }
-            }
-            throw;
-        }
-        finally
-        {
-            if (transaction is not null)
-                await transaction.DisposeAsync();
-        }
+
+        var artifact = SpaceArtifact.Create(
+            lease.TenantId,
+            input.Payload.ModelVersionId,
+            input.ExcelSource,
+            file,
+            SpaceArtifactType.ExcelCadMatchPreview,
+            SpaceExcelCadMatchArtifactVersions.ArtifactSchema);
+        artifact.AttachToJob(input.Job);
+        context.Artifacts.Add(artifact);
+        await context.SaveChangesAsync(cancellationToken);
+        await write.CommitAsync(cancellationToken);
+        return Output(Checkpoint(artifact, file, value));
     }
 
     private async Task<MatchInput> LoadInputAsync(
@@ -585,6 +550,7 @@ public sealed class SpaceExcelCadMatchJobStepExecutor(
         byte[] bytes,
         string sha256,
         ISpaceQuarantineStore writes,
+        SpaceArtifactWriteTransaction write,
         CancellationToken cancellationToken)
     {
         var fileId = Guid.NewGuid();
@@ -595,7 +561,7 @@ public sealed class SpaceExcelCadMatchJobStepExecutor(
         try
         {
             await session.Content.WriteAsync(bytes, cancellationToken);
-            await session.CommitAsync(cancellationToken);
+            await write.PublishAsync(fileId, session, cancellationToken);
             var file = SpaceFile.CreateUploading(
                 fileId,
                 tenantId,
