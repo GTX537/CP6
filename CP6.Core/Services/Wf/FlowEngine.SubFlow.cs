@@ -163,7 +163,8 @@ public partial class FlowEngine
                 await _db.SaveChangesAsync(ct);
                 return;
             }
-            catch (DbUpdateConcurrencyException) when (attempt < 2)
+            catch (DbUpdateConcurrencyException) when (attempt < 2
+                && (!_db.Database.IsNpgsql() || _db.Database.CurrentTransaction is null))
             {
                 foreach (var e in _db.ChangeTracker.Entries().ToList()) await e.ReloadAsync(ct);   // 撞版 → 重读 → 状态闸零动作
             }
@@ -190,7 +191,11 @@ public partial class FlowEngine
                 job.Status = ServiceJobStatus.Succeeded;             // 凭据已消费（组未齐也算——组齐由各子终态各自凭据保证）
                 job.CompletedAtUtc = DateTime.UtcNow;
                 try { await _db.SaveChangesAsync(ct); }
-                catch (DbUpdateConcurrencyException) { await _db.Entry(job).ReloadAsync(ct); }
+                catch (DbUpdateConcurrencyException) when (!_db.Database.IsNpgsql()
+                    || _db.Database.CurrentTransaction is null)
+                {
+                    await _db.Entry(job).ReloadAsync(ct);
+                }
             }
         }
     }

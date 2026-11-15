@@ -1,6 +1,10 @@
+using System.Data;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence;
+using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace CP6.Core.Services.Wf;
 
@@ -14,8 +18,8 @@ public interface IWfServiceJobService
 
 /// <summary>
 /// 服务任务异步引擎核心（spec §4.2 主循环 + §4.6 lease reaper）。与 <see cref="FlowEngine"/> 共享同一 scoped
-/// <see cref="CP6Context"/>（DI 注入），故 ResumeServiceTokenAsync/FailServiceTokenAsync 的 token 推进/路由与本表 job
-/// 写在同一 DbContext 上协同（它们各自带 ×3 乐观并发重试 + 内部 SaveChanges；job 实体独立追踪，互不冲突）。
+/// <see cref="CP6Context"/>（DI 注入）。PostgreSQL 在同一 Main 权威事务内提交 token 推进、业务回调、
+/// 通知及作业终态。外部执行器使用已领取的作业身份并在该事务外运行。
 /// <para>正确性护栏：① <b>reaper（P0-4）</b> 只回收 <c>Running &amp;&amp; LockExpiresAtUtc &lt; nowUtc</c> 的过期租约
 /// （未过期租约绝不误杀）；② <b>状态闸（P0-5）</b> 执行前校验 实例 Running &amp;&amp; token Active@job.NodeId，否则标 Cancelled
 /// 不执行（撤回/驳回/token 已离开 → 不重复副作用，配合 executor 幂等闭合崩溃窗口）；③ <b>指数退避（P0-1）</b>
@@ -41,13 +45,16 @@ public sealed class WfServiceJobService : IWfServiceJobService
     private readonly CP6Context _db;
     private readonly FlowEngine _engine;
     private readonly IReadOnlyDictionary<string, IServiceTaskExecutor> _executors;
+    private readonly ILogger<WfServiceJobService>? _logger;
 
-    public WfServiceJobService(CP6Context db, FlowEngine engine, IEnumerable<IServiceTaskExecutor> executors)
+    public WfServiceJobService(CP6Context db, FlowEngine engine, IEnumerable<IServiceTaskExecutor> executors,
+        ILogger<WfServiceJobService>? logger = null)
     {
         _db = db;
         _engine = engine;
         _executors = (executors ?? Array.Empty<IServiceTaskExecutor>())
             .ToDictionary(e => e.Key, StringComparer.OrdinalIgnoreCase);
+        _logger = logger;
     }
 
     public async Task<int> ScanOnceAsync(DateTime nowUtc, string workerId, CancellationToken ct = default)
@@ -69,15 +76,20 @@ public sealed class WfServiceJobService : IWfServiceJobService
         if (expired.Count > 0) await _db.SaveChangesAsync(ct);
 
         // ② 取到期 Pending（reaper 之后查，刚回收的也可能纳入本轮）
-        var jobs = await _db.Wf_ServiceJobs
+        var jobIds = await _db.Wf_ServiceJobs
             .Where(j => j.Status == ServiceJobStatus.Pending && j.NextAttemptAtUtc <= nowUtc)
             .OrderBy(j => j.NextAttemptAtUtc)
             .Take(BatchSize)
+            .Select(j => j.Id)
             .ToListAsync(ct);
 
         int processed = 0;
-        foreach (var job in jobs)
+        foreach (var jobId in jobIds)
         {
+            var job = await _db.Wf_ServiceJobs.SingleOrDefaultAsync(
+                j => j.Id == jobId && j.Status == ServiceJobStatus.Pending && j.NextAttemptAtUtc <= nowUtc, ct);
+            if (job is null) continue;
+
             // ③ lease 抢占：RowVersion 守（生产多 worker 并发，败方 DbUpdateConcurrencyException → reload + 跳过）
             job.Status = ServiceJobStatus.Running;
             job.LockedBy = workerId;
@@ -86,9 +98,6 @@ public sealed class WfServiceJobService : IWfServiceJobService
             try { await _db.SaveChangesAsync(ct); }
             catch (DbUpdateConcurrencyException) { await _db.Entry(job).ReloadAsync(ct); continue; }
 
-            // ── 单 job 隔离（FIX 2）：lease 抢占成功后的处理体（状态闸→执行→恢复/重试/路由）包 try/catch。
-            //    某条 job 抛出（如 executor 之外的引擎/DB 异常）不得中止整批：吞掉 + continue，留其 Running+lease，
-            //    由后续扫描的 reaper（租约过期）回收重投。lease-claim 自身在本 try 之外（已有并发-skip 的 continue）。
             try
             {
                 // ── 子流程内部 Kind 短路（子流程 spec §3.2 worker 兜底入口）：不进 executor 注册表、不走状态闸④
@@ -96,21 +105,22 @@ public sealed class WfServiceJobService : IWfServiceJobService
                 //    引擎内状态闸零动作，凭据照常消费。
                 if (job.Kind == WfJobKind.SubFlowResume)
                 {
-                    var subPayload = SubFlowResumePayload.Parse(job.ActionRefJson);
-                    if (subPayload is null)
+                    if (await CommitClaimAsync(job, async current =>
                     {
-                        job.Status = ServiceJobStatus.Failed;
-                        job.LastError = Trunc("E-WF-025 subFlowResume 载荷非法");
-                        job.CompletedAtUtc = nowUtc;
-                    }
-                    else
-                    {
-                        await _engine.CheckSubFlowGroupAsync(subPayload.ParentTokenId, ct);
-                        job.Status = ServiceJobStatus.Succeeded;
-                        job.CompletedAtUtc = nowUtc;
-                    }
-                    await _db.SaveChangesAsync(ct);
-                    processed++;
+                        var payload = SubFlowResumePayload.Parse(current.ActionRefJson);
+                        if (payload is null)
+                        {
+                            current.Status = ServiceJobStatus.Failed;
+                            current.LastError = Trunc("E-WF-025 subFlowResume 载荷非法");
+                        }
+                        else
+                        {
+                            await _engine.CheckSubFlowGroupAsync(payload.ParentTokenId, ct);
+                            current.Status = ServiceJobStatus.Succeeded;
+                        }
+                        current.CompletedAtUtc = nowUtc;
+                        return true;
+                    }, ct)) processed++;
                     continue;
                 }
 
@@ -120,10 +130,8 @@ public sealed class WfServiceJobService : IWfServiceJobService
                 if (inst is null || inst.Status != FlowInstanceStatus.Running
                     || tok is null || tok.Status != FlowTokenStatus.Active || tok.NodeId != job.NodeId)
                 {
-                    job.Status = ServiceJobStatus.Cancelled;
-                    job.CompletedAtUtc = nowUtc;
-                    await _db.SaveChangesAsync(ct);
-                    processed++;
+                    if (await CommitClaimAsync(job, current => CompleteAsync(current, null, nowUtc, ct), ct))
+                        processed++;
                     continue;
                 }
 
@@ -160,50 +168,111 @@ public sealed class WfServiceJobService : IWfServiceJobService
                         ActionRefJson = job.ActionRefJson,
                     };
                     try { result = await exec.ExecuteAsync(sctx); }
-                    catch (Exception ex) { result = ServiceTaskResult.Fail(ex.Message); }   // executor 异常不炸引擎
+                    catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+                    catch (Exception ex) { result = ServiceTaskResult.Fail(ex.Message); }
                 }
 
-                // ⑥ 成功 → 恢复 token（幂等，内部 advance/dispatch/SaveChanges + ×3 重试）；⑦ 失败 → 退避重试 / 耗尽路由
-                if (result.Success)
-                {
-                    await _engine.ResumeServiceTokenAsync(job.InstanceId, job.TokenId, job.NodeId, result.OutputVars);
-                    job.Status = ServiceJobStatus.Succeeded;
-                    job.CompletedAtUtc = nowUtc;
-                    await _db.SaveChangesAsync(ct);
-                }
-                else
-                {
-                    if (job.AttemptCount < job.MaxAttempts)
-                    {
-                        job.Status = ServiceJobStatus.Pending;
-                        job.NextAttemptAtUtc = nowUtc + TimeSpan.FromSeconds(BackoffBaseSec * Math.Pow(2, job.AttemptCount - 1));
-                        job.LastError = Trunc(result.Error);
-                        job.LockedBy = null;
-                        job.LockedAtUtc = null;
-                        job.LockExpiresAtUtc = null;
-                        await _db.SaveChangesAsync(ct);
-                    }
-                    else
-                    {
-                        // FIX 1：先 FailServiceTokenAsync（其 ×3 重试内部 ChangeTracker.ReloadAsync 会重载本 job，
-                        //         若先置终态字段会被 reload 回滚成 Running/丢 LastError）→ 路由完成后再置终态字段并保存（clobber-proof，对齐成功路径次序）。
-                        await _engine.FailServiceTokenAsync(job.InstanceId, job.TokenId, job.NodeId, result.Error);
-                        job.Status = ServiceJobStatus.Failed;
-                        job.LastError = Trunc(result.Error);
-                        job.CompletedAtUtc = nowUtc;
-                        await _db.SaveChangesAsync(ct);
-                    }
-                }
-                processed++;
+                if (await CommitClaimAsync(job, current => CompleteAsync(current, result, nowUtc, ct), ct))
+                    processed++;
             }
-            catch (Exception)
+            catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+            catch (Exception error)
             {
-                // 单 job 隔离：留其 Running+lease，由 reaper 回收重投；不中止整批，不 rethrow（无 logger，吞掉）。
-                continue;
+                // An ambiguous commit keeps its persisted outcome. The next scan only reaps a still-running lease.
+                _db.ChangeTracker.Clear();
+                _logger?.LogWarning(error, "Workflow service job {JobId} did not return a completion result.", jobId);
             }
         }
 
         return processed;
+    }
+
+    private async Task<bool> CommitClaimAsync(Wf_ServiceJob claimed, Func<Wf_ServiceJob, Task<bool>> complete,
+        CancellationToken ct)
+    {
+        if (!_db.Database.IsNpgsql())
+        {
+            if (!await complete(claimed)) return false;
+            await _db.SaveChangesAsync(ct);
+            return true;
+        }
+
+        // The worker context has committed its technical claim. Re-read business state after the Main lock.
+        _db.ChangeTracker.Clear();
+        await using var tx = await _db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
+        try
+        {
+            await AuthenticationCompletionGateV1.AcquireAsync(_db, ct);
+            var tenantId = _db.CurrentTenantId;
+            var tenant = await _db.Sys_Tenants.AsNoTracking().Where(t => t.Id == tenantId)
+                .Select(t => new { t.Enable, t.ExpireDate }).SingleOrDefaultAsync(ct);
+            if (tenant is not { Enable: true } || tenant.ExpireDate <= DateTime.Now)
+                return false;
+
+            var job = await _db.Wf_ServiceJobs.FromSqlInterpolated($"""
+                SELECT j.* FROM public."Wf_ServiceJob" AS j
+                WHERE j."TenantId" = {tenantId} AND j."Id" = {claimed.Id} FOR UPDATE
+                """).SingleOrDefaultAsync(ct);
+            // PostgreSQL stores timestamps to microsecond precision.
+            if (job is null || job.Status != ServiceJobStatus.Running || job.LockedBy != claimed.LockedBy
+                || job.LockedAtUtc?.Ticks / 10 != claimed.LockedAtUtc?.Ticks / 10
+                || job.AttemptCount != claimed.AttemptCount || job.LockExpiresAtUtc is not DateTime deadline
+                || deadline <= await DatabaseUtcClock.ReadUtcNowAsync(_db, ct))
+                return false;
+
+            if (!await complete(job)) return false;
+            await _db.SaveChangesAsync(ct);
+            if (tenant.ExpireDate <= DateTime.Now || deadline <= await DatabaseUtcClock.ReadUtcNowAsync(_db, ct))
+                return false;
+            await tx.CommitAsync(ct);
+            return true;
+        }
+        finally
+        {
+            _db.ChangeTracker.Clear();
+        }
+    }
+
+    private async Task<bool> CompleteAsync(Wf_ServiceJob job, ServiceTaskResult? result, DateTime nowUtc, CancellationToken ct)
+    {
+        var active = await _db.Wf_FlowInstances.AnyAsync(i => i.Id == job.InstanceId
+            && i.Status == FlowInstanceStatus.Running, ct)
+            && await _db.Wf_FlowTokens.AnyAsync(t => t.Id == job.TokenId
+                && t.Status == FlowTokenStatus.Active && t.NodeId == job.NodeId, ct);
+        if (!active)
+        {
+            job.Status = ServiceJobStatus.Cancelled;
+        }
+        else if (result is null)
+        {
+            // A claim from an outdated pre-execution read can be reaped and executed by the next scan.
+            return false;
+        }
+        else if (result.Success)
+        {
+            await _engine.ResumeServiceTokenAsync(job.InstanceId, job.TokenId, job.NodeId, result.OutputVars);
+            job.Status = ServiceJobStatus.Succeeded;
+        }
+        else
+        {
+            if (job.AttemptCount < job.MaxAttempts)
+            {
+                job.Status = ServiceJobStatus.Pending;
+                job.LastError = Trunc(result.Error);
+                job.NextAttemptAtUtc = nowUtc + TimeSpan.FromSeconds(BackoffBaseSec * Math.Pow(2, job.AttemptCount - 1));
+                job.LockedBy = null;
+                job.LockedAtUtc = null;
+                job.LockExpiresAtUtc = null;
+                return true;
+            }
+
+            await _engine.FailServiceTokenAsync(job.InstanceId, job.TokenId, job.NodeId, result.Error);
+            job.LastError = Trunc(result.Error);
+            job.Status = ServiceJobStatus.Failed;
+        }
+
+        job.CompletedAtUtc = nowUtc;
+        return true;
     }
 
     /// <summary>LastError 截断 ≤1000 字（对齐实体列长，spec §2.3）。</summary>

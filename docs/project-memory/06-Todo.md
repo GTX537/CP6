@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 W625-01 后续
+
+核对独立 OA 超时动作、提交后子流程内联路径、连接器目标效果以及 Space 和 CRM 剩余正式验收。 [交付](../development/evidence/W625-01/DELIVERY.md)
+
 ## 2026-11-15 W624-01 后续
 
 继续 CAD 与 Excel 后台 Source、Issues 及导入批次的提交顺序，以及历史重刊发父作业。 [交付](../development/evidence/W624-01/DELIVERY.md)
