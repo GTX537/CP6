@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-15 W656-01
+
+三条刊发无外部效果写路、一次实际 COMMIT 回包丢失及人工 Reconcile 重开通过定向 PostgreSQL 验证。 [交付](../development/evidence/W656-01/DELIVERY.md)
+
 ## 2026-11-15 W652-01
 
 实际签名出库逆序回写、原结果和回退兼容通过，采用 W649 的组合业务抢占与暂停抢占均在原生 PostgreSQL 通过。 [交付](../development/evidence/W652-01/DELIVERY.md)
