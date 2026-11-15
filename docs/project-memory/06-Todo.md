@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 W640-01 后续
+
+继续采购和 OA 已提交子流程的父续行、ERP 出库回写 #1163。 [交付](../development/evidence/W640-01/DELIVERY.md)
+
 ## 2026-11-15 W639-01 后续
 
 继续受限库存与旧 OA 工作流原生事务，核对完整写者清单。 [交付](../development/evidence/W639-01/DELIVERY.md)
