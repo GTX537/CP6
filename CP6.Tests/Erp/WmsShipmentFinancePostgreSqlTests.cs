@@ -337,7 +337,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 
 
 
-    private ServiceProvider W620Services(Guid tenant, string? connection = null)
+    private ServiceProvider W620Services(Guid tenant, string? connection = null, bool stockFinanceEnabled = true)
     {
         var services = new ServiceCollection();
         services.AddLogging();
@@ -359,6 +359,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         services.AddScoped<ICostCollectService, CostCollectService>();
         services.AddScoped<ICostSettleService, CostSettleService>();
         services.AddScoped<IFinBridgeHook, FinBridgeHook>();
+        if (stockFinanceEnabled) services.AddScoped<IStockFinBridge, StockFinBridge>();
+        else services.AddScoped<IStockFinBridge, NoOpStockFinBridge>();
         services.AddScoped<IDeadLetterNotifier, DeadLetterNotifier>();
         services.AddScoped<IIntegrationEventDispatcher>(sp => new IntegrationEventDispatcher(
             new NoOpMesBridgeHook(), new NoOpWmsBridgeHook(), new NoOpErpBridgeHook(), new NoOpOrderCancelBridgeHook(),

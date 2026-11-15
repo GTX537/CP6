@@ -1,5 +1,6 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Persistence.Tenancy;
+using CP6.Core.Services.Fin;
 using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
@@ -48,8 +49,18 @@ public partial class StockMovementService : IStockMovementService
         && _seq is WmsSequenceService sequence && sequence.Owns(db);
     internal async Task PublishCommittedCancellationAsync(StockTransaction transaction)
     {
-        try { await _finBridge.OnStockMovedAsync(transaction,transaction.RelatedType??"",transaction.OperatorCd); } catch { /* existing best-effort bridge */ }
+        await PublishStockFinanceAsync(transaction);
         try { await _notifier.NotifyStockChangedAsync(new StockChangedEvent { TxnNo=transaction.TxnNo,TxnType=transaction.TxnType,TxnAt=transaction.TxnDateTime,WarehouseCd=transaction.WarehouseCd,LocationCd=transaction.LocationCd,ProductCd=transaction.ProductCd,LotNo=transaction.LotNo,Qty=transaction.Qty,RelatedNo=transaction.RelatedNo,OperatorCd=transaction.OperatorCd }); } catch { /* existing best-effort notification */ }
+    }
+
+    private async Task PublishStockFinanceAsync(StockTransaction transaction)
+    {
+        try
+        {
+            if (_finBridge is not StockFinBridge finance || !await finance.TryProcessCommittedStockMoveAsync(transaction.Id))
+                await _finBridge.OnStockMovedAsync(transaction, transaction.RelatedType ?? "", transaction.OperatorCd);
+        }
+        catch { /* existing best-effort bridge */ }
     }
 
     private Task<string> ApplyCoreAsync(StockMovementRequest req, CancellationToken ct = default)
@@ -156,16 +167,15 @@ public partial class StockMovementService : IStockMovementService
             await _db.SaveChangesAsync(ct);
             if (_db.Database.IsNpgsql()) await StockMovementSequenceV1.Record(_db,stock.Id,txn.Id,ct);
             if(binding!=null)await InheritanceAccess.CompleteStockTransaction(binding,ct);
+            // The restricted writer has its own native connection and no general integration-event permission.
+            if (_db.Database.IsNpgsql() && _db is not StockMovementWriteContextV1 && _finBridge is StockFinBridge finance)
+                await finance.StageStockMoveAsync(_db, txn, ct);
             if (tx != null) await tx.CommitAsync(ct);
             var canPublishNow = publishWhenCommitted && (tx != null || isInMemory);
 
             // WMS→Fin 库存过账桥点火（best-effort、commit 之后・通知の前、失敗しても在庫移動は成功扱い）。
             // 実際に過账するか否かは桥内の (TxnType,RelatedType) 帰属フィルタが判定（採購入庫/盘盈亏/报废のみ）。
-            if (canPublishNow) try
-            {
-                await _finBridge.OnStockMovedAsync(txn, req.RelatedType ?? "", req.OperatorCd);
-            }
-            catch { /* fin bridge failure must not break stock movement */ }
+            if (canPublishNow) await PublishStockFinanceAsync(txn);
 
             // SignalR リアルタイム通知（best-effort、失敗しても本処理は成功扱い）
             if (canPublishNow) try

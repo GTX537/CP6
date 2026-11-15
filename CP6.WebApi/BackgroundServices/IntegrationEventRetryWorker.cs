@@ -114,7 +114,10 @@ public class IntegrationEventRetryWorker : BackgroundService
 
         var now = DateTime.UtcNow;
         var native = db.Database.IsNpgsql();
+        var stockFinanceEnabled = native && sp.GetService<IStockFinBridge>() is StockFinBridge;
         var due = await db.IntegrationEvents
+            .Where(e => !native || stockFinanceEnabled || e.SourceModule != "WMS" || e.TargetModule != "FIN"
+                || e.HookName != nameof(IStockFinBridge.OnStockMovedAsync))
             .Where(e =>
                 (e.Status == IntegrationEventStatus.Failed &&
                 (((e.SourceModule == SpaceSourceModule &&
@@ -127,7 +130,8 @@ public class IntegrationEventRetryWorker : BackgroundService
                 (native && e.Status == IntegrationEventStatus.Pending && e.Attempts == 0 && e.NextRetryAt <= now
                  && e.SourceModule == "WMS" && e.TargetModule == "FIN"
                  && (e.HookName == nameof(IFinBridgeHook.OnShipmentConfirmedAsync)
-                     || e.HookName == nameof(IFinBridgeHook.OnShipmentCancelledAsync))))
+                     || e.HookName == nameof(IFinBridgeHook.OnShipmentCancelledAsync)
+                     || (stockFinanceEnabled && e.HookName == nameof(IStockFinBridge.OnStockMovedAsync)))))
             .OrderBy(e => e.NextRetryAt)
             .Take(50)
             .ToListAsync(ct);
@@ -138,6 +142,13 @@ public class IntegrationEventRetryWorker : BackgroundService
             {
                 db.Entry(evt).State = EntityState.Detached;
                 await ProcessShipmentFinanceEventAsync(tenantId, evt.Id, now, ct);
+                continue;
+            }
+
+            if (native && StockFinBridge.IsStockMoveEvent(evt))
+            {
+                db.Entry(evt).State = EntityState.Detached;
+                await ProcessStockFinanceEventAsync(tenantId, evt.Id, now, ct);
                 continue;
             }
 
@@ -189,6 +200,17 @@ public class IntegrationEventRetryWorker : BackgroundService
         if (sp.GetRequiredService<IFinBridgeHook>() is not FinBridgeHook finance)
             throw new InvalidOperationException("WMS_FIN_OWNER_TRANSACTION_REQUIRED");
         if (await finance.ProcessShipmentAsync(eventId, now, _opts, ct) is { } dead)
+            await sp.GetRequiredService<IDeadLetterNotifier>().NotifyAsync(dead, ct);
+    }
+
+    private async Task ProcessStockFinanceEventAsync(Guid tenantId, Guid eventId, DateTime now, CancellationToken ct)
+    {
+        using var scope = _scopeFactory.CreateScope();
+        var sp = scope.ServiceProvider;
+        sp.GetRequiredService<ITenantContext>().CurrentTenantId = tenantId;
+        if (sp.GetRequiredService<IStockFinBridge>() is not StockFinBridge finance)
+            throw new InvalidOperationException("WMS_FIN_OWNER_TRANSACTION_REQUIRED");
+        if (await finance.ProcessStockMoveAsync(eventId, now, _opts, ct) is { } dead)
             await sp.GetRequiredService<IDeadLetterNotifier>().NotifyAsync(dead, ct);
     }
 
