@@ -31,7 +31,7 @@ public sealed partial class SpacePublishOrchestrator :
     private readonly EfSpacePublishSnapshotReader _snapshots;
     private readonly ILogger<SpacePublishOrchestrator> _logger;
     private readonly ISpaceDesignWriteAuthority? _writeAuthority;
-    private readonly ISpaceArtifactWriteAuthority? _historicalWriteAuthority;
+    private readonly ISpaceArtifactWriteAuthority? _jobWriteAuthority;
 
     public SpacePublishOrchestrator(
         SpaceContext context,
@@ -57,7 +57,7 @@ public sealed partial class SpacePublishOrchestrator :
         _snapshots = new EfSpacePublishSnapshotReader(context);
         _logger = logger ?? NullLogger<SpacePublishOrchestrator>.Instance;
         _writeAuthority = writeAuthority;
-        _historicalWriteAuthority = historicalWriteAuthority;
+        _jobWriteAuthority = historicalWriteAuthority;
     }
 
     public Task<CreateSpacePublishAttemptResponse> StartAsync(
@@ -269,7 +269,7 @@ public sealed partial class SpacePublishOrchestrator :
         SpacePublishAttempt attempt;
         await using (var workerWrite = parentLease is not null
                          ? await SpaceArtifactWriteTransaction.BeginMetadataAsync(
-                             _context, parentLease, _historicalWriteAuthority, cancellationToken)
+                             _context, parentLease, _jobWriteAuthority, cancellationToken)
                          : null)
         await using (var transaction = workerWrite is null
                          ? await SpaceDesignWriteTransaction.BeginForPermissionAsync(
