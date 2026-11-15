@@ -333,8 +333,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     {
         public bool FailConfirmation { get; set; }
 
-        public Task AuthorizeModelEditAsync(SpaceContext context, CancellationToken cancellationToken, string? additionalPermission = null)
+        public Task AuthorizeAsync(SpaceContext context, string requiredPermission, CancellationToken cancellationToken, string? additionalPermission = null)
         {
+            Assert.Equal("space:model:edit", requiredPermission);
             Assert.Equal("space:source:upload", additionalPermission);
             return context.Database.ExecuteSqlRawAsync("SELECT cp6_authentication_v1.acquire()", cancellationToken);
         }
