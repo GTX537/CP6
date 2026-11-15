@@ -1,4 +1,5 @@
 using System.Data;
+using System.Data.Common;
 using System.Text.Json;
 using CP6.Core.Persistence;
 using CP6.Space.Application;
@@ -535,15 +536,18 @@ public sealed class EfSpaceVersionCloneProcessor :
     private readonly SpaceContext _context;
     private readonly ISpaceClock _clock;
     private readonly ISpaceJobLeaseStore _leases;
+    private readonly ISpaceArtifactWriteAuthority? _writeAuthority;
 
     public EfSpaceVersionCloneProcessor(
         SpaceContext context,
         ISpaceClock clock,
-        ISpaceJobLeaseStore leases)
+        ISpaceJobLeaseStore leases,
+        ISpaceArtifactWriteAuthority? writeAuthority = null)
     {
         _context = context;
         _clock = clock;
         _leases = leases;
+        _writeAuthority = writeAuthority;
     }
 
     public async Task<SpaceVersionCloneCounts> CloneSnapshotAsync(
@@ -631,6 +635,23 @@ public sealed class EfSpaceVersionCloneProcessor :
         {
             return await ProcessOnceAsync(lease, cancellationToken);
         }
+        catch (SpaceJobProcessingException error) when (error.ErrorCode == "SPACE_ARTIFACT_COMMIT_UNKNOWN")
+        {
+            try
+            {
+                if (await ReadCommittedCompletionAsync(lease) is { } recovered)
+                    return recovered;
+            }
+            catch (DbException readError) when (readError.IsTransient)
+            {
+                // The original job and attempt remain the recovery record when readback is unavailable.
+            }
+            throw;
+        }
+        catch (SpaceJobProcessingException)
+        {
+            throw;
+        }
         catch (SpaceJobLeaseLostException)
         {
             throw;
@@ -641,22 +662,20 @@ public sealed class EfSpaceVersionCloneProcessor :
         }
         catch (SpaceVersionStateException)
         {
-            await _leases.FailJobAsync(
+            await FailCloneAsync(
                 lease,
                 SpaceJobFailureKind.Input,
                 SpaceErrorCodes.VersionStateInvalid,
-                "The clone source or reservation is no longer valid.",
-                cancellationToken: CancellationToken.None);
+                "The clone source or reservation is no longer valid.");
             throw;
         }
         catch (SpaceVersionConflictException)
         {
-            await _leases.FailJobAsync(
+            await FailCloneAsync(
                 lease,
                 SpaceJobFailureKind.Input,
                 SpaceErrorCodes.VersionConflict,
-                "The clone reservation conflicted with current model state.",
-                cancellationToken: CancellationToken.None);
+                "The clone reservation conflicted with current model state.");
             throw;
         }
         catch (DbUpdateConcurrencyException exception)
@@ -665,14 +684,18 @@ public sealed class EfSpaceVersionCloneProcessor :
                 "The clone worker lost its database fencing token.",
                 exception);
         }
+        catch (Exception error) when (_context.Database.IsNpgsql() && DatabaseFailureClassifier.Classify(error).CanRetryTransaction)
+        {
+            throw new SpaceJobProcessingException(SpaceJobFailureKind.Transient, "SPACE_ARTIFACT_AUTHORITY_CHANGED",
+                "The clone ownership changed concurrently.");
+        }
         catch
         {
-            await _leases.FailJobAsync(
+            await FailCloneAsync(
                 lease,
                 SpaceJobFailureKind.Bug,
                 SpaceErrorCodes.VersionStateInvalid,
-                "The clone snapshot could not be completed.",
-                cancellationToken: CancellationToken.None);
+                "The clone snapshot could not be completed.");
             throw new SpaceVersionStateException(
                 "The clone snapshot could not be completed.");
         }
@@ -691,24 +714,24 @@ public sealed class EfSpaceVersionCloneProcessor :
         }
 
         _context.ChangeTracker.Clear();
-        await using var transaction = await _context.Database.BeginTransactionAsync(
-            IsolationLevel.ReadCommitted,
-            cancellationToken);
+        await using var write = _context.Database.IsNpgsql()
+            ? await BeginCloneCompletionAsync(lease, cancellationToken) : null;
+        await using var transaction = write is null
+            ? await _context.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken) : null;
+
+        Task CommitAsync() => write is null ? transaction!.CommitAsync(cancellationToken) : write.CommitAsync(cancellationToken);
+
         try
         {
-            var now = RequireUtcNow();
-            var job = await _context.Jobs.SingleOrDefaultAsync(
+            var now = await ReadCloneTimeAsync(cancellationToken);
+            var job = write?.CompletionJob ?? await _context.Jobs.SingleOrDefaultAsync(
                           candidate => candidate.Id == lease.JobId,
                           cancellationToken)
                       ?? throw new SpaceJobLeaseLostException(
                           "The clone Job no longer exists.");
-            job.EnsureLease(lease.AttemptId, lease.WorkerId, now);
-            var attempt = await _context.JobAttempts.SingleAsync(
-                candidate =>
-                    candidate.Id == lease.AttemptId &&
-                    candidate.JobId == lease.JobId &&
-                    candidate.Outcome == SpaceJobAttemptOutcome.Running,
-                cancellationToken);
+            if (write is null)
+                job.EnsureLease(lease.AttemptId, lease.WorkerId, now);
+            var attempt = await LoadCloneAttemptAsync(lease, cancellationToken);
             var payload = ReadPayload(job);
             if (payload.TargetVersionId != job.SubjectId)
             {
@@ -739,7 +762,7 @@ public sealed class EfSpaceVersionCloneProcessor :
                 job.AcknowledgeCancellation(lease.AttemptId, lease.WorkerId, now);
                 attempt.Cancel(now);
                 await _context.SaveChangesAsync(cancellationToken);
-                await transaction.CommitAsync(cancellationToken);
+                await CommitAsync();
                 return EmptyCounts();
             }
 
@@ -780,7 +803,7 @@ public sealed class EfSpaceVersionCloneProcessor :
                 now,
                 cancellationToken);
             var counts = await CountSnapshotAsync(_context, target.Id, cancellationToken);
-            var completedAt = RequireUtcNow();
+            var completedAt = await ReadCloneTimeAsync(cancellationToken);
             var checkpointJson = JsonSerializer.Serialize(counts, JsonOptions);
             var step = SpaceJobStep.Start(
                 lease.TenantId,
@@ -806,14 +829,84 @@ public sealed class EfSpaceVersionCloneProcessor :
                 checkpointJson);
             attempt.Succeed(completedAt);
             await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            await CommitAsync();
             return counts;
         }
-        catch
+        catch when (transaction is not null)
         {
             await transaction.RollbackAsync(CancellationToken.None);
             throw;
         }
+    }
+
+    private Task<SpaceArtifactWriteTransaction> BeginCloneCompletionAsync(SpaceJobLease lease, CancellationToken cancellationToken) =>
+        SpaceArtifactWriteTransaction.BeginMetadataAsync(_context, lease, _writeAuthority, cancellationToken, completingJob: true);
+
+    private Task<DateTime> ReadCloneTimeAsync(CancellationToken cancellationToken) => _context.Database.IsNpgsql()
+        ? DatabaseUtcClock.ReadUtcNowAsync(_context, cancellationToken)
+        : Task.FromResult(RequireUtcNow());
+
+    private async Task<SpaceJobAttempt> LoadCloneAttemptAsync(SpaceJobLease lease, CancellationToken cancellationToken)
+    {
+        if (!_context.Database.IsNpgsql())
+            return await _context.JobAttempts.SingleAsync(candidate => candidate.Id == lease.AttemptId
+                && candidate.JobId == lease.JobId && candidate.Outcome == SpaceJobAttemptOutcome.Running, cancellationToken);
+
+        return await _context.JobAttempts.FromSqlInterpolated($"""
+            SELECT a.* FROM public."Space_JobAttempt" AS a
+            WHERE a."TenantId" = {lease.TenantId} AND a."JobId" = {lease.JobId} AND a."Id" = {lease.AttemptId}
+            FOR UPDATE
+            """).SingleOrDefaultAsync(candidate => candidate.Outcome == SpaceJobAttemptOutcome.Running, cancellationToken)
+            ?? throw new SpaceJobLeaseLostException("The original clone attempt is no longer running.");
+    }
+
+    private async Task FailCloneAsync(SpaceJobLease lease, SpaceJobFailureKind kind, string code, string summary)
+    {
+        if (!_context.Database.IsNpgsql())
+        {
+            await _leases.FailJobAsync(lease, kind, code, summary, cancellationToken: CancellationToken.None);
+            return;
+        }
+
+        // The DI lease ledger owns a separate context. Failure and reservation cleanup belong to this transaction.
+        var ct = CancellationToken.None;
+        _context.ChangeTracker.Clear();
+        await using var write = await BeginCloneCompletionAsync(lease, ct);
+        var job = write.CompletionJob!;
+        var attempt = await LoadCloneAttemptAsync(lease, ct);
+        var now = await ReadCloneTimeAsync(ct);
+        if (job.CancellationRequestedAtUtc.HasValue)
+        {
+            job.AcknowledgeCancellation(lease.AttemptId, lease.WorkerId, now);
+            attempt.Cancel(now);
+        }
+        else
+        {
+            var decision = SpaceJobRetryPolicy.DecideAutomatic(kind, job.AttemptCount, job.MaxAttempts, now);
+            job.Fail(lease.AttemptId, lease.WorkerId, kind, code, summary, decision, now);
+            attempt.Fail(kind, code, summary, now);
+        }
+        await SpaceCloneReservationCleanup.ReleaseIfTerminalAsync(_context, job, ct);
+        await _context.SaveChangesAsync(ct);
+        await write.CommitAsync(ct);
+    }
+
+    private async Task<SpaceVersionCloneCounts?> ReadCommittedCompletionAsync(SpaceJobLease lease)
+    {
+        _context.ChangeTracker.Clear();
+        var completion = await (from job in _context.Jobs.AsNoTracking()
+            join attempt in _context.JobAttempts.AsNoTracking() on job.Id equals attempt.JobId
+            where job.Id == lease.JobId && job.JobType == lease.JobType && job.SubjectType == lease.SubjectType
+                && job.SubjectId == lease.SubjectId && job.InputHash == lease.InputHash && job.AttemptCount == lease.AttemptNo
+                && attempt.Id == lease.AttemptId && attempt.WorkerId == lease.WorkerId
+            select new { job.Status, job.ResultSummaryJson, attempt.Outcome }).SingleOrDefaultAsync(CancellationToken.None);
+        return completion switch
+        {
+            { Status: SpaceJobStatus.Succeeded, Outcome: SpaceJobAttemptOutcome.Succeeded, ResultSummaryJson: { } json }
+                => JsonSerializer.Deserialize<SpaceVersionCloneCounts>(json, JsonOptions),
+            { Status: SpaceJobStatus.Cancelled, Outcome: SpaceJobAttemptOutcome.Cancelled } => EmptyCounts(),
+            _ => null,
+        };
     }
 
     private static void ValidateReservation(
