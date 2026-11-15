@@ -165992,6 +165992,11 @@
       "at": "2026-11-15T11:09:28.814530+00:00",
       "change": "W604-01 刊发提交、人工重试和历史重刊的原生事务采用 Main 当前权限栅栏。",
       "evidence": "docs/development/evidence/W604-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T11:12:46.325808+00:00",
+      "change": "W603-01 固定资产十条写入口及月末折旧采用共同原生栅栏，补事务失败回滚和当前租户引用。",
+      "evidence": "docs/development/evidence/W603-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -211998,10 +212003,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W604",
-      "path": "docs/development/evidence/W604-01/DELIVERY.md",
-      "baseline_sha": "791a4f503cfcffd19dca7bc71d4de9ece2785dd3",
-      "registered_at": "2026-11-15T10:46:48.164629+00:00",
+      "id": "W603",
+      "path": "docs/development/evidence/W603-01/DELIVERY.md",
+      "baseline_sha": "8c6709c7c6c5d8f9270c106a4fa1ff032c9c23bd",
+      "registered_at": "2026-11-15T10:30:33.899294+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212015,11 +212020,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "继续补 CAD 准备和解析及 Excel 预检入口，核对财务固定资产和后台写者。保持 PGT-017 NOT_RUN",
+      "next_action": "继续预算 11 条、AP/AR 12 条和工单结转 1 条，核对其余后台写者。正式 PGT-017 保持 NOT_RUN",
       "windows": [
         {
-          "id": "W604-01",
-          "workspace_task": "W604-01",
+          "id": "W603-01",
+          "workspace_task": "W603-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212029,29 +212034,29 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w604-01",
-          "planned_scope_ref": "docs/development/evidence/W604-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W604-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "branch": "codex/w603-01",
+          "planned_scope_ref": "docs/development/evidence/W603-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W603-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:SpacePublishAttempt",
-            "Main:SpaceHistoricalRepublish",
-            "Main:IAM-CurrentWriteAuthority",
+            "Main:FinAssetWrites",
+            "Main:AssetDepreciationWorker",
+            "Main:CurrentWriteAuthority",
             "Local:PostgreSQL-HTTP"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "8 actual Space PostgreSQL/Kestrel owner scenarios, 2 native shared commit cases, 105 contracts, 18 units, local publish 200/401",
-          "remaining_scope": "Space CAD preparation/parse/retry and Excel preflight/match, publication and artifact workers, remaining finance and CRM transport isolation",
-          "main_tested_source_sha": "03fa0b59405307661d6dc24e68706717f03d3e50"
+          "validation_summary": "42 native PostgreSQL asset and worker cases, 26 related tests, local publish 200/401",
+          "remaining_scope": "24 reachable finance HTTP write routes, other financial workers, CAD/Excel and publication execution, CRM full transport retirement",
+          "main_tested_source_sha": "344f3007ea4d97d36360171c0e47081cae717ced"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -267474,6 +267479,68 @@
             "main_tested_source_sha": "a144feffe66079826a5e8ddacef11409904100bd",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1116",
             "main_remote_main_sha": "791a4f503cfcffd19dca7bc71d4de9ece2785dd3"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W604",
+        "path": "docs/development/evidence/W604-01/DELIVERY.md",
+        "baseline_sha": "791a4f503cfcffd19dca7bc71d4de9ece2785dd3",
+        "registered_at": "2026-11-15T10:46:48.164629+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "继续补 CAD 准备和解析及 Excel 预检入口，核对财务固定资产和后台写者。保持 PGT-017 NOT_RUN",
+        "windows": [
+          {
+            "id": "W604-01",
+            "workspace_task": "W604-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w604-01",
+            "planned_scope_ref": "docs/development/evidence/W604-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W604-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:SpacePublishAttempt",
+              "Main:SpaceHistoricalRepublish",
+              "Main:IAM-CurrentWriteAuthority",
+              "Local:PostgreSQL-HTTP"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "8 actual Space PostgreSQL/Kestrel owner scenarios, 2 native shared commit cases, 105 contracts, 18 units, local publish 200/401",
+            "remaining_scope": "Space CAD preparation/parse/retry and Excel preflight/match, publication and artifact workers, remaining finance and CRM transport isolation",
+            "main_tested_source_sha": "03fa0b59405307661d6dc24e68706717f03d3e50",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1119",
+            "main_remote_main_sha": "c2b2e8bb7f04171f98681efc9b54e84e81569f23"
           }
         ],
         "storage": {

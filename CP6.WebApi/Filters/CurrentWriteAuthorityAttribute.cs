@@ -6,6 +6,7 @@ using CP6.Core.Services.Sys;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Filters;
@@ -16,6 +17,7 @@ namespace CP6.WebApi.Filters;
 public sealed class CurrentWriteAuthorityAttribute : Attribute, IAsyncActionFilter
 {
     public bool ChangesAuthentication { get; set; }
+    public bool RollbackOnFailure { get; set; }
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
@@ -37,12 +39,18 @@ public sealed class CurrentWriteAuthorityAttribute : Attribute, IAsyncActionFilt
                 executed = await next();
                 if (executed is { Exception: { } error, ExceptionHandled: false })
                     (executed.ExceptionDispatchInfo ?? ExceptionDispatchInfo.Capture(error)).Throw();
+                if (RollbackOnFailure && executed.Result is IStatusCodeActionResult { StatusCode: >= 400 })
+                    throw new RejectedWrite();
                 if (ChangesAuthentication)
                     await TenantAdministrationHttpV1.Complete(http, services, ct);
                 else if (await CurrentActor(ct) != actor)
                     throw new IamAdministrationExceptionV1(401, "REAUTH_REQUIRED");
                 return true;
             }, http.RequestAborted);
+        }
+        catch (RejectedWrite)
+        {
+            // The authority transaction rolled back. Keep the action's original result.
         }
         catch (IamAdministrationExceptionV1 error)
         {
@@ -69,4 +77,6 @@ public sealed class CurrentWriteAuthorityAttribute : Attribute, IAsyncActionFilt
             }
         }
     }
+
+    private sealed class RejectedWrite : Exception;
 }
