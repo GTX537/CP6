@@ -78,6 +78,8 @@ public sealed class InquiryServicePermissionIssuerV1(CP6Context db, ITenantConte
                 return now;
             }
             await RequireCurrentTenant();
+            var pending = await TenantPendingSuspensionV1.ExistsAsync(db, registration.Tenant, ct);
+            if (pending && nonce is null) throw new InquiryPermissionExceptionV1(503, "inquiry_authority_unavailable");
             CrmIdentitySnapshot? serviceSource = null;
             if (registry.IdentityPublicationEnabled)
             {
@@ -122,7 +124,7 @@ public sealed class InquiryServicePermissionIssuerV1(CP6Context db, ITenantConte
                     throw new InquiryPermissionExceptionV1(503, "inquiry_service_role_source_unavailable");
                 result = signing.SignServiceContext(result, nonce, registration, serviceSource!, roles, identityRuntime!.ContractBundleSha256, request, issued, expiry,contextVersion);
             }
-            var fence = tenantPause is not null && nonce is not null
+            var fence = tenantPause is not null && nonce is not null && !pending
                 ? await tenantPause.ReadBindingAsync(db, registration.Tenant, ct) : null;
             ct.ThrowIfCancellationRequested(); await tx.CommitAsync(ct);
             return new(result ?? throw new InquiryPermissionExceptionV1(503,"inquiry_authority_unavailable"), fence);
