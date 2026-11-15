@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W660-01
+
+Main IAM 普通用户实际变更持久封存意图，冷拒接期间限制受影响用户的新 CRM 写授权。原业务、C02、Outbox、审核、回执在最终 Main 事务提交。[W660-01 交付](../development/evidence/W660-01/DELIVERY.md)
+
 ## 2026-11-15 W659-01
 
 启用租户显式期限沿版本化及旧 PUT 的原命令先存意图，使用既有 W649 停签和真实期限代次。 [交付](../development/evidence/W659-01/DELIVERY.md)
