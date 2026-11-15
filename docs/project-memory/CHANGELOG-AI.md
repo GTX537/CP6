@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W634-01
+
+历史刊发父作业阶段持同一 Main 栅栏和原 Job 租约，沿用旧子作业精确结果。 [交付](../development/evidence/W634-01/DELIVERY.md)
+
 ## 2026-11-15 W631-01
 
 以 PostgreSQL 租户复合约束、原 AP 证据和本地授权事务保护三单匹配、放行及拒绝。 [交付](../development/evidence/W631-01/DELIVERY.md)

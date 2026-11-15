@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W634-01 Space 历史刊发父链
+
+克隆、进入验证、保存验证结果和创建子刊发受 Main 共同栅栏及原父 Job 租约保护。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W634-01/DELIVERY.md)
+
 ## 2026-11-15 W631-01 三单匹配的采购及财务事务
 
 三条 HTTP 写者与 Main 权限、应付、凭证、原 PO 状态共用事务，实测两种提交顺序。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W631-01/DELIVERY.md)

@@ -603,7 +603,7 @@ public sealed class EfSpaceVersionCloneProcessor :
         if (await TargetContainsSnapshotAsync(target.Id, cancellationToken))
         {
             if (target.Status != SpaceVersionStatus.Initializing)
-                return await CountSnapshotAsync(target.Id, cancellationToken);
+                return await CountSnapshotAsync(_context, target.Id, cancellationToken);
             throw new SpaceVersionStateException(
                 "An initializing historical clone contains partial snapshot rows.");
         }
@@ -620,7 +620,7 @@ public sealed class EfSpaceVersionCloneProcessor :
             request.RequestedBy,
             request.RequestedAtUtc,
             cancellationToken);
-        return await CountSnapshotAsync(target.Id, cancellationToken);
+        return await CountSnapshotAsync(_context, target.Id, cancellationToken);
     }
 
     public async Task<SpaceVersionCloneCounts> ProcessAsync(
@@ -779,7 +779,7 @@ public sealed class EfSpaceVersionCloneProcessor :
                 job.RequestedBy,
                 now,
                 cancellationToken);
-            var counts = await CountSnapshotAsync(target.Id, cancellationToken);
+            var counts = await CountSnapshotAsync(_context, target.Id, cancellationToken);
             var completedAt = RequireUtcNow();
             var checkpointJson = JsonSerializer.Serialize(counts, JsonOptions);
             var step = SpaceJobStep.Start(
@@ -913,41 +913,42 @@ public sealed class EfSpaceVersionCloneProcessor :
             row => row.ModelVersionId == targetVersionId,
             cancellationToken);
 
-    private async Task<SpaceVersionCloneCounts> CountSnapshotAsync(
+    internal static async Task<SpaceVersionCloneCounts> CountSnapshotAsync(
+        SpaceContext context,
         Guid targetVersionId,
         CancellationToken cancellationToken) =>
         new(
-            await _context.Sources.CountAsync(
+            await context.Sources.CountAsync(
                 row => row.ModelVersionId == targetVersionId,
                 cancellationToken),
-            await _context.FloorRevisions.CountAsync(
+            await context.FloorRevisions.CountAsync(
                 row => row.ModelVersionId == targetVersionId,
                 cancellationToken),
-            await _context.ZoneRevisions.CountAsync(
+            await context.ZoneRevisions.CountAsync(
                 row => row.ModelVersionId == targetVersionId,
                 cancellationToken),
-            await _context.AisleRevisions.CountAsync(
+            await context.AisleRevisions.CountAsync(
                 row => row.ModelVersionId == targetVersionId,
                 cancellationToken),
-            await _context.RackRevisions.CountAsync(
+            await context.RackRevisions.CountAsync(
                 row => row.ModelVersionId == targetVersionId,
                 cancellationToken),
-            await _context.RackLevelRevisions.CountAsync(
+            await context.RackLevelRevisions.CountAsync(
                 row => row.ModelVersionId == targetVersionId,
                 cancellationToken),
-            await _context.LocationRevisions.CountAsync(
+            await context.LocationRevisions.CountAsync(
                 row => row.ModelVersionId == targetVersionId,
                 cancellationToken),
-            await _context.ElementRevisions.CountAsync(
+            await context.ElementRevisions.CountAsync(
                 row => row.ModelVersionId == targetVersionId,
                 cancellationToken),
-            await _context.ElementAttributes.CountAsync(
+            await context.ElementAttributes.CountAsync(
                 row => row.ModelVersionId == targetVersionId,
                 cancellationToken),
-            await _context.LocationExternalBindings.CountAsync(
+            await context.LocationExternalBindings.CountAsync(
                 row => row.ModelVersionId == targetVersionId,
                 cancellationToken),
-            await _context.DesignAttributes.CountAsync(
+            await context.DesignAttributes.CountAsync(
                 row => row.ModelVersionId == targetVersionId,
                 cancellationToken));
 
