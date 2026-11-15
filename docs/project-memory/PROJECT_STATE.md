@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 · W600-01 财务科目及应付主数据
+
+六条入口采用 Main 的原生事务栅栏。21 项实际 PostgreSQL 场景及 30 项相关回归通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W600-01/DELIVERY.md)
+
 ## 2026-11-15 · W599-01 CRM 原库重启隔离
 
 CRM PR #232 已合入，8 项隔离原生用例通过。原端点重启后原 API 和两个发布者凭据保持拒绝，完整恢复目标两租户一致且公开就绪恢复。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付记录](../development/evidence/W599-01/DELIVERY.md)

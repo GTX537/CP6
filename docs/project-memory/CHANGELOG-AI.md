@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 · W600-01
+
+登记科目、银行账户和税码的 PostgreSQL 原生事务、角色竞争和租户写集回归。 [交付记录](../development/evidence/W600-01/DELIVERY.md)
+
 ## 2026-11-15 · W599-01
 
 登记原库实际重启后持续拒绝旧登录、恢复目标的两租户重绑和原 Kafka 水位证据。 [交付记录](../development/evidence/W599-01/DELIVERY.md)
