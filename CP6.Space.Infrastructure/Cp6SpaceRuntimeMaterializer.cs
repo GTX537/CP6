@@ -32,15 +32,30 @@ public sealed class Cp6SpaceRuntimeMaterializer : ISpaceRuntimeMaterializer
         _clock = clock;
     }
 
-    public async Task<SpaceRuntimeActivationResult> ActivateAsync(
+    public Task<SpaceRuntimeActivationResult> ActivateAsync(
         SpaceRuntimeActivationRequest request,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+        ActivateCoreAsync(request, null, cancellationToken);
+
+    internal Task<SpaceRuntimeActivationResult> ActivateForPublishAsync(
+        SpaceRuntimeActivationRequest request, SpaceJobLease lease, CancellationToken cancellationToken) =>
+        ActivateCoreAsync(request, lease, cancellationToken);
+
+    private async Task<SpaceRuntimeActivationResult> ActivateCoreAsync(
+        SpaceRuntimeActivationRequest request, SpaceJobLease? lease, CancellationToken cancellationToken)
     {
         ValidateRequest(request);
-        await using var transaction =
-            await _space.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken);
+        var postgres = _space.Database.IsNpgsql();
+        if (postgres && lease is null)
+            throw new InvalidOperationException("SPACE_RUNTIME_PUBLISH_LEASE_REQUIRED");
+        await using var transaction = postgres
+            ? await SpacePublishEffectAuthority.BeginAsync(_space, _execution.TenantId, cancellationToken)
+            : await _space.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+        var tenant = new TenantContext { CurrentTenantId = _execution.TenantId };
+        await using var runtime = await DatabaseSharedContext.CreateAsync<CP6Context>(_space,
+            DatabaseContextKind.Core, options => new(options, tenant), cancellationToken);
+        var authority = !postgres ? null : await SpacePublishEffectAuthority.RequireAsync(
+            runtime, _space, lease!, request.AttemptId, cancellationToken);
 
         var model = await _space.Models.SingleOrDefaultAsync(
                         value => value.SiteId == request.SiteId,
@@ -78,6 +93,7 @@ public sealed class Cp6SpaceRuntimeMaterializer : ISpaceRuntimeMaterializer
             attempt.TargetVersionId != request.TargetVersionId ||
             attempt.BaseVersionId != request.BaseVersionId ||
             attempt.RequestedBy != request.ActorId ||
+            (postgres && attempt.JobId != lease!.JobId) ||
             attempt.Status != SpacePublishAttemptStatus.ActivatingRuntime ||
             attempt.CurrentStep != SpacePublishStep.ActivateRuntime ||
             plan.SiteId != request.SiteId ||
@@ -126,13 +142,6 @@ public sealed class Cp6SpaceRuntimeMaterializer : ISpaceRuntimeMaterializer
         var snapshot = await LoadSnapshotAsync(
             target.Id,
             cancellationToken);
-        var tenant = new TenantContext
-        {
-            CurrentTenantId = _execution.TenantId,
-        };
-        await using var runtime = await DatabaseSharedContext.CreateAsync<CP6Context>(_space,
-            DatabaseContextKind.Core, options => new(options, tenant), cancellationToken);
-
         var projection = await MaterializeCp6Async(
             runtime,
             model.SiteId,
@@ -170,6 +179,8 @@ public sealed class Cp6SpaceRuntimeMaterializer : ISpaceRuntimeMaterializer
         target.MarkPublished(request.ActorId, RequireUtcNow());
         model.SetPublishedVersion(target, materializedHash);
         await _space.SaveChangesAsync(cancellationToken);
+        if (authority is not null)
+            await authority.ConfirmAsync(_space, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
 
         return new SpaceRuntimeActivationResult(

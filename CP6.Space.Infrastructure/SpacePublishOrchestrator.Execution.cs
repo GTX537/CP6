@@ -105,6 +105,8 @@ public sealed partial class SpacePublishOrchestrator
         var model = await _context.Models.SingleAsync(
             value => value.Id == target.ModelId,
             cancellationToken);
+        if (HasCommittedRuntime(attempt, target, model))
+            return await RecoverCommittedRuntimeAsync(execution, attempt, target, model);
         if (target.Status == SpaceVersionStatus.ReconciliationRequired)
         {
             if (execution.Lease.JobType != SpaceJobType.Reconcile)
@@ -124,6 +126,14 @@ public sealed partial class SpacePublishOrchestrator
                 "The target version left the active publishing state.");
         }
 
+        if (execution.Lease.AttemptNo > 1 && attempt.Status is
+            SpacePublishAttemptStatus.ApplyingWms or SpacePublishAttemptStatus.ActivatingRuntime)
+        {
+            // A replacement lease can arrive before the previous worker recorded the outcome.
+            // The normal batch/status path below resolves the original operation key.
+            attempt.WaitForRetry(attempt.CurrentStep, SpaceErrorCodes.JobLeaseLost,
+                "The previous worker lease ended before the publish outcome was recorded.");
+        }
         attempt.BeginPreflight();
         await AppendAuditAsync(
             attempt,
@@ -403,9 +413,19 @@ public sealed partial class SpacePublishOrchestrator
             SpaceWmsBatchResult? result = null;
             try
             {
-                result = await _adapter.ApplyBatchAsync(
+                result = await ApplyPublishBatchAsync(
                     batch.Request,
+                    execution.Lease,
                     cancellationToken);
+            }
+            catch (SpaceJobProcessingException error) when (error.ErrorCode == SpacePublishEffectAuthority.TenantInactiveCode)
+            {
+                throw await ScheduleRetryAsync(execution, attempt, SpacePublishStep.ApplyWms,
+                    error.ErrorCode, error.SanitizedError, cancellationToken);
+            }
+            catch (SpaceJobLeaseLostException)
+            {
+                throw;
             }
             catch
             {
@@ -416,8 +436,9 @@ public sealed partial class SpacePublishOrchestrator
                 {
                     try
                     {
-                        result = await _adapter.ApplyBatchAsync(
+                        result = await ApplyPublishBatchAsync(
                             batch.Request,
+                            execution.Lease,
                             cancellationToken);
                     }
                     catch
@@ -623,15 +644,11 @@ public sealed partial class SpacePublishOrchestrator
         await _context.SaveChangesAsync(CancellationToken.None);
         try
         {
-            var activated = await _runtime.ActivateAsync(
-                new SpaceRuntimeActivationRequest(
-                    attempt.Id,
-                    model.SiteId,
-                    target.Id,
-                    attempt.BaseVersionId,
-                    plan.PlanHash,
-                    attempt.RequestedBy),
-                cancellationToken);
+            var request = new SpaceRuntimeActivationRequest(attempt.Id, model.SiteId, target.Id,
+                attempt.BaseVersionId, plan.PlanHash, attempt.RequestedBy);
+            var activated = _runtime is Cp6SpaceRuntimeMaterializer native
+                ? await native.ActivateForPublishAsync(request, execution.Lease, cancellationToken)
+                : await _runtime.ActivateAsync(request, cancellationToken);
             attempt.Complete(
                 RequireUtcNow(),
                 "Runtime activated with hash " +
@@ -666,59 +683,35 @@ public sealed partial class SpacePublishOrchestrator
             await _context.SaveChangesAsync(CancellationToken.None);
             return Output(attempt);
         }
+        catch (SpaceJobLeaseLostException)
+        {
+            _context.ChangeTracker.Clear();
+            throw;
+        }
         catch (Exception exception)
         {
+            _context.ChangeTracker.Clear();
+            var persistedAttempt = await _context.PublishAttempts.SingleAsync(
+                value => value.Id == attempt.Id,
+                CancellationToken.None);
+            if (exception is SpaceJobProcessingException { ErrorCode: SpacePublishEffectAuthority.TenantInactiveCode } paused)
+            {
+                throw await ScheduleRetryAsync(execution, persistedAttempt, SpacePublishStep.ActivateRuntime,
+                    paused.ErrorCode, paused.SanitizedError, CancellationToken.None);
+            }
             _logger.LogError(
                 exception,
                 "Runtime activation failed for publish Attempt {AttemptId} and Job {JobId}.",
                 attempt.Id,
                 execution.Lease.JobId);
-            _context.ChangeTracker.Clear();
             var persistedModel = await _context.Models.SingleAsync(
                 value => value.Id == model.Id,
                 CancellationToken.None);
             var persistedTarget = await _context.Versions.SingleAsync(
                 value => value.Id == target.Id,
                 CancellationToken.None);
-            var persistedAttempt = await _context.PublishAttempts.SingleAsync(
-                value => value.Id == attempt.Id,
-                CancellationToken.None);
-            if (persistedModel.CurrentPublishedVersionId == persistedTarget.Id &&
-                persistedTarget.Status == SpaceVersionStatus.Published)
-            {
-                persistedAttempt.Complete(
-                    RequireUtcNow(),
-                    "Runtime activation committed; completion was recovered from the Published pointer.");
-                var resolvedIssueCount = await ResolveReconciliationIssuesAsync(
-                    persistedAttempt.Id,
-                    $"Recovered from the committed Published pointer by Job {execution.Lease.JobId:D}.",
-                    CancellationToken.None);
-                if (resolvedIssueCount > 0)
-                {
-                    await AppendAuditAsync(
-                        persistedAttempt,
-                        execution.Lease.JobId,
-                        batchId: null,
-                        SpacePublishAuditEventType.ReconciliationResolved,
-                        JobEventKey(execution, "reconciliation-resolved-recovered"),
-                        "Open reconciliation issues were resolved from the committed Published pointer.",
-                        errorCode: null,
-                        JsonSerializer.Serialize(new { resolvedIssueCount }, Json),
-                        CancellationToken.None);
-                }
-                await AppendAuditAsync(
-                    persistedAttempt,
-                    execution.Lease.JobId,
-                    batchId: null,
-                    SpacePublishAuditEventType.Completed,
-                    JobEventKey(execution, "completed-recovered"),
-                    "Runtime completion was recovered from the committed Published pointer.",
-                    errorCode: null,
-                    JsonSerializer.Serialize(new { recovered = true }, Json),
-                    CancellationToken.None);
-                await _context.SaveChangesAsync(CancellationToken.None);
-                return Output(persistedAttempt);
-            }
+            if (HasCommittedRuntime(persistedAttempt, persistedTarget, persistedModel))
+                return await RecoverCommittedRuntimeAsync(execution, persistedAttempt, persistedTarget, persistedModel);
             throw await ScheduleRetryAsync(
                 execution,
                 persistedAttempt,
@@ -728,6 +721,43 @@ public sealed partial class SpacePublishOrchestrator
                 exception.GetType().Name + ".",
                 CancellationToken.None);
         }
+    }
+
+    private Task<SpaceWmsBatchResult> ApplyPublishBatchAsync(
+        SpaceWmsBatch batch, SpaceJobLease lease, CancellationToken cancellationToken) =>
+        _adapter is Cp6SpaceWmsAdapter native
+            ? native.ApplyPublishBatchAsync(batch, _context, lease, cancellationToken)
+            : _adapter.ApplyBatchAsync(batch, cancellationToken);
+
+    private static bool HasCommittedRuntime(SpacePublishAttempt attempt, SpaceModelVersion target, SpaceModel model) =>
+        attempt.CurrentStep == SpacePublishStep.ActivateRuntime && attempt.WmsCommittedAtUtc.HasValue &&
+        model.CurrentPublishedVersionId == attempt.TargetVersionId && model.LastMaterializedHash is not null &&
+        target.Status == SpaceVersionStatus.Published && target.PublishedBy == attempt.RequestedBy &&
+        target.PublishedAtUtc.HasValue;
+
+    private async Task<SpaceJobStepOutput> RecoverCommittedRuntimeAsync(
+        SpaceJobStepExecution execution, SpacePublishAttempt attempt, SpaceModelVersion target, SpaceModel model)
+    {
+        if (attempt.Status != SpacePublishAttemptStatus.ActivatingRuntime)
+            attempt.BeginActivatingRuntime();
+        attempt.Complete(target.PublishedAtUtc!.Value,
+            "Runtime activation committed; completion was recovered from the Published pointer.");
+        var resolvedIssueCount = await ResolveReconciliationIssuesAsync(
+            attempt.Id, $"Recovered from the committed Published pointer by Job {execution.Lease.JobId:D}.", CancellationToken.None);
+        if (resolvedIssueCount > 0)
+        {
+            await AppendAuditAsync(attempt, execution.Lease.JobId, batchId: null, SpacePublishAuditEventType.ReconciliationResolved,
+                JobEventKey(execution, "reconciliation-resolved-recovered"),
+                "Open reconciliation issues were resolved from the committed Published pointer.", errorCode: null,
+                JsonSerializer.Serialize(new { resolvedIssueCount }, Json), CancellationToken.None);
+        }
+        await AppendAuditAsync(attempt, execution.Lease.JobId, batchId: null, SpacePublishAuditEventType.Completed,
+            JobEventKey(execution, "completed-recovered"),
+            "Runtime completion was recovered from the committed Published pointer.", errorCode: null,
+            JsonSerializer.Serialize(new { recovered = true, materializedHash = model.LastMaterializedHash }, Json),
+            CancellationToken.None);
+        await _context.SaveChangesAsync(CancellationToken.None);
+        return Output(attempt);
     }
 
     private async Task<IReadOnlyList<(

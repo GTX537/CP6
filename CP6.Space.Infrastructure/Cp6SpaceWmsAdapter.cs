@@ -230,13 +230,31 @@ public sealed class Cp6SpaceWmsAdapter : ISpaceWmsAdapter
             DateTimeOffset.UtcNow);
     }
 
-    public async Task<SpaceWmsBatchResult> ApplyBatchAsync(
+    public Task<SpaceWmsBatchResult> ApplyBatchAsync(
         SpaceWmsBatch batch,
-        CancellationToken ct = default)
+        CancellationToken ct = default) =>
+        ApplyBatchCoreAsync(batch, null, null, ct);
+
+    internal Task<SpaceWmsBatchResult> ApplyPublishBatchAsync(
+        SpaceWmsBatch batch, SpaceContext space, SpaceJobLease lease, CancellationToken ct) =>
+        ApplyBatchCoreAsync(batch, space, lease, ct);
+
+    private async Task<SpaceWmsBatchResult> ApplyBatchCoreAsync(
+        SpaceWmsBatch batch, SpaceContext? space, SpaceJobLease? lease, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(batch);
         EnsureScope(batch.Context);
         EnsureCleanWriteContext();
+
+        var postgres = _db.Database.IsNpgsql();
+        if (postgres)
+        {
+            var replay = await ReadCommittedBatchAsync(batch, ct);
+            if (replay is not null)
+                return replay;
+            if (space is null || lease is null || _db.Database.CurrentTransaction is not null)
+                throw new InvalidOperationException("SPACE_WMS_PUBLISH_LEASE_REQUIRED");
+        }
 
         IDbContextTransaction? transaction = null;
         var ownsTransaction =
@@ -244,41 +262,24 @@ public sealed class Cp6SpaceWmsAdapter : ISpaceWmsAdapter
             _db.Database.CurrentTransaction is null;
         if (ownsTransaction)
         {
-            transaction = await _db.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                ct);
+            transaction = postgres
+                ? await SpacePublishEffectAuthority.BeginAsync(_db, batch.Context.TenantId, ct)
+                : await _db.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
         }
 
         try
         {
-            var previous = await _db.SpaceWmsOperations
-                .SingleOrDefaultAsync(
-                    operation =>
-                        operation.OperationKey == batch.OperationKey,
-                    ct);
-            if (previous is not null)
+            var replay = await ReadCommittedBatchAsync(batch, ct);
+            if (replay is not null)
             {
-                if (!string.Equals(
-                        previous.PayloadHash,
-                        batch.PayloadHash,
-                        StringComparison.OrdinalIgnoreCase))
-                {
-                    if (transaction is not null)
-                        await transaction.CommitAsync(ct);
-                    return ConflictResult(batch);
-                }
-
-                var replay = JsonSerializer.Deserialize<SpaceWmsBatchResult>(
-                    previous.ResultJson,
-                    Json);
-                if (replay is null)
-                    throw new InvalidOperationException(
-                        "SPACE_WMS_RESULT_UNCERTAIN");
-                if (transaction is not null)
+                if (transaction is not null && !postgres)
                     await transaction.CommitAsync(ct);
                 return replay;
             }
 
+            await using var leaseContext = postgres ? await space!.ShareTransactionAsync(_db, ct) : null;
+            var authority = leaseContext is null ? null : await SpacePublishEffectAuthority.RequireAsync(
+                _db, leaseContext, lease!, batch.PublishAttemptId, ct);
             var compatibility = SpaceWmsContract.CheckCompatibility(
                 batch,
                 CapabilitySnapshot());
@@ -311,9 +312,13 @@ public sealed class Cp6SpaceWmsAdapter : ISpaceWmsAdapter
                 ResultJson = JsonSerializer.Serialize(result, Json),
                 ObservedAtUtc = result.ObservedAtUtc.UtcDateTime,
             });
-            await _db.SaveChangesAsync(ct);
+            await _db.SaveChangesAsync(acceptAllChangesOnSuccess: !postgres, ct);
+            if (authority is not null)
+                await authority.ConfirmAsync(_db, ct);
             if (transaction is not null)
                 await transaction.CommitAsync(ct);
+            if (postgres)
+                _db.ChangeTracker.AcceptAllChanges();
             return result;
         }
         catch
@@ -326,6 +331,18 @@ public sealed class Cp6SpaceWmsAdapter : ISpaceWmsAdapter
             if (transaction is not null)
                 await transaction.DisposeAsync();
         }
+    }
+
+    private async Task<SpaceWmsBatchResult?> ReadCommittedBatchAsync(SpaceWmsBatch batch, CancellationToken ct)
+    {
+        var previous = await _db.SpaceWmsOperations.AsNoTracking()
+            .SingleOrDefaultAsync(operation => operation.OperationKey == batch.OperationKey, ct);
+        if (previous is null)
+            return null;
+        if (!string.Equals(previous.PayloadHash, batch.PayloadHash, StringComparison.OrdinalIgnoreCase))
+            return ConflictResult(batch);
+        return JsonSerializer.Deserialize<SpaceWmsBatchResult>(previous.ResultJson, Json)
+            ?? throw new InvalidOperationException("SPACE_WMS_RESULT_UNCERTAIN");
     }
 
     public async Task<SpaceWmsOperationStatus> GetOperationStatusAsync(
