@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 W641-01 后续
+
+按最终写者清单继续 Space 普通校验及普通 Published→Draft 克隆的后台栅栏。 [交付](../development/evidence/W641-01/DELIVERY.md)
+
 ## 2026-11-15 W643-01 后续
 
 完成 W641 OA 父续行采用并核对正式 PGT-017 全部登记写者。 [交付](../development/evidence/W643-01/DELIVERY.md)

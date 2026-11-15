@@ -8,9 +8,13 @@ namespace CP6.Tests.Erp;
 // A loopback-only PostgreSQL fixture. Drop exactly one acknowledged COMMIT from the selected LOGIN.
 internal sealed class StockPostgresCommitRelay : IAsyncDisposable
 {
+    private const int DropNextCommit = 1;
+    private const int HoldNextCommit = 2;
     private readonly TcpListener listener;
     private readonly CancellationTokenSource stopping = new();
     private readonly TaskCompletionSource dropped = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly TaskCompletionSource commitHeld = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly TaskCompletionSource releaseCommit = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly List<Task> connections = [];
     private readonly Task accepting;
     private int armed;
@@ -24,7 +28,10 @@ internal sealed class StockPostgresCommitRelay : IAsyncDisposable
 
     internal int Port => ((IPEndPoint)listener.LocalEndpoint).Port;
     internal Task Dropped => dropped.Task;
-    internal void Arm() => Interlocked.Exchange(ref armed, 1);
+    internal Task CommitHeld => commitHeld.Task;
+    internal void Arm() => Interlocked.Exchange(ref armed, DropNextCommit);
+    internal void ArmHold() => Interlocked.Exchange(ref armed, HoldNextCommit);
+    internal void ReleaseCommit() => releaseCommit.TrySetResult();
 
     private async Task AcceptAsync(int postgresPort, string login)
     {
@@ -82,11 +89,19 @@ internal sealed class StockPostgresCommitRelay : IAsyncDisposable
         {
             var body = new byte[BodyLength(header.AsSpan(1))];
             await postgres.ReadExactlyAsync(body, ct);
-            if (header[0] == 'C' && body.AsSpan().SequenceEqual("COMMIT\0"u8)
-                && Interlocked.Exchange(ref armed, 0) == 1)
+            if (header[0] == 'C' && body.AsSpan().SequenceEqual("COMMIT\0"u8))
             {
-                dropped.TrySetResult();
-                return;
+                switch (Interlocked.Exchange(ref armed, 0))
+                {
+                    case DropNextCommit:
+                        dropped.TrySetResult();
+                        return;
+                    case HoldNextCommit:
+                        // PostgreSQL has finished committing. The client is still waiting for this reply.
+                        commitHeld.TrySetResult();
+                        await releaseCommit.Task.WaitAsync(ct);
+                        break;
+                }
             }
             await client.WriteAsync(header, ct);
             await client.WriteAsync(body, ct);
