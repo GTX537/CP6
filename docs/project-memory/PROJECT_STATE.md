@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W659-01 租户期限原操作
+
+两个原期限入口的断连、恢复及两种 PostgreSQL 顺序均实测。与 W658 组合复测通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W659-01/DELIVERY.md)
+
 ## 2026-11-15 W658-01 角色与询盘范围原操作
 
 真实首次连接拒绝、重启、两种提交顺序和 CRM 确认丢失已验证。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W658-01/DELIVERY.md)

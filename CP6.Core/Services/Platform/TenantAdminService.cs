@@ -150,23 +150,26 @@ public partial class TenantAdminService : ITenantAdminService
 
     public Task UpdateAsync(Guid id, string name, DateTime? expire, string? remark, string? timeZoneId = null,
         CancellationToken cancellationToken = default)
-        => MutateAsync((actor, ct) => UpdateCoreAsync(id, name, expire, remark, timeZoneId, actor, ct), cancellationToken);
+        => _db.Database.IsNpgsql() && _crmPause?.IsRegistered(id) == true
+            ? UpdateRegisteredLegacyAsync(id, new(name, expire, remark, timeZoneId), cancellationToken)
+            : MutateAsync((actor, ct) => UpdateCoreAsync(id, name, expire, remark, timeZoneId, actor, ct), cancellationToken);
 
     private async Task UpdateCoreAsync(Guid id, string name, DateTime? expire, string? remark, string? timeZoneId,
-        PlatformAdminAuthorization.Actor? actor, CancellationToken cancellationToken)
+        PlatformAdminAuthorization.Actor? actor, CancellationToken cancellationToken, TenantPendingSuspensionV1? pending = null)
     {
         var t = await CurrentTargetAsync(id, cancellationToken);
-        await RequireNoPendingSuspension(id, cancellationToken);
-        // E-T2：TimeZoneId 保存前校验（E-WF-028 家族）。空串/空白 → 清空（沿用 app 默认）；
-        // 非空且不可解析（既非 IANA 亦非 Windows id）→ 拒绝保存，不落任一字段。
-        var normalizedTz = string.IsNullOrWhiteSpace(timeZoneId) ? null : timeZoneId.Trim();
-        if (normalizedTz != null)
+        if (pending is null)
+            await RequireNoPendingSuspension(id, cancellationToken);
+        var normalizedTz = NormalizeManagementTimeZone(timeZoneId);
+        if (pending is not null)
         {
-            try { TimeZoneInfo.FindSystemTimeZoneById(normalizedTz); }
-            catch (Exception ex) when (ex is TimeZoneNotFoundException or InvalidTimeZoneException)
-            { throw new InvalidOperationException("E-WF-028"); }
+            if (_crmPause is null ||
+                await _crmPause.ReadSuspensionBoundaryAsync(_db, id, cancellationToken) != (pending.Store, pending.SourceVersion))
+                throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503);
+            // The native trigger permits edits only after the intent is removed in this transaction.
+            await TenantPendingSuspensionV1.ClearAsync(_db, id, cancellationToken);
         }
-        if (_crmPause is not null && _db.Database.IsNpgsql() && t.Enable && t.ExpireDate != expire)
+        else if (_crmPause is not null && _db.Database.IsNpgsql() && t.Enable && t.ExpireDate != expire)
             await _crmPause.RequireDeadlineCaptureAsync(_db, id, cancellationToken);
         t.TenantName = name;
         t.ExpireDate = expire;
@@ -174,6 +177,19 @@ public partial class TenantAdminService : ITenantAdminService
         t.TimeZoneId = normalizedTz;
         StageManagementAudit(SecurityEventType.TenantUpdated, t, actor);
         await SaveManagementChangesAsync(cancellationToken);
+    }
+
+    private static string? NormalizeManagementTimeZone(string? timeZoneId)
+    {
+        // Blank uses the application default. The existing contract accepts IANA and Windows identifiers.
+        var normalized = string.IsNullOrWhiteSpace(timeZoneId) ? null : timeZoneId.Trim();
+        if (normalized is not null)
+        {
+            try { TimeZoneInfo.FindSystemTimeZoneById(normalized); }
+            catch (Exception ex) when (ex is TimeZoneNotFoundException or InvalidTimeZoneException)
+            { throw new InvalidOperationException("E-WF-028"); }
+        }
+        return normalized;
     }
 
     public Task SuspendAsync(Guid id, CancellationToken cancellationToken = default)
