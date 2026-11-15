@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 · W595-01 受控切换余项
+
+CRM 正式切换需要已授权且跨重启持续的旧写者隔离、可信 Main/Kafka 水位和产品重绑入口。继续验证 Main 财务与 Space 的剩余 writer。 [交付记录](../development/evidence/W595-01/DELIVERY.md)
+
 ## 2026-11-15 · W596-01 PGT-017 余项
 
 登记跨仓 CRM 全租户恢复结果，并继续核对 Space 底图、CAD/Excel、刊发、规划等写者、余下财务事务与正式切换。 [交付记录](../development/evidence/W596-01/DELIVERY.md)

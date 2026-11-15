@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-15 · W595-01 CRM PostgreSQL 恢复演练
+
+实际 PostgreSQL 与 Kafka、Dapr，7 项跨仓恢复场景及 6 项相关回归通过，零跳过。 [交付记录](../development/evidence/W595-01/DELIVERY.md)
+
 ## 2026-11-15 · W596-01 Space 版本创建
 
 空白与发布克隆预留验证暂停和业务先提交；系统与租户模板验证中断后复用原版本、任务和楼层，同键继续生成布局。 [交付记录](../development/evidence/W596-01/DELIVERY.md)
