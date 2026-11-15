@@ -166117,6 +166117,16 @@
       "at": "2026-11-15T17:49:16.211915+00:00",
       "change": "W640-01 旧 OA 到期待办持有 Main 根并核对原版本及最终有效期，保留原流程、预算回写和通知，并延后连接器。",
       "evidence": "docs/development/evidence/W640-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T17:52:07.424340+00:00",
+      "change": "W642-01 受限库存三条配置路径在原 PostgreSQL 事务保存财务意图，实测两种提交顺序、原键恢复和现有角色升级。",
+      "evidence": "docs/development/evidence/W642-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T18:10:50.457616+00:00",
+      "change": "W643-01 原 WMS 出库在同事务保存 ERP 回写意图，由持 Main 根的 Worker 原子写订单、明细和原回执，实测两种提交顺序。",
+      "evidence": "docs/development/evidence/W643-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212123,10 +212133,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W640",
-      "path": "docs/development/evidence/W640-01/DELIVERY.md",
-      "baseline_sha": "2cae251e90fecc2cd6d49e0297c8c71a51624d25",
-      "registered_at": "2026-11-15T17:25:01.939080+00:00",
+      "id": "W643",
+      "path": "docs/development/evidence/W643-01/DELIVERY.md",
+      "baseline_sha": "db6c58fd89006524201d2578b6ffc890525e0712",
+      "registered_at": "2026-11-15T17:55:24.494133+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212140,11 +212150,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Use the next DEV-2 scope for the native subflow parent continuation.",
+      "next_action": "Complete the W641 adoption and reconcile the full formal PGT-017 writer evidence.",
       "windows": [
         {
-          "id": "W640-01",
-          "workspace_task": "W640-01",
+          "id": "W643-01",
+          "workspace_task": "W643-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212154,28 +212164,28 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w640-01",
-          "planned_scope_ref": "docs/development/evidence/W640-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W640-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w643-01",
+          "planned_scope_ref": "docs/development/evidence/W643-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W643-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Legacy due workflow timeout escalation, decision and error edge",
-            "Main root, original published workflow, native expiry and durable callback/Outbox",
-            "DEV-2"
+            "Actual WMS shipment producer, native ERP original event/result and source quantity",
+            "Main native root on the exact current ERP projection and retained recoveries",
+            "DEV-1"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "15 targeted cases passed, zero skips, including four native signed orderings, late expiry, deferred connector and existing authority checks. Three unrelated historical SQLite initialization failures reproduced on earlier intact runtime. 310 local hashes, seven identical DLLs and 200/401/200.",
-          "remaining_scope": "W641 post-commit parent continuation and W643 ERP shipment projection. Formal PostgreSQL 26 PASS / 1 NOT_RUN.",
-          "main_tested_source_sha": "427c38c46119d5957598270a15fcea889c98ca13"
+          "validation_summary": "Three native shipment projection cases including both orders and native producer ACK loss, four W620 native controls, eleven component cases. 310 files, three identical tested DLLs and local HTTP 200/401.",
+          "remaining_scope": "W641 original already-accepted OA parent continuation and final writer reconciliation; formal PostgreSQL remains 26 PASS / 1 NOT_RUN.",
+          "main_tested_source_sha": "7f3684dcfae18867eba8bccfa2025179e72f8567"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -269169,6 +269179,128 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W640",
+        "path": "docs/development/evidence/W640-01/DELIVERY.md",
+        "baseline_sha": "2cae251e90fecc2cd6d49e0297c8c71a51624d25",
+        "registered_at": "2026-11-15T17:25:01.939080+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Use the next DEV-2 scope for the native subflow parent continuation.",
+        "windows": [
+          {
+            "id": "W640-01",
+            "workspace_task": "W640-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w640-01",
+            "planned_scope_ref": "docs/development/evidence/W640-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W640-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Legacy due workflow timeout escalation, decision and error edge",
+              "Main root, original published workflow, native expiry and durable callback/Outbox",
+              "DEV-2"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "15 targeted cases passed, zero skips, including four native signed orderings, late expiry, deferred connector and existing authority checks. Three unrelated historical SQLite initialization failures reproduced on earlier intact runtime. 310 local hashes, seven identical DLLs and 200/401/200.",
+            "remaining_scope": "W641 post-commit parent continuation and W643 ERP shipment projection. Formal PostgreSQL 26 PASS / 1 NOT_RUN.",
+            "main_tested_source_sha": "427c38c46119d5957598270a15fcea889c98ca13",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1165",
+            "main_remote_main_sha": "4df0a3a4253eb05a22af259e14ca9817ef24857d"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W642",
+        "path": "docs/development/evidence/W642-01/DELIVERY.md",
+        "baseline_sha": "e3548b6581e41f83440c858cbff5fd4a960c8606",
+        "registered_at": "2026-11-15T17:21:03.623392+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Use the next DEV-1 scope for native ERP shipment projection and continue OA tests.",
+        "windows": [
+          {
+            "id": "W642-01",
+            "workspace_task": "W642-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w642-01",
+            "planned_scope_ref": "docs/development/evidence/W642-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W642-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Legacy, V1 and V2 actual restricted PostgreSQL stock movements",
+              "Original finance payload in the same transaction and narrowly granted function",
+              "DEV-1"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "Three native fixtures including six actual signed order cases, native lost COMMIT, existing-role adoption and real CP6.TenantStorage CLI; eight related native cases passed. 310 file hashes, source-bound DLLs, HTTP 200/401/401/401.",
+            "remaining_scope": "W641 committed OA parent continuation and W643 ERP shipment projection. Formal PostgreSQL 26 PASS / 1 NOT_RUN.",
+            "main_tested_source_sha": "e60ab2f5f9884f2f7e92b14e3e896a1cf240104e",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1166",
+            "main_remote_main_sha": "db6c58fd89006524201d2578b6ffc890525e0712"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },

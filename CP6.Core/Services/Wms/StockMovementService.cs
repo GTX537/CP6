@@ -167,8 +167,7 @@ public partial class StockMovementService : IStockMovementService
             await _db.SaveChangesAsync(ct);
             if (_db.Database.IsNpgsql()) await StockMovementSequenceV1.Record(_db,stock.Id,txn.Id,ct);
             if(binding!=null)await InheritanceAccess.CompleteStockTransaction(binding,ct);
-            // The restricted writer has its own native connection and no general integration-event permission.
-            if (_db.Database.IsNpgsql() && _db is not StockMovementWriteContextV1 && _finBridge is StockFinBridge finance)
+            if (_db.Database.IsNpgsql() && _finBridge is StockFinBridge finance)
                 await finance.StageStockMoveAsync(_db, txn, ct);
             if (tx != null) await tx.CommitAsync(ct);
             var canPublishNow = publishWhenCommitted && (tx != null || isInMemory);

@@ -37,6 +37,7 @@ var stockInstallContract = args switch
     ["install-stock-original-journal-v1", "--stdin"] => StockOriginalJournalStorageV1.Contract,
     ["install-stock-outbox-writer-v1", "--stdin"] => StockOutboxWriterStorageV1.Contract,
     ["install-stock-movement-writer-v1", "--stdin"] => StockMovementWriterStorageV1.Contract,
+    ["install-stock-movement-finance-v1", "--stdin"] => StockMovementFinanceWriterStorageV1.Contract,
     ["install-stock-adjust-owner-v1", "--stdin"] => StockAdjustOwnerStorageV1.Contract,
     ["install-stock-creation-writer-v2", "--stdin"] => StockCreationWriterStorageV2.Contract,
     _ => null
@@ -44,7 +45,7 @@ var stockInstallContract = args switch
 var controlExecutionStarted = false;
 if ((!args.SequenceEqual(["provision", "--stdin"]) && !revocation && !serviceToken && !tenantControl && !directoryControl && !rmaControl && stockInstallContract is null) || !Console.IsInputRedirected)
 {
-    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1|install-identity-directory-v2|inspect-identity-directory-v2|install-rma-tenant-storage-v1|migrate-rma-tenant-storage-v1|prepare-rma-core-tenant-storage-v1|commission-rma-core-tenant-storage-v1|prepare-rma-core-from-creation-v2|commission-rma-core-from-creation-v2|migrate-rma-core-outbound-index-v1|install-rma-core-original-journal-v1|install-rma-core-draft-writer-v1|install-rma-core-submit-writer-v1|install-stock-read-v1|inspect-stock-read-v1|install-stock-write-fence-v1|install-stock-original-journal-v1|install-stock-outbox-writer-v1|install-stock-movement-writer-v1|install-stock-adjust-owner-v1|install-stock-creation-writer-v2|stock-outbox-epoch-v1 --stdin (one bounded JSON document on redirected standard input).");
+    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1|install-identity-directory-v2|inspect-identity-directory-v2|install-rma-tenant-storage-v1|migrate-rma-tenant-storage-v1|prepare-rma-core-tenant-storage-v1|commission-rma-core-tenant-storage-v1|prepare-rma-core-from-creation-v2|commission-rma-core-from-creation-v2|migrate-rma-core-outbound-index-v1|install-rma-core-original-journal-v1|install-rma-core-draft-writer-v1|install-rma-core-submit-writer-v1|install-stock-read-v1|inspect-stock-read-v1|install-stock-write-fence-v1|install-stock-original-journal-v1|install-stock-outbox-writer-v1|install-stock-movement-writer-v1|install-stock-movement-finance-v1|install-stock-adjust-owner-v1|install-stock-creation-writer-v2|stock-outbox-epoch-v1 --stdin (one bounded JSON document on redirected standard input).");
     return 2;
 }
 try
@@ -148,6 +149,7 @@ try
                 StockOriginalJournalStorageV1.Contract => "CP6.TenantStorage.StockOriginalJournalV1",
                 StockOutboxWriterStorageV1.Contract => "CP6.TenantStorage.StockOutboxWriterV1",
                 StockMovementWriterStorageV1.Contract => "CP6.TenantStorage.StockMovementWriterV1",
+                StockMovementFinanceWriterStorageV1.Contract => "CP6.TenantStorage.StockMovementFinanceWriterV1",
                 StockAdjustOwnerStorageV1.Contract => "CP6.TenantStorage.StockAdjustOwnerV1",
                 _ => "CP6.TenantStorage.StockCreationWriterV2"
             }
@@ -201,6 +203,7 @@ try
                 StockOriginalJournalStorageV1.Contract => StockOriginalJournalStorageV1.InstallAsync(control, tx, readInstallationId, stockRequest.Tenants, timeout.Token),
                 StockOutboxWriterStorageV1.Contract => StockOutboxWriterStorageV1.InstallAsync(control, tx, readInstallationId, stockRequest.Tenants, timeout.Token),
                 StockMovementWriterStorageV1.Contract => StockMovementWriterStorageV1.InstallAsync(control, tx, readInstallationId, stockRequest.Tenants, timeout.Token),
+                StockMovementFinanceWriterStorageV1.Contract => StockMovementFinanceWriterStorageV1.InstallAsync(control, tx, readInstallationId, stockRequest.Tenants, timeout.Token),
                 StockAdjustOwnerStorageV1.Contract => StockAdjustOwnerStorageV1.InstallAsync(control, tx, readInstallationId, stockRequest.Tenants, timeout.Token),
                 _ => StockCreationWriterStorageV2.InstallAsync(control, tx, readInstallationId, stockRequest.Tenants, timeout.Token)
             };

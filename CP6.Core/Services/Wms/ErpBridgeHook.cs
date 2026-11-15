@@ -16,7 +16,7 @@ namespace CP6.Core.Services.Wms;
 /// 出庫明細↔受注明細の対応は WebOrderNo + ProductCd で照合（同一製品が複数明細にある場合は
 /// 未充足の明細へ順次充当）。
 /// </remarks>
-public class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
+public partial class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
 {
     public ErpBridgeHook(CP6Context db, ILogger<ErpBridgeHook> logger)
         : base(db, logger)
@@ -29,100 +29,19 @@ public class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
         var payload = new { outboundNo, userName };
         try
         {
-            var ob = await Db.OutboundOrders.AsNoTracking()
-                .FirstOrDefaultAsync(x => x.OutboundNo == outboundNo && !x.IsDeleted);
-            if (ob == null)
+            var result = await ProjectShipmentAsync(outboundNo, userName, null, CancellationToken.None);
+            if (result.Status == IntegrationEventStatus.Success)
             {
-                var msg = $"出庫指示 [{outboundNo}] が見つかりません";
-                await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
-                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload, userName);
-                return ErpBridgeResult.Skipped(msg);
+                await Db.SaveChangesAsync();
+                Logger.LogInformation("[ERP-Bridge] 出庫 {Outbound} → 受注 {Order} 出荷実績回写（ShipStatus={Status}）",
+                    outboundNo, result.OrderNo, result.ShipStatus);
             }
 
-            // 出荷区分かつ受注紐付きのみ回写対象（材料出庫等は対象外）
-            if (ob.OutboundType != OutboundType.Shipping || string.IsNullOrWhiteSpace(ob.WebOrderNo))
-            {
-                var msg = "出荷区分かつ受注紐付きの出庫ではありません";
-                await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
-                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload, userName);
-                return ErpBridgeResult.Skipped(msg);
-            }
-
-            var webOrderNo = ob.WebOrderNo!;
-
-            var shippedLines = await Db.OutboundOrderDetails.AsNoTracking()
-                .Where(d => d.OutboundNo == outboundNo && !d.IsDeleted && d.ShippedQty > 0)
-                .OrderBy(d => d.LineNo)
-                .ToListAsync();
-            if (shippedLines.Count == 0)
-            {
-                var msg = "出荷数のある明細がありません";
-                await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
-                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload, userName);
-                return ErpBridgeResult.Skipped(msg);
-            }
-
-            var order = await Db.Orders
-                .FirstOrDefaultAsync(o => o.WebOrderNo == webOrderNo && !o.IsDeleted);
-            if (order == null)
-            {
-                var msg = $"受注 [{webOrderNo}] が見つかりません";
-                await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
-                    outboundNo, null, IntegrationEventStatus.Skipped, msg, corrId, payload, userName);
-                return ErpBridgeResult.Skipped(msg);
-            }
-
-            var orderDetails = await Db.OrderDetails
-                .Where(d => d.WebOrderNo == webOrderNo && !d.IsDeleted)
-                .OrderBy(d => d.WebOrderDetailNo)
-                .ToListAsync();
-
-            var now = DateTime.Now;
-
-            // 出庫明細を製品CDで受注明細へ順次充当（同一製品が複数行ある場合は未充足行から埋める）
-            foreach (var grp in shippedLines.GroupBy(s => s.ProductCd))
-            {
-                var remaining = grp.Sum(s => s.ShippedQty);
-                var targets = orderDetails
-                    .Where(d => d.ProductCd == grp.Key)
-                    .OrderBy(d => d.WebOrderDetailNo)
-                    .ToList();
-                if (targets.Count == 0) continue;
-
-                foreach (var od in targets)
-                {
-                    if (remaining <= 0) break;
-                    var ordered = od.Quantity ?? 0m;
-                    var already = od.ShippedQty ?? 0m;
-                    var capacity = ordered > 0 ? ordered - already : remaining; // 数量未設定なら全量充当
-                    var apply = capacity > 0 ? Math.Min(remaining, capacity) : remaining;
-                    if (apply <= 0) continue;
-
-                    od.ShippedQty = already + apply;
-                    od.ShipStatus = (ordered > 0 && od.ShippedQty >= ordered) ? 9 : 5;
-                    od.LastShipDate = now;
-                    od.LastOutboundNo = outboundNo;
-                    od.Modifier = userName;
-                    od.ModifyDate = now;
-                    remaining -= apply;
-                }
-            }
-
-            // ヘッダ ロールアップ
-            bool allShipped = orderDetails.All(d => d.ShipStatus == 9);
-            bool anyShipped = orderDetails.Any(d => d.ShipStatus >= 5);
-            order.ShipStatus = allShipped ? 9 : (anyShipped ? 5 : order.ShipStatus);
-            order.ActualShipDate = now;
-            order.Modifier = userName;
-            order.ModifyDate = now;
-
-            await Db.SaveChangesAsync();
-
-            Logger.LogInformation("[ERP-Bridge] 出庫 {Outbound} → 受注 {Order} 出荷実績回写（ShipStatus={Status}）",
-                outboundNo, webOrderNo, order.ShipStatus);
             await PersistEventAsync("WMS", "ERP", nameof(OnShipmentConfirmedAsync),
-                outboundNo, webOrderNo, IntegrationEventStatus.Success, null, corrId, payload, userName);
-            return ErpBridgeResult.Ok(webOrderNo);
+                outboundNo, result.OrderNo, result.Status, result.Error, corrId, payload, userName);
+            return result.Status == IntegrationEventStatus.Success
+                ? ErpBridgeResult.Ok(result.OrderNo!)
+                : ErpBridgeResult.Skipped(result.Error!);
         }
         catch (Exception ex)
         {
@@ -131,6 +50,82 @@ public class ErpBridgeHook : BridgeHookBase, IErpBridgeHook
                 outboundNo, null, IntegrationEventStatus.Failed, ex.ToString(), corrId, payload, userName);
             return ErpBridgeResult.Failed(ex.Message);
         }
+    }
+
+    private async Task<ShipmentProjectionResult> ProjectShipmentAsync(string outboundNo, string? userName,
+        ShipmentProjectionPayload? original, CancellationToken ct)
+    {
+        var outbound = await Db.OutboundOrders.AsNoTracking()
+            .FirstOrDefaultAsync(row => row.OutboundNo == outboundNo && !row.IsDeleted, ct);
+        if (outbound is null)
+            return ShipmentProjectionResult.Skipped($"出庫指示 [{outboundNo}] が見つかりません");
+        if (outbound.OutboundType != OutboundType.Shipping || string.IsNullOrWhiteSpace(outbound.WebOrderNo))
+            return ShipmentProjectionResult.Skipped("出荷区分かつ受注紐付きの出庫ではありません");
+
+        var orderNo = outbound.WebOrderNo;
+        if (original is not null && (outbound.Status != OutboundOrderStatus.Completed
+            || (original.Version == 1 && (original.OutboundId != outbound.Id || original.OrderNo != orderNo))))
+            return ShipmentProjectionResult.Failed("DISPATCH-400");
+
+        var shipped = await Db.OutboundOrderDetails.AsNoTracking()
+            .Where(row => row.OutboundNo == outboundNo && !row.IsDeleted && row.ShippedQty > 0)
+            .OrderBy(row => row.LineNo).ToListAsync(ct);
+        if (shipped.Count == 0)
+            return ShipmentProjectionResult.Skipped("出荷数のある明細がありません");
+
+        var order = await Db.Orders.FirstOrDefaultAsync(row => row.WebOrderNo == orderNo && !row.IsDeleted, ct);
+        if (order is null)
+            return ShipmentProjectionResult.Skipped($"受注 [{orderNo}] が見つかりません");
+
+        var lines = await Db.OrderDetails.Where(row => row.WebOrderNo == orderNo && !row.IsDeleted)
+            .OrderBy(row => row.WebOrderDetailNo).ToListAsync(ct);
+        if (original is { Version: null })
+        {
+            // Legacy shipment projection updated the order and its lines in one SaveChanges.
+            if (lines.Any(line => line.LastOutboundNo == outboundNo)
+                || await Db.IntegrationEvents.AsNoTracking().AnyAsync(evt => evt.SourceModule == "WMS"
+                    && evt.TargetModule == "ERP" && evt.HookName == nameof(OnShipmentConfirmedAsync)
+                    && evt.SourceNo == outboundNo && evt.TargetNo == orderNo && evt.Status == IntegrationEventStatus.Success, ct))
+                return new(IntegrationEventStatus.Success, orderNo, null, order.ShipStatus);
+
+            // An equal or later write may have superseded the original line markers.
+            if (order.ActualShipDate is DateTime last
+                && (outbound.ModifyDate is not DateTime confirmation || last >= confirmation))
+                return ShipmentProjectionResult.Failed("ERP_SHIPMENT_OUTCOME_UNKNOWN");
+        }
+
+        var appliedAt = original is null ? DateTime.Now : outbound.ModifyDate ?? DateTime.Now;
+
+        // Keep the order bridge allocation policy for multiple lines sharing a product.
+        foreach (var group in shipped.GroupBy(row => row.ProductCd))
+        {
+            var remaining = group.Sum(row => row.ShippedQty);
+            foreach (var line in lines.Where(row => row.ProductCd == group.Key))
+            {
+                if (remaining <= 0) break;
+                var ordered = line.Quantity ?? 0m;
+                var already = line.ShippedQty ?? 0m;
+                var capacity = ordered > 0 ? ordered - already : remaining;
+                var applied = capacity > 0 ? Math.Min(remaining, capacity) : remaining;
+                if (applied <= 0) continue;
+
+                line.ShippedQty = already + applied;
+                line.ShipStatus = (ordered > 0 && line.ShippedQty >= ordered) ? 9 : 5;
+                line.LastShipDate = appliedAt;
+                line.LastOutboundNo = outboundNo;
+                line.Modifier = userName;
+                line.ModifyDate = appliedAt;
+                remaining -= applied;
+            }
+        }
+
+        var allShipped = lines.All(line => line.ShipStatus == 9);
+        var anyShipped = lines.Any(line => line.ShipStatus >= 5);
+        order.ShipStatus = allShipped ? 9 : (anyShipped ? 5 : order.ShipStatus);
+        order.ActualShipDate = appliedAt;
+        order.Modifier = userName;
+        order.ModifyDate = appliedAt;
+        return new(IntegrationEventStatus.Success, orderNo, null, order.ShipStatus);
     }
 
     public async Task<ErpBridgeResult> OnReturnConfirmedAsync(string rmaNo, string? userName)

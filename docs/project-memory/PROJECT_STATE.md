@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-11-15 W643-01 出库到 ERP 的原回写
+
+原真实出库、回写意图、ERP 同事务结果及暂停两序和未知应答恢复均已核对。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W643-01/DELIVERY.md)
+
+## 2026-11-15 W642-01 受限库存原财务意图
+
+三种受限库存写法均保留同一真实原库存事务、原量价和财务恢复；正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W642-01/DELIVERY.md)
+
 ## 2026-11-15 W640-01 旧 OA 超时扫描
 
 每个已到期待办和实际状态在当前 Main 栅栏内重读，结束时复核真实租户有效期。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W640-01/DELIVERY.md)
