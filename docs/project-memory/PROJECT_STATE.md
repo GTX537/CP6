@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W624-01 Space 映射配置授权
+
+CAD 与 Excel 两个保存入口已接入 Main 共同栅栏。创建、更新实测暂停两种顺序并补签名撤权验证。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W624-01/DELIVERY.md)
+
 ## 2026-11-15 W621-01 Space 刊发原生效果
 
 内置 WMS 与 Runtime 激活同各自原生事务核对 Main 当前租户及原作业租约。7 项实库通过，含四种时序、两次提交应答遗失和实际到期。PostgreSQL 正式矩阵仍为 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W621-01/DELIVERY.md)

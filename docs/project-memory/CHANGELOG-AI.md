@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W624-01
+
+CAD、Excel 映射保存与 Main 暂停和版本化撤权共用保存事务的授权根。 [交付](../development/evidence/W624-01/DELIVERY.md)
+
 ## 2026-11-15 W621-01
 
 刊发保留同一 WMS 操作回执和版本指针，Main 当前租户及原作业租约参与新的物理效果提交。 [交付](../development/evidence/W621-01/DELIVERY.md)

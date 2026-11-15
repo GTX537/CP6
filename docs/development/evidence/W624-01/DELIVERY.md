@@ -16,3 +16,7 @@
 - 补充通过 4 项真实 PostgreSQL 同键并发和调用方事务保护，以及 12 项 CAD、Excel 映射服务测试，零跳过。独立 `CP6.Space.IntegrationTests` 的普通构建遇到既有 `RecordingTaskCenter` 缺少接口成员，补充构建仅通过制品目录中的 MSBuild 配置排除该无关测试文件。所用映射产品程序集与签名验证相同。旧启动脚本等待 Windows 子进程退出的失败及随后报告日志读取失败均保留，后一次测试 TRX 完整且 PostgreSQL 正常停止。 [补充 TRX](D:/CP6-test-artifacts/W624-01/mapping-services-confirmed/results.trx) · [普通构建日志](D:/CP6-test-artifacts/W624-01/mapping-services/build.log) · [补充数据库停止日志](D:/CP6-test-artifacts/W624-01/mapping-services-confirmed/stop.log)
 
 隔离进程均已停止。验证针对两条映射配置写入口及原映射服务合同。Actions 与部署均为零。
+
+## 发布与主线组合核对
+
+受测源码 `82f3d2034eccd52b182a597bcd8c2f759634c5c0` 的隔离本地发布共 310 文件，七份程序集与实际验证文件相同。PostgreSQL 18.6 通过 56970 启动，Kestrel 56978 活性 200，CAD 与 Excel 匿名保存均为 401，所用进程已停止。与 W621 主线组合为 `eefc892a5c4a4a2dc22902db48e9039e93495367`，三个产品和测试文件逐字节相同。W621 对 SpaceContext 的增加仅供刊发事务创建共享读写上下文，映射服务使用的授权和保存事务源码保持相同。 [发布与 SHA-256](D:/CP6-test-artifacts/W624-01/publish-verified-smoke.json)
