@@ -166177,6 +166177,11 @@
       "at": "2026-11-15T21:35:19.606015+00:00",
       "change": "W658-01 角色和询盘范围原操作先耐久记录待确认，首次封存连接拒绝时停发实际受影响的新写许可；业务与原回执一次提交。",
       "evidence": "docs/development/evidence/W658-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-15T21:47:40.458921+00:00",
+      "change": "W659-01 版本化与旧 PUT 的显式期限改为按原命令耐久停发新写，原期限及双库封存提交确认可恢复。",
+      "evidence": "docs/development/evidence/W659-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212183,10 +212188,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W658",
-      "path": "docs/development/evidence/W658-01/DELIVERY.md",
-      "baseline_sha": "39923b3e5ce0f328591609e7af266c5c48aee1e9",
-      "registered_at": "2026-11-15T20:48:51.287302+00:00",
+      "id": "W659",
+      "path": "docs/development/evidence/W659-01/DELIVERY.md",
+      "baseline_sha": "382328801d062080426c97b5f9fdf1d87ed957c2",
+      "registered_at": "2026-11-15T21:00:06.940749+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212200,11 +212205,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Continue ordinary existing-user CRM first-seal restoration, then other affected registered Main owners. Verify combined original deadline adoption.",
+      "next_action": "Complete exact user and session recovery, then remaining native Main departmental and role fanout boundaries before recording overall acceptance.",
       "windows": [
         {
-          "id": "W658-01",
-          "workspace_task": "W658-01",
+          "id": "W659-01",
+          "workspace_task": "W659-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212214,28 +212219,28 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w658-01",
-          "planned_scope_ref": "docs/development/evidence/W658-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W658-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "branch": "codex/w659-01",
+          "planned_scope_ref": "docs/development/evidence/W659-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W659-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Five original Main role/inquiry scope mutations and their current claimant restrictions",
-            "CRM original W649 service and native C02 receivers",
-            "DEV-1"
+            "Enabled tenant exact CRM deadline predecessor and legacy plus versioned management",
+            "PostgreSQL 18.6 fixed store, original C02 and real commit acknowledgements",
+            "DEV-2"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "42 native/targeted Main and six CRM executions, actual first dedicated login refusal, Main restart, scoped retained original, both signed role/scope orders, and real CRM commit ACK loss. Zero skips. 310 exact package, fresh migration 0, liveness 200 and anonymous 401.",
-          "remaining_scope": "W659 verified original deadline and needs shared fixture and client combined regression before protected adoption. Ordinary existing-user, browser-family, department and relevant cross-tenant menu cold intents remain in tracked Main scope. PGT-017 NOT_RUN.",
-          "main_tested_source_sha": "3d8500b93159fce224bfd58b7e7008b1acbe42ca"
+          "validation_summary": "Both original HTTP paths tested cold and both database acknowledgement failures. Actual CRM owner-first and expiry-update-first. Thirty-four affected Main and two W649 baseline checks. Combined upon adopting W658, four actual two-store paths 8/8, zero skips. Exact 310-file output 200/401/401, both actual migrations.",
+          "remaining_scope": "Ordinary existing-user cold restoration W660 active. Browser-family including CRM local logout recovery, registered department and actual MenuKey fanout remain. Formal PGT-017 NOT_RUN.",
+          "main_tested_source_sha": "d559b5fb81af281a4c621953d315520c16e44290"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -269971,6 +269976,67 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W658",
+        "path": "docs/development/evidence/W658-01/DELIVERY.md",
+        "baseline_sha": "39923b3e5ce0f328591609e7af266c5c48aee1e9",
+        "registered_at": "2026-11-15T20:48:51.287302+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Continue ordinary existing-user CRM first-seal restoration, then other affected registered Main owners. Verify combined original deadline adoption.",
+        "windows": [
+          {
+            "id": "W658-01",
+            "workspace_task": "W658-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w658-01",
+            "planned_scope_ref": "docs/development/evidence/W658-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W658-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Five original Main role/inquiry scope mutations and their current claimant restrictions",
+              "CRM original W649 service and native C02 receivers",
+              "DEV-1"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "42 native/targeted Main and six CRM executions, actual first dedicated login refusal, Main restart, scoped retained original, both signed role/scope orders, and real CRM commit ACK loss. Zero skips. 310 exact package, fresh migration 0, liveness 200 and anonymous 401.",
+            "remaining_scope": "W659 verified original deadline and needs shared fixture and client combined regression before protected adoption. Ordinary existing-user, browser-family, department and relevant cross-tenant menu cold intents remain in tracked Main scope. PGT-017 NOT_RUN.",
+            "main_tested_source_sha": "3d8500b93159fce224bfd58b7e7008b1acbe42ca",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1178",
+            "main_remote_main_sha": "65b0cd7ccef2f23822f26bdecfec6df1348963e6"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },

@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-15 W659-01
+
+原期限命令在双库确认丢失时继续恢复一次。采用 W658 后补测 Main 四项、CRM 四项，零跳过。 [交付](../development/evidence/W659-01/DELIVERY.md)
+
 ## 2026-11-15 W658-01
 
 五个角色和范围入口采用原操作持久意图。Main 42、CRM 6 项通过。 [交付](../development/evidence/W658-01/DELIVERY.md)
