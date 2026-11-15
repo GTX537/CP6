@@ -16,13 +16,13 @@ internal sealed class SpaceDesignWriteAuthority(
     IServiceScopeFactory scopeFactory,
     ISpaceExecutionContext execution) : ISpaceDesignWriteAuthority
 {
-    public Task AuthorizeModelEditAsync(SpaceContext context, CancellationToken ct)
-        => CheckAsync(context, authorize: true, ct);
+    public Task AuthorizeModelEditAsync(SpaceContext context, CancellationToken ct, string? additionalPermission = null)
+        => CheckAsync(context, authorize: true, additionalPermission, ct);
 
     public Task ConfirmSessionAsync(SpaceContext context, CancellationToken ct)
-        => CheckAsync(context, authorize: false, ct);
+        => CheckAsync(context, authorize: false, additionalPermission: null, ct);
 
-    private async Task CheckAsync(SpaceContext space, bool authorize, CancellationToken ct)
+    private async Task CheckAsync(SpaceContext space, bool authorize, string? additionalPermission, CancellationToken ct)
     {
         // Internal Space work has its own execution context. This boundary consumes the HTTP session.
         if (http.HttpContext is not { } request)
@@ -32,11 +32,10 @@ internal sealed class SpaceDesignWriteAuthority(
         var services = scope.ServiceProvider;
         services.GetRequiredService<ITenantContext>().CurrentTenantId = space.CurrentTenantId;
         var core = services.GetRequiredService<CP6Context>();
-        core.Database.SetDbConnection(space.Database.GetDbConnection(), contextOwnsConnection: false);
-        await core.Database.UseTransactionAsync(space.Database.CurrentTransaction!.GetDbTransaction(), ct);
-
         try
         {
+            core.Database.SetDbConnection(space.Database.GetDbConnection(), contextOwnsConnection: false);
+            await core.Database.UseTransactionAsync(space.Database.CurrentTransaction!.GetDbTransaction(), ct);
             if (authorize)
                 await AuthenticationCompletionGateV1.AcquireAsync(core, ct);
 
@@ -46,7 +45,8 @@ internal sealed class SpaceDesignWriteAuthority(
             if (authorize)
             {
                 var current = await services.GetRequiredService<ICurrentPermissionContext>().GetAsync();
-                if (!current.ActionKeys.Contains("space:model:edit"))
+                if (!current.ActionKeys.Contains("space:model:edit") ||
+                    (additionalPermission is not null && !current.ActionKeys.Contains(additionalPermission)))
                     throw new SpaceProblemException(SpaceErrorCodes.PermissionDenied, 403,
                         "The Space request was denied.", recoveryAction: "request-access");
             }

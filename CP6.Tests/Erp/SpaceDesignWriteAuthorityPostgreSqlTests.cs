@@ -33,42 +33,15 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await using var manager = await TenantManagementSeed();
         var db = writer.Db;
         var connection = db.Database.GetConnectionString()!;
-        var menu = await db.Sys_Menus.SingleOrDefaultAsync(x => x.MenuKey == "space");
-        if (menu is null)
-        {
-            menu = new() { MenuId = 32740, MenuKey = "space", MenuName = "Simulated Space Design" };
-            db.Sys_Menus.Add(menu);
-            await db.SaveChangesAsync();
-        }
-        if (!await db.Sys_MenuActions.AnyAsync(x => x.MenuId == menu.MenuId && x.ActionCode == "model:edit"))
-            db.Sys_MenuActions.Add(new() { MenuId = menu.MenuId, ActionCode = "model:edit", ActionName = "Edit model" });
-        db.Sys_RoleActions.Add(new() { RoleId = 72, MenuId = menu.MenuId, ActionCode = "model:edit" });
-        await db.SaveChangesAsync();
-        db.ChangeTracker.Clear();
-
+        var menuId = await GrantSpaceDesignActions(writer, "model:edit");
         var execution = new SpaceDesignExecution(writer.Tenant, writer.User);
         var modelSite = Guid.NewGuid();
-        var options = new DatabaseOptions(DatabaseProvider.PostgreSql);
-        var profile = DatabaseMigrationProfile.For(options, DatabaseContextKind.Space);
-        var spaceOptions = DatabaseContextOptions.Configure(new DbContextOptionsBuilder<SpaceContext>(), options,
-            connection, profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema);
-        await using var space = new SpaceContext(spaceOptions.Options, execution, new SystemSpaceClock());
+        await using var space = SpaceDesignContext(connection, execution);
         await space.Database.MigrateAsync();
         var (version, floor, lease) = await SeedSpaceDesignDraft(space, execution, modelSite);
         var input = SpaceDesignBusinessInput(operation, version, floor, lease);
         var match = operation is "element" or "layout" ? "Space_ElementCommandBatch" : "Space_IdempotencyRecord";
-        var fixtureSettings = new Dictionary<string, string>
-        {
-            ["Space__Compatibility__DesignApiEnabled"] = "true",
-            ["Space__Compatibility__Sites__0__TenantId"] = writer.Tenant.ToString("D"),
-            ["Space__Compatibility__Sites__0__SiteId"] = modelSite.ToString("D"),
-            ["Space__Compatibility__Sites__0__Mode"] = "DesignV1",
-            ["Space__Compatibility__Sites__0__CutoverState"] = "DesignV1",
-            ["Space__Compatibility__Sites__0__Evidence__BootstrapVerified"] = "true",
-            ["Space__Compatibility__Sites__0__Evidence__RuntimeHashVerified"] = "true",
-            ["Space__Compatibility__Sites__0__Evidence__WmsIdentityVerified"] = "true"
-        };
-        await using var host = await AuthenticationApiProcess.Start(connection, fixtureSettings);
+        await using var host = await AuthenticationApiProcess.Start(connection, SpaceDesignSettings(writer.Tenant, modelSite));
         var actor = await Login(host, writer);
         var administrator = await Login(host, manager);
         using var current = await host.Send(OperationsRequest(administrator, HttpMethod.Get, ManagementPath(writer.Tenant)));
@@ -93,7 +66,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
                     WHERE "TenantId"=@tenant AND "RoleId"=72 AND "MenuId"=@menu AND "ActionCode"='model:edit';
                     """, control, revoking);
                 removeAction.Parameters.AddWithValue("tenant", writer.Tenant);
-                removeAction.Parameters.AddWithValue("menu", menu.MenuId);
+                removeAction.Parameters.AddWithValue("menu", menuId);
                 Assert.Equal(1, await removeAction.ExecuteNonQueryAsync());
                 pending = Send();
                 waiting = await WaitForFence(observer, control.ProcessID, "%cp6_authentication_v1.acquire%", null, pending);
@@ -107,7 +80,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             Assert.True(denied.StatusCode == HttpStatusCode.Forbidden, await OperationsFailure(denied));
             Assert.Equal(before, afterRevocation);
 
-            db.Sys_RoleActions.Add(new() { RoleId = 72, MenuId = menu.MenuId, ActionCode = "model:edit" });
+            db.Sys_RoleActions.Add(new() { RoleId = 72, MenuId = menuId, ActionCode = "model:edit" });
             await db.SaveChangesAsync();
             using var regranted = await Send();
             Assert.True(regranted.StatusCode == HttpStatusCode.Created, await OperationsFailure(regranted));
@@ -225,8 +198,50 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 
     private sealed record SpaceDesignInput(string Path, object Body, HttpStatusCode Status, string Key);
 
+    private static async Task<int> GrantSpaceDesignActions(Harness writer, params string[] actions)
+    {
+        var db = writer.Db;
+        var menu = await db.Sys_Menus.SingleOrDefaultAsync(x => x.MenuKey == "space");
+        if (menu is null)
+        {
+            menu = new() { MenuId = 32740, MenuKey = "space", MenuName = "Simulated Space Design" };
+            db.Sys_Menus.Add(menu);
+            await db.SaveChangesAsync();
+        }
+        foreach (var action in actions)
+        {
+            if (!await db.Sys_MenuActions.AnyAsync(x => x.MenuId == menu.MenuId && x.ActionCode == action))
+                db.Sys_MenuActions.Add(new() { MenuId = menu.MenuId, ActionCode = action, ActionName = action });
+            db.Sys_RoleActions.Add(new() { RoleId = 72, MenuId = menu.MenuId, ActionCode = action });
+        }
+        await db.SaveChangesAsync();
+        db.ChangeTracker.Clear();
+        return menu.MenuId;
+    }
+
+    private static SpaceContext SpaceDesignContext(string connection, SpaceDesignExecution execution)
+    {
+        var options = new DatabaseOptions(DatabaseProvider.PostgreSql);
+        var profile = DatabaseMigrationProfile.For(options, DatabaseContextKind.Space);
+        var spaceOptions = DatabaseContextOptions.Configure(new DbContextOptionsBuilder<SpaceContext>(), options,
+            connection, profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema);
+        return new SpaceContext(spaceOptions.Options, execution, new SystemSpaceClock());
+    }
+
+    private static Dictionary<string, string> SpaceDesignSettings(Guid tenant, Guid site) => new()
+    {
+        ["Space__Compatibility__DesignApiEnabled"] = "true",
+        ["Space__Compatibility__Sites__0__TenantId"] = tenant.ToString("D"),
+        ["Space__Compatibility__Sites__0__SiteId"] = site.ToString("D"),
+        ["Space__Compatibility__Sites__0__Mode"] = "DesignV1",
+        ["Space__Compatibility__Sites__0__CutoverState"] = "DesignV1",
+        ["Space__Compatibility__Sites__0__Evidence__BootstrapVerified"] = "true",
+        ["Space__Compatibility__Sites__0__Evidence__RuntimeHashVerified"] = "true",
+        ["Space__Compatibility__Sites__0__Evidence__WmsIdentityVerified"] = "true"
+    };
+
     private static async Task<(SpaceModelVersion Version, SpaceFloorRevision Floor, SpaceEditLease Lease)> SeedSpaceDesignDraft(
-        SpaceContext space, SpaceDesignExecution execution, Guid site)
+        SpaceContext space, SpaceDesignExecution execution, Guid site, bool storeLease = true)
     {
         var model = SpaceModel.Create(execution.TenantId, site);
         space.Models.Add(model);
@@ -249,7 +264,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var lease = SpaceEditLease.Create(execution.TenantId, draft.Id, floor.LogicalId, execution.ActorId, "Simulated editor",
             Guid.NewGuid(), DateTime.UtcNow, TimeSpan.FromMinutes(4));
         space.FloorRevisions.Add(floor);
-        space.EditLeases.Add(lease);
+        if (storeLease)
+            space.EditLeases.Add(lease);
         await space.SaveChangesAsync();
         space.ChangeTracker.Clear();
         return (draft, floor, lease);
