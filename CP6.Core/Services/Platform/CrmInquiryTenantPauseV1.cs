@@ -147,7 +147,7 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
         }
     }
 
-    internal async Task<NpgsqlConnection> OpenRoleSealAsync(Guid tenant, Guid store, CancellationToken ct)
+    internal async Task<NpgsqlConnection> OpenSealAsync(Guid tenant, Guid store, CancellationToken ct)
     {
         if (!bindings.TryGetValue(tenant, out var binding) || binding.StoreId != store)
             throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503);
@@ -156,15 +156,24 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
         { throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503, error); }
     }
 
-    internal static async Task AdvanceConnectedRoleAsync(NpgsqlConnection connection, Guid tenant, Guid store,
+    internal static Task AdvanceConnectedRoleAsync(NpgsqlConnection connection, Guid tenant, Guid store,
         string aggregate, int version, CancellationToken ct)
+        => AdvanceConnectedVersionAsync(connection, tenant, store, aggregate, version,
+            "SELECT crm_inquiry_tenant_pause_v1.advance_role_v1(@tenant,@store,@aggregate,@version)", ct);
+
+    internal static Task AdvanceConnectedIdentityAsync(NpgsqlConnection connection, Guid tenant, Guid store,
+        string aggregate, int version, CancellationToken ct)
+        => AdvanceConnectedVersionAsync(connection, tenant, store, aggregate, version,
+            "SELECT crm_inquiry_tenant_pause_v1.advance_identity_v1(@tenant,@store,@aggregate,@version)", ct);
+
+    private static async Task AdvanceConnectedVersionAsync(NpgsqlConnection connection, Guid tenant, Guid store,
+        string aggregate, int version, string sql, CancellationToken ct)
     {
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(ct);
         deadline.CancelAfter(TimeSpan.FromSeconds(8));
         try
         {
-            await AdvanceVersionAsync(connection, tenant, store, version,
-                "SELECT crm_inquiry_tenant_pause_v1.advance_role_v1(@tenant,@store,@aggregate,@version)", deadline.Token, aggregate);
+            await AdvanceVersionAsync(connection, tenant, store, version, sql, deadline.Token, aggregate);
         }
         catch (Exception error) when (error is NpgsqlException or TimeoutException ||
                                       error is OperationCanceledException && !ct.IsCancellationRequested)

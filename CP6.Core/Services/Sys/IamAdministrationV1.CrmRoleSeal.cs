@@ -45,7 +45,7 @@ public sealed partial class IamAdministrationV1
                 await tx.ReleaseSavepointAsync(preview, token);
                 db.ChangeTracker.Clear();
                 if (await currentActor(token) != who) throw Error(401, "REAUTH_REQUIRED");
-                await RequireRoleSealDurability(token);
+                await RequireSealDurability(token);
                 await IamCrmRoleSealV1.InsertAsync(db, tenant, roleId, who, kind, command, fingerprint.Protect(inputHash),
                     store.Value, required, token);
                 return (null, await IamCrmRoleSealV1.ReadAsync(db, tenant, command.OperationId, token));
@@ -58,7 +58,7 @@ public sealed partial class IamAdministrationV1
         var tenantId = db.CurrentTenantId;
         var fence = db.InquiryFence ?? throw new TenantManagementExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503);
         // A failed first login cannot mark this request as possibly sealed and holds no Main root.
-        await using var connection = await fence.OpenRoleSealAsync(tenantId, intent.StoreId, ct);
+        await using var connection = await fence.OpenSealAsync(tenantId, intent.StoreId, ct);
         var completed = await ExecuteAsync<IamOperationV1?>(permission, currentActor, async (who, token) =>
         {
             var original = await Original(who, kind, command, token);
@@ -70,7 +70,7 @@ public sealed partial class IamAdministrationV1
             if (!pending.SealStarted)
             {
                 if (requireCatalog is not null) await requireCatalog(token);
-                await RequireRoleSealDurability(token);
+                await RequireSealDurability(token);
                 await pending.MarkStartedAsync(db, tenantId, token);
             }
             return null;
@@ -97,7 +97,7 @@ public sealed partial class IamAdministrationV1
                 var receipt = await write(who, token);
                 if (!sealedRole) throw Error(412, "IAM_REFERENCES_CHANGED");
                 if (await currentActor(token) != who) throw Error(401, "REAUTH_REQUIRED");
-                await RequireRoleSealDurability(token);
+                await RequireSealDurability(token);
                 await pending.RemoveAsync(db, tenantId, token);
                 return receipt;
             }
@@ -133,7 +133,7 @@ public sealed partial class IamAdministrationV1
         }
     }
 
-    private Task RequireRoleSealDurability(CancellationToken ct) => db.Database.ExecuteSqlRawAsync("""
+    private Task RequireSealDurability(CancellationToken ct) => db.Database.ExecuteSqlRawAsync("""
         SELECT set_config('synchronous_commit','on',true)
         WHERE current_setting('synchronous_commit') IN ('off','local')
         """, ct);

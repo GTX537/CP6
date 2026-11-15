@@ -64,8 +64,9 @@ public sealed partial class InquiryPermissionIssuerV1(CP6Context db, InquiryPerm
         var permissions = await new PermissionAggregator(db).BuildAsync(subject.SubjectId, ct);
         if (permissions.UserId != subject.SubjectId || required.Any(x => !permissions.ActionKeys.Contains(x)))
             throw new InquiryPermissionExceptionV1(403, "insufficient_scope");
-        if (!pending && !readOnly && await IamCrmRoleSealV1.BlocksIssuanceAsync(db, subject.TenantId,
-                permissions.RoleIds.ToArray(), request.SiteId, request.FormId, ct))
+        if (!pending && !readOnly && (await IamCrmUserSealV1.ExistsAsync(db, subject.TenantId, subject.SubjectId, ct)
+            || await IamCrmRoleSealV1.BlocksIssuanceAsync(db, subject.TenantId,
+                permissions.RoleIds.ToArray(), request.SiteId, request.FormId, ct)))
         {
             if (!needsFence) throw new InquiryPermissionExceptionV1(503, "inquiry_authority_unavailable");
             pending = true;

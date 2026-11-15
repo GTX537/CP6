@@ -1,4 +1,5 @@
 using System.Text.Json;
+using CP6.Core.Services.Sys;
 using CP6.WebApi.Localization;
 using Microsoft.Extensions.Localization;
 
@@ -35,6 +36,11 @@ public class BizExceptionMiddleware
                 data = (object?)null
             });
             await context.Response.WriteAsync(payload);
+        }
+        catch (IamAdministrationExceptionV1 ex) when (ex.Message == "IAM_CRM_USER_SEAL_PENDING")
+        {
+            context.Response.StatusCode = ex.Status;
+            await context.Response.WriteAsJsonAsync(new { code = ex.Status, message = ex.Message });
         }
         catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (
             ex.InnerException is Npgsql.PostgresException { SqlState: "23514", MessageText: "AUTHORITY_FENCE_UNAVAILABLE" })
