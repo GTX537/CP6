@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-15 W614-01 后续
+
+刊发与 WMS 写入、CAD 来源、Excel 后台、财务 OA 和 WMS 财务重试继续验证。CRM 实际使用部署及后续传输轮换另验。 [交付](../development/evidence/W614-01/DELIVERY.md)
+
 ## 2026-11-15 W616-01 后续
 
 继续核对 CAD 来源最终化、Excel 预检和后台 Apply、刊发后台、WMS 激活、CRM 目标传输及财务跨域后台。 [交付](../development/evidence/W616-01/DELIVERY.md)

@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W614-01
+
+CRM Outbox 在实际恢复目标要求同一次重绑回执和签名传输，保留原队列及发布回执。 [交付](../development/evidence/W614-01/DELIVERY.md)
+
 ## 2026-11-15 W616-01
 
 独立 FileScan 状态提交按当前租户与 Job 租约排序。实际完成已提交但应答中断时，原尝试可读取原结论。 [交付](../development/evidence/W616-01/DELIVERY.md)
