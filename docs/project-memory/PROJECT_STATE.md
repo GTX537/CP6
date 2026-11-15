@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 W618-01 财务凭证实际复核人
+
+旧 OA 凭证回调按实际人工复核角色核对制单账户，原人改名后的新凭证仍保持双人规则。59 项定向通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W618-01/DELIVERY.md)
+
 ## 2026-11-15 W614-01 CRM 恢复目标 Outbox
 
 恢复目标完成物理重绑后再核对签名传输及每租户目标专用发布者。两个租户、12 个 Root 经真实 PostgreSQL、Kafka、Dapr 联验。正式 PostgreSQL 26 PASS / 1 NOT_RUN。 [交付](../development/evidence/W614-01/DELIVERY.md)

@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 W618-01
+
+PostgreSQL 新手工凭证内部保存制单账户 UUID，旧 OA 用真实同意人核对，原公开文本字段继续展示。 [交付](../development/evidence/W618-01/DELIVERY.md)
+
 ## 2026-11-15 W614-01
 
 CRM Outbox 在实际恢复目标要求同一次重绑回执和签名传输，保留原队列及发布回执。 [交付](../development/evidence/W614-01/DELIVERY.md)

@@ -183,7 +183,7 @@ public sealed class FinanceRelationalTests(CoreBusinessRelationalFixture fixture
                 bindingSaved = true;
                 entryId = await CreatePendingAsync(db, seed, approver.ToString(), 80.01m);
                 var journal = Journal(db);
-                var dispatcher = new ApprovalDispatcher([new JournalApprovalCallback(journal)]);
+                var dispatcher = new ApprovalDispatcher([new JournalApprovalCallback(journal, db)]);
                 var engine = new FlowEngine(db, new ApproverResolver(db), notifier: null, dispatcher: dispatcher);
                 await new ApprovalService(db, engine).SubmitAsync("FinJournalPost", entryId.ToString(), starter);
                 var task = await db.Wf_FlowTasks.SingleAsync(t => t.Status == FlowTaskStatus.Pending);

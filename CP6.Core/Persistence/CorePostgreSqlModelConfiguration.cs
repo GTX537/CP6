@@ -1,5 +1,6 @@
 using CP6.Entity.DomainModels.Integration;
 using CP6.Entity.DomainModels.Erp;
+using CP6.Entity.DomainModels.Fin;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DomainModels.Sys;
 using CP6.Entity.DomainModels.Wf;
@@ -11,6 +12,8 @@ namespace CP6.Core.Persistence;
 /// <summary>Only properties with an audited UTC writer are instants; other Core DateTimes retain their wall-clock values.</summary>
 internal static class CorePostgreSqlModelConfiguration
 {
+    internal const string JournalMakerUserId = "MakerUserId";
+
     // Writer evidence and the deliberately preserved local/mixed columns are recorded in WP2-CORE-MAPPING.md.
     private static readonly IReadOnlySet<(Type EntityType, string Property)> UtcDateTimes =
         new HashSet<(Type, string)>
@@ -66,6 +69,7 @@ internal static class CorePostgreSqlModelConfiguration
 
     public static void Apply(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<JournalEntry>().Property<Guid?>(JournalMakerUserId);
         // The authenticated account name is preserved verbatim by the native return receipt writer.
         modelBuilder.Entity<InboundReceipt>().Property(x => x.OperatorCd).HasMaxLength(100);
         modelBuilder.Entity<StockTransaction>().Property(x => x.OperatorCd).HasMaxLength(100);
