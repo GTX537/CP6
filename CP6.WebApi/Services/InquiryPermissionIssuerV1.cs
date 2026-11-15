@@ -90,6 +90,16 @@ public sealed partial class InquiryPermissionIssuerV1(CP6Context db, InquiryPerm
                     ? await InquiryPrivacyPermissionSourceV1.ReadAsync(db, subject.SubjectId, request.Purpose, required, permissions,
                         captureCatalog ?? AuthorizationCatalogV1.Capture, ct)
                     : new InquiryPermissionFactsV1(required, [], [], false);
+        if (!pending && !readOnly)
+        {
+            // Configuration requests can use the live directory's crm-lead department choices.
+            var scope = request.Purpose.StartsWith("configuration:", StringComparison.Ordinal)
+                ? permissions.DataScopes.GetValueOrDefault("crm-lead", 1) : 1;
+            var targets = scope == 4 ? permissions.CustomDeptIds.GetValueOrDefault("crm-lead", []).ToArray() : facts.Departments;
+            pending = await IamCrmDepartmentSealV1.BlocksIssuanceAsync(db, subject.TenantId, permissions.DeptId,
+                targets, scope == 5, scope == 3 ? permissions.DeptId : null, ct);
+            if (pending && !needsFence) throw new InquiryPermissionExceptionV1(503, "inquiry_authority_unavailable");
+        }
         var final = await currentBearer(db, ct);
         if (final is null || final.TenantId != subject.TenantId || final.SubjectId != subject.SubjectId || final.SessionId != subject.SessionId
             || db.CurrentTenantId != subject.TenantId)
