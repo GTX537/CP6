@@ -1,5 +1,5 @@
 using CP6.Core.Persistence;
-using System.Data;
+using System.Data.Common;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,7 +8,6 @@ using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Space.Infrastructure;
 
@@ -17,7 +16,8 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
     IServiceProvider services,
     ISpaceExcelWorkbookReader workbookReader,
     ISpaceExcelMappingService mappings,
-    ISpaceClock clock) : ISpaceExcelCadApplyJobStepExecutor
+    ISpaceClock clock,
+    ISpaceArtifactWriteAuthority? writeAuthority = null) : ISpaceExcelCadApplyJobStepExecutor
 {
     private const long MaximumArtifactBytes = 200L * 1024L * 1024L;
     private static readonly JsonSerializerOptions JsonOptions =
@@ -33,7 +33,7 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         {
             return await ExecuteCoreAsync(execution, cancellationToken);
         }
-        catch (SpaceJobProcessingException)
+        catch (Exception exception) when (exception is SpaceJobProcessingException or SpaceJobLeaseLostException)
         {
             throw;
         }
@@ -123,13 +123,10 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         if (existing is not null)
             return Output(existing);
 
-        IDbContextTransaction? transaction = context.Database.IsRelational()
-            ? await context.Database.BeginTransactionAsync(
-                IsolationLevel.Serializable,
-                cancellationToken)
-            : null;
         try
         {
+            await using var write = await SpaceArtifactWriteTransaction.BeginMetadataAsync(
+                context, execution.Lease, writeAuthority, cancellationToken);
             await AcquireFloorEditLockAsync(
                 execution.Lease.TenantId,
                 input.Payload.ModelVersionId,
@@ -140,13 +137,12 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                 planSha256,
                 cancellationToken);
             if (existing is not null)
-            {
-                if (transaction is not null)
-                    await transaction.CommitAsync(cancellationToken);
                 return Output(existing);
-            }
 
-            await EnsureActiveEditLeaseAsync(input, cancellationToken);
+            var editLease = await LoadActiveEditLeaseAsync(input, cancellationToken);
+            if (context.Database.IsNpgsql())
+                await EnsureCurrentMatchArtifactAsync(input, cancellationToken);
+            input = input with { ExcelSource = await write.LockMetadataSourceAsync(input.ExcelSource, input.ExcelFile, cancellationToken) };
             var state = await LoadWritableStateAsync(
                 input,
                 projection,
@@ -292,20 +288,34 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                 state.Version.ContentRevision,
                 responseJson);
             await context.SaveChangesAsync(cancellationToken);
-            if (transaction is not null)
-                await transaction.CommitAsync(cancellationToken);
+            await write.CommitAsync(cancellationToken, now =>
+            {
+                if (editLease.IsExpired(now))
+                    throw EditLeaseLost();
+            });
             return Output(result);
         }
-        catch
+        catch (Exception exception)
         {
-            if (transaction is not null)
-                await transaction.RollbackAsync(CancellationToken.None);
+            if (context.Database.IsNpgsql())
+                context.ChangeTracker.Clear();
+            if (exception is SpaceJobProcessingException
+                { ErrorCode: "SPACE_ARTIFACT_COMMIT_UNKNOWN" or "SPACE_ARTIFACT_TENANT_INACTIVE" })
+            {
+                try
+                {
+                    // COMMIT may have reached PostgreSQL, or an earlier attempt may
+                    // have committed before this worker waited on Main authority.
+                    var recovered = await ReadBatchReplayAsync(input, planSha256, CancellationToken.None);
+                    if (recovered is not null)
+                        return Output(recovered);
+                }
+                catch (DbException readError) when (readError.IsTransient)
+                {
+                    // Retain the original disposition when readback is unavailable.
+                }
+            }
             throw;
-        }
-        finally
-        {
-            if (transaction is not null)
-                await transaction.DisposeAsync();
         }
     }
 
@@ -392,7 +402,8 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
             throw Invalid("The Match Artifact does not match the frozen Apply input.");
         }
 
-        var source = await context.Sources.SingleOrDefaultAsync(
+        var sources = context.Database.IsNpgsql() ? context.Sources.AsNoTracking() : context.Sources;
+        var source = await sources.SingleOrDefaultAsync(
             item => item.Id == payload.ExcelSourceId &&
                     item.ModelVersionId == payload.ModelVersionId,
             cancellationToken) ?? throw Missing("The Excel source was not found.");
@@ -430,9 +441,27 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
             job,
             payload,
             artifact,
+            stored.File,
             source,
             excelFile,
             preflightPayload);
+    }
+
+    private async Task EnsureCurrentMatchArtifactAsync(ImmutableInput input, CancellationToken cancellationToken)
+    {
+        var file = await SpaceFileReferenceLock.LoadAsync(context, input.Job.TenantId, input.MatchFile.Id, includeDeleted: false,
+            cancellationToken);
+        if (file is null || !IsClean(file) || file.Sha256 != input.MatchFile.Sha256 ||
+            file.StorageKey != input.MatchFile.StorageKey || file.SizeBytes != input.MatchFile.SizeBytes ||
+            !await context.Artifacts.AsNoTracking().AnyAsync(artifact =>
+                artifact.Id == input.Payload.ArtifactId && artifact.FileId == input.MatchFile.Id &&
+                artifact.JobId == input.Payload.MatchJobId && artifact.SourceId == input.Payload.ExcelSourceId &&
+                artifact.ModelVersionId == input.Payload.ModelVersionId &&
+                artifact.ArtifactType == SpaceArtifactType.ExcelCadMatchPreview &&
+                artifact.SchemaVersion == SpaceExcelCadMatchArtifactVersions.ArtifactSchema, cancellationToken))
+        {
+            throw Invalid("The authoritative Match Artifact changed before Apply executed.");
+        }
     }
 
     private async Task<SpaceExcelMappingProfileDto> LoadMappingAsync(
@@ -1541,6 +1570,9 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
                 cancellationToken);
         if (batch is null)
             return null;
+        var source = await context.Sources.AsNoTracking().Where(item => item.Id == input.Payload.ExcelSourceId)
+            .Select(item => new { item.State, item.ImportedCommandBatchId })
+            .SingleOrDefaultAsync(cancellationToken);
         if (batch.ModelVersionId != input.Payload.ModelVersionId ||
             batch.FloorLogicalId != input.Payload.FloorLogicalId ||
             batch.ClientInstanceId != input.Payload.ClientInstanceId ||
@@ -1553,8 +1585,8 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
             batch.ResultFloorRevision != input.Payload.ExpectedFloorRevision + 1 ||
             batch.ResultVersionContentRevision !=
                 input.Payload.ExpectedContentRevision + 1 ||
-            input.ExcelSource.State != SpaceSourceState.Imported ||
-            input.ExcelSource.ImportedCommandBatchId != input.Payload.CommandBatchId)
+            source is null || source.State != SpaceSourceState.Imported ||
+            source.ImportedCommandBatchId != input.Payload.CommandBatchId)
         {
             throw Invalid("The deterministic Apply command batch conflicts with stored state.");
         }
@@ -1839,12 +1871,19 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         return now;
     }
 
-    private async Task EnsureActiveEditLeaseAsync(
+    private async Task<SpaceEditLease> LoadActiveEditLeaseAsync(
         ImmutableInput input,
         CancellationToken cancellationToken)
     {
-        var now = await ReadAuthoritativeUtcNowAsync(cancellationToken);
-        var lease = await context.EditLeases.AsNoTracking()
+        var leases = context.Database.IsNpgsql()
+            ? context.EditLeases.FromSqlInterpolated($"""
+                SELECT e.* FROM public."Space_EditLease" AS e
+                WHERE e."TenantId" = {input.Job.TenantId} AND e."ModelVersionId" = {input.Payload.ModelVersionId}
+                  AND e."FloorLogicalId" = {input.Payload.FloorLogicalId}
+                FOR SHARE
+                """)
+            : context.EditLeases;
+        var lease = await leases.AsNoTracking()
             .SingleOrDefaultAsync(candidate =>
                 candidate.ModelVersionId == input.Payload.ModelVersionId &&
                 candidate.FloorLogicalId == input.Payload.FloorLogicalId,
@@ -1853,14 +1892,16 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
             lease.LeaseId != input.Payload.LeaseId ||
             lease.OwnerUserId != input.Job.RequestedBy ||
             lease.ClientInstanceId != input.Payload.ClientInstanceId ||
-            lease.IsExpired(now))
+            lease.IsExpired(await ReadAuthoritativeUtcNowAsync(cancellationToken)))
         {
-            throw Failure(
-                SpaceJobFailureKind.Input,
-                SpaceErrorCodes.EditLeaseLost,
-                "The floor edit lease expired or changed before Excel/CAD Apply executed.");
+            throw EditLeaseLost();
         }
+        return lease;
     }
+
+    private static SpaceJobProcessingException EditLeaseLost() =>
+        Failure(SpaceJobFailureKind.Input, SpaceErrorCodes.EditLeaseLost,
+            "The floor edit lease expired or changed before Excel/CAD Apply executed.");
 
     private async Task<DateTime> ReadAuthoritativeUtcNowAsync(
         CancellationToken cancellationToken)
@@ -1990,6 +2031,7 @@ public sealed class SpaceExcelCadApplyJobStepExecutor(
         SpaceJob Job,
         SpaceExcelCadApplyJobPayload Payload,
         SpaceExcelCadMatchArtifactV1 Artifact,
+        SpaceFile MatchFile,
         SpaceModelSource ExcelSource,
         SpaceFile ExcelFile,
         SpaceExcelPreflightJobPayload PreflightPayload);

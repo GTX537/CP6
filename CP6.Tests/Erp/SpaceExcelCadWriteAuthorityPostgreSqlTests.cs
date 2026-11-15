@@ -4,6 +4,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using ClosedXML.Excel;
+using CP6.Core.EFDbContext;
+using CP6.Core.Services.Common;
 using CP6.Core.Services.Platform;
 using CP6.Core.Services.Space.Observability;
 using CP6.Space.Application;
@@ -11,6 +13,7 @@ using CP6.Space.Contracts;
 using CP6.Space.Domain;
 using CP6.Space.Infrastructure;
 using CP6.Tests.Platform;
+using CP6.WebApi.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
@@ -177,7 +180,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 
         using var confirmed = await SendExcelCadWrite(host, actor, confirm);
         var apply = await ReadExcelCadResponse<ConfirmSpaceExcelCadMatchResponse>(confirmed, HttpStatusCode.Accepted);
-        var executor = new SpaceExcelCadApplyJobStepExecutor(space, files, workbookReader, mappings, clock);
+        using var mainAuthority = new ServiceCollection()
+            .AddScoped<ITenantContext, TenantContext>()
+            .AddScoped(provider => new CP6Context(
+                new DbContextOptionsBuilder<CP6Context>().UseNpgsql(space.Database.GetConnectionString()).Options,
+                provider.GetRequiredService<ITenantContext>()))
+            .BuildServiceProvider();
+        var authority = new SpaceArtifactWriteAuthority(mainAuthority.GetRequiredService<IServiceScopeFactory>(), TimeProvider.System);
+        var executor = new SpaceExcelCadApplyJobStepExecutor(space, files, workbookReader, mappings, clock, authority);
         await RunExcelCadFixtureStep(space, apply.ApplyJobId, SpaceExcelCadApplyJobProcessor.Version,
             SpaceExcelCadApplyJobProcessor.ApplyConfirmedArtifact, executor.ExecuteAsync);
         var batch = await space.ElementCommandBatches.AsNoTracking().SingleAsync(item => item.Id == apply.CommandBatchId);
@@ -191,12 +201,13 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
 
     private static async Task<StartSpaceExcelCadMatchRequest> SeedExcelCadPreviewReady(SpaceContext space, SpaceDesignExecution execution,
-        SpaceModelVersion version, SpaceFloorRevision floor, FileSystemSpaceFileStore store, SpaceExcelMappingProfileDto excelProfile)
+        SpaceModelVersion version, SpaceFloorRevision floor, FileSystemSpaceFileStore store, SpaceExcelMappingProfileDto excelProfile,
+        byte[]? workbook = null)
     {
         var tenant = execution.TenantId;
         const string workbookMediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
         var excelFile = await WriteExcelCadFixtureFile(store, tenant, "racks.xlsx", workbookMediaType,
-            SpaceFileRetentionClass.Source, BuildExcelCadWorkbook(floor.FloorCode, excelProfile.Definition));
+            SpaceFileRetentionClass.Source, workbook ?? BuildExcelCadWorkbook(floor.FloorCode, excelProfile.Definition));
         var excel = SpaceModelSource.CreateFileSource(tenant, version.Id, SpaceSourceType.Excel, excelFile, "racks.xlsx");
         excel.ConfigureImport(SpaceExcelPreflightJobProcessor.Version, excelProfile.Id, excelProfile.Version, null, null, null);
         excel.BeginParsing();

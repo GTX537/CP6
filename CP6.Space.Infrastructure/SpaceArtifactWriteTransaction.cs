@@ -121,7 +121,7 @@ internal sealed class SpaceArtifactWriteTransaction(
         return source;
     }
 
-    internal async Task CommitAsync(CancellationToken cancellationToken)
+    internal async Task CommitAsync(CancellationToken cancellationToken, Action<DateTime>? confirmDeadline = null)
     {
         if (transaction is null)
         {
@@ -131,8 +131,9 @@ internal sealed class SpaceArtifactWriteTransaction(
 
         if (currentJob is not null)
         {
-            await VerifyLeaseAsync(context, currentJob, lease, cancellationToken);
+            var now = await VerifyLeaseAsync(context, currentJob, lease, cancellationToken);
             authority!.ConfirmTenantExpiry(expiresAt);
+            confirmDeadline?.Invoke(now);
         }
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -175,15 +176,17 @@ internal sealed class SpaceArtifactWriteTransaction(
         }
     }
 
-    private static async Task VerifyLeaseAsync(SpaceContext context, SpaceJob job, SpaceJobLease lease,
+    private static async Task<DateTime> VerifyLeaseAsync(SpaceContext context, SpaceJob job, SpaceJobLease lease,
         CancellationToken cancellationToken)
     {
         if (job.JobType != lease.JobType || job.SubjectType != lease.SubjectType || job.SubjectId != lease.SubjectId ||
             job.InputHash != lease.InputHash || job.AttemptCount != lease.AttemptNo)
             throw new SpaceJobLeaseLostException("The Job no longer matches this worker lease.");
-        job.EnsureLease(lease.AttemptId, lease.WorkerId, await DatabaseUtcClock.ReadUtcNowAsync(context, cancellationToken));
+        var now = await DatabaseUtcClock.ReadUtcNowAsync(context, cancellationToken);
+        job.EnsureLease(lease.AttemptId, lease.WorkerId, now);
         if (job.CancellationRequestedAtUtc.HasValue)
             throw new SpaceJobProcessingException(SpaceJobFailureKind.Transient, "SPACE_ARTIFACT_JOB_CANCEL_PENDING",
                 "The artifact Job has a pending cancellation.");
+        return now;
     }
 }
