@@ -36,7 +36,10 @@ public class ArInvoiceService : IArInvoiceService
         return await q.OrderByDescending(x => x.InvoiceDate).ThenByDescending(x => x.No).ToListAsync();
     }
 
-    public async Task<FinResult> CreateAsync(ArInvoice invoice, string user)
+    public Task<FinResult> CreateAsync(ArInvoice invoice, string user) =>
+        WriteDraftAsync(invoice, user, validateLinks: true);
+
+    private async Task<FinResult> WriteDraftAsync(ArInvoice invoice, string user, bool validateLinks)
     {
         if (invoice.Lines.Count == 0) return FinResult.Fail("E-FIN-304");
 
@@ -44,6 +47,13 @@ public class ArInvoiceService : IArInvoiceService
         var taxes = taxIds.Count == 0
             ? new Dictionary<Guid, TaxCode>()
             : await _db.TaxCodes.Where(t => taxIds.Contains(t.Id)).ToDictionaryAsync(t => t.Id);
+
+        var native = _db.Database.IsNpgsql();
+        if (native && validateLinks)
+        {
+            var links = await ValidateDraftLinksAsync(invoice, taxes);
+            if (!links.Ok) return links;
+        }
 
         // 销项税：恒按税率计提（不涉可抵扣）
         decimal net = 0m, tax = 0m;
@@ -59,6 +69,13 @@ public class ArInvoiceService : IArInvoiceService
         invoice.TaxAmount = tax;
         invoice.GrossAmount = net + tax;
 
+        if (native)
+        {
+            invoice.TenantId = _db.CurrentTenantId;
+            invoice.JournalEntryId = null;
+            invoice.CostJournalEntryId = null;
+        }
+
         invoice.Id = invoice.Id == Guid.Empty ? Guid.NewGuid() : invoice.Id;
         invoice.No = await _seq.NextAsync(SeqKey, invoice.InvoiceDate);
         invoice.Status = ArInvoiceStatus.Draft;
@@ -69,6 +86,7 @@ public class ArInvoiceService : IArInvoiceService
         var n = 1;
         foreach (var line in invoice.Lines)
         {
+            if (native) line.TenantId = invoice.TenantId;
             line.InvoiceId = invoice.Id;
             if (line.LineNo == 0) line.LineNo = n;
             n++;
@@ -102,7 +120,8 @@ public class ArInvoiceService : IArInvoiceService
             j.Source == VoucherSource.AR && j.SourceDocNo == inv.No && j.Status == JournalStatus.Posted))?.Id;
 
         // ② 成本结转（借COGS/贷FG）；红字走 AR.CogsReversal（借FG/贷COGS，货退回入库）—— 成本为本位币（我方成本，不随销售外币）
-        if (inv.CostAmount > 0m)
+        var hasCost = inv.CostAmount > 0m;
+        if (hasCost)
         {
             var cogs = new FinBizEvent
             {
@@ -112,13 +131,47 @@ public class ArInvoiceService : IArInvoiceService
             cogs.HeaderAmounts["Amount"] = inv.CostAmount;
             var r2 = await _engine.GenerateAsync(cogs);
             if (!r2.Ok) return r2;
+        }
+        // A persisted cost leg remains authoritative for this source number even when the draft now shows zero.
+        if (hasCost || _db.Database.IsNpgsql())
             inv.CostJournalEntryId = (await _db.JournalEntries.FirstOrDefaultAsync(j =>
                 j.Source == VoucherSource.Cost && j.SourceDocNo == inv.No && j.Status == JournalStatus.Posted))?.Id;
-        }
 
         inv.Status = ArInvoiceStatus.Posted;
         inv.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();
+        return FinResult.Pass();
+    }
+
+    private async Task<FinResult> ValidateDraftLinksAsync(ArInvoice invoice, IReadOnlyDictionary<Guid, TaxCode> taxes)
+    {
+        if (invoice.Lines.Any(line => line.TaxCodeId is Guid id && id != Guid.Empty && !taxes.ContainsKey(id)))
+            return FinResult.Fail("E-FIN-205");
+
+        var centers = invoice.Lines.Select(line => line.CostCenterId.GetValueOrDefault()).Where(id => id != Guid.Empty).Distinct().ToArray();
+        if (centers.Length != 0 && await _db.CostCenters.CountAsync(center => centers.Contains(center.Id)) != centers.Length)
+            return FinResult.Fail("E-FIN-206");
+
+        if (invoice.OriginInvoiceId is Guid origin && origin != Guid.Empty
+            && !await _db.ArInvoices.AnyAsync(existing => existing.Id == origin))
+            return FinResult.Fail("E-FIN-302");
+
+        // Historical callers also use unregistered credit note IDs as correlation keys.
+        if (invoice.CreditNoteId is Guid credit && credit != Guid.Empty
+            && await _db.CreditNotes.IgnoreQueryFilters().AnyAsync(note => note.Id == credit && note.TenantId != _db.CurrentTenantId))
+            return FinResult.Fail("E-FIN-305");
+
+        var accounts = invoice.Lines.Select(line => line.RevenueAccountId.GetValueOrDefault()).Where(id => id != Guid.Empty).Distinct().ToArray();
+        if (accounts.Length != 0)
+        {
+            var owned = await _db.GlAccounts.Where(account => accounts.Contains(account.Id)).Select(account => account.Id).ToListAsync();
+            if (owned.Count != accounts.Length)
+            {
+                var index = invoice.Lines.FindIndex(line => line.RevenueAccountId is Guid id && id != Guid.Empty && !owned.Contains(id));
+                var lineNo = invoice.Lines[index].LineNo;
+                return FinResult.Fail("E-FIN-108", lineNo == 0 ? index + 1 : lineNo);
+            }
+        }
         return FinResult.Pass();
     }
 
@@ -155,7 +208,7 @@ public class ArInvoiceService : IArInvoiceService
             }).ToList(),
         };
 
-        var created = await CreateAsync(inv, user);
+        var created = await WriteDraftAsync(inv, user, validateLinks: false);
         if (!created.Ok) return (created, null, null);
         var posted = await PostAsync(inv.Id, user);
         return (posted, inv.Id, inv.No);
@@ -165,7 +218,13 @@ public class ArInvoiceService : IArInvoiceService
     {
         // 幂等：同退货单已开红字→返回既有
         var existing = await _db.ArInvoices.FirstOrDefaultAsync(x => x.CreditNoteId == request.CreditNoteId && x.IsCreditMemo);
-        if (existing != null) return (FinResult.Pass(), existing.Id, existing.No);
+        if (existing != null)
+        {
+            var result = _db.Database.IsNpgsql() && existing.Status == ArInvoiceStatus.Draft
+                ? await PostAsync(existing.Id, user)
+                : FinResult.Pass();
+            return (result, existing.Id, existing.No);
+        }
 
         var inv = new ArInvoice
         {
