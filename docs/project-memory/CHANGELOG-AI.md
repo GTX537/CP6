@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-15 · W593-01 Main 与 Space 共用 PostgreSQL 写栅栏
+
+Space 保留可串行化事务，Main 在同连接检查当前会话和 model:edit，原提交回执及重试合同通过定向验证。 [缺陷 #1100](https://github.com/GTX537/CP6/issues/1100) · [交付记录](../development/evidence/W593-01/DELIVERY.md)
+
 ## 2026-11-14 · W592-01 CRM 恢复未重绑时就绪关闭
 
 已修复未重绑目标仍返回就绪 200 的问题。探针复用既有只读数据库函数，实际物理恢复、两租户及权限回归通过。 [交付记录](../development/evidence/W592-01/DELIVERY.md)

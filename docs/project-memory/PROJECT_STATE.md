@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-15 · W593-01 Space Design 新写入栅栏
+
+四条独立 Space 事务接入 Main 当前权限，68 项通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W593-01/DELIVERY.md)
+
 ## 2026-11-14 · W592-01 CRM 恢复目标就绪
 
 真实 PostgreSQL 提升后的未重绑目标返回就绪 503，存活 200。六项定向回归通过。正式 PostgreSQL 26 PASS / 1 NOT_RUN，原询盘 60/60。 [交付记录](../development/evidence/W592-01/DELIVERY.md)
