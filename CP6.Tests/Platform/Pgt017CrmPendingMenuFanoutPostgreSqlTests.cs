@@ -5,6 +5,7 @@ using System.Text.Json;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
+using CP6.Tests.Erp;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,11 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     [Pgt017MainFact]
     public async Task PGT017_global_menu_key_refused_second_store_stops_fresh_authority_without_partial_seal()
     {
+        var mode = Environment.GetEnvironmentVariable("CP6_W664_MENU_MODE") ?? "put";
+        var order = Environment.GetEnvironmentVariable("CP6_W664_MENU_ORDER");
+        var ack = mode == "ack";
+        var action = mode switch { "post" => "add", "delete" => "delete", _ => "edit" };
+        var method = mode switch { "post" => HttpMethod.Post, "delete" => HttpMethod.Delete, _ => HttpMethod.Put };
         await using var tenantOne = await Seed();
         await using var tenantTwo = await Seed();
         var tenants = new[] { tenantOne, tenantTwo }.OrderBy(h => h.Tenant).ToArray();
@@ -37,7 +43,17 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var pairs = new Dictionary<Guid, InquirySiteFormScopeV1>();
         foreach (var tenant in tenants)
         {
-            pairs[tenant.Tenant] = (await GrantInquiry(tenant))[0];
+            pairs[tenant.Tenant] = order is null ? (await GrantInquiry(tenant))[0] : await GrantIntake(tenant);
+            if (order is not null)
+            {
+                var originalSubject = await tenant.Db.Sys_Users.SingleAsync(u => u.Id == tenant.ActorId);
+                originalSubject.AuthenticationEpoch = Guid.NewGuid();
+                originalSubject.DeptId = tenant.Parent;
+                await tenant.Db.SaveChangesAsync();
+                tenant.Db.ChangeTracker.Clear();
+                await new IdentityBootstrapService(tenant.Db, ContextRuntime(tenant.Tenant, options.Issuer)).InitializeAsync(tenant.Tenant);
+                tenant.Db.ChangeTracker.Clear();
+            }
             await CopyRole71ForIndependentInquiry(tenant);
             tenant.Db.Sys_Users.Add(new Sys_User
             {
@@ -48,20 +64,13 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             tenant.Db.ChangeTracker.Clear();
         }
 
-        first.Db.Sys_Menus.Add(new Sys_Menu { MenuId = menuId, MenuKey = resource, MenuName = "Original global menu", Enable = true });
-        var adminMenu = await first.Db.Sys_Menus.SingleOrDefaultAsync(m => m.MenuKey == "menu");
-        if (adminMenu is null)
-        {
-            adminMenu = new Sys_Menu
-            {
-                MenuId = Interlocked.Increment(ref policyMenuId), MenuKey = "menu", MenuName = "Menus", Enable = true,
-            };
-            first.Db.Sys_Menus.Add(adminMenu);
-        }
-
+        if (mode != "post")
+            first.Db.Sys_Menus.Add(new Sys_Menu { MenuId = menuId, MenuKey = resource, MenuName = "Original global menu", Enable = true });
         const int writerRole = 74;
         first.Db.Sys_Roles.Add(new Sys_Role { RoleId = writerRole, RoleName = "W664 menu writer", Enable = true });
-        first.Db.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = writerRole, MenuId = adminMenu.MenuId, ActionCode = "edit" });
+        await GrantWriter("menu", action);
+        if (mode == "delete") await GrantWriter("menu", "add");
+        await GrantWriter("role", "edit");
         first.Db.Sys_Users.Add(new Sys_User
         {
             UserName = writerName, RoleId = writerRole, DeptId = first.Parent, Enable = true,
@@ -73,7 +82,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         foreach (var tenant in tenants)
         {
             tenant.Db.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = 71, MenuId = menuId, ActionCode = "query" });
-            tenant.Db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 71, MenuId = menuId });
+            if (mode != "post") tenant.Db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 71, MenuId = menuId });
             await tenant.Db.SaveChangesAsync();
             tenant.Db.ChangeTracker.Clear();
         }
@@ -91,11 +100,21 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         observer.Database = secondDatabase;
         await using var crmSecond = new NpgsqlConnection(observer.ConnectionString);
         await crmSecond.OpenAsync();
-        var storeFirst = await InstallMenuSealStore(crmFirst, first.Tenant, "w664_menu_seal_a");
+        var storeFirst = order is null
+            ? await InstallMenuSealStore(crmFirst, first.Tenant, "w664_menu_seal_a")
+            : new MenuSealStore(first.Tenant, Guid.Parse(Environment.GetEnvironmentVariable("CP6_PGT017_STORE_ID")!),
+                new NpgsqlConnectionStringBuilder(Environment.GetEnvironmentVariable("CP6_PGT017_SEAL_CONNECTION")));
         var storeSecond = await InstallMenuSealStore(crmSecond, second.Tenant, "w664_menu_seal_b");
-        var firstDbOid = await RequireMenuSealStore(crmFirst, storeFirst);
-        var secondDbOid = await RequireMenuSealStore(crmSecond, storeSecond);
-        Assert.NotEqual(firstDbOid, secondDbOid);
+        await using var crmRelay = ack ? new StockPostgresCommitRelay(crmFirst.Port, storeFirst.SealConnection.Username!,
+            int.Parse(Environment.GetEnvironmentVariable("CP6_W664_CRM_ACK_PORT")!)) : null;
+        var hostConnection = new NpgsqlConnectionStringBuilder(first.Db.Database.GetConnectionString());
+        await using var mainRelay = ack ? new StockPostgresCommitRelay(hostConnection.Port, hostConnection.Username!,
+            int.Parse(Environment.GetEnvironmentVariable("CP6_W664_MAIN_ACK_PORT")!)) : null;
+        if (mainRelay is not null)
+        {
+            hostConnection.Port = mainRelay.Port;
+            hostConnection.SslMode = SslMode.Disable;
+        }
 
         var environment = IdentityEnvironment(first.Tenant);
         environment["CrmIdentity__Tenants__" + second.Tenant.ToString("D")] = "us";
@@ -119,11 +138,13 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         foreach (var store in new[] { storeFirst, storeSecond })
         {
             var prefix = $"CrmInquiryTenantPause__Tenants__{store.Tenant:D}__";
-            environment[prefix + "ConnectionString"] = store.SealConnection.ConnectionString;
+            var binding = new NpgsqlConnectionStringBuilder(store.SealConnection.ConnectionString);
+            if (crmRelay is not null && store == storeFirst) binding.Port = crmRelay.Port;
+            environment[prefix + "ConnectionString"] = binding.ConnectionString;
             environment[prefix + "StoreId"] = store.StoreId.ToString("D");
         }
 
-        await using var host = await AuthenticationApiProcess.Start(first.Db.Database.GetConnectionString()!, environment, allowAutoRedirect: false);
+        await using var host = await AuthenticationApiProcess.Start(hostConnection.ConnectionString, environment, allowAutoRedirect: false);
         var writer = await Login(host, first, userName: writerName);
         var subjects = new List<(MenuSealStore Store, string Affected, string Independent)>();
         foreach (var (tenant, store) in new[] { (first, storeFirst), (second, storeSecond) })
@@ -141,6 +162,16 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             Assert.True(admission.OriginalRead);
         });
 
+        var bridge = Environment.GetEnvironmentVariable("CP6_PGT017_BRIDGE")!;
+        if (order is not null)
+        {
+            await WriteCrmSessionAsync();
+            await WaitConfigurationBridge(bridge, "ready");
+        }
+
+        var firstDbOid = await RequireMenuSealStore(crmFirst, storeFirst);
+        var secondDbOid = await RequireMenuSealStore(crmSecond, storeSecond);
+        Assert.NotEqual(firstDbOid, secondDbOid);
         var beforeMain = await ReadMainEffects();
         var beforeFirst = await ReadMenuRoleFence(crmFirst, first.Tenant);
         var beforeSecond = await ReadMenuRoleFence(crmSecond, second.Tenant);
@@ -150,6 +181,19 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Assert.Equal(2, sourceVersions.Count);
         Assert.Equal(0, beforeFirst.MinimumVersion);
         Assert.Equal(0, beforeSecond.MinimumVersion);
+        object payload = mode == "delete"
+            ? new[] { menuId }
+            : new { MenuId = menuId, MenuName = "Changed global menu", MenuKey = resource + "-changed", Enable = true };
+        Task<HttpResponseMessage> Write() => host.Send(Request(method, "api/menu", writer, payload));
+        if (order is not null)
+        {
+            using var completed = await ExerciseOrderAsync();
+            await AssertCommittedAsync(completed);
+            await MarkAsync("paused");
+            await WaitConfigurationBridge(bridge, "finished");
+            return;
+        }
+
         await SetMenuSealLogin(crmSecond, storeSecond, enabled: false);
         try
         {
@@ -159,8 +203,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             await using var stillAvailable = new NpgsqlConnection(storeFirst.SealConnection.ConnectionString);
             await stillAvailable.OpenAsync();
 
-            using var attempted = await host.Send(Request(HttpMethod.Put, "api/menu", writer,
-                new { MenuId = menuId, MenuName = "Changed global menu", MenuKey = resource + "-changed", Enable = true }));
+            using var attempted = await Write();
             var afterMain = await ReadMainEffects();
             var afterFirst = await ReadMenuRoleFence(crmFirst, first.Tenant);
             var afterSecond = await ReadMenuRoleFence(crmSecond, second.Tenant);
@@ -185,8 +228,243 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             }, new JsonSerializerOptions { WriteIndented = true }));
 
             Assert.Equal(new MenuColdOutcome(503, true, true, true, true, true), observed);
+            using var error = JsonDocument.Parse(await attempted.Content.ReadAsStringAsync());
+            Assert.Equal(503, error.RootElement.GetProperty("code").GetInt32());
+            Assert.Equal("AUTHORITY_FENCE_UNAVAILABLE", error.RootElement.GetProperty("message").GetString());
+            var pending = await ReadMenuPlanAsync();
+            Assert.Equal(2, pending.Length);
+            Assert.Equal(new[] { first.Tenant, second.Tenant }, pending.Select(r => r.TenantId).ToArray());
+            Assert.All(pending, child =>
+            {
+                Assert.False(child.SealStarted);
+                Assert.Equal(71, child.RoleId);
+                Assert.Equal(sourceVersions[child.TenantId], child.SourceVersion);
+                Assert.Equal(child.MenuOperationId, pending[0].MenuOperationId);
+                Assert.Equal(first.Tenant, child.ActorTenant);
+                Assert.Equal(64, child.SourceHash.Length);
+                Assert.Equal(64, child.SuccessorHash.Length);
+            });
+            await AssertChildUnavailableAsync(pending[0]);
+            if (mode == "put")
+            {
+                var displayMenu = await first.Db.Sys_Menus.AsNoTracking().SingleAsync(m => m.MenuKey == "menu");
+                var orderNo = displayMenu.OrderNo + 1;
+                using var display = await host.Send(Request(HttpMethod.Put, "api/menu/tree", writer,
+                    new[] { new { displayMenu.MenuId, displayMenu.ParentId, OrderNo = orderNo } }));
+                var displayBody = await display.Content.ReadAsStringAsync();
+                Assert.True(display.StatusCode == HttpStatusCode.OK, displayBody);
+                var recordedOrder = await first.Db.Sys_Menus.AsNoTracking().Where(m => m.MenuId == displayMenu.MenuId)
+                    .Select(m => m.OrderNo).SingleAsync();
+                Assert.Equal(orderNo, recordedOrder);
+                using var afterDisplay = JsonDocument.Parse(await ReadMainEffects());
+                foreach (var original in originalMainRows.RootElement.EnumerateObject())
+                {
+                    var current = afterDisplay.RootElement.GetProperty(original.Name).GetRawText();
+                    if (original.Name == "CatalogRevision") Assert.NotEqual(original.Value.GetRawText(), current);
+                    else Assert.Equal(original.Value.GetRawText(), current);
+                }
+                Assert.Equal(beforeFirst, await ReadMenuRoleFence(crmFirst, first.Tenant));
+                Assert.Equal(beforeSecond, await ReadMenuRoleFence(crmSecond, second.Tenant));
+            }
+            Assert.Equal(pending, await ReadMenuPlanAsync());
         }
         finally { await SetMenuSealLogin(crmSecond, storeSecond, enabled: true); }
+
+        if (crmRelay is not null && mainRelay is not null)
+        {
+            crmRelay.Arm();
+            using var interrupted = await Write();
+            await crmRelay.Dropped.WaitAsync(TimeSpan.FromSeconds(12));
+            Assert.Equal(HttpStatusCode.ServiceUnavailable, interrupted.StatusCode);
+            Assert.Equal(beforeMain, await ReadMainEffects());
+            var partialFirst = await ReadMenuRoleFence(crmFirst, first.Tenant);
+            var partialSecond = await ReadMenuRoleFence(crmSecond, second.Tenant);
+            Assert.Equal(new MenuRoleFence(sourceVersions[first.Tenant] + 1, beforeFirst.Revision + 1), partialFirst);
+            Assert.Equal(beforeSecond, partialSecond);
+            var stillAccepted = await ReadMenuPlanAsync();
+            Assert.Equal(2, stillAccepted.Length);
+            Assert.All(stillAccepted, row => Assert.True(row.SealStarted));
+
+            await using var barrier = new NpgsqlConnection(observer.ConnectionString);
+            await barrier.OpenAsync();
+            await using var tx = await barrier.BeginTransactionAsync();
+            await using (var hold = new NpgsqlCommand("SELECT crm_identity_lock_v1.hold_v1(@tenant)", barrier, tx))
+            {
+                hold.Parameters.AddWithValue("tenant", second.Tenant);
+                await hold.ExecuteNonQueryAsync();
+            }
+            var repair = Write();
+            int blocked;
+            try
+            {
+                blocked = await WaitMenuSealBlockAsync(crmSecond, barrier.ProcessID, repair);
+                Assert.Equal(beforeMain, await ReadMainEffects());
+                mainRelay.Arm();
+            }
+            finally { await tx.RollbackAsync(); }
+            using var response = await repair;
+            await mainRelay.Dropped.WaitAsync(TimeSpan.FromSeconds(12));
+            Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
+            Assert.Empty(await ReadMenuPlanAsync());
+            await File.WriteAllTextAsync(Path.Combine(bridge, "menu-ack.json"), JsonSerializer.Serialize(new
+            {
+                OriginalOperationId = stillAccepted[0].MenuOperationId, PartialFirst = partialFirst, PartialSecond = partialSecond,
+                CrmAckDropped = true, MainAckDropped = true, BlockingSecondStoreBackend = barrier.ProcessID, SealBackend = blocked,
+                MainOutcomeStatus = (int)response.StatusCode,
+            }));
+        }
+
+        using var recovered = await Write();
+        await AssertCommittedAsync(recovered);
+        if (mode == "delete")
+        {
+            using var recreated = await host.Send(Request(HttpMethod.Post, "api/menu", writer,
+                new { MenuId = menuId, MenuName = "Later non-CRM menu", MenuKey = "later-w664-" + menuId, Enable = true }));
+            Assert.Equal(HttpStatusCode.OK, recreated.StatusCode);
+            using var newDeletion = await Write();
+            using var newResult = JsonDocument.Parse(await newDeletion.Content.ReadAsStringAsync());
+            Assert.Equal(1, newResult.RootElement.GetProperty("count").GetInt32());
+            using var again = await Write();
+            using var absent = JsonDocument.Parse(await again.Content.ReadAsStringAsync());
+            Assert.Equal(0, absent.RootElement.GetProperty("count").GetInt32());
+        }
+
+        async Task GrantWriter(string key, string actionCode)
+        {
+            var menu = first.Db.Sys_Menus.Local.SingleOrDefault(m => m.MenuKey == key)
+                ?? await first.Db.Sys_Menus.SingleOrDefaultAsync(m => m.MenuKey == key);
+            if (menu is null)
+            {
+                menu = new Sys_Menu { MenuId = Interlocked.Increment(ref policyMenuId), MenuKey = key, MenuName = key, Enable = true };
+                first.Db.Sys_Menus.Add(menu);
+            }
+            first.Db.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = writerRole, MenuId = menu.MenuId, ActionCode = actionCode });
+        }
+
+        async Task AssertChildUnavailableAsync(MenuPlanRow child)
+        {
+            var path = $"api/iam/roles/operations/{child.OperationId:D}";
+            using var get = await host.Send(Request(HttpMethod.Get, path + "?kind=role-update", writer));
+            Assert.Equal(HttpStatusCode.Conflict, get.StatusCode);
+            Assert.Contains("IAM_CRM_MENU_SEAL_OWNED", await get.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+            using var close = await host.Send(Request(HttpMethod.Post, path + "/close?kind=role-update", writer));
+            Assert.Equal(HttpStatusCode.Conflict, close.StatusCode);
+            Assert.Contains("IAM_CRM_MENU_SEAL_OWNED", await close.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+            var original = new IamRoleCommandV1
+            {
+                OperationId = child.OperationId, RoleId = 71, RoleName = "one", Enable = true,
+                ExpectedVersion = await first.Authority.Version("role:71", default),
+                ExpectedReferencesVersion = await first.Authority.ReferencesVersion(default),
+                Reason = "W664 native ordinary role receipt ownership control",
+            };
+            using var put = await host.Send(Request(HttpMethod.Put, "api/iam/roles/71", writer, original));
+            Assert.Equal(HttpStatusCode.Conflict, put.StatusCode);
+            Assert.Contains("IAM_CRM_MENU_SEAL_OWNED", await put.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+        }
+
+        Task<MenuPlanRow[]> ReadMenuPlanAsync() => first.Db.Database.SqlQuery<MenuPlanRow>($"""
+            SELECT r.tenant_id AS "TenantId", r.role_id AS "RoleId", r.operation_id AS "OperationId",
+                   r.menu_operation_id AS "MenuOperationId", r.seal_started AS "SealStarted", r.source_version AS "SourceVersion",
+                   r.source_hash AS "SourceHash", r.successor_hash AS "SuccessorHash", o.actor_tenant AS "ActorTenant"
+            FROM cp6_authentication_v1.pending_crm_role_seals r JOIN cp6_authentication_v1.legacy_menu_operations o
+              ON o.operation_id=r.menu_operation_id WHERE o.menu_ids @> ARRAY[{menuId}]
+            ORDER BY r.tenant_id,r.role_id
+            """).ToArrayAsync();
+
+        async Task AssertCommittedAsync(HttpResponseMessage response)
+        {
+            var body = await response.Content.ReadAsStringAsync();
+            Assert.True(response.StatusCode == HttpStatusCode.OK, body);
+            using var json = JsonDocument.Parse(body);
+            if (mode == "delete") Assert.Equal(3, json.RootElement.GetProperty("count").GetInt32());
+            else
+            {
+                Assert.Equal(menuId, json.RootElement.GetProperty("menuId").GetInt32());
+                Assert.Equal(resource + "-changed", json.RootElement.GetProperty("menuKey").GetString());
+            }
+
+            var afterMain = await ReadMainEffects();
+            Assert.NotEqual(beforeMain, afterMain);
+            using var old = JsonDocument.Parse(beforeMain);
+            using var final = JsonDocument.Parse(afterMain);
+            Assert.Equal(old.RootElement.GetProperty("RoleActions").GetRawText(), final.RootElement.GetProperty("RoleActions").GetRawText());
+            if (mode == "delete") Assert.Equal(JsonValueKind.Null, final.RootElement.GetProperty("RoleMenus").ValueKind);
+            else Assert.Equal(old.RootElement.GetProperty("RoleMenus").GetRawText(), final.RootElement.GetProperty("RoleMenus").GetRawText());
+            Assert.Equal(old.RootElement.GetProperty("Outbox").GetInt32() + 2, final.RootElement.GetProperty("Outbox").GetInt32());
+            Assert.Equal(old.RootElement.GetProperty("PriorityOutbox").GetInt32(), final.RootElement.GetProperty("PriorityOutbox").GetInt32());
+            Assert.Equal(old.RootElement.GetProperty("FieldAudit").GetInt32() + 1, final.RootElement.GetProperty("FieldAudit").GetInt32());
+            Assert.Equal(old.RootElement.GetProperty("CommandAudit").GetInt32() + 1, final.RootElement.GetProperty("CommandAudit").GetInt32());
+
+            var finalFirst = await ReadMenuRoleFence(crmFirst, first.Tenant);
+            var finalSecond = await ReadMenuRoleFence(crmSecond, second.Tenant);
+            Assert.Equal(new MenuRoleFence(sourceVersions[first.Tenant] + 1, beforeFirst.Revision + (ack ? 2 : 1)), finalFirst);
+            Assert.Equal(new MenuRoleFence(sourceVersions[second.Tenant] + 1, beforeSecond.Revision + 1), finalSecond);
+            Assert.Empty(await ReadMenuPlanAsync());
+            Assert.All(await CurrentAdmission(), admission => Assert.True(admission.Affected && admission.Independent && admission.OriginalRead));
+            using var replay = await Write();
+            Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
+            Assert.Equal(body, await replay.Content.ReadAsStringAsync());
+            Assert.Equal(afterMain, await ReadMainEffects());
+            Assert.Equal(finalFirst, await ReadMenuRoleFence(crmFirst, first.Tenant));
+            Assert.Equal(finalSecond, await ReadMenuRoleFence(crmSecond, second.Tenant));
+
+            await File.WriteAllTextAsync(Path.Combine(bridge, "menu-committed.json"), JsonSerializer.Serialize(new
+            {
+                Mode = mode, Order = order, MenuId = menuId, Response = json.RootElement,
+                Main = final.RootElement, First = finalFirst, Second = finalSecond,
+            }, new JsonSerializerOptions { WriteIndented = true }));
+        }
+
+        async Task<HttpResponseMessage> ExerciseOrderAsync()
+        {
+            if (order == "owner-first")
+            {
+                await WaitConfigurationBridge(bridge, "owner-held");
+                var write = Write();
+                try
+                {
+                    var blocked = await WaitMenuSealBlockAsync(crmFirst, null, write);
+                    Assert.Equal(beforeMain, await ReadMainEffects());
+                    Assert.Equal(beforeFirst, await ReadMenuRoleFence(crmFirst, first.Tenant));
+                    Assert.Equal(beforeSecond, await ReadMenuRoleFence(crmSecond, second.Tenant));
+                    Assert.All(await ReadMenuPlanAsync(), entry => Assert.True(entry.SealStarted));
+                    await File.WriteAllTextAsync(Path.Combine(bridge, "owner-wait.json"), JsonSerializer.Serialize(new { SealBackend = blocked }));
+                }
+                finally { await MarkAsync("release-owner"); }
+                return await write;
+            }
+
+            Assert.Equal("pause-first", order);
+            await WaitConfigurationBridge(bridge, "permission-held");
+            return await Write();
+        }
+
+        async Task WriteCrmSessionAsync()
+        {
+            var pair = pairs[first.Tenant];
+            var source = await first.Db.CrmIdentitySnapshots.AsNoTracking().Where(r => r.TenantId == first.Tenant)
+                .OrderBy(r => r.AggregateId).ToArrayAsync();
+            var account = await first.Db.Sys_Users.AsNoTracking().SingleAsync(u => u.Id == first.ActorId);
+            await File.WriteAllTextAsync(Path.Combine(bridge, "session.json.tmp"), JsonSerializer.Serialize(new
+            {
+                marker = "CP6-owned-inquiry-configuration-interop-v1", issuer = options.Issuer, origin = host.Origin.ToString(),
+                accessToken = subjects[0].Affected, tenantId = first.Tenant, subjectId = first.ActorId, departmentId = first.Parent,
+                siteId = pair.SiteId, formId = pair.FormId, keyId = options.KeyId, publicKeyBase64 = options.PublicKeyBase64,
+                activeFromUtc = options.ActiveFromUtc, sourceRows = source.Select(r => new
+                {
+                    r.AggregateId, r.EventType, r.Version, r.PayloadSha256, r.IsDeleted, r.PayloadJson,
+                }),
+                authenticationEpoch = account.AuthenticationEpoch,
+            }));
+            File.Move(Path.Combine(bridge, "session.json.tmp"), Path.Combine(bridge, "session.json"));
+        }
+
+        async Task MarkAsync(string phase)
+        {
+            var destination = Path.Combine(bridge, phase);
+            await File.WriteAllTextAsync(destination + ".tmp", "PASS");
+            File.Move(destination + ".tmp", destination);
+        }
 
         async Task<string> Exchange(Guid tenant, Dictionary<string, string> login)
         {
@@ -266,7 +544,10 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
               'CatalogRevision',(SELECT jsonb_agg(jsonb_build_array(r.tenant_id,r.revision) ORDER BY r.tenant_id) FROM cp6_authentication_v1.identity_admission_revisions r
                 WHERE r.tenant_id=ANY({tenantIds}) AND r.object_key='permission-catalog'),
               'Outbox',(SELECT count(*) FROM crm_identity."Cp6_OutboxMessage" WHERE "TenantId"=ANY({tenantIds})),
-              'PriorityOutbox',(SELECT count(*) FROM crm_identity_priority."Cp6_OutboxMessage" WHERE "TenantId"=ANY({tenantIds}))
+              'PriorityOutbox',(SELECT count(*) FROM crm_identity_priority."Cp6_OutboxMessage" WHERE "TenantId"=ANY({tenantIds})),
+              'FieldAudit',(SELECT count(*) FROM public."Sys_FieldAuditLogs" WHERE "EntityName"='Sys_Menu' AND "EntityKey"={menuId.ToString()}),
+              'CommandAudit',(SELECT count(*) FROM public."Sys_SecurityLogs" WHERE "TenantId"={first.Tenant}
+                AND "ContextJson"::jsonb->>'kind' IN ('menu-add','menu-edit','menu-delete'))
             )::text AS "Value"
             """).SingleAsync();
     }
@@ -344,6 +625,29 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Assert.True(await reader.ReadAsync());
         return new(reader.GetInt32(0), reader.GetInt64(1));
     }
+
+    private static async Task<int> WaitMenuSealBlockAsync(NpgsqlConnection crm, int? blocker, Task request)
+    {
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(6));
+        await using var query = new NpgsqlCommand("""
+            SELECT pid FROM pg_stat_activity
+            WHERE datname=current_database() AND application_name='cp6-main-inquiry-tenant-pause-v1'
+              AND wait_event_type='Lock' AND query LIKE '%advance_role_v1%'
+              AND cardinality(pg_blocking_pids(pid))>0
+              AND (@blocker::integer IS NULL OR @blocker=ANY(pg_blocking_pids(pid)))
+            LIMIT 1
+            """, crm);
+        query.Parameters.AddWithValue("blocker", NpgsqlTypes.NpgsqlDbType.Integer, blocker is null ? DBNull.Value : (object)blocker.Value);
+        while (!request.IsCompleted)
+        {
+            if (await query.ExecuteScalarAsync(timeout.Token) is int pid) return pid;
+            await Task.Delay(25, timeout.Token);
+        }
+        throw new InvalidOperationException("Main returned before the original CRM role seal blocked.");
+    }
+
+    private sealed record MenuPlanRow(Guid TenantId, int RoleId, Guid OperationId, Guid MenuOperationId, bool SealStarted,
+        int SourceVersion, string SourceHash, string SuccessorHash, Guid ActorTenant);
 
     private static string QuoteMenuIdentifier(string value)
     {
