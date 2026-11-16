@@ -85,6 +85,8 @@ public sealed partial class PrivacyDispositionOwnerV1
         Id(operation);var bytes=MainOwnerOperationJournalV1.Encode(new{kind,input});return Transaction(true,session,async(a,t)=>
         {
             Can(a,"read");var old=await Original(a,operation,bytes,t);if(old!=null)return old;Can(a,capability);
+            if (await FindDispositionSealAsync(a, operation, t) is not null)
+                throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_OPERATION_CONFLICT");
             var effectResult=await effect(a,t);
             var target=input switch{PrivacyDispositionPolicyCommandV1 p=>(Policy:(Guid?)p.PolicyId,Tenant:(Guid?)p.TargetTenantId,Subject:(Guid?)null),
                 PrivacyDispositionHoldCommandV1 h=>(Policy:(Guid?)null,Tenant:(Guid?)h.TargetTenantId,Subject:(Guid?)h.SubjectId),
@@ -99,6 +101,13 @@ public sealed partial class PrivacyDispositionOwnerV1
         Id(operation);return Transaction(close,session,async(a,t)=>
         {
             Can(a,"read");var old=await Original(a,operation,null,t);if(old!=null)return old;
+            if (await FindDispositionSealAsync(a, operation, t) is { } pending)
+            {
+                if (!close || pending.Record.SealStarted)
+                    throw DispositionSealUnknown();
+                await RequireDispositionSealDurabilityAsync(t);
+                await pending.Record.RemoveAsync(db, pending.Tenant, t);
+            }
             var result=new PrivacyDispositionOperationV1(operation,close?"CLOSED":"NOT_FOUND","CLOSE",null,null);
             if(close)await Store(a,operation,null,result,t);return result;
         },ct);

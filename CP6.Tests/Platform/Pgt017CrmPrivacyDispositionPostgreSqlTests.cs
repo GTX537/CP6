@@ -115,11 +115,23 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             await SetSealLogin(false);
             try
             {
-                await using (var closed = new NpgsqlConnection(seal.ConnectionString))
+                await using (var deniedConnection = new NpgsqlConnection(seal.ConnectionString))
                 {
-                    var refusal = await Assert.ThrowsAsync<PostgresException>(() => closed.OpenAsync());
+                    var refusal = await Assert.ThrowsAsync<PostgresException>(() => deniedConnection.OpenAsync());
                     Assert.Equal(PostgresErrorCodes.InvalidAuthorizationSpecification, refusal.SqlState);
                 }
+                var closeInput = input with { OperationId = Guid.NewGuid(), ConfirmationRef = Guid.NewGuid() };
+                using (var refusedBeforeSend = await Execute(host, closeInput))
+                    Assert.Equal(HttpStatusCode.ServiceUnavailable, refusedBeforeSend.StatusCode);
+                var closed = await ReadPrivacy<PrivacyDispositionOperationV1>(host, HttpMethod.Post,
+                    $"{PrivacyDispositionRoute}/operations/{closeInput.OperationId:D}/close", requesterSession);
+                Assert.Equal(("CLOSED", closeInput.OperationId), (closed.State, closed.OperationId));
+                var closedReplay = await ReadPrivacy<PrivacyDispositionOperationV1>(host, HttpMethod.Post, path, requesterSession, closeInput);
+                Assert.Equal(closed, closedReplay);
+                Assert.Equal(expectedFence, await Sign(host, affected.Access, subject.Id, "intake:reject"));
+                Assert.Equal(writesBefore, await Writes());
+                Assert.Equal(floorsBefore, await Floors());
+
                 var priorRefusals = await SealDenials();
                 using (var refused = await Execute(host, input))
                     Assert.Equal(HttpStatusCode.ServiceUnavailable, refused.StatusCode);
@@ -225,6 +237,10 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             Assert.Equal(("APPROVED", approved.Version, approved.ScopeDigest), (original.State, original.Version, original.ScopeDigest));
             Assert.Equal((requester.Id, approver.Id), (original.RequesterId, original.ApproverId!.Value));
             Assert.Null(original.Execution);
+            using var operation = await api.Send(Request(HttpMethod.Get,
+                $"{PrivacyDispositionRoute}/operations/{input.OperationId:D}", requesterSession));
+            Assert.Equal(HttpStatusCode.ServiceUnavailable, operation.StatusCode);
+            Assert.Contains("PRIVACY_DISPOSITION_OUTCOME_UNKNOWN", await operation.Content.ReadAsStringAsync());
         }
 
         async Task CheckCommitted(AuthenticationApiProcess api, HttpResponseMessage? completed = null)
