@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-15，W673 接入已有用户 SSO 首绑的同用户待确认和原生 CRM 栅栏，保留既有身份、原客户端绑定与原会话策略。Web 可重新验证原交互。 [W673 交付](../development/evidence/W673-01/DELIVERY.md)
+
 2026-11-15，W672 让已接受的登录失败在同一 Main 权限根保存原计数及期限，使用登记 CRM 的原生封存和原 lease。双序、冷恢复和 Main COMMIT 确认丢失通过。 [W672 交付](../development/evidence/W672-01/DELIVERY.md)
 
 2026-11-15，W671 保留原 QuickPIN 与 Badge 调用合同，按原用户和凭据修订封存 CRM Grant，贴合原 C02 与 Outbox。 [W671 交付](../development/evidence/W671-01/DELIVERY.md)
