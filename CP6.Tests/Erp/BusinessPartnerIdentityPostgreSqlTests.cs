@@ -98,7 +98,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     public async Task Business_partner_identity_legacy_service_create_update_delete_use_native_identity_and_preserve_uninvented_facts()
     {
         await using var h = await Seed(); await GrantBusinessPartnerIdentity(h);
-        var svc = new BusinessPartnerService(h.Db);
+        await GrantPartnerActions(h, "profile-query", "add", "edit", "del");
+        h.Db.Sys_Roles.Add(new() { RoleId = 1, RoleName = "管理员" });
+        h.Db.Sys_UserRoles.Add(new() { UserId = h.User, RoleId = 1 });
+        await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
+        var svc = new BusinessPartnerService(h.Db, PartnerAuthority(h));
         var dto = new BusinessPartnerDto { BpCd = "S-" + Guid.NewGuid().ToString("N")[..12], BpName = "Legacy original", BpAbbrev = "C", BaseCd = "B",
             CustomerFlg = true, AccountsReceivableCd = "AR", SalesStaffCd = "SA", BusinessStaffCd = "BS" };
         await svc.CreateAsync(dto, "price-owner", preRegister: true); h.Db.ChangeTracker.Clear();
@@ -108,6 +112,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var second = await owner.ReadAsync(id); Assert.Equal("2", second.Reference.Version); Assert.Equal("Changed", second.Source.GetProperty("bpName").GetString());
         await svc.DeleteAsync(dto.BpCd, null, "price-owner"); h.Db.ChangeTracker.Clear();
         var deleted = await owner.ReadAsync(id); Assert.True(deleted.Source.GetProperty("isDeleted").GetBoolean()); Assert.Equal(9, deleted.Source.GetProperty("status").GetInt32());
+        Assert.Null(await svc.GetByCdAsync(dto.BpCd));
+        Assert.Equal(9, (await svc.GetByCdAsync(dto.BpCd, includeDeleted: true))!.Status);
         Assert.Empty((await owner.ListAsync(new())).Items); Assert.Equal(first.OriginalJson, (await owner.ReadAsync(id, "1")).OriginalJson);
         Assert.Equal("NOT_ATTESTED", deleted.TradingEligibility);
     }
@@ -129,15 +135,25 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     public async Task Business_partner_identity_department_scope_uses_explicit_native_uuid_and_rechecks_disabled_binding(int type)
     {
         await using var h = await Seed(); await GrantBusinessPartnerIdentity(h); var id = await SeedIdentityPartner(h); var other = await SeedIdentityPartner(h);
+        await GrantPartnerActions(h, "profile-query", "add", "edit");
         var admin = await MappingAdmin(h); await StandaloneScope(h, admin, type); var owner = Partners(h);
+        var legacy = new BusinessPartnerService(h.Db, PartnerAuthority(h));
         Assert.Equal(0, (await owner.ListAsync(new())).Total);
+        Assert.Equal(0, (await legacy.SearchAsync(new())).Total);
+        Assert.Equal("CREATION_DEPARTMENT_REQUIRED",
+            (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => legacy.CreateAsync(PartnerInput("BP-NEW", "新档案"), null))).Message);
         var code = await h.Db.BusinessPartners.Where(x => x.Id == id).Select(x => x.BpCd).SingleAsync();
         Assert.Equal(id, Assert.Single(await StandaloneAdmin(h, admin).FindObjectsAsync("business-partner", code, _ => Task.FromResult(h.User), default)).Id);
         var binding = await BindStandalone(h, admin, "business-partner", id);
         var page = await owner.ListAsync(new(PageSize: 1)); Assert.Equal(1, page.Total); Assert.Equal(id, Assert.Single(page.Items).Reference.Id);
+        Assert.Equal(code, Assert.Single((await legacy.SearchAsync(new())).Rows).BpCd);
+        var otherCode = await h.Db.BusinessPartners.Where(x => x.Id == other).Select(x => x.BpCd).SingleAsync();
+        Assert.Equal(404, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(
+            () => legacy.UpdateAsync(otherCode, PartnerInput(otherCode, "新名称"), null))).Status);
         await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => owner.ReadAsync(other));
         var disable = await StandaloneCommand(h, admin, "business-partner", id, binding.EntityId); await SaveStandalone(h, admin, disable with { Enabled = false });
         Assert.Equal(0, (await owner.ListAsync(new())).Total); await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => owner.ReadAsync(id, "1"));
+        Assert.Null(await legacy.GetByCdAsync(code));
     }
 
     [CurrentPermissionPostgresFact]
@@ -247,7 +263,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         using var original = JsonDocument.Parse(json); Assert.Equal(9, original.RootElement.GetProperty("status").GetInt32()); Assert.True(original.RootElement.GetProperty("isFrozen").GetBoolean());
         Assert.Equal("Before e\u0301", original.RootElement.GetProperty("bpName").GetString());
         Assert.Equal(1, await db.Database.SqlQueryRaw<int>("SELECT count(*)::int AS \"Value\" FROM cp6_business_partner_identity_v1.versions").SingleAsync());
-        Assert.Single(await db.Sys_MenuActions.Where(x => x.MenuId == 212 && x.ActionCode == "query").ToArrayAsync());
-        Assert.Empty(await db.Sys_RoleActions.Where(x => x.MenuId == 212 && x.ActionCode == "query").ToArrayAsync());
+        var actions = await db.Sys_MenuActions.Where(x => x.MenuId == 212).Select(x => x.ActionCode).ToArrayAsync();
+        Assert.Equal(new[] { "export", "profile-query", "query" }, actions.Order(StringComparer.Ordinal));
+        Assert.Empty(await db.Sys_RoleActions.Where(x => x.MenuId == 212).ToArrayAsync());
     }
 }

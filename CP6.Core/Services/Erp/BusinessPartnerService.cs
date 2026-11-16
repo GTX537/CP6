@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels;
 using CP6.Entity.DTOs;
 using Microsoft.EntityFrameworkCore;
@@ -14,35 +15,37 @@ namespace CP6.Core.Services.Erp;
 /// 仕様書 §8 — 21 条のバリデーションを実装。
 /// FLG 変更不可チェック（MSG-018）は §4 注記の「13 種 FLG」を対象に訂正時のみ。
 /// </remarks>
-public class BusinessPartnerService : IBusinessPartnerService
+public partial class BusinessPartnerService : IBusinessPartnerService
 {
     private readonly CP6Context _db;
+    private readonly OperationsOwnerV1? _owner;
     private static readonly Regex ZipPattern = new(@"^\d{3}-?\d{4}$", RegexOptions.Compiled);
     private static readonly Regex TelPattern = new(@"^[\d\-\(\)\s]+$", RegexOptions.Compiled);
 
-    public BusinessPartnerService(CP6Context db) { _db = db; }
+    public BusinessPartnerService(CP6Context db, OperationsOwnerV1? owner = null)
+    {
+        _db = db;
+        _owner = owner;
+    }
 
     // ═══════════════════════════════════════════════════════════
     //  CRUD
     // ═══════════════════════════════════════════════════════════
 
-    public async Task<BusinessPartnerDto?> GetByCdAsync(string bpCd, bool includeDeleted = false)
+    private static async Task<BusinessPartnerDto?> ReadAsync(IQueryable<BusinessPartner> rows, string bpCd,
+        bool nameReadable, CancellationToken ct)
     {
-        var q = _db.BusinessPartners.AsNoTracking().Where(x => x.BpCd == bpCd);
-        if (!includeDeleted) q = q.Where(x => !x.IsDeleted);
-        var e = await q.FirstOrDefaultAsync();
-        return e == null ? null : ToDto(e);
+        var row = await rows.FirstOrDefaultAsync(x => x.BpCd == bpCd, ct);
+        return row == null ? null : ToDto(row, nameReadable);
     }
 
-    public Task<bool> ExistsAsync(string bpCd)
-        => _db.BusinessPartners.AsNoTracking().AnyAsync(x => x.BpCd == bpCd && !x.IsDeleted);
-
-    public async Task<string> CreateAsync(BusinessPartnerDto dto, string? userName, bool preRegister = false)
+    private async Task<BusinessPartner> CreateCoreAsync(BusinessPartnerDto dto, string? userName,
+        bool preRegister, bool reserveDeletedCode, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(dto.BpCd))
-            throw new InvalidOperationException("E10022: 取引先 CD は必須です。");
-        if (await ExistsAsync(dto.BpCd))
-            throw new InvalidOperationException($"E10035: 取引先コード '{dto.BpCd}' が既に存在します。");
+            throw new InvalidOperationException("E10022: 业务伙伴代码不能为空。");
+        if (await _db.BusinessPartners.AnyAsync(x => x.BpCd == dto.BpCd && (reserveDeletedCode || !x.IsDeleted), ct))
+            throw new InvalidOperationException("E10035: 该业务伙伴代码已被占用。");
 
         var errors = new List<string>();
         Validate(dto, isEdit: false, before: null, errors);
@@ -58,16 +61,13 @@ public class BusinessPartnerService : IBusinessPartnerService
         entity.GifuInterfaceFlg = false;       // 岐阜 IF 連携 — 初期 false
         entity.McTransferFlg = false;
         _db.BusinessPartners.Add(entity);
-        await _db.SaveChangesAsync();
-        return entity.BpCd;
+        await _db.SaveChangesAsync(ct);
+        return entity;
     }
 
-    public async Task UpdateAsync(string bpCd, BusinessPartnerDto dto, string? userName)
+    private async Task UpdateCoreAsync(BusinessPartner entity, BusinessPartnerDto dto, string? userName,
+        CancellationToken ct)
     {
-        var entity = await _db.BusinessPartners
-            .FirstOrDefaultAsync(x => x.BpCd == bpCd && !x.IsDeleted)
-            ?? throw new KeyNotFoundException($"取引先 '{bpCd}' が見つかりません。");
-
         if (dto.RowVersion != null && dto.RowVersion.Length > 0)
             _db.Entry(entity).Property(x => x.RowVersion).OriginalValue = dto.RowVersion;
 
@@ -86,21 +86,19 @@ public class BusinessPartnerService : IBusinessPartnerService
         entity.Modifier = userName;
         entity.ModifyDate = DateTime.Now;
         entity.McTransferFlg = false;          // 内容変更 → mc 再転送対象
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(ct);
     }
 
-    public async Task DeleteAsync(string bpCd, byte[]? rowVersion, string? userName)
+    private async Task DeleteCoreAsync(BusinessPartner entity, byte[]? rowVersion, string? userName,
+        CancellationToken ct)
     {
-        var entity = await _db.BusinessPartners
-            .FirstOrDefaultAsync(x => x.BpCd == bpCd && !x.IsDeleted)
-            ?? throw new KeyNotFoundException($"取引先 '{bpCd}' が見つかりません。");
         if (rowVersion != null && rowVersion.Length > 0)
             _db.Entry(entity).Property(x => x.RowVersion).OriginalValue = rowVersion;
         entity.IsDeleted = true;
         entity.Status = 9;
         entity.Modifier = userName;
         entity.ModifyDate = DateTime.Now;
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(ct);
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -207,6 +205,12 @@ public class BusinessPartnerService : IBusinessPartnerService
         chkDay(d.CollectionPlannedDay, "集金予定日");
     }
 
+    internal void ValidateExisting(BusinessPartner partner, IList<string> errors)
+    {
+        var dto = ToDto(partner);
+        Validate(dto, isEdit: true, before: dto, errors);
+    }
+
     // ═══════════════════════════════════════════════════════════
     //  FLG 変更不可チェック（仕様書 §4 注記 — MSG-018）
     // ═══════════════════════════════════════════════════════════
@@ -259,9 +263,12 @@ public class BusinessPartnerService : IBusinessPartnerService
             ["createDate"] = "CreateDate",
         };
 
-    public async Task<(List<BpListItemDto>, int)> SearchAsync(BpQueryDto q)
+    private static async Task<(List<BpListItemDto>, int)> SearchCoreAsync(
+        IQueryable<BusinessPartner> iq, BpQueryDto q, bool nameReadable, CancellationToken ct, bool export = false)
     {
-        var iq = _db.BusinessPartners.AsNoTracking().Where(x => !x.IsDeleted);
+        if (!nameReadable && (!string.IsNullOrWhiteSpace(q.BpName)
+            || string.Equals(q.SortField, "bpName", StringComparison.OrdinalIgnoreCase)))
+            throw new OrderPriceCorrectionException("FIELD_READ_FORBIDDEN", 403);
 
         // 11 個の属性 FLG（OR 結合）— 全て OFF はクエリ前にバリデーションすべきだがガードとして空集合を返す
         var anyFlg = (q.IncludeCustomer ?? false) || (q.IncludeAccountsReceivable ?? false) || (q.IncludeBilling ?? false)
@@ -319,20 +326,20 @@ public class BusinessPartnerService : IBusinessPartnerService
         if (!string.IsNullOrWhiteSpace(q.BpClass09)) iq = iq.Where(x => x.BpClass09 == q.BpClass09);
         if (!string.IsNullOrWhiteSpace(q.BpClass10)) iq = iq.Where(x => x.BpClass10 == q.BpClass10);
 
-        var total = await iq.CountAsync();
+        var total = export ? (int?)null : await iq.CountAsync(ct);
         if (q.MaxRows.HasValue && total > q.MaxRows.Value)
             throw new InvalidOperationException($"E10013: 検索件数が上限 {q.MaxRows.Value} 件を超えました（{total} 件）");
 
-        iq = QuerySort.Apply(iq, q.SortField, q.SortOrder, BpSortMap, s => s.OrderBy(x => x.BpCd));
+        iq = QuerySort.Apply(iq, export ? null : q.SortField, q.SortOrder, BpSortMap, s => s.OrderBy(x => x.BpCd));
+        var offset = export ? 0 : (q.Page - 1) * q.PageSize;
+        if (!export) iq = iq.Skip(offset).Take(q.PageSize);
 
         var rows = await iq
-            .Skip((q.Page - 1) * q.PageSize)
-            .Take(q.PageSize)
             .Select(x => new BpListItemDto
             {
                 Status = x.Status,
                 BpCd = x.BpCd,
-                BpName = x.BpName,
+                BpName = nameReadable ? x.BpName : null,
                 BpAbbrev = x.BpAbbrev,
                 SalesStaffCd = x.SalesStaffCd,
                 BusinessStaffCd = x.BusinessStaffCd,
@@ -353,36 +360,14 @@ public class BusinessPartnerService : IBusinessPartnerService
                 CreateDate = x.CreateDate,
                 Creator = x.Creator,
             })
-            .ToListAsync();
+            .ToListAsync(ct);
 
-        for (int i = 0; i < rows.Count; i++) rows[i].RowNo = (q.Page - 1) * q.PageSize + i + 1;
-        return (rows, total);
+        for (int i = 0; i < rows.Count; i++) rows[i].RowNo = offset + i + 1;
+        return (rows, total ?? rows.Count);
     }
 
-    public async Task<byte[]> ExportListCsvAsync(BpQueryDto q)
+    private static byte[] EncodeCsv(List<BpListItemDto> rows)
     {
-        // 全件取得（ページング無視）
-        var qry = new BpQueryDto
-        {
-            IncludeCustomer = q.IncludeCustomer, IncludeAccountsReceivable = q.IncludeAccountsReceivable,
-            IncludeBilling = q.IncludeBilling, IncludeReceipt = q.IncludeReceipt,
-            IncludeDelivery = q.IncludeDelivery, IncludeCreditMgmt = q.IncludeCreditMgmt,
-            IncludeSupplier = q.IncludeSupplier, IncludeAccountsPayable = q.IncludeAccountsPayable,
-            IncludePaymentSchedule = q.IncludePaymentSchedule, IncludePayment = q.IncludePayment,
-            IncludeMaker = q.IncludeMaker,
-            RegisteredDateFrom = q.RegisteredDateFrom, RegisteredDateTo = q.RegisteredDateTo,
-            BpCd = q.BpCd, BpName = q.BpName, Ein = q.Ein, EinType = q.EinType, StdCoCd = q.StdCoCd,
-            ZipCd = q.ZipCd, Addr = q.Addr, Tel = q.Tel, Fax = q.Fax, AreaCd = q.AreaCd,
-            SalesWg = q.SalesWg, SalesStaffCd = q.SalesStaffCd,
-            BusinessWg = q.BusinessWg, BusinessStaffCd = q.BusinessStaffCd,
-            BpClass01 = q.BpClass01, BpClass02 = q.BpClass02, BpClass03 = q.BpClass03,
-            BpClass04 = q.BpClass04, BpClass05 = q.BpClass05, BpClass06 = q.BpClass06,
-            BpClass07 = q.BpClass07, BpClass08 = q.BpClass08, BpClass09 = q.BpClass09, BpClass10 = q.BpClass10,
-            IncludePreRegistered = q.IncludePreRegistered, IncludeRegistered = q.IncludeRegistered,
-            Page = 1, PageSize = int.MaxValue,
-        };
-        var (rows, _) = await SearchAsync(qry);
-
         var sb = new StringBuilder();
         sb.AppendLine("№,ステータス,取引先,取引先名,取引先別名1,営業担当,業務担当,法人番号,標準企業コード,住所1,住所2,得意先,売掛先,請求先,入金先,納品先,与信管理先,発注先,買掛先,支払予定管理先,支払先,メーカ,登録日,登録担当");
         foreach (var r in rows)
@@ -418,9 +403,9 @@ public class BusinessPartnerService : IBusinessPartnerService
     //  Mapping
     // ═══════════════════════════════════════════════════════════
 
-    private static BusinessPartnerDto ToDto(BusinessPartner e) => new()
+    private static BusinessPartnerDto ToDto(BusinessPartner e, bool nameReadable = true) => new()
     {
-        BpCd = e.BpCd, BpName = e.BpName, BpAbbrev = e.BpAbbrev, BaseCd = e.BaseCd, Status = e.Status,
+        BpCd = e.BpCd, BpName = nameReadable ? e.BpName : null, BpAbbrev = e.BpAbbrev, BaseCd = e.BaseCd, Status = e.Status,
         CrmAccountId = e.CrmAccountId, CurrencyCd = e.CurrencyCd, IsFrozen = e.IsFrozen,
         StdCoCd = e.StdCoCd, Ein = e.Ein, EinType = e.EinType, LocalPublicCd = e.LocalPublicCd, DenzaiNo = e.DenzaiNo,
         ZipCd = e.ZipCd, Addr1 = e.Addr1, Addr2 = e.Addr2, Addr3 = e.Addr3, Addr4 = e.Addr4,
@@ -512,7 +497,7 @@ public class BusinessPartnerService : IBusinessPartnerService
 
     private static void ApplyDto(BusinessPartner e, BusinessPartnerDto d)
     {
-        e.BpCd = d.BpCd; e.BpName = d.BpName; e.BpAbbrev = d.BpAbbrev; e.BaseCd = d.BaseCd; e.Status = d.Status;
+        e.BpCd = d.BpCd; e.BpName = d.BpName!; e.BpAbbrev = d.BpAbbrev; e.BaseCd = d.BaseCd; e.Status = d.Status;
         e.StdCoCd = d.StdCoCd; e.Ein = d.Ein; e.EinType = d.EinType; e.LocalPublicCd = d.LocalPublicCd; e.DenzaiNo = d.DenzaiNo;
         e.ZipCd = d.ZipCd; e.Addr1 = d.Addr1; e.Addr2 = d.Addr2; e.Addr3 = d.Addr3; e.Addr4 = d.Addr4;
         e.Tel = d.Tel; e.Fax = d.Fax; e.AreaCd = d.AreaCd;

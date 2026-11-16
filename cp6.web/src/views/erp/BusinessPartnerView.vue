@@ -22,7 +22,8 @@
           <el-button v-if="!store.isPreReg && !store.isReg" type="primary" size="small" :loading="loading" @click="onLoad()" style="margin-left: 4px">{{ t('sales.btn.load') }}</el-button>
         </el-form-item>
         <el-form-item :label="t('sales.term.bpName')">
-          <el-input v-model="store.bp.bpName" :disabled="!store.canEdit" style="width: 280px" />
+          <el-input :model-value="store.bp.bpName ?? ''" :disabled="!store.canEdit || nameHidden"
+            @update:model-value="store.bp.bpName = $event" style="width: 280px" />
         </el-form-item>
         <el-form-item :label="t('sales.term.base') + ' CD'" required>
           <el-input v-model="store.bp.baseCd" :disabled="!store.canEdit" style="width: 140px" />
@@ -53,7 +54,8 @@
     <el-card shadow="never" class="footer-card">
       <div class="btn-row">
         <el-button @click="onClear">{{ t('sales.btn.clear') }}</el-button>
-        <el-button v-if="store.canEdit" v-permission="'erp-business-partner:add'" type="primary" :loading="saving" @click="onSave">{{ t('sales.btn.register') }}</el-button>
+        <el-button v-if="store.canEdit && permission.has(store.isEdit ? 'erp-business-partner:edit' : 'erp-business-partner:add')"
+          type="primary" :loading="saving" @click="onSave">{{ t('sales.btn.register') }}</el-button>
         <el-button v-if="store.isDelete" v-permission="'erp-business-partner:del'" type="danger" :loading="saving" @click="onDelete">{{ t('sales.btn.delete') }}</el-button>
       </div>
     </el-card>
@@ -66,6 +68,7 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useBpStore } from '@/stores/businessPartner'
+import { usePermissionStore } from '@/stores/permission'
 import { bpApi } from '@/api/erp/businessPartner'
 import { BpOperationType } from '@/types/erp/businessPartner'
 import CpTag from '@/components/base/CpTag.vue'
@@ -83,6 +86,7 @@ import PaymentTab from './bp/PaymentTab.vue'
 const { t } = useI18n()
 const route = useRoute()
 const store = useBpStore()
+const permission = usePermissionStore()
 const activeTab = ref<string>('basic')
 const loading = ref(false)
 const saving = ref(false)
@@ -124,6 +128,7 @@ const opTagType = computed<'primary' | 'warning' | 'danger' | 'info' | 'success'
 
 // 取引先 CD は事前登録/登録時のみ入力可（仕様書 §7）
 const isCdEditable = computed(() => store.isPreReg || store.isReg)
+const nameHidden = computed(() => hasLoaded.value && store.isEdit && store.original?.bpName === null)
 
 async function onLoad(skipDirtyCheck = false) {
   if (!store.bp.bpCd) {
@@ -167,7 +172,7 @@ onMounted(async () => {
 
 async function onSave() {
   // 必須/9 FLG チェック
-  if (!store.bp.bpName?.trim()) { ElMessage.error(t('取引先名は必須です')); return }
+  if (!nameHidden.value && !store.bp.bpName?.trim()) { ElMessage.error('业务伙伴名称不能为空。'); return }
   if (!store.bp.baseCd?.trim()) { ElMessage.error(t('拠点 CD は必須です')); return }
   if (!store.hasAnyFlg) { ElMessage.error(t('9 個の属性 FLG のいずれかを選択してください')); return }
 
@@ -182,21 +187,19 @@ async function onSave() {
 
   saving.value = true
   try {
-    if (store.isPreReg || store.isReg) {
-      const r = await bpApi.create(store.bp, store.isPreReg)
-      if (r.code === 0 && r.data) {
-        store.loadFromDto(r.data)
-        hasLoaded.value = true
-        ElMessage.success(t('sales.msg.saveSuccess'))
-        store.setOperationType(BpOperationType.Edit)
-      }
-    } else if (store.isEdit) {
-      const r = await bpApi.update(store.bp.bpCd, store.bp)
-      if (r.code === 0 && r.data) {
-        store.loadFromDto(r.data)
-        ElMessage.success(t('sales.msg.saveSuccess'))
-      }
+    const creating = store.isPreReg || store.isReg
+    if (!creating && !store.isEdit) return
+    const r = creating ? await bpApi.create(store.bp, store.isPreReg) : await bpApi.update(store.bp.bpCd, store.bp)
+    if (r.code !== 0) return
+    if (r.data) {
+      store.loadFromDto(r.data)
+      hasLoaded.value = true
+      if (creating) store.setOperationType(BpOperationType.Edit)
+    } else {
+      store.reset()
+      hasLoaded.value = false
     }
+    ElMessage.success(t('sales.msg.saveSuccess'))
   } catch (e: any) {
     // 楽観ロック競合（409/E10034）：interceptor は 409 を黙殺するため、ここで明示通知する
     const status = e?.response?.status

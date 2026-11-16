@@ -22,14 +22,14 @@ export const bpApi = {
 
   /** 新規登録（preRegister=true なら事前登録） */
   create(data: BusinessPartnerDto, preRegister = false) {
-    return http.post<any, ApiResult<BusinessPartnerDto>>(
+    return http.post<any, ApiResult<BusinessPartnerDto | null>>(
       '/business-partners', data, { params: { preRegister } },
     )
   },
 
   /** 訂正 */
   update(bpCd: string, data: BusinessPartnerDto) {
-    return http.put<any, ApiResult<BusinessPartnerDto>>(
+    return http.put<any, ApiResult<BusinessPartnerDto | null>>(
       `/business-partners/${encodeURIComponent(bpCd)}`, data,
     )
   },

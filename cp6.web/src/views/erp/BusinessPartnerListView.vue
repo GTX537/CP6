@@ -51,7 +51,7 @@
         <el-form-item>
           <el-button type="primary" @click="search" :loading="loading">{{ t('sales.btn.search') }}</el-button>
           <el-button @click="resetQuery">{{ t('sales.btn.clear') }}</el-button>
-          <el-button :icon="Download" @click="exportCsv" :loading="exporting">{{ t('sales.btn.exportCsv') }}</el-button>
+          <el-button v-if="canExport" :icon="Download" @click="exportCsv" :loading="exporting">{{ t('sales.btn.exportCsv') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -109,7 +109,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, h } from 'vue'
+import { ref, reactive, h, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -117,10 +117,14 @@ import { Download, Check } from '@element-plus/icons-vue'
 import CpTag from '@/components/base/CpTag.vue'
 import { type Tone } from '@/components/base/CpTag.vue'
 import { bpApi } from '@/api/erp/businessPartner'
+import { usePermissionStore } from '@/stores/permission'
 import type { BpQueryDto, BpListItemDto } from '@/types/erp/businessPartner'
 
 const { t } = useI18n()
 const router = useRouter()
+const permission = usePermissionStore()
+const canExport = computed(() => permission.has('erp-business-partner:query')
+  && permission.has('erp-business-partner:profile-query') && permission.has('erp-business-partner:export'))
 
 // 简易内联组件：FLG 图标
 const FlgIcon = (props: { on: boolean }) => props.on

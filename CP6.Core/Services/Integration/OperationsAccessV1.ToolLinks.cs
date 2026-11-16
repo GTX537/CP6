@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Core.Services.Integration;
 internal sealed partial class OperationsAccessV1
 {
-    private async Task<OperationsAccessV1?> LinkedSource(string resource,CancellationToken ct)
+    private async Task<OperationsAccessV1?> LinkedSource(string resource,CancellationToken ct,string action="query")
     {
-        try{return await SourceAsync(resource,ct);}
+        try{return await ActionAsync(resource,action,ct);}
         catch(OrderPriceCorrectionException e)when(e.Status==403&&e.Message=="ACTION_FORBIDDEN"){return null;}
     }
     internal async Task<IQueryable<PlateMoldStock>> ScopedToolInstances(CancellationToken ct)
