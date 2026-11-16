@@ -166237,6 +166237,11 @@
       "at": "2026-11-16T03:22:07.321743+00:00",
       "change": "W670 在现有已批准资料处置入口保存原批准、作用域和精确 CRM 封存，在首次拒接与应答丢失时保留原操作键和回执。双库两序沿原 CRM 业务 Owner 验证。",
       "evidence": "docs/development/evidence/W670-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-16T03:37:04.470700+00:00",
+      "change": "W671 在原设备管理授权根内保存 QuickPIN 原请求及目标物理 CRM 状态。真实两库顺序与拒接恢复验证保留原用户影响范围。",
+      "evidence": "docs/development/evidence/W671-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212243,10 +212248,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W670",
-      "path": "docs/development/evidence/W670-01/DELIVERY.md",
-      "baseline_sha": "479f4e9b975b049d81e4ff3b27ade232900c60e2",
-      "registered_at": "2026-11-16T02:17:25.251376+00:00",
+      "id": "W671",
+      "path": "docs/development/evidence/W671-01/DELIVERY.md",
+      "baseline_sha": "a831e1df97c6052dc5dc2ba435fa4f1f67ec900f",
+      "registered_at": "2026-11-16T03:02:47.990105+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212260,11 +212265,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "验证 W671 的合法 QuickPIN 写入，并独立准备正式登录的实际锁定状态。",
+      "next_action": "W672 继续 Main Web/Native 及二因子入场锁定；独立准备原 SSO 已有账户首次绑定。",
       "windows": [
         {
-          "id": "W670-01",
-          "workspace_task": "W670-01",
+          "id": "W671-01",
+          "workspace_task": "W671-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212274,27 +212279,27 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w670-01",
-          "planned_scope_ref": "docs/development/evidence/W670-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W670-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "branch": "codex/w671-01",
+          "planned_scope_ref": "docs/development/evidence/W671-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W671-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main 已批准资料处置、两人确认及原执行回执",
-            "已登记 CRM 用户安全来源、C02 原生事务与按用户 pending"
+            "原 WMS 设备管理动作与目标用户凭据",
+            "注册 CRM 的准确 Grant、C02 及原生提交"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "真实 Main/CRM PostgreSQL 18.6 定向 14 PASS/0 跳过。两种原生 CRM/处置提交顺序、实际 28000/重启/同批准回执、Main 真实 COMMIT 应答遗失、两个目标 grant 与稳定身份验证。W314 原 7 及 W315 独立恢复 1；310 文件源码绑定本地发布 200/401/401。",
-          "remaining_scope": "QuickPIN、真实登录锁定及原用户 SSO 首绑仍待正式验证。PGT-017 保持 NOT_RUN。",
-          "main_tested_source_sha": "9fec8a9095135d1b2fcfc6159d55d2a509e2df21"
+          "validation_summary": "实际 Main/CRM PostgreSQL 18.6 6 PASS/0 跳过。真实首次拒接、重启同原件、两种原生提交顺序、实际 QuickPIN 自改/过期/原权限，310 文件源码绑定本地 PG 初始化及 HTTP 200/401。W666 共享批次的两个 COMMIT 确认证据复用。",
+          "remaining_scope": "实际登录锁定阈值和 SSO 已有用户首绑继续。PGT-017 仍为 NOT_RUN。",
+          "main_tested_source_sha": "cef15bf16dd9cc281e5a2dd58f3bd27cd592f8be"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:/CP6-worktrees/dev-2"
         ],
         "new_worktrees": 0
       },
@@ -270772,6 +270777,66 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W670",
+        "path": "docs/development/evidence/W670-01/DELIVERY.md",
+        "baseline_sha": "479f4e9b975b049d81e4ff3b27ade232900c60e2",
+        "registered_at": "2026-11-16T02:17:25.251376+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "验证 W671 的合法 QuickPIN 写入，并独立准备正式登录的实际锁定状态。",
+        "windows": [
+          {
+            "id": "W670-01",
+            "workspace_task": "W670-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w670-01",
+            "planned_scope_ref": "docs/development/evidence/W670-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W670-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main 已批准资料处置、两人确认及原执行回执",
+              "已登记 CRM 用户安全来源、C02 原生事务与按用户 pending"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "真实 Main/CRM PostgreSQL 18.6 定向 14 PASS/0 跳过。两种原生 CRM/处置提交顺序、实际 28000/重启/同批准回执、Main 真实 COMMIT 应答遗失、两个目标 grant 与稳定身份验证。W314 原 7 及 W315 独立恢复 1；310 文件源码绑定本地发布 200/401/401。",
+            "remaining_scope": "QuickPIN、真实登录锁定及原用户 SSO 首绑仍待正式验证。PGT-017 保持 NOT_RUN。",
+            "main_tested_source_sha": "9fec8a9095135d1b2fcfc6159d55d2a509e2df21",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1191",
+            "main_remote_main_sha": "a16518e321c31e8cab3577d1a3b147d6c495721a"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },

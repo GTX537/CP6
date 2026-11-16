@@ -37,14 +37,14 @@ public sealed class IdentityChangeCapture
                         nameof(user.Enable), nameof(user.DeptId), nameof(user.ManagerId), nameof(user.RoleId),
                         nameof(user.Password), nameof(user.PasswordChangedAt), nameof(user.LockedUntil),
                         nameof(user.MustChangePassword), nameof(user.AuthenticationEpoch), nameof(user.TwoFactorEnabled),
-                        nameof(user.TwoFactorSecret), nameof(user.ExternalSubject), nameof(user.ExternalProvider)
+                        nameof(user.TwoFactorSecret), nameof(user.ExternalSubject), nameof(user.ExternalProvider), nameof(user.QuickPinHash)
                     }.Any(Changed):
                     capture.Targets.Add((user.TenantId, $"user:{user.Id:D}"));
                     if (entry.State != EntityState.Added && (entry.State == EntityState.Deleted ||
                         Changed(nameof(user.Password)) || Changed(nameof(user.PasswordChangedAt)) ||
                         Changed(nameof(user.AuthenticationEpoch)) || Changed(nameof(user.TwoFactorEnabled)) ||
                         Changed(nameof(user.TwoFactorSecret)) || Changed(nameof(user.ExternalSubject)) ||
-                        Changed(nameof(user.ExternalProvider)) || (!user.Enable && Changed(nameof(user.Enable))) ||
+                        Changed(nameof(user.ExternalProvider)) || Changed(nameof(user.QuickPinHash)) || (!user.Enable && Changed(nameof(user.Enable))) ||
                         (user.MustChangePassword && Changed(nameof(user.MustChangePassword))) ||
                         (user.LockedUntil > DateTime.Now && Changed(nameof(user.LockedUntil)))))
                         capture.InvalidatedUsers.Add((user.TenantId, user.Id));
