@@ -25,7 +25,7 @@ import visibility_v4
 
 FORMAT = "cp6-rma-iam-reconciliation-v1"
 ARCHIVE_FORMATS = (iam_v6.FORMAT, file_content_assets.FORMAT, erp_integration.FORMAT,
-                   privacy_evidence.FORMAT, archive.FORMAT_WITH_STOCK_OUTBOX, archive.FORMAT_WITH_FILE_CONTENT_HISTORY)
+                   privacy_evidence.FORMAT, archive.FORMAT_WITH_STOCK_OUTBOX, *archive.HISTORY_FORMATS)
 REPORT = "iam-reconciliation.jsonl"
 
 

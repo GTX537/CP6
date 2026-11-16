@@ -82,7 +82,7 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
         raise StageError("rma-stage-manifest-digest-mismatch")
     header = json.loads(manifest_file.read_text(encoding="utf-8"))
     if include_file_content_history:
-        formats = (archive.FORMAT_WITH_FILE_CONTENT_HISTORY,)
+        formats = archive.HISTORY_FORMATS
     else:
         formats = (*STAGE_FORMATS, archive.FORMAT_WITH_STOCK_OUTBOX) if include_stock_outbox else STAGE_FORMATS
     if not isinstance(header, dict) or header.get("format") not in formats:
@@ -96,7 +96,7 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
     if (source.system_identifier, source.database_oid) == (target.system_identifier, target.database_oid):
         raise StageError("rma-stage-target-is-source")
     projection = manifest.get("sharedProjection")
-    has_history = manifest["format"] == archive.FORMAT_WITH_FILE_CONTENT_HISTORY
+    has_history = manifest["format"] in archive.HISTORY_FORMATS
     has_stock = has_history or manifest["format"] == archive.FORMAT_WITH_STOCK_OUTBOX
     has_privacy = has_stock or manifest["format"] == privacy_evidence.FORMAT
     has_erp = has_privacy or manifest["format"] == erp_integration.FORMAT
@@ -110,7 +110,7 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
     counts = read_counts(manifest.get("counts"), ("heads", "versions", "history", "outbounds"))
     if manifest.get("profile") != archive.PROFILE or manifest.get("tenantTables") != list(archive.TABLES) \
             or not isinstance(projection, dict) or projection.get("table") != "public.T_OutboundOrder" \
-            or projection.get("columns") != list(columns) or counts["history"] != 1 \
+            or projection.get("columns") != list(columns) or counts["history"] != (2 if manifest["format"] == archive.FORMAT_WITH_STORAGE_MODEL_V2 else 1) \
             or not isinstance(migration, dict) or migration.get("migrationId") != archive.MIGRATION:
         raise StageError("rma-stage-manifest-metadata-rejected")
     archive.guid(migration.get("operationId"))
@@ -144,6 +144,8 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
         plan["stockOutbox"] = manifest["stockOutbox"]
     if has_history:
         plan["fileContentHistory"] = manifest["fileContentHistory"]
+    if manifest["format"] == archive.FORMAT_WITH_STORAGE_MODEL_V2:
+        plan["storageModel"] = manifest["storageModel"]
     return checked, plan
 
 
@@ -777,6 +779,8 @@ def execute(args):
     if args.action == "stage":
         checked, metadata = checked_bundle(args.bundle, output, tenant, digest, target, file_root,
                                            include_stock_outbox=True, include_file_content_history=include_history)
+        if metadata["format"] == archive.FORMAT_WITH_STORAGE_MODEL_V2:
+            raise StageError("storage-model-v2-requires-commissioned-core-candidate")
         plan.update(metadata)
         schema = "t_" + tenant.hex
         has_journal = plan["journalCounts"] is not None

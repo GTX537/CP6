@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-16，W676 的 RMA 存储 v2/v12 完整归档、五项关闭候选和同源恢复已在 PostgreSQL 18.6 通过；当前权限、失败回滚、同键原件和 B 租户保持。WP02-02 进入 VERIFYING，待正常 PR 远端回执结项；WP02-03 仍 PLANNED。PGT 27/27、询盘 60/60 保持。 [W676 交付](../development/evidence/W676-01/DELIVERY.md)
+
 2026-11-16，W675 已完成当前 Main 存储对象与写者归属阶段：实际目录 140 个 schema、891 张表，341 张固定 EF 表及全部 9 种 DbContext 已核对。既有共享键域与 Owner 保持，WP02-02 继续 RMA 存储 v2 兼容归档恢复。PGT 27/27、询盘 60/60、38 DONE / 1 IN_PROGRESS / 336 PLANNED 保持。 [本轮交付](../development/evidence/W675-01/DELIVERY.md)
 
 2026-11-16，W674 已完成 WP02-02 整卡复核。按矩阵归属，本卡 17/17 项通过，正式 PostgreSQL 总计 27/27；整卡保持 IN_PROGRESS。实际余项为当前 Main 对象/写者的完整存储归属与 RMA 存储模型 v2 兼容归档恢复，先推进对象归属核对。原询盘 60/60、38 DONE / 1 IN_PROGRESS / 336 PLANNED 保持。 [整卡复核与接续](../development/evidence/W674-01/DELIVERY.md)

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Recover missing Core RMA rows on their original source, retaining current shared authority.
 
-The supported recovery unit is the adopted v11 Core RMA archive and its same-cut
-companions. This command does not replace a database/schema, rewind live rows,
+The supported recovery unit is the complete v11 (storage v1) or v12 (storage v2)
+Core RMA archive and its same-cut companions. This command does not replace a database/schema, rewind live rows,
 restore credentials, or dispatch archived messages. A missing shared dependency
 is a closed recovery, not permission to manufacture another Owner's effects.
 """
@@ -32,10 +32,12 @@ import reconcile_stock_outbox as stock_delivery
 import source_v3
 import stage
 import stock_adjust_candidate as stock_effects
+import storage_model_v2
 import visibility_v4 as visibility
 
 
 PROFILE = "cp6-rma-live-missing-rows-recovery-v1"
+PROFILE_STORAGE_V2 = "cp6-rma-live-missing-rows-recovery-v2"
 SCHEMA = "cp6_rma_live_recovery_v1"
 RECEIPTS = SCHEMA + ".operations"
 Q = archive.literal
@@ -197,7 +199,11 @@ def binding(query, target, tenant, installation, receipt_digest, manifest):
           FOR UPDATE OF m), 'null'::json);
     """)
     require(rows is not None and rows["migration"] == manifest["migration"], "current-binding-rejected")
-    archive.require_v1_schema(query, tenant)
+    if manifest['format'] == archive.FORMAT_WITH_STORAGE_MODEL_V2:
+        current_model = storage_model_v2.capture(query, target, installation, tenant, rows)
+        require(current_model == manifest['storageModel'], 'storage-model-original-changed')
+    else:
+        archive.require_v1_schema(query, tenant)
     query(f"LOCK TABLE {schema}.heads,{schema}.versions IN ACCESS EXCLUSIVE MODE; SELECT to_json(true);")
     require(query(f"""
         SELECT to_json(current_setting('session_replication_role')='origin'
@@ -434,7 +440,8 @@ def _execute(args):
         stock_effects.checked_effects(effects, output, tenant, pin, effects_pin)
         staging = candidate_proof(args, other, tenant, candidate_installation, candidate_pin, pin, effects_pin, output)
         prepare_rows(args, output, tenant)
-        key = dict(profile=PROFILE, target=target.mapping(), tenantId=str(tenant), operationId=str(operation),
+        profile = PROFILE_STORAGE_V2 if manifest['format'] == archive.FORMAT_WITH_STORAGE_MODEL_V2 else PROFILE
+        key = dict(profile=profile, target=target.mapping(), tenantId=str(tenant), operationId=str(operation),
                    manifestSha256=pin, effectsSha256=effects_pin, sourceCommissionSha256=source_pin,
                    candidateTarget=other.mapping(), candidateId=str(args.candidate_id),
                    candidateCommissionSha256=candidate_pin, stagingReceipts=staging)
@@ -461,10 +468,15 @@ def _execute(args):
                 result = read_receipt(query, tenant, operation, key)
                 if result is None:
                     binding(query, target, tenant, installation, source_pin, manifest)
+                    model_v2 = manifest['format'] == archive.FORMAT_WITH_STORAGE_MODEL_V2
+                    if model_v2:
+                        storage_model_v2.begin_recovery(query, tenant)
                     inserted = restore_rows(query, output, tenant, metadata)
                     kept = companions(query, args, tenant, metadata, output)
+                    if model_v2:
+                        storage_model_v2.end_recovery(query, tenant)
                     result = query(f"""
-                        SELECT json_build_object('outcome','RESTORED','profile',{Q(PROFILE)},
+                        SELECT json_build_object('outcome','RESTORED','profile',{Q(profile)},
                           'tenantId',{Q(tenant)},'operationId',{Q(operation)},'binding',{Q(json.dumps(key))}::json,
                           'inserted',{Q(json.dumps(inserted))}::json,'retained',{Q(json.dumps(kept))}::json,
                           'snapshot',{Q(json.dumps(manifest['snapshot']))}::json,

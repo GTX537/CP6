@@ -360,8 +360,8 @@ def execute(args):
     else:
         checked, metadata = stage.checked_bundle(bundle, output, tenant, pin, target, root, include_stock_outbox=True,
                                                 include_file_content_history=include_history)
-        source_format = archive.FORMAT_WITH_FILE_CONTENT_HISTORY if include_history else archive.FORMAT_WITH_STOCK_OUTBOX
-        if metadata['format'] != source_format or metadata.get('erpIntegrationCounts') != COUNTS:
+        formats = archive.HISTORY_FORMATS if include_history else (archive.FORMAT_WITH_STOCK_OUTBOX,)
+        if metadata['format'] not in formats or metadata.get('erpIntegrationCounts') != COUNTS:
             raise stage.StageError('rma-stage-erp-candidate-shape-rejected')
         plan.update(format=metadata['format'], counts=COUNTS)
         if order:
@@ -397,7 +397,7 @@ def main():
             command.add_argument('--bundle', type=Path, required=True)
             command.add_argument('--file-content-root', type=Path, required=True)
             command.add_argument('--include-file-content-history', action='store_true',
-                                 help='accept a complete v11 archive for this ERP C03 import')
+                                 help='accept a complete v11/v12 archive for this ERP C03 import')
             command.add_argument('--dotnet', type=Path, help='trusted .NET host for order inspection')
             command.add_argument('--tenant-storage', type=Path, help='trusted CP6.TenantStorage.dll from the matching application build')
     try:

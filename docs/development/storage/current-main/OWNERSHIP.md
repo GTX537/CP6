@@ -30,7 +30,7 @@
 | `cp6_stock_outbox_v1` 十三表 | `StockOutboxContextV1`、`StockOutboxEnqueueV1`、`StockOutboxWorkerV1` 采用 Platform Outbox v2。源 Owner 为 `Main.Wms.StockMovement`，投递 Owner 为 `Main.Wms.InventoryNotification`。 | 原 route/root、lease、epoch、claim/send/receipt 与业务原件共同对账；已有归档 v10/v11 切片沿 W526/W527。 |
 | `cp6_main_owner_v1.operations` 及各原生 append-only/hold/处置表 | 各 Owner 的原操作与结果；数据库 trigger、FK 和检查约束在逐对象目录保留。 | 保留原始字节和当前 hold/处置策略；本清单不制定新的 TTL、不授予 purge，也不把删除策略改成永久保留。 |
 | RMA `{trusted tenant schema}.heads/versions/rma_migration_history_v1` | 已采用租户布局。Owner 仍为 `Main.Wms.RmaApplication.v1`，共享原回执、出库依赖、身份和消息域仍共享。佣用后原 `cp6_rma_application_v1.heads/versions` 写者由安装器关闭，原物理表不会被本清单删除。 | v1 + 完整共享切片的实际归档恢复沿 [W526](../../evidence/W526-01/DELIVERY.md)、[W527](../../evidence/W527-01/DELIVERY.md)。 |
-| RMA `application_heads_v2/application_versions_v2`、`cp6_rma_model_v2` 及普通租户 v2 writer | 两视图指向原租户表；读模型、写者登记和迁移原件见 [W528](../../evidence/W528-01/DELIVERY.md)。 | **存储 v2 兼容归档恢复仍待实现**。现行归档工具继续拒绝 v2；归档格式 v11 不是存储模型 v2。 |
+| RMA `application_heads_v2/application_versions_v2`、`cp6_rma_model_v2` 及普通租户 v2 writer | 两视图指向原租户表；读模型、写者登记和迁移原件见 [W528](../../evidence/W528-01/DELIVERY.md)。 | [W676](../../evidence/W676-01/DELIVERY.md) 已验证显式 v12 完整归档、关闭候选和同源缺失行恢复；默认旧格式仍拒绝 v2。当前 IAM、原迁移与普通角色权限保持，完整 schema 毁损恢复另行处理。 |
 | Stock / Identity / ERP 的普通角色安装覆盖层 | 保留固定共享表和全局键，通过原租户 LOGIN 目录、RLS、列/函数授权及原 Owner 事务进入。具体模板在 optional 索引。 | 冷目录不代表这些覆盖层已经安装；普通角色与跨租拒绝证据复用相应 PGT。本轮没有安装新环境。 |
 
 ## 非直接表名写者的核对

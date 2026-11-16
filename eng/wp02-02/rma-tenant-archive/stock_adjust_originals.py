@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export a full v11 cut with the native rows of one original Stock adjustment."""
+"""Export a full v11/v12 cut with the native rows of one original Stock adjustment."""
 import argparse
 import json
 import os
@@ -133,7 +133,8 @@ def export(args):
         include_original_journal=True, include_rma_source=True, include_rma_visibility=True,
         include_identity_priority=True, include_rma_iam_references=True, file_content_root=root,
         include_erp_integration=True, include_privacy_evidence=True, include_main_stock_outbox=True,
-        include_file_content_history=True, on_snapshot=same_snapshot)
+        include_file_content_history=True,
+        include_rma_storage_model_v2=getattr(args, "include_rma_storage_model_v2", False), on_snapshot=same_snapshot)
     manifest_file = bundle / "manifest.json"
     manifest = {
         "format": FORMAT, "tenantId": str(tenant), "operationId": str(operation),
@@ -152,6 +153,8 @@ def main():
         parser.add_argument("--" + field, type=Path, required=True)
     for field in ("username", "installation", "tenant", "operation"):
         parser.add_argument("--" + field, required=True)
+    parser.add_argument("--include-rma-storage-model-v2", action="store_true",
+                        help="export the complete v12 archive and Stock originals in the same snapshot")
     try:
         print(export(parser.parse_args()))
     except (archive.ArchiveError, OSError, ValueError, subprocess.SubprocessError) as error:
