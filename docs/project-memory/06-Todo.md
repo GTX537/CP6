@@ -1,5 +1,7 @@
 # 当前待办与优先级
 
+2026-11-15，PGT-017 继续实际登录锁定阈值及已存在用户的 SSO 首绑，QuickPIN 已有双库实证。 [W671 交付](../development/evidence/W671-01/DELIVERY.md)
+
 2026-11-15，PGT-017 继续 QuickPIN、正式登录锁定及已存在用户的 SSO 首绑。身份资料处置已有实际两库证据。 [W670 交付](../development/evidence/W670-01/DELIVERY.md)
 
 2026-11-15，继续 PGT-017 的已批准身份资料处置、QuickPIN、实际锁定与 SSO 首绑。2FA 的现有测试和实测原件证据已归档。 [W668 交付](../development/evidence/W668-01/DELIVERY.md)
