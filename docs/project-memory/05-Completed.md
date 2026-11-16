@@ -1,5 +1,7 @@
 # 已完成能力与近期里程碑
 
+2026-11-16，完成 WP02-02 原卡、当前源码和已采用 PostgreSQL 证据的集中复核，清除 PGT-011/017/022/024/025 过时待办。确认本卡 17 项与正式矩阵 27 项均已有实证；对象归属与 RMA 存储 v2 恢复仍未完成，不将本次文档审查记为整卡交付。 [W674 复核](../development/evidence/W674-01/DELIVERY.md)
+
 2026-11-15，财务 40 条原写入口、后台和 Space 原生事务，以及 Main 与 CRM 的两种提交顺序、原结果和登记两租户的受控恢复完成正式验收。 [PGT-017 正式验收](../development/evidence/W645-01/DELIVERY.md)
 
 2026-11-15，W673 复用已验签 IdP 与原浏览器能力恢复 SSO 首绑。精确原状态、原期限、C02/Outbox 与原回执经实际首拒和 COMMIT 确认丢失验证。 [W673 交付](../development/evidence/W673-01/DELIVERY.md)

@@ -1,5 +1,7 @@
 # 当前待办与优先级
 
+2026-11-16，WP02-02 下一步核对当前 Main 对象、全部唯一域、Owner、实际写者及恢复依赖，明确继续共享、已采用租户布局和未开放路径；随后补 RMA 存储模型 v2 的兼容归档恢复。正式 PGT 27/27 直接复用；WP02-03 保持 PLANNED，PGT-017 已通过，其余整卡出口另按原卡复核。 [W674 剩余范围](../development/evidence/W674-01/DELIVERY.md)
+
 2026-11-15，PGT-017 已通过。正式 PostgreSQL 矩阵当前为 27 项。 [PGT-017 正式验收](../development/evidence/W645-01/DELIVERY.md)
 
 2026-11-15，合并并核对 PGT-017 正式单项验收记录。W673 已完成登记的 SSO 首绑实证。 [W673 交付](../development/evidence/W673-01/DELIVERY.md)
