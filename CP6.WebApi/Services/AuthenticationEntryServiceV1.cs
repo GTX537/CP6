@@ -23,13 +23,18 @@ public sealed partial class AuthenticationEntryServiceV1(CP6Context db, ITenantC
         JsonSerializer.Serialize(new[] { client.ClientKind, client.DeviceId, client.AppVersion, client.PlatformVersion }));
     public static string WebBinding(string challenge) => AuthenticationInteractionStoreV1.Hash(challenge);
 
-    public Task<AuthenticationEntryResultV1> BeginAsync(AuthenticationProofV1 proof, string challenge,
+    public async Task<AuthenticationEntryResultV1> BeginAsync(AuthenticationProofV1 proof, string challenge,
         ClientContextDto? client, string? ip, string? ua, Action<AuthenticationEntryResultV1>? stage, CancellationToken ct, bool deferOutput = false)
     {
         tenant.CurrentTenantId = proof.TenantId;
         RequireClient(proof, challenge, client);
-        return gate.ExecuteAsync(proof, async (authority, token) =>
+        var lockout = proof.PrimaryMethod == AuthenticationPrimaryMethod.Sso
+            ? login as LoginSecurityService ?? throw new InvalidOperationException("AUTH_SESSION_AUTHORITY_UNAVAILABLE")
+            : null;
+        if (lockout is not null) await lockout.ResolveLockoutForSsoAsync(proof, gate, ct);
+        return await gate.ExecuteAsync(proof, async (authority, token) =>
         {
+            if (lockout is not null) await lockout.RequireNoPendingLoginLockoutAsync(proof.TenantId, proof.UserId, token);
             var decision = authority.Decide();
             var purpose = decision switch
             {
@@ -122,7 +127,8 @@ public sealed partial class AuthenticationEntryServiceV1(CP6Context db, ITenantC
             var expected = enroll ? AuthenticationDecisionV1.EnrollmentRequired : AuthenticationDecisionV1.SecondFactorPending;
             if (a.Decide() != expected || enroll && !await store.PreparationMatchesAsync(a.User.Id, a.User.TwoFactorSecret, pending.PreparationHash, token))
                 throw new InvalidOperationException("E-SEC-013");
-            if (enroll && await IamCrmUserSealV1.ExistsAsync(db, a.User.TenantId, a.User.Id, token))
+            var pendingSeal = await IamCrmUserSealV1.ReadAsync(db, a.User.TenantId, Guid.Empty, token, a.User.Id);
+            if (pendingSeal is not null && (enroll || LoginSecurityService.IsLoginLockout(pendingSeal)))
                 throw new InvalidOperationException("AUTH_SESSION_AUTHORITY_UNAVAILABLE");
             await store.ClaimAsync(a.Proof.CompletionRef, lease, token);
             return true;
@@ -163,18 +169,8 @@ public sealed partial class AuthenticationEntryServiceV1(CP6Context db, ITenantC
         }
         catch (FactorRejectedException)
         {
-            // Persist the real failure, including lockout. This negative result does not issue a session.
-            await using var tx = await db.Database.BeginTransactionAsync(ct);
-            await AuthenticationCompletionGateV1.AcquireAsync(db, ct);
-            var user = await db.Sys_Users.IgnoreQueryFilters().SingleAsync(x => x.Id == pending.Proof.UserId, ct);
-            await db.Entry(user).ReloadAsync(ct);
-            if (user.TenantId != pending.Proof.TenantId || AuthSessionVersion.For(user) != pending.Proof.AuthenticationVersion)
-                throw new InvalidOperationException("REAUTH_REQUIRED");
-            await login.RecordFailureAsync(user);
-            Audit(user, SecurityEventType.TwoFactorFailed, pending.Proof, ip, ua);
-            await store.FinishAsync(pending.Proof.CompletionRef, lease, false, ct);
-            await db.SaveChangesAsync(ct);
-            await tx.CommitAsync(ct);
+            var owner = login as LoginSecurityService ?? throw new InvalidOperationException("AUTH_SESSION_AUTHORITY_UNAVAILABLE");
+            await owner.RecordFactorFailureAsync(pending.Proof, lease, ip, ua, ct);
             throw new InvalidOperationException("E-SEC-011");
         }
     }

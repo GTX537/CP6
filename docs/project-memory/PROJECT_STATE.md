@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-15，W672 已验证 Web/native 密码和因子阈值、实际 Main 与 CRM 两库提交顺序、首拒原件与锁定期限。正式 PostgreSQL 仍为 26 项通过，PGT-017 待已存在用户的 SSO 首绑。 [W672 交付](../development/evidence/W672-01/DELIVERY.md)
+
 2026-11-15，W671 的 QuickPIN 已在真实 PostgreSQL 验证两库提交顺序、冷连接恢复与原设备合同。当前 PostgreSQL 正式仍 26 项通过，PGT-017 待锁定和原 SSO 首绑。 [W671 交付](../development/evidence/W671-01/DELIVERY.md)
 
 2026-11-15，W670 核验已批准身份资料处置的两库事务和原回执，实测冷恢复、双序和 Main 应答丢失。PostgreSQL 正式仍 26 项通过，PGT-017 待其他已确认凭据写者。 [W670 交付](../development/evidence/W670-01/DELIVERY.md)

@@ -82,6 +82,13 @@ public sealed partial class ClientAuthController : ControllerBase
     private string? ClientIp => HttpContext.Connection.RemoteIpAddress?.ToString();
     private string? ClientUa => Request.Headers.UserAgent.ToString();
 
+    private async Task<BizException> LockedLoginAsync(Sys_User user, NativeLoginRequest request)
+    {
+        await _audit.LogAsync(SecurityEventType.AccountLocked, user.Id, user.UserName, request.TenantCode,
+            ClientIp, ClientUa, ClientReason(request.Client, "locked"));
+        return new BizException("E-SEC-002");
+    }
+
     [HttpPost("login")]
     [AllowAnonymous]
     public async Task<ActionResult<NativeAuthResult>> Login(NativeLoginRequest request)
@@ -117,17 +124,22 @@ public sealed partial class ClientAuthController : ControllerBase
             throw new BizException("E-SEC-001");
         }
 
+        var nativeLogin = _db.Database.IsNpgsql()
+            ? _loginSecurity as LoginSecurityService ?? throw AuthenticationEntryFailureAttribute.ToBusiness("AUTH_SESSION_AUTHORITY_UNAVAILABLE")
+            : null;
+        if (nativeLogin is not null) _tenant.CurrentTenantId = user.TenantId;
         try { _loginSecurity.EnsureNotLocked(user); }
-        catch (InvalidOperationException)
-        {
-            await _audit.LogAsync(
-                SecurityEventType.AccountLocked, user.Id, user.UserName, request.TenantCode,
-                ClientIp, ClientUa, ClientReason(request.Client, "locked"));
-            throw new BizException("E-SEC-002");
-        }
+        catch (InvalidOperationException) { throw await LockedLoginAsync(user, request); }
 
-        var originalPolicy = _db.Database.IsNpgsql() ? await Policies.ReadAsync(user.TenantId, HttpContext.RequestAborted) : null;
-        if (!_hasher.Verify(request.Password, user.Password))
+        var originalPolicy = nativeLogin is not null ? await Policies.ReadAsync(user.TenantId, HttpContext.RequestAborted) : null;
+        if (nativeLogin is not null)
+        {
+            var decision = await nativeLogin.EvaluatePasswordAsync(user, candidate => _hasher.Verify(request.Password, candidate.Password),
+                browser: false, request.TenantCode, ClientIp, ClientUa, ClientReason(request.Client, "wrong password"), HttpContext.RequestAborted);
+            if (decision == LoginSecurityService.PasswordDecision.AlreadyLocked) throw await LockedLoginAsync(user, request);
+            if (decision != LoginSecurityService.PasswordDecision.Accepted) throw new BizException("E-SEC-001");
+        }
+        else if (!_hasher.Verify(request.Password, user.Password))
         {
             await _loginSecurity.RecordFailureAsync(user);
             await _audit.LogAsync(
@@ -148,8 +160,15 @@ public sealed partial class ClientAuthController : ControllerBase
             throw new BizException("E-SEC-021");
 
         _tenant.CurrentTenantId = user.TenantId;
-        if (originalProof != null) return await PgNativeResultAsync(() => Entries.BeginAsync(originalProof,
-            AuthenticationRecoveryBindingV1.Challenge(Request), request.Client, ClientIp, ClientUa, null, HttpContext.RequestAborted, deferOutput: true));
+        if (originalProof is not null)
+        {
+            try { await nativeLogin!.ResolveLockoutBeforeLoginAsync(user, HttpContext.RequestAborted); }
+            catch (RefreshCompletionUnknownException)
+            { return StatusCode(503, new { code = "AUTHENTICATION_COMPLETION_OUTCOME_UNKNOWN" }); }
+            if (user.LockedUntil > DateTime.Now) throw await LockedLoginAsync(user, request);
+            return await PgNativeResultAsync(() => Entries.BeginAsync(originalProof,
+                AuthenticationRecoveryBindingV1.Challenge(Request), request.Client, ClientIp, ClientUa, null, HttpContext.RequestAborted, deferOutput: true));
+        }
         var mode = _twoFactor.ResolveTenantMode(user.TenantId);
         if (_twoFactor.IsChallengeRequired(user, mode))
         {

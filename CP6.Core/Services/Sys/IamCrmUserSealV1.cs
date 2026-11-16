@@ -68,13 +68,14 @@ internal sealed class IamCrmUserSealV1
     internal static Task<bool> CompletionSealStartedAsync(CP6Context db, Guid completion, CancellationToken ct)
         => db.Database.SqlQuery<bool>($"""
             SELECT EXISTS(SELECT 1 FROM cp6_authentication_v1.pending_crm_user_seals
-              WHERE completion_id={completion} AND seal_started) AS "Value"
+              WHERE completion_id={completion} AND (seal_started OR kind={LoginSecurityService.FactorLockout})) AS "Value"
             """).SingleAsync(ct);
 
     internal static async Task CloseCompletionAsync(CP6Context db, Guid completion, CancellationToken ct)
     {
         var started = await db.Database.SqlQuery<bool?>($"""
-            SELECT seal_started AS "Value" FROM cp6_authentication_v1.pending_crm_user_seals WHERE completion_id={completion}
+            SELECT (seal_started OR kind={LoginSecurityService.FactorLockout}) AS "Value"
+            FROM cp6_authentication_v1.pending_crm_user_seals WHERE completion_id={completion}
             """).SingleOrDefaultAsync(ct);
         if (started is null) return;
         if (started.Value) throw new InvalidOperationException("AUTHENTICATION_COMPLETION_OUTCOME_UNKNOWN");

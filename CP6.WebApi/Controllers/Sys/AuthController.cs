@@ -68,6 +68,12 @@ public partial class AuthController : LocalizedControllerBase
     private string? ClientIp => HttpContext.Connection.RemoteIpAddress?.ToString();
     private string? ClientUa => Request.Headers.UserAgent.ToString();
 
+    private async Task<BizException> LockedLoginAsync(Sys_User user, string? requestTenantCode)
+    {
+        await _audit.LogAsync(SecurityEventType.AccountLocked, user.Id, user.UserName, requestTenantCode, ClientIp, ClientUa, "account locked");
+        return new BizException("E-SEC-002");
+    }
+
     /// <summary>
     /// 登录
     /// POST /api/auth/login
@@ -115,6 +121,11 @@ public partial class AuthController : LocalizedControllerBase
             throw new BizException("E-SEC-001");
         }
 
+        var nativeLogin = _context.Database.IsNpgsql()
+            ? _login as LoginSecurityService ?? throw AuthenticationEntryFailureAttribute.ToBusiness("AUTH_SESSION_AUTHORITY_UNAVAILABLE")
+            : null;
+        if (nativeLogin is not null) _tenant.CurrentTenantId = user.TenantId;
+
         // 2. 账户锁定优先：锁定期内即使密码正确也拒
         try
         {
@@ -122,14 +133,20 @@ public partial class AuthController : LocalizedControllerBase
         }
         catch (InvalidOperationException)
         {
-            await _audit.LogAsync(SecurityEventType.AccountLocked, user.Id, user.UserName, request.TenantCode, ClientIp, ClientUa, "account locked");
-            throw new BizException("E-SEC-002");
+            throw await LockedLoginAsync(user, request.TenantCode);
         }
 
-        var originalPolicy = _context.Database.IsNpgsql() ? await Policies.ReadAsync(user.TenantId, HttpContext.RequestAborted) : null;
+        var originalPolicy = nativeLogin is not null ? await Policies.ReadAsync(user.TenantId, HttpContext.RequestAborted) : null;
         var originalChallenge = AuthenticationRecoveryBindingV1.Challenge(Request);
         // 3. 验证密码（BCrypt 哈希对比）
-        if (!_hasher.Verify(request.Password, user.Password))
+        if (nativeLogin is not null)
+        {
+            var decision = await nativeLogin.EvaluatePasswordAsync(user, candidate => _hasher.Verify(request.Password, candidate.Password),
+                browser: true, request.TenantCode, ClientIp, ClientUa, "wrong password", HttpContext.RequestAborted);
+            if (decision == LoginSecurityService.PasswordDecision.AlreadyLocked) throw await LockedLoginAsync(user, request.TenantCode);
+            if (decision != LoginSecurityService.PasswordDecision.Accepted) throw new BizException("E-SEC-001");
+        }
+        else if (!_hasher.Verify(request.Password, user.Password))
         {
             await _login.RecordFailureAsync(user);
             // 本次失败若触发锁定记 AccountLocked，否则 LoginFailed；对外仍统一 E-SEC-001（防枚举）
@@ -170,7 +187,14 @@ public partial class AuthController : LocalizedControllerBase
         // 章10：确定当前请求租户为该用户的租户 → 后续权限聚合/菜单查询按其租户正确作用域
         _tenant.CurrentTenantId = user.TenantId;
 
-        if (originalProof != null) return await PgWebBeginAsync(originalProof, originalChallenge);
+        if (originalProof is not null)
+        {
+            try { await nativeLogin!.ResolveLockoutBeforeLoginAsync(user, HttpContext.RequestAborted); }
+            catch (RefreshCompletionUnknownException)
+            { return StatusCode(503, new { code = "AUTHENTICATION_COMPLETION_OUTCOME_UNKNOWN" }); }
+            if (user.LockedUntil > DateTime.Now) throw await LockedLoginAsync(user, request.TenantCode);
+            return await PgWebBeginAsync(originalProof, originalChallenge);
+        }
 
         // #2 2FA（T6）：用户已启用 2FA 或租户强制 → 写 pending 半登录态，不签发完整 access/refresh。
         //   purpose=2fa_enroll(强制租户且未启用 → 必须先扫码绑定) / 2fa_verify(已启用 → 输码即可)。
