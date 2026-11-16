@@ -1,5 +1,7 @@
 # 已完成能力与近期里程碑
 
+2026-11-15，W666 接入自助改密与管理员 2FA 重置的原生跨库封存，验证两个真实提交顺序、首次拒接恢复和两库 COMMIT 应答丢失。 [W666 交付](../development/evidence/W666-01/DELIVERY.md)
+
 2026-11-15，W665 的普通 Web 退出和两个既有完成入口沿用持久 CRM 家族封存。实测原受理先提交保留、封存先提交拒绝迟到业务、冷重启和双库 COMMIT 应答丢失。 [W665 交付](../development/evidence/W665-01/DELIVERY.md)
 
 2026-11-15，W664 补齐旧菜单 POST、PUT、DELETE 的原件恢复、角色粒度新许可停发与原生两种提交顺序。310 文件本地发布及 PostgreSQL 18.6 启动检查通过。 [W664 交付](../development/evidence/W664-01/DELIVERY.md)

@@ -537,39 +537,51 @@ public partial class AuthController : LocalizedControllerBase
     [Authorize]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest req)
     {
+        if (_context.Database.IsNpgsql())
+            return await IamAdministrationHttpV1.ExecuteLegacyCredential(this, async () =>
+            {
+                var owner = await IamAdministrationHttpV1.WriteLegacyCredential(HttpContext, null,
+                    AuthenticationPolicyServiceV1.Hash(req.NewPassword), Validate, (user, plan) =>
+                        Apply(user, plan.PasswordSalt, plan.PasswordSalt is null ? null : plan.ChangedAt),
+                    () => (_hasher as BCryptPasswordHasher ?? throw IamAdministrationV1.Error(503, "IAM_AUTHORITY_UNAVAILABLE")).CreateSalt());
+                if (owner is null) throw IamAdministrationV1.Error(401, "REAUTH_REQUIRED");
+                return await Completed(owner.UserId, owner.UserName);
+            });
+
         var uid = (await _perm.GetAsync()).UserId;
         var user = await _context.Sys_Users.FirstAsync(u => u.Id == uid);
+        await Validate(user);
+        await Apply(user, null, null);
+        await _context.SaveChangesAsync();
+        return await Completed(uid, user.UserName);
 
-        // 旧密码核对（控制器层，直接 BizException 经中间件本地化）
-        if (!_hasher.Verify(req.CurrentPassword, user.Password))
-            throw new BizException("E-SEC-006");
-
-        // 策略 + 历史校验由 Core 服务以 InvalidOperationException(E-SEC 码) 抛出，边界转 BizException
-        try
+        async Task Validate(Sys_User target)
         {
-            _policy.Validate(req.NewPassword);
-            await _policy.CheckHistoryAsync(uid, req.NewPassword);
+            if (!_hasher.Verify(req.CurrentPassword, target.Password))
+                throw new BizException("E-SEC-006");
+            try
+            {
+                _policy.Validate(req.NewPassword);
+                await _policy.CheckHistoryAsync(target.Id, req.NewPassword);
+            }
+            catch (InvalidOperationException ex) { throw new BizException(ex.Message); }
         }
-        catch (InvalidOperationException ex)
+
+        async Task Apply(Sys_User target, string? salt, DateTime? changedAt)
         {
-            throw new BizException(ex.Message);
+            await _policy.RecordHistoryAsync(target.Id, target.Password);
+            target.Password = salt is null ? _hasher.Hash(req.NewPassword) : BCryptPasswordHasher.HashWithSalt(req.NewPassword, salt);
+            target.PasswordChangedAt = changedAt ?? DateTime.Now;
+            target.MustChangePassword = false;
+            await _refresh.RevokeAllForUserAsync(target.Id, saveChanges: false);
         }
 
-        // 旧哈希入历史并裁剪（不 SaveChanges，与下方写入合并一次保存）（审计 T3 叠加）
-        await _policy.RecordHistoryAsync(uid, user.Password);
-        user.Password = _hasher.Hash(req.NewPassword);
-        user.PasswordChangedAt = DateTime.Now;
-        user.MustChangePassword = false;
-        // 改密后吊销该用户全部刷新令牌：saveChanges:false 入轨，与改密合并一次原子保存
-        // （改密成功 ⇔ 旧凭证全失效；若分两次保存则第二次失败会留下"改密了但旧 refresh 仍可续命"的窗口）
-        await _refresh.RevokeAllForUserAsync(uid, saveChanges: false);
-        await _context.SaveChangesAsync();   // 一次性原子持久化：裁剪 + 新历史 + 用户更新 + 令牌吊销
-        _cookies.ClearAuthCookies(Response);
-
-        // 安全审计（改密成功）
-        await _audit.LogAsync(SecurityEventType.PasswordChanged, uid, user.UserName, null, ClientIp, ClientUa);
-
-        return Ok(new { code = 0, message = "OK" });
+        async Task<IActionResult> Completed(Guid id, string userName)
+        {
+            _cookies.ClearAuthCookies(Response);
+            await _audit.LogAsync(SecurityEventType.PasswordChanged, id, userName, null, ClientIp, ClientUa);
+            return Ok(new { code = 0, message = "OK" });
+        }
     }
 
     /// <summary>

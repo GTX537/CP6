@@ -10,6 +10,8 @@ public class BCryptPasswordHasher : IPasswordHasher
     public BCryptPasswordHasher(IOptions<SecurityOptions> options) : this(options.Value.Password.BcryptWorkFactor) { }
 
     public string Hash(string plain) => BCrypt.Net.BCrypt.HashPassword(plain, workFactor: _workFactor);
+    internal string CreateSalt() => BCrypt.Net.BCrypt.GenerateSalt(_workFactor);
+    internal static string HashWithSalt(string plain, string salt) => BCrypt.Net.BCrypt.HashPassword(plain, salt);
     public bool Verify(string plain, string hash) { try { return BCrypt.Net.BCrypt.Verify(plain, hash); } catch { return false; } }
     // 前缀判定 BCrypt 变体；长度 >= 60 容忍未来变体（标准 BCrypt 输出恰 60 字符）
     public bool IsHashed(string value)
