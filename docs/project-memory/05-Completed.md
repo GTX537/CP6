@@ -1,5 +1,7 @@
 # 已完成能力与近期里程碑
 
+2026-11-16，W685 历史成本单列表、详情和 FG 成本共同校验当前查看及来源费率权。25 项定向用例按最终结果通过，其中 10 项实际 PostgreSQL、15 项历史成本组件用例，零跳过。 [W685 交付](../development/evidence/W685-01/DELIVERY.md)
+
 2026-11-16，W684 发货开票使用对应原生订单明细价格。同商品异价、来源歧义、失效及真实入账验证通过。9 项实际 PostgreSQL 定向用例按最终结果通过，零跳过。 [W684 交付](../development/evidence/W684-01/DELIVERY.md)
 
 2026-11-16，W683 核对库存、入库单、收货和出库单价，补齐 RSV 及出库明细复制的库存查询、字段、对象及最终门。26 项本地 PostgreSQL 定向用例通过，含实际 Program/HTTP，零失败、零跳过。 [W683 交付](../development/evidence/W683-01/DELIVERY.md)

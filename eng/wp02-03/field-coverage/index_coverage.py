@@ -92,6 +92,15 @@ def main():
                                if resource == 'wms-outbound-order' else 'CURRENT_OWNER_UNIT_PRICE_WRITE'),
                         export='NO_EXPORT_ENTRY_IN_REVIEWED_CONTROLLERS',
                         download='NO_DOWNLOAD_ENTRY_IN_REVIEWED_CONTROLLERS')
+        elif resource == 'mes-process-cost-rate':
+            uses.update(query='CURRENT_RATE_OWNER_AND_COST_HISTORY_SOURCE_GATES',
+                        write='CURRENT_RATE_FIELDS_VERSION_AND_PERIOD',
+                        export='NO_EXPORT_ENTRY_IN_REVIEWED_CONTROLLERS',
+                        download='NO_DOWNLOAD_ENTRY_IN_REVIEWED_CONTROLLERS')
+        elif resource == 'fin-cost':
+            uses.update(query='CURRENT_FINANCE_VIEW_AND_RATE_SOURCE_GATES',
+                        export='NO_EXPORT_ENTRY_IN_REVIEWED_CONTROLLERS',
+                        download='NO_DOWNLOAD_ENTRY_IN_REVIEWED_CONTROLLERS')
         records.append({**entry, 'review_group': group, 'uses': uses,
                         'lexical_source_candidates': refs, 'permission_attribute_route_ids': direct})
     args.output.mkdir(parents=True, exist_ok=True)

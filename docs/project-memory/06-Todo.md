@@ -1,6 +1,6 @@
 # 当前待办与优先级
 
-2026-11-16，接续 WP02-03 核对其余 Operations 价格类消费者，优先制造工序成本费率及实际用途。 [W684 交付](../development/evidence/W684-01/DELIVERY.md)
+2026-11-16，WP02-03 接续核对其余 Operations 派生输出、写回读及独立用途。实时工费归集仍由 Finance Owner 窗口采用。 [W685 交付](../development/evidence/W685-01/DELIVERY.md)
 
 2026-11-16，接续 WP02-03 核对库存、入库及出库单价实际消费，继续派生结果、写回读和独立用途。业务伙伴其他消费者、文件与附件用途、订单其他消费者和 Space WP13-04 依各自合同核对。 [W682 交付](../development/evidence/W682-01/DELIVERY.md)
 
