@@ -120,7 +120,7 @@ public partial class OutboundService
             var fulfilment=frozen.CaptureReturnSource || frozen.CaptureReturnApplicationSource
                 ?await OutboundFulfilmentV1.Prepare(_db,a,row,frozen.CaptureReturnApplicationSource,ct):null;
             using var inheritance=((StockMovementService)_stock).InheritTransactions(a);
-            var package=await ShipCoreAsync(number,frozen,a.Actor,effects);QueueStockEffects(effects);
+            var package=await ShipCoreAsync(number,frozen,a.Actor,effects,ct);QueueStockEffects(effects);
             if(fulfilment!=null)await OutboundFulfilmentV1.Capture(_db,row,fulfilment,package,ct);
             a.AtCommit(t=>a.RequireOutbound(number,false,t));return package;
         });
