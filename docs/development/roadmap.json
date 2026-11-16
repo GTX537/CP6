@@ -169208,7 +169208,16 @@
           "classification": "IMPLEMENTATION_REMAINS",
           "report": "docs/development/evidence/W674-01/DELIVERY.md",
           "remaining": "当前 Main 尚缺覆盖 EF、raw SQL、迁移非表对象、全部唯一域及实际写者的完整存储归属清单；先按 S02-00 §3 复用已采用证据，明确继续共享、已采用租户布局和未开放新布局的对象及恢复依赖，不自动全库迁移。已支持的 RMA 存储模型 v2 尚需兼容归档/恢复及隔离 PostgreSQL 实测；现行工具按 W528 明确拒绝。正式 PGT 27/27（本卡 17/17）保持，PGT-011/017/022/024/025 不再列未运行，其他 WP02 卡和既有环境切换各按原范围。"
-        }
+        },
+        "review_history": [
+          {
+            "window": "W310-01",
+            "as_of": "2026-11-08",
+            "classification": "IMPLEMENTATION_REMAINS",
+            "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
+            "remaining": "完整Stock候选及正式制品采用、ERP非本C03原图、现行权限/凭据与恢复批准链，实际epoch变化的合法路径，以及正式PGT-021/022/024；已实测的关闭态组合和现行差异不重复。"
+          }
+        ]
       },
       "wave326_delivery": {
         "status": "CLOSED",
@@ -212393,7 +212402,7 @@
       "path": "docs/development/evidence/W675-01/DELIVERY.md",
       "baseline_sha": "8dfe0ef0b53852fa6797e986639133d3708f022c",
       "registered_at": "2026-11-16T05:46:27.439523+00:00",
-      "phase": "INVENTORY_COMPLETED_PENDING_INTEGRATION",
+      "phase": "INVENTORY_COMPLETED",
       "assigned_chats": [
         "COORD"
       ],
@@ -212432,7 +212441,7 @@
           ],
           "remaining_scope": "W675 已建立当前 Main 冷初始化完整对象目录及当前全部 DbContext/租户模型、原生/封闭配置/包/后台写者归属，既有全局键、Owner 和存储位置不变；源索引不替代原 PGT 写者实证。下一步实现 RMA 存储模型 v2 的兼容归档恢复，保留 v1 和当前拒绝门，在隔离 PostgreSQL 以模拟数据验证原件、共享切片、当前安全状态、普通角色读回、同键恢复、失败回滚及 B 租户保护。生产切换、其他 WP02 整卡及未采用对象的新租户布局不据此完成。",
           "review_completed": true,
-          "integration_status": "PENDING_PROTECTED_PR",
+          "integration_status": "PROTECTED_PR_REQUIRED; adoption proof is the PR merge and workspace finish record",
           "validation_summary": "Actual isolated PostgreSQL catalog and all context models reconciled; metadata probe and 81 native predicates verified; existing business/ordinary-role evidence reused within original scope."
         }
       ],
