@@ -143,15 +143,7 @@ public sealed class AuthenticationInteractionStoreV1(CP6Context db)
         try
         {
             await AuthenticationCompletionGateV1.AcquireAsync(db, ct);
-            var changed = await db.Database.ExecuteSqlInterpolatedAsync($"""
-                UPDATE cp6_authentication_v1.access_sessions SET revoked_at=clock_timestamp()
-                WHERE access_jti={jti} AND revoked_at IS NULL
-                """, ct);
-            if (changed == 1)
-            {
-                db.Sys_SecurityLogs.Add(audit);
-                await db.SaveChangesAsync(ct);
-            }
+            await RevokeAccessWithinRootAsync(jti, audit, bestEffort: false, ct);
             ct.ThrowIfCancellationRequested();
             committing = true;
             await tx.CommitAsync(ct);
@@ -164,6 +156,15 @@ public sealed class AuthenticationInteractionStoreV1(CP6Context db)
             if (committing) throw new RefreshCompletionUnknownException(error);
             throw;
         }
+    }
+
+    internal async Task RevokeAccessWithinRootAsync(string jti, Sys_SecurityLog audit, bool bestEffort, CancellationToken ct)
+    {
+        var changed = await db.Database.ExecuteSqlInterpolatedAsync($"""
+            UPDATE cp6_authentication_v1.access_sessions SET revoked_at=clock_timestamp()
+            WHERE access_jti={jti} AND revoked_at IS NULL
+            """, ct);
+        if (changed == 1) await SecurityAuditService.SaveLogoutWithinRootAsync(db, audit, bestEffort, ct);
     }
 
     public Task<AuthenticationSessionRow?> ReadSessionByRefreshAsync(string hash, CancellationToken ct = default)

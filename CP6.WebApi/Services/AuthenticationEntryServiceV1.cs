@@ -16,7 +16,7 @@ public sealed record AuthenticationEntryResultV1(AuthenticationProofV1 Proof, st
 public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext tenant,
     AuthenticationCompletionGateV1 gate, AuthenticationInteractionStoreV1 store,
     IAuthSessionService sessions, IRefreshTokenService refresh, ITwoFactorService factors,
-    ILoginSecurityService login, IClientDeviceService devices)
+    ILoginSecurityService login, IClientDeviceService devices, ICrmOidcGrantStore? crmGrants = null)
 {
     public static string Binding(ClientContextDto client) => AuthenticationInteractionStoreV1.Hash(
         JsonSerializer.Serialize(new[] { client.ClientKind, client.DeviceId, client.AppVersion, client.PlatformVersion }));
@@ -229,24 +229,40 @@ public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext t
         Action<TokenSessionDto>? stage, CancellationToken ct, bool deferOutput = false, string? browserAttempt = null)
     {
         if (client != null) ClientContextValidator.Validate(client);
-        return refresh.RotateWithAuthenticationAsync(raw, ip, ua,
-            client == null ? RefreshTokenClientContext.Web : new(client.ClientKind, client.DeviceId, client.AppVersion),
-            async (rotation, token) =>
+        var binding = client is null ? RefreshTokenClientContext.Web : new(client.ClientKind, client.DeviceId, client.AppVersion);
+        return refresh is RefreshTokenService postgres && crmGrants is SqlCrmOidcGrantStore crm
+            ? postgres.RotateWithAuthenticationAsync(raw, ip, ua, binding, Complete, (reuse, token) => StageReuse(crm, reuse, token), ct, deferOutput)
+            : refresh.RotateWithAuthenticationAsync(raw, ip, ua, binding, Complete, ct, deferOutput);
+
+        async Task<TokenSessionDto> Complete(AuthenticationRotationV1 rotation, CancellationToken token)
+        {
+            if (client != null) await devices.EnsureLoginAllowedAsync(client, rotation.User.TenantId, token);
+            if (browserAttempt != null)
             {
-                if (client != null) await devices.EnsureLoginAllowedAsync(client, rotation.User.TenantId, token);
-                if (browserAttempt != null)
-                {
-                    if (client != null) throw new InvalidOperationException("REAUTH_REQUIRED");
-                    await new BrowserAuthenticationRecoveryV1(db).RecordRotationAsync(browserAttempt, rotation.RawToken, token);
-                }
-                var access = sessions.BuildAccessToken(rotation.User, rotation.AccessJti, false, rotation.User.IsPlatformAdmin);
-                var profile = await sessions.BuildProfileAsync(rotation.User, false);
-                Audit(rotation.User, SecurityEventType.TokenRefreshed, rotation.Evidence.Primary, ip, ua);
-                var result = new TokenSessionDto { AccessToken = access, AccessExpiresAt = sessions.AccessExpiresAt,
-                    RefreshToken = rotation.RawToken, RefreshExpiresAt = rotation.RefreshExpiresAtUtc, Profile = profile };
-                stage?.Invoke(result);
-                return result;
-            }, ct, deferOutput);
+                if (client != null) throw new InvalidOperationException("REAUTH_REQUIRED");
+                await new BrowserAuthenticationRecoveryV1(db).RecordRotationAsync(browserAttempt, rotation.RawToken, token);
+            }
+            var access = sessions.BuildAccessToken(rotation.User, rotation.AccessJti, false, rotation.User.IsPlatformAdmin);
+            var profile = await sessions.BuildProfileAsync(rotation.User, false);
+            Audit(rotation.User, SecurityEventType.TokenRefreshed, rotation.Evidence.Primary, ip, ua);
+            var result = new TokenSessionDto { AccessToken = access, AccessExpiresAt = sessions.AccessExpiresAt,
+                RefreshToken = rotation.RawToken, RefreshExpiresAt = rotation.RefreshExpiresAtUtc, Profile = profile };
+            stage?.Invoke(result);
+            return result;
+        }
+
+        async Task<Func<CancellationToken, Task>?> StageReuse(SqlCrmOidcGrantStore crm, RefreshReuseSourceV1 reuse, CancellationToken token)
+        {
+            try
+            {
+                var accepted = await crm.TryStageRefreshReuseAsync(db, reuse, token);
+                return accepted is null ? null : completeToken => crm.CompleteSourceRetirementForRequestAsync(accepted, completeToken);
+            }
+            catch (Exception error) when (error is CrmOidcFamilyLogoutUnavailableException or System.Data.Common.DbException or DbUpdateException)
+            {
+                throw new RefreshCompletionUnknownException(error);
+            }
+        }
     }
 
     private void Audit(Sys_User user, SecurityEventType type, AuthenticationProofV1 proof, string? ip, string? ua)

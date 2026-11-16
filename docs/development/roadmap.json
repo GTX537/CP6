@@ -166222,6 +166222,11 @@
       "at": "2026-11-16T01:57:12.539040+00:00",
       "change": "W669 修复完整 Main 宿主的 CRM Basic V2 入口。复用既有显式服务传输和认证，验证原客户端签名与 PostgreSQL 受控登记恢复。",
       "evidence": "docs/development/evidence/W669-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-16T02:14:32.043389+00:00",
+      "change": "W667 按精确签名 access JTI 和原 refresh 风险主体各自接受原计划，在实际 CRM 事务封存后按原合同提交 Main 写入。核对正常本地入口与旧回执。",
+      "evidence": "docs/development/evidence/W667-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212228,10 +212233,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W669",
-      "path": "docs/development/evidence/W669-01/DELIVERY.md",
-      "baseline_sha": "640800b350e01f7046a9f7140fbe0f776587080d",
-      "registered_at": "2026-11-16T01:37:22.543698+00:00",
+      "id": "W667",
+      "path": "docs/development/evidence/W667-01/DELIVERY.md",
+      "baseline_sha": "39b52d7b906beb4ab191849af015906bd8827513",
+      "registered_at": "2026-11-16T01:05:54.220348+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212245,11 +212250,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "W667 继续接入精确 access 退出和真实 refresh replay。W668 并行准备剩余 2FA 的真实合同。",
+      "next_action": "W668 验证 2FA 的准备、入会及自助停用，独立准备 Main 原生身份处置的事务证据。",
       "windows": [
         {
-          "id": "W669-01",
-          "workspace_task": "W669-01",
+          "id": "W667-01",
+          "workspace_task": "W667-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212259,27 +212264,27 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w669-01",
-          "planned_scope_ref": "docs/development/evidence/W669-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W669-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w667-01",
+          "planned_scope_ref": "docs/development/evidence/W667-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W667-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main 完整宿主的精确 CRM Basic V2 路由",
-            "独立登记的服务源与同库身份事务"
+            "Main 精确 access source JTI 和原 refresh 重用",
+            "实际 CRM grants、C02 和原生封存与现有恢复 Worker"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "27 PASS/0 跳过。实际签名 Main/Kestrel 和两座 PostgreSQL 18.6，原 Basic V2 请求无浏览器 Cookie 200，Ed25519、来源版本与写栅栏核对，七种拒绝对照通过。310 文件源码绑定发布与原生初始化；服务冷恢复双 ACK 复用已登记 W669-01-CHECK，业务两序复用 W547。",
-          "remaining_scope": "单 access 退出、真实 refresh replay、直接 2FA 和其他实际凭据写者继续。PGT-017 保持 NOT_RUN。",
-          "main_tested_source_sha": "932f05e9cc5901abf3decc882d429062e9d20642"
+          "validation_summary": "PostgreSQL 18.6 与实际 Main/CRM 58 通过、0 跳过。精确 access 及实际 refresh 重用各两种提交顺序，真实冷拒、重启、两份原生 COMMIT 应答丢失，保留合法别名/轮转。310 文件源码绑定本地发布通过迁移与 HTTP 200/401/401。",
+          "remaining_scope": "剩余的 2FA 写路径及 Main 已批准数据处置等有效凭据写者继续。PGT-017 保持 NOT_RUN。",
+          "main_tested_source_sha": "1303c7f486918019da7eb7830d6350aa3672703e"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -270572,6 +270577,66 @@
             "main_tested_source_sha": "a2011cfbaac1a15d7cd9bc88b2c7099cfcec7e94",
             "main_pull_request": "https://github.com/GTX537/CP6/pull/1187",
             "main_remote_main_sha": "640800b350e01f7046a9f7140fbe0f776587080d"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W669",
+        "path": "docs/development/evidence/W669-01/DELIVERY.md",
+        "baseline_sha": "640800b350e01f7046a9f7140fbe0f776587080d",
+        "registered_at": "2026-11-16T01:37:22.543698+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "W667 继续接入精确 access 退出和真实 refresh replay。W668 并行准备剩余 2FA 的真实合同。",
+        "windows": [
+          {
+            "id": "W669-01",
+            "workspace_task": "W669-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w669-01",
+            "planned_scope_ref": "docs/development/evidence/W669-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W669-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main 完整宿主的精确 CRM Basic V2 路由",
+              "独立登记的服务源与同库身份事务"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "27 PASS/0 跳过。实际签名 Main/Kestrel 和两座 PostgreSQL 18.6，原 Basic V2 请求无浏览器 Cookie 200，Ed25519、来源版本与写栅栏核对，七种拒绝对照通过。310 文件源码绑定发布与原生初始化；服务冷恢复双 ACK 复用已登记 W669-01-CHECK，业务两序复用 W547。",
+            "remaining_scope": "单 access 退出、真实 refresh replay、直接 2FA 和其他实际凭据写者继续。PGT-017 保持 NOT_RUN。",
+            "main_tested_source_sha": "932f05e9cc5901abf3decc882d429062e9d20642",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1188",
+            "main_remote_main_sha": "9f8e964ea8766506e36d9749a27d65f7605c5513"
           }
         ],
         "storage": {

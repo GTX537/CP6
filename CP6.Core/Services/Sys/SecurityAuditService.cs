@@ -1,5 +1,8 @@
+using System.Data.Common;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Sys;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Logging;
 
 namespace CP6.Core.Services.Sys;
@@ -31,6 +34,33 @@ public class SecurityAuditService : ISecurityAuditService
             // 审计失败不阻断主流程，但记一行便于排查"审计为何缺失"
             _logger?.LogWarning(ex, "安全审计写入失败 type={EventType} user={UserName}", type, userName);
         }
+    }
+
+    internal static async Task SaveLogoutWithinRootAsync(CP6Context db, Sys_SecurityLog audit, bool bestEffort, CancellationToken ct)
+    {
+        if (!bestEffort)
+        {
+            db.Sys_SecurityLogs.Add(audit);
+            await db.SaveChangesAsync(ct);
+            return;
+        }
+
+        var transaction = db.Database.CurrentTransaction!;
+        const string savepoint = "web_logout_audit_v1";
+        await transaction.CreateSavepointAsync(savepoint, ct);
+        try
+        {
+            db.Sys_SecurityLogs.Add(audit);
+            await db.SaveChangesAsync(ct);
+        }
+        catch (Exception error) when (error is DbUpdateException or DbException)
+        {
+            await transaction.RollbackToSavepointAsync(savepoint, ct);
+            db.Entry(audit).State = EntityState.Detached;
+            db.GetService<ILoggerFactory>().CreateLogger<SecurityAuditService>()
+                .LogWarning("Web logout audit write failed for tenant {TenantId}, user {UserId}", audit.TenantId, audit.UserId);
+        }
+        await transaction.ReleaseSavepointAsync(savepoint, ct);
     }
 
     internal static Sys_SecurityLog CreateRecord(SecurityEventType type, Guid? userId, string? userName,
