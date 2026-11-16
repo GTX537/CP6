@@ -57,10 +57,14 @@ public sealed partial class AuthenticationEntryServiceV1(CP6Context db, ITenantC
     }
 
     public async Task<AuthenticationInteractionV1> ReadAsync(string challenge, ClientContextDto? client,
-        string? purpose, CancellationToken ct)
+        string? purpose, CancellationToken ct, bool allowAcceptedEnrollment = false)
     {
         if (client != null) ClientContextValidator.Validate(client);
-        var pending = await store.ReadAsync(challenge, client == null ? WebBinding(challenge) : Binding(client), purpose, ct);
+        var binding = client == null ? WebBinding(challenge) : Binding(client);
+        AuthenticationInteractionV1? pending = null;
+        if (allowAcceptedEnrollment && purpose == "2fa_enroll")
+            pending = (await store.ReadAcceptedEnrollmentAsync(challenge, binding, ct))?.Interaction;
+        pending ??= await store.ReadAsync(challenge, binding, purpose, ct);
         RequireClient(pending.Proof, challenge, client);
         tenant.CurrentTenantId = pending.Proof.TenantId;
         return pending;
