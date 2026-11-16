@@ -1,3 +1,7 @@
+using System.Data.Common;
+using CP6.Core.Services.Platform;
+using CP6.Core.Services.Sys;
+using CP6.WebApi.Services;
 using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels;
@@ -34,37 +38,35 @@ public class MenuController : ControllerBase
 
     [HttpPost]
     [RequirePermission("menu", "add")]
-    [CurrentWriteAuthority]
-    public async Task<IActionResult> Add([FromBody] Sys_Menu entity)
-    {
-        entity.CreateDate = DateTime.Now;
-        _context.Sys_Menus.Add(entity);
-        await _context.SaveChangesAsync();
-        return Ok(entity);
-    }
+    public Task<IActionResult> Add([FromBody] Sys_Menu entity)
+        => WriteLegacyAsync("menu:add", "menu-add", [entity.MenuId], entity.MenuKey, EditableInput(entity), async ct =>
+        {
+            entity.CreateDate = DateTime.Now;
+            _context.Sys_Menus.Add(entity);
+            await _context.SaveChangesAsync(ct);
+            return new(Menu: entity);
+        });
 
     [HttpPut]
     [RequirePermission("menu", "edit")]
-    [CurrentWriteAuthority]
-    public async Task<IActionResult> Update([FromBody] Sys_Menu entity)
-    {
-        // #4 字段审计 T4：先查后改（替 attach-as-Modified），令 Modified diff 准确。
-        // 仅拷可编辑列；MenuId(PK) 与 CreateDate 刻意不动（无 Creator/Modifier）。
-        var existing = await _context.Sys_Menus.FindAsync(entity.MenuId);
-        if (existing == null)
-            return NotFound();
+    public Task<IActionResult> Update([FromBody] Sys_Menu entity)
+        => WriteLegacyAsync("menu:edit", "menu-edit", [entity.MenuId], entity.MenuKey, EditableInput(entity), async ct =>
+        {
+            // Load the row for accurate field auditing and preserve its creation time.
+            var existing = await _context.Sys_Menus.FindAsync([entity.MenuId], ct);
+            if (existing == null) return new();
 
-        existing.MenuName = entity.MenuName;
-        existing.RoutePath = entity.RoutePath;
-        existing.MenuKey = entity.MenuKey;
-        existing.Icon = entity.Icon;
-        existing.ParentId = entity.ParentId;
-        existing.OrderNo = entity.OrderNo;
-        existing.Enable = entity.Enable;
+            existing.MenuName = entity.MenuName;
+            existing.RoutePath = entity.RoutePath;
+            existing.MenuKey = entity.MenuKey;
+            existing.Icon = entity.Icon;
+            existing.ParentId = entity.ParentId;
+            existing.OrderNo = entity.OrderNo;
+            existing.Enable = entity.Enable;
 
-        await _context.SaveChangesAsync();
-        return Ok(existing);
-    }
+            await _context.SaveChangesAsync(ct);
+            return new(Menu: existing);
+        });
 
     /// <summary>
     /// 批量保存菜单树的父子关系与同级顺序。
@@ -130,18 +132,53 @@ public class MenuController : ControllerBase
 
     [HttpDelete]
     [RequirePermission("menu", "delete")]
-    [CurrentWriteAuthority]
-    public async Task<IActionResult> Delete([FromBody] int[] ids)
+    public Task<IActionResult> Delete([FromBody] int[] ids)
+        => WriteLegacyAsync("menu:delete", "menu-delete", ids.Distinct().Order().ToArray(), null, new { }, async ct =>
+        {
+            var entities = await _context.Sys_Menus.Where(m => ids.Contains(m.MenuId)).ToListAsync(ct);
+            _context.Sys_Menus.RemoveRange(entities);
+            // Menus are global and the original operation removes all tenants' RoleMenu mappings.
+            var mappings = _context.Sys_RoleMenus.IgnoreQueryFilters().Where(rm => ids.Contains(rm.MenuId));
+            _context.Sys_RoleMenus.RemoveRange(mappings);
+            return new(DeletedCount: await _context.SaveChangesAsync(ct));
+        });
+
+    private async Task<IActionResult> WriteLegacyAsync(string permission, string kind, int[] ids, string? key,
+        object input, Func<CancellationToken, Task<LegacyMenuMutationResultV1>> write)
     {
-        var entities = await _context.Sys_Menus.Where(m => ids.Contains(m.MenuId)).ToListAsync();
-        _context.Sys_Menus.RemoveRange(entities);
-        // 同时删除关联的权限映射。P0-T3 补口：Sys_Menu 是全局表，删菜单须清**所有租户**的映射
-        // （Sys_RoleMenu 已租户化，不带 IgnoreQueryFilters 只会清当前租户、他租留孤儿行）。
-        var mappings = _context.Sys_RoleMenus.IgnoreQueryFilters().Where(rm => ids.Contains(rm.MenuId));
-        _context.Sys_RoleMenus.RemoveRange(mappings);
-        var count = await _context.SaveChangesAsync();
-        return Ok(new { count });
+        if (!_context.Database.IsNpgsql()) return LegacyResult(await write(default));
+
+        var http = HttpContext;
+        var services = http.RequestServices;
+        try
+        {
+            // The original authority now owns its individual transactions. The single-transaction
+            // CurrentWriteAuthority filter still handles menu tree ordering.
+            var authority = services.GetRequiredService<IamAdministrationV1>();
+            var result = await authority.WriteLegacyMenuAsync(permission, kind, ids, key, input, http.User.FindFirst("impersonator_id")?.Value,
+                ct => IamAdministrationHttpV1.CurrentActor(http, services, ct, allowImpersonation: true),
+                write, http.RequestAborted);
+            return LegacyResult(result);
+        }
+        catch (IamAdministrationExceptionV1 error) { return Failure(error.Status, error.Message); }
+        catch (TenantManagementExceptionV1 error) { return Failure(error.Status, error.Message); }
+        catch (Exception error) when (error is DbException or DbUpdateException or CurrentPermissionUnavailableException)
+        {
+            return Failure(503, "AUTHORITY_FENCE_UNAVAILABLE");
+        }
+
+        IActionResult Failure(int status, string code) => StatusCode(status, new { code = status, message = code });
     }
+
+    private IActionResult LegacyResult(LegacyMenuMutationResultV1 result)
+    {
+        if (result.Menu is not null) return Ok(result.Menu);
+        if (result.DeletedCount is { } count) return Ok(new { count });
+        return NotFound();
+    }
+
+    private static object EditableInput(Sys_Menu entity)
+        => new { entity.MenuName, entity.RoutePath, entity.MenuKey, entity.Icon, entity.ParentId, entity.OrderNo, entity.Enable };
 }
 
 public record MenuTreePosition(int MenuId, int? ParentId, int OrderNo);

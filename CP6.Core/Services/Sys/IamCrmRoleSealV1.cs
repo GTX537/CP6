@@ -20,6 +20,7 @@ internal sealed class CrmRoleSealRequiredV1(CrmRoleSealVersionV1 version, Inquir
 
 internal sealed class IamCrmRoleSealV1
 {
+    public Guid TenantId { get; set; }
     public int RoleId { get; set; }
     public Guid OperationId { get; set; }
     public Guid ActorId { get; set; }
@@ -32,11 +33,13 @@ internal sealed class IamCrmRoleSealV1
     public string SuccessorType { get; set; } = null!;
     public string SuccessorHash { get; set; } = null!;
     public bool SealStarted { get; set; }
+    public Guid? MenuOperationId { get; set; }
 
     internal CrmRoleSealVersionV1 Version => new(SourceVersion, SourceType, SourceHash, SuccessorType, SuccessorHash);
 
     internal void RequireOwner(Guid actor, string kind)
     {
+        if (MenuOperationId.HasValue) throw IamAdministrationV1.Error(409, "IAM_CRM_MENU_SEAL_OWNED");
         if (ActorId != actor) throw IamAdministrationV1.Error(403, "IAM_OPERATION_OWNER_MISMATCH");
         if (Kind != kind) throw IamAdministrationV1.Error(409, "IAM_OPERATION_KIND_CONFLICT");
     }
@@ -44,10 +47,10 @@ internal sealed class IamCrmRoleSealV1
     internal static Task<IamCrmRoleSealV1?> ReadAsync(CP6Context db, Guid tenant, Guid operation,
         CancellationToken ct, int? role = null)
         => db.Database.SqlQuery<IamCrmRoleSealV1>($"""
-            SELECT role_id AS "RoleId", operation_id AS "OperationId", actor_id AS "ActorId", kind AS "Kind",
+            SELECT tenant_id AS "TenantId", role_id AS "RoleId", operation_id AS "OperationId", actor_id AS "ActorId", kind AS "Kind",
                    request_protected AS "RequestProtected", store_id AS "StoreId", source_version AS "SourceVersion",
                    source_type AS "SourceType", source_hash AS "SourceHash", successor_type AS "SuccessorType",
-                   successor_hash AS "SuccessorHash", seal_started AS "SealStarted"
+                   successor_hash AS "SuccessorHash", seal_started AS "SealStarted", menu_operation_id AS "MenuOperationId"
             FROM cp6_authentication_v1.pending_crm_role_seals
             WHERE tenant_id={tenant} AND (operation_id={operation} OR role_id={role})
             ORDER BY (operation_id={operation}) DESC LIMIT 1
@@ -80,11 +83,11 @@ internal sealed class IamCrmRoleSealV1
     internal Task MarkStartedAsync(CP6Context db, Guid tenant, CancellationToken ct)
         => db.Database.ExecuteSqlInterpolatedAsync($"""
             UPDATE cp6_authentication_v1.pending_crm_role_seals SET seal_started=true
-            WHERE tenant_id={tenant} AND operation_id={OperationId}
+            WHERE tenant_id={tenant} AND operation_id={OperationId} AND menu_operation_id IS NULL
             """, ct);
 
     internal Task RemoveAsync(CP6Context db, Guid tenant, CancellationToken ct)
         => db.Database.ExecuteSqlInterpolatedAsync($"""
-            DELETE FROM cp6_authentication_v1.pending_crm_role_seals WHERE tenant_id={tenant} AND operation_id={OperationId}
+            DELETE FROM cp6_authentication_v1.pending_crm_role_seals WHERE tenant_id={tenant} AND operation_id={OperationId} AND menu_operation_id IS NULL
             """, ct);
 }
