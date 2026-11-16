@@ -204,6 +204,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     public async Task Routing_owner_internal_allocation_uses_stored_sources_and_rolls_back_on_final_failure(bool disabled)
     {
         var hook=new CommandHook();await using var h=await Seed(hook);var owner=await GrantOperations(h);
+        await GrantAllocationStockQuery(h);
         IOutboundRoutingService routing=disabled?new NoOpOutboundRoutingService(h.Db):new OutboundRoutingService(h.Db);
         var wms=new OutboundService(h.Db,new WmsSequenceService(h.Db),new StockMovementService(h.Db,new WmsSequenceService(h.Db)),routing:routing,owner:owner);
         h.Db.Warehouses.Add(new(){WarehouseCd="W02",WarehouseName="Legacy target"});
@@ -211,7 +212,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         h.Db.OutboundRoutingRules.Add(new(){RuleName="Existing",TargetWarehouseCd="W02",Enabled=true});
         h.Db.Stocks.AddRange(new(){WarehouseCd="W01",LocationCd="L",ProductCd="P",PhysicalQty=10m,AvailableQty=10m},new(){WarehouseCd="W02",LocationCd="L2",ProductCd="P",PhysicalQty=10m,AvailableQty=10m});
         await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();var no=await wms.CreateOrderAsync(NewOutbound(),null);await wms.ConfirmOrderAsync(no,null);var reads=0;
-        hook.Before=c=>{if(c.CommandText.Contains("WITH field_subject")&&++reads==2)throw new IOException("final source fault");return Task.CompletedTask;};
+        hook.Before=c=>{if(c.CommandText.Contains("WITH field_subject")&&Equals(c.Parameters["field_resource"].Value,"wms-outbound-order")&&++reads==2)throw new IOException("final source fault");return Task.CompletedTask;};
         Assert.Equal(503,(await Assert.ThrowsAsync<OrderPriceCorrectionException>(()=>wms.AllocateAsync(no,"forged"))).Status);hook.Before=null;
         Assert.Equal(0,await h.Db.StockTransactions.CountAsync());Assert.All(await h.Db.Stocks.AsNoTracking().ToArrayAsync(),s=>Assert.Equal(0,s.AllocatedQty));
         await wms.AllocateAsync(no,null);var chosen=await h.Db.Stocks.AsNoTracking().SingleAsync(x=>x.AllocatedQty>0);Assert.Equal(disabled?"W01":"W02",chosen.WarehouseCd);Assert.Equal(1.12345678m,chosen.AllocatedQty);

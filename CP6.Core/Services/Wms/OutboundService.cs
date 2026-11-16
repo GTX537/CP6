@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Erp;
 using CP6.Core.Services.Integration;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels;
@@ -402,7 +403,8 @@ public partial class OutboundService : IOutboundService
         return(null,await candidates.AnyAsync()?"LOCATION_OPERATION_BLOCKED":null);
     }
 
-    private async Task AllocateCoreAsync(string outboundNo, string? userName, OperationsAccessV1? access = null, List<Func<Task>>? effects = null)
+    private async Task AllocateCoreAsync(string outboundNo, string? userName, OperationsAccessV1? access = null,
+        List<Func<Task>>? effects = null, CancellationToken ct = default)
     {
         var header = await _db.OutboundOrders
             .FirstOrDefaultAsync(x => x.OutboundNo == outboundNo && !x.IsDeleted)
@@ -484,7 +486,16 @@ public partial class OutboundService : IOutboundService
                 throw new InsufficientStockException(d.ProductCd, d.LotNo ?? "", needed, 0m);
             }
 
-            if(access!=null)await access.GuardNewLocationUse(chosenWarehouse,candidate.LocationCd,CancellationToken.None);
+            if (access != null)
+            {
+                await access.GuardNewLocationUse(chosenWarehouse, candidate.LocationCd, ct);
+                // 预留流水始终携带候选库存单价，空值也要走同一来源权限。
+                var source = await access.SourceAsync(OperationsOwnerV1.Stock, ct);
+                source.RequirePriceRead();
+                var stockId = candidate.Id;
+                if (!await source.InventoryStocks().AnyAsync(stock => stock.Id == stockId, ct))
+                    throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
+            }
             // 引当（RSV）— 実際に引き当てた倉庫(chosenWarehouse)で発行
             var txnNo = await ApplyStockFromParentAsync(new StockMovementRequest
             {

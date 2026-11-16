@@ -33,7 +33,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var catalog=new AuthorizationCatalogStoreV1();
         catalog.RegisterFields("order",[new("UnitPrice","Price"),new("Amount","Amount")]);catalog.RegisterScope("order","Order",[1,2,3,4,5],2);
         catalog.RegisterFields("mes-work-order",[]);catalog.RegisterScope("mes-work-order","Manufacturing",[1,2,3,4,5],1);
-        catalog.RegisterFields("wms-outbound-order",[new("UnitPrice","Price")]);catalog.RegisterScope("wms-outbound-order","Outbound",[1,2,3,4,5],1);catalog.Seal();
+        catalog.RegisterFields("wms-outbound-order",[new("UnitPrice","Price")]);catalog.RegisterScope("wms-outbound-order","Outbound",[1,2,3,4,5],1);
+        catalog.RegisterFields("wms-stock",[new("UnitPrice","单价")]);catalog.RegisterScope("wms-stock","库存",[1,2,3,4,5],1);
+        catalog.Seal();
         return new(h.Db,new OperationsHttp{HttpContext=h.Http},_=>Task.FromResult(h.User),catalog.Capture);
     }
     [CurrentPermissionPostgresFact]

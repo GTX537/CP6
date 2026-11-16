@@ -30,6 +30,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     public async Task Operations_partial_allocation_records_shortage_and_cancel_releases_only_actual_reservation()
     {
         await using var h=await Seed();var owner=await GrantOperations(h);var seq=new WmsSequenceService(h.Db);
+        await GrantAllocationStockQuery(h);
         var wms=new OutboundService(h.Db,seq,new StockMovementService(h.Db,seq),shortage:new MaterialShortageService(h.Db),owner:owner);
         h.Db.Locations.Add(new(){WarehouseCd="W01",LocationCd="L"});
         h.Db.Stocks.Add(new(){WarehouseCd="W01",LocationCd="L",ProductCd="P",LotNo="",PhysicalQty=10m,AvailableQty=10m});

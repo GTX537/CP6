@@ -1,5 +1,7 @@
 # 当前待办与优先级
 
+2026-11-16，接续优先 [P0 #1211](https://github.com/GTX537/CP6/issues/1211) 的同商品异价发票原生行匹配，随后继续其他消费者。 [W683 交付](../development/evidence/W683-01/DELIVERY.md)
+
 2026-11-16，接续 WP02-03 核对库存、入库及出库单价实际消费，继续派生结果、写回读和独立用途。业务伙伴其他消费者、文件与附件用途、订单其他消费者和 Space WP13-04 依各自合同核对。 [W682 交付](../development/evidence/W682-01/DELIVERY.md)
 
 2026-11-16 接续：W681 的 #1206 修复待本轮正常 PR/远端采用收尾。下一窗口优先 [P0 #1207](https://github.com/GTX537/CP6/issues/1207) 的旧 BP 读取、名称筛选/排序、CSV 与写后回读，先独立红测再修复；不要把 W163 身份来源通过外推为完整旧业务采用。其余 Operations、文件/附件用途、订单其他消费者、Space WP13-04 保持原范围。 [W681 交付](../development/evidence/W681-01/DELIVERY.md)
