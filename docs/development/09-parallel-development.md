@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+## 2026-11-16 UTC · W685 工序费率与历史成本授权
+
+COORD 从 Main `30712bce0` 复用 DEV-1 / `codex/w685-01`，交付 #1214。25 项定向用例按最终结果通过，其中 10 项实际 PostgreSQL、15 项历史成本组件用例，零跳过。正常 PR 采用、远端核对、关闭 Issue 后 finish。WP02-03 继续。 [W685 交付](evidence/W685-01/DELIVERY.md)
+
 ## 2026-11-16 UTC · W684 发货开票单价匹配
 
 COORD 从 Main `0686fc6d5` 复用 DEV-1 / `codex/w684-01`，修复 #1211。9 项实际 PostgreSQL 定向用例按最终结果通过，零跳过。正常 PR 采用、远端核对、关闭 Issue 后 finish。WP02-03 继续。 [W684 交付](evidence/W684-01/DELIVERY.md)

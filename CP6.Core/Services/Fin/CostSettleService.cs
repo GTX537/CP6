@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Erp;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,11 +17,13 @@ public class CostSettleService : ICostSettleService
 {
     private readonly CP6Context _db;
     private readonly IJournalEntryService _journal;
+    private readonly ICostCollectService? _history;
 
-    public CostSettleService(CP6Context db, IJournalEntryService journal)
+    public CostSettleService(CP6Context db, IJournalEntryService journal, ICostCollectService? history = null)
     {
         _db = db;
         _journal = journal;
+        _history = history;
     }
 
     public async Task<FinResult> SettleAsync(string workOrderNo, string user)
@@ -143,7 +146,14 @@ public class CostSettleService : ICostSettleService
     }
 
     public async Task<decimal> FgUnitCostAsync(string workOrderNo)
-        => (await _db.CostSheets.AsNoTracking().FirstOrDefaultAsync(s => s.WorkOrderNo == workOrderNo))?.FgUnitCost ?? 0m;
+    {
+        if (!_db.Database.IsNpgsql())
+            return (await _db.CostSheets.AsNoTracking().FirstOrDefaultAsync(s => s.WorkOrderNo == workOrderNo))?.FgUnitCost ?? 0m;
+
+        var history = _history ?? throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
+        var sheet = await history.GetByWorkOrderAsync(workOrderNo);
+        return sheet?.FgUnitCost ?? throw new OrderPriceCorrectionException("E-FIN-403", 400);
+    }
 
     private async Task<Guid?> RoleIdAsync(string role)
         => (await _db.GlAccounts.FirstOrDefaultAsync(a => a.Role == role && a.IsActive))?.Id;

@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-16，W685 从 Main 30712bce0 复用 DEV-1，修复 #1214 的历史成本费率披露。25 项定向用例按最终结果通过，其中 10 项实际 PostgreSQL、15 项历史成本组件用例，零跳过。 [W685 交付](../development/evidence/W685-01/DELIVERY.md)
+
 2026-11-16，W684 从 Main 0686fc6d5 复用 DEV-1，修复 #1211 的发货开票原生订单行价。9 项实际 PostgreSQL 定向用例按最终结果通过，零跳过。 [W684 交付](../development/evidence/W684-01/DELIVERY.md)
 
 2026-11-16，W683 从 Main 722fa775d 复用 DEV-1，把选中库存单价的来源权限纳入出库分配事务，修复 #1210。26 项本地 PostgreSQL 定向用例通过，含实际 Program/HTTP，零失败、零跳过。 [W683 交付](../development/evidence/W683-01/DELIVERY.md)
