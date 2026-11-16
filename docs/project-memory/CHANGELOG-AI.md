@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-15，W669 增加 Basic V2 精确服务路径，实际验证无浏览器 Cookie 的既有 CRM 请求及独立错误认证、传输和作用域边界。 [W669 交付](../development/evidence/W669-01/DELIVERY.md)
+
 2026-11-15，W666 为两个旧凭据写者保留首次连接前的持久原件，复用已登记用户和真实 Grant 封存，验证改密权限、原审计、成功回执及独立主体。 [W666 交付](../development/evidence/W666-01/DELIVERY.md)
 
 2026-11-15，W665 保留原三种退出能力，在首次 CRM 冷连接前保存精确原家族与原计划，由原 Worker 恢复。真实隔离 PostgreSQL 两库、签名宿主及本地发布检查通过。 [W665 交付](../development/evidence/W665-01/DELIVERY.md)

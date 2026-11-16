@@ -1,5 +1,7 @@
 # 当前待办与优先级
 
+2026-11-15，继续精确 access 退出、真实 refresh replay 和剩余凭据写者。W669 的 Basic V2 全宿主验证接续已有服务登记两库恢复。 [W669 交付](../development/evidence/W669-01/DELIVERY.md)
+
 2026-11-15，PGT-017 继续精确 access 退出、refresh 真重放与其他凭据写者，修复已独立复现的 CRM Basic V2 签发入口。 [W666 交付](../development/evidence/W666-01/DELIVERY.md) · [#1186](https://github.com/GTX537/CP6/issues/1186)
 
 2026-11-15，继续 PGT-017 自助改密、管理员 2FA 重置、精确 access 退出和实际 refresh replay。服务登记的受控重启恢复可并行核验。 [W665 交付](../development/evidence/W665-01/DELIVERY.md)
