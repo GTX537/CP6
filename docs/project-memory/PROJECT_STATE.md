@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-16，W675 已完成当前 Main 存储对象与写者归属阶段：实际目录 140 个 schema、891 张表，341 张固定 EF 表及全部 9 种 DbContext 已核对。既有共享键域与 Owner 保持，WP02-02 继续 RMA 存储 v2 兼容归档恢复。PGT 27/27、询盘 60/60、38 DONE / 1 IN_PROGRESS / 336 PLANNED 保持。 [本轮交付](../development/evidence/W675-01/DELIVERY.md)
+
 2026-11-16，W674 已完成 WP02-02 整卡复核。按矩阵归属，本卡 17/17 项通过，正式 PostgreSQL 总计 27/27；整卡保持 IN_PROGRESS。实际余项为当前 Main 对象/写者的完整存储归属与 RMA 存储模型 v2 兼容归档恢复，先推进对象归属核对。原询盘 60/60、38 DONE / 1 IN_PROGRESS / 336 PLANNED 保持。 [整卡复核与接续](../development/evidence/W674-01/DELIVERY.md)
 
 2026-11-15，PGT-017 完成 PostgreSQL 正式验收。正式矩阵 27/27，原询盘保持 60/60。 [PGT-017 正式验收](../development/evidence/W645-01/DELIVERY.md)
