@@ -1,5 +1,7 @@
 # 已完成能力与近期里程碑
 
+2026-11-15，W667 采用精确 JTI 原件及 refresh 重用的主体范围，实际验证两种提交顺序、冷拒、重启恢复、两库 COMMIT 应答丢失及原会话对照。 [W667 交付](../development/evidence/W667-01/DELIVERY.md)
+
 2026-11-15，W669 处理 CRM Basic V2 实际客户端的服务签发入口。真实请求通过原有签名、作用域以及 PostgreSQL 栅栏检查。 [W669 交付](../development/evidence/W669-01/DELIVERY.md)
 
 2026-11-15，W666 接入自助改密与管理员 2FA 重置的原生跨库封存，验证两个真实提交顺序、首次拒接恢复和两库 COMMIT 应答丢失。 [W666 交付](../development/evidence/W666-01/DELIVERY.md)
