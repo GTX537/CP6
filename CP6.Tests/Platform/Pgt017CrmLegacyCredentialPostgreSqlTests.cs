@@ -8,6 +8,7 @@ using System.Text.Json.Nodes;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
+using CP6.Tests.Erp;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
@@ -84,6 +85,20 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         await using var crm = new NpgsqlConnection(Environment.GetEnvironmentVariable("CP6_PGT017_CRM_OBSERVER"));
         await crm.OpenAsync();
         if (!ordered) await InstallUserSealFixture(crm, seal, h.Tenant, store);
+        var crmAck = Environment.GetEnvironmentVariable("CP6_W666_CRM_ACK_PORT");
+        var mainAck = Environment.GetEnvironmentVariable("CP6_W666_MAIN_ACK_PORT");
+        await using var crmRelay = string.IsNullOrEmpty(crmAck) ? null :
+            new StockPostgresCommitRelay(seal.Port, seal.Username!, int.Parse(crmAck));
+        var sealConnection = new NpgsqlConnectionStringBuilder(seal.ConnectionString);
+        if (crmRelay is not null) sealConnection.Port = crmRelay.Port;
+        var mainConnection = new NpgsqlConnectionStringBuilder(h.Db.Database.GetConnectionString()!);
+        await using var mainRelay = string.IsNullOrEmpty(mainAck) ? null :
+            new StockPostgresCommitRelay(mainConnection.Port, mainConnection.Username!, int.Parse(mainAck));
+        if (mainRelay is not null)
+        {
+            mainConnection.Port = mainRelay.Port;
+            mainConnection.SslMode = SslMode.Disable;
+        }
 
         var environment = IdentityEnvironment(h.Tenant);
         var clientSecret = CrmOidcCrypto.RandomToken();
@@ -103,9 +118,9 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         environment["ASPNETCORE_URLS"] = "http://127.0.0.1:" + Environment.GetEnvironmentVariable("CP6_PGT017_MAIN_HTTP_PORT");
         environment["JWT__Secret"] = CrmOidcCrypto.RandomToken() + CrmOidcCrypto.RandomToken();
         var prefix = $"CrmInquiryTenantPause__Tenants__{h.Tenant:D}__";
-        environment[prefix + "ConnectionString"] = seal.ConnectionString;
+        environment[prefix + "ConnectionString"] = sealConnection.ConnectionString;
         environment[prefix + "StoreId"] = store.ToString("D");
-        Task<AuthenticationApiProcess> Start() => AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, environment, allowAutoRedirect: false);
+        Task<AuthenticationApiProcess> Start() => AuthenticationApiProcess.Start(mainConnection.ConnectionString, environment, allowAutoRedirect: false);
 
         await using var host = await Start();
         var subjectCookies = await SignIn(host, "iam-admin", oldPassword, $"iam_{h.Tenant:N}", factorSecret);
@@ -210,6 +225,13 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             Assert.Equal(503, envelope.Code);
             Assert.Equal("AUTHORITY_FENCE_UNAVAILABLE", envelope.Authority);
             Assert.Equal(1, pending);
+            var originalIntent = await Intent();
+            Assert.False(originalIntent.Started);
+            Assert.Equal(passwordChange ? subject.Id : manager.Id, originalIntent.Actor);
+            Assert.Equal(passwordChange ? "self-change-password" : "admin-reset-2fa", originalIntent.Kind);
+            Assert.Equal(store, originalIntent.Store);
+            Assert.Equal(aggregates.Order(StringComparer.Ordinal), originalIntent.Sources.Select(source => source.Aggregate).Order(StringComparer.Ordinal));
+            Assert.False(await Committed(originalIntent));
 
             var pid = host.ProcessId;
             await host.StopAsync();
@@ -218,13 +240,82 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             Assert.Null(await Sign(restarted, affected.Access, subject.Id, "intake:reject"));
             Assert.Equal(expectedFence, await Sign(restarted, unaffected.Access, manager.Id, "intake:reject"));
             Assert.Equal(before, await MainFacts());
+            if (passwordChange)
+            {
+                using var different = await restarted.Send(Request(HttpMethod.Post, path, actorCookies,
+                    new { CurrentPassword = oldPassword, NewPassword = TestPassword() }));
+                Assert.Equal(HttpStatusCode.Conflict, different.StatusCode);
+            }
+            if (impersonated)
+            {
+                using var different = await restarted.Send(Request(HttpMethod.Post, path, managerCookies, subject.Id));
+                Assert.Equal(HttpStatusCode.Forbidden, different.StatusCode);
+            }
+            AssertSameIntent(originalIntent, await Intent());
             await SetSealLogin(true);
-            using var resumed = await Change(restarted);
+            var sourceFloors = aggregates.Select(aggregate => originalIntent.Sources.Single(source => source.Aggregate == aggregate).Version).ToArray();
+            if (crmRelay is not null)
+            {
+                crmRelay.Arm();
+                using var unconfirmed = await Change(restarted);
+                await crmRelay.Dropped.WaitAsync(TimeSpan.FromSeconds(10));
+                Assert.Equal(HttpStatusCode.ServiceUnavailable, unconfirmed.StatusCode);
+                Assert.Equal("AUTHORITY_FENCE_UNAVAILABLE", (await FailureEnvelope(unconfirmed)).Authority);
+                Assert.Equal(before, await MainFacts());
+                Assert.False(await Committed(originalIntent));
+                Assert.Equal(sourceFloors, await Floors());
+                var stillPending = await Intent();
+                AssertSameIntent(originalIntent, stillPending);
+                Assert.True(stillPending.Started);
+                Assert.Null(await Sign(restarted, affected.Access, subject.Id, "intake:reject"));
+                Assert.Equal(expectedFence, await Sign(restarted, unaffected.Access, manager.Id, "intake:reject"));
+                await Save("credential-crm-ack.json", new { Intent = stillPending, Floors = await Floors(), LocalWritesUnchanged = true, ReceiptExists = false });
+            }
+
+            using var resumed = mainRelay is null ? await Change(restarted) : await LoseFinalMainAck(restarted, mainRelay);
             await CheckCommitted(restarted, resumed);
             Assert.Equal(0, await Pending());
-            await Save("credential-recovery.json", new { Before = before, After = await MainFacts(), Floors = await Floors(), RestartPid = restarted.ProcessId });
+            Assert.True(await Committed(originalIntent));
+            Assert.Equal(sourceFloors, await Floors());
+            foreach (var planned in originalIntent.Sources)
+            {
+                var actual = await h.Db.CrmIdentitySnapshots.AsNoTracking().SingleAsync(row => row.TenantId == h.Tenant && row.AggregateId == planned.Aggregate);
+                Assert.Equal((planned.Version, planned.SuccessorType, planned.IntentHash), (actual.Version, actual.EventType, actual.PayloadSha256));
+            }
+            Assert.Equal(expectedFence, await Sign(restarted, unaffected.Access, manager.Id, "intake:reject"));
+            await Save("credential-recovery.json", new { Before = before, After = await MainFacts(), Floors = await Floors(),
+                RestartPid = restarted.ProcessId, OriginalIntent = originalIntent, ReceiptExists = true,
+                CrmCommitAckLost = crmRelay is not null, MainCommitAckLost = mainRelay is not null });
         }
         finally { await SetSealLogin(true); }
+
+        async Task<HttpResponseMessage> LoseFinalMainAck(AuthenticationApiProcess api, StockPostgresCommitRelay relay)
+        {
+            var original = h.Db.Database.GetConnectionString()!;
+            await using var holder = new NpgsqlConnection(original);
+            await holder.OpenAsync();
+            await using var tx = await holder.BeginTransactionAsync();
+            await using var hold = new NpgsqlCommand("""
+                SELECT 1 FROM public."Sys_Users" WHERE "TenantId"=@tenant AND "Id"=@user FOR UPDATE
+                """, holder, tx);
+            hold.Parameters.AddWithValue("tenant", h.Tenant);
+            hold.Parameters.AddWithValue("user", subject.Id);
+            Assert.Equal(1, await hold.ExecuteScalarAsync());
+            await using var observer = new NpgsqlConnection(original);
+            await observer.OpenAsync();
+            var pendingChange = Change(api);
+            try
+            {
+                var writer = await WaitForMainBlock(observer, holder.ProcessID, "%UPDATE%Sys_Users%", pendingChange);
+                Assert.Equal(before, await MainFacts());
+                await Save("credential-main-ack-gate.json", new { Writer = writer, Holder = holder.ProcessID, OriginalWritesUnchanged = true });
+                relay.Arm();
+            }
+            finally { await tx.RollbackAsync(); }
+            var result = await pendingChange;
+            await relay.Dropped.WaitAsync(TimeSpan.FromSeconds(10));
+            return result;
+        }
 
         async Task CheckBothStores()
         {
@@ -366,6 +457,25 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             WHERE tenant_id={h.Tenant} AND user_id={subject.Id}
             """).SingleAsync();
 
+        async Task<CredentialIntentProbe> Intent()
+        {
+            var row = await IamCrmUserSealV1.ReadAsync(h.Db, h.Tenant, Guid.Empty, CancellationToken.None, subject.Id);
+            Assert.NotNull(row);
+            return new(row.OperationId, row.ActorId, row.Kind, row.StoreId, row.SealStarted, row.ReadAdvances());
+        }
+
+        Task<bool> Committed(CredentialIntentProbe intent) => h.Db.Database.SqlQuery<bool>($"""
+            SELECT EXISTS(SELECT 1 FROM cp6_authentication_v1.iam_operations
+                WHERE tenant_id={h.Tenant} AND operation_id={intent.Operation} AND actor_id={intent.Actor}
+                    AND kind={intent.Kind} AND state='COMMITTED' AND result_json::jsonb->>'EntityId'={subject.Id.ToString("D")}) AS "Value"
+            """).SingleAsync();
+
+        static void AssertSameIntent(CredentialIntentProbe original, CredentialIntentProbe current)
+        {
+            Assert.Equal((original.Operation, original.Actor, original.Kind, original.Store), (current.Operation, current.Actor, current.Kind, current.Store));
+            Assert.Equal(original.Sources, current.Sources);
+        }
+
         async Task<int[]> Floors()
         {
             await using var sql = new NpgsqlCommand("""
@@ -484,6 +594,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     }
 
     private sealed record CredentialFailureEnvelope(string? Media, int? Code, string? Authority);
+    private sealed record CredentialIntentProbe(Guid Operation, Guid Actor, string Kind, Guid Store, bool Started, CrmUserSealAdvanceV1[] Sources);
 
     private sealed record CredentialProbeState(Guid CredentialRevision, Guid Epoch, bool PasswordUnchanged, DateTime? PasswordDate,
         bool MustChangePassword, bool FactorEnabled, bool FactorSecretUnchanged, DateTime? FactorEnrollment, string OriginalWrites);

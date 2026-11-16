@@ -33,7 +33,11 @@ public sealed partial class IamAdministrationV1(CP6Context db, ICurrentPermissio
         Func<Guid,CancellationToken,Task<T>> body, CancellationToken ct)
         => ExecuteCurrentAsync(permission,currentActor,(current,token)=>body(current.UserId,token),ct);
 
-    internal async Task<T> ExecuteCurrentAsync<T>(string permission, Func<CancellationToken,Task<Guid>> currentActor,
+    internal Task<T> ExecuteCurrentAsync<T>(string permission, Func<CancellationToken,Task<Guid>> currentActor,
+        Func<UserPermissionContext,CancellationToken,Task<T>> body, CancellationToken ct)
+        => ExecuteAuthorityAsync(permission ?? throw Error(403,"IAM_FORBIDDEN"), currentActor, body, ct);
+
+    private async Task<T> ExecuteAuthorityAsync<T>(string? permission, Func<CancellationToken,Task<Guid>> currentActor,
         Func<UserPermissionContext,CancellationToken,Task<T>> body, CancellationToken ct)
     {
         if (!IsPostgreSql || db.Database.CurrentTransaction != null || System.Transactions.Transaction.Current != null
@@ -47,7 +51,8 @@ public sealed partial class IamAdministrationV1(CP6Context db, ICurrentPermissio
             var tenant = await db.Sys_Tenants.IgnoreQueryFilters().AsNoTracking().SingleOrDefaultAsync(x => x.Id == db.CurrentTenantId,ct);
             var current = await permissions.GetAsync();
             if (user is not { Enable:true } || user.LockedUntil > DateTime.Now || tenant is not { Enable:true }
-                || tenant.ExpireDate <= DateTime.Now || current.UserId != actor || !current.ActionKeys.Contains(permission)) throw Error(403,"IAM_FORBIDDEN");
+                || tenant.ExpireDate <= DateTime.Now || current.UserId != actor
+                || permission is not null && !current.ActionKeys.Contains(permission)) throw Error(403,"IAM_FORBIDDEN");
             db.ChangeTracker.Clear();
             var result = await body(current,ct); ct.ThrowIfCancellationRequested(); attempted = true;
             await tx.CommitAsync(ct); return result;
