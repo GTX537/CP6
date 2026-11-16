@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-15，W669 对完整 Main 宿主验证 CRM Basic V2 原签发入口，服务登记独立双库恢复已实测。正式 PostgreSQL 保持 26 通过，PGT-017 继续验证其余会话及凭据写者。 [W669 交付](../development/evidence/W669-01/DELIVERY.md)
+
 2026-11-15，W666 自助改密和管理员 2FA 重置已验证 PostgreSQL 事务封存，最终定向 19 通过、0 跳过。正式矩阵仍 26 通过，PGT-017 继续核验已确认的其他会话/凭据写者和服务 Basic V2 入口。 [W666 交付](../development/evidence/W666-01/DELIVERY.md)
 
 2026-11-15，W665 验证普通 Web 退出和两个既有完成入口的 CRM 家族封存，26 通过、0 跳过。正式 PostgreSQL 仍为 26 通过，PGT-017 待完成精确 access 退出、刷新重放和其他直接凭据写者。 [W665 交付](../development/evidence/W665-01/DELIVERY.md)

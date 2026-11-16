@@ -166217,6 +166217,11 @@
       "at": "2026-11-16T01:33:09.526691+00:00",
       "change": "W666 将自助改密与管理员 2FA 重置接入同用户精确持久原件，实际首次 CRM 拒接停发、两条业务双序、两次独立库 ACK、原审计和远端状态。",
       "evidence": "docs/development/evidence/W666-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-16T01:57:12.539040+00:00",
+      "change": "W669 修复完整 Main 宿主的 CRM Basic V2 入口。复用既有显式服务传输和认证，验证原客户端签名与 PostgreSQL 受控登记恢复。",
+      "evidence": "docs/development/evidence/W669-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212223,10 +212228,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W666",
-      "path": "docs/development/evidence/W666-01/DELIVERY.md",
-      "baseline_sha": "a3a4e3ca179cfc0430e5f65e4b5e7ed400ed12c1",
-      "registered_at": "2026-11-16T00:38:21.200005+00:00",
+      "id": "W669",
+      "path": "docs/development/evidence/W669-01/DELIVERY.md",
+      "baseline_sha": "640800b350e01f7046a9f7140fbe0f776587080d",
+      "registered_at": "2026-11-16T01:37:22.543698+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212240,11 +212245,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "W667 继续按原 access JTI 及 refresh 真重放；独立修复 Basic V2 的 #1186。",
+      "next_action": "W667 继续接入精确 access 退出和真实 refresh replay。W668 并行准备剩余 2FA 的真实合同。",
       "windows": [
         {
-          "id": "W666-01",
-          "workspace_task": "W666-01",
+          "id": "W669-01",
+          "workspace_task": "W669-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212255,21 +212260,21 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w666-01",
-          "planned_scope_ref": "docs/development/evidence/W666-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W666-01/DELIVERY.md",
+          "branch": "codex/w669-01",
+          "planned_scope_ref": "docs/development/evidence/W669-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W669-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main 自助改密、管理员 2FA 与已有按用户粒度原件",
-            "CRM 原用户与 grant C02、原生封存和 Main 事务"
+            "Main 完整宿主的精确 CRM Basic V2 路由",
+            "独立登记的服务源与同库身份事务"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "PostgreSQL 18.6 和实际 Kestrel/Main/CRM 最终 19 通过、0 跳过。两入口原生四组两序、两条各双 COMMIT ACK、原强制改密和权限回归通过，复用原注册冷拒接与重启的有效证据。",
-          "remaining_scope": "精确单 access 退出与 refresh 真重放、其他直接凭据写者继续验收。服务发布恢复已独立实测，Basic V2 完整入口 #1186 待修复。PGT-017 保持 NOT_RUN，WP02-03 独立记录。",
-          "main_tested_source_sha": "a2011cfbaac1a15d7cd9bc88b2c7099cfcec7e94"
+          "validation_summary": "27 PASS/0 跳过。实际签名 Main/Kestrel 和两座 PostgreSQL 18.6，原 Basic V2 请求无浏览器 Cookie 200，Ed25519、来源版本与写栅栏核对，七种拒绝对照通过。310 文件源码绑定发布与原生初始化；服务冷恢复双 ACK 复用已登记 W669-01-CHECK，业务两序复用 W547。",
+          "remaining_scope": "单 access 退出、真实 refresh replay、直接 2FA 和其他实际凭据写者继续。PGT-017 保持 NOT_RUN。",
+          "main_tested_source_sha": "932f05e9cc5901abf3decc882d429062e9d20642"
         }
       ],
       "storage": {
@@ -270512,6 +270517,66 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W666",
+        "path": "docs/development/evidence/W666-01/DELIVERY.md",
+        "baseline_sha": "a3a4e3ca179cfc0430e5f65e4b5e7ed400ed12c1",
+        "registered_at": "2026-11-16T00:38:21.200005+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "W667 继续按原 access JTI 及 refresh 真重放；独立修复 Basic V2 的 #1186。",
+        "windows": [
+          {
+            "id": "W666-01",
+            "workspace_task": "W666-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w666-01",
+            "planned_scope_ref": "docs/development/evidence/W666-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W666-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main 自助改密、管理员 2FA 与已有按用户粒度原件",
+              "CRM 原用户与 grant C02、原生封存和 Main 事务"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "PostgreSQL 18.6 和实际 Kestrel/Main/CRM 最终 19 通过、0 跳过。两入口原生四组两序、两条各双 COMMIT ACK、原强制改密和权限回归通过，复用原注册冷拒接与重启的有效证据。",
+            "remaining_scope": "精确单 access 退出与 refresh 真重放、其他直接凭据写者继续验收。服务发布恢复已独立实测，Basic V2 完整入口 #1186 待修复。PGT-017 保持 NOT_RUN，WP02-03 独立记录。",
+            "main_tested_source_sha": "a2011cfbaac1a15d7cd9bc88b2c7099cfcec7e94",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1187",
+            "main_remote_main_sha": "640800b350e01f7046a9f7140fbe0f776587080d"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },
