@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-15，W665 保留原三种退出能力，在首次 CRM 冷连接前保存精确原家族与原计划，由原 Worker 恢复。真实隔离 PostgreSQL 两库、签名宿主及本地发布检查通过。 [W665 交付](../development/evidence/W665-01/DELIVERY.md)
+
 2026-11-15，W664 增加全局菜单跨 CRM Store 的精确封存和旧合同读回，覆盖第二库登录拒绝与先后提交。实际本地签名宿主及两物理库通过，未运行 Actions 或部署。 [W664 交付](../development/evidence/W664-01/DELIVERY.md)
 
 ## 2026-11-15 W662-01

@@ -1,5 +1,6 @@
 using System.Data.Common;
 using CP6.WebApi.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.BackgroundServices;
 
@@ -23,7 +24,7 @@ internal sealed class CrmOidcFamilyLogoutRecoveryWorkerV1(IServiceScopeFactory s
                     {
                         await store.CompleteAcceptedFamilyAsync(accepted, stoppingToken);
                     }
-                    catch (Exception error) when (error is CrmOidcFamilyLogoutUnavailableException or DbException)
+                    catch (Exception error) when (error is CrmOidcFamilyLogoutUnavailableException or DbException or DbUpdateException)
                     {
                         logger.LogWarning("CRM OIDC logout remains pending for tenant {TenantId}, browser family {FamilyId}",
                             accepted.TenantId, accepted.FamilyId);
