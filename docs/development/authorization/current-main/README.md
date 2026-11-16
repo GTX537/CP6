@@ -1,6 +1,6 @@
 # 当前 Main 字段与用途核销入口
 
-W678-01 建立，W679-01 核销个人表单/附件，W680-01 核销库存金额相关四组消费者；接续 [W677 整卡复核](../../evidence/W677-01/DELIVERY.md)。本目录是当前实现的导航与核销记录，不是授权配置、第二套任务台账或全部入口已通过的证明。WP02-03 状态仍以 `roadmap.json` 为准。
+W678-01 建立，W679-01 核销个人表单/附件，W680-01 核销库存金额相关四组消费者，W681-01 补齐看板仓库名和库龄客户名的来源权限；接续 [W677 整卡复核](../../evidence/W677-01/DELIVERY.md)。本目录是当前实现的导航与核销记录，不是授权配置、第二套任务台账或全部入口已通过的证明。WP02-03 状态仍以 `roadmap.json` 为准。
 
 [resources.jsonl](resources.jsonl) 保存封存目录内每个资源的完整受控字段域、scope、四用途结论、候选源码和路由引用。[routes.jsonl](routes.jsonl) 保存实际 MVC descriptor 的路由、方法及直接声明的属性。`permission_attribute_route_ids` 只连接明确的菜单属性；Controller 通过服务调用 Owner 时可能没有该属性，空列表不意味着未授权。`lexical_source_candidates` 是字面量/Operations 常量检索的首个位置，包含定义和引用，不是调用图。
 
@@ -25,7 +25,11 @@ W678-01 建立，W679-01 核销个人表单/附件，W680-01 核销库存金额�
 
 ## 继续核销的顺序
 
-1. 继续剩余 Operations 的实际 DTO、派生依赖、写回读及 Owner 决定；个人表单/附件复用 W679，库存金额四组的注册字段边界复用 W680。关联仓库/客户名称等应随相应来源资源核销，不从名称相同推导跨资源权限或豁免。
+W681 核对了仓库/库位当前 Owner 的名称、地址、管理者、备注、条码投影与名称/草稿写入门，以及业务伙伴身份 Owner 的 BpName、历史原件和内部 Hold 投影。仓库/库位名称操作结果只返回标识、效果和版本，私有审计不披露前后名称；草稿读取继续走当前字段投影，尚未采用的条码/管理者来源明确拒绝。出库路由的仓库候选调用同一当前 Owner，不按名称搜索或借候选输出隐藏名。这些限定路径已有行为证据，其他消费者仍保留待核对，三个资源继续留在 operations 组。
+
+看板的 WarehouseName 现在同时要求当前仓库 query、字段读取及 MasterWarehouses 真实范围；库龄客户分组名称要求自身 CustomerName 与业务伙伴 query/BpName/真实范围相交。只有明确无 query 权或字段不可读才隐藏名称，来源故障继续失败；名称来源加入同一事务的最终权限门。隐藏名称不会删除本来可见的库存分组，仍返回仓库码或客户码，金额和数量沿原合同。客户分组的 CustomerNameReadable 反映两端字段/动作交集，不证明每个来源对象均可见。没有把业务码显示关联升级成 UUID 身份或交易资格。见 [W681 交付](../../evidence/W681-01/DELIVERY.md)及 [#1206](https://github.com/GTX537/CP6/issues/1206)。
+
+1. 优先处理 [#1207](https://github.com/GTX537/CP6/issues/1207)：业务伙伴旧详情、列表、按名称筛选/排序、CSV 与写后回读没有被新身份 Owner 覆盖。源码已确认独立权限缺口；该 Issue 尚未完成独立 HTTP 红测和修复，不能把 W681 的身份来源核对记为整个资源通过。然后继续剩余 Operations 的派生 DTO、写回读及独立用途。
 2. 文件/受控文档 v1 和表单附件 v2 保留各自已采用读取合同；独立用途模型继续按原 WP02-03 与对应 Owner 核销，不能把版本不同当成权限豁免或自动关闭合法下载。静态检索结果本身不判定安全或缺陷。
 3. 发现可重现的披露、越权或错误派生结果后，在 GitHub Issues 登记并定向修复。没有变更的已通过场景复用原证据，不因扩大导航清单重跑全部 PGT。
 
@@ -41,4 +45,4 @@ dotnet <private-build>/bin/MetadataProbe/debug/MetadataProbe.dll <main-package> 
 uv run --offline --python 3.13 python -B eng/wp02-03/field-coverage/index_coverage.py --metadata <metadata-output> --output docs/development/authorization/current-main
 ```
 
-生成器中的分类对应上表的已知边界，不自动发现所有调用或认定未知路径通过。新资源默认进入待核对组。元数据来源见 [W678 交付](../../evidence/W678-01/DELIVERY.md)；W679、W680 没有产品、目录或路由变更，复用同一采集输入更新已核对分类。[W679 交付](../../evidence/W679-01/DELIVERY.md) 记录个人表单、旧扫描修正；[W680 交付](../../evidence/W680-01/DELIVERY.md) 记录库存金额四组的真实消费与验证范围。
+生成器中的分类对应上表的已知边界，不自动发现所有调用或认定未知路径通过。新资源默认进入待核对组。元数据来源见 [W678 交付](../../evidence/W678-01/DELIVERY.md)；W679、W680 没有产品、目录或路由变更，复用同一采集输入更新已核对分类。W681 修改两个消费者的服务端名称投影，目录、权限注册和 MVC 路由输入未变，继续复用该元数据并再生成当前源码导航。[W679 交付](../../evidence/W679-01/DELIVERY.md) 记录个人表单、旧扫描修正；[W680 交付](../../evidence/W680-01/DELIVERY.md) 记录库存金额四组的真实消费与验证范围。
