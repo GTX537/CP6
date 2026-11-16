@@ -22,6 +22,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         decimal quantity = 2.12345678m, int scale = 18, bool onlyLastLine = false, bool manualSource = false, string? formalCustomer = null)
     {
         await GrantOrderReads(h); await GrantOperations(h); await GrantUomProfile(h); await GrantProductUnitEdit(h);
+        await GrantAllocationStockQuery(h);
         var unit = await MakeUnit(Units(h), BaseUnit(scale: scale));
         if (numerator != "1" || denominator != "1") unit = await MakeUnit(Units(h), BaseUnit("BOX") with
             { Mode = "RATIO", BaseRef = unit.Reference, Numerator = numerator, Denominator = denominator });
@@ -35,11 +36,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             .SetProperty(x => x.Quantity, quantity));
         if (formalCustomer != null) await h.Db.Orders.ExecuteUpdateAsync(s => s.SetProperty(x => x.CustomerCd, formalCustomer));
         var catalog = new AuthorizationCatalogStoreV1();
-        foreach (var resource in new[] { "order", "wms-outbound-order", "product", "uom-profile", "erp-business-partner" })
+        foreach (var resource in new[] { "order", "wms-outbound-order", "wms-stock", "product", "uom-profile", "erp-business-partner" })
         {
             catalog.RegisterScope(resource, resource, [1,2,3,4,5], 5);
             catalog.RegisterFields(resource, resource == "order" ? [new("UnitPrice","Price"), new("Amount","Amount")]
-                : resource == "wms-outbound-order" ? [new("UnitPrice","Price")] : resource == "erp-business-partner" ? [new("BpName","Name")] : []);
+                : resource is "wms-outbound-order" or "wms-stock" ? [new("UnitPrice","Price")] : resource == "erp-business-partner" ? [new("BpName","Name")] : []);
         }
         catalog.Seal(); var service = OperationsWms(h, new(h.Db, new OperationsHttp { HttpContext = h.Http }, _ => Task.FromResult(h.User), catalog.Capture));
         h.Db.Locations.Add(new() { WarehouseCd = "W01", LocationCd = "L" });

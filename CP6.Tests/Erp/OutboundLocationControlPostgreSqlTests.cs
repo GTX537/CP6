@@ -14,6 +14,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     private static async Task<(OutboundService service,Guid first,Guid second)> AllocationControls(Harness h,bool routed=true)
     {
         var owner=await GrantOperations(h);await h.Db.WmsRoleScopes.ExecuteDeleteAsync();await GrantMaster(h);
+        await GrantAllocationStockQuery(h);
         await EngineeringAction(h,"wms-location","block");await EngineeringAction(h,"wms-location","unblock");
         foreach(var code in new[]{"W01","W02"})
         {
@@ -136,6 +137,13 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await using var h=await Seed();var f=await AllocationControls(h);var no=await ConfirmAllocation(f.service);
         await using var host=await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!,new Dictionary<string,string>{{"OutboundRouting__Enabled",enabled.ToString()}});var cookies=await Login(host,h);
         const string root="api/wms/outbound-order/";
+        h.Db.Sys_RoleFieldPerms.Add(new() { RoleId = 72, ResourceKey = "wms-stock", FieldName = "UnitPrice", Access = 3 });
+        await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
+        using var denied=await host.Send(OperationsRequest(cookies,HttpMethod.Post,root+no+"/allocate"));
+        Assert.Equal(HttpStatusCode.Forbidden,denied.StatusCode);
+        Assert.Contains("FIELD_READ_FORBIDDEN",await denied.Content.ReadAsStringAsync());
+        Assert.Equal(0,await h.Db.StockTransactions.CountAsync());
+        await h.Db.Sys_RoleFieldPerms.Where(x=>x.ResourceKey=="wms-stock").ExecuteDeleteAsync();
         using var allocate=await host.Send(OperationsRequest(cookies,HttpMethod.Post,root+no+"/allocate"));Assert.True(allocate.IsSuccessStatusCode,await OperationsFailure(allocate));
         await BlockInventory(h,f.first);await BlockInventory(h,f.second);
         using var cancel=await host.Send(OperationsRequest(cookies,HttpMethod.Post,root+no+"/cancel"));Assert.Equal(HttpStatusCode.OK,cancel.StatusCode);

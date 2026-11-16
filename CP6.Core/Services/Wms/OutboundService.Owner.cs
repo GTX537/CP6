@@ -97,7 +97,7 @@ public partial class OutboundService
             if(_shortage!=null && (_shortage is not MaterialShortageService real || !real.Owns(_db)))
                 throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
             using var inheritance=((StockMovementService)_stock).InheritTransactions(a);
-            await AllocateCoreAsync(number,a.Actor,a,effects);QueueStockEffects(effects);
+            await AllocateCoreAsync(number,a.Actor,a,effects,ct);QueueStockEffects(effects);
             a.AtCommit(t=>a.RequireOutbound(number,false,t));return true;
         });
         await PublishEffects(effects);
