@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "baseline_id": "CP6-DEV-ROADMAP-20261011/R1",
-  "as_of": "2026-11-13",
+  "as_of": "2026-11-16",
   "scope": "125已接受设计目标的全量大任务计划与进度登记。247仅为修订运行场景；原模块验收需继续盘点。不是125目标实现已完成的证明。",
   "main_baseline_sha": "90ea752e9029d171e6a0307fcda06c66c3e04a69",
   "sources": [
@@ -166257,6 +166257,11 @@
       "at": "2026-11-16T04:39:25.478541+00:00",
       "change": "正式 PGT-017 依可追溯的登记写者、两种真实提交顺序、原权威与业务写集及 CRM 产品级受控恢复标为 PASS。PostgreSQL 正式矩阵 27/27。",
       "evidence": "docs/development/evidence/W645-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-16T05:33:18.555747+00:00",
+      "change": "W674 完成 WP02-02 整卡复核：所属17项PGT与全矩阵27/27保持，清除五项过时PGT待办；对象/写者完整存储归属与RMA存储v2兼容恢复仍需完成，整卡保持IN_PROGRESS。",
+      "evidence": "docs/development/evidence/W674-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -167736,19 +167741,21 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W481-01",
+        "chat_label": "COORD / W674-01",
         "repository": "Main",
-        "branch": "codex/w481-01",
-        "worktree": "D:/CP6-worktrees/dev-2",
-        "claimed_at": "2026-11-11T13:56:49.786330+00:00",
-        "baseline_sha": "42072bffb5205c4eabb371264f026f58728275d2",
-        "entry_evidence": "docs/development/planning/20261111-codex-12h-business-chain.md",
+        "branch": "codex/w674-01",
+        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+        "claimed_at": "2026-11-16T05:28:16.826553+00:00",
+        "baseline_sha": "b829ff69893f4c59d12335b27b26bdf88f19f7d7",
+        "entry_evidence": "docs/development/evidence/W674-01/DELIVERY.md",
         "phase": "CLOSED",
-        "dispatch_scope": "同一v11完整候选组合及适用验收收口；历史同名前缀引用保留，当前无开放同任务PR。",
+        "dispatch_scope": "WP02-02 original whole-card review and residual-scope reconciliation only",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W481-01/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/W674-01/DELIVERY.md",
+        "worker_delivery_received": true,
+        "full_task_completed": false
       },
       "blockers": [],
       "validation_evidence": [],
@@ -168768,6 +168775,21 @@
           ],
           "worker_start_received": true,
           "delivery_report": "docs/development/evidence/W423-01/DELIVERY.md"
+        },
+        {
+          "chat_label": "COORD / W481-01",
+          "repository": "Main",
+          "branch": "codex/w481-01",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "claimed_at": "2026-11-11T13:56:49.786330+00:00",
+          "baseline_sha": "42072bffb5205c4eabb371264f026f58728275d2",
+          "entry_evidence": "docs/development/planning/20261111-codex-12h-business-chain.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "同一v11完整候选组合及适用验收收口；历史同名前缀引用保留，当前无开放同任务PR。",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "delivery_report": "docs/development/evidence/W481-01/DELIVERY.md"
         }
       ],
       "preparation_delivery_history": [
@@ -168845,7 +168867,7 @@
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       },
-      "remaining_scope": "PGT-022 needs the adopted legal route-epoch change and old-message recovery scenario; PGT-024 needs two actual compatible models and app rollback. PGT-011/017/025 and remaining WP02 Owner adoption stay open under their original cards. Permanent A/B cross-database routing is not a PGT-021 prerequisite.",
+      "remaining_scope": "当前 Main 尚缺覆盖 EF、raw SQL、迁移非表对象、全部唯一域及实际写者的完整存储归属清单；先按 S02-00 §3 复用已采用证据，明确继续共享、已采用租户布局和未开放新布局的对象及恢复依赖，不自动全库迁移。已支持的 RMA 存储模型 v2 尚需兼容归档/恢复及隔离 PostgreSQL 实测；现行工具按 W528 明确拒绝。正式 PGT 27/27（本卡 17/17）保持，PGT-011/017/022/024/025 不再列未运行，其他 WP02 卡和既有环境切换各按原范围。",
       "main_package_adoption": {
         "version": "0.10.4",
         "path": "docs/development/evidence/W526-01/DELIVERY.md",
@@ -169046,12 +169068,12 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W310-01",
-        "as_of": "2026-11-08",
+        "window": "W674-01",
+        "as_of": "2026-11-16",
         "classification": "IMPLEMENTATION_REMAINS",
-        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
-        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。  W346 现有 Stock 首装提交后丢弃 stdout，从另一个真实进程在准确物理库取回原安装 ID，驱动原写栅栏及后续已交付安装。孤立回执、未绑定登录读策略及目录/权限漂移拒绝。 W348 实际验证共享消息 profile 的初始化中断、原键恢复及原结果重放。  W350 在 fresh-only PostgreSQL 真实把原 RMA heads/versions 迁入各自租户 schema，验证原子首版、实际进程竞争、中断与原结果、普通角色和原复合约束。 新隔离全 Core 物理 commissioning 以实际发布宿主和 PostgreSQL 验证，旧业务与旧 RMA journal 栅栏、其他 Owner 和原回执已证。 W355 实测 Stock 10/100 普通登录冷暖、缓存 churn、真实模型、原生后端及双进程有限峰值，原配置 129/1000 拒绝。 原 RMA 正常 HTTP 单条和历史读从真实登录经当前共享权威到新租户 EF，A/B 原件、ETag、授权和真实 SQL已验证。 W358 RMA 已 Ready 租户的真实非事务索引、原生无效对象中断及准确原键恢复已验证，B 和已采用普通读继续。 原 RMA 受权分页列表以真实 A/B Bearer 验证两页和当前权限，第二页实际跨128候选，版本按原键读取。 原生同快照 RMA tenant schema 和已引用的共享 Outbound 从真实 A/B 活动库准确导出并独立 staging，ACL/Owner、版本和原内容通过。 W361 对真实全 Core 的原 RMA 日志安装普通租户 RLS 和同事务最小追加，实测同键跨租、闭合回滚、原认证根、其他 Owner 及原回执。 W366 增加真实 RMA 原操作日志同快照 v2 切片，准确固定租户和原 Owner，原 bytes 与隔离 staging 已验，保留 v1。 W364 在真实宿主首次采用普通 RMA draft POST，原 head、version 和 W361 journal 同事务写回，现行授权、八位数量、原 ETag 及同键精确重放已证。 W370 将真实 RMA v1/v2 归档 staging 接可操作入口，验证同事务原 schema、共享片和回执，坏输入回滚及原结果恢复。 W372 实际采用普通 RMA 提交，原 If-Match、版本推进、原日志、权限、故障回滚与原结果实证。共享归档保持确切已采用 writer 权限。 W374 实际交付 v3 同切面来源归档及 v1/v2 兼容。 W375 真正接正常原操作查询与关闭，当前授权、迟到竞争及原结果实证。 W377 实际交付 v3 隔离 staging、来源精度和字符规则、后段回滚与同键恢复。 W379 实测原可见性 v4 同切面，保留直连和回退工单、软删、空键与原库位隔离。 W380 同快照实际身份优先四表、原 bytea、租约和全局消息键，旧格式兼容。 W382 实际 v4 原子落表、真实图失败回滚与原回执。 W385 实际 v5 四表中立 staging，原键、空成员、原回执及同 pin 回滚。 W384 实际对账当前终态/租约与原键冲突，保持 UNKNOWN，受限角色真失败闭合。 W387 实际历史 IAM 同快照归档，后续字段和策略漂移未影响原切面。 W389 同快照保留原 FileContent 资产和原工程父版本，真实原件按长度与摘要复核，异常缺件拒绝。 W391 原历史 IAM 原子落表，原参与者标志跨 heads/journal 精确核实，晚段失败后同键恢复。 W393 对账原 IAM 现行事实，原 3 项漂移和原缺失参与者按原值保留，精确 v6/v7 原源通过。 W394 实测 v7 文件引用中立落表、真实晚段故障全回滚及原回执恢复。 W395 实测 ERP 八表同切面归档及原 C 与 ICU 键域，保留报文/原结果/租约及 replay 审计。 W396 原 v6/v7 清单使用相同 Identity Priority 当前对账，实际发布原件和空键权限得到验证。 W398 原 ERP 八表在同一事务中立暂存，保留原键和字节，实测全回滚与精确原回执。 W399 已实测统一 v8 包的 ERP 原收件、发件和桥接当前键，未知或原绑定冲突保守停止，当前行无改写。 W400 已实测同一 v8 原包的 IAM 与 Identity Priority 现行对账，沿用原键与原报告。 W402 已实测 v9 的安全审计和主体保留历史与既有归档共享同一快照，原切面、来源环境和租户准确。 W403 已实测 Main Stock 发件箱、路由、companion 和关联原日志的同快照完整切片。 W404 已实测原 v9 历史证据在独立空目标中立落表，保留原行、版本和原回执。 W405 实测统一 v10 在同一 PostgreSQL 切面收齐 RMA 和 Main Stock 14 个原成员，保留两租户真实原结果及切面差异。 W407 实测统一 v10 和 14 个 Stock 原成员以原类型和键原子暂存，保留原切面与同键回执，分别验证独立 Published companion。 W408 实测同源 v10 的 Stock 原键在 PostgreSQL 当前快照保留原状态，异租全局键不披露、当前冲突/缺失闭合，并对回独立 W352 历史 Pending 与 W403 当前 Published 的原票据、回执及发送尝试。 W409 对同源原 v9/v10 实测三个只读入口，保留 IAM 17 项、Identity Published Outbox 1 项，原件无 ERP/Identity Inbox/资产样本。 W406 实测独立 Core 候选原两表导入、晚外键全回滚和原 COMMIT 回执恢复。W401 用同等隔离候选独立验证普通 HTTP 当前/历史读回、跨租户和现行撤权。 W411 实测 v10 原两表在独立 Core 导入、故障回滚及原回执恢复。 W410 实测 v2 批准开放与活跃 B。 W412 实测非空同源 v10 和中立暂存。 W413 PostgreSQL 18.6 实测 v2 两条真实草稿及提交原件 12 列逐字节相同，晚段 23514 全回滚，655 字节独立回执原样回读，A/B 同键隔离。 W414 Windows 实测同源 v10 原 41 字节按原租户键落盘，错文件零写入，并发只发布一次，回包丢失后原回执逐字节恢复，原 v8 空包和既有归档校验兼容。 W416 PostgreSQL 18.6 从真实 W383 源导出 3 文件、3 事件、3 原回执和 1 原父版本，原生内容逐项吻合，实际切点隔离和错误图拒绝通过。 W417 原 PGT-006、007、009 在真实关闭 RMA Core 候选范围通过。普通 A/B 登录、20 个原生 42501 及原序列、流水、ACL 前后状态均准确。 W418 实际 PostgreSQL 18.6 关闭候选五份原件逐字节一致，原 675 字节回执恢复，权限拒绝及晚段原生故障完整回滚。 W419 真实 ERP C03 Owner 在 A/B 写入独立终态与原消息。重复报文保持八表与序列，A 八份原生成员与正常 v10 切面逐字节一致。 W421 复用已执行的五项 PostgreSQL 18.6 实证，正式矩阵 8 PASS、19 NOT_RUN。 W420 同一 W372 库的 A/B 实际 Engineering、FileContent 原件和分别五份原生 COPY 一致，原 RMA 和四条原流水逐字节保持。 W424 采用 PGT-023 的受控容量及凭据轮换实证。 W426 采用 PGT-001 的真实普通 Stock V2 正向证据。 W427 实测共享表 DELETE RLS 和原密钥列拒绝并采用 PGT-008。 W430 实测同 schema 归属更新的原 ACL 与固定 CHECK、两次无半写和合法原版本提交。 W431 实测原共享消息键并发、两种 raw、失败全回滚及独立键域，结合原受控接收采用 PGT-015。 W422 原 W419 C03 在 PostgreSQL 关闭候选完整导入。已分配 token 拒绝、晚段全局键冲突全回滚、714 字节原回执恢复、A/B 原件保持与实际序列 11。 W432 真实 PostgreSQL 保存点、约束与语句超时的原事务恢复及 A/B 独立复用，合用 W344 的真实 HTTP 取消与坏连接替换，采用原 PGT-010。 W425 真实 A 后端交给 B 的事务入口，身份守卫拒绝，业务回调与 SQL 均为零，A/B 原行摘要一致。 W428 正常 PostgreSQL Core EF 224 到 225、用户复合外键、IAM 原事务与 HTTP 错属回滚。角色复合引用仍是原 PGT-027 余项。 W434 正常 Core EF 225 到 226、IAM Owner 与 HTTP，角色和用户普通 SCRAM COPY、原生无半写及合法 A。合用同 schema 验证覆盖原 PGT-027。 W433 实际 Main 创建 V1 到 Core commissioning 和 RMA。原键、无旧密码、非 Ready 拒绝、错误 Owner 保留、DDL 后中断全回滚及 CLI 原回执恢复。 W429 实际 PostgreSQL 18.6 在同一 holder 导出 A 的 v11，五个 FileContent 原成员独立 COPY 逐字节一致。B 的真实同键写入、独立归档及错租拒绝通过。 W423 W372 同源 A/B 真实 C03、重复投递及普通角色读回，A 的原 FileContent 资产和 ERP 八表纳入同一 v8 快照。原两租户业务字节核对。 W415 实测隔离 503、独立批准、普通 A 原 DRAFT/SUBMITTED、B UNKNOWN、同租错 actor 拒绝及同 Bearer 撤权后 403，原 12 列保持。 W467 已采用W429实际v11原件显式写入隔离暂存，五个FileContent原历史成员按原类型、键和租户落库及COPY逐字节回读，旧v10、晚段真实回滚和暂存回执保持；recoveryReady=false。 W468 消费W467真实v11暂存回执及原manifest pin，核对同一历史元数据，原LocalFileStore 45字节按原键写入独立私有候选，可原样恢复回执，旧41字节v10保留；recoveryReady=false。 W469 沿W429 v11与W468候选原45字节，PostgreSQL 18.6关闭候选导入FileContent三表及原Owner流水，引用Engineering父版本，五原CSV与回执逐字节一致，B同键原记录不变，真实晚段故障全回滚。 W470 完整W429 v11在同一物理身份的私有副本通过四个只读入口，IAM 17、Identity Priority 1、ERP 2、Main Stock 2，49源关系及原件不变；recoveryReady=false。 W471 实际.NET FileContent Owner在W469关闭候选读取A/B原快照、Engineering父版本和同键原流水，A原45字节真实下载、B错摘要拒绝，15关系及候选回执不变。 W472 完整W429 v11的RMA head及version各一行在隔离PostgreSQL 18.6关闭Core候选逐字节导入，真实晚失败回滚，回执可原样恢复。W429的模拟RMA流水保持按原图校验拒绝。 W473 完整W429 v11的实际ERP C03原图在关闭PostgreSQL候选导入，A/B各八原成员逐字节一致；23505原生晚失败回滚、序列11、同原回执及源49关系保持。 W474 W372停机源独立副本以真实草稿和提交原流水生成同源完整v11；仅补模拟环境及空Stock路由，两租户原流水不变，原A两COMMITTED共3443字节与W372同。 W475 同一真实W474 v11在关闭PostgreSQL候选导入RMA原1 head/2 version及2原COMMITTED，原3443字节、双回执、真实晚失败回滚及普通A/B隔离通过。 W476 同源 v11 保留两条实际 RMA 原流水，含 A/B 原生 FileContent 与 ERP C03 验证数据。选定租户 14 份 PostgreSQL 暂存 CSV、45 字节原件和两份恢复回执精确一致。 W477 同源 v11 纳入 A/B 真实 Stock Owner 原库存操作。A 的 14 份 Stock CSV 与 PostgreSQL 源及中立暂存逐字节一致，复核 W476 的 16 份原 CSV、45 字节文件及待发送原状态。 W478 同一实际四域 v11 的 ERP 原 Pending 在隔离 PostgreSQL 上由真实派送器取得租约并经一次模拟确认转为 Published。三次只读对账保留归档原值、当前状态与 B 原八表。 W479 同一实际 v11 对仅 schema、缺共享 ERP、缺文件和源库别名在暂存前拒绝。完整包闭合暂存，错键无法取回回执，正确键原样恢复。源 Published、归档 Pending 及 B 原件保持。 W481 同一v11在单个关闭候选组合ERP/Core/RMA原journal/FileContent并恢复四类回执和独立文件；错误顺序与晚段回滚通过；现行撤权及全局键实测，真实epoch变化仍未运行。",
-        "remaining": "完整Stock候选及正式制品采用、ERP非本C03原图、现行权限/凭据与恢复批准链，实际epoch变化的合法路径，以及正式PGT-021/022/024；已实测的关闭态组合和现行差异不重复。",
+        "report": "docs/development/evidence/W674-01/DELIVERY.md",
+        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。  W346 现有 Stock 首装提交后丢弃 stdout，从另一个真实进程在准确物理库取回原安装 ID，驱动原写栅栏及后续已交付安装。孤立回执、未绑定登录读策略及目录/权限漂移拒绝。 W348 实际验证共享消息 profile 的初始化中断、原键恢复及原结果重放。  W350 在 fresh-only PostgreSQL 真实把原 RMA heads/versions 迁入各自租户 schema，验证原子首版、实际进程竞争、中断与原结果、普通角色和原复合约束。 新隔离全 Core 物理 commissioning 以实际发布宿主和 PostgreSQL 验证，旧业务与旧 RMA journal 栅栏、其他 Owner 和原回执已证。 W355 实测 Stock 10/100 普通登录冷暖、缓存 churn、真实模型、原生后端及双进程有限峰值，原配置 129/1000 拒绝。 原 RMA 正常 HTTP 单条和历史读从真实登录经当前共享权威到新租户 EF，A/B 原件、ETag、授权和真实 SQL已验证。 W358 RMA 已 Ready 租户的真实非事务索引、原生无效对象中断及准确原键恢复已验证，B 和已采用普通读继续。 原 RMA 受权分页列表以真实 A/B Bearer 验证两页和当前权限，第二页实际跨128候选，版本按原键读取。 原生同快照 RMA tenant schema 和已引用的共享 Outbound 从真实 A/B 活动库准确导出并独立 staging，ACL/Owner、版本和原内容通过。 W361 对真实全 Core 的原 RMA 日志安装普通租户 RLS 和同事务最小追加，实测同键跨租、闭合回滚、原认证根、其他 Owner 及原回执。 W366 增加真实 RMA 原操作日志同快照 v2 切片，准确固定租户和原 Owner，原 bytes 与隔离 staging 已验，保留 v1。 W364 在真实宿主首次采用普通 RMA draft POST，原 head、version 和 W361 journal 同事务写回，现行授权、八位数量、原 ETag 及同键精确重放已证。 W370 将真实 RMA v1/v2 归档 staging 接可操作入口，验证同事务原 schema、共享片和回执，坏输入回滚及原结果恢复。 W372 实际采用普通 RMA 提交，原 If-Match、版本推进、原日志、权限、故障回滚与原结果实证。共享归档保持确切已采用 writer 权限。 W374 实际交付 v3 同切面来源归档及 v1/v2 兼容。 W375 真正接正常原操作查询与关闭，当前授权、迟到竞争及原结果实证。 W377 实际交付 v3 隔离 staging、来源精度和字符规则、后段回滚与同键恢复。 W379 实测原可见性 v4 同切面，保留直连和回退工单、软删、空键与原库位隔离。 W380 同快照实际身份优先四表、原 bytea、租约和全局消息键，旧格式兼容。 W382 实际 v4 原子落表、真实图失败回滚与原回执。 W385 实际 v5 四表中立 staging，原键、空成员、原回执及同 pin 回滚。 W384 实际对账当前终态/租约与原键冲突，保持 UNKNOWN，受限角色真失败闭合。 W387 实际历史 IAM 同快照归档，后续字段和策略漂移未影响原切面。 W389 同快照保留原 FileContent 资产和原工程父版本，真实原件按长度与摘要复核，异常缺件拒绝。 W391 原历史 IAM 原子落表，原参与者标志跨 heads/journal 精确核实，晚段失败后同键恢复。 W393 对账原 IAM 现行事实，原 3 项漂移和原缺失参与者按原值保留，精确 v6/v7 原源通过。 W394 实测 v7 文件引用中立落表、真实晚段故障全回滚及原回执恢复。 W395 实测 ERP 八表同切面归档及原 C 与 ICU 键域，保留报文/原结果/租约及 replay 审计。 W396 原 v6/v7 清单使用相同 Identity Priority 当前对账，实际发布原件和空键权限得到验证。 W398 原 ERP 八表在同一事务中立暂存，保留原键和字节，实测全回滚与精确原回执。 W399 已实测统一 v8 包的 ERP 原收件、发件和桥接当前键，未知或原绑定冲突保守停止，当前行无改写。 W400 已实测同一 v8 原包的 IAM 与 Identity Priority 现行对账，沿用原键与原报告。 W402 已实测 v9 的安全审计和主体保留历史与既有归档共享同一快照，原切面、来源环境和租户准确。 W403 已实测 Main Stock 发件箱、路由、companion 和关联原日志的同快照完整切片。 W404 已实测原 v9 历史证据在独立空目标中立落表，保留原行、版本和原回执。 W405 实测统一 v10 在同一 PostgreSQL 切面收齐 RMA 和 Main Stock 14 个原成员，保留两租户真实原结果及切面差异。 W407 实测统一 v10 和 14 个 Stock 原成员以原类型和键原子暂存，保留原切面与同键回执，分别验证独立 Published companion。 W408 实测同源 v10 的 Stock 原键在 PostgreSQL 当前快照保留原状态，异租全局键不披露、当前冲突/缺失闭合，并对回独立 W352 历史 Pending 与 W403 当前 Published 的原票据、回执及发送尝试。 W409 对同源原 v9/v10 实测三个只读入口，保留 IAM 17 项、Identity Published Outbox 1 项，原件无 ERP/Identity Inbox/资产样本。 W406 实测独立 Core 候选原两表导入、晚外键全回滚和原 COMMIT 回执恢复。W401 用同等隔离候选独立验证普通 HTTP 当前/历史读回、跨租户和现行撤权。 W411 实测 v10 原两表在独立 Core 导入、故障回滚及原回执恢复。 W410 实测 v2 批准开放与活跃 B。 W412 实测非空同源 v10 和中立暂存。 W413 PostgreSQL 18.6 实测 v2 两条真实草稿及提交原件 12 列逐字节相同，晚段 23514 全回滚，655 字节独立回执原样回读，A/B 同键隔离。 W414 Windows 实测同源 v10 原 41 字节按原租户键落盘，错文件零写入，并发只发布一次，回包丢失后原回执逐字节恢复，原 v8 空包和既有归档校验兼容。 W416 PostgreSQL 18.6 从真实 W383 源导出 3 文件、3 事件、3 原回执和 1 原父版本，原生内容逐项吻合，实际切点隔离和错误图拒绝通过。 W417 原 PGT-006、007、009 在真实关闭 RMA Core 候选范围通过。普通 A/B 登录、20 个原生 42501 及原序列、流水、ACL 前后状态均准确。 W418 实际 PostgreSQL 18.6 关闭候选五份原件逐字节一致，原 675 字节回执恢复，权限拒绝及晚段原生故障完整回滚。 W419 真实 ERP C03 Owner 在 A/B 写入独立终态与原消息。重复报文保持八表与序列，A 八份原生成员与正常 v10 切面逐字节一致。 W421 复用已执行的五项 PostgreSQL 18.6 实证，正式矩阵 8 PASS、19 NOT_RUN。 W420 同一 W372 库的 A/B 实际 Engineering、FileContent 原件和分别五份原生 COPY 一致，原 RMA 和四条原流水逐字节保持。 W424 采用 PGT-023 的受控容量及凭据轮换实证。 W426 采用 PGT-001 的真实普通 Stock V2 正向证据。 W427 实测共享表 DELETE RLS 和原密钥列拒绝并采用 PGT-008。 W430 实测同 schema 归属更新的原 ACL 与固定 CHECK、两次无半写和合法原版本提交。 W431 实测原共享消息键并发、两种 raw、失败全回滚及独立键域，结合原受控接收采用 PGT-015。 W422 原 W419 C03 在 PostgreSQL 关闭候选完整导入。已分配 token 拒绝、晚段全局键冲突全回滚、714 字节原回执恢复、A/B 原件保持与实际序列 11。 W432 真实 PostgreSQL 保存点、约束与语句超时的原事务恢复及 A/B 独立复用，合用 W344 的真实 HTTP 取消与坏连接替换，采用原 PGT-010。 W425 真实 A 后端交给 B 的事务入口，身份守卫拒绝，业务回调与 SQL 均为零，A/B 原行摘要一致。 W428 正常 PostgreSQL Core EF 224 到 225、用户复合外键、IAM 原事务与 HTTP 错属回滚。角色复合引用仍是原 PGT-027 余项。 W434 正常 Core EF 225 到 226、IAM Owner 与 HTTP，角色和用户普通 SCRAM COPY、原生无半写及合法 A。合用同 schema 验证覆盖原 PGT-027。 W433 实际 Main 创建 V1 到 Core commissioning 和 RMA。原键、无旧密码、非 Ready 拒绝、错误 Owner 保留、DDL 后中断全回滚及 CLI 原回执恢复。 W429 实际 PostgreSQL 18.6 在同一 holder 导出 A 的 v11，五个 FileContent 原成员独立 COPY 逐字节一致。B 的真实同键写入、独立归档及错租拒绝通过。 W423 W372 同源 A/B 真实 C03、重复投递及普通角色读回，A 的原 FileContent 资产和 ERP 八表纳入同一 v8 快照。原两租户业务字节核对。 W415 实测隔离 503、独立批准、普通 A 原 DRAFT/SUBMITTED、B UNKNOWN、同租错 actor 拒绝及同 Bearer 撤权后 403，原 12 列保持。 W467 已采用W429实际v11原件显式写入隔离暂存，五个FileContent原历史成员按原类型、键和租户落库及COPY逐字节回读，旧v10、晚段真实回滚和暂存回执保持；recoveryReady=false。 W468 消费W467真实v11暂存回执及原manifest pin，核对同一历史元数据，原LocalFileStore 45字节按原键写入独立私有候选，可原样恢复回执，旧41字节v10保留；recoveryReady=false。 W469 沿W429 v11与W468候选原45字节，PostgreSQL 18.6关闭候选导入FileContent三表及原Owner流水，引用Engineering父版本，五原CSV与回执逐字节一致，B同键原记录不变，真实晚段故障全回滚。 W470 完整W429 v11在同一物理身份的私有副本通过四个只读入口，IAM 17、Identity Priority 1、ERP 2、Main Stock 2，49源关系及原件不变；recoveryReady=false。 W471 实际.NET FileContent Owner在W469关闭候选读取A/B原快照、Engineering父版本和同键原流水，A原45字节真实下载、B错摘要拒绝，15关系及候选回执不变。 W472 完整W429 v11的RMA head及version各一行在隔离PostgreSQL 18.6关闭Core候选逐字节导入，真实晚失败回滚，回执可原样恢复。W429的模拟RMA流水保持按原图校验拒绝。 W473 完整W429 v11的实际ERP C03原图在关闭PostgreSQL候选导入，A/B各八原成员逐字节一致；23505原生晚失败回滚、序列11、同原回执及源49关系保持。 W474 W372停机源独立副本以真实草稿和提交原流水生成同源完整v11；仅补模拟环境及空Stock路由，两租户原流水不变，原A两COMMITTED共3443字节与W372同。 W475 同一真实W474 v11在关闭PostgreSQL候选导入RMA原1 head/2 version及2原COMMITTED，原3443字节、双回执、真实晚失败回滚及普通A/B隔离通过。 W476 同源 v11 保留两条实际 RMA 原流水，含 A/B 原生 FileContent 与 ERP C03 验证数据。选定租户 14 份 PostgreSQL 暂存 CSV、45 字节原件和两份恢复回执精确一致。 W477 同源 v11 纳入 A/B 真实 Stock Owner 原库存操作。A 的 14 份 Stock CSV 与 PostgreSQL 源及中立暂存逐字节一致，复核 W476 的 16 份原 CSV、45 字节文件及待发送原状态。 W478 同一实际四域 v11 的 ERP 原 Pending 在隔离 PostgreSQL 上由真实派送器取得租约并经一次模拟确认转为 Published。三次只读对账保留归档原值、当前状态与 B 原八表。 W479 同一实际 v11 对仅 schema、缺共享 ERP、缺文件和源库别名在暂存前拒绝。完整包闭合暂存，错键无法取回回执，正确键原样恢复。源 Published、归档 Pending 及 B 原件保持。 W481 同一v11在单个关闭候选组合ERP/Core/RMA原journal/FileContent并恢复四类回执和独立文件；错误顺序与晚段回滚通过；现行撤权及全局键实测，真实epoch变化仍未运行。 W674 按原卡复核全部17项所属PGT、共享/租户布局及当前源码；正式27/27保持，真实余项见本轮整卡报告。",
+        "remaining": "当前 Main 尚缺覆盖 EF、raw SQL、迁移非表对象、全部唯一域及实际写者的完整存储归属清单；先按 S02-00 §3 复用已采用证据，明确继续共享、已采用租户布局和未开放新布局的对象及恢复依赖，不自动全库迁移。已支持的 RMA 存储模型 v2 尚需兼容归档/恢复及隔离 PostgreSQL 实测；现行工具按 W528 明确拒绝。正式 PGT 27/27（本卡 17/17）保持，PGT-011/017/022/024/025 不再列未运行，其他 WP02 卡和既有环境切换各按原范围。",
         "next_action": "在原卡剩余范围内区分真实版本/Owner依赖与已交付提供者；下一原任务按询盘直接调用链和实际前置登记，不把本次闭合候选当作整卡完成。",
         "evidence_refs": [
           "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
@@ -169157,7 +169179,14 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W481-01"
+        "latest_window": "W481-01",
+        "previous_review": {
+          "window": "W310-01",
+          "as_of": "2026-11-08",
+          "classification": "IMPLEMENTATION_REMAINS",
+          "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
+          "remaining": "完整Stock候选及正式制品采用、ERP非本C03原图、现行权限/凭据与恢复批准链，实际epoch变化的合法路径，以及正式PGT-021/022/024；已实测的关闭态组合和现行差异不重复。"
+        }
       },
       "wave326_delivery": {
         "status": "CLOSED",
@@ -171083,6 +171112,55 @@
         "full_task_completed": false,
         "tested_source_sha": "01c7640e540cef40a7661e1c3ddb74f5af9fd6a0",
         "actual_evidence": "D:/CP6-test-artifacts/W528-01/native-04/actual.json"
+      },
+      "whole_card_review": {
+        "window": "W674-01",
+        "report": "docs/development/evidence/W674-01/DELIVERY.md",
+        "reviewed_source_sha": "b829ff69893f4c59d12335b27b26bdf88f19f7d7",
+        "result": "IMPLEMENTATION_REMAINS",
+        "formal_cases": [
+          "PGT-001",
+          "PGT-002",
+          "PGT-003",
+          "PGT-005",
+          "PGT-006",
+          "PGT-007",
+          "PGT-008",
+          "PGT-009",
+          "PGT-010",
+          "PGT-012",
+          "PGT-018",
+          "PGT-019",
+          "PGT-021",
+          "PGT-022",
+          "PGT-023",
+          "PGT-024",
+          "PGT-027"
+        ],
+        "formal_cases_passed": 17,
+        "all_postgresql_cases_passed": 27,
+        "new_business_tests_executed": false,
+        "resolved_stale_pending_cases": [
+          "PGT-011",
+          "PGT-017",
+          "PGT-022",
+          "PGT-024",
+          "PGT-025"
+        ],
+        "remaining_scope": [
+          {
+            "id": "current-main-storage-ownership",
+            "source": "docs/design-handbook/architecture/02-postgresql-tenancy.md#3-数据分类与物理边界",
+            "next_action": "核对当前对象、唯一域、Owner和实际写者；明确原共享位置、已采用租户布局及未开放路径，复用原证据。"
+          },
+          {
+            "id": "rma-storage-model-v2-recovery",
+            "source": "CP6.WebApi/rma-tenant-model-compatibility.json",
+            "next_action": "实现兼容的存储v2归档恢复，保留v1与当前拒绝语义直到新路径实际验收。"
+          }
+        ],
+        "full_task_completed": false,
+        "next_window": "WP02-02 current Main object and writer ownership reconciliation"
       }
     },
     {
@@ -171168,7 +171246,7 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
-      "remaining_scope": "当前PostgreSQL权限单语句一致性已正常集成且远端核对；Owner提交前撤权fence、权威版本与registry/映射签认、字段V1真实来源采用、运行时缓存协议/负载容量及全Main/跨仓业务采用未验收。调用者RR旧快照不等于当前提交授权。完整WP02-03保持PLANNED/NOT_CHECKED，WP02-02完整前置保留。",
+      "remaining_scope": "PGT-017 已由 W645 正式通过，已登记 Main/CRM 写者的共同门和原结果证据直接复用。整卡仍需按原范围复核权威版本、registry/映射签认、字段V1真实来源、运行缓存协议/容量和实际消费者采用，尚不宣称这些整卡出口全部满足。WP02-02 完整前置保持 IN_PROGRESS，见 W674 整卡复核；本卡保持 PLANNED。",
       "wave10_delivery": {
         "status": "MERGED",
         "source_candidate_sha": "d29721d20e3ddc4eac46e9b40434e3b680326605",
@@ -177811,6 +177889,14 @@
         "validation": "7 条真实 PostgreSQL 撤权与重新授权，21 项定向组件回归，共 28 通过、0 失败、0 跳过。",
         "remaining": "PGT-017 余下采购询价回写、采购订单/收货、财务过账、MRP、旧流程批办/退回/转交/撤回、部分 WMS/Space、订单取号、缓存注销和普通数据库写者。按原提交单元验证。",
         "full_task_complete": false
+      },
+      "predecessor_review": {
+        "window": "W674-01",
+        "report": "docs/development/evidence/W674-01/DELIVERY.md",
+        "previous_remaining_scope": "当前PostgreSQL权限单语句一致性已正常集成且远端核对；Owner提交前撤权fence、权威版本与registry/映射签认、字段V1真实来源采用、运行时缓存协议/负载容量及全Main/跨仓业务采用未验收。调用者RR旧快照不等于当前提交授权。完整WP02-03保持PLANNED/NOT_CHECKED，WP02-02完整前置保留。",
+        "prerequisite_state": "WP02-02 IN_PROGRESS",
+        "adopted_case": "PGT-017 PASS; docs/development/evidence/W645-01/DELIVERY.md",
+        "full_task_completed": false
       }
     },
     {
@@ -212263,11 +212349,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W645",
-      "path": "docs/development/evidence/W645-01/DELIVERY.md",
-      "baseline_sha": "a93722b75a7317b249353f40f23c07ae3e199674",
-      "registered_at": "2026-11-16T04:38:53.879093+00:00",
-      "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+      "id": "W674",
+      "path": "docs/development/evidence/W674-01/DELIVERY.md",
+      "baseline_sha": "b829ff69893f4c59d12335b27b26bdf88f19f7d7",
+      "registered_at": "2026-11-16T05:28:16.826553+00:00",
+      "phase": "REVIEW_COMPLETED",
       "assigned_chats": [
         "COORD"
       ],
@@ -212280,45 +212366,43 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "正式 PostgreSQL 矩阵 27 PASS，原询盘 60/60。",
+      "next_action": "Continue WP02-02 current Main storage object/writer classification, then storage-model-v2 recovery.",
       "windows": [
         {
-          "id": "W645-01",
-          "workspace_task": "W645-01",
+          "id": "W674-01",
+          "workspace_task": "W674-01",
           "related_tasks": [
-            "PGT-017",
-            "WP02-03"
+            "WP02-02"
           ],
           "chat": "COORD",
           "mode": "SINGLE_CHAT",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w645-01",
-          "planned_scope_ref": "docs/development/evidence/W645-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W645-01/DELIVERY.md",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "branch": "codex/w674-01",
+          "planned_scope_ref": "docs/development/evidence/W674-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W674-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "PostgreSQL 正式验收唯一矩阵",
-            "Main 与 CRM 已登记实测写者、证据和原生锁序"
+            "Main:roadmap-and-project-state",
+            "Main:WP02-02-whole-card-review"
           ],
-          "main_branch_disposition": "pending-final-finish-record",
-          "main_seat_released": false,
-          "validation_summary": "正式 PGT-017 使用各已采用任务的实际隔离 PostgreSQL 18.6、真实业务事务和原生失败证据。最终写者 W673 双库五项候选验证、18 项原 SSO 回归和 23 项定向 Web 回归。采用文档检查、证据链接和正式矩阵一致性通过后集成。",
-          "remaining_scope": "PGT-017 已完成。独立生产采用按受保护发布流程记录。",
-          "main_tested_source_sha": "e2e0e4ea8216596d01f639dcedaaa1f9148c7410"
+          "remaining_scope": "当前 Main 尚缺覆盖 EF、raw SQL、迁移非表对象、全部唯一域及实际写者的完整存储归属清单；先按 S02-00 §3 复用已采用证据，明确继续共享、已采用租户布局和未开放新布局的对象及恢复依赖，不自动全库迁移。已支持的 RMA 存储模型 v2 尚需兼容归档/恢复及隔离 PostgreSQL 实测；现行工具按 W528 明确拒绝。正式 PGT 27/27（本卡 17/17）保持，PGT-011/017/022/024/025 不再列未运行，其他 WP02 卡和既有环境切换各按原范围。",
+          "review_completed": true,
+          "validation_summary": "Original task and current source reviewed; 17 owned PGT cases PASS; structural/link/diff validation only, original native evidence reused.",
+          "delivery_tracking": "Protected PR and D:/CP6-test-artifacts/W674-01/main-finish.json record actual adoption and seat release."
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/wave17-dispatch-20261018"
+          "D:\\CP6-worktrees\\wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
-      "product_integrated": true
+      "product_code_changed": false
     },
     "wave_history": [
       {
@@ -271032,6 +271116,64 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/dev-2"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W645",
+        "path": "docs/development/evidence/W645-01/DELIVERY.md",
+        "baseline_sha": "a93722b75a7317b249353f40f23c07ae3e199674",
+        "registered_at": "2026-11-16T04:38:53.879093+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "正式 PostgreSQL 矩阵 27 PASS，原询盘 60/60。",
+        "windows": [
+          {
+            "id": "W645-01",
+            "workspace_task": "W645-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w645-01",
+            "planned_scope_ref": "docs/development/evidence/W645-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W645-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "PostgreSQL 正式验收唯一矩阵",
+              "Main 与 CRM 已登记实测写者、证据和原生锁序"
+            ],
+            "main_branch_disposition": "pending-final-finish-record",
+            "main_seat_released": false,
+            "validation_summary": "正式 PGT-017 使用各已采用任务的实际隔离 PostgreSQL 18.6、真实业务事务和原生失败证据。最终写者 W673 双库五项候选验证、18 项原 SSO 回归和 23 项定向 Web 回归。采用文档检查、证据链接和正式矩阵一致性通过后集成。",
+            "remaining_scope": "PGT-017 已完成。独立生产采用按受保护发布流程记录。",
+            "main_tested_source_sha": "e2e0e4ea8216596d01f639dcedaaa1f9148c7410"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/wave17-dispatch-20261018"
           ],
           "new_worktrees": 0
         },

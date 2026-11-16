@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-16，W674 依据最新接续记录完成 WP02-02 整卡复核，修正台账过时余项并同步生成页和项目状态。保留正式 PostgreSQL 27/27、WP02-02 IN_PROGRESS 与 WP02-03 PLANNED；本次没有业务代码、数据库或工作流变更。 [W674 复核](../development/evidence/W674-01/DELIVERY.md)
+
 2026-11-15，补齐已有用户 SSO 首绑验证并完成 PGT-017 的正式矩阵、写者清单与 CRM 双库恢复证据。 [PGT-017 正式验收](../development/evidence/W645-01/DELIVERY.md)
 
 2026-11-15，W673 接入已有用户 SSO 首绑的同用户待确认和原生 CRM 栅栏，保留既有身份、原客户端绑定与原会话策略。Web 可重新验证原交互。 [W673 交付](../development/evidence/W673-01/DELIVERY.md)
