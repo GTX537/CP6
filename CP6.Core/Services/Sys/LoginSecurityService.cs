@@ -42,8 +42,8 @@ public partial class LoginSecurityService : ILoginSecurityService
 
     public async Task RecordSuccessAsync(Sys_User user, string? ip)
     {
-        if (_db.Database.IsNpgsql() && await ReadLoginLockoutAsync(user.TenantId, user.Id, CancellationToken.None) is not null)
-            throw new InvalidOperationException("AUTH_SESSION_AUTHORITY_UNAVAILABLE");
+        if (_db.Database.IsNpgsql())
+            await RequireNoPendingLoginLockoutAsync(user.TenantId, user.Id, CancellationToken.None);
         user.FailedLoginCount = 0;
         user.LockedUntil = null;
         user.LastFailedLoginAt = null;

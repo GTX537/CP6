@@ -64,6 +64,19 @@ public partial class LoginSecurityService
         await _db.Entry(user).ReloadAsync(ct);
     }
 
+    internal async Task ResolveLockoutForSsoAsync(AuthenticationProofV1 proof, AuthenticationCompletionGateV1 gate, CancellationToken ct)
+    {
+        if (await ReadLoginLockoutAsync(proof.TenantId, proof.UserId, ct) is not { } intent) return;
+        await gate.ExecuteAsync(proof, static (_, _) => Task.FromResult(true), ct);
+        await CompleteLockoutAsync(proof.TenantId, intent, ct);
+    }
+
+    internal async Task RequireNoPendingLoginLockoutAsync(Guid tenant, Guid user, CancellationToken ct)
+    {
+        if (await ReadLoginLockoutAsync(tenant, user, ct) is not null)
+            throw new InvalidOperationException("AUTH_SESSION_AUTHORITY_UNAVAILABLE");
+    }
+
     private Task<PreparedFailure> PrepareFailureAsync(Guid tenant, Guid userId, Guid? credential, Guid operation,
         FailedFactor? factor, FailureAudit audit, CancellationToken ct) => WithinLoginRootAsync<PreparedFailure>(tenant, async token =>
     {

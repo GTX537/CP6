@@ -21,12 +21,13 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     public async Task PGT017_login_lockout_preserves_the_original_failure_and_success_order()
     {
         const int threshold = 5;
-        const int lockoutMinutes = 15;
         const string browserRoute = "api/auth/login";
         const string nativeRoute = "api/client-auth/login";
 
         var mode = LockoutSetting("MODE");
         var scenario = LockoutSetting("SCENARIO");
+        var expiredBeforeRecovery = scenario == "cold-expired";
+        var lockoutMinutes = expiredBeforeRecovery ? 1 : 15;
         var native = mode.StartsWith("native-", StringComparison.Ordinal);
         var factor = !mode.EndsWith("-password", StringComparison.Ordinal);
         var enrollment = mode.EndsWith("-enroll", StringComparison.Ordinal);
@@ -59,7 +60,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
 
         var store = Guid.Parse(Environment.GetEnvironmentVariable("CP6_PGT017_STORE_ID")!);
         var seal = new NpgsqlConnectionStringBuilder(Environment.GetEnvironmentVariable("CP6_PGT017_SEAL_CONNECTION"));
-        await using var crm = new NpgsqlConnection(Environment.GetEnvironmentVariable("CP6_PGT017_CRM_OBSERVER"));
+        var crmConnection = Environment.GetEnvironmentVariable("CP6_PGT017_CRM_OBSERVER");
+        await using var crm = new NpgsqlConnection(crmConnection);
         await crm.OpenAsync();
         await InstallUserSealFixture(crm, seal, h.Tenant, store);
 
@@ -168,7 +170,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         }
 
         var acceptedNotBefore = DateTime.Now;
-        if (scenario == "cold-restart")
+        if (scenario is "cold-restart" or "cold-expired")
         {
             var deniedBefore = CountDeniedConnections();
             await SetSealLogin(false);
@@ -198,23 +200,58 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 await Save("cold-accepted.json", new { Mode = mode, Before = before, Waiting = waiting, Floor = floorBefore,
                     original.OperationId, original.StoreId, original.SealStarted, original.CompletionId, Plan = OriginalSource(original),
                     AcceptedNotBefore = acceptedNotBefore, AcceptedNotAfter = acceptedNotAfter });
+
+                await host.StopAsync();
+                environment["Security__Lockout__LockoutMinutes"] = (lockoutMinutes + 7).ToString();
+                if (expiredBeforeRecovery)
+                {
+                    var wait = acceptedNotAfter.AddMinutes(lockoutMinutes).AddSeconds(1) - DateTime.Now;
+                    if (wait > TimeSpan.Zero) await Task.Delay(wait);
+                }
+                else await SetSealLogin(true);
+
+                var refusalCount = CountDeniedConnections();
+                await using var restarted = await AuthenticationApiProcess.Start(apiConnection.ConnectionString, environment);
+                using var currentAdmission = await Login(restarted, password);
+                if (expiredBeforeRecovery)
+                {
+                    Assert.Equal(HttpStatusCode.OK, currentAdmission.StatusCode);
+                    Assert.True(native ? (await currentAdmission.Content.ReadFromJsonAsync<NativeAuthResult>())?.Session is not null
+                        : ReadCookies(currentAdmission).ContainsKey("cp6_at"));
+                    var afterExpiry = await MainFacts();
+                    Assert.Equal(before with { Count = 0, LastFailure = null, LastLogin = afterExpiry.LastLogin,
+                        Sessions = before.Sessions + 1, SessionProofs = before.SessionProofs + 1 }, afterExpiry);
+                    Assert.True(afterExpiry.LastLogin > acceptedNotAfter);
+                    Assert.Equal(floorBefore, await Floor());
+                    Assert.Equal(refusalCount, CountDeniedConnections());
+                    Assert.Null(await Pending());
+                    await AssertAudits((SecurityEventType.LoginFailed, 1), (SecurityEventType.LoginSuccess, 1), (SecurityEventType.AccountLocked, 0));
+                    var result = await h.Db.Database.SqlQuery<string>($"""
+                        SELECT result_json AS "Value" FROM cp6_authentication_v1.iam_operations
+                        WHERE tenant_id={h.Tenant} AND operation_id={original.OperationId} AND state='COMMITTED'
+                        """).SingleAsync();
+                    using var receipt = JsonDocument.Parse(result);
+                    var deadline = receipt.RootElement.GetProperty("LockedUntil").GetDateTime();
+                    Assert.True(receipt.RootElement.GetProperty("ExpiredWithoutSeal").GetBoolean());
+                    Assert.Equal(threshold, receipt.RootElement.GetProperty("Count").GetInt32());
+                    Assert.InRange(deadline, acceptedNotBefore.AddMinutes(lockoutMinutes).AddMilliseconds(-1), acceptedNotAfter.AddMinutes(lockoutMinutes));
+                    await Save("cold-expired.json", new { Mode = mode, original.OperationId, Deadline = deadline, After = afterExpiry, Floor = await Floor() });
+                }
+                else
+                {
+                    await AssertError(currentAdmission, "E-SEC-002");
+                    await AssertCommitted(acceptedNotAfter, original);
+                    await Save("cold-recovered.json", new { Mode = mode, original.OperationId, RestartedPid = restarted.ProcessId,
+                        After = await MainFacts(), Floor = await Floor() });
+                }
+                return;
             }
             finally { await SetSealLogin(true); }
-
-            await host.StopAsync();
-            environment["Security__Lockout__LockoutMinutes"] = (lockoutMinutes + 7).ToString();
-            await using var restarted = await AuthenticationApiProcess.Start(apiConnection.ConnectionString, environment);
-            using var currentAdmission = await Login(restarted, password);
-            await AssertError(currentAdmission, "E-SEC-002");
-            await AssertCommitted(acceptedNotAfter, original);
-            await Save("cold-recovered.json", new { Mode = mode, original.OperationId, RestartedPid = restarted.ProcessId,
-                After = await MainFacts(), Floor = await Floor() });
-            return;
         }
 
         if (scenario is "lockout-first" or "main-ack")
         {
-            await using var barrier = new NpgsqlConnection(crm.ConnectionString);
+            await using var barrier = new NpgsqlConnection(crmConnection);
             await barrier.OpenAsync();
             await using var hold = await barrier.BeginTransactionAsync();
             await using var holdTenant = new NpgsqlCommand("SELECT crm_identity_lock_v1.hold_v1(@tenant)", barrier, hold);
@@ -342,7 +379,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             {
                 var failures = audit.Where(row => row.EventType is (int)SecurityEventType.LoginFailed or (int)SecurityEventType.AccountLocked).ToArray();
                 Assert.All(failures, row => Assert.Equal(tenantCode, row.RequestTenantCode));
-                var originalFailure = scenario == "success-first" || native ? SecurityEventType.LoginFailed : SecurityEventType.AccountLocked;
+                var originalFailure = scenario == "success-first" || expiredBeforeRecovery || native ? SecurityEventType.LoginFailed : SecurityEventType.AccountLocked;
                 if (expected.Any(expectation => expectation.Type == originalFailure && expectation.Count > 0))
                 {
                     var reason = native ? "client=Windows;device=w672-owned-device;version=1.0.0;detail=wrong password" : "wrong password";

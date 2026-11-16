@@ -23,13 +23,18 @@ public sealed partial class AuthenticationEntryServiceV1(CP6Context db, ITenantC
         JsonSerializer.Serialize(new[] { client.ClientKind, client.DeviceId, client.AppVersion, client.PlatformVersion }));
     public static string WebBinding(string challenge) => AuthenticationInteractionStoreV1.Hash(challenge);
 
-    public Task<AuthenticationEntryResultV1> BeginAsync(AuthenticationProofV1 proof, string challenge,
+    public async Task<AuthenticationEntryResultV1> BeginAsync(AuthenticationProofV1 proof, string challenge,
         ClientContextDto? client, string? ip, string? ua, Action<AuthenticationEntryResultV1>? stage, CancellationToken ct, bool deferOutput = false)
     {
         tenant.CurrentTenantId = proof.TenantId;
         RequireClient(proof, challenge, client);
-        return gate.ExecuteAsync(proof, async (authority, token) =>
+        var lockout = proof.PrimaryMethod == AuthenticationPrimaryMethod.Sso
+            ? login as LoginSecurityService ?? throw new InvalidOperationException("AUTH_SESSION_AUTHORITY_UNAVAILABLE")
+            : null;
+        if (lockout is not null) await lockout.ResolveLockoutForSsoAsync(proof, gate, ct);
+        return await gate.ExecuteAsync(proof, async (authority, token) =>
         {
+            if (lockout is not null) await lockout.RequireNoPendingLoginLockoutAsync(proof.TenantId, proof.UserId, token);
             var decision = authority.Decide();
             var purpose = decision switch
             {
