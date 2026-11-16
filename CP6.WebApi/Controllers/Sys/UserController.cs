@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CP6.WebApi.Services;
-using CP6.WebApi.Filters;
 
 namespace CP6.WebApi.Controllers.Sys;
 
@@ -133,30 +132,39 @@ public class UserController : LocalizedControllerBase
     /// <summary>管理员重置用户 2FA（清启用/密钥/入会时间，复用 user:edit 权限点）。POST /api/user/reset-2fa</summary>
     [HttpPost("reset-2fa")]
     [RequirePermission("user", "edit")]
-    [CurrentWriteAuthority(ChangesAuthentication = true)]
     public async Task<IActionResult> ResetTwoFactor([FromBody] Guid userId)
     {
-        var u = await _context.Sys_Users.FirstOrDefaultAsync(x => x.Id == userId);
-        if (u == null) return NotFound();
         if (_context.Database.IsNpgsql())
         {
-            TwoFactorService.ResetCredentials(u);
-            _context.Sys_SecurityLogs.Add(new()
+            return await IamAdministrationHttpV1.ExecuteLegacyCredential(this, async () =>
             {
-                UserId = u.Id,
-                UserName = u.UserName,
-                EventType = (int)SecurityEventType.TwoFactorReset,
-                Reason = "admin-reset",
-                ContextJson = JsonSerializer.Serialize(new
+                var actors = JsonSerializer.Serialize(new
                 {
                     actorId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub"),
                     impersonatorId = User.FindFirstValue("impersonator_id")
-                }),
-                CreatedAt = DateTime.Now
+                });
+                var changed = await IamAdministrationHttpV1.WriteLegacyCredential(HttpContext, userId, null,
+                    static _ => Task.CompletedTask, (target, plan) =>
+                    {
+                        TwoFactorService.ResetCredentials(target, plan.ResetEpoch);
+                        _context.Sys_SecurityLogs.Add(new()
+                        {
+                            UserId = target.Id,
+                            UserName = target.UserName,
+                            EventType = (int)SecurityEventType.TwoFactorReset,
+                            Reason = "admin-reset",
+                            ContextJson = actors,
+                            CreatedAt = plan.ChangedAt
+                        });
+                        return Task.CompletedTask;
+                    });
+                return changed is null ? NotFound() : Ok(new { code = 0 });
             });
         }
-        else
-            await _2fa.ResetAsync(u, "admin-reset");
+
+        var u = await _context.Sys_Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (u == null) return NotFound();
+        await _2fa.ResetAsync(u, "admin-reset");
         await SaveUserChangesAsync();
         return Ok(new { code = 0 });
     }

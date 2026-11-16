@@ -1,6 +1,9 @@
+using System.Data.Common;
 using System.Security.Claims;
+using CP6.Core.Auth;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Platform;
+using CP6.Entity.DomainModels.Sys;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -30,18 +33,44 @@ public static class IamAdministrationHttpV1
     // Independent Owners supply their own DI scope so authentication reads use the same
     // fresh context and transaction as the business decision, including the final recheck.
     internal static async Task<Guid> CurrentActor(HttpContext context,IServiceProvider services,CancellationToken ct,
-        bool allowImpersonation = false)
+        bool allowImpersonation = false, bool allowRequiredPasswordChange = false)
     {
         bool current;
         try { current=await AccessTokenAuthentication.IsCurrentAsync(services,context.User,ct); }
         catch(InvalidOperationException e) when(e.Message is "REAUTH_REQUIRED" or "AUTHENTICATION_DENIED" or "SSO_REQUIRED")
         { throw new IamAdministrationExceptionV1(401,"REAUTH_REQUIRED"); }
         var user=context.User;
-        if(!current || (!allowImpersonation && user.HasClaim(x=>x.Type=="impersonator_id")) || user.FindFirstValue("must_change_password")!="false"
+        if(!current || (!allowImpersonation && user.HasClaim(x=>x.Type=="impersonator_id"))
+            || (!allowRequiredPasswordChange && user.FindFirstValue("must_change_password")!="false")
             || !long.TryParse(user.FindFirstValue("exp"),out var expires) || expires<=DateTimeOffset.UtcNow.ToUnixTimeSeconds()
             || !Guid.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier)??user.FindFirstValue("sub"),out var actor))
             throw new IamAdministrationExceptionV1(401,"REAUTH_REQUIRED");
         return actor;
+    }
+
+    internal static Task<LegacyCredentialSubjectV1?> WriteLegacyCredential(HttpContext http, Guid? target, string? passwordFingerprint,
+        Func<Sys_User, Task> validate, Func<Sys_User, LegacyCredentialPlanV1, Task> apply, Func<string>? createPasswordSalt = null)
+    {
+        var services = http.RequestServices;
+        var request = new LegacyCredentialRequestV1(target, ClaimId("impersonator_id"), ClaimId("impersonator_tenant_id"), passwordFingerprint);
+        var permission = target is null ? null : http.GetEndpoint()?.Metadata.GetMetadata<RequirePermissionAttribute>()?.PermissionKey
+            ?? throw IamAdministrationV1.Error(503, "IAM_AUTHORITY_UNAVAILABLE");
+        return services.GetRequiredService<IamAdministrationV1>().WriteLegacyCredentialAsync(request, permission,
+            ct => CurrentActor(http, services, ct, allowImpersonation: true, allowRequiredPasswordChange: target is null),
+            ct => TenantAdministrationHttpV1.Complete(http, services, ct), validate, apply, createPasswordSalt, http.RequestAborted);
+
+        Guid? ClaimId(string name) => http.User.FindFirstValue(name) is { } value ? Guid.Parse(value) : null;
+    }
+
+    internal static async Task<IActionResult> ExecuteLegacyCredential(ControllerBase controller, Func<Task<IActionResult>> action)
+    {
+        try { return await action(); }
+        catch (IamAdministrationExceptionV1 error) { return Failure(error.Status, error.Message); }
+        catch (TenantManagementExceptionV1 error) { return Failure(error.Status, error.Message); }
+        catch (Exception error) when (error is DbException or DbUpdateException or CurrentPermissionUnavailableException)
+        { return Failure(503, "AUTHORITY_FENCE_UNAVAILABLE"); }
+
+        IActionResult Failure(int status, string code) => controller.StatusCode(status, new { code = status, message = code });
     }
     public static async Task<IActionResult> Execute(ControllerBase controller,Func<Task<object>> action)
     {
