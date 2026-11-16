@@ -99,6 +99,7 @@ def main():
                         download='NO_DOWNLOAD_ENTRY_IN_REVIEWED_CONTROLLERS')
         elif resource == 'fin-cost':
             uses.update(query='CURRENT_FINANCE_VIEW_AND_RATE_SOURCE_GATES',
+                        write='CURRENT_FINANCE_COLLECT_AND_SOURCE_GATES',
                         export='NO_EXPORT_ENTRY_IN_REVIEWED_CONTROLLERS',
                         download='NO_DOWNLOAD_ENTRY_IN_REVIEWED_CONTROLLERS')
         records.append({**entry, 'review_group': group, 'uses': uses,
