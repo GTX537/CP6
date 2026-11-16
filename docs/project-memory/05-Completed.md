@@ -1,5 +1,7 @@
 # 已完成能力与近期里程碑
 
+2026-11-15，W668 已将 2FA 准备、入会和自助停用接入现有用户事务封存，观察实际 Main 两种提交顺序、真实跨库拒接及现有原会话恢复。 [W668 交付](../development/evidence/W668-01/DELIVERY.md)
+
 2026-11-15，W667 采用精确 JTI 原件及 refresh 重用的主体范围，实际验证两种提交顺序、冷拒、重启恢复、两库 COMMIT 应答丢失及原会话对照。 [W667 交付](../development/evidence/W667-01/DELIVERY.md)
 
 2026-11-15，W669 处理 CRM Basic V2 实际客户端的服务签发入口。真实请求通过原有签名、作用域以及 PostgreSQL 栅栏检查。 [W669 交付](../development/evidence/W669-01/DELIVERY.md)
