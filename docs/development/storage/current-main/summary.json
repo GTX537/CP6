@@ -1,0 +1,66 @@
+{
+  "source_baseline": "8dfe0ef0b53852fa6797e986639133d3708f022c",
+  "adopted_binary_source": "e2e0e4ea8216596d01f639dcedaaa1f9148c7410",
+  "server_version": "18.6",
+  "schemas": 140,
+  "relation_kinds": {
+    "r": 891,
+    "S": 40,
+    "v": 1
+  },
+  "routines": 567,
+  "triggers": 1713,
+  "indexes": 2317,
+  "unique_indexes": 1662,
+  "foreign_keys": 859,
+  "ef_tables": 341,
+  "source_files": 2876,
+  "discovered_context_types": [
+    "CP6.Core.EFDbContext.CP6Context",
+    "CP6.Core.Persistence.Tenancy.RmaTenantReadContext",
+    "CP6.Core.Persistence.Tenancy.StockMovementWriteContextV1",
+    "CP6.Core.Persistence.Tenancy.TenantIdentityDirectoryReader+DirectoryContext",
+    "CP6.Core.Persistence.Tenancy.TenantStockReadStore+StockReadContext",
+    "CP6.Core.Services.CrmIdentity.IdentityMessagingContext",
+    "CP6.Core.Services.ErpIntegration.ErpIntegrationContext",
+    "CP6.Core.Services.Integration.StockOutbox.StockOutboxContextV1",
+    "CP6.Space.Infrastructure.SpaceContext"
+  ],
+  "extracted_context_types": [
+    "CP6.Core.EFDbContext.CP6Context",
+    "CP6.Space.Infrastructure.SpaceContext",
+    "CP6.Core.Services.CrmIdentity.IdentityMessagingContext",
+    "CP6.Core.Services.ErpIntegration.ErpIntegrationContext",
+    "CP6.Core.Services.Integration.StockOutbox.StockOutboxContextV1",
+    "CP6.Core.Persistence.Tenancy.StockMovementWriteContextV1",
+    "CP6.Core.Persistence.Tenancy.TenantIdentityDirectoryReader+DirectoryContext",
+    "CP6.Core.Persistence.Tenancy.TenantStockReadStore+StockReadContext",
+    "CP6.Core.Persistence.Tenancy.RmaTenantReadContext",
+    "CP6.Core.Persistence.Tenancy.RmaTenantReadContext"
+  ],
+  "unhandled_context_types": [],
+  "optional_ddl_templates": 85,
+  "model_catalog_mismatches": [],
+  "equivalent_index_names": [
+    {
+      "table": "cp6_stock_outbox_v1.DispatchRun",
+      "model": "PK_DispatchRun",
+      "catalog": [
+        "DispatchRun_pkey"
+      ],
+      "columns": [
+        "RootId",
+        "RequestId"
+      ]
+    }
+  ],
+  "tenant_model_profiles": [
+    "rma-application-core-tenant-v1",
+    "rma-application-core-tenant-v2"
+  ],
+  "native_canonicalized_ef_predicates": 81,
+  "relations_without_direct_source_token": [],
+  "routines_without_direct_source_token": [],
+  "scope": "Actual cold Main catalog plus separately identified optional installation source templates; no production inspection.",
+  "source_index_semantics": "Conservative token and writer-bearing-file references, not an exhaustive semantic call graph or per-entry authorization proof."
+}
