@@ -1,6 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
+using CP6.WebApi.Controllers.Erp;
 using CP6.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,7 @@ namespace CP6.WebApi.Controllers.Fin;
 
 /// <summary>
 /// 成本核算 REST —— 财务章06。/api/fin/cost。按工单归集料工费(料吃MES真实消耗)→完工结转WIP→FG。
-/// 功能权限（D-2 约定）：变更端点贴 [RequirePermission("fin-cost", …)]；读端点仅 [Authorize]。
+/// PostgreSQL 成本单查询、明细和完工单位成本共用当前财务及费率来源权限。
 /// </summary>
 [ApiController]
 [Route("api/fin/cost")]
@@ -31,11 +32,13 @@ public class CostController : ControllerBase
 
     /// <summary>成本单列表（可按状态）。</summary>
     [HttpGet]
+    [OrderOwnerResult]
     public async Task<IActionResult> List([FromQuery] CostSheetStatus? status)
         => Ok2(await _collect.ListAsync(status));
 
     /// <summary>取某工单成本单（含明细）。</summary>
     [HttpGet("{workOrderNo}")]
+    [OrderOwnerResult]
     public async Task<IActionResult> Get(string workOrderNo)
     {
         var cs = await _collect.GetByWorkOrderAsync(workOrderNo);
@@ -44,13 +47,14 @@ public class CostController : ControllerBase
 
     /// <summary>FG 完工单位成本（喂 AR 成本结转切真实）。</summary>
     [HttpGet("{workOrderNo}/fg-unit-cost")]
+    [OrderOwnerResult]
     public async Task<IActionResult> FgUnitCost(string workOrderNo)
         => Ok2(new { workOrderNo, fgUnitCost = await _settle.FgUnitCostAsync(workOrderNo) });
 
     /// <summary>归集料工费（料自动吃 MES 真实消耗×BOM单价，工费传标准估算）。</summary>
     [HttpPost("{workOrderNo}/collect")]
     [RequirePermission("fin-cost", "collect")]
-    [CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+    [OrderOwnerResult]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public async Task<IActionResult> Collect(string workOrderNo, [FromBody] CollectReq req)
         => Fin(await _collect.CollectAsync(workOrderNo, req.LaborStd, req.OverheadStd, CurrentUser));

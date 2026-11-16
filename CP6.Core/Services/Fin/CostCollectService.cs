@@ -1,4 +1,6 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Erp;
+using CP6.Core.Services.Integration;
 using CP6.Core.Services.Mes;
 using CP6.Entity.DomainModels.Erp;
 using CP6.Entity.DomainModels.Fin;
@@ -19,6 +21,7 @@ public class CostCollectService : ICostCollectService
     private readonly CP6Context _db;
     private readonly IFinSequenceService _seq;
     private readonly IProcessCostRateService _rateSvc;
+    private readonly OperationsOwnerV1? _owner;
     private const string SeqKey = "CS";
 
     /// <summary>
@@ -27,11 +30,12 @@ public class CostCollectService : ICostCollectService
     /// </summary>
     public bool StrictCostRate { get; set; } = false;
 
-    public CostCollectService(CP6Context db, IFinSequenceService seq, IProcessCostRateService rateSvc)
+    public CostCollectService(CP6Context db, IFinSequenceService seq, IProcessCostRateService rateSvc, OperationsOwnerV1? owner = null)
     {
         _db = db;
         _seq = seq;
         _rateSvc = rateSvc;
+        _owner = owner;
     }
 
     public async Task<FinResult> CollectAsync(string workOrderNo, decimal laborStd, decimal overheadStd, string user)
@@ -188,12 +192,26 @@ public class CostCollectService : ICostCollectService
     }
 
     public Task<CostSheet?> GetByWorkOrderAsync(string workOrderNo)
-        => _db.CostSheets.Include(s => s.Lines).FirstOrDefaultAsync(s => s.WorkOrderNo == workOrderNo);
+        => ReadHistoryAsync((sheets, ct) => sheets.Include(s => s.Lines)
+            .FirstOrDefaultAsync(s => s.WorkOrderNo == workOrderNo, ct));
 
-    public async Task<List<CostSheet>> ListAsync(CostSheetStatus? status = null)
+    public Task<List<CostSheet>> ListAsync(CostSheetStatus? status = null)
+        => ReadHistoryAsync((sheets, ct) =>
+        {
+            if (status is CostSheetStatus filter) sheets = sheets.Where(sheet => sheet.Status == filter);
+            return sheets.AsNoTracking().OrderByDescending(sheet => sheet.CreateDate).ToListAsync(ct);
+        });
+
+    private Task<T> ReadHistoryAsync<T>(Func<IQueryable<CostSheet>, CancellationToken, Task<T>> read)
     {
-        var q = _db.CostSheets.AsNoTracking().AsQueryable();
-        if (status is CostSheetStatus s) q = q.Where(x => x.Status == s);
-        return await q.OrderByDescending(x => x.CreateDate).ToListAsync();
+        var sheets = _db.CostSheets;
+        if (!_db.Database.IsNpgsql()) return read(sheets, default);
+        var owner = _owner?.Owns(_db) == true ? _owner : throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
+        return owner.ExecuteAsync(OperationsOwnerV1.FinCost, "view", false, async (access, ct) =>
+        {
+            var rates = await access.SourceAsync(OperationsOwnerV1.ProcessCostRate, ct);
+            rates.RequireUnmaskedRates();
+            return await read(rates.CostSheetsWithReadableRates(sheets.AsNoTracking()), ct);
+        }, readOnlyAuthorityFence: true);
     }
 }

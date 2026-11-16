@@ -668,6 +668,8 @@ CP6.Core.Services.Sys.FieldRegistry.Register("order",
 CP6.Core.Services.Sys.DataScopeRegistry.Register("mes-work-order", "製造指図", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-outbound-order", "出庫指示", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("mes-work-order");
+CP6.Core.Services.Sys.DataScopeRegistry.Register("fin-cost", "财务成本单", new[] { 5 }, 5);
+CP6.Core.Services.Sys.FieldRegistry.Register("fin-cost");
 foreach(var resource in new[]{"mes-production-result","wms-inbound-order","wms-inbound-receipt"})
 {
     CP6.Core.Services.Sys.DataScopeRegistry.Register(resource,resource,new[]{1,2,3,4,5},1);
@@ -2290,6 +2292,7 @@ using (var scope = app.Services.CreateScope())
     // 上方 D-2 finActions 块仅默认租户（.Any 受行级过滤）；本块照 M-WMS T3b 逐租户显式 TenantId + IgnoreQueryFilters，
     // 覆盖全部租户 admin（否则非默认租户 admin 年结 403）。须置于 Fin 权限块之后（MenuKey 604 已回填、菜单行已在）。幂等。
     CP6.WebApi.Seed.FinPeriodPermissionSeed.EnsureSeeded(db);
+    if (db.Database.IsNpgsql()) CP6.WebApi.Seed.FinCostViewSeed.EnsureSeeded(db);
 
     // S 类认证加固（T8）：安全审计日志菜单（114，挂"系统管理"100 组）+ admin 授权 + query 操作权限点。
     // 菜单驱动路由注册（无 Sys_Menu 则前端路由不注册 → 白屏不可达，A4 H-3 教训）。
