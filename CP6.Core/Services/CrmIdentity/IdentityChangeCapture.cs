@@ -46,7 +46,7 @@ public sealed class IdentityChangeCapture
                         Changed(nameof(user.TwoFactorSecret)) || Changed(nameof(user.ExternalSubject)) ||
                         Changed(nameof(user.ExternalProvider)) || Changed(nameof(user.QuickPinHash)) || (!user.Enable && Changed(nameof(user.Enable))) ||
                         (user.MustChangePassword && Changed(nameof(user.MustChangePassword))) ||
-                        (user.LockedUntil > DateTime.Now && Changed(nameof(user.LockedUntil)))))
+                        (user.LockedUntil > (db.CaptureLoginLockoutAt ?? DateTime.Now) && Changed(nameof(user.LockedUntil)))))
                         capture.InvalidatedUsers.Add((user.TenantId, user.Id));
                     break;
                 case Sys_Dept dept when options.Tenants.ContainsKey(dept.TenantId) &&
