@@ -86,6 +86,12 @@ def main():
                         write='CURRENT_ACTION_SCOPE_FIELDS_AND_PROFILE_READBACK',
                         export='INDEPENDENT_EXPORT_ACTION_AND_FIELD_USE',
                         download='NO_DOWNLOAD_ENTRY_IN_REVIEWED_CONTROLLERS')
+        elif resource in ('wms-stock', 'wms-inbound-order', 'wms-inbound-receipt', 'wms-outbound-order'):
+            uses.update(query='CURRENT_OWNER_UNIT_PRICE_SCOPED',
+                        write=('CURRENT_TARGET_AND_ALLOCATION_SOURCE_PRICE_GATES'
+                               if resource == 'wms-outbound-order' else 'CURRENT_OWNER_UNIT_PRICE_WRITE'),
+                        export='NO_EXPORT_ENTRY_IN_REVIEWED_CONTROLLERS',
+                        download='NO_DOWNLOAD_ENTRY_IN_REVIEWED_CONTROLLERS')
         records.append({**entry, 'review_group': group, 'uses': uses,
                         'lexical_source_candidates': refs, 'permission_attribute_route_ids': direct})
     args.output.mkdir(parents=True, exist_ok=True)
