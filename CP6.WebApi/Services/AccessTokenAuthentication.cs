@@ -48,7 +48,7 @@ public static class AccessTokenAuthentication
             return true;
     }
 
-    private static async Task<bool> CurrentStateAsync(CP6Context db, AuthenticationPolicyServiceV1 policies, ClaimsPrincipal principal, CancellationToken ct)
+    internal static async Task<bool> CurrentStateAsync(CP6Context db, AuthenticationPolicyServiceV1 policies, ClaimsPrincipal principal, CancellationToken ct)
     {
         var identities = principal.Identities.Where(x => x.IsAuthenticated).ToArray();
         if (identities.Length != 1) return false;

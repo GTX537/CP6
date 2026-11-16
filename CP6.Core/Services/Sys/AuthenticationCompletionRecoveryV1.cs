@@ -11,8 +11,11 @@ public sealed record AuthenticationRecoveryStatusV1(string State);
 /// <summary>Owner recovery authenticates possession of the original interaction secret, never a completion id.</summary>
 public sealed class AuthenticationCompletionRecoveryV1(CP6Context db)
 {
-    public async Task<AuthenticationRecoveryStatusV1> ResolveAsync(AuthenticationRecoveryRequestV1 request,
-        bool close, CancellationToken ct)
+    public Task<AuthenticationRecoveryStatusV1> ResolveAsync(AuthenticationRecoveryRequestV1 request, bool close, CancellationToken ct)
+        => ResolveAsync(request, close, null, ct);
+
+    internal async Task<AuthenticationRecoveryStatusV1> ResolveAsync(AuthenticationRecoveryRequestV1 request, bool close,
+        Func<WebAuthenticationFamilyClosureV1, CancellationToken, Task<bool>>? deferWebClose, CancellationToken ct)
     {
         if (!db.Database.IsNpgsql() || db.Database.CurrentTransaction != null || db.ChangeTracker.HasChanges())
             throw new InvalidOperationException("AUTH_SESSION_AUTHORITY_UNAVAILABLE");
@@ -23,10 +26,11 @@ public sealed class AuthenticationCompletionRecoveryV1(CP6Context db)
         {
             await AuthenticationCompletionGateV1.AcquireAsync(db, ct);
             var store = new AuthenticationInteractionStoreV1(db);
-            string? targetHash = null; Guid completion; string state;
+            string? originalHash = null, targetHash = null; Guid completion; string state;
             if (request.Kind == "refresh")
             {
                 var hash = AuthenticationInteractionStoreV1.Hash(request.Credential);
+                originalHash = hash;
                 var row = await db.Sys_RefreshTokens.IgnoreQueryFilters().AsNoTracking().SingleOrDefaultAsync(x => x.TokenHash == hash, ct);
                 var receipt = await store.ReadSessionByRefreshAsync(hash, ct);
                 if (row == null || receipt == null || row.ClientKind != request.ClientKind
@@ -64,14 +68,16 @@ public sealed class AuthenticationCompletionRecoveryV1(CP6Context db)
             }
             if (close)
             {
-                if (targetHash != null) await store.RejectGenerationAsync(targetHash, false, ct);
+                var web = request.ClientKind == "Web" && deferWebClose is not null
+                    ? await WebAuthenticationFamilyClosureV1.PrepareAsync(db, WebAuthenticationCloseKindV1.Completion, originalHash,
+                        targetHash, completion, null, ct)
+                    : null;
+                if (web is not null && await deferWebClose!(web, ct)) state = "COMPLETION_UNKNOWN";
                 else
                 {
-                    await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_authentication_v1.interactions SET state='rejected',lease=NULL WHERE completion_id={completion}", ct);
-                    var roots = await db.Database.SqlQuery<string>($"SELECT refresh_hash AS \"Value\" FROM cp6_authentication_v1.session_evidence WHERE completion_id={completion} AND parent_refresh_hash IS NULL").ToListAsync(ct);
-                    foreach (var root in roots) await store.RejectGenerationAsync(root, false, ct);
+                    await ApplyCloseWithinRootAsync(db, completion, targetHash, ct);
+                    state = "CLOSED";
                 }
-                state = "CLOSED";
             }
             ct.ThrowIfCancellationRequested(); commitAttempted = true; await tx.CommitAsync(ct);
             return new(state);
@@ -83,6 +89,19 @@ public sealed class AuthenticationCompletionRecoveryV1(CP6Context db)
             if (commitAttempted) throw new RefreshCompletionUnknownException(error);
             throw;
         }
+    }
+
+    internal static async Task ApplyCloseWithinRootAsync(CP6Context db, Guid completion, string? targetHash, CancellationToken ct)
+    {
+        var store = new AuthenticationInteractionStoreV1(db);
+        if (targetHash is not null)
+        {
+            await store.RejectGenerationAsync(targetHash, false, ct);
+            return;
+        }
+        await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_authentication_v1.interactions SET state='rejected',lease=NULL WHERE completion_id={completion}", ct);
+        foreach (var root in await WebAuthenticationFamilyClosureV1.RootHashesAsync(db, completion, ct))
+            await store.RejectGenerationAsync(root, false, ct);
     }
 
     public sealed class RecoveryRow

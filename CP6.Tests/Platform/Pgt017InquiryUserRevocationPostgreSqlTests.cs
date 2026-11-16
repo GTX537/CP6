@@ -33,6 +33,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     {
         Assert.Contains(revocation, new[] { "user", "session" });
         var sessionOnly = revocation == "session";
+        var webLogout = sessionOnly && Environment.GetEnvironmentVariable("CP6_W665_ORDER_RAW") == "1";
         var sid = Guid.Parse(new JwtSecurityTokenHandler().ReadJwtToken(hint).Claims.Single(c => c.Type == "sid").Value);
         var tokenAggregate = IdentityEventContracts.TokenAggregate(issuer, sid.ToString("D"));
         var userAggregate = $"user:{h.ActorId:D}";
@@ -114,8 +115,11 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Assert.Equal(before.Generation + (sessionOnly ? 1 : 2), after.Generation);
         Assert.Equal(sessionOnly ? 0 : 1, after.Audits);
         Assert.Equal(sessionOnly ? 0 : 1, after.Receipts);
-        using var replay = await Revoke();
+        using var replay = await (webLogout
+            ? host.Send(Request(HttpMethod.Post, "api/auth/completion/close", originalCookies, new { }))
+            : Revoke());
         Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
+        if (webLogout) Assert.Equal("CLOSED", (await replay.Content.ReadFromJsonAsync<AuthenticationRecoveryStatusV1>())!.State);
         if (!sessionOnly) Assert.Equal(await result.Content.ReadFromJsonAsync<IamOperationV1>(),
             await replay.Content.ReadFromJsonAsync<IamOperationV1>());
         Assert.Equal(after, await Read());
@@ -134,6 +138,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         {
             if (!sessionOnly)
                 return host.Send(Request(HttpMethod.Put, $"api/iam/users/{h.ActorId:D}", manager!, command));
+            if (webLogout) return host.Send(Request(HttpMethod.Post, "api/auth/logout", originalCookies, new { }));
             var request = new HttpRequestMessage(HttpMethod.Post, "connect/end-session")
             {
                 Content = new FormUrlEncodedContent(new Dictionary<string, string>
