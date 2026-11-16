@@ -11,6 +11,7 @@ internal sealed class CrmOidcFamilyLogoutRecoveryWorkerV1(IServiceScopeFactory s
     {
         using var timer = new PeriodicTimer(TimeSpan.FromSeconds(5));
         var after = Guid.Empty;
+        var afterSource = Guid.Empty;
         while (await timer.WaitForNextTickAsync(stoppingToken))
         {
             try
@@ -32,6 +33,22 @@ internal sealed class CrmOidcFamilyLogoutRecoveryWorkerV1(IServiceScopeFactory s
                     after = accepted.FamilyId;
                 }
                 if (batch.Count < 32) after = Guid.Empty;
+
+                var sources = await store.ReadPendingSourceRetirementsAsync(afterSource, stoppingToken);
+                foreach (var accepted in sources)
+                {
+                    try
+                    {
+                        await store.CompleteSourceRetirementAsync(accepted, stoppingToken);
+                    }
+                    catch (Exception error) when (error is CrmOidcFamilyLogoutUnavailableException or DbException or DbUpdateException)
+                    {
+                        logger.LogWarning("CRM authentication retirement remains pending for tenant {TenantId}, operation {OperationId}",
+                            accepted.TenantId, accepted.OperationId);
+                    }
+                    afterSource = accepted.OperationId;
+                }
+                if (sources.Count < 32) afterSource = Guid.Empty;
             }
             catch (DbException)
             {

@@ -42,8 +42,8 @@ internal interface ICrmOidcFamilySealV1
 
     Task<NpgsqlConnection> OpenAsync(Guid tenant, Guid store, CancellationToken ct);
 
-    Task SealAndAppendAsync(NpgsqlConnection crm, DbConnection source, DbTransaction transaction, CrmOidcFamilyLogoutV1 owner,
-        CrmOidcGrantRevocationV1[] grants, IReadOnlySet<Guid> alreadyRevoked, CancellationToken ct);
+    Task SealAndAppendAsync(NpgsqlConnection crm, DbConnection source, DbTransaction transaction, Guid tenant, Guid subject,
+        Guid store, CrmOidcGrantRevocationV1[] grants, IReadOnlySet<Guid> alreadyRevoked, CancellationToken ct);
 }
 
 public sealed partial class SqlCrmOidcGrantStore
@@ -60,6 +60,9 @@ public sealed partial class SqlCrmOidcGrantStore
                 ON p.tenant_id=r."TenantId" AND p.family_id=r."BrowserSessionId" AND p.subject_id=r."UserId"
               WHERE p.completed_at_utc IS NULL AND g."SourceRefreshHash"=r."TokenHash" COLLATE "C"
                 AND g."OrganizationId"=p.tenant_id AND g."SubjectId"=p.subject_id)
+            AND NOT EXISTS (SELECT 1 FROM cp6_authentication_v1.crm_auth_source_retirements_v1 p
+              WHERE p.completed_at_utc IS NULL AND p.tenant_id=g."OrganizationId" AND p.subject_id=g."SubjectId"
+                AND (p.source_jti IS NULL OR p.source_jti=g."SourceJti"::text COLLATE "C"))
           LIMIT 100);
         INSERT INTO public."CrmOidcGrant"
           ("Id","CodeHash","ClientId","RedirectUri","Challenge","Nonce","SubjectId","OrganizationId","SourceJti","SourceRefreshHash","SecurityStamp",
@@ -88,6 +91,15 @@ public sealed partial class SqlCrmOidcGrantStore
         var family = await ReadFamilyAsync(db, tx, grant, CancellationToken.None);
         if (family?.Pending == true || RequiresNativeFamilyLogout(grant.OrganizationId) && (family is null || family.LoggedOut))
             throw new CrmOidcFamilyAdmissionClosedException();
+        if (await db.ExecuteScalarAsync<bool>("""
+            SELECT EXISTS (SELECT 1 FROM cp6_authentication_v1.crm_auth_source_retirements_v1 p
+              WHERE p.completed_at_utc IS NULL AND p.tenant_id=@OrganizationId AND p.subject_id=@SubjectId
+                AND (p.source_jti IS NULL OR p.source_jti=@SourceJti))
+              OR EXISTS (SELECT 1 FROM cp6_authentication_v1.access_sessions a
+                JOIN cp6_authentication_v1.session_evidence s ON s.refresh_hash=a.refresh_hash
+                WHERE a.access_jti=@SourceJti AND a.refresh_hash=@SourceRefreshHash
+                  AND (a.revoked_at IS NOT NULL OR s.rejected_at IS NOT NULL))
+            """, grant, tx)) throw new CrmOidcFamilyAdmissionClosedException();
         await db.ExecuteAsync(PgSaveGrant, grant, tx);
         return true;
     }, CancellationToken.None);
@@ -176,13 +188,9 @@ public sealed partial class SqlCrmOidcGrantStore
 
             if (webClose is not null) await ApplyWebCloseAsync(db, tx, webClose, ct);
             var alreadyRevoked = current.Where(g => g.Revoked).Select(g => g.GrantId).ToHashSet();
-            if (crm is not null) await seal.SealAndAppendAsync(crm, db, tx, owner, expected, alreadyRevoked, ct);
-            var pending = expected.Where(g => !alreadyRevoked.Contains(g.GrantId)).Select(g => g.GrantId).ToArray();
-            var updated = await db.ExecuteAsync(new CommandDefinition("""
-                UPDATE public."CrmOidcGrant" SET "Revoked"=true
-                WHERE "Id"=ANY(@pending) AND "OrganizationId"=@TenantId AND "SubjectId"=@SubjectId AND NOT "Revoked"
-                """, new { pending, owner.TenantId, owner.SubjectId }, tx, cancellationToken: ct));
-            if (updated != pending.Length) throw new CrmOidcFamilyLogoutUnavailableException();
+            if (crm is not null) await seal.SealAndAppendAsync(crm, db, tx, owner.TenantId, owner.SubjectId, owner.StoreId,
+                expected, alreadyRevoked, ct);
+            await RevokeOwnGrantsAsync(db, tx, owner.TenantId, owner.SubjectId, expected, alreadyRevoked, ct);
             await db.ExecuteAsync(new CommandDefinition("""
                 UPDATE public."Sys_BrowserSessions"
                 SET "LoggedOutAtUtc"=COALESCE("LoggedOutAtUtc",clock_timestamp()) WHERE "Id"=@FamilyId;
@@ -193,6 +201,17 @@ public sealed partial class SqlCrmOidcGrantStore
                 """, owner, tx, cancellationToken: ct));
             return true;
         }, ct);
+    }
+
+    private static async Task RevokeOwnGrantsAsync(DbConnection db, DbTransaction tx, Guid tenant, Guid subject,
+        CrmOidcGrantRevocationV1[] expected, IReadOnlySet<Guid> alreadyRevoked, CancellationToken ct)
+    {
+        var pending = expected.Where(g => !alreadyRevoked.Contains(g.GrantId)).Select(g => g.GrantId).ToArray();
+        var updated = await db.ExecuteAsync(new CommandDefinition("""
+            UPDATE public."CrmOidcGrant" SET "Revoked"=true
+            WHERE "Id"=ANY(@pending) AND "OrganizationId"=@tenant AND "SubjectId"=@subject AND NOT "Revoked"
+            """, new { pending, tenant, subject }, tx, cancellationToken: ct));
+        if (updated != pending.Length) throw new CrmOidcFamilyLogoutUnavailableException();
     }
 
     private static async Task RequireOriginalOidcSourceAsync(DbConnection db, DbTransaction tx, CrmOidcFamilyLogoutV1 owner, CancellationToken ct)
@@ -207,14 +226,17 @@ public sealed partial class SqlCrmOidcGrantStore
     }
 
     // Called inside the existing issuer root after validating the live native bearer grant.
-    internal static Task<bool> HasPendingFamilyLogoutAsync(DbConnection db, DbTransaction tx, Guid tenant, Guid grantId, CancellationToken ct)
+    internal static Task<bool> HasPendingAuthenticationRetirementAsync(DbConnection db, DbTransaction tx, Guid tenant, Guid grantId, CancellationToken ct)
         => db.ExecuteScalarAsync<bool>(new CommandDefinition("""
-            SELECT EXISTS(SELECT 1 FROM public."CrmOidcGrant" g
-              JOIN public."Sys_RefreshTokens" r ON g."SourceRefreshHash"=r."TokenHash" COLLATE "C"
-              JOIN cp6_authentication_v1.crm_oidc_family_logouts_v1 p
-                ON p.tenant_id=r."TenantId" AND p.family_id=r."BrowserSessionId" AND p.subject_id=r."UserId"
-              WHERE g."Id"=@grantId AND g."OrganizationId"=@tenant AND g."OrganizationId"=p.tenant_id
-                AND g."SubjectId"=p.subject_id AND p.completed_at_utc IS NULL)
+            SELECT EXISTS (SELECT 1 FROM public."CrmOidcGrant" g WHERE g."Id"=@grantId AND g."OrganizationId"=@tenant
+              AND (EXISTS (SELECT 1 FROM public."Sys_RefreshTokens" r
+                    JOIN cp6_authentication_v1.crm_oidc_family_logouts_v1 p
+                      ON p.tenant_id=r."TenantId" AND p.family_id=r."BrowserSessionId" AND p.subject_id=r."UserId"
+                    WHERE g."SourceRefreshHash"=r."TokenHash" COLLATE "C" AND p.tenant_id=g."OrganizationId"
+                      AND p.subject_id=g."SubjectId" AND p.completed_at_utc IS NULL)
+                OR EXISTS (SELECT 1 FROM cp6_authentication_v1.crm_auth_source_retirements_v1 p
+                    WHERE p.tenant_id=g."OrganizationId" AND p.subject_id=g."SubjectId" AND p.completed_at_utc IS NULL
+                      AND (p.source_jti IS NULL OR p.source_jti=g."SourceJti"::text COLLATE "C"))))
             """, new { tenant, grantId }, tx, cancellationToken: ct));
 
     private async Task<string> SaveNativeContinuationAsync(Guid grantId, string redirect, string requestHash, CancellationToken ct)

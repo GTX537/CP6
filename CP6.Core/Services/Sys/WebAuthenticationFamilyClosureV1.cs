@@ -1,9 +1,6 @@
-using System.Data.Common;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.Logging;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -108,24 +105,7 @@ internal sealed record WebAuthenticationFamilyClosureV1(WebAuthenticationCloseKi
         var audit = SecurityAuditService.CreateRecord(SecurityEventType.Logout, originalAudit.UserId, originalAudit.UserName,
             null, originalAudit.ClientIp, originalAudit.UserAgent, null);
         audit.TenantId = originalAudit.TenantId;
-        var transaction = db.Database.CurrentTransaction!;
-        const string auditSavepoint = "web_logout_audit_v1";
-        await transaction.CreateSavepointAsync(auditSavepoint, ct);
-        try
-        {
-            db.Sys_SecurityLogs.Add(audit);
-            await db.SaveChangesAsync(ct);
-        }
-        catch (Exception error) when (error is DbUpdateException or DbException)
-        {
-            // Ordinary logout has always kept its best-effort audit. Recover its savepoint
-            // before committing the original termination. Browser close's audit remains required.
-            await transaction.RollbackToSavepointAsync(auditSavepoint, ct);
-            db.Entry(audit).State = EntityState.Detached;
-            db.GetService<ILoggerFactory>().CreateLogger<SecurityAuditService>()
-                .LogWarning("Web logout audit write failed for tenant {TenantId}, user {UserId}", originalAudit.TenantId, originalAudit.UserId);
-        }
-        await transaction.ReleaseSavepointAsync(auditSavepoint, ct);
+        await SecurityAuditService.SaveLogoutWithinRootAsync(db, audit, bestEffort: true, ct);
     }
 
     internal static Task<WebRefreshRow?> ReadWebRefreshAsync(CP6Context db, string hash, CancellationToken ct)

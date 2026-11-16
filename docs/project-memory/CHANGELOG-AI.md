@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-15，W667 将精确 access 退出和实际 refresh 重用接入持久原件和 CRM 原生封存。沿原 URI、Cookie、审计与一次性认证父子证据判定。 [W667 交付](../development/evidence/W667-01/DELIVERY.md)
+
 2026-11-15，W669 增加 Basic V2 精确服务路径，实际验证无浏览器 Cookie 的既有 CRM 请求及独立错误认证、传输和作用域边界。 [W669 交付](../development/evidence/W669-01/DELIVERY.md)
 
 2026-11-15，W666 为两个旧凭据写者保留首次连接前的持久原件，复用已登记用户和真实 Grant 封存，验证改密权限、原审计、成功回执及独立主体。 [W666 交付](../development/evidence/W666-01/DELIVERY.md)
