@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+## 2026-11-16 UTC · W676 存储 v2 恢复验收
+
+COORD 在固定 DEV-1 / `codex/w676-01` 完成原 WP02-02 的 v2 归档恢复及直接兼容缺口；实际 PostgreSQL 与当前 Main 宿主验收通过。当前原卡 VERIFYING，正常 PR 远端核对后结项，再复核 WP02-03。未启动其他执行对话或生产切换。 [交付](evidence/W676-01/DELIVERY.md)
+
 ## 2026-11-16 UTC · W675 当前 Main 存储归属
 
 COORD 复用固定 DEV-1 和 `codex/w675-01` 完成原 WP02-02 对象/写者归属阶段，基线 `8dfe0ef0b`。实际 PostgreSQL 目录与当前模型相符；保留既有共享键域及已采用租户布局。下一项直接进入存储 v2 兼容归档恢复，未授权生产切换。 [交付与清单](evidence/W675-01/DELIVERY.md)

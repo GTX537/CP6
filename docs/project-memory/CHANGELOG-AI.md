@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-16，W676 新增显式 v12 与同源 v2 恢复，保留 v1 和全部共享切片；实际故障回滚、同键回执、普通读回及归档后撤权保持。#1198 的旧 Stock 守卫检查已按真实迁移修复，原拒绝/原生回归保留。 [W676 交付](../development/evidence/W676-01/DELIVERY.md)
+
 2026-11-16，W675 增加当前 PostgreSQL 存储归属清单和可复用元数据工具；核对 891 张实际表、全部 DbContext、局部索引与原生/封闭配置/包写者，保持原存储合同和整卡状态。 [交付](../development/evidence/W675-01/DELIVERY.md)
 
 2026-11-16，W674 依据最新接续记录完成 WP02-02 整卡复核，修正台账过时余项并同步生成页和项目状态。保留正式 PostgreSQL 27/27、WP02-02 IN_PROGRESS 与 WP02-03 PLANNED；本次没有业务代码、数据库或工作流变更。 [W674 复核](../development/evidence/W674-01/DELIVERY.md)
