@@ -59,7 +59,7 @@
   "unsupported": "reject-without-fallback",
   "recovery": {
     "rma-application-core-tenant-v1": "existing-v11",
-    "rma-application-core-tenant-v2": "requires-compatible-archive-and-restore"
+    "rma-application-core-tenant-v2": "archive-v12-same-source-missing-rows"
   },
   "contraction": "none"
 }

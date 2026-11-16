@@ -20,7 +20,7 @@ from privacy_evidence import CSV_LIMIT_LOCK
 
 
 FORMAT = "cp6-main-stock-outbox-reconciliation-v1"
-ARCHIVE_FORMATS = (archive.FORMAT_WITH_STOCK_OUTBOX, archive.FORMAT_WITH_FILE_CONTENT_HISTORY)
+ARCHIVE_FORMATS = (archive.FORMAT_WITH_STOCK_OUTBOX, *archive.HISTORY_FORMATS)
 REPORT = "reconciliation.jsonl"
 BATCH_SIZE = 128
 STATES = {0: "Pending", 1: "Dispatching", 2: "Published", 3: "DeadLettered"}

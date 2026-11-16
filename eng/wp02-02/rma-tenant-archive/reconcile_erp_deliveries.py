@@ -22,7 +22,7 @@ import privacy_evidence
 
 FORMAT = "cp6-erp-delivery-reconciliation-v1"
 ARCHIVE_FORMATS = (erp_integration.FORMAT, privacy_evidence.FORMAT, archive.FORMAT_WITH_STOCK_OUTBOX,
-                   archive.FORMAT_WITH_FILE_CONTENT_HISTORY)
+                   *archive.HISTORY_FORMATS)
 REPORT = "reconciliation.jsonl"
 BATCH_SIZE = 128
 COMMAND, OUTBOX, BRIDGE = (next(table for table in erp_integration.TABLES if table.name == name)

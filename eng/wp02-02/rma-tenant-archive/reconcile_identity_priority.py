@@ -25,7 +25,7 @@ import privacy_evidence
 
 FORMAT = "cp6-identity-priority-reconciliation-v1"
 ARCHIVE_FORMATS = (identity_priority.FORMAT, iam_v6.FORMAT, file_content_assets.FORMAT, erp_integration.FORMAT,
-                   privacy_evidence.FORMAT, archive.FORMAT_WITH_STOCK_OUTBOX, archive.FORMAT_WITH_FILE_CONTENT_HISTORY)
+                   privacy_evidence.FORMAT, archive.FORMAT_WITH_STOCK_OUTBOX, *archive.HISTORY_FORMATS)
 REPORT = "reconciliation.jsonl"
 BATCH_SIZE = 128
 # Platform 0.10.3 accepts a maximum 1 MiB envelope, emitted as native hex bytea in v5.

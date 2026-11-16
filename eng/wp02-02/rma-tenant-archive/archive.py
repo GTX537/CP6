@@ -36,6 +36,8 @@ FORMAT = "cp6-rma-source-archive-v1"
 FORMAT_WITH_JOURNAL = "cp6-rma-source-archive-v2"
 FORMAT_WITH_STOCK_OUTBOX = "cp6-rma-source-archive-v10"
 FORMAT_WITH_FILE_CONTENT_HISTORY = "cp6-rma-source-archive-v11"
+FORMAT_WITH_STORAGE_MODEL_V2 = "cp6-rma-source-archive-v12"
+HISTORY_FORMATS = (FORMAT_WITH_FILE_CONTENT_HISTORY, FORMAT_WITH_STORAGE_MODEL_V2)
 STOCK_MEMBER_PREFIX = "stock-outbox-"
 PROFILE = "rma-application-core-tenant-v1"
 LINEAGE = "rma-application-v1"
@@ -357,7 +359,7 @@ def adopted_submit_writer(query, target, installation, ready, executor):
                system_id=literal(target.system_identifier)))
 
 
-def capture(query, tenant, schema, ready, draft_executor, submit_writer):
+def capture(query, tenant, schema, ready, draft_executor, submit_writer, *, storage_model_v2=False):
     result = query("""
         LOCK TABLE {schema}.heads, {schema}.versions, {schema}.{history} IN ACCESS SHARE MODE;
         WITH target_schema AS (
@@ -370,7 +372,7 @@ def capture(query, tenant, schema, ready, draft_executor, submit_writer):
             SELECT c.relowner,g.grantee,g.grantor,g.privilege_type,g.is_grantable,'table',c.relname::text,NULL
                 FROM pg_class c JOIN target_schema n ON n.oid=c.relnamespace,
                 LATERAL aclexplode(coalesce(c.relacl,acldefault('r',c.relowner))) g
-            WHERE c.relkind='r'
+            WHERE c.relkind IN ('r','v')
             UNION ALL
             SELECT c.relowner,g.grantee,g.grantor,g.privilege_type,g.is_grantable,'column',c.relname::text,a.attname::text
                 FROM pg_attribute a
@@ -402,7 +404,7 @@ def capture(query, tenant, schema, ready, draft_executor, submit_writer):
           'capturedAt',transaction_timestamp(), 'serverVersionNum',current_setting('server_version_num')::integer,
           'migration',(SELECT json_build_object('operationId',h.operation_id,'migrationId',h.migration_id,
                 'scriptSha256',h.script_sha256,'receiptSha256',encode(sha256(convert_to(h.result_json,'UTF8')),'hex'))
-              FROM {schema}.{history} h WHERE h.tenant_id={tenant}::uuid AND h.lineage={lineage}),
+              FROM {schema}.{history} h WHERE h.tenant_id={tenant}::uuid AND h.lineage={lineage} AND h.migration_id={migration}),
           'counts',json_build_object(
             'heads',(SELECT count(*) FROM {schema}.heads), 'versions',(SELECT count(*) FROM {schema}.versions),
             'history',(SELECT count(*) FROM {schema}.{history}), 'outbounds',(SELECT count(*) FROM ({outbounds}) o)),
@@ -422,14 +424,14 @@ def capture(query, tenant, schema, ready, draft_executor, submit_writer):
                          OR (grantee NOT IN (object_owner,{login}::oid) AND NOT writer_grant))
                       AND (SELECT count(*) FROM grants WHERE grantee={draft_executor}::oid) IN (0,{writer_grants})
                       AND NOT EXISTS (SELECT FROM pg_default_acl a JOIN target_schema n ON n.oid=a.defaclnamespace));
-    """.format(schema=schema, history=HISTORY, tenant=literal(tenant), lineage=literal(LINEAGE),
+    """.format(schema=schema, history=HISTORY, tenant=literal(tenant), lineage=literal(LINEAGE), migration=literal(MIGRATION),
                outbounds=outbounds_sql(tenant, schema), schema_name=literal(schema),
                login=literal(ready["roleOid"]), owner=literal(ready["ownerOid"]),
                draft_executor="NULL" if draft_executor is None else literal(draft_executor),
                submit_writer="TRUE" if submit_writer else "FALSE", writer_grants=19 if submit_writer else 11))
-    if result["migration"] != ready["migration"] or result["counts"]["history"] != 1:
+    if result["migration"] != ready["migration"] or result["counts"]["history"] != (2 if storage_model_v2 else 1):
         raise ArchiveError("rma-history-mismatch")
-    if not result["tenantOnly"] or result["relations"] != list(TABLES) \
+    if not result["tenantOnly"] or result["relations"] != sorted((*TABLES, "application_heads_v2", "application_versions_v2") if storage_model_v2 else TABLES) \
             or result["functions"] != ["rma_application_immutable_v1"]:
         raise ArchiveError("rma-schema-scope-rejected")
     if not result["ownersInScope"]:
@@ -560,7 +562,9 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
                   include_original_journal=False, include_rma_source=False, include_rma_visibility=False,
                   include_identity_priority=False, include_rma_iam_references=False, file_content_root=None,
                   include_erp_integration=False, include_privacy_evidence=False, include_main_stock_outbox=False,
-                  include_file_content_history=False, environ=None, on_snapshot=None):
+                  include_file_content_history=False, include_rma_storage_model_v2=False, environ=None, on_snapshot=None):
+    if include_rma_storage_model_v2 and not include_file_content_history:
+        raise ArchiveError("storage-model-v2-needs-complete-file-content-history-archive")
     if include_file_content_history and not include_main_stock_outbox:
         raise ArchiveError("file-content-history-needs-main-stock-outbox")
     if include_main_stock_outbox and not include_privacy_evidence:
@@ -597,10 +601,15 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
     connection = connection_args(target, username)
     with snapshot_session(pg_bin, connection, environ, logs) as query:
         ready = check_source(query, target, installation, tenant)
-        require_v1_schema(query, tenant)
+        model = None
+        if include_rma_storage_model_v2:
+            import storage_model_v2
+            model = storage_model_v2.capture(query, target, installation, tenant, ready)
+        else:
+            require_v1_schema(query, tenant)
         draft_executor = adopted_draft_executor(query, target, installation, ready)
         submit_writer = adopted_submit_writer(query, target, installation, ready, draft_executor)
-        captured = capture(query, tenant, schema, ready, draft_executor, submit_writer)
+        captured = capture(query, tenant, schema, ready, draft_executor, submit_writer, storage_model_v2=include_rma_storage_model_v2)
         snapshot = captured["snapshotId"]
         if include_erp_integration:
             erp_counts = erp_integration.capture_counts(query, tenant, ready["ownerOid"])
@@ -764,6 +773,9 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
         manifest["excluded"][1] = "original operations and close outcomes outside the archived tenant Owner slices"
         manifest["excluded"][4] = ("other audit and legal hold scopes, privacy policies and execution state, external file bodies, "
                                    "other assets, unreferenced engineering revisions and cross-database dependencies")
+    if model is not None:
+        manifest["format"] = FORMAT_WITH_STORAGE_MODEL_V2
+        manifest["storageModel"] = model
     pending = logs / "manifest.pending"
     with pending.open("x", encoding="utf-8", newline="\n") as file:
         json.dump(manifest, file, indent=2)
@@ -779,7 +791,7 @@ def verify_bundle(bundle, tenant, *, file_content_root=None):
     if "manifest.json" not in names or any(path.is_symlink() or not path.is_file() for path in files):
         raise ArchiveError("bundle-member-mismatch")
     manifest = json.loads((bundle / "manifest.json").read_text(encoding="utf-8"))
-    stock_formats = (FORMAT_WITH_STOCK_OUTBOX, FORMAT_WITH_FILE_CONTENT_HISTORY)
+    stock_formats = (FORMAT_WITH_STOCK_OUTBOX, *HISTORY_FORMATS)
     privacy_formats = (privacy_evidence.FORMAT, *stock_formats)
     erp_formats = (erp_integration.FORMAT, *privacy_formats)
     asset_formats = (file_content_assets.FORMAT, *erp_formats)
@@ -790,6 +802,10 @@ def verify_bundle(bundle, tenant, *, file_content_root=None):
     if not isinstance(manifest, dict) or manifest.get("format") not in (FORMAT, FORMAT_WITH_JOURNAL, *source_formats) \
             or manifest.get("recoveryReady") is not False:
         raise ArchiveError("bundle-format-rejected")
+    if manifest["format"] == FORMAT_WITH_STORAGE_MODEL_V2:
+        import storage_model_v2
+        storage_model_v2.verify(manifest.get("storageModel"), tenant, guid(manifest.get("installationId")),
+                                PhysicalTarget.from_mapping(manifest.get("source")))
     members = MEMBERS
     if manifest["format"] in (FORMAT_WITH_JOURNAL, *source_formats):
         members += (JOURNAL_MEMBER,)
@@ -829,7 +845,7 @@ def verify_bundle(bundle, tenant, *, file_content_root=None):
     if manifest["format"] in stock_formats:
         stock = stock_outbox_module()
         members += tuple(STOCK_MEMBER_PREFIX + name for name in stock.MEMBERS)
-    if manifest["format"] == FORMAT_WITH_FILE_CONTENT_HISTORY:
+    if manifest["format"] in HISTORY_FORMATS:
         file_history = file_content_history_module()
         PhysicalTarget.from_mapping(manifest.get("source"))
         guid(manifest.get("installationId"))
@@ -853,7 +869,7 @@ def verify_bundle(bundle, tenant, *, file_content_root=None):
         raise ArchiveError("bundle-member-mismatch")
     if any(file_digest(bundle / name) != expected[name] for name in members):
         raise ArchiveError("bundle-digest-mismatch")
-    if manifest["format"] == FORMAT_WITH_FILE_CONTENT_HISTORY:
+    if manifest["format"] in HISTORY_FORMATS:
         root = file_content_assets.checked_root(file_content_root)
         file_history.verify_archive_members(bundle, tenant, history_counts, manifest["fileContentAssets"]["count"], root)
     elif manifest["format"] in asset_formats:
@@ -894,6 +910,8 @@ def main():
                         help="include the original Main Stock queue and companions in v10 (requires --include-privacy-evidence)")
     export.add_argument("--include-file-content-history", action="store_true",
                         help="include the original FileContent history in v11 (requires --include-main-stock-outbox)")
+    export.add_argument("--include-rma-storage-model-v2", action="store_true",
+                        help="capture the v2 storage migration original in complete archive v12 (requires --include-file-content-history)")
     verify = actions.add_parser("verify")
     verify.add_argument("--bundle", type=Path, required=True)
     verify.add_argument("--tenant", required=True)
@@ -911,7 +929,8 @@ def main():
                                    file_content_root=args.file_content_root, include_erp_integration=args.include_erp_integration,
                                    include_privacy_evidence=args.include_privacy_evidence,
                                    include_main_stock_outbox=args.include_main_stock_outbox,
-                                   include_file_content_history=args.include_file_content_history)
+                                   include_file_content_history=args.include_file_content_history,
+                                   include_rma_storage_model_v2=args.include_rma_storage_model_v2)
             print(bundle)
         else:
             manifest = verify_bundle(args.bundle, args.tenant, file_content_root=args.file_content_root)

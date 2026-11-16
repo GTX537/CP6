@@ -33,6 +33,9 @@ TOKEN_BODY = """BEGIN
 END"""
 # The normalized body from 20261026001000_MainStockCreationOutboxV2.
 SOURCE_PROOF_SHA256 = "f7bd0295e5a5711cd778de7c6992e574a640bc52af65cf9dae805cfbc718da70"
+# The adopted epoch migration retains the same effect graph and requires the binding's current route epoch.
+EPOCH_MIGRATION = "20261113073000_MainStockOutboxTerminalEpochV1"
+EPOCH_SOURCE_PROOF_SHA256 = "7947e01e2908af8a172176a9df915bf74e340480e536f0c7f7cec4ac6ec9e345"
 JOURNAL = STOCK.relation(STOCK.JOURNAL)
 QUEUE = (STOCK.ROUTE_TABLE, STOCK.AUTHORITY, STOCK.NATIVE, STOCK.SOURCE, STOCK.BINDING)
 ROWVERSIONS = EFFECTS[:3]
@@ -132,7 +135,9 @@ def layout_sql():
                    AND t.tgdeferrable=e.deferred AND t.tginitdeferred=e.deferred AND NOT t.tgisinternal))
            OR (SELECT count(*) FROM (VALUES
                 ({Q(TOKEN_FUNCTION)},{Q(hashlib.sha256(TOKEN_BODY.encode('utf-8')).hexdigest())},NULL::text[]),
-                ({Q(SOURCE_PROOF)},{Q(SOURCE_PROOF_SHA256)},ARRAY['search_path=pg_catalog'])
+                ({Q(SOURCE_PROOF)},CASE WHEN EXISTS (SELECT FROM public."__EFMigrationsHistory"
+                    WHERE "MigrationId"={Q(EPOCH_MIGRATION)}) THEN {Q(EPOCH_SOURCE_PROOF_SHA256)}
+                    ELSE {Q(SOURCE_PROOF_SHA256)} END,ARRAY['search_path=pg_catalog'])
               ) e(func,body_sha,settings) JOIN pg_proc p ON p.oid=e.func::regprocedure
                 WHERE p.proowner=owner AND NOT p.prosecdef AND p.prorettype='trigger'::regtype
                   AND encode(sha256(convert_to(btrim(replace(p.prosrc,chr(13),''),E' \\t\\n'),'UTF8')),'hex')=e.body_sha

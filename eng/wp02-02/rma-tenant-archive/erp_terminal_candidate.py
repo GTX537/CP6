@@ -360,7 +360,7 @@ def execute(args):
     else:
         checked, metadata = stage.checked_bundle(bundle, output, tenant, pin, target, root, include_stock_outbox=True,
                                                 include_file_content_history=include_history)
-        source_format = archive.FORMAT_WITH_FILE_CONTENT_HISTORY if include_history else archive.FORMAT_WITH_STOCK_OUTBOX
+        source_format = metadata["format"]
         if metadata['format'] != source_format or metadata.get('erpIntegrationCounts') != COUNTS:
             raise stage.StageError('rma-stage-erp-candidate-shape-rejected')
         plan.update(format=metadata['format'], counts=COUNTS)

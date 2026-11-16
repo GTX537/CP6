@@ -181,7 +181,18 @@ def inject_late_failure(request, core_next, movement_next):
             raise RuntimeError("late Stock source proof accepted a wrong original digest")
 
 
+def verify_source_guard(run_sql):
+    """Accept the adopted layout and reject an unknown guard without retaining its DDL."""
+    run_sql("stock-adopted-guard", importer.layout_sql())
+    run_sql("stock-unknown-guard", f"""
+        CREATE OR REPLACE FUNCTION {importer.SOURCE_PROOF} RETURNS trigger
+        LANGUAGE plpgsql SET search_path=pg_catalog AS $unknown$ BEGIN RETURN NEW; END $unknown$;
+        """ + importer.layout_sql(), error=b"rma-stage-stock-candidate-layout-rejected")
+    run_sql("stock-guard-after-rollback", importer.layout_sql())
+
+
 def verify(request, tenant_b, b_effects, b_queue, core_next, movement_next):
+    verify_source_guard(lambda label, sql, **kwargs: native(request, label, sql, write=True, **kwargs))
     before = boundary(request, "boundary-before")
     require(before["core"][1] is False and before["movement"][1] is False and
             before["core"][0] < core_next and
