@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-16，W688 从远端 Main 5d9e33ca8 复用 DEV-1，修复 #1219。26 项定向用例通过，其中 20 项使用 PostgreSQL，6 项为成本组件回归，零跳过。 [W688 交付](../development/evidence/W688-01/DELIVERY.md)
+
 2026-11-16，W687 从 Main b3236811 复用 DEV-1，接入完工财务路径并修复 #1217。24 项定向用例通过，其中 18 项使用 PostgreSQL，6 项为成本组件回归，零跳过。 [W687 交付](../development/evidence/W687-01/DELIVERY.md)
 
 2026-11-16，W686 从 Main f0090ab5a 复用 DEV-1，接入手工实时工费归集。29 项定向用例按最终结果通过，其中 14 项真实 PostgreSQL、15 项成本组件回归，零跳过。 [W686 交付](../development/evidence/W686-01/DELIVERY.md)
