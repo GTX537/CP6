@@ -13,6 +13,66 @@ namespace CP6.Tests.Erp;
 
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
+    [CurrentPermissionPostgresFact]
+    public async Task W684_shipment_invoice_uses_each_bound_order_line_price_for_the_same_product()
+    {
+        await using var h = await Seed();
+        await h.Db.OrderDetails.Where(x => x.WebOrderDetailNo == 2)
+            .ExecuteUpdateAsync(update => update.SetProperty(x => x.IndividualUnitPrice, 12.3456m));
+        var shipment = await AllocateFulfilment(h);
+        await SeedAr(h, "invoice-create");
+        await using var host = await StartW620Api(h);
+        var cookies = await Login(host, h);
+        using var shipped = await host.Send(OperationsRequest(cookies, HttpMethod.Post,
+            $"/api/wms/outbound-order/{shipment.Number}/ship", new { }));
+        Assert.True(shipped.StatusCode == HttpStatusCode.OK, await OperationsFailure(shipped));
+
+        await using var observer = new NpgsqlConnection(h.Db.Database.GetConnectionString());
+        await observer.OpenAsync();
+        var after = await ReadW620(observer, h.Tenant, shipment.Number);
+        var evt = Assert.Single(after.Rows("events"));
+        Assert.Equal(IntegrationEventStatus.Success, evt.GetProperty("Status").GetString());
+        using var payload = JsonDocument.Parse(evt.GetProperty("PayloadJson").GetString()!);
+        var projected = payload.RootElement.GetProperty("Lines").EnumerateArray().ToArray();
+        Assert.Equal(new[] { 3m, 12.3456m }, projected.Select(x => x.GetProperty("UnitPrice").GetDecimal()));
+        Assert.Single(projected.Select(x => x.GetProperty("ItemId").GetString()).Distinct());
+
+        var invoice = Assert.Single(after.Rows("invoices"));
+        Assert.Equal((int)ArInvoiceStatus.Posted, AssetInt(invoice, "Status"));
+        Assert.Equal(32.59m, AssetDecimal(invoice, "GrossAmount"));
+        var lines = after.Rows("invoiceLines").OrderBy(row => AssetDecimal(row, "UnitPrice")).ToArray();
+        Assert.Equal(new[] { (2.12345678m, 3m, 6.37m), (2.12345678m, 12.3456m, 26.22m) },
+            lines.Select(row => (AssetDecimal(row, "Qty"), AssetDecimal(row, "UnitPrice"), AssetDecimal(row, "Amount"))));
+        CheckApJournal(after, AssetId(invoice, "JournalEntryId"), invoice.GetProperty("No").GetString()!, 32.59m, VoucherSource.AR);
+    }
+
+    [TenantManagementPostgresTheory]
+    [InlineData(false, "SHIPMENT_INVOICE_SOURCE_AMBIGUOUS")]
+    [InlineData(true, "SHIPMENT_INVOICE_SOURCE_UNAVAILABLE")]
+    public async Task W684_shipment_invoice_source_failure_preserves_reservations_and_never_stages_an_invoice(
+        bool bound, string errorCode)
+    {
+        await using var h = await Seed();
+        await h.Db.OrderDetails.Where(x => x.WebOrderDetailNo == 2)
+            .ExecuteUpdateAsync(update => update.SetProperty(x => x.IndividualUnitPrice, 12.3456m));
+        var shipment = await AllocateFulfilment(h, manualSource: !bound);
+        if (bound)
+            await h.Db.OrderDetails.Where(x => x.WebOrderDetailNo == 2)
+                .ExecuteUpdateAsync(update => update.SetProperty(x => x.IsDeleted, true));
+        await SeedAr(h, "invoice-create");
+        await using var host = await StartW620Api(h);
+        var cookies = await Login(host, h);
+        await using var observer = new NpgsqlConnection(h.Db.Database.GetConnectionString());
+        await observer.OpenAsync();
+        var before = await ReadW620(observer, h.Tenant, shipment.Number);
+
+        using var response = await host.Send(OperationsRequest(cookies, HttpMethod.Post,
+            $"/api/wms/outbound-order/{shipment.Number}/ship", new { }));
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Contains(errorCode, await response.Content.ReadAsStringAsync());
+        Assert.Equal(before, await ReadW620(observer, h.Tenant, shipment.Number));
+    }
+
     [TenantManagementPostgresTheory]
     [InlineData("ship")]
     [InlineData("wms-cancel")]

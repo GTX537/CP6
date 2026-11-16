@@ -535,7 +535,8 @@ public partial class OutboundService : IOutboundService
     //  Ship（出庫確定）
     // ═══════════════════════════════════════════════════════════
 
-    private async Task<string?> ShipCoreAsync(string outboundNo, ShipRequest req, string? userName, List<Func<Task>>? effects = null)
+    private async Task<string?> ShipCoreAsync(string outboundNo, ShipRequest req, string? userName,
+        List<Func<Task>>? effects = null, CancellationToken ct = default)
     {
         var header = await _db.OutboundOrders
             .FirstOrDefaultAsync(x => x.OutboundNo == outboundNo && !x.IsDeleted)
@@ -554,6 +555,11 @@ public partial class OutboundService : IOutboundService
 
         // 今回出荷数のスナップショット（ループで ShippedQty が更新される前に確保）— FIN 自動開票の行数量に使用
         var shippedByLine = details.ToDictionary(d => d.LineNo, d => d.AllocatedQty - d.ShippedQty);
+        var nativeFinance = effects is not null ? _finBridge as FinBridgeHook : null;
+        // 原生财务意图在同一事务内保存。先取得可用售价，再扣减库存。
+        var nativeInvoice = header.OutboundType == OutboundType.Shipping && nativeFinance is not null
+            ? await BuildFinInvoiceRequestAsync(header, details, shippedByLine, useOrderLineage: true, ct)
+            : null;
 
         foreach (var d in details)
         {
@@ -630,10 +636,9 @@ public partial class OutboundService : IOutboundService
         //  受注售価を優先取得し、成本は工単成本単があれば消費端が実成本へ切替、無ければ EstimatedCost 回退（0=成本凭证保留）。
         if (header.OutboundType == OutboundType.Shipping)
         {
-            var nativeFinance = effects is not null ? _finBridge as FinBridgeHook : null;
             try
             {
-                var finReq = await BuildFinInvoiceRequestAsync(header, details, shippedByLine);
+                var finReq = nativeInvoice ?? await BuildFinInvoiceRequestAsync(header, details, shippedByLine);
                 if (finReq.Lines.Count > 0)
                 {
                     if (nativeFinance is not null)
@@ -652,16 +657,15 @@ public partial class OutboundService : IOutboundService
     }
 
     /// <summary>
-    /// 出庫確定データから FIN 自動開票リクエストを組立てる。
-    /// 售価は受注明細 <see cref="OrderDetail.IndividualUnitPrice"/> を優先（引当で在庫成本価に汚染され得る
-    /// 出庫明細 UnitPrice を盲信しない）。取得できない場合のみ出庫明細 UnitPrice に回退する。
+    /// 使用发货数量与可用售价构造开票意图。
     /// </summary>
     private async Task<FinShipmentInvoiceRequest> BuildFinInvoiceRequestAsync(
-        OutboundOrder header, List<OutboundOrderDetail> details, IReadOnlyDictionary<int, decimal> shippedByLine)
+        OutboundOrder header, List<OutboundOrderDetail> details, IReadOnlyDictionary<int, decimal> shippedByLine,
+        bool useOrderLineage = false, CancellationToken ct = default)
     {
-        // 受注明細の售価を製品CD別に索引（同製品複数明細は最初の非 null 価格を採用）
+        var orderPriceByLine = useOrderLineage ? await ResolveShipmentOrderPricesAsync(header, details, ct) : null;
         var orderPriceByProduct = new Dictionary<string, decimal?>();
-        if (!string.IsNullOrWhiteSpace(header.WebOrderNo))
+        if (!useOrderLineage && !string.IsNullOrWhiteSpace(header.WebOrderNo))
         {
             var ods = await _db.OrderDetails.AsNoTracking()
                 .Where(d => d.WebOrderNo == header.WebOrderNo && !d.IsDeleted)
@@ -676,12 +680,10 @@ public partial class OutboundService : IOutboundService
         {
             if (!shippedByLine.TryGetValue(d.LineNo, out var qty) || qty <= 0m) continue;
 
-            decimal unitPrice = 0m;
-            if (orderPriceByProduct.TryGetValue(d.ProductCd, out var op) && op.HasValue)
-                unitPrice = op.Value;           // 受注售価を優先
-            else if (d.UnitPrice.HasValue)
-                unitPrice = d.UnitPrice.Value;  // 受注明細が引けない場合のみ出庫明細単価へ回退
-
+            var orderPrice = orderPriceByLine is null
+                ? orderPriceByProduct.GetValueOrDefault(d.ProductCd)
+                : orderPriceByLine.GetValueOrDefault(d.Id);
+            var unitPrice = orderPrice ?? d.UnitPrice ?? 0m;
             lines.Add(new FinShipmentInvoiceLine { ItemId = d.ProductCd, Qty = qty, UnitPrice = unitPrice });
         }
 
@@ -696,6 +698,43 @@ public partial class OutboundService : IOutboundService
             EstimatedCost = 0m,   // 工単成本単があれば消費端が実 FG 単位成本へ切替、無ければ成本凭证は保留（CostAmount>0 のみ計上）
             Lines = lines,
         };
+    }
+
+    private async Task<Dictionary<Guid, decimal?>> ResolveShipmentOrderPricesAsync(OutboundOrder shipment,
+        List<OutboundOrderDetail> details, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(shipment.WebOrderNo)) return [];
+
+        var bindings = await OutboundOrderLineageV1.Read(_db, shipment.OutboundNo, ct);
+        // 当前订单及其明细已通过来源权限和业务锁。用原生关系取得当前行，保留数据库的业务键语义。
+        var orderLines = await (from line in _db.OrderDetails.AsNoTracking()
+            join order in _db.Orders.AsNoTracking() on line.WebOrderNo equals order.WebOrderNo
+            where order.WebOrderNo == shipment.WebOrderNo && !line.IsDeleted
+            select new { OrderId = order.Id, line.Id, line.ProductCd, line.QtyUnit, line.IndividualUnitPrice }).ToArrayAsync(ct);
+        var byId = orderLines.ToDictionary(line => line.Id);
+        var byProduct = orderLines.ToLookup(line => line.ProductCd);
+        var prices = new Dictionary<Guid, decimal?>();
+        foreach (var detail in details)
+        {
+            if (bindings.TryGetValue(detail.Id, out var origin))
+            {
+                if (!byId.TryGetValue(origin.OrderLineId, out var line) || line.OrderId != origin.OrderId
+                    || line.ProductCd != origin.ProductCode || detail.ProductCd != origin.ProductCode
+                    || line.QtyUnit != origin.QuantityUnit)
+                    throw new OrderPriceCorrectionException("SHIPMENT_INVOICE_SOURCE_UNAVAILABLE", 409);
+                prices[detail.Id] = line.IndividualUnitPrice ?? detail.UnitPrice
+                    ?? throw new OrderPriceCorrectionException("SHIPMENT_INVOICE_SOURCE_UNAVAILABLE", 409);
+                continue;
+            }
+
+            // 历史或手工关联缺少原生行绑定时，只能复用没有歧义的已有售价。
+            var candidates = byProduct[detail.ProductCd].Select(line => line.IndividualUnitPrice).Distinct().ToArray();
+            if (candidates.Length > 1)
+                throw new OrderPriceCorrectionException("SHIPMENT_INVOICE_SOURCE_AMBIGUOUS", 409);
+            prices[detail.Id] = candidates.SingleOrDefault();
+        }
+
+        return prices;
     }
 
     // ═══════════════════════════════════════════════════════════

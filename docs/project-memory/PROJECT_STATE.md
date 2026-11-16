@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-16，W684 修复 #1211。9 项实际 PostgreSQL 定向用例按最终结果通过，零跳过。库存、入库、出库单价直接路径及原生开票行价已核对，WP02-03 继续。 [W684 交付](../development/evidence/W684-01/DELIVERY.md)
+
 2026-11-16，W683 修复 #1210 出库分配复制库存价的来源权限。26 项本地 PostgreSQL 定向用例通过，含实际 Program/HTTP，零失败、零跳过。WP02-03 继续，开票行价格优先 #1211。 [W683 交付](../development/evidence/W683-01/DELIVERY.md)
 
 2026-11-16，W682 修复 #1207 业务伙伴旧档案、列表、CSV 与写后回读权限。18 个不同用例按最新适用结果通过（12 个 PostgreSQL，含 4 个实际 HTTP 场景，6 个种子和 ERP 单元回归），零跳过。vue-tsc 通过。WP02-03 仍在推进，下一窗口优先库存与收发货单价消费者。 [W682 交付](../development/evidence/W682-01/DELIVERY.md)
