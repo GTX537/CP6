@@ -3,13 +3,21 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text.Json;
+using CP6.Core.Services.Common;
 using CP6.Core.Services.CrmIdentity;
+using CP6.Core.Services.Platform;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
 using CP6.Entity.DTOs.Client;
 using CP6.Tests.Erp;
 using CP6.WebApi.Services;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
+using Moq;
 using Npgsql;
 using OtpNet;
 
@@ -17,6 +25,9 @@ namespace CP6.Tests.Platform;
 
 public sealed partial class IamUserAssignmentsPostgreSqlTests
 {
+    internal static Task RegisterLockoutStoreFixture(NpgsqlConnection crm, NpgsqlConnectionStringBuilder seal, Guid tenant, Guid store)
+        => InstallUserSealFixture(crm, seal, tenant, store);
+
     [Pgt017LockoutCandidateFact]
     public async Task PGT017_login_lockout_preserves_the_original_failure_and_success_order()
     {
@@ -482,6 +493,107 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Guid Credential, Guid Epoch, int Version, string SourceHash, int Outbox, int Sessions, int SessionProofs, LockoutInteraction? Interaction);
 
     private sealed record LockoutInteraction(Guid Completion, string State, Guid? Lease, bool Factor, int Consumed, int Sessions);
+}
+
+public sealed partial class AuthenticationSsoPostgreSqlTests
+{
+    [Pgt017LockoutCandidateFact]
+    public async Task PGT017_verified_Sso_primary_resolves_the_same_accepted_factor_lockout()
+    {
+        await using var external = await Harness.Create(server, 1, true, false, true);
+        var subject = external.User.Id;
+        var tenantId = external.Organization.Id;
+        var tenant = new TenantContext { CurrentTenantId = tenantId };
+        var configured = IdentityRuntime(tenantId);
+        var storeId = Guid.Parse(Environment.GetEnvironmentVariable("CP6_PGT017_STORE_ID")!);
+        var seal = new NpgsqlConnectionStringBuilder(Environment.GetEnvironmentVariable("CP6_PGT017_SEAL_CONNECTION"));
+        await using var crm = new NpgsqlConnection(Environment.GetEnvironmentVariable("CP6_PGT017_CRM_OBSERVER"));
+        await crm.OpenAsync();
+        await IamUserAssignmentsPostgreSqlTests.RegisterLockoutStoreFixture(crm, seal, tenantId, storeId);
+        await using var fence = new CrmInquiryTenantPauseV1(new Dictionary<Guid, CrmInquiryTenantPauseBindingV1>
+        {
+            [tenantId] = new() { StoreId = storeId, ConnectionString = seal.ConnectionString }
+        });
+        var identity = new CrmIdentityRuntime(configured.Options, configured.Validator, inquiryFence: fence);
+        await using var db = server.Context(tenant, identity);
+        var account = await db.Sys_Users.SingleAsync(row => row.Id == subject);
+        account.FailedLoginCount = 4;
+        account.LastFailedLoginAt = DateTime.Now.AddMinutes(-1);
+        await db.SaveChangesAsync();
+
+        var options = Options.Create(new SecurityOptions { Password = new PasswordPolicyOptions { ExpiryDays = 1 } });
+        var policy = new AuthenticationPolicyServiceV1(db, options);
+        var gate = new AuthenticationCompletionGateV1(db, policy);
+        var interactions = new AuthenticationInteractionStoreV1(db);
+        var audit = new SecurityAuditService(db);
+        var cache = new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()));
+        var factors = new TwoFactorService(db, new TotpService(options), new LogEmailSender(NullLogger<LogEmailSender>.Instance),
+            cache, audit, options);
+        var owner = new LoginSecurityService(db, options, new EphemeralDataProtectionProvider());
+        var entry = new AuthenticationEntryServiceV1(db, tenant, gate, interactions, Mock.Of<IAuthSessionService>(),
+            new RefreshTokenService(db, options, tenant), factors, owner, Mock.Of<IClientDeviceService>());
+        var start = await Start(external);
+        var proof = await start.Callback();
+        Assert.Equal((subject, AuthenticationPrimaryMethod.Sso), (proof.UserId, proof.PrimaryMethod));
+        var challenged = await entry.BeginAsync(proof, start.Key, null, null, null, null, CancellationToken.None);
+        Assert.Equal("2fa_verify", challenged.Purpose);
+
+        await SetSealLogin(false);
+        IamCrmUserSealV1 accepted;
+        try
+        {
+            var refusal = await Assert.ThrowsAsync<RefreshCompletionUnknownException>(() => entry.CompleteFactorAsync(start.Key,
+                null, false, "totp", "invalid", null, null, null, CancellationToken.None));
+            Assert.True(refusal.InnerException?.InnerException is PostgresException { SqlState: "28000" });
+            accepted = Assert.IsType<IamCrmUserSealV1>(await IamCrmUserSealV1.ReadAsync(db, tenantId, Guid.Empty, CancellationToken.None, subject));
+            Assert.Equal(proof.CompletionRef, accepted.CompletionId);
+            Assert.False(accepted.SealStarted);
+            Assert.Equal(4, (await db.Sys_Users.AsNoTracking().SingleAsync(row => row.Id == subject)).FailedLoginCount);
+        }
+        finally { await SetSealLogin(true); }
+
+        var next = await Start(external);
+        var currentProof = await next.Callback();
+        Assert.Equal((subject, AuthenticationPrimaryMethod.Sso), (currentProof.UserId, currentProof.PrimaryMethod));
+        var denied = await Assert.ThrowsAsync<InvalidOperationException>(() => entry.BeginAsync(currentProof, next.Key,
+            null, null, null, null, CancellationToken.None));
+        Assert.Equal("AUTHENTICATION_DENIED", denied.Message);
+        var after = await db.Sys_Users.AsNoTracking().SingleAsync(row => row.Id == subject);
+        Assert.Equal(5, after.FailedLoginCount);
+        Assert.True(after.LockedUntil > DateTime.Now);
+        Assert.Null(await IamCrmUserSealV1.ReadAsync(db, tenantId, accepted.OperationId, CancellationToken.None));
+        var lease = await db.Database.SqlQuery<string>($"""
+            SELECT state AS "Value" FROM cp6_authentication_v1.interactions
+            WHERE completion_id={proof.CompletionRef} AND lease IS NULL AND factor IS NULL
+            """).SingleAsync();
+        Assert.Equal("pending", lease);
+        Assert.False(await db.Database.SqlQuery<bool>($"""
+            SELECT EXISTS(SELECT FROM cp6_authentication_v1.interactions WHERE completion_id={currentProof.CompletionRef}) AS "Value"
+            """).SingleAsync());
+        Assert.False(await db.Sys_RefreshTokens.AnyAsync(row => row.TenantId == tenantId && row.UserId == subject));
+        Assert.Equal(1, await db.Sys_SecurityLogs.CountAsync(row => row.TenantId == tenantId && row.UserId == subject
+            && row.EventType == (int)SecurityEventType.TwoFactorFailed));
+        var aggregate = $"user:{subject:D}";
+        var snapshot = await db.CrmIdentitySnapshots.AsNoTracking().SingleAsync(row => row.TenantId == tenantId && row.AggregateId == aggregate);
+        var expected = Assert.Single(accepted.ReadAdvances(), row => row.Aggregate == aggregate);
+        Assert.Equal((expected.Version, expected.IntentHash), (snapshot.Version, snapshot.PayloadSha256));
+        await using var floorQuery = new NpgsqlCommand("SELECT minimum_version FROM crm_inquiry_tenant_pause_v1.identity_fences WHERE tenant_id=@tenant AND aggregate_id=@source", crm);
+        floorQuery.Parameters.AddWithValue("tenant", tenantId);
+        floorQuery.Parameters.AddWithValue("source", aggregate);
+        var floor = Assert.IsType<int>(await floorQuery.ExecuteScalarAsync());
+        Assert.Equal(expected.Version, floor);
+        await File.WriteAllTextAsync(Path.Combine(Environment.GetEnvironmentVariable("CP6_PGT017_BRIDGE")!, "sso-recovered.json"),
+            JsonSerializer.Serialize(new { accepted.OperationId, Original = proof.CompletionRef, Next = currentProof.CompletionRef, Floor = floor,
+                after.LockedUntil, after.FailedLoginCount, Snapshot = snapshot.PayloadSha256, SsoRejections = 1 }));
+
+        async Task SetSealLogin(bool enabled)
+        {
+            using var quote = new NpgsqlCommandBuilder();
+            var role = quote.QuoteIdentifier(seal.Username!);
+            await using var sql = new NpgsqlCommand($"ALTER ROLE {role} {(enabled ? "LOGIN" : "NOLOGIN")}", crm);
+            await sql.ExecuteNonQueryAsync();
+        }
+    }
 }
 
 internal sealed class Pgt017LockoutCandidateFactAttribute : FactAttribute
