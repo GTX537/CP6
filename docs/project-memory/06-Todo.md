@@ -1,6 +1,6 @@
 # 当前待办与优先级
 
-2026-11-16，继续 WP02-03 的剩余消费者。MES 完工自动归集及结转、FIN-COST-01 正式成本版本链仍待相应窗口。 [W686 交付](../development/evidence/W686-01/DELIVERY.md)
+2026-11-16，继续 WP02-03 的其他派生 DTO、写回读和独立用途。FIN-COST-01 正式版本化政策和发布沿对应任务推进。完工提交后至 Finance Owner 启动前的进程中断仍需持久恢复设计。 [W687 交付](../development/evidence/W687-01/DELIVERY.md)
 
 2026-11-16，接续 WP02-03 核对库存、入库及出库单价实际消费，继续派生结果、写回读和独立用途。业务伙伴其他消费者、文件与附件用途、订单其他消费者和 Space WP13-04 依各自合同核对。 [W682 交付](../development/evidence/W682-01/DELIVERY.md)
 
