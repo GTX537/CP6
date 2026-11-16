@@ -85,7 +85,7 @@ public partial class SsoService
                 await RequireMappingAuthority(input);
                 var current = await PrepareMapping(input, intent.UserId);
                 if (current != intent) throw new InvalidOperationException("SSO_IDENTITY_CHANGED");
-                var user = await ApplyMappingAsync(input, intent, Guid.NewGuid());
+                var user = await ApplyLocalMappingAsync(input, intent);
                 var fresh = await RecordMappingAsync(input, intent, user);
                 attempted = true; await tx.CommitAsync(); return fresh;
             }
@@ -108,6 +108,21 @@ public partial class SsoService
         catch (Exception error) { throw new SsoMappingRecoveryRequiredV1(input.Reference, error); }
         System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(failure!).Throw();
         throw new InvalidOperationException("SSO_IDENTITY_MAPPING_FAILED");
+    }
+
+    private async Task<Sys_User> ApplyLocalMappingAsync(MappingInput input, MappingIntent intent)
+    {
+        var tenant = input.Policy.TenantId;
+        if (intent.Kind != "LINK" || _db.InquiryFence?.RegisteredStore(tenant) is null)
+            return await ApplyMappingAsync(input, intent, Guid.NewGuid());
+
+        // This registered link had no existing CRM sources to seal when it was accepted.
+        // A newly established source must go through a new admission and the durable seal path.
+        if (await IamCrmUserSealV1.ExistsAsync(_db, tenant, intent.UserId, default))
+            throw new InvalidOperationException("SSO_IDENTITY_CHANGED");
+        var (user, advances) = await CaptureSsoLinkAsync(input, intent, Guid.NewGuid());
+        if (advances.Length != 0) throw new InvalidOperationException("SSO_IDENTITY_CHANGED");
+        return user;
     }
 
     private async Task<Sys_User> ApplyMappingAsync(MappingInput input, MappingIntent intent, Guid epoch)
