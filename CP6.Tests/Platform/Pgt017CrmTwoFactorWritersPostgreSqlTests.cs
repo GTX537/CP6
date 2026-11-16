@@ -28,7 +28,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var scenario = Environment.GetEnvironmentVariable("CP6_W668_SCENARIO");
         var close = scenario == "crm-unavailable-close";
         var credentialFirst = scenario == "credential-first";
-        var unavailable = close || credentialFirst || scenario == "crm-unavailable";
+        var preparedGrant = scenario == "crm-unavailable-original-grant";
+        var unavailable = close || credentialFirst || preparedGrant || scenario == "crm-unavailable";
         var native = mode.StartsWith("native-", StringComparison.Ordinal);
         var self = mode.EndsWith("-self", StringComparison.Ordinal) || mode.StartsWith("disable-self", StringComparison.Ordinal);
         var setup = mode.StartsWith("setup-", StringComparison.Ordinal) || mode.EndsWith("-setup", StringComparison.Ordinal);
@@ -44,7 +45,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var managerPassword = TestPassword();
         var actor = await h.Db.Sys_Users.SingleAsync(row => row.Id == h.ActorId);
         var tenant = await h.Db.Sys_Tenants.SingleAsync(row => row.Id == h.Tenant);
-        tenant.TwoFactorMode = self ? 1 : 2;
+        tenant.TwoFactorMode = self || preparedGrant ? 1 : 2;
         var hasher = new BCryptPasswordHasher(4);
         actor.Password = hasher.Hash(password);
         actor.AuthenticationEpoch = Guid.NewGuid();
@@ -61,6 +62,13 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             TwoFactorSecret = independentFactor, TwoFactorEnrolledAt = independentFactor is null ? null : DateTime.Now
         };
         h.Db.Sys_Users.Add(independentUser);
+        var policyPassword = preparedGrant ? TestPassword() : null;
+        if (policyPassword is not null)
+            h.Db.Sys_Users.Add(new Sys_User
+            {
+                Id = Guid.NewGuid(), UserName = "w668-policy-owner", Password = hasher.Hash(policyPassword),
+                RoleId = 72, Enable = true, DeptId = h.Parent, AuthenticationEpoch = Guid.NewGuid()
+            });
         await h.Db.SaveChangesAsync();
         h.Db.ChangeTracker.Clear();
 
@@ -106,6 +114,21 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         await using var host = await AuthenticationApiProcess.Start(connection, environment, allowAutoRedirect: false);
         var tenantCode = $"iam_{h.Tenant:N}";
         var originalBrowser = self ? await SignIn(host, actor.UserName, password, tenantCode, secret) : null;
+        Guid[] originalGrants = [];
+        if (preparedGrant)
+        {
+            var optionalBrowser = await SignIn(host, actor.UserName, password, tenantCode);
+            originalGrants = [GrantId((await Exchange(optionalBrowser)).Access)];
+            var policyBrowser = await SignIn(host, "w668-policy-owner", policyPassword!, tenantCode);
+            using var change = await host.Send(Request(HttpMethod.Put, "api/sys/two-factor-policy", policyBrowser, new { Mode = 2 }));
+            Assert.Equal(HttpStatusCode.OK, change.StatusCode);
+            Assert.Equal(2, (await h.Db.Sys_Tenants.AsNoTracking().SingleAsync(row => row.Id == h.Tenant)).TwoFactorMode);
+            Assert.Equal(1, await h.Db.Database.SqlQuery<int>($"""
+                SELECT count(*)::int AS "Value" FROM public."CrmOidcGrant"
+                WHERE "Id"=ANY({originalGrants}) AND "OrganizationId"={h.Tenant} AND "SubjectId"={actor.Id}
+                    AND "Consumed" AND NOT "Revoked" AND "AccessExpiresAtUtc">clock_timestamp()
+                """).SingleAsync());
+        }
         var independentBrowser = await SignIn(host, independentUser.UserName, managerPassword, tenantCode, independentFactor);
         var independentGrant = await Exchange(independentBrowser);
         var expectedFence = $"{store:D}/1";
@@ -149,7 +172,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         }
         var codeFromMail = mail is null ? null : await mail.Code.WaitAsync(TimeSpan.FromSeconds(10));
         var submittedCode = setup ? null : codeFromMail ?? new Totp(Base32Encoding.ToBytes(secret!)).ComputeTotp();
-        var grants = self ? new[] { GrantId((await Exchange(originalBrowser!)).Access) } : Array.Empty<Guid>();
+        var grants = self ? new[] { GrantId((await Exchange(originalBrowser!)).Access) } : originalGrants;
         var aggregates = new[] { $"user:{actor.Id:D}" }
             .Concat(grants.Select(id => IdentityEventContracts.TokenAggregate(options.Issuer, id.ToString("D")))).ToArray();
         Assert.Equal(expectedFence, await Sign(independentGrant.Access, independentUser.Id, "intake:reject"));
@@ -158,7 +181,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var before = await MainFacts();
         var route = self ? "api/auth/2fa/" + (setup ? "setup-self" : disable ? "disable-self" : "enroll-self")
             : (native ? "api/client-auth/2fa/" : "api/auth/2fa/") + (setup ? "setup" : "enroll");
-        var usesCrm = self || !setup;
+        var usesCrm = grants.Length > 0 || !setup;
         if (scenario == "authority-first")
         {
             var floors = await Floors();
@@ -214,7 +237,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 Assert.Equal((actor.Id, actor.Id, store), (pending.ActorId, pending.UserId, pending.StoreId));
                 Assert.False(pending.SealStarted);
                 Assert.False(webAccess);
-                if (!self)
+                if (!self && !setup)
                 {
                     Assert.Equal("COMPLETION_UNKNOWN", status);
                     Assert.Equal(before.Challenge!.Completion, after.Challenge!.Completion);
@@ -222,6 +245,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                         (after.Challenge.State, after.Challenge.HasLease, after.Challenge.Prepared,
                             after.Challenge.HasFactor, after.Challenge.Consumptions, after.Challenge.Sessions));
                 }
+                if (preparedGrant) Assert.Equal(before.Challenge, after.Challenge);
                 if (close)
                 {
                     Assert.Equal("CLOSED", await Completion("close"));
@@ -335,7 +359,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                     Assert.Equal(("pending", true, 0, 0),
                         (after.Challenge!.State, after.Challenge.Prepared, after.Challenge.Consumptions, after.Challenge.Sessions));
             }
-            if (self)
+            if (grants.Length > 0)
                 Assert.Equal(1, await h.Db.Database.SqlQuery<int>($"""
                     SELECT count(*)::int AS "Value" FROM public."CrmOidcGrant" WHERE "Id"=ANY({grants})
                         AND "OrganizationId"={h.Tenant} AND "SubjectId"={actor.Id} AND "Revoked"
