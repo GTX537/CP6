@@ -166297,6 +166297,11 @@
       "at": "2026-11-16T10:56:41.413881+00:00",
       "change": "W681 修复 #1206，17 项 PG/HTTP 通过；登记独立 P0 #1207 为下一任务，WP02-03 继续 IN_PROGRESS。",
       "evidence": "docs/development/evidence/W681-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-16T11:32:47.800579+00:00",
+      "change": "W682 修复 #1207。18 个不同用例按最新适用结果通过（12 个 PostgreSQL，含 4 个实际 HTTP 场景，6 个种子和 ERP 单元回归），零跳过。vue-tsc 通过。WP02-03 保持 IN_PROGRESS。",
+      "evidence": "docs/development/evidence/W682-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -171487,18 +171492,18 @@
       "card_anchor": "wp02-03",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W681-01",
+        "chat_label": "COORD / W682-01",
         "repository": "Main",
-        "branch": "codex/w681-01",
+        "branch": "codex/w682-01",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-11-16T10:56:41.413881+00:00",
-        "baseline_sha": "64cfb12b781c1067c8c24c779b9425aa74017255",
-        "entry_evidence": "docs/development/evidence/W681-01/DELIVERY.md",
+        "claimed_at": "2026-11-16T11:32:47.800579+00:00",
+        "baseline_sha": "2f6e885dcafd3c8c3ed505c6303a7ec7629830b3",
+        "entry_evidence": "docs/development/evidence/W682-01/DELIVERY.md",
         "phase": "CLOSED",
-        "dispatch_scope": "仓库、库位、业务伙伴注册字段与看板/库龄直接名称消费者核销及确认缺口修复",
+        "dispatch_scope": "修复 P0 #1207：业务伙伴旧详情、列表、CSV、写入及保存后披露的当前权限",
         "bounded_window_gate": "CONFIRMED",
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W681-01/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/W682-01/DELIVERY.md",
         "full_task_completed": false,
         "worker_delivery_received": true
       },
@@ -171548,6 +171553,15 @@
           "scope": "两类当前关联名称来源权限修复，仓库/库位名称及业务伙伴身份来源限定回归；不是旧 BP CRUD/CSV 或完整资源验收。",
           "environment": "Windows/.NET 8/PostgreSQL 18.6，私有端口57368；模拟用户/权限/库存/仓库/客户，真实 Owner/事务/数据库，两个实际 Program/HTTP 场景。",
           "observed_at": "2026-11-16T11:11:58.823284+00:00"
+        },
+        {
+          "path": "docs/development/evidence/W682-01/DELIVERY.md",
+          "result": "PASS",
+          "source_sha": "71ebdf506ac76752a997f74247febc376ef617d1",
+          "command": "dotnet build CP6.Tests + W682 verify-final.ps1 and focused VSTest rechecks + vue-tsc --noEmit",
+          "scope": "#1207 旧档案权限、字段和真实对象范围、独立导出、同事务写回读与授权目录。18 个不同用例按最新适用结果通过（12 个 PostgreSQL，含 4 个实际 HTTP 场景，6 个种子和 ERP 单元回归），零跳过。vue-tsc 通过。",
+          "environment": "Windows/.NET 8/PostgreSQL 18.6，私有端口 57369。模拟用户、权限和业务伙伴，真实数据库及 Program/HTTP。",
+          "observed_at": "2026-11-16T11:57:48.536761+00:00"
         }
       ],
       "delivery_evidence": null,
@@ -171555,7 +171569,7 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
-      "remaining_scope": "W681 已修复库存看板仓库名/库龄客户名的来源权限缺口 #1206，17 项本地 PG/HTTP 通过；仓库/库位当前名称和草稿、业务伙伴身份来源限定核对。优先处理 P0 #1207：旧 BP 详情/列表/名称筛选排序/CSV/写后回读；其独立 HTTP 红测和修复未完成。随后继续其余 Operations 的派生 DTO、写回读、独立用途，文件/受控文档 v1、表单附件 v2、订单其他消费者与 Space WP13-04 保持原范围。",
+      "remaining_scope": "W682 修复 #1207，旧业务伙伴详情、范围内查重、列表、独立 CSV 和写后回读已采用当前权限。优先核对库存及收发货单价的真实消费路径，再核对其余 Operations 派生输出、写回读、独立用途。业务伙伴还有其他消费者合同，文件与附件独立用途、订单其他消费者及 Space WP13-04 继续按各自范围推进。",
       "wave10_delivery": {
         "status": "MERGED",
         "source_candidate_sha": "d29721d20e3ddc4eac46e9b40434e3b680326605",
@@ -176339,6 +176353,22 @@
           "delivery_report": "docs/development/evidence/W680-01/DELIVERY.md",
           "full_task_completed": false,
           "worker_delivery_received": true
+        },
+        {
+          "chat_label": "COORD / W681-01",
+          "repository": "Main",
+          "branch": "codex/w681-01",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-11-16T10:56:41.413881+00:00",
+          "baseline_sha": "64cfb12b781c1067c8c24c779b9425aa74017255",
+          "entry_evidence": "docs/development/evidence/W681-01/DELIVERY.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "仓库、库位、业务伙伴注册字段与看板/库龄直接名称消费者核销及确认缺口修复",
+          "bounded_window_gate": "CONFIRMED",
+          "worker_start_received": true,
+          "delivery_report": "docs/development/evidence/W681-01/DELIVERY.md",
+          "full_task_completed": false,
+          "worker_delivery_received": true
         }
       ],
       "wave13_delivery": {
@@ -177561,13 +177591,13 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W681-01",
+        "window": "W682-01",
         "as_of": "2026-11-16",
         "classification": "CONSUMER_RECONCILIATION_REMAINS",
-        "report": "docs/development/evidence/W681-01/DELIVERY.md",
-        "delivered": "修复 #1206 两类库存名称来源权限；当前主数据名称/草稿和身份来源限定核对；17/17 本地 PG/HTTP 通过。旧 BP 入口独立缺口 #1207 保持 Open。",
-        "remaining": "W681 已修复库存看板仓库名/库龄客户名的来源权限缺口 #1206，17 项本地 PG/HTTP 通过；仓库/库位当前名称和草稿、业务伙伴身份来源限定核对。优先处理 P0 #1207：旧 BP 详情/列表/名称筛选排序/CSV/写后回读；其独立 HTTP 红测和修复未完成。随后继续其余 Operations 的派生 DTO、写回读、独立用途，文件/受控文档 v1、表单附件 v2、订单其他消费者与 Space WP13-04 保持原范围。",
-        "next_action": "W681 已修复库存看板仓库名/库龄客户名的来源权限缺口 #1206，17 项本地 PG/HTTP 通过；仓库/库位当前名称和草稿、业务伙伴身份来源限定核对。优先处理 P0 #1207：旧 BP 详情/列表/名称筛选排序/CSV/写后回读；其独立 HTTP 红测和修复未完成。随后继续其余 Operations 的派生 DTO、写回读、独立用途，文件/受控文档 v1、表单附件 v2、订单其他消费者与 Space WP13-04 保持原范围。",
+        "report": "docs/development/evidence/W682-01/DELIVERY.md",
+        "delivered": "修复 #1207 的业务伙伴旧入口权限。现有 query 保持最小身份范围，完整档案另有 profile-query，CSV 另有 export 和 Export 字段决定，写后回读复用同事务当前权限。18 个不同用例按最新适用结果通过（12 个 PostgreSQL，含 4 个实际 HTTP 场景，6 个种子和 ERP 单元回归），零跳过。vue-tsc 通过。",
+        "remaining": "W682 修复 #1207，旧业务伙伴详情、范围内查重、列表、独立 CSV 和写后回读已采用当前权限。优先核对库存及收发货单价的真实消费路径，再核对其余 Operations 派生输出、写回读、独立用途。业务伙伴还有其他消费者合同，文件与附件独立用途、订单其他消费者及 Space WP13-04 继续按各自范围推进。",
+        "next_action": "W682 修复 #1207，旧业务伙伴详情、范围内查重、列表、独立 CSV 和写后回读已采用当前权限。优先核对库存及收发货单价的真实消费路径，再核对其余 Operations 派生输出、写回读、独立用途。业务伙伴还有其他消费者合同，文件与附件独立用途、订单其他消费者及 Space WP13-04 继续按各自范围推进。",
         "evidence_refs": [
           "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
           "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
@@ -177649,11 +177679,12 @@
           "docs/development/evidence/W678-01/DELIVERY.md",
           "docs/development/evidence/W679-01/DELIVERY.md",
           "docs/development/evidence/W680-01/DELIVERY.md",
-          "docs/development/evidence/W681-01/DELIVERY.md"
+          "docs/development/evidence/W681-01/DELIVERY.md",
+          "docs/development/evidence/W682-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W681-01",
+        "latest_window": "W682-01",
         "review_history": [
           {
             "window": "W310-01",
@@ -178037,6 +178068,102 @@
             "formal_state_changed": false,
             "new_product_validation": true,
             "latest_window": "W680-01"
+          },
+          {
+            "window": "W681-01",
+            "as_of": "2026-11-16",
+            "classification": "CONSUMER_RECONCILIATION_REMAINS",
+            "report": "docs/development/evidence/W681-01/DELIVERY.md",
+            "delivered": "修复 #1206 两类库存名称来源权限；当前主数据名称/草稿和身份来源限定核对；17/17 本地 PG/HTTP 通过。旧 BP 入口独立缺口 #1207 保持 Open。",
+            "remaining": "W681 已修复库存看板仓库名/库龄客户名的来源权限缺口 #1206，17 项本地 PG/HTTP 通过；仓库/库位当前名称和草稿、业务伙伴身份来源限定核对。优先处理 P0 #1207：旧 BP 详情/列表/名称筛选排序/CSV/写后回读；其独立 HTTP 红测和修复未完成。随后继续其余 Operations 的派生 DTO、写回读、独立用途，文件/受控文档 v1、表单附件 v2、订单其他消费者与 Space WP13-04 保持原范围。",
+            "next_action": "W681 已修复库存看板仓库名/库龄客户名的来源权限缺口 #1206，17 项本地 PG/HTTP 通过；仓库/库位当前名称和草稿、业务伙伴身份来源限定核对。优先处理 P0 #1207：旧 BP 详情/列表/名称筛选排序/CSV/写后回读；其独立 HTTP 红测和修复未完成。随后继续其余 Operations 的派生 DTO、写回读、独立用途，文件/受控文档 v1、表单附件 v2、订单其他消费者与 Space WP13-04 保持原范围。",
+            "evidence_refs": [
+              "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
+              "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
+              "docs/development/evidence/WP02-03/consistent-permission-read/DELIVERY.md",
+              "docs/development/evidence/WP02-03/platform-admin-transaction/DELIVERY.md",
+              "docs/development/evidence/WP02-03/user-create-whitelist/DELIVERY.md",
+              "docs/development/evidence/WP02-03/platform-admin-current-actor/DELIVERY.md",
+              "docs/development/evidence/WP02-03/impersonation-final-gate/DELIVERY.md",
+              "docs/development/evidence/WP02-03/session-authentication-current-state/DELIVERY.md",
+              "docs/development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md",
+              "docs/development/evidence/WP02-03/authentication-entry-completion/DELIVERY.md",
+              "docs/development/evidence/WP02-03/authentication-session-continuity/DELIVERY.md",
+              "docs/development/evidence/WP02-03/authentication-browser-recovery/DELIVERY.md",
+              "docs/development/evidence/WP02-03/sso-admission-policy/DELIVERY.md",
+              "docs/development/evidence/WP02-03/sso-identity-admission/DELIVERY.md",
+              "docs/development/evidence/WP02-03/iam-user-assignments/DELIVERY.md",
+              "docs/development/evidence/WP02-03/organization-administration/DELIVERY.md",
+              "docs/development/evidence/WP02-03/role-administration/DELIVERY.md",
+              "docs/development/evidence/WP02-03/integer-role-identity/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-cancel-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/operations-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/production-inbound-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/menu-action-administration/DELIVERY.md",
+              "docs/development/evidence/WP02-03/trusted-field-source/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-price-correction-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-department-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-read-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-write-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/stocktake-dashboard-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/defect-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/quality-owners/DELIVERY.md",
+              "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
+              "docs/development/evidence/WP02-03/mes-realtime/DELIVERY.md",
+              "docs/development/evidence/WP02-03/wms-hub-scope/DELIVERY.md",
+              "docs/development/evidence/WP02-03/machine-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/oee-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/planning-owner/DELIVERY.md",
+              "docs/development/evidence/W136-01/DELIVERY.md",
+              "docs/development/evidence/W137-01/DELIVERY.md",
+              "docs/development/evidence/W138-01/DELIVERY.md",
+              "docs/development/evidence/W139-01/DELIVERY.md",
+              "docs/development/evidence/W140-01/DELIVERY.md",
+              "docs/development/evidence/W141-01/DELIVERY.md",
+              "docs/development/evidence/W148-01/DELIVERY.md",
+              "docs/development/evidence/W310-01/DELIVERY.md",
+              "docs/development/evidence/W435-01/DELIVERY.md",
+              "docs/development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md",
+              "docs/development/evidence/BUG-881-DEVICE-LIFECYCLE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-887-BARCODE-CONFIG-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-889-LABEL-RECOVERY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-891-WCS-TASK-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-897-PAPER-ROLL-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-899-REMNANT-LIFECYCLE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-903-WMS-FEATURE-REQUEST-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-905-WMS-FEATURE-QUERY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-907-OPERLOG-AUTHORITY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-909-FIELD-AUDIT-LIST-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-911-DICT-MUTATION-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-913-SPACE-CODE-WRITE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-915-SPACE-SITE-FLOOR-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-917-SPACE-HIERARCHY-GEOMETRY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-927-SPACE-LOCATION-ADOPT-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-929-SPACE-LOCATION-DEACTIVATE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-931-SPACE-TOPOLOGY-DELETE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md",
+              "docs/development/evidence/W645-01/DELIVERY.md",
+              "docs/development/evidence/W677-01/DELIVERY.md",
+              "docs/development/evidence/W678-01/DELIVERY.md",
+              "docs/development/evidence/W679-01/DELIVERY.md",
+              "docs/development/evidence/W680-01/DELIVERY.md",
+              "docs/development/evidence/W681-01/DELIVERY.md",
+              "docs/development/evidence/W682-01/DELIVERY.md"
+            ],
+            "formal_state_changed": false,
+            "new_product_validation": true,
+            "latest_window": "W681-01"
           }
         ]
       },
@@ -178779,6 +178906,13 @@
         "full_task_completed": false,
         "issue": 1206,
         "next_issue": 1207
+      },
+      "wave682_delivery": {
+        "report": "docs/development/evidence/W682-01/DELIVERY.md",
+        "source_sha": "71ebdf506ac76752a997f74247febc376ef617d1",
+        "issue": 1207,
+        "scope": "业务伙伴旧档案、写后回读与 CSV 权限",
+        "full_task_completed": false
       }
     },
     {
@@ -213231,10 +213365,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W681",
-      "path": "docs/development/evidence/W681-01/DELIVERY.md",
-      "baseline_sha": "64cfb12b781c1067c8c24c779b9425aa74017255",
-      "registered_at": "2026-11-16T10:56:41.413881+00:00",
+      "id": "W682",
+      "path": "docs/development/evidence/W682-01/DELIVERY.md",
+      "baseline_sha": "2f6e885dcafd3c8c3ed505c6303a7ec7629830b3",
+      "registered_at": "2026-11-16T11:32:47.800579+00:00",
       "phase": "LOCAL_VERIFIED_PENDING_INTEGRATION",
       "assigned_chats": [
         "COORD"
@@ -213248,11 +213382,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "正常受保护 PR 采用、远端核对、关闭 #1206 及 finish；下一窗口优先处理 P0 #1207。",
+      "next_action": "正常受保护 PR 采用、远端核对、关闭 #1207 和 finish。下一窗口优先核对库存与收发货单价消费者。",
       "windows": [
         {
-          "id": "W681-01",
-          "workspace_task": "W681-01",
+          "id": "W682-01",
+          "workspace_task": "W682-01",
           "related_tasks": [
             "WP02-03"
           ],
@@ -213262,20 +213396,20 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w681-01",
-          "planned_scope_ref": "docs/development/evidence/W681-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W681-01/DELIVERY.md",
+          "branch": "codex/w682-01",
+          "planned_scope_ref": "docs/development/evidence/W682-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W682-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:roadmap-and-project-state",
-            "Main:master-data-name-consumers"
+            "Main:business-partner-crud-permissions"
           ],
           "review_completed": true,
           "integration_status": "PENDING_PROTECTED_PR",
-          "validation_summary": "4 项原生 PG 红测复现，修复后 17 项 PG/HTTP 通过、零失败/跳过；两类直接名称来源权限修复及限定主数据核对。",
-          "remaining_scope": "W681 已修复库存看板仓库名/库龄客户名的来源权限缺口 #1206，17 项本地 PG/HTTP 通过；仓库/库位当前名称和草稿、业务伙伴身份来源限定核对。优先处理 P0 #1207：旧 BP 详情/列表/名称筛选排序/CSV/写后回读；其独立 HTTP 红测和修复未完成。随后继续其余 Operations 的派生 DTO、写回读、独立用途，文件/受控文档 v1、表单附件 v2、订单其他消费者与 Space WP13-04 保持原范围。"
+          "validation_summary": "18 个不同用例按最新适用结果通过（12 个 PostgreSQL，含 4 个实际 HTTP 场景，6 个种子和 ERP 单元回归），零跳过。vue-tsc 通过。",
+          "remaining_scope": "W682 修复 #1207，旧业务伙伴详情、范围内查重、列表、独立 CSV 和写后回读已采用当前权限。优先核对库存及收发货单价的真实消费路径，再核对其余 Operations 派生输出、写回读、独立用途。业务伙伴还有其他消费者合同，文件与附件独立用途、订单其他消费者及 Space WP13-04 继续按各自范围推进。"
         }
       ],
       "storage": {
@@ -272469,6 +272603,62 @@
           "new_worktrees": 0
         },
         "product_code_changed": false
+      },
+      {
+        "id": "W681",
+        "path": "docs/development/evidence/W681-01/DELIVERY.md",
+        "baseline_sha": "64cfb12b781c1067c8c24c779b9425aa74017255",
+        "registered_at": "2026-11-16T10:56:41.413881+00:00",
+        "phase": "LOCAL_VERIFIED_PENDING_INTEGRATION",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "正常受保护 PR 采用、远端核对、关闭 #1206 及 finish；下一窗口优先处理 P0 #1207。",
+        "windows": [
+          {
+            "id": "W681-01",
+            "workspace_task": "W681-01",
+            "related_tasks": [
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w681-01",
+            "planned_scope_ref": "docs/development/evidence/W681-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W681-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:roadmap-and-project-state",
+              "Main:master-data-name-consumers"
+            ],
+            "review_completed": true,
+            "integration_status": "PENDING_PROTECTED_PR",
+            "validation_summary": "4 项原生 PG 红测复现，修复后 17 项 PG/HTTP 通过、零失败/跳过；两类直接名称来源权限修复及限定主数据核对。",
+            "remaining_scope": "W681 已修复库存看板仓库名/库龄客户名的来源权限缺口 #1206，17 项本地 PG/HTTP 通过；仓库/库位当前名称和草稿、业务伙伴身份来源限定核对。优先处理 P0 #1207：旧 BP 详情/列表/名称筛选排序/CSV/写后回读；其独立 HTTP 红测和修复未完成。随后继续其余 Operations 的派生 DTO、写回读、独立用途，文件/受控文档 v1、表单附件 v2、订单其他消费者与 Space WP13-04 保持原范围。"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:\\CP6-worktrees\\wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_code_changed": true
       }
     ],
     "development_priority": {

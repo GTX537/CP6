@@ -82,9 +82,10 @@ def main():
             uses.update(query='CURRENT_MASTER_OWNER_REVIEWED_OTHER_CONSUMERS_PENDING',
                         write='NAME_AND_DRAFT_FIELD_GATES_REVIEWED_OTHER_CONSUMERS_PENDING')
         elif resource == 'erp-business-partner':
-            uses.update(query='IDENTITY_OWNER_REVIEWED_LEGACY_READS_OPEN_ISSUE_1207',
-                        write='LEGACY_WRITE_AND_READBACK_REVIEW_OPEN_ISSUE_1207',
-                        export='LEGACY_CSV_BOUNDARY_OPEN_ISSUE_1207')
+            uses.update(query='CURRENT_IDENTITY_AND_PROFILE_QUERY_SCOPED',
+                        write='CURRENT_ACTION_SCOPE_FIELDS_AND_PROFILE_READBACK',
+                        export='INDEPENDENT_EXPORT_ACTION_AND_FIELD_USE',
+                        download='NO_DOWNLOAD_ENTRY_IN_REVIEWED_CONTROLLERS')
         records.append({**entry, 'review_group': group, 'uses': uses,
                         'lexical_source_candidates': refs, 'permission_attribute_route_ids': direct})
     args.output.mkdir(parents=True, exist_ok=True)
