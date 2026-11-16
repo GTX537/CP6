@@ -207,7 +207,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
 
     [CurrentPermissionPostgresFact]
-    public async Task Work_center_owner_finance_http_reports_unavailable_instead_of_legacy_success_or_generic_error()
+    public async Task Work_center_owner_finance_http_rejects_a_collector_without_work_order_query()
     {
         await using var h = await Seed();
         var menu = await h.Db.Sys_Menus.SingleOrDefaultAsync(x => x.MenuKey == "fin-cost");
@@ -217,8 +217,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
         await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!); var cookies = await Login(host, h);
         using var response = await host.Send(OperationsRequest(cookies, HttpMethod.Post, "api/fin/cost/ANY/collect", new { laborStd = 1, overheadStd = 1 }));
-        Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode); Assert.True(response.Headers.CacheControl?.NoStore);
-        Assert.Contains("FINANCE_OWNER_REQUIRED", await response.Content.ReadAsStringAsync());
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode); Assert.True(response.Headers.CacheControl?.NoStore);
+        Assert.Contains("ACTION_FORBIDDEN", await response.Content.ReadAsStringAsync());
         Assert.False(await h.Db.CostSheets.AnyAsync());
     }
 

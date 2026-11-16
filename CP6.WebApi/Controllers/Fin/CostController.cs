@@ -51,7 +51,7 @@ public class CostController : ControllerBase
     public async Task<IActionResult> FgUnitCost(string workOrderNo)
         => Ok2(new { workOrderNo, fgUnitCost = await _settle.FgUnitCostAsync(workOrderNo) });
 
-    /// <summary>归集料工费（料自动吃 MES 真实消耗×BOM单价，工费传标准估算）。</summary>
+    /// <summary>按同租户工单、材料消耗、工时和有效费率归集，授权及采番由 Finance Owner 处理。</summary>
     [HttpPost("{workOrderNo}/collect")]
     [RequirePermission("fin-cost", "collect")]
     [OrderOwnerResult]

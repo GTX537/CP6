@@ -16,7 +16,7 @@ namespace CP6.Core.Services.Fin;
 /// 双模式：StrictCostRate=true 缺工序/费率即失败；false（默认迁移）整单回退传入的标准估算。
 /// 错误码：401 工单不存在 / 402 成本单已结转不可重归集 / E-A2-COST-001 无工序 / E-A2-RATE-002 无费率。
 /// </summary>
-public class CostCollectService : ICostCollectService
+public partial class CostCollectService : ICostCollectService
 {
     private readonly CP6Context _db;
     private readonly IFinSequenceService _seq;
@@ -38,10 +38,11 @@ public class CostCollectService : ICostCollectService
         _owner = owner;
     }
 
-    public async Task<FinResult> CollectAsync(string workOrderNo, decimal laborStd, decimal overheadStd, string user)
+    public Task<FinResult> CollectAsync(string workOrderNo, decimal laborStd, decimal overheadStd, string user)
+        => _db.Database.IsNpgsql() ? CollectOwnedAsync(workOrderNo) : CollectLegacyAsync(workOrderNo, laborStd, overheadStd, user);
+
+    private async Task<FinResult> CollectLegacyAsync(string workOrderNo, decimal laborStd, decimal overheadStd, string user)
     {
-        // Legacy fallback is not a Finance Owner and must not turn authorization failure into estimated costs.
-        if (_db.Database.IsNpgsql()) throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("FINANCE_OWNER_REQUIRED", 503);
         var wo = await _db.Set<WorkOrder>().FirstOrDefaultAsync(w => w.WorkOrderNo == workOrderNo && !w.IsDeleted);
         if (wo == null) return FinResult.Fail("E-FIN-401");
 
@@ -56,7 +57,6 @@ public class CostCollectService : ICostCollectService
             .GroupBy(p => (p.ProcessCd, p.MaterialCd))
             .ToDictionary(g => g.Key, g => g.First().SupplyPrice ?? 0m);
 
-        decimal matActual = 0m, matStd = 0m;
         var lines = new List<CostSheetLine>();
         var ln = 1;
         foreach (var m in woMats)
@@ -65,8 +65,6 @@ public class CostCollectService : ICostCollectService
             var planQty = m.PlanQty ?? 0m;
             var actualAmt = Math.Round(m.ActualQty * price, 2, MidpointRounding.AwayFromZero);
             var stdAmt = Math.Round(planQty * price, 2, MidpointRounding.AwayFromZero);
-            matActual += actualAmt;
-            matStd += stdAmt;
             lines.Add(new CostSheetLine
             {
                 LineNo = ln++, Element = CostElement.Material,
@@ -78,7 +76,6 @@ public class CostCollectService : ICostCollectService
         // ── 工/费做真：逐工序 工时×费率（spec §4.4）──
         // 人工 = ActualLaborHour × LaborRate（缺则回退标准人工工时）；制费 = ActualMachineHour × OverheadRate（缺回退标准机时）。
         // 标准机时 = SetupHour + 完工数×CycleTime；标准人工工时 = 标准机时×标准人数。费率按基准日（实绩完工日→计划开始日→建单日）解析。
-        decimal laborAct = 0m, laborStdAmt = 0m, ohAct = 0m, ohStd = 0m;
         var baseDate = wo.ActualEndDate ?? wo.PlanStartDate ?? wo.CreateDate;
         var calcQty = wo.CompletedQty;
 
@@ -118,7 +115,6 @@ public class CostCollectService : ICostCollectService
                 var laborStdLine = Math.Round(stdLabor * rate.LaborRate, 2, MidpointRounding.AwayFromZero);
                 var ohActLine = Math.Round(actMachine * rate.OverheadRate, 2, MidpointRounding.AwayFromZero);
                 var ohStdLine = Math.Round(stdMachine * rate.OverheadRate, 2, MidpointRounding.AwayFromZero);
-                laborAct += laborActLine; laborStdAmt += laborStdLine; ohAct += ohActLine; ohStd += ohStdLine;
 
                 lines.Add(new CostSheetLine
                 {
@@ -139,7 +135,6 @@ public class CostCollectService : ICostCollectService
 
         if (legacyFallback)
         {
-            laborAct = laborStdAmt = laborStd; ohAct = ohStd = overheadStd;
             lines.RemoveAll(l => l.Element is CostElement.Labor or CostElement.Overhead);   // 清部分行，整单估算
             lines.Add(new CostSheetLine
             {
@@ -153,6 +148,23 @@ public class CostCollectService : ICostCollectService
             });
         }
 
+        return await SaveCollectionAsync(wo, sheet, lines, user, default);
+    }
+
+    private async Task<FinResult> SaveCollectionAsync(WorkOrder wo, CostSheet? sheet, List<CostSheetLine> lines,
+        string actor, CancellationToken ct)
+    {
+        var groups = lines.ToLookup(line => line.Element);
+        (decimal Actual, decimal Standard) Totals(CostElement element) =>
+            (groups[element].Sum(line => line.ActualAmount), groups[element].Sum(line => line.StandardAmount));
+        var material = Totals(CostElement.Material);
+        var labor = Totals(CostElement.Labor);
+        var overhead = Totals(CostElement.Overhead);
+        if (_db.Database.IsNpgsql() && (!AmountFits(material.Actual) || !AmountFits(material.Standard)
+            || !AmountFits(labor.Actual) || !AmountFits(labor.Standard)
+            || !AmountFits(overhead.Actual) || !AmountFits(overhead.Standard)))
+            return FinResult.Fail("COST_VALUE_OUT_OF_RANGE");
+
         var now = DateTime.Now;
         if (sheet == null)
         {
@@ -160,8 +172,8 @@ public class CostCollectService : ICostCollectService
             {
                 Id = Guid.NewGuid(),
                 No = await _seq.NextAsync(SeqKey, now),
-                WorkOrderNo = workOrderNo,
-                Creator = user,
+                WorkOrderNo = wo.WorkOrderNo,
+                Creator = actor,
                 CreateDate = now,
             };
             _db.CostSheets.Add(sheet);
@@ -170,24 +182,20 @@ public class CostCollectService : ICostCollectService
         {
             _db.CostSheetLines.RemoveRange(sheet.Lines);   // 重归集：清旧明细重算
             sheet.Lines.Clear();
-            sheet.Modifier = user;
+            sheet.Modifier = actor;
             sheet.ModifyDate = now;
         }
 
         sheet.ProductCd = wo.ProductCd;
         sheet.CostCenterId ??= null;
         sheet.CompletedQty = wo.CompletedQty;
-        sheet.MaterialActual = matActual;
-        sheet.MaterialStandard = matStd;
-        // A2 §4.4：工/费按工时×费率做真（迁移模式缺工序/费率时整单回退传入估算，见上）
-        sheet.LaborActual = laborAct;
-        sheet.LaborStandard = laborStdAmt;
-        sheet.OverheadActual = ohAct;
-        sheet.OverheadStandard = ohStd;
+        (sheet.MaterialActual, sheet.MaterialStandard) = material;
+        (sheet.LaborActual, sheet.LaborStandard) = labor;
+        (sheet.OverheadActual, sheet.OverheadStandard) = overhead;
         sheet.Status = CostSheetStatus.Collected;
         foreach (var l in lines) { l.CostSheetId = sheet.Id; sheet.Lines.Add(l); }
 
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(ct);
         return FinResult.Pass();
     }
 
