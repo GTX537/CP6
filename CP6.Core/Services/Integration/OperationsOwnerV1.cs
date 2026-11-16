@@ -242,7 +242,8 @@ public sealed partial class OperationsOwnerV1
         => action=="add" && (ticket.Resource=="order" && ticket.Action=="add" && resource is Mes or Outbound
             || ticket.Resource==Mes && ticket.Action=="issue" && resource==Outbound)
         || ticket.Resource==Production && ticket.Action=="complete" && ticket.CompletionResultId!=null
-            && (resource==Receipt && action=="post" || resource==Production && action=="backflush");
+            && (resource==Receipt && action=="post" || resource==Production && action=="backflush"
+                || resource==FinCost && action=="settle");
     private static bool IsBusiness(string name)=>BusinessTables.Contains(name) || name is "PlateMoldStock" or "RmaHeader" or "RmaDetail" or "ReplenishOrder" or "MobileTask" or "MobileTaskEvent" or "MobileTaskScanLog" or "TaskCommandReceipt" or "WorkCenter" or "ProcessCostRate" or "CrossDockOrder" or "SlottingPlan" or "VmiBilling" or "KitMaster" or "KitMasterComponent" or "KitOrder" or "SampleStock";
     private async Task LockGraph(bool write,CancellationToken ct,string? resource=null)
     {

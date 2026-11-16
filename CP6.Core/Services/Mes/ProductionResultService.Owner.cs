@@ -1,4 +1,5 @@
 using CP6.Core.Services.Erp;
+using CP6.Core.Services.Fin;
 using CP6.Core.Services.Integration;
 using CP6.Core.Services.Wms;
 using CP6.Entity.DTOs.Mes;
@@ -69,6 +70,19 @@ public partial class ProductionResultService
             try{await backflush.BackflushCompletedAsync(ticket);}
             catch(Exception ex){backflushOk=false;_logger?.LogWarning(ex,"Completion backflush unavailable for {WorkOrder}; cost collection skipped",req.WorkOrderNo);}
         }
-        if(backflushOk && _finBridge!=null)try{await _finBridge.OnWorkOrderCompletedAsync(req.WorkOrderNo,ticket.Actor);}catch{}
+        if (backflushOk && _finBridge != null)
+        {
+            try
+            {
+                if (_backflush is BackflushService && _finBridge is FinBridgeHook finance)
+                    await finance.OnWorkOrderCompletedOwnedAsync(ticket);
+                else
+                    await _finBridge.OnWorkOrderCompletedAsync(ticket.Number, ticket.Actor);
+            }
+            catch (Exception error)
+            {
+                _logger?.LogWarning(error, "Committed MES completion {ResultId} did not return a financial outcome", ticket.CompletionResultId);
+            }
+        }
     }
 }

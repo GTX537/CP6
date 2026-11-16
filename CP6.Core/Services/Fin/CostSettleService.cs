@@ -26,6 +26,9 @@ public class CostSettleService : ICostSettleService
         _history = history;
     }
 
+    internal bool Owns(CP6Context context) => ReferenceEquals(_db, context)
+        && _journal is JournalEntryService journal && journal.Owns(context);
+
     public async Task<FinResult> SettleAsync(string workOrderNo, string user)
     {
         var sheet = await _db.CostSheets.FirstOrDefaultAsync(s => s.WorkOrderNo == workOrderNo);

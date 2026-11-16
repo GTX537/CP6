@@ -26,6 +26,10 @@ public class JournalEntryService : IJournalEntryService
         _seq = seq;
     }
 
+    internal bool Owns(CP6Context context) => ReferenceEquals(_db, context)
+        && _period is FiscalPeriodService period && period.Owns(context)
+        && _seq is FinSequenceService sequence && sequence.Owns(context);
+
     public Task<JournalEntry?> GetAsync(Guid id) =>
         _db.JournalEntries.Include(x => x.Lines).FirstOrDefaultAsync(x => x.Id == id);
 
