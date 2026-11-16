@@ -4,94 +4,73 @@ using CP6.Core.Auth;
 using CP6.WebApi.Controllers.Oa;
 using CP6.WebApi.Controllers.Wf;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CP6.Tests;
 
-/// <summary>
-/// 反射守卫（M-OA/WF 横切接线波 Task 4，fail-closed 防回潮闸）：扫 CP6.WebApi 程序集
-/// **两个命名空间** Controllers.Oa（14）+ Controllers.Wf（5）= 19 controller，锁死
-/// 「未来新增 OA/WF 写端点漏贴权限键即红」。与已合并的 <c>WmsPermissionAttributeTests</c> /
-/// <c>ErpPermissionAttributeTests</c> / <c>MesPermissionAttributeTests</c> 同型三件套。
-/// 真相源：docs/seeds/oawf-permission-keys.md（19 控制器扫描面 / 47 非GET端点 / 45 贴点 / 2 只读 POST 豁免；
-/// 45 = 37 M-OA/WF·F-T2 + 2 波④ B-T2 batch-transfer/preview + 3 波⑤ A-T4 WorkCalendar toggle/clear/import-jp
-/// + 3 波⑤ D-T2 WfConnector create/update/enabled）。
-/// **A-T4（WFS 波⑤ 引擎基建，年历管理页）**：WorkCalendarController 新增至 Controllers.Oa 纳入本守卫，
-/// 贡献 3 变更端点（Calendar.Edit×3：POST toggle / DELETE {date} / POST import-jp），计数 17→18 / 贴点 39→42 /
-/// 41→44 非GET；只读 GET List 循 OA 兄弟约定不贴键（NoReadOnlyGetAction 守卫）。菜单/权限种子落库归 F-T1 收口。
-/// **D-T2（WFS 波⑤ 引擎基建，连接器管理页）**：WfConnectorController 新增至 Controllers.Oa 纳入本守卫，
-/// 贡献 3 变更端点（Connector.Edit×3：POST create / PUT {id} / POST {id}/enabled），计数 18→19 / 贴点 42→45 /
-/// 44→47 非GET；只读 GET List/{id} 循同约定不贴键。菜单/权限种子落库归 F-T1 收口。
-/// **F-T2（WFS 波③ 事件触发，E-T1 交接票）**：FlowTriggerAdminController 由 Controllers.Integration 收编回
-/// Controllers.Oa 纳入本守卫，贡献 6 变更端点（Edit×5 + View×1=CronPreview），计数 16→17 / 贴点 31→37 / 33→39 非GET。
-///
-/// ① discovery 守卫：断言扫到 17 个 controller（防命名空间/程序集变动导致「空扫空过」假绿）。
-///    谓词覆盖 **两个** 命名空间（Oa ∪ Wf），计数断言 17 防单侧空扫。
-/// ② fail-closed 核心闸：每个变更端点（HttpPost/HttpPut/HttpDelete）**要么**带 [RequirePermission]、
-///    **要么**在显式只读 POST 豁免清单内；两者皆非即 offender 断言失败。且贴点数精确 == 39、
-///    豁免命中数精确 == 2（41 = 39 + 2 收口）。将来谁新增 OA/WF 写端点忘贴权限，本用例立刻红。
-/// ③ 键约定校验（防 typo）：读出每个 [RequirePermission] 的 (menu, action)，断言 menu 匹配
-///    ^oa-[a-z0-9-]+$（连字符，禁下划线）。**注**：Wf 命名空间 5 控制器（Flow/Form/Task/AdvancedFlow/
-///    Approval）无自己菜单行，其键锚定「消费页」OA 菜单，故 **全部键仍为 oa-* 前缀**（真相源 §一/§二）——
-///    本波不存在 wf-* 键。action **逐词相等**落在真相源实际使用的 action 集合内。
-/// ④ 豁免防腐：每条豁免必须确为「变更端点 且 未贴权限」——防豁免清单变陈旧（端点改名/被贴/被删）
-///    却仍白名单遮蔽某个真·写端点丢键。
-///
-/// 断言方式：RequirePermissionAttribute 的 menu/action 为 private field，实例反射不可读，
-/// 故用 <see cref="CustomAttributeData"/> 读构造参数 (menu, action)。
-/// 继承说明：17 个 OA/WF 控制器中 1 个（Wf.TaskController）直接继承 ControllerBase，其余 16 个
-/// （Oa 全 12 + Wf 的 AdvancedFlow/Approval/Flow/Form）经 <c>LocalizedControllerBase</c>（抽象基类，
-/// 仅惰性暴露 Localizer 属性，**零 [HttpXxx] action 声明**）继承 ControllerBase；因各级基类均无端点
-/// 声明，写端点均为子类手写声明方法，故 BindingFlags.DeclaredOnly 反射不会漏扫端点（逐类自查类头，
-/// 见 oawf-t4-report.md 继承链核对）。若未来在共享基类（LocalizedControllerBase 或 ControllerBase
-/// 派生链上）新增 [HttpXxx] 方法，DeclaredOnly 会静默漏扫该端点——届时须调整扫描策略（如改用非
-/// DeclaredOnly 并按声明类型过滤）。
-/// </summary>
+// 当前入口登记见 docs/development/evidence/W679-01/DELIVERY.md。
+// 这里只校验接线登记；实际 Owner 权限由行为回归覆盖。未知新端点仍失败。
 public class OawfPermissionAttributeTests
 {
-    /// <summary>
-    /// menu 键约定：**oa-** 前缀 + 小写字母数字连字符。Wf 命名空间控制器键锚定 OA 消费页菜单，
-    /// 故亦为 oa-* 前缀（真相源 §一/§二：/api/wf/* 五控制器无自己菜单行）。
-    /// </summary>
     private static readonly Regex MenuPattern = new("^oa-[a-z0-9-]+$", RegexOptions.Compiled);
 
-    /// <summary>
-    /// 真相源实际使用的 action 集合（从已贴的 37 个 [RequirePermission] 逐词读出的真实 action，非凭空造）。
-    /// 只读 POST 豁免归 view 但**不贴键**（未打属性），故本集合**不含 view**——逐词相等，多一词/少一词即红。
-    /// 新 action 词若出现须显式加入本集合，否则视为疑似 typo 报错。
-    /// </summary>
     private static readonly HashSet<string> ActionVocabulary = new()
     {
-        "add", "edit", "del",                       // 四基粒度写（view 未贴，不入集）
-        "favorite",                                 // 低危个性化写：oa-form-catalog:favorite 收藏表单
-        "read",                                     // 低危写：oa-inbox:read 标记已读（归并 Inbox/CC/Notification，§五归并4）
-        "submit",                                   // 状态键：oa-form-catalog:submit 起流程/提交（归并 Draft/Flow/Approval/Form，§五归并3）
-        "enable",                                   // 状态键：oa-flow-admin:enable 流程启停干预（§五归并6）
-        "withdraw",                                 // 状态键：oa-inbox:withdraw 撤回申请
-        "approve", "transfer", "sendback",          // 高危键：审批办理/转交/退回（§三，归并 Inbox+Flow/AdvancedFlow）
-        "addsign",                                  // 高危键：oa-inbox:addsign 加签改审批链（§三）
-        "delegate",                                 // 高危键：oa-settings:delegate 委派授权（合一 OA #5/#6 + AdvancedFlow #26，§三/§六注4）
-        "form-save",                                // 高危键：oa-designer:form-save 表单定义保存（旧栈 Form.SaveDef，§三）
-        // WFS 波④ 信箱体验 B-T2：InboxController 新增 batch-transfer/preview 两个 POST，同贴 oa-inbox:batch-transfer。
-        "batch-transfer",                           // 高危键：oa-inbox:batch-transfer 在途批量改派（spec OA.Inbox.BatchTransfer；preview 同键，C8）
-        // WFS 波③ 事件触发 F-T2（E-T1 交接票）：FlowTriggerAdminController 由 Integration 收编回 Controllers.Oa，
-        // 纳入本 fail-closed 守卫扫描面。Edit=增改/启停/试发/重置key（5 端点），View=cron 预览（1 端点，POST）。
-        "FlowTrigger.View", "FlowTrigger.Edit",     // oa-flow-admin:FlowTrigger.*（点式 action，与 spec §6 权限点名逐字一致）
-        // WFS 波⑤ 引擎基建 A-T4：WorkCalendarController（年历管理页）。Edit=反转/清除/导入（3 写端点同键）；
-        // View=只读列一年（GET 不贴键，故本集合仅含 Edit——与 spec §2 权限点名逐字一致；种子落库归 F-T1）。
-        "Calendar.Edit", "Calendar.View",           // oa-work-calendar:Calendar.*（点式 action）
-        // WFS 波⑤ 引擎基建 D-T2：WfConnectorController（连接器管理页，挂 oa-flow-admin 菜单）。Edit=新建/编辑/启停
-        // （3 写端点同键）；View=只读列表/取单（GET 不贴键，故本集合仅含 Edit——照 A-T4 处理方式 View 亦入词表约定）。
-        "Connector.Edit", "Connector.View",          // oa-flow-admin:Connector.*（点式 action，与 spec §5 权限点名逐字一致）
+        "add", "edit", "del",
+        "favorite",
+        "read",
+        "submit",
+        "enable",
+        "withdraw",
+        "approve", "transfer", "sendback",
+        "addsign",
+        "delegate",
+        "form-save",
+        "batch-transfer",
+        "FlowTrigger.View", "FlowTrigger.Edit",
+        "Calendar.Edit", "Calendar.View",
+        "Connector.Edit", "Connector.View",
     };
 
-    /// <summary>
-    /// 只读 POST 豁免清单（真相源 §四，共 2 条 —— 均逐条读 Service 实现证得无写副作用；归 view，不贴权限键）。
-    /// 键 = "ControllerName.MethodName"。每条带真相源编号 + 豁免依据。
-    /// </summary>
     private static readonly HashSet<string> ReadOnlyPostExemptions = new()
     {
-        "ForecastController.Preview",   // §四#1 ForecastService.ForecastAsync 仅 Wf_FlowDefs 读定义→内存遍历 schema 算预计审批路径，不产生实例、全类无 Add/Update/Remove/SaveChanges；POST 仅为传 varsJson 复杂体
-        "QueryController.Search",       // §四#2 InboxService.QueryAsync 仅 Wf_FlowInstances 多条件筛选 + join，Take(500).ToListAsync 投影 DTO，无写；POST 仅为传 FormQueryFilter 复杂体
+        "ForecastController.Preview",
+        "QueryController.Search",
+    };
+
+    // 明确到方法，不按整个控制器放行；命令重读由 Owner 区分当前读权与写权。
+    private static readonly HashSet<string> BoundaryGuardedActions = new()
+    {
+        "ApprovalBindingController.Create", "ApprovalBindingController.Revise", "ApprovalBindingController.Disable",
+        "DraftController.Create", "DraftController.Update", "DraftController.Rebase", "DraftController.Submit", "DraftController.Delete",
+        "FlowAuthoringController.Preview", "FlowAuthoringController.Simulate", "FlowAuthoringController.Publish", "FlowAuthoringController.Clone", "FlowAuthoringController.Next", "FlowAuthoringController.Activate", "FlowAuthoringController.Save",
+        "FlowAuthoringPolicyController.Save",
+        "FlowPublicationPolicyController.Save",
+        "FlowDraftController.Create",
+        "FormAuthoringController.LegacySource", "FormAuthoringController.LegacySourceClose", "FormAuthoringController.Rules", "FormAuthoringController.Save", "FormAuthoringController.Preview", "FormAuthoringController.Publish", "FormAuthoringController.Clone", "FormAuthoringController.Next", "FormAuthoringController.Activate",
+        "FormAuthoringPolicyController.Save",
+        "FormPublicationPolicyController.Save",
+        "FormFieldDispositionController.CreateRequest", "FormFieldDispositionController.Decide", "FormFieldDispositionController.Hold", "FormFieldDispositionController.Close",
+        "FormFilesController.Upload", "FormFilesController.Read", "FormFilesController.Command", "FormFilesController.Close", "FormFilesController.Download", "FormFilesController.InboxRead", "FormFilesController.InboxDownload", "FormFilesController.QueryRead", "FormFilesController.QueryDownload",
+        "FormSubmissionController.Submit",
+        "NativeFormQueryController.Search",
+        "NativeInboxController.TaskRead", "NativeInboxController.CcRead", "NativeInboxController.Close",
+        "NativeTaskBatchesController.Preview", "NativeTaskBatchesController.Transfer",
+        "NativeTaskOperationsController.Decide", "NativeTaskOperationsController.DecisionClose", "NativeTaskOperationsController.Preview", "NativeTaskOperationsController.SendBack", "NativeTaskOperationsController.Transfer", "NativeTaskOperationsController.AddSign", "NativeTaskOperationsController.Close",
+        "PersonalFormController.AdoptLegacy", "PersonalFormController.Favorite", "PersonalFormController.FormPreview", "PersonalFormController.Options", "PersonalFormController.Create", "PersonalFormController.Submit", "PersonalFormController.DraftPreview", "PersonalFormController.Save", "PersonalFormController.Delete", "PersonalFormController.Restore", "PersonalFormController.SubmitDraft", "PersonalFormController.Preview", "PersonalFormController.Rebase", "PersonalFormController.RecoverSnapshot", "PersonalFormController.Close", "PersonalFormController.SendBackPreview", "PersonalFormController.SendBack", "PersonalFormController.Transfer", "PersonalFormController.AddSign", "PersonalFormController.EditReturned", "PersonalFormController.ResubmitReturned", "PersonalFormController.ResolveApprover", "PersonalFormController.Decide", "PersonalFormController.DecideSfs", "PersonalFormController.Configure",
+        "TaskDecisionController.Decide", "TaskDecisionController.CloseCommand",
+        "TaskDelegationController.Create", "TaskDelegationController.Revise", "TaskDelegationController.Revoke", "TaskDelegationController.Close",
+    };
+
+    // 已关闭且不提供业务结果的旧入口，与仍有当前权限读取的 Owner 分开登记。
+    private static readonly HashSet<string> RetiredActions = new()
+    {
+        "DefinitionController.Retired",
+        "DesignerController.Retired",
+        "FlowAdminController.Retired",
+        "FlowController.DefinitionRetired",
+        "FormController.DefinitionRetired",
     };
 
     private static IEnumerable<Type> OawfControllers =>
@@ -103,20 +82,19 @@ public class OawfPermissionAttributeTests
             .OrderBy(t => t.Name);
 
     private static IEnumerable<MethodInfo> ActionMethods(Type t) =>
-        t.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-            .Where(m => !m.IsSpecialName);
+        t.GetMethods(BindingFlags.Public | BindingFlags.Instance)
+            .Where(m => m.GetCustomAttributes<HttpMethodAttribute>().Any());
 
     private static bool IsMutating(MethodInfo m) =>
         m.GetCustomAttributes<HttpPostAttribute>().Any()
         || m.GetCustomAttributes<HttpPutAttribute>().Any()
-        || m.GetCustomAttributes<HttpPatchAttribute>().Any()   // X-SWEEP T1：补 PATCH，杜绝未来 [HttpPatch] 写端点静默逃出扫描面
+        || m.GetCustomAttributes<HttpPatchAttribute>().Any()
         || m.GetCustomAttributes<HttpDeleteAttribute>().Any();
 
     private static bool IsGet(MethodInfo m) => m.GetCustomAttributes<HttpGetAttribute>().Any();
 
     private static string Key(Type c, MethodInfo m) => $"{c.Name}.{m.Name}";
 
-    /// <summary>经 CustomAttributeData 读构造参数 (menu, action)；无特性返回 null。</summary>
     private static (string menu, string action)? ReadPermission(MethodInfo m)
     {
         var data = CustomAttributeData.GetCustomAttributes(m)
@@ -129,17 +107,16 @@ public class OawfPermissionAttributeTests
     [Fact]
     public void OawfControllers_AreDiscovered()
     {
-        // 守卫：Controllers.Oa（14，含 F-T2 收编的 FlowTriggerAdminController + A-T4 WorkCalendarController
-        //      + D-T2 WfConnectorController）+ Controllers.Wf（5）下继承 ControllerBase 的非抽象类共 19
-        //      （含 Forecast/Query 两个全豁免·真写=0 控制器）。防单侧空扫假绿。
-        Assert.Equal(23, OawfControllers.Count());
+        Assert.Contains(typeof(InboxController), OawfControllers);
+        Assert.Contains(typeof(CP6.WebApi.Controllers.Wf.TaskController), OawfControllers);
     }
 
     [Fact]
     public void EveryMutatingAction_IsGuarded_WithConventionalKeyOrExemption()
     {
         var offenders = new List<string>();
-        var taggedCount = 0;
+        var boundaryHit = new HashSet<string>();
+        var retiredHit = new HashSet<string>();
         var exemptHit = new HashSet<string>();
 
         foreach (var c in OawfControllers)
@@ -148,21 +125,28 @@ public class OawfPermissionAttributeTests
             var key = Key(c, m);
             var perm = ReadPermission(m);
 
+            if (BoundaryGuardedActions.Contains(key) || RetiredActions.Contains(key))
+            {
+                Assert.True(c.IsDefined(typeof(AuthorizeAttribute), true), $"{key}：必须要求登录");
+                Assert.False(c.IsDefined(typeof(AllowAnonymousAttribute), true) || m.IsDefined(typeof(AllowAnonymousAttribute), true), $"{key}：不得匿名访问");
+                Assert.Null(perm);
+                Assert.DoesNotContain(key, ReadOnlyPostExemptions);
+                Assert.False(BoundaryGuardedActions.Contains(key) && RetiredActions.Contains(key), $"{key}：边界分类冲突");
+                (BoundaryGuardedActions.Contains(key) ? boundaryHit : retiredHit).Add(key);
+                continue;
+            }
             if (perm == null)
             {
-                // 未贴权限：唯有在显式只读 POST 豁免清单内才放行。
                 if (ReadOnlyPostExemptions.Contains(key))
                     exemptHit.Add(key);
                 else
-                    offenders.Add($"{key}：变更端点缺 [RequirePermission] 且不在只读 POST 豁免清单");
+                    offenders.Add($"{key}：变更端点缺 [RequirePermission] 且未登记实际边界");
                 continue;
             }
 
-            // 已贴权限却又列入豁免 = 语义冲突（豁免应无键）。
             if (ReadOnlyPostExemptions.Contains(key))
                 offenders.Add($"{key}：既贴 [RequirePermission] 又在豁免清单，二者互斥");
 
-            taggedCount++;
             if (!MenuPattern.IsMatch(perm.Value.menu))
                 offenders.Add($"{key}：menu '{perm.Value.menu}' 不符约定 ^oa-[a-z0-9-]+$");
             if (!ActionVocabulary.Contains(perm.Value.action))
@@ -172,16 +156,14 @@ public class OawfPermissionAttributeTests
         Assert.True(offenders.Count == 0,
             "变更端点权限点缺失/键不合约定/豁免冲突:\n" + string.Join("\n", offenders));
 
-        // 收口断言：P0 definition/submission/draft/decision 资源端点纳入后共 52 个贴点。
-        Assert.Equal(52, taggedCount);
-        Assert.Equal(2, exemptHit.Count);
+        Assert.True(BoundaryGuardedActions.SetEquals(boundaryHit), "Owner 入口登记已过时");
+        Assert.True(RetiredActions.SetEquals(retiredHit), "关闭入口登记已过时");
+        Assert.True(ReadOnlyPostExemptions.SetEquals(exemptHit), "旧入口登记已过时");
     }
 
     [Fact]
     public void ReadOnlyPostExemptions_AreAllStillUntaggedMutatingEndpoints()
     {
-        // 豁免防腐：清单每一条都必须实存、确为变更端点、且当前未贴权限键。
-        // 防清单变陈旧（端点被改名/删除/后来贴了键）却仍白名单遮蔽某真·写端点丢键。
         var byKey = OawfControllers
             .SelectMany(c => ActionMethods(c).Select(m => (key: Key(c, m), method: m)))
             .ToDictionary(x => x.key, x => x.method);
@@ -201,21 +183,19 @@ public class OawfPermissionAttributeTests
         }
 
         Assert.True(stale.Count == 0, "只读 POST 豁免清单已陈旧:\n" + string.Join("\n", stale));
-        Assert.Equal(2, ReadOnlyPostExemptions.Count);
     }
 
     [Fact]
-    public void NoReadOnlyGetAction_HasRequirePermission()
+    public void ReadPermissions_MatchCurrentDeclaredBindings()
     {
-        // 只读误贴防护：纯 HttpGet（且非变更）端点不应带 [RequirePermission]（本波未给 GET 贴）。
-        var offenders = new List<string>();
-        foreach (var c in OawfControllers)
-        foreach (var m in ActionMethods(c))
+        // GET 可合法要求 query/view；核对已采用映射，不禁止读取权限。
+        var expected = new Dictionary<string, (string menu, string action)>
         {
-            var readOnly = IsGet(m) && !IsMutating(m);
-            if (readOnly && ReadPermission(m) != null)
-                offenders.Add($"{Key(c, m)}：只读 GET 端点误贴 [RequirePermission]");
-        }
-        Assert.True(offenders.Count == 0, "只读端点误贴权限点:\n" + string.Join("\n", offenders));
+        };
+        var actual = OawfControllers.SelectMany(c => ActionMethods(c)
+            .Where(m => IsGet(m) && !IsMutating(m) && ReadPermission(m) != null)
+            .Select(m => (key: Key(c, m), permission: ReadPermission(m)!.Value)))
+            .ToDictionary(x => x.key, x => x.permission);
+        Assert.Equal(expected.OrderBy(x => x.Key), actual.OrderBy(x => x.Key));
     }
 }

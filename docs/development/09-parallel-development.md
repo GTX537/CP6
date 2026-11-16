@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+## 2026-11-16 UTC · W679 个人表单与旧扫描核销
+
+COORD 从已确认 Main `3f856aadd` 复用 DEV-1 / `codex/w679-01`。个人表单/附件当前字段边界与 #1202 所报入口已核对，修正扫描并完成 21/21 本地验证；待正常 PR 采用、远端核对及官方 finish。WP02-03 仍 IN_PROGRESS，下一窗口继续 Operations 派生输出和独立用途。没有其他执行对话、Actions 或部署。[交付](evidence/W679-01/DELIVERY.md)
+
 ## 2026-11-16 UTC · W678 字段用途核销与订单读取
 
 COORD 从已确认 Main `c84aeea9b` 复用固定 DEV-1 / `codex/w678-01`，建立当前资源/字段/用途/真实路由清单，并修复直接复现的订单辅助读取缺口 #1201。相关本地验证已完成，待正常 PR 采用与官方 finish；WP02-03 保持 IN_PROGRESS。后续个人表单/附件、Operations 输出及 #1202 原入口核销继续。用户本轮决定以简体中文为标准，见 AGENTS。没有其他执行对话、Actions 或部署。 [交付与实际验证](evidence/W678-01/DELIVERY.md)

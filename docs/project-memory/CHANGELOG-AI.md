@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-16 · W679：复用固定 DEV-1，从 Main 3f856aadd 领取个人表单/附件及 #1202 窗口。真实调用链核销、修正两组扫描、补 DataJson 回归，21/21 通过；当前清单和台账同步。无产品权限、工作流、迁移或部署变更。 [W679 交付](../development/evidence/W679-01/DELIVERY.md)
+
 2026-11-16，W678 新增当前封存目录与路由核销入口；订单辅助读取接入现有 Owner 并通过定向原生/HTTP 验证，修正 ERP 扫描的历史适用边界。用户将标准语言改为简体中文，AGENTS 与本轮提示同步。保留所有失败及未核对范围，未运行 Actions 或部署；WP02-03 继续 IN_PROGRESS。 [W678 交付](../development/evidence/W678-01/DELIVERY.md)
 
 2026-11-16，W677 登记 W676 PR1199 / Main 343624813 的准确采用与分支席位处置，WP02-02 DONE；同步 WP02-03 当前复核与真实余项。只改文档台账，业务证据复用，无产品测试、Actions 或部署。 [W677 复核](../development/evidence/W677-01/DELIVERY.md)

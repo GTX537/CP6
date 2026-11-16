@@ -166282,6 +166282,11 @@
       "at": "2026-11-16T07:58:04.234144+00:00",
       "change": "W678 接续当前字段/用途核销，建立封存目录与真实入口索引并定向处理订单辅助读取权限缺口 #1201；WP02-03 保持 IN_PROGRESS。",
       "evidence": "docs/development/evidence/W678-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-16T08:45:34.683351+00:00",
+      "change": "W679 领取个人表单/附件实际权限核销与 #1202 旧扫描修复；WP02-03 保持 IN_PROGRESS。",
+      "evidence": "docs/development/evidence/W679-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -171472,18 +171477,18 @@
       "card_anchor": "wp02-03",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W678-01",
+        "chat_label": "COORD / W679-01",
         "repository": "Main",
-        "branch": "codex/w678-01",
+        "branch": "codex/w679-01",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-11-16T07:58:04.234144+00:00",
-        "baseline_sha": "c84aeea9b922dec8e847786cb1401e821e51b843",
-        "entry_evidence": "docs/development/evidence/W678-01/DELIVERY.md",
+        "claimed_at": "2026-11-16T08:45:34.683351+00:00",
+        "baseline_sha": "3f856aadd2799b997d8808fc62fd0a5e9c947415",
+        "entry_evidence": "docs/development/evidence/W679-01/DELIVERY.md",
         "phase": "CLOSED",
-        "dispatch_scope": "Current field-use coverage and confirmed Order auxiliary-read gap #1201",
+        "dispatch_scope": "个人表单/附件实际权限核销与 #1202 扫描修复",
         "bounded_window_gate": "CONFIRMED",
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W678-01/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/W679-01/DELIVERY.md",
         "full_task_completed": false,
         "worker_delivery_received": true
       },
@@ -171506,6 +171511,15 @@
           "scope": "W678 auxiliary-read fix and affected existing Owner behavior only; indexed routes are not all validated.",
           "environment": "Windows; isolated PostgreSQL 18.6; actual Main HTTP; simulated users/orders",
           "observed_at": "2026-11-16T08:34:34.832100+00:00"
+        },
+        {
+          "path": "docs/development/evidence/W679-01/DELIVERY.md",
+          "result": "PASS",
+          "source_sha": "ddda3e8b01fd78f136215dd9b714da2854b7e937",
+          "command": "dotnet vstest: OawfPermissionAttributeTests, PlanPubPermissionAttributeTests, 10 explicit PersonalForm/NativeInbox/FormFiles cases; index_coverage.py",
+          "scope": "W679 扫描修复及个人表单/附件字段边界限定验证；不是全卡或所有 MVC 入口验收。",
+          "environment": "Windows/.NET 8.0.424/PostgreSQL 18.6；模拟用户、表单、文件存储/扫描器；真实 Owner 与数据库。",
+          "observed_at": "2026-11-16T09:08:58.567338+00:00"
         }
       ],
       "delivery_evidence": null,
@@ -171513,7 +171527,7 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
-      "remaining_scope": "W678 已建立当前封存字段域/MVC 路由及用途核销入口；继续个人表单/附件、Operations 受控字段派生输出，以及文件/受控文档已采用 v1 与独立用途模型的合同核销。清单中的待核对不等于产品缺陷或已通过；产品主数据查入、其他追踪/未出货入口仍需实际消费者证据。PGT-017、当前源与原询盘已通过范围直接复用，Space 专用组合沿 WP13-04 采用。",
+      "remaining_scope": "W679 已核销个人表单 Title/DataJson、动态策略及上下文附件读取，#1202 旧扫描已修正且本地 21/21 通过；继续 Operations 受控字段派生 DTO、写回读及独立用途，文件/受控文档 v1 与表单附件 v2 的独立用途合同核销。订单产品查入、其他追踪/未出货入口仍需各自消费者证据；Space 专用组合沿 WP13-04，PGT/询盘已通过范围复用。",
       "wave10_delivery": {
         "status": "MERGED",
         "source_candidate_sha": "d29721d20e3ddc4eac46e9b40434e3b680326605",
@@ -176249,6 +176263,22 @@
           "worker_delivery_received": true,
           "delivery_report": "docs/development/evidence/W677-01/DELIVERY.md",
           "full_task_completed": false
+        },
+        {
+          "chat_label": "COORD / W678-01",
+          "repository": "Main",
+          "branch": "codex/w678-01",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-11-16T07:58:04.234144+00:00",
+          "baseline_sha": "c84aeea9b922dec8e847786cb1401e821e51b843",
+          "entry_evidence": "docs/development/evidence/W678-01/DELIVERY.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "Current field-use coverage and confirmed Order auxiliary-read gap #1201",
+          "bounded_window_gate": "CONFIRMED",
+          "worker_start_received": true,
+          "delivery_report": "docs/development/evidence/W678-01/DELIVERY.md",
+          "full_task_completed": false,
+          "worker_delivery_received": true
         }
       ],
       "wave13_delivery": {
@@ -177471,13 +177501,13 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W678-01",
+        "window": "W679-01",
         "as_of": "2026-11-16",
         "classification": "CONSUMER_RECONCILIATION_REMAINS",
-        "report": "docs/development/evidence/W678-01/DELIVERY.md",
-        "delivered": "81 resources/114 controlled fields/2103 MVC descriptors indexed; confirmed auxiliary Order read gap #1201 fixed using existing Owner and v1.1 mapping.",
-        "remaining": "W678 已建立当前封存字段域/MVC 路由及用途核销入口；继续个人表单/附件、Operations 受控字段派生输出，以及文件/受控文档已采用 v1 与独立用途模型的合同核销。清单中的待核对不等于产品缺陷或已通过；产品主数据查入、其他追踪/未出货入口仍需实际消费者证据。PGT-017、当前源与原询盘已通过范围直接复用，Space 专用组合沿 WP13-04 采用。",
-        "next_action": "W678 已建立当前封存字段域/MVC 路由及用途核销入口；继续个人表单/附件、Operations 受控字段派生输出，以及文件/受控文档已采用 v1 与独立用途模型的合同核销。清单中的待核对不等于产品缺陷或已通过；产品主数据查入、其他追踪/未出货入口仍需实际消费者证据。PGT-017、当前源与原询盘已通过范围直接复用，Space 专用组合沿 WP13-04 采用。",
+        "report": "docs/development/evidence/W679-01/DELIVERY.md",
+        "delivered": "个人表单/上下文附件实际权限边界核销；#1202 扫描修正与 DataJson 整体授权回归，本地 21/21。未修改产品权限或声称独立下载用途已采用。",
+        "remaining": "W679 已核销个人表单 Title/DataJson、动态策略及上下文附件读取，#1202 旧扫描已修正且本地 21/21 通过；继续 Operations 受控字段派生 DTO、写回读及独立用途，文件/受控文档 v1 与表单附件 v2 的独立用途合同核销。订单产品查入、其他追踪/未出货入口仍需各自消费者证据；Space 专用组合沿 WP13-04，PGT/询盘已通过范围复用。",
+        "next_action": "W679 已核销个人表单 Title/DataJson、动态策略及上下文附件读取，#1202 旧扫描已修正且本地 21/21 通过；继续 Operations 受控字段派生 DTO、写回读及独立用途，文件/受控文档 v1 与表单附件 v2 的独立用途合同核销。订单产品查入、其他追踪/未出货入口仍需各自消费者证据；Space 专用组合沿 WP13-04，PGT/询盘已通过范围复用。",
         "evidence_refs": [
           "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
           "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
@@ -177556,11 +177586,12 @@
           "docs/development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md",
           "docs/development/evidence/W645-01/DELIVERY.md",
           "docs/development/evidence/W677-01/DELIVERY.md",
-          "docs/development/evidence/W678-01/DELIVERY.md"
+          "docs/development/evidence/W678-01/DELIVERY.md",
+          "docs/development/evidence/W679-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W678-01",
+        "latest_window": "W679-01",
         "review_history": [
           {
             "window": "W310-01",
@@ -177662,6 +177693,99 @@
             "formal_state_changed": false,
             "new_product_validation": false,
             "latest_window": "W677-01"
+          },
+          {
+            "window": "W678-01",
+            "as_of": "2026-11-16",
+            "classification": "CONSUMER_RECONCILIATION_REMAINS",
+            "report": "docs/development/evidence/W678-01/DELIVERY.md",
+            "delivered": "81 resources/114 controlled fields/2103 MVC descriptors indexed; confirmed auxiliary Order read gap #1201 fixed using existing Owner and v1.1 mapping.",
+            "remaining": "W678 已建立当前封存字段域/MVC 路由及用途核销入口；继续个人表单/附件、Operations 受控字段派生输出，以及文件/受控文档已采用 v1 与独立用途模型的合同核销。清单中的待核对不等于产品缺陷或已通过；产品主数据查入、其他追踪/未出货入口仍需实际消费者证据。PGT-017、当前源与原询盘已通过范围直接复用，Space 专用组合沿 WP13-04 采用。",
+            "next_action": "W678 已建立当前封存字段域/MVC 路由及用途核销入口；继续个人表单/附件、Operations 受控字段派生输出，以及文件/受控文档已采用 v1 与独立用途模型的合同核销。清单中的待核对不等于产品缺陷或已通过；产品主数据查入、其他追踪/未出货入口仍需实际消费者证据。PGT-017、当前源与原询盘已通过范围直接复用，Space 专用组合沿 WP13-04 采用。",
+            "evidence_refs": [
+              "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
+              "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
+              "docs/development/evidence/WP02-03/consistent-permission-read/DELIVERY.md",
+              "docs/development/evidence/WP02-03/platform-admin-transaction/DELIVERY.md",
+              "docs/development/evidence/WP02-03/user-create-whitelist/DELIVERY.md",
+              "docs/development/evidence/WP02-03/platform-admin-current-actor/DELIVERY.md",
+              "docs/development/evidence/WP02-03/impersonation-final-gate/DELIVERY.md",
+              "docs/development/evidence/WP02-03/session-authentication-current-state/DELIVERY.md",
+              "docs/development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md",
+              "docs/development/evidence/WP02-03/authentication-entry-completion/DELIVERY.md",
+              "docs/development/evidence/WP02-03/authentication-session-continuity/DELIVERY.md",
+              "docs/development/evidence/WP02-03/authentication-browser-recovery/DELIVERY.md",
+              "docs/development/evidence/WP02-03/sso-admission-policy/DELIVERY.md",
+              "docs/development/evidence/WP02-03/sso-identity-admission/DELIVERY.md",
+              "docs/development/evidence/WP02-03/iam-user-assignments/DELIVERY.md",
+              "docs/development/evidence/WP02-03/organization-administration/DELIVERY.md",
+              "docs/development/evidence/WP02-03/role-administration/DELIVERY.md",
+              "docs/development/evidence/WP02-03/integer-role-identity/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-cancel-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/operations-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/production-inbound-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/menu-action-administration/DELIVERY.md",
+              "docs/development/evidence/WP02-03/trusted-field-source/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-price-correction-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-department-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-read-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-write-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/stocktake-dashboard-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/defect-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/quality-owners/DELIVERY.md",
+              "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
+              "docs/development/evidence/WP02-03/mes-realtime/DELIVERY.md",
+              "docs/development/evidence/WP02-03/wms-hub-scope/DELIVERY.md",
+              "docs/development/evidence/WP02-03/machine-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/oee-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/planning-owner/DELIVERY.md",
+              "docs/development/evidence/W136-01/DELIVERY.md",
+              "docs/development/evidence/W137-01/DELIVERY.md",
+              "docs/development/evidence/W138-01/DELIVERY.md",
+              "docs/development/evidence/W139-01/DELIVERY.md",
+              "docs/development/evidence/W140-01/DELIVERY.md",
+              "docs/development/evidence/W141-01/DELIVERY.md",
+              "docs/development/evidence/W148-01/DELIVERY.md",
+              "docs/development/evidence/W310-01/DELIVERY.md",
+              "docs/development/evidence/W435-01/DELIVERY.md",
+              "docs/development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md",
+              "docs/development/evidence/BUG-881-DEVICE-LIFECYCLE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-887-BARCODE-CONFIG-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-889-LABEL-RECOVERY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-891-WCS-TASK-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-897-PAPER-ROLL-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-899-REMNANT-LIFECYCLE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-903-WMS-FEATURE-REQUEST-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-905-WMS-FEATURE-QUERY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-907-OPERLOG-AUTHORITY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-909-FIELD-AUDIT-LIST-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-911-DICT-MUTATION-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-913-SPACE-CODE-WRITE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-915-SPACE-SITE-FLOOR-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-917-SPACE-HIERARCHY-GEOMETRY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-927-SPACE-LOCATION-ADOPT-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-929-SPACE-LOCATION-DEACTIVATE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-931-SPACE-TOPOLOGY-DELETE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md",
+              "docs/development/evidence/W645-01/DELIVERY.md",
+              "docs/development/evidence/W677-01/DELIVERY.md",
+              "docs/development/evidence/W678-01/DELIVERY.md",
+              "docs/development/evidence/W679-01/DELIVERY.md"
+            ],
+            "formal_state_changed": false,
+            "new_product_validation": true,
+            "latest_window": "W678-01"
           }
         ]
       },
@@ -178382,6 +178506,13 @@
         "source_sha": "1cc2a93302895906dd184a5923d50ddcb1ebadb4",
         "issue": "https://github.com/GTX537/CP6/issues/1201",
         "scope": "Bounded field-use inventory and confirmed auxiliary Order read fix",
+        "full_task_completed": false
+      },
+      "wave679_delivery": {
+        "report": "docs/development/evidence/W679-01/DELIVERY.md",
+        "source_sha": "ddda3e8b01fd78f136215dd9b714da2854b7e937",
+        "issue": "https://github.com/GTX537/CP6/issues/1202",
+        "scope": "个人表单/附件当前字段消费核销与旧扫描修正",
         "full_task_completed": false
       }
     },
@@ -212835,10 +212966,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W678",
-      "path": "docs/development/evidence/W678-01/DELIVERY.md",
-      "baseline_sha": "c84aeea9b922dec8e847786cb1401e821e51b843",
-      "registered_at": "2026-11-16T07:58:04.234144+00:00",
+      "id": "W679",
+      "path": "docs/development/evidence/W679-01/DELIVERY.md",
+      "baseline_sha": "3f856aadd2799b997d8808fc62fd0a5e9c947415",
+      "registered_at": "2026-11-16T08:45:34.683351+00:00",
       "phase": "LOCAL_VERIFIED_PENDING_INTEGRATION",
       "assigned_chats": [
         "COORD"
@@ -212852,11 +212983,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "Normal protected PR and remote-main verification; finish W678, then continue the bounded consumer inventory.",
+      "next_action": "正常受保护 PR 采用、远端核对、关闭 #1202 并 finish；下一窗口继续 Operations 字段派生输出核销。",
       "windows": [
         {
-          "id": "W678-01",
-          "workspace_task": "W678-01",
+          "id": "W679-01",
+          "workspace_task": "W679-01",
           "related_tasks": [
             "WP02-03"
           ],
@@ -212866,20 +212997,20 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w678-01",
-          "planned_scope_ref": "docs/development/evidence/W678-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W678-01/DELIVERY.md",
+          "branch": "codex/w679-01",
+          "planned_scope_ref": "docs/development/evidence/W679-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W679-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:roadmap-and-project-state",
-            "Main:order-read-owner"
+            "Main:permission-attribute-tests"
           ],
-          "remaining_scope": "W678 已建立当前封存字段域/MVC 路由及用途核销入口；继续个人表单/附件、Operations 受控字段派生输出，以及文件/受控文档已采用 v1 与独立用途模型的合同核销。清单中的待核对不等于产品缺陷或已通过；产品主数据查入、其他追踪/未出货入口仍需实际消费者证据。PGT-017、当前源与原询盘已通过范围直接复用，Space 专用组合沿 WP13-04 采用。",
           "review_completed": true,
           "integration_status": "PENDING_PROTECTED_PR",
-          "validation_summary": "4 reproduced failures; 54 distinct related cases have passing evidence from bounded runs; zero related skips. Two accidentally selected unchanged-module scans remain tracked in #1202; no blanket suite-PASS claim."
+          "validation_summary": "21 通过 / 0 失败 / 0 跳过：11 扫描、10 PostgreSQL 行为；基线 6 失败 / 5 通过保留。",
+          "remaining_scope": "W679 已核销个人表单 Title/DataJson、动态策略及上下文附件读取，#1202 旧扫描已修正且本地 21/21 通过；继续 Operations 受控字段派生 DTO、写回读及独立用途，文件/受控文档 v1 与表单附件 v2 的独立用途合同核销。订单产品查入、其他追踪/未出货入口仍需各自消费者证据；Space 专用组合沿 WP13-04，PGT/询盘已通过范围复用。"
         }
       ],
       "storage": {
@@ -212888,7 +213019,7 @@
         ],
         "new_worktrees": 0
       },
-      "product_code_changed": true
+      "product_code_changed": false
     },
     "wave_history": [
       {
@@ -271905,6 +272036,62 @@
           "new_worktrees": 0
         },
         "product_code_changed": false
+      },
+      {
+        "id": "W678",
+        "path": "docs/development/evidence/W678-01/DELIVERY.md",
+        "baseline_sha": "c84aeea9b922dec8e847786cb1401e821e51b843",
+        "registered_at": "2026-11-16T07:58:04.234144+00:00",
+        "phase": "LOCAL_VERIFIED_PENDING_INTEGRATION",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "Normal protected PR and remote-main verification; finish W678, then continue the bounded consumer inventory.",
+        "windows": [
+          {
+            "id": "W678-01",
+            "workspace_task": "W678-01",
+            "related_tasks": [
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w678-01",
+            "planned_scope_ref": "docs/development/evidence/W678-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W678-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:roadmap-and-project-state",
+              "Main:order-read-owner"
+            ],
+            "remaining_scope": "W678 已建立当前封存字段域/MVC 路由及用途核销入口；继续个人表单/附件、Operations 受控字段派生输出，以及文件/受控文档已采用 v1 与独立用途模型的合同核销。清单中的待核对不等于产品缺陷或已通过；产品主数据查入、其他追踪/未出货入口仍需实际消费者证据。PGT-017、当前源与原询盘已通过范围直接复用，Space 专用组合沿 WP13-04 采用。",
+            "review_completed": true,
+            "integration_status": "PENDING_PROTECTED_PR",
+            "validation_summary": "4 reproduced failures; 54 distinct related cases have passing evidence from bounded runs; zero related skips. Two accidentally selected unchanged-module scans remain tracked in #1202; no blanket suite-PASS claim."
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:\\CP6-worktrees\\wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_code_changed": true
       }
     ],
     "development_priority": {
