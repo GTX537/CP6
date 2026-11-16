@@ -105,7 +105,7 @@ public sealed partial class PrivacyDispositionOwnerV1
             {
                 if (!close || pending.Record.SealStarted)
                     throw DispositionSealUnknown();
-                await RequireDispositionSealDurabilityAsync(t);
+                await IamAdministrationV1.RequireSealDurabilityAsync(db, t);
                 await pending.Record.RemoveAsync(db, pending.Tenant, t);
             }
             var result=new PrivacyDispositionOperationV1(operation,close?"CLOSED":"NOT_FOUND","CLOSE",null,null);

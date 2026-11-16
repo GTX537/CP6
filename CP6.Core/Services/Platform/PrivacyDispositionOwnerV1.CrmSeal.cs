@@ -62,7 +62,7 @@ public sealed partial class PrivacyDispositionOwnerV1
                 await transaction.RollbackToSavepointAsync(preview, token);
                 await transaction.ReleaseSavepointAsync(preview, token);
                 db.ChangeTracker.Clear();
-                await RequireDispositionSealDurabilityAsync(token);
+                await IamAdministrationV1.RequireSealDurabilityAsync(db, token);
                 var sealOperation = DispositionSealOperation(a, input.OperationId);
                 // The private row binds the request digest and generated source values. It holds no profile fields or credentials.
                 await IamCrmUserSealV1.InsertAsync(db, tenant, scope.SubjectId, a.Actor.Id, DispositionSealKind, sealOperation,
@@ -90,7 +90,7 @@ public sealed partial class PrivacyDispositionOwnerV1
                 await RequirePendingApprovalAsync(a, id, input, pending, token);
                 if (!pending.Record.SealStarted)
                 {
-                    await RequireDispositionSealDurabilityAsync(token);
+                    await IamAdministrationV1.RequireSealDurabilityAsync(db, token);
                     await pending.Record.MarkStartedAsync(db, pending.Tenant, token);
                 }
                 return null;
@@ -113,7 +113,7 @@ public sealed partial class PrivacyDispositionOwnerV1
                 var current = await CaptureDispositionAsync(a, plan.Scope, accepted, token);
                 RequireDispositionAdvances(pending.Record, current.Advances);
 
-                await RequireDispositionSealDurabilityAsync(token);
+                await IamAdministrationV1.RequireSealDurabilityAsync(db, token);
                 var receipt = await StoreExecutionAsync(a, plan, input, bytes, current.Version, token);
                 await pending.Record.RemoveAsync(db, pending.Tenant, token);
                 // Check the originating session before sending. The transaction also checks it at local completion.
@@ -201,17 +201,18 @@ public sealed partial class PrivacyDispositionOwnerV1
                 throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_IDENTITY_WRITER_UNAVAILABLE", 503);
             advances.Add(advance);
         };
-        Guid version;
+        db.CaptureExactCrmUserSeal = true;
         try
         {
-            version = await PrivacyIdentityEffectV1.ApplyAsync(db, hasher, scope.TargetTenantId, scope.SubjectId, a.Actor.Id,
+            var version = await PrivacyIdentityEffectV1.ApplyAsync(db, hasher, scope.TargetTenantId, scope.SubjectId, a.Actor.Id,
                 input.Epoch, input.PasswordChangedAt, ct);
+            return (version, advances.ToArray());
         }
-        finally { db.CaptureCrmUserSeal = null; }
-
-        var payloads = db.CrmIdentitySnapshots.Local.Where(row => row.TenantId == scope.TargetTenantId)
-            .ToDictionary(row => row.AggregateId, row => row.PayloadSha256, StringComparer.Ordinal);
-        return (version, advances.Select(advance => advance with { IntentHash = payloads[advance.Aggregate] }).ToArray());
+        finally
+        {
+            db.CaptureExactCrmUserSeal = false;
+            db.CaptureCrmUserSeal = null;
+        }
     }
 
     private static void RequireDispositionAdvances(IamCrmUserSealV1 pending, CrmUserSealAdvanceV1[] advances)
@@ -225,10 +226,6 @@ public sealed partial class PrivacyDispositionOwnerV1
             throw DispositionSealUnknown();
     }
 
-    private Task RequireDispositionSealDurabilityAsync(CancellationToken ct) => db.Database.ExecuteSqlRawAsync("""
-        SELECT set_config('synchronous_commit','on',true)
-        WHERE current_setting('synchronous_commit') IN ('off','local')
-        """, ct);
 
     private static PrivacyDispositionExceptionV1 DispositionSealUnknown(Exception? error = null) =>
         new("PRIVACY_DISPOSITION_OUTCOME_UNKNOWN", 503, error);

@@ -7,6 +7,7 @@ using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.Platform;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
+using CP6.Tests.Erp;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
@@ -73,8 +74,18 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var binding = $"CrmInquiryTenantPause__Tenants__{h.Tenant:D}__";
         environment[binding + "StoreId"] = store.ToString("D");
         environment[binding + "ConnectionString"] = seal.ConnectionString;
-        Task<AuthenticationApiProcess> Start() => AuthenticationApiProcess.Start(
-            h.Db.Database.GetConnectionString()!, environment, allowAutoRedirect: false);
+        var mainConnection = new NpgsqlConnectionStringBuilder(h.Db.Database.GetConnectionString());
+        var relayPort = Environment.GetEnvironmentVariable("CP6_W670_MAIN_ACK_PORT");
+        await using var relay = string.IsNullOrEmpty(relayPort) ? null :
+            new StockPostgresCommitRelay(mainConnection.Port, mainConnection.Username!, int.Parse(relayPort));
+        var routed = new NpgsqlConnectionStringBuilder(mainConnection.ConnectionString);
+        if (relay is not null)
+        {
+            routed.Port = relay.Port;
+            routed.SslMode = SslMode.Disable;
+        }
+        Task<AuthenticationApiProcess> Start(bool direct = false) => AuthenticationApiProcess.Start(
+            direct ? mainConnection.ConnectionString : routed.ConnectionString, environment, allowAutoRedirect: false);
 
         await using var host = await Start();
         var requesterSession = await Login(host, h, password, requester.UserName);
@@ -149,7 +160,24 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 Assert.Equal(writesBefore, await Writes());
 
                 await SetSealLogin(true);
-                await CheckCommitted(restarted);
+                if (relay is null)
+                {
+                    await CheckCommitted(restarted);
+                }
+                else
+                {
+                    await LoseFinalMainAcknowledgement(restarted, relay);
+                    await restarted.StopAsync();
+                    await using var readback = await Start(direct: true);
+                    Assert.NotEqual(restarted.ProcessId, readback.ProcessId);
+                    await CheckCommitted(readback);
+                    await SaveEvidence("privacy-main-ack-readback.json", new
+                    {
+                        FaultedPid = restarted.ProcessId, DirectPid = readback.ProcessId, input.OperationId, approved.PlanId,
+                        Subject = subject.Id, Completed = await Writes()
+                    });
+                }
+
                 await SaveEvidence("privacy-cold.json", new
                 {
                     approved.PlanId, input.OperationId, OriginalSubject = subject.Id, requester.Id,
@@ -158,6 +186,42 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 });
             }
             finally { await SetSealLogin(true); }
+        }
+
+        async Task LoseFinalMainAcknowledgement(AuthenticationApiProcess api, StockPostgresCommitRelay fault)
+        {
+            await using var holder = new NpgsqlConnection(mainConnection.ConnectionString);
+            await holder.OpenAsync();
+            await using var transaction = await holder.BeginTransactionAsync();
+            await using var hold = new NpgsqlCommand("""
+                SELECT 1 FROM public."Sys_Users" WHERE "TenantId"=@tenant AND "Id"=@id FOR UPDATE
+                """, holder, transaction);
+            hold.Parameters.AddWithValue("tenant", h.Tenant);
+            hold.Parameters.AddWithValue("id", subject.Id);
+            Assert.Equal(1, await hold.ExecuteScalarAsync());
+            await using var observer = new NpgsqlConnection(mainConnection.ConnectionString);
+            await observer.OpenAsync();
+            var submit = Execute(api, input);
+            int writer;
+            try
+            {
+                writer = await WaitForMainBlock(observer, holder.ProcessID, "%UPDATE%Sys_Users%", submit);
+                Assert.Equal(writesBefore, await Writes());
+                fault.Arm();
+            }
+            finally { await transaction.RollbackAsync(); }
+
+            using var unconfirmed = await submit;
+            await fault.Dropped.WaitAsync(TimeSpan.FromSeconds(10));
+            Assert.Equal(HttpStatusCode.ServiceUnavailable, unconfirmed.StatusCode);
+            Assert.Contains("PRIVACY_DISPOSITION_OUTCOME_UNKNOWN", await unconfirmed.Content.ReadAsStringAsync());
+            var committed = await Writes();
+            Assert.Equal((1, 1, 1), (committed.Executions, committed.Tombstones, committed.Originals));
+            await SaveEvidence("privacy-main-ack.json", new
+            {
+                Writer = writer, Holder = holder.ProcessID, input.OperationId, approved.PlanId,
+                Before = writesBefore, Committed = committed, Floors = await Floors()
+            });
         }
 
         async Task CheckCommitOrder()
@@ -259,6 +323,11 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             Assert.Equal((approved.Scope.PolicyVersion, approved.Scope.TargetVersion, "APPLIED", "PARTIAL"),
                 (execution.PolicyVersion, execution.BeforeVersion, execution.OwnerOutcome, execution.State));
             Assert.NotEqual(execution.BeforeVersion, execution.AfterVersion);
+            var stored = await h.Db.Database.SqlQuery<string>($"""
+                SELECT receipt_json AS "Value" FROM cp6_privacy_disposition_v1.executions
+                WHERE plan_id={approved.PlanId} AND target_tenant={h.Tenant} AND subject_id={subject.Id}
+                """).SingleAsync();
+            Assert.Equal(stored, JsonSerializer.Serialize(execution));
 
             var user = await h.Db.Sys_Users.AsNoTracking().SingleAsync(row => row.Id == subject.Id);
             Assert.Equal((h.Tenant, $"anon_{subject.Id:N}", false), (user.TenantId, user.UserName, user.Enable));
