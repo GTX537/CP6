@@ -1,8 +1,23 @@
+using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace CP6.Core.Services.Sys;
+
+internal sealed record RefreshReuseSourceV1(Guid TenantId, Guid UserId, string RefreshHash, string ReplacementHash)
+{
+    internal async Task ApplyWithinRootAsync(CP6Context db, CancellationToken ct)
+    {
+        await db.Sys_RefreshTokens.IgnoreQueryFilters().Where(x => x.UserId == UserId && x.TenantId == TenantId && x.RevokedAt == null)
+            .ExecuteUpdateAsync(s => s.SetProperty(x => x.RevokedAt, DateTime.Now), ct);
+        await db.Database.ExecuteSqlInterpolatedAsync($"""
+            UPDATE cp6_authentication_v1.session_evidence s SET rejected_at=clock_timestamp()
+            FROM public."Sys_RefreshTokens" r
+            WHERE r."TokenHash"=s.refresh_hash AND r."UserId"={UserId} AND r."TenantId"={TenantId}
+            """, ct);
+    }
+}
 
 public partial class RefreshTokenService
 {
@@ -102,8 +117,15 @@ public partial class RefreshTokenService
         Func<AuthenticationRotationV1, CancellationToken, Task<T>> complete, CancellationToken ct = default, bool deferOutput = false)
         => RotateAuthenticatedAsync(raw, ip, ua, client, complete, deferOutput, ct);
 
+    internal Task<T> RotateWithAuthenticationAsync<T>(string raw, string? ip, string? ua, RefreshTokenClientContext client,
+        Func<AuthenticationRotationV1, CancellationToken, Task<T>> complete,
+        Func<RefreshReuseSourceV1, CancellationToken, Task<Func<CancellationToken, Task>?>> stageReuse,
+        CancellationToken ct, bool deferOutput)
+        => RotateAuthenticatedAsync(raw, ip, ua, client, complete, deferOutput, ct, stageReuse);
+
     private async Task<T> RotateAuthenticatedAsync<T>(string raw, string? ip, string? ua, RefreshTokenClientContext client,
-        Func<AuthenticationRotationV1, CancellationToken, Task<T>> complete, bool pendingCompletion, CancellationToken ct)
+        Func<AuthenticationRotationV1, CancellationToken, Task<T>> complete, bool pendingCompletion, CancellationToken ct,
+        Func<RefreshReuseSourceV1, CancellationToken, Task<Func<CancellationToken, Task>?>>? stageReuse = null)
     {
         RequireOwnedCleanTransaction(); var hash = HashOf(raw);
         var observed = await _db.Sys_RefreshTokens.IgnoreQueryFilters().AsNoTracking().SingleOrDefaultAsync(x => x.TokenHash == hash);
@@ -143,10 +165,15 @@ public partial class RefreshTokenService
                         x.TokenHash == row.ReplacedByTokenHash && x.UserId == row.UserId && x.TenantId == row.TenantId
                         && (x.CompletionRejectedAtUtc != null || x.CompletionPending)))
                     throw new InvalidOperationException("E-SEC-007");
-                await _db.Sys_RefreshTokens.IgnoreQueryFilters().Where(x => x.UserId == user.Id && x.TenantId == user.TenantId && x.RevokedAt == null)
-                    .ExecuteUpdateAsync(s => s.SetProperty(x => x.RevokedAt, DateTime.Now));
-                await _db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_authentication_v1.session_evidence s SET rejected_at=clock_timestamp() FROM public.\"Sys_RefreshTokens\" r WHERE r.\"TokenHash\"=s.refresh_hash AND r.\"UserId\"={user.Id} AND r.\"TenantId\"={user.TenantId}", ct);
+                var reuse = new RefreshReuseSourceV1(user.TenantId, user.Id, hash, row.ReplacedByTokenHash);
+                var accepted = stageReuse is null ? null : await stageReuse(reuse, ct);
+                if (accepted is null) await reuse.ApplyWithinRootAsync(_db, ct);
                 commitAttempted = true; await tx.CommitAsync(); committed = true;
+                if (accepted is not null)
+                {
+                    await tx.DisposeAsync();
+                    await accepted(ct);
+                }
                 throw new InvalidOperationException("E-SEC-008");
             }
             _tenant.CurrentTenantId = user.TenantId;

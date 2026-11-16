@@ -33,14 +33,14 @@ internal sealed class CrmOidcFamilySealV1(DatabaseOptions database, CrmIdentityR
         catch (TenantManagementExceptionV1) { throw new CrmOidcFamilyLogoutUnavailableException(); }
     }
 
-    public async Task SealAndAppendAsync(NpgsqlConnection crm, DbConnection source, DbTransaction transaction, CrmOidcFamilyLogoutV1 owner,
-        CrmOidcGrantRevocationV1[] grants, IReadOnlySet<Guid> alreadyRevoked, CancellationToken ct)
+    public async Task SealAndAppendAsync(NpgsqlConnection crm, DbConnection source, DbTransaction transaction, Guid tenant, Guid subject,
+        Guid store, CrmOidcGrantRevocationV1[] grants, IReadOnlySet<Guid> alreadyRevoked, CancellationToken ct)
     {
         await using var context = await CreateContextAsync(source, transaction, ct);
         foreach (var existing in grants.Where(g => alreadyRevoked.Contains(g.GrantId)))
         {
             var aggregate = Aggregate(existing.GrantId);
-            if (!await context.CrmIdentitySnapshots.AsNoTracking().AnyAsync(snapshot => snapshot.TenantId == owner.TenantId &&
+            if (!await context.CrmIdentitySnapshots.AsNoTracking().AnyAsync(snapshot => snapshot.TenantId == tenant &&
                     snapshot.AggregateId == aggregate && snapshot.Version == existing.Version && snapshot.EventType == existing.SuccessorType &&
                     snapshot.PayloadSha256 == existing.SuccessorHash && !snapshot.IsDeleted, ct))
                 throw new CrmOidcFamilyLogoutUnavailableException();
@@ -48,12 +48,12 @@ internal sealed class CrmOidcFamilySealV1(DatabaseOptions database, CrmIdentityR
 
         var pending = grants.Where(g => !alreadyRevoked.Contains(g.GrantId)).ToArray();
         if (pending.Length == 0) return;
-        var current = await AppendRevocationsAsync(context, owner.TenantId, owner.SubjectId,
+        var current = await AppendRevocationsAsync(context, tenant, subject,
             pending.Select(g => (g.GrantId, g.AccessExpiresAtUtc)), ct);
         if (!current.SequenceEqual(pending)) throw new CrmOidcFamilyLogoutUnavailableException();
         try
         {
-            await CrmInquiryTenantPauseV1.AdvanceConnectedIdentitiesAsync(crm, owner.TenantId, owner.StoreId,
+            await CrmInquiryTenantPauseV1.AdvanceConnectedIdentitiesAsync(crm, tenant, store,
                 current.Select(g => (Aggregate(g.GrantId), g.Version)).ToArray(), ct);
         }
         catch (TenantManagementExceptionV1) { throw new CrmOidcFamilyLogoutUnavailableException(); }

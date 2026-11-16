@@ -61,7 +61,7 @@ public sealed partial class InquiryPermissionIssuerV1(CP6Context db, InquiryPerm
             : request.Purpose is "intake:release" or "intake:reject" or "privacy:consent-withdraw" or "privacy:export" or "privacy:download";
         var readOnly = request.Purpose is "configuration:read" or "intake:list" or "intake:detail";
         var pending = !readOnly && (await TenantPendingSuspensionV1.ExistsAsync(db, subject.TenantId, ct)
-            || await SqlCrmOidcGrantStore.HasPendingFamilyLogoutAsync(db.Database.GetDbConnection(), tx.GetDbTransaction(), subject.TenantId, subject.SessionId, ct));
+            || await SqlCrmOidcGrantStore.HasPendingAuthenticationRetirementAsync(db.Database.GetDbConnection(), tx.GetDbTransaction(), subject.TenantId, subject.SessionId, ct));
         if (pending && !needsFence) throw new InquiryPermissionExceptionV1(503, "inquiry_authority_unavailable");
         var permissions = await new PermissionAggregator(db).BuildAsync(subject.SubjectId, ct);
         if (permissions.UserId != subject.SubjectId || required.Any(x => !permissions.ActionKeys.Contains(x)))
