@@ -145,6 +145,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             Assert.Equal(HttpStatusCode.OK, send.StatusCode);
         }
         var codeFromMail = mail is null ? null : await mail.Code.WaitAsync(TimeSpan.FromSeconds(10));
+        var submittedCode = setup ? null : codeFromMail ?? new Totp(Base32Encoding.ToBytes(secret!)).ComputeTotp();
         var grants = self ? new[] { GrantId((await Exchange(originalBrowser!)).Access) } : Array.Empty<Guid>();
         var aggregates = new[] { $"user:{actor.Id:D}" }
             .Concat(grants.Select(id => IdentityEventContracts.TokenAggregate(options.Issuer, id.ToString("D")))).ToArray();
@@ -215,39 +216,23 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                         (after.Challenge.State, after.Challenge.HasLease, after.Challenge.Prepared,
                             after.Challenge.HasFactor, after.Challenge.Consumptions, after.Challenge.Sessions));
                 }
+                await SetSealLogin(true);
+                using var resumed = await Mutate();
+                var recovered = await MainFacts();
+                await CheckCommitted(resumed, recovered);
+                var receipt = await h.Db.Database.SqlQuery<bool>($"""
+                    SELECT EXISTS(SELECT 1 FROM cp6_authentication_v1.iam_operations
+                        WHERE tenant_id={h.Tenant} AND operation_id={pending.OperationId} AND actor_id={actor.Id} AND state='COMMITTED') AS "Value"
+                    """).SingleAsync();
+                Assert.True(receipt);
+                await Save("two-factor-recovered.json", new { Mode = mode, Route = route, pending.OperationId, After = recovered,
+                    OriginalReceipt = receipt, Floors = await Floors(), Http = (int)resumed.StatusCode });
             }
             else
             {
-                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 Assert.Equal(0, denials);
-                Assert.Equal(0, after.Pending);
-                Assert.Equal(setup, after.CredentialRevision == before.CredentialRevision);
-                Assert.Equal(setup, after.Epoch == before.Epoch);
-                Assert.Equal(!disable && !setup, after.TwoFactor);
-                Assert.Equal(!setup && !disable, after.OriginalSecret);
-                if (setup)
-                {
-                    Assert.NotEqual(before.PreparationRevision, after.PreparationRevision);
-                    Assert.True(await SetupSecret(response) == (await h.Db.Sys_Users.AsNoTracking().SingleAsync(row => row.Id == actor.Id)).TwoFactorSecret);
-                    if (!self)
-                    {
-                        Assert.Equal(floorsBefore, floorsAfter);
-                        Assert.Equal(("pending", true, 0, 0),
-                            (after.Challenge!.State, after.Challenge.Prepared, after.Challenge.Consumptions, after.Challenge.Sessions));
-                    }
-                }
-                if (self)
-                    Assert.Equal(1, await h.Db.Database.SqlQuery<int>($"""
-                        SELECT count(*)::int AS "Value" FROM public."CrmOidcGrant" WHERE "Id"=ANY({grants})
-                            AND "OrganizationId"={h.Tenant} AND "SubjectId"={actor.Id} AND "Revoked"
-                        """).SingleAsync());
-                if (!self && !setup)
-                {
-                    Assert.True(native ? (await response.Content.ReadFromJsonAsync<NativeAuthResult>())?.Session is not null : webAccess);
-                    Assert.Equal(before.Challenge!.Completion, after.Challenge!.Completion);
-                    Assert.Equal(("completed", false, true, 1, 1),
-                        (after.Challenge.State, after.Challenge.HasLease, after.Challenge.HasFactor, after.Challenge.Consumptions, after.Challenge.Sessions));
-                }
+                await CheckCommitted(response, after);
+                if (!usesCrm) Assert.Equal(floorsBefore, floorsAfter);
             }
         }
         finally { if (unavailable) await SetSealLogin(true); }
@@ -266,10 +251,40 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Task<HttpResponseMessage> Mutate()
         {
             if (setup) return SendSetup();
-            var code = codeFromMail ?? new Totp(Base32Encoding.ToBytes(secret!)).ComputeTotp();
-            if (native) return NativePost(route, new NativeTwoFactorRequest { ChallengeToken = challenge!, Client = client, Code = code, Method = "totp" });
-            object body = disable ? new { CurrentPassword = password, Code = code, Method = email ? "email" : "totp" } : new { Code = code };
+            if (native) return NativePost(route, new NativeTwoFactorRequest { ChallengeToken = challenge!, Client = client, Code = submittedCode!, Method = "totp" });
+            object body = disable ? new { CurrentPassword = password, Code = submittedCode, Method = email ? "email" : "totp" } : new { Code = submittedCode };
             return host.Send(Request(HttpMethod.Post, route, self ? originalBrowser! : pendingBrowser!, body));
+        }
+
+        async Task CheckCommitted(HttpResponseMessage response, FactorMainProbe after)
+        {
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(0, after.Pending);
+            Assert.Equal(setup, after.CredentialRevision == before.CredentialRevision);
+            Assert.Equal(setup, after.Epoch == before.Epoch);
+            Assert.Equal(!disable && !setup, after.TwoFactor);
+            Assert.Equal(!setup && !disable, after.OriginalSecret);
+            if (setup)
+            {
+                Assert.NotEqual(before.PreparationRevision, after.PreparationRevision);
+                Assert.True(await SetupSecret(response) == (await h.Db.Sys_Users.AsNoTracking().SingleAsync(row => row.Id == actor.Id)).TwoFactorSecret);
+                if (!self)
+                    Assert.Equal(("pending", true, 0, 0),
+                        (after.Challenge!.State, after.Challenge.Prepared, after.Challenge.Consumptions, after.Challenge.Sessions));
+            }
+            if (self)
+                Assert.Equal(1, await h.Db.Database.SqlQuery<int>($"""
+                    SELECT count(*)::int AS "Value" FROM public."CrmOidcGrant" WHERE "Id"=ANY({grants})
+                        AND "OrganizationId"={h.Tenant} AND "SubjectId"={actor.Id} AND "Revoked"
+                    """).SingleAsync());
+            if (!self && !setup)
+            {
+                Assert.True(native ? (await response.Content.ReadFromJsonAsync<NativeAuthResult>())?.Session is not null
+                    : ReadCookies(response).ContainsKey("cp6_at"));
+                Assert.Equal(before.Challenge!.Completion, after.Challenge!.Completion);
+                Assert.Equal(("completed", false, true, 1, 1),
+                    (after.Challenge.State, after.Challenge.HasLease, after.Challenge.HasFactor, after.Challenge.Consumptions, after.Challenge.Sessions));
+            }
         }
 
         async Task<FactorMainProbe> MainFacts()

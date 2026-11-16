@@ -105,7 +105,7 @@ internal sealed record WebAuthenticationFamilyClosureV1(WebAuthenticationCloseKi
         var audit = SecurityAuditService.CreateRecord(SecurityEventType.Logout, originalAudit.UserId, originalAudit.UserName,
             null, originalAudit.ClientIp, originalAudit.UserAgent, null);
         audit.TenantId = originalAudit.TenantId;
-        await SecurityAuditService.SaveLogoutWithinRootAsync(db, audit, bestEffort: true, ct);
+        await SecurityAuditService.SaveWithinRootAsync(db, audit, bestEffort: true, ct);
     }
 
     internal static Task<WebRefreshRow?> ReadWebRefreshAsync(CP6Context db, string hash, CancellationToken ct)

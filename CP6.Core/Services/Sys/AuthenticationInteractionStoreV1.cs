@@ -164,7 +164,7 @@ public sealed class AuthenticationInteractionStoreV1(CP6Context db)
             UPDATE cp6_authentication_v1.access_sessions SET revoked_at=clock_timestamp()
             WHERE access_jti={jti} AND revoked_at IS NULL
             """, ct);
-        if (changed == 1) await SecurityAuditService.SaveLogoutWithinRootAsync(db, audit, bestEffort, ct);
+        if (changed == 1) await SecurityAuditService.SaveWithinRootAsync(db, audit, bestEffort, ct);
     }
 
     public Task<AuthenticationSessionRow?> ReadSessionByRefreshAsync(string hash, CancellationToken ct = default)

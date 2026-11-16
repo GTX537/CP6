@@ -36,7 +36,7 @@ public class SecurityAuditService : ISecurityAuditService
         }
     }
 
-    internal static async Task SaveLogoutWithinRootAsync(CP6Context db, Sys_SecurityLog audit, bool bestEffort, CancellationToken ct)
+    internal static async Task SaveWithinRootAsync(CP6Context db, Sys_SecurityLog audit, bool bestEffort, CancellationToken ct)
     {
         if (!bestEffort)
         {
@@ -46,7 +46,7 @@ public class SecurityAuditService : ISecurityAuditService
         }
 
         var transaction = db.Database.CurrentTransaction!;
-        const string savepoint = "web_logout_audit_v1";
+        const string savepoint = "security_audit_v1";
         await transaction.CreateSavepointAsync(savepoint, ct);
         try
         {
@@ -58,7 +58,7 @@ public class SecurityAuditService : ISecurityAuditService
             await transaction.RollbackToSavepointAsync(savepoint, ct);
             db.Entry(audit).State = EntityState.Detached;
             db.GetService<ILoggerFactory>().CreateLogger<SecurityAuditService>()
-                .LogWarning("Web logout audit write failed for tenant {TenantId}, user {UserId}", audit.TenantId, audit.UserId);
+                .LogWarning("Security audit {EventType} write failed for tenant {TenantId}, user {UserId}", audit.EventType, audit.TenantId, audit.UserId);
         }
         await transaction.ReleaseSavepointAsync(savepoint, ct);
     }

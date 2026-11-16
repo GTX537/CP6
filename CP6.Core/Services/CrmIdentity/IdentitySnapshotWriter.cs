@@ -224,7 +224,7 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
             {
                 var (subject, intent) = value switch
                 {
-                    UserIdentityData user => (user.UserId, UserSealIntent(data)),
+                    UserIdentityData user => (user.UserId, db.CaptureExactCrmUserSeal ? payload : UserSealIntent(data)),
                     TokenRevokedIdentityData token => (Guid.Parse(token.SubjectId[5..]), payload),
                     _ => throw new InvalidOperationException("C02_USER_SEAL_SOURCE_INVALID"),
                 };
