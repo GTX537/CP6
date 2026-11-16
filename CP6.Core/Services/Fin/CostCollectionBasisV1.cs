@@ -8,13 +8,15 @@ namespace CP6.Core.Services.Fin;
 
 // Exact inputs and results of the current A2 calculation. Each successful collection appends one version.
 internal sealed record CostCollectionBasisV1(string PolicyVersion, DateTime RateDate,
-    CostCollectionBasisV1.CostAmountsV1 Amounts, CostCollectionBasisV1.RateUseV1[] Rates)
+    CostCollectionBasisV1.CostAmountsV1 Amounts, CostCollectionBasisV1.RateUseV1[] Rates, Guid? LedgerId = null)
 {
     internal const string Policy = "CP6.A2.v1";
     internal const int MoneyScale = 2;
 
     internal sealed record RateUseV1(Guid RateId, Guid WorkCenterId, string WorkCenter, DateTime ValidFrom,
-        DateTime? ValidTo, decimal LaborRate, decimal OverheadRate, byte[]? SourceRowVersion)
+        DateTime? ValidTo, decimal LaborRate, decimal OverheadRate, byte[]? SourceRowVersion, Guid? LedgerId = null,
+        Guid? CostCenterId = null, Guid? CostCenterVersionId = null, Guid? PolicyVersionId = null, Guid? RateBasisId = null,
+        Guid? OperationProfileId = null, Guid? RateMaker = null)
     {
         internal static RateUseV1 Capture(ProcessCostRate row, Guid centerId)
             => new(row.Id, centerId, row.WgCd, row.ValidFrom, row.ValidTo, row.LaborRate, row.OverheadRate, row.RowVersion);
@@ -39,10 +41,10 @@ internal static class CostCollectionBasisStoreV1
     internal sealed record Version(long Number, CostCollectionBasisV1 Basis);
 
     internal static Task AppendAsync(CP6Context db, CostSheet sheet, DateTime date,
-        CostCollectionBasisV1.RateUseV1[] rates, CancellationToken ct)
+        CostCollectionBasisV1.RateUseV1[] rates, Guid? ledgerId, CancellationToken ct)
     {
         var basis = new CostCollectionBasisV1(CostCollectionBasisV1.Policy, date,
-            CostCollectionBasisV1.CostAmountsV1.Capture(sheet), rates);
+            CostCollectionBasisV1.CostAmountsV1.Capture(sheet), rates, ledgerId);
         var json = JsonSerializer.Serialize(basis);
         return db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_fin_cost_basis_v1.versions (tenant_id, cost_sheet_id, version, basis)
@@ -69,7 +71,8 @@ internal static class CostCollectionBasisStoreV1
         """);
 
     internal static IQueryable<RateIdentity> CurrentRates(CP6Context db) => db.Database.SqlQuery<RateIdentity>($"""
-        SELECT cost_sheet_id AS "CostSheetId", rate_id AS "RateId", work_center_id AS "WorkCenterId", work_center AS "WorkCenter"
+        SELECT cost_sheet_id AS "CostSheetId", rate_id AS "RateId", work_center_id AS "WorkCenterId",
+            work_center AS "WorkCenter", ledger_id AS "LedgerId", rate_maker AS "RateMaker"
         FROM cp6_fin_cost_basis_v1.current_rates WHERE tenant_id={db.CurrentTenantId}
         """);
 
@@ -93,5 +96,7 @@ internal static class CostCollectionBasisStoreV1
         public Guid RateId { get; set; }
         public Guid WorkCenterId { get; set; }
         public string WorkCenter { get; set; } = null!;
+        public Guid? LedgerId { get; set; }
+        public Guid? RateMaker { get; set; }
     }
 }

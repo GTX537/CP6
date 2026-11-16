@@ -37,7 +37,13 @@ public partial class FinBridgeHook
             return;
         }
 
-        var settled = await settle.SettleAsync(evt.SourceNo, settler.Actor);
+        var settled = await settle.SettleForSubjectAsync(evt.SourceNo, settler.Actor, settler.ActorId);
+        if (settled.Code == "COST_LEDGER_SETTLEMENT_ADOPTION_REQUIRED")
+        {
+            evt.Status = IntegrationEventStatus.Skipped;
+            evt.LastError = settled.Code;
+            return;
+        }
         if (!settled.Ok)
             throw new OrderPriceCorrectionException(settled.Code!, 422);
         evt.Status = IntegrationEventStatus.Success;

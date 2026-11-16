@@ -22,6 +22,7 @@ public partial class CostCollectService : ICostCollectService
     private readonly IFinSequenceService _seq;
     private readonly IProcessCostRateService _rateSvc;
     private readonly OperationsOwnerV1? _owner;
+    private readonly ManufacturingFinanceScopeV1? _financeScope;
     private const string SeqKey = "CS";
 
     /// <summary>
@@ -30,12 +31,14 @@ public partial class CostCollectService : ICostCollectService
     /// </summary>
     public bool StrictCostRate { get; set; } = false;
 
-    public CostCollectService(CP6Context db, IFinSequenceService seq, IProcessCostRateService rateSvc, OperationsOwnerV1? owner = null)
+    public CostCollectService(CP6Context db, IFinSequenceService seq, IProcessCostRateService rateSvc,
+        OperationsOwnerV1? owner = null, ManufacturingFinanceScopeV1? financeScope = null)
     {
         _db = db;
         _seq = seq;
         _rateSvc = rateSvc;
         _owner = owner;
+        _financeScope = financeScope;
     }
 
     public Task<FinResult> CollectAsync(string workOrderNo, decimal laborStd, decimal overheadStd, string user)
@@ -152,7 +155,8 @@ public partial class CostCollectService : ICostCollectService
     }
 
     private async Task<FinResult> SaveCollectionAsync(WorkOrder wo, CostSheet? sheet, List<CostSheetLine> lines,
-        string actor, CancellationToken ct, (DateTime Date, CostCollectionBasisV1.RateUseV1[] Rates)? rateBasis = null)
+        string actor, CancellationToken ct,
+        (DateTime Date, CostCollectionBasisV1.RateUseV1[] Rates, Guid? LedgerId, Guid? CenterId)? rateBasis = null)
     {
         var groups = lines.ToLookup(line => line.Element);
         (decimal Actual, decimal Standard) Totals(CostElement element) =>
@@ -187,7 +191,8 @@ public partial class CostCollectService : ICostCollectService
         }
 
         sheet.ProductCd = wo.ProductCd;
-        sheet.CostCenterId ??= null;
+        if (rateBasis is { LedgerId: not null } adopted)
+            sheet.CostCenterId = adopted.CenterId;
         sheet.CompletedQty = wo.CompletedQty;
         (sheet.MaterialActual, sheet.MaterialStandard) = material;
         (sheet.LaborActual, sheet.LaborStandard) = labor;
@@ -197,7 +202,7 @@ public partial class CostCollectService : ICostCollectService
 
         await _db.SaveChangesAsync(ct);
         if (rateBasis is { } basis)
-            await CostCollectionBasisStoreV1.AppendAsync(_db, sheet, basis.Date, basis.Rates, ct);
+            await CostCollectionBasisStoreV1.AppendAsync(_db, sheet, basis.Date, basis.Rates, basis.LedgerId, ct);
         return FinResult.Pass();
     }
 
@@ -221,7 +226,10 @@ public partial class CostCollectService : ICostCollectService
         {
             var rates = await access.SourceAsync(OperationsOwnerV1.ProcessCostRate, ct);
             rates.RequireUnmaskedRates();
-            return await read(rates.CostSheetsWithReadableRates(sheets.AsNoTracking()), ct);
+            var scope = _financeScope ?? new ManufacturingFinanceScopeV1(_db, null);
+            await scope.GateAsync(false, ct);
+            var visible = scope.CostSheetsInScope(sheets.AsNoTracking(), access.ActorId);
+            return await read(rates.CostSheetsWithReadableRates(visible), ct);
         }, readOnlyAuthorityFence: true);
     }
 }

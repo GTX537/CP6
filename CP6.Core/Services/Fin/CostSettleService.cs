@@ -18,18 +18,24 @@ public class CostSettleService : ICostSettleService
     private readonly CP6Context _db;
     private readonly IJournalEntryService _journal;
     private readonly ICostCollectService? _history;
+    private readonly ManufacturingFinanceScopeV1? _financeScope;
 
-    public CostSettleService(CP6Context db, IJournalEntryService journal, ICostCollectService? history = null)
+    public CostSettleService(CP6Context db, IJournalEntryService journal, ICostCollectService? history = null,
+        ManufacturingFinanceScopeV1? financeScope = null)
     {
         _db = db;
         _journal = journal;
         _history = history;
+        _financeScope = financeScope;
     }
 
     internal bool Owns(CP6Context context) => ReferenceEquals(_db, context)
         && _journal is JournalEntryService journal && journal.Owns(context);
 
-    public async Task<FinResult> SettleAsync(string workOrderNo, string user)
+    public Task<FinResult> SettleAsync(string workOrderNo, string user)
+        => SettleForSubjectAsync(workOrderNo, user, null);
+
+    internal async Task<FinResult> SettleForSubjectAsync(string workOrderNo, string user, Guid? subject)
     {
         var sheet = await _db.CostSheets.FirstOrDefaultAsync(s => s.WorkOrderNo == workOrderNo);
         if (sheet == null || sheet.Status == CostSheetStatus.Draft) return FinResult.Fail("E-FIN-403");
@@ -45,6 +51,15 @@ public class CostSettleService : ICostSettleService
                 return FinResult.Fail("COST_POLICY_VERSION_UNAVAILABLE");
             if (version.Basis.Amounts != currentAmounts)
                 return FinResult.Fail("COST_COLLECTION_VERSION_CONFLICT");
+            if (version.Basis.LedgerId is Guid ledger)
+            {
+                if (_financeScope == null || subject == null)
+                    return FinResult.Fail("FINANCE_CONTEXT_NOT_FOUND");
+                await _financeScope.GateAsync(false, CancellationToken.None);
+                if (!await _financeScope.CanUseLedgerAsync(ledger, subject.Value, CancellationToken.None))
+                    return FinResult.Fail("FINANCE_CONTEXT_NOT_FOUND");
+                return FinResult.Fail("COST_LEDGER_SETTLEMENT_ADOPTION_REQUIRED");
+            }
         }
         var amounts = version?.Basis.Amounts ?? currentAmounts;
         var total = amounts.TotalActual;

@@ -5,6 +5,7 @@ using CP6.Core.Services.Mes;
 using CP6.Entity.DomainModels.Fin;
 using CP6.Entity.DomainModels.Mes;
 using Microsoft.EntityFrameworkCore;
+using ExecutionRate = CP6.Core.Services.Fin.ManufacturingRateConsumptionV1.ExecutionRate;
 
 namespace CP6.Core.Services.Fin;
 
@@ -53,19 +54,42 @@ public partial class CostCollectService
         var rates = await access.SourceAsync(OperationsOwnerV1.ProcessCostRate, ct);
         rates.RequireUnmaskedRates();
         var date = order.ActualEndDate ?? order.PlanStartDate ?? order.CreateDate;
-        var selectedRates = await ProcessCostRateService.SelectEffectiveAsync(_db, centers, date, rates, ct);
-        if (selectedRates.Any(row => !row.Visible))
-            throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
-        if (selectedRates.Any(row => row.Ambiguous))
-            throw new OrderPriceCorrectionException("RATE_PERIOD_CONFLICT", 409);
-        if (selectedRates.Length != centers.Distinct().Count())
-            return FinResult.Fail("E-A2-RATE-002");
-
-        var selectedIds = selectedRates.Select(row => row.Rate.Id).ToArray();
+        var financeScope = _financeScope ?? new ManufacturingFinanceScopeV1(_db, null);
+        var published = await new ManufacturingRateConsumptionV1(_db, financeScope)
+            .SelectAsync(order, workSteps, centers.Length, access, rates, ct);
+        IQueryable<ExecutionRate> executionRates;
+        CostCollectionBasisV1.RateUseV1[] evidence;
+        if (published != null)
+        {
+            if (sheet != null && (await CostCollectionBasisStoreV1.ReadLatestAsync(_db, sheet.Id))?.Basis.LedgerId != published.LedgerId)
+                return FinResult.Fail("COST_SCOPE_CUTOVER_REQUIRED");
+            date = published.Date;
+            executionRates = published.Rates;
+            evidence = published.Evidence;
+        }
+        else
+        {
+            var selectedRates = await ProcessCostRateService.SelectEffectiveAsync(_db, centers, date, rates, ct);
+            if (selectedRates.Any(row => !row.Visible))
+                throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
+            if (selectedRates.Any(row => row.Ambiguous))
+                throw new OrderPriceCorrectionException("RATE_PERIOD_CONFLICT", 409);
+            if (selectedRates.Length != centers.Distinct().Count())
+                return FinResult.Fail("E-A2-RATE-002");
+            var ids = selectedRates.Select(row => row.Rate.Id).ToArray();
+            executionRates = from step in workSteps
+                join rate in _db.ProcessCostRates.AsNoTracking().Where(row => ids.Contains(row.Id)) on step.WgCd equals rate.WgCd
+                select new ExecutionRate
+                {
+                    StepId = step.Id, LaborRate = rate.LaborRate, OverheadRate = rate.OverheadRate, ValidFrom = rate.ValidFrom,
+                };
+            evidence = selectedRates.OrderBy(row => row.Rate.WgCd, StringComparer.Ordinal)
+                .Select(row => CostCollectionBasisV1.RateUseV1.Capture(row.Rate, row.WorkCenterId)).ToArray();
+        }
         List<CostSheetLine> lines;
         try
         {
-            var steps = await ReadExecutionCostsAsync(order, workSteps, selectedIds, ct);
+            var steps = await ReadExecutionCostsAsync(order, workSteps, executionRates, ct);
             if (steps.Length != centers.Length)
                 return FinResult.Fail("E-A2-COST-004");
             var materials = await ReadMaterialCostsAsync(order, ct);
@@ -90,20 +114,18 @@ public partial class CostCollectService
 
         for (var index = 0; index < lines.Count; index++)
             lines[index].LineNo = index + 1;
-        var rateUses = selectedRates.OrderBy(row => row.Rate.WgCd, StringComparer.Ordinal)
-            .Select(row => CostCollectionBasisV1.RateUseV1.Capture(row.Rate, row.WorkCenterId)).ToArray();
-        return await SaveCollectionAsync(order, sheet, lines, access.Actor, ct, (date, rateUses));
+        return await SaveCollectionAsync(order, sheet, lines, access.Actor, ct,
+            (date, evidence, published?.LedgerId, published?.CenterId));
     }
 
     private async Task<(CostSheetLine Labor, CostSheetLine Overhead)[]> ReadExecutionCostsAsync(WorkOrder order,
-        IQueryable<WorkOrderProcess> workSteps, Guid[] rateIds, CancellationToken ct)
+        IQueryable<WorkOrderProcess> workSteps, IQueryable<ExecutionRate> rates, CancellationToken ct)
     {
         var routing = _db.ProductProcesses.AsNoTracking().Where(row => !row.IsDeleted && row.ProductCd == order.ProductCd);
-        var rates = _db.ProcessCostRates.AsNoTracking().Where(row => rateIds.Contains(row.Id));
         // 工时乘法和行金额舍入在 PostgreSQL numeric 上计算，先保留完整乘积再舍入。
         var steps = await (from step in workSteps
             join standard in routing on new { step.ProcessCd, step.TaskCd } equals new { standard.ProcessCd, standard.TaskCd }
-            join rate in rates on step.WgCd equals rate.WgCd
+            join rate in rates on step.Id equals rate.StepId
             let stdMachine = (standard.SetupHour ?? 0m) + order.CompletedQty * (standard.CycleTime ?? 0m)
             let stdLabor = stdMachine * (standard.StandardCrewSize ?? 1m)
             let machine = step.ActualMachineHour ?? stdMachine

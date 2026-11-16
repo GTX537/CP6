@@ -187,7 +187,29 @@ public class ArInvoiceService : IArInvoiceService
             if (existing.CustomerId != request.CustomerId || (existing.OrderId ?? "") != (request.OrderId ?? ""))
                 return (FinResult.Fail("E-FIN-303"), existing.Id, existing.No);
             if (existing.Status != ArInvoiceStatus.Draft) return (FinResult.Pass(), existing.Id, existing.No);
+        }
 
+        decimal? finishedGoodsCost = null;
+        if (!string.IsNullOrEmpty(request.WorkOrderNo))
+        {
+            if (_db.Database.IsNpgsql())
+            {
+                var fromLedger = ShipmentLedgerAssignment(request.WorkOrderNo);
+                var source = await (from bound in fromLedger
+                    from sheet in _db.CostSheets.AsNoTracking()
+                        .Where(row => !bound && row.WorkOrderNo == request.WorkOrderNo).Take(1).DefaultIfEmpty()
+                    select new { Bound = bound, Sheet = sheet }).SingleAsync();
+                if (source.Bound)
+                    return (FinResult.Fail("COST_LEDGER_SHIPMENT_ADOPTION_REQUIRED"), existing?.Id, existing?.No);
+                finishedGoodsCost = source.Sheet?.FgUnitCost;
+            }
+            else
+                finishedGoodsCost = (await _db.CostSheets.AsNoTracking()
+                    .FirstOrDefaultAsync(s => s.WorkOrderNo == request.WorkOrderNo))?.FgUnitCost;
+        }
+
+        if (existing != null)
+        {
             // The stored draft and an already posted original leg belong to the first attempt.
             // PostAsync and the existing engine complete the missing leg using that draft.
             var revenue = await ShipmentVoucherAsync(existing.No, VoucherSource.AR, existing.JournalEntryId);
@@ -198,13 +220,9 @@ public class ArInvoiceService : IArInvoiceService
         }
 
         // F3-D3 成本切真实：有来源工单且已归集成本单时，成本 = FG 单位成本 × 出货数；否则回退估算成本
-        var cost = request.EstimatedCost;
-        if (!string.IsNullOrEmpty(request.WorkOrderNo))
-        {
-            var cs = await _db.CostSheets.AsNoTracking().FirstOrDefaultAsync(s => s.WorkOrderNo == request.WorkOrderNo);
-            if (cs != null && cs.FgUnitCost > 0m)
-                cost = Math.Round(cs.FgUnitCost * request.Lines.Sum(l => l.Qty), 2, MidpointRounding.AwayFromZero);
-        }
+        var cost = finishedGoodsCost is > 0m
+            ? Math.Round(finishedGoodsCost.Value * request.Lines.Sum(l => l.Qty), 2, MidpointRounding.AwayFromZero)
+            : request.EstimatedCost;
 
         var inv = new ArInvoice
         {
@@ -229,6 +247,12 @@ public class ArInvoiceService : IArInvoiceService
         var posted = await PostAsync(inv.Id, user);
         return (posted, inv.Id, inv.No);
     }
+
+    private IQueryable<bool> ShipmentLedgerAssignment(string workOrderNo) => _db.Database.SqlQuery<bool>($"""
+        SELECT EXISTS(SELECT 1 FROM cp6_fin_mfg_v1.work_orders link
+            JOIN public."T_WorkOrder" w ON (w."TenantId",w."Id")=(link.tenant_id,link.work_order_id)
+            WHERE link.tenant_id={_db.CurrentTenantId} AND w."WorkOrderNo"={workOrderNo}) AS "Value"
+        """);
 
     private static bool ConflictingDraftVoucher(JournalEntry? voucher, Guid? linkedId)
         => voucher is null ? linkedId.HasValue : voucher.Status != JournalStatus.Posted;

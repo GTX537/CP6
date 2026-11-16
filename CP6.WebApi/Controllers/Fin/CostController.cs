@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using CP6.Core.Auth;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
@@ -64,7 +65,10 @@ public class CostController : ControllerBase
     [RequirePermission("fin-cost", "settle")]
     [CurrentWriteAuthority(RollbackOnFailure = true)]
     public async Task<IActionResult> Settle(string workOrderNo)
-        => Fin(await _settle.SettleAsync(workOrderNo, CurrentUser));
+        => Fin(await (_settle is CostSettleService owner
+            ? owner.SettleForSubjectAsync(workOrderNo, CurrentUser,
+                Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub"), out var subject) ? subject : null)
+            : _settle.SettleAsync(workOrderNo, CurrentUser)));
 
     public record CollectReq(decimal LaborStd, decimal OverheadStd);
 }

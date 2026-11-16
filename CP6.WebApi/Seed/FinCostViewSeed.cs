@@ -7,19 +7,18 @@ public static class FinCostViewSeed
 {
     public static void EnsureSeeded(CP6Context db)
     {
-        var missing = from tenant in db.Sys_Tenants
+        var targets = (from tenant in db.Sys_Tenants
             from menu in db.Sys_Menus
-            where menu.MenuKey == "fin-cost" && !db.Sys_MenuActions.IgnoreQueryFilters().Any(action =>
-                action.MenuId == menu.MenuId && action.TenantId == tenant.Id && action.ActionCode == "view")
-            select new { TenantId = tenant.Id, menu.MenuId };
-        foreach (var entry in missing.ToList())
-            db.Sys_MenuActions.Add(new()
-            {
-                TenantId = entry.TenantId,
-                MenuId = entry.MenuId,
-                ActionCode = "view",
-                ActionName = "查看成本单",
-            });
+            where menu.MenuKey == "fin-cost"
+            select new { TenantId = tenant.Id, menu.MenuId }).ToList();
+        var actions = new[] { ("view", "查看成本单"), ("rate-draft", "制订费率"), ("rate-review", "专业复核"), ("rate-release", "发布费率") };
+        foreach (var (code, name) in actions)
+        {
+            var existing = db.Sys_MenuActions.IgnoreQueryFilters().Where(a => a.ActionCode == code)
+                .Select(a => new { a.TenantId, a.MenuId }).ToHashSet();
+            foreach (var entry in targets.Where(e => !existing.Contains(e)))
+                db.Sys_MenuActions.Add(new() { TenantId = entry.TenantId, MenuId = entry.MenuId, ActionCode = code, ActionName = name });
+        }
         db.SaveChanges();
     }
 }

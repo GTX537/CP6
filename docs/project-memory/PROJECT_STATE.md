@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-16，W690 完成账套、成本中心版本、费率复核发布及现行 PostgreSQL 归集用版。46 项定向用例通过，其中 33 项使用 PostgreSQL，13 项为成本组件回归，零跳过。WP02-03 继续。 [W690 交付](../development/evidence/W690-01/DELIVERY.md)
+
 2026-11-16，W689 完成现行 PostgreSQL 财务归集和结转的精确用版。31 项定向用例按最终结果通过，其中 25 项使用 PostgreSQL，6 项为成本组件回归，零跳过。WP02-03 继续。 [W689 交付](../development/evidence/W689-01/DELIVERY.md)
 
 2026-11-16，W688 完成 MES 完工后的材料反冲和财务重启恢复。26 项定向用例通过，其中 20 项使用 PostgreSQL，6 项为成本组件回归，零跳过。WP02-03 继续。 [W688 交付](../development/evidence/W688-01/DELIVERY.md)
