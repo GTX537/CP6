@@ -1,5 +1,7 @@
 # 当前待办与优先级
 
+2026-11-15，PGT-017 已通过。正式 PostgreSQL 矩阵当前为 27 项。 [PGT-017 正式验收](../development/evidence/W645-01/DELIVERY.md)
+
 2026-11-15，合并并核对 PGT-017 正式单项验收记录。W673 已完成登记的 SSO 首绑实证。 [W673 交付](../development/evidence/W673-01/DELIVERY.md)
 
 2026-11-15，PGT-017 继续已有用户 SSO 首次绑定两库验证。锁定的原先后顺序和回复保持已有正式证据。 [W672 交付](../development/evidence/W672-01/DELIVERY.md)

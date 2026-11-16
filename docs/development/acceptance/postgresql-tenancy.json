@@ -4,7 +4,7 @@
   "design_version": "cp6-pg-tenancy-v1",
   "kind": "DESIGN_ACCEPTANCE_PLAN",
   "database_target": "PostgreSQL",
-  "execution_status": "PARTIAL",
+  "execution_status": "COMPLETE",
   "scope": "设计场景；不替代原模块验收，不代表实际隔离、迁移或恢复通过。",
   "design_path": "docs/design-handbook/architecture/02-postgresql-tenancy.md",
   "fixture_policy": {
@@ -667,8 +667,16 @@
       ],
       "implementation_task": "WP02-03",
       "source_scope": "CTX02-A4;CTX02-A7",
-      "status": "NOT_RUN",
-      "execution_evidence": []
+      "status": "PASS",
+      "execution_evidence": [
+        {
+          "report": "docs/development/evidence/W645-01/DELIVERY.md",
+          "profile": "main-crm-native-writer-commit-order",
+          "tested_source": "e2e0e4ea8216596d01f639dcedaaa1f9148c7410",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "登记的 Main 业务和后台、Space、CRM 实际 Owner。隔离 Kestrel、双库两序、原业务/C02 和回执，物理首次断连、两库 COMMIT、可信恢复后继及两个登记模拟租户。每次真实受测版本和复用范围见报告。"
+        }
+      ]
     },
     {
       "id": "PGT-018",

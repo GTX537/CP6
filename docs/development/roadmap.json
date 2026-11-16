@@ -166252,6 +166252,11 @@
       "at": "2026-11-16T04:34:46.750534+00:00",
       "change": "W673 接入已有用户 SSO 首绑的同用户待确认和原生 CRM 栅栏，保留既有身份、原客户端绑定与原会话策略。Web 可重新验证原交互。",
       "evidence": "docs/development/evidence/W673-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-16T04:39:25.478541+00:00",
+      "change": "正式 PGT-017 依可追溯的登记写者、两种真实提交顺序、原权威与业务写集及 CRM 产品级受控恢复标为 PASS。PostgreSQL 正式矩阵 27/27。",
+      "evidence": "docs/development/evidence/W645-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212258,10 +212263,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W673",
-      "path": "docs/development/evidence/W673-01/DELIVERY.md",
-      "baseline_sha": "3974694ccb47ef4e46e2abc24b661e82cf94070d",
-      "registered_at": "2026-11-16T03:42:35.007810+00:00",
+      "id": "W645",
+      "path": "docs/development/evidence/W645-01/DELIVERY.md",
+      "baseline_sha": "a93722b75a7317b249353f40f23c07ae3e199674",
+      "registered_at": "2026-11-16T04:38:53.879093+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212275,11 +212280,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "复核既有写者和各来源实际证据，完成 PGT-017 正式验收与 #1012。",
+      "next_action": "正式 PostgreSQL 矩阵 27 PASS，原询盘 60/60。",
       "windows": [
         {
-          "id": "W673-01",
-          "workspace_task": "W673-01",
+          "id": "W645-01",
+          "workspace_task": "W645-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212289,27 +212294,27 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w673-01",
-          "planned_scope_ref": "docs/development/evidence/W673-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W673-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w645-01",
+          "planned_scope_ref": "docs/development/evidence/W645-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W645-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "已有用户 SSO 首绑与原浏览器能力",
-            "真实 CRM 物理封存、原 C02 与已登记 PostgreSQL 迁移"
+            "PostgreSQL 正式验收唯一矩阵",
+            "Main 与 CRM 已登记实测写者、证据和原生锁序"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "PostgreSQL 18.6 五份新的候选实证均通过，含首拒、CRM COMMIT ACK、实际 Web 新验签原件恢复和每序 Main+CRM；W27 定向 18 项、Web 定向 23 项、受影响 Vue 类型检查和 310 文件精确源本地发布通过，零跳过。",
-          "remaining_scope": "已登记写者均有实际证据，正式矩阵待唯一总验收核销。",
+          "validation_summary": "正式 PGT-017 使用各已采用任务的实际隔离 PostgreSQL 18.6、真实业务事务和原生失败证据。最终写者 W673 双库五项候选验证、18 项原 SSO 回归和 23 项定向 Web 回归。采用文档检查、证据链接和正式矩阵一致性通过后集成。",
+          "remaining_scope": "PGT-017 已完成。独立生产采用按受保护发布流程记录。",
           "main_tested_source_sha": "e2e0e4ea8216596d01f639dcedaaa1f9148c7410"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -270967,6 +270972,66 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W673",
+        "path": "docs/development/evidence/W673-01/DELIVERY.md",
+        "baseline_sha": "3974694ccb47ef4e46e2abc24b661e82cf94070d",
+        "registered_at": "2026-11-16T03:42:35.007810+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "复核既有写者和各来源实际证据，完成 PGT-017 正式验收与 #1012。",
+        "windows": [
+          {
+            "id": "W673-01",
+            "workspace_task": "W673-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w673-01",
+            "planned_scope_ref": "docs/development/evidence/W673-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W673-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "已有用户 SSO 首绑与原浏览器能力",
+              "真实 CRM 物理封存、原 C02 与已登记 PostgreSQL 迁移"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "PostgreSQL 18.6 五份新的候选实证均通过，含首拒、CRM COMMIT ACK、实际 Web 新验签原件恢复和每序 Main+CRM；W27 定向 18 项、Web 定向 23 项、受影响 Vue 类型检查和 310 文件精确源本地发布通过，零跳过。",
+            "remaining_scope": "已登记写者均有实际证据，正式矩阵待唯一总验收核销。",
+            "main_tested_source_sha": "e2e0e4ea8216596d01f639dcedaaa1f9148c7410",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1194",
+            "main_remote_main_sha": "a93722b75a7317b249353f40f23c07ae3e199674"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },
