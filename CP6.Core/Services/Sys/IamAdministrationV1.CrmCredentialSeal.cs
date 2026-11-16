@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Core.Services.Sys;
 
 internal sealed record LegacyCredentialRequestV1(Guid? TargetUserId, Guid? ImpersonatorId, Guid? ImpersonatorTenantId,
-    string? PasswordInputFingerprint, string? FactorMethod = null);
+    string? PasswordInputFingerprint, string? FactorMethod = null, string? QuickPinBadge = null);
 
 internal sealed record LegacyCredentialPlanV1(LegacyCredentialRequestV1 Request, Guid OriginalCredentialRevision,
     DateTime ChangedAt, string? PasswordSalt, Guid? ResetEpoch, Guid? PreparationRevision = null,
@@ -35,20 +35,40 @@ internal sealed record AcceptedCredentialFactorV1(byte[] Key, byte[] Mac)
 
 public sealed partial class IamAdministrationV1
 {
-    internal async Task<LegacyCredentialSubjectV1?> WriteLegacyCredentialAsync(LegacyCredentialRequestV1 request, string? permission,
+    internal Task<LegacyCredentialSubjectV1?> WriteLegacyCredentialAsync(LegacyCredentialRequestV1 request, string? permission,
         Func<CancellationToken, Task<Guid>> currentActor, Func<CancellationToken, Task> complete,
         Func<Sys_User, Task> validate, Func<Sys_User, LegacyCredentialPlanV1, Task> apply,
         Func<string>? createPasswordSalt, CancellationToken ct, LegacyCredentialFactorChangeV1? factor = null)
+        => WriteCredentialAsync(request, permission, currentActor, complete, validate, (user, _, plan) => apply(user, plan),
+            createPasswordSalt, ct, factor);
+
+    internal Task<LegacyCredentialSubjectV1?> WriteWarehouseQuickPinAsync(string userName, string badge, string pin,
+        Func<CancellationToken, Task<Guid>> currentActor, Func<CancellationToken, Task> complete,
+        Action<Sys_User, UserPermissionContext, LegacyCredentialPlanV1> apply, Func<string> createSalt, CancellationToken ct)
+        => WriteCredentialAsync(new LegacyCredentialRequestV1(null, null, null, null, QuickPinBadge: badge),
+            "wms-mobile:device-manage", currentActor, complete, static _ => Task.CompletedTask, (user, actor, plan) =>
+            {
+                apply(user, actor, plan);
+                return Task.CompletedTask;
+            }, createSalt, ct, quickPinUserName: userName, pin: pin);
+
+    private async Task<LegacyCredentialSubjectV1?> WriteCredentialAsync(LegacyCredentialRequestV1 request, string? permission,
+        Func<CancellationToken, Task<Guid>> currentActor, Func<CancellationToken, Task> complete,
+        Func<Sys_User, Task> validate, Func<Sys_User, UserPermissionContext, LegacyCredentialPlanV1, Task> apply,
+        Func<string>? createPasswordSalt, CancellationToken ct, LegacyCredentialFactorChangeV1? factor = null,
+        string? quickPinUserName = null, string? pin = null)
     {
-        var self = request.TargetUserId is null;
-        var kind = factor?.Kind ?? (self ? "self-change-password" : "admin-reset-2fa");
+        var self = request.TargetUserId is null && quickPinUserName is null;
+        var kind = quickPinUserName is null
+            ? factor?.Kind ?? (self ? "self-change-password" : "admin-reset-2fa")
+            : "wms-set-quick-pin";
         var preparationResult = kind == "self-setup-2fa";
         var tenant = db.CurrentTenantId;
         var phase = await ExecuteAuthorityAsync<(Guid Actor, LegacyCredentialSubjectV1? Subject, IamCrmUserSealV1? Pending)>(permission, currentActor, async (current, token) =>
         {
-            var target = request.TargetUserId ?? current.UserId;
-            var user = await FindUser(target, token);
+            var user = await FindUser(self ? current.UserId : request.TargetUserId, token);
             if (user is null) return (current.UserId, null, null);
+            var target = user.Id;
             var owner = new LegacyCredentialSubjectV1(user.Id, user.UserName);
             await validate(user);
 
@@ -63,12 +83,13 @@ public sealed partial class IamAdministrationV1
             if (factor?.Accept is { } accept) await accept(user);
             var now = DateTime.Now;
             var plan = new LegacyCredentialPlanV1(request, user.CredentialRevision, now.AddTicks(-(now.Ticks % 10)),
-                store.HasValue ? createPasswordSalt?.Invoke() : null, !self || factor is not null && !preparationResult ? Guid.NewGuid() : null,
+                store.HasValue ? createPasswordSalt?.Invoke() : null,
+                quickPinUserName is null && (!self || factor is not null && !preparationResult) ? Guid.NewGuid() : null,
                 factor is null ? null : await ReadCredentialPreparationAsync(db, user.Id, token),
-                factor?.Code is { } code ? AcceptedCredentialFactorV1.Create(code) : null);
+                (pin ?? factor?.Code) is { } code ? AcceptedCredentialFactorV1.Create(code) : null);
             if (store is null)
             {
-                await Apply(user, plan, token);
+                await Apply(user, current, plan, token);
                 await complete(token);
                 return (current.UserId, await FinishUser(user, token), null);
             }
@@ -76,7 +97,7 @@ public sealed partial class IamAdministrationV1
             var tx = db.Database.CurrentTransaction!;
             const string preview = "iam_legacy_credential_seal";
             await tx.CreateSavepointAsync(preview, token);
-            var advances = await Capture(user, plan, token);
+            var advances = await Capture(user, current, plan, token);
             if (advances.Length == 0)
             {
                 await tx.ReleaseSavepointAsync(preview, token);
@@ -127,7 +148,7 @@ public sealed partial class IamAdministrationV1
                 if (!original.SealStarted) throw Unknown();
                 var user = await FindUser(subject, token);
                 var plan = await ReadPlan(original, current.UserId, user, token);
-                var advances = await Capture(user!, plan, token);
+                var advances = await Capture(user!, current, plan, token);
                 if (advances.SingleOrDefault(advance => advance.Aggregate == source) != predecessors.GetValueOrDefault(source) ||
                     advances.Any(advance => predecessors.TryGetValue(advance.Aggregate, out var expected) && advance != expected))
                     throw Unknown();
@@ -154,12 +175,14 @@ public sealed partial class IamAdministrationV1
             throw;
         }
 
-        Task<Sys_User?> FindUser(Guid subjectId, CancellationToken token) =>
-            db.Sys_Users.SingleOrDefaultAsync(row => row.TenantId == tenant && row.Id == subjectId, token);
+        Task<Sys_User?> FindUser(Guid? subjectId, CancellationToken token) => quickPinUserName is null
+            ? db.Sys_Users.SingleOrDefaultAsync(row => row.TenantId == tenant && row.Id == subjectId, token)
+            : db.Sys_Users.FirstOrDefaultAsync(row => row.TenantId == tenant && row.UserName == quickPinUserName &&
+                (subjectId == null || row.Id == subjectId), token);
 
-        async Task Apply(Sys_User user, LegacyCredentialPlanV1 plan, CancellationToken token)
+        async Task Apply(Sys_User user, UserPermissionContext actor, LegacyCredentialPlanV1 plan, CancellationToken token)
         {
-            await apply(user, plan);
+            await apply(user, actor, plan);
             await db.SaveChangesAsync(token);
         }
 
@@ -170,8 +193,8 @@ public sealed partial class IamAdministrationV1
             return new(user.Id, user.UserName, revision);
         }
 
-        Task<CrmUserSealAdvanceV1[]> Capture(Sys_User user, LegacyCredentialPlanV1 plan, CancellationToken token) =>
-            CaptureCredentialAdvancesAsync(db, tenant, user.Id, () => Apply(user, plan, token));
+        Task<CrmUserSealAdvanceV1[]> Capture(Sys_User user, UserPermissionContext actor, LegacyCredentialPlanV1 plan, CancellationToken token) =>
+            CaptureCredentialAdvancesAsync(db, tenant, user.Id, () => Apply(user, actor, plan, token));
 
         async Task<LegacyCredentialPlanV1> ReadPlan(IamCrmUserSealV1 original, Guid actor, Sys_User? user, CancellationToken token)
         {
@@ -180,7 +203,7 @@ public sealed partial class IamAdministrationV1
             var plan = JsonSerializer.Deserialize<LegacyCredentialPlanV1>(fingerprint.Unprotect(original.RequestProtected))!;
             if (plan.Request.ImpersonatorId != request.ImpersonatorId || plan.Request.ImpersonatorTenantId != request.ImpersonatorTenantId)
                 throw Error(403, "IAM_OPERATION_OWNER_MISMATCH");
-            if (plan.Request != request || plan.Factor is { } proof && !proof.Matches(factor?.Code))
+            if (plan.Request != request || plan.Factor is { } proof && !proof.Matches(pin ?? factor?.Code))
                 throw Error(409, "IAM_OPERATION_INPUT_CONFLICT");
             if (plan.OriginalCredentialRevision != user?.CredentialRevision ||
                 plan.PreparationRevision is { } revision && revision != await ReadCredentialPreparationAsync(db, user!.Id, token))

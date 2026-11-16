@@ -106,15 +106,45 @@ public sealed partial class ClientDeviceService
         if (string.IsNullOrWhiteSpace(request.UserName) || string.IsNullOrWhiteSpace(request.BadgeNo)
             || request.Pin is not { Length: 6 } || request.Pin.Any(ch => !char.IsDigit(ch)))
             throw new ArgumentException("WM-DEVICE-QUICK-PIN-DATA");
-        var hasher = _hasher ?? throw new OrderPriceCorrectionException("DEVICE_AUTHORITY_UNAVAILABLE", 503);
-        _ = await Administer(async (actor, token) =>
+        var administration = _administration;
+        var session = _session;
+        var hasher = _hasher;
+        if (administration?.Owns(_db) != true || session is null || hasher is null)
+            throw new OrderPriceCorrectionException("DEVICE_AUTHORITY_UNAVAILABLE", 503);
+
+        var badge = request.BadgeNo.Trim();
+        try
         {
-            var user = await _db.Sys_Users.FirstOrDefaultAsync(u => u.UserName == request.UserName, token)
-                ?? throw new OrderPriceCorrectionException("WM-DEVICE-USER-NOT-FOUND", 404);
-            user.BadgeNo = request.BadgeNo.Trim(); user.QuickPinHash = hasher.Hash(request.Pin);
-            user.Modifier = actor.UserName; user.ModifyDate = DateTime.Now;
-            await _db.SaveChangesAsync(token); return true;
-        }, ct);
+            var changed = await administration.WriteWarehouseQuickPinAsync(request.UserName, badge, request.Pin,
+                session.CurrentActor, async token =>
+                {
+                    await session.Complete(token);
+                    await RequireTenantLifetime(false, token);
+                }, (user, actor, plan) =>
+                {
+                    user.BadgeNo = badge;
+                    user.QuickPinHash = plan.PasswordSalt is { } salt
+                        ? BCryptPasswordHasher.HashWithSalt(request.Pin, salt)
+                        : hasher.Hash(request.Pin);
+                    user.Modifier = actor.UserName;
+                    user.ModifyDate = plan.ChangedAt;
+                }, () => (hasher as BCryptPasswordHasher
+                    ?? throw new OrderPriceCorrectionException("DEVICE_AUTHORITY_UNAVAILABLE", 503)).CreateSalt(), ct);
+            if (changed is null) throw new OrderPriceCorrectionException("WM-DEVICE-USER-NOT-FOUND", 404);
+        }
+        catch (IamAdministrationExceptionV1 error)
+        {
+            throw new OrderPriceCorrectionException(error.Message == "IAM_OPERATION_UNKNOWN" ? "DEVICE_OUTCOME_UNKNOWN" : error.Message,
+                error.Status, error);
+        }
+        catch (TenantManagementExceptionV1 error)
+        {
+            throw new OrderPriceCorrectionException(error.Message, error.Status, error);
+        }
+        catch (Exception error) when (!DeviceBusinessFailure(error, ct))
+        {
+            throw new OrderPriceCorrectionException("DEVICE_AUTHORITY_UNAVAILABLE", 503, error);
+        }
     }
 
     private static void ValidateDevicePublicKey(string raw)

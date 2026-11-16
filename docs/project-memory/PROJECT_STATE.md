@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-15，W671 的 QuickPIN 已在真实 PostgreSQL 验证两库提交顺序、冷连接恢复与原设备合同。当前 PostgreSQL 正式仍 26 项通过，PGT-017 待锁定和原 SSO 首绑。 [W671 交付](../development/evidence/W671-01/DELIVERY.md)
+
 2026-11-15，W670 核验已批准身份资料处置的两库事务和原回执，实测冷恢复、双序和 Main 应答丢失。PostgreSQL 正式仍 26 项通过，PGT-017 待其他已确认凭据写者。 [W670 交付](../development/evidence/W670-01/DELIVERY.md)
 
 2026-11-15，W668 实测 2FA 原准备、入会、自助停用及原挑战恢复，13 项原生和 16 项组件通过。PostgreSQL 正式矩阵仍 26 项通过，PGT-017 待已批准处置和其他实际凭据写者验收。 [W668 交付](../development/evidence/W668-01/DELIVERY.md)

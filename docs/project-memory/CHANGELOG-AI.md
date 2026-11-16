@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-15，W671 保留原 QuickPIN 与 Badge 调用合同，按原用户和凭据修订封存 CRM Grant，贴合原 C02 与 Outbox。 [W671 交付](../development/evidence/W671-01/DELIVERY.md)
+
 2026-11-15，W670 保留原两人批准和操作键，精确用户封存先行，资料处置、C02、Outbox 与回执在 Main 同一事务完成。 [W670 交付](../development/evidence/W670-01/DELIVERY.md)
 
 2026-11-15，W668 保留已有 Web 与原生候选的原挑战和 factor 回执，在首次 CRM 连接前挂起精确写者，继续沿最终正式原件处理。 [W668 交付](../development/evidence/W668-01/DELIVERY.md)
