@@ -43,6 +43,7 @@ def main():
             for a in route['attributes'])]
         group = ('scope-only' if fields is None else 'empty-field-domain' if not fields else
                  'order' if resource == 'order' else 'inquiry' if resource.startswith('crm-') else
+                 'personal-form' if resource == 'workflow-personal-form' else
                  'authoring' if resource in ('approval-binding', 'workflow-definition', 'workflow-form-definition') else
                  'file-download' if resource in ('file-content', 'plm-controlled-document') else
                  'report-center' if resource == 'wms-report-center' else
@@ -54,6 +55,11 @@ def main():
             uses = dict.fromkeys(uses, 'SCOPE_ONLY_REGISTRATION')
         elif group == 'order':
             uses = dict.fromkeys(uses, 'EXPLICIT_OWNER_MAPPING_WITH_BOUNDED_EVIDENCE')
+        elif group == 'personal-form':
+            uses.update(query='CURRENT_OWNER_MASK_AND_FINAL_GATE',
+                        write='CURRENT_OWNER_MASK_AND_FINAL_GATE',
+                        export='NO_EXPORT_ENTRY_IN_REVIEWED_CONTROLLERS',
+                        download='ADOPTED_V2_CONTEXTUAL_FILE_READ_NOT_INDEPENDENT_USE')
         elif group in ('operations', 'authoring', 'file-download', 'report-center'):
             uses.update(query='READ_MAPPING_PRESENT', write='WRITE_MAPPING_PRESENT')
             if group == 'report-center':

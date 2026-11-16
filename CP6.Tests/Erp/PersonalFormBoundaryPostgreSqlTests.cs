@@ -80,6 +80,27 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal("FIELD_WRITE_FORBIDDEN",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>owner.SaveDraftAsync(created.DraftId,PersonalCommand(new PersonalFormSaveV2(PersonalData("{\"fixed\":0}"),null),"deny",saved.ResourceVersion)))).Message);
     }
     [CurrentPermissionPostgresFact]
+    public async Task PersonalForm_current_DataJson_grant_controls_disclosure_and_partial_save_without_losing_hidden_data()
+    {
+        await using var h=await Seed();var(owner,_,_)=await PreparePersonal(h,"{\"Fields\":[{\"Name\":\"a\",\"Type\":\"input\"}]}");
+        var context=await owner.ContextAsync("personal");
+        var created=PersonalResult<PersonalFormDraftV2>(await owner.CreateDraftAsync("personal",PersonalCommand(new PersonalFormCreateV2(context.FormVersionId,PersonalData("{\"a\":\"保留原值\"}"),null))));
+        h.Db.Sys_RoleFieldPerms.Add(new(){RoleId=72,ResourceKey=PersonalFormOwnerV2.Resource,FieldName="DataJson",Access=2});
+        await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
+        var readOnly=await owner.DraftAsync(created.DraftId);
+        using var visibleData=JsonDocument.Parse(readOnly.DataJson);Assert.Equal("保留原值",visibleData.RootElement.GetProperty("a").GetString());
+        Assert.Equal("FIELD_WRITE_FORBIDDEN",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>owner.SaveDraftAsync(created.DraftId,
+            PersonalCommand(new PersonalFormSaveV2(PersonalData("{\"a\":\"不应写入\"}"),null),"readonly",readOnly.RowVersion)))).Message);
+        await h.Db.Sys_RoleFieldPerms.Where(p=>p.RoleId==72&&p.ResourceKey==PersonalFormOwnerV2.Resource&&p.FieldName=="DataJson").ExecuteUpdateAsync(p=>p.SetProperty(x=>x.Access,3));
+        var hidden=await owner.DraftAsync(created.DraftId);Assert.DoesNotContain("\"a\"",hidden.SchemaJson);
+        using var hiddenData=JsonDocument.Parse(hidden.DataJson);Assert.False(hiddenData.RootElement.TryGetProperty("a",out _));
+        var original=await owner.OriginalAsync(PersonalFormOwnerV2.Create,"personal","create");
+        using var originalData=JsonDocument.Parse(PersonalResult<PersonalFormDraftV2>(original).DataJson);Assert.False(originalData.RootElement.TryGetProperty("a",out _));
+        await owner.SaveDraftAsync(created.DraftId,PersonalCommand(new PersonalFormSaveV2(PersonalData("{}"),null),"preserve",hidden.RowVersion));
+        var stored=await h.Db.Database.SqlQuery<string>($"SELECT data_json AS \"Value\" FROM cp6_personal_form_v2.drafts WHERE id={created.DraftId}").SingleAsync();
+        using var storedData=JsonDocument.Parse(stored);Assert.Equal("保留原值",storedData.RootElement.GetProperty("a").GetString());
+    }
+    [CurrentPermissionPostgresFact]
     public async Task PersonalForm_final_scope_change_rolls_back_entire_submission_and_allows_clean_recovery()
     {
         await using var h=await Seed();var(original,_,_)=await PreparePersonal(h);var context=await original.ContextAsync("personal");var calls=0;
