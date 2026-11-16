@@ -19,7 +19,7 @@ public enum BpOperationType
 public class BusinessPartnerDto
 {
     public string BpCd { get; set; } = string.Empty;
-    public string BpName { get; set; } = string.Empty;
+    public string? BpName { get; set; }
     public string? BpAbbrev { get; set; }
     public string BaseCd { get; set; } = string.Empty;
     public int Status { get; set; } = 1;

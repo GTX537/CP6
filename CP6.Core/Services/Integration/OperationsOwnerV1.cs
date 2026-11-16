@@ -20,6 +20,7 @@ public sealed partial class OperationsOwnerV1
     internal const string ToolInstance = "wms-plate-mold";
     internal const string PlateMold = "erp-plate-mold", ToolSpecification = "plm-tool-specification";
     internal const string Product = "product", BusinessPartner = "erp-business-partner";
+    internal const string BusinessPartnerProfileQuery = "profile-query";
     internal const string LocationRule = "wms-location-rule";
     internal const string InventoryIdentity = "wms-inventory-identity";
     internal const string TransferEnvironment = "wms-transfer-environment", TransferSource = "wms-transfer-source";
@@ -126,13 +127,21 @@ public sealed partial class OperationsOwnerV1
         var menu=resource=="order"?"erp-order":resource==Product?"erp-product":resource==UomProfile?"erp-uom-profile":resource==CurrencyPolicy?"erp-currency-policy":resource;
         var actions=await (from a in db.Sys_MenuActions.AsNoTracking() join m in db.Sys_Menus.AsNoTracking() on a.MenuId equals m.MenuId
             where m.Enable && m.MenuKey==menu select a.ActionCode).ToArrayAsync(ct);
-        if(!actor.ActionKeys.Contains(menu+":"+action) || !actions.Contains(action,StringComparer.Ordinal))
+        bool Can(string key) => actor.ActionKeys.Contains(menu + ":" + key) && actions.Contains(key, StringComparer.Ordinal);
+        var partnerExport = resource == BusinessPartner && action == "export";
+        var partnerProfile = resource == BusinessPartner && action == BusinessPartnerProfileQuery;
+        if (!Can(action) || (partnerProfile || partnerExport) && !Can("query")
+            || partnerExport && !Can(BusinessPartnerProfileQuery))
             throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
         var type=actor.DataScopes.GetValueOrDefault(resource,scope.Default);
         if(!scope.Supports.Contains(type) || type is <1 or >5 || type is 2 or 3 && actor.DeptId==null)
             throw new OrderPriceCorrectionException("OWNER_SCOPE_MAPPING_UNAVAILABLE",503);
-        var uses=new[]{FieldPermissionUseV1.Read,FieldPermissionUseV1.Write};
-        var mappings=source.Fields.SelectMany(f=>uses.Select(use=>new FieldPermissionMappingV1(f,use,"/operations/"+resource+"/"+f,true,[])));
+        var uses = partnerExport
+            ? new[] { FieldPermissionUseV1.Read, FieldPermissionUseV1.Write, FieldPermissionUseV1.Export }
+            : new[] { FieldPermissionUseV1.Read, FieldPermissionUseV1.Write };
+        var mappings = source.Fields.SelectMany(f => uses.Select(use => new FieldPermissionMappingV1(f, use,
+            use == FieldPermissionUseV1.Export ? "/api/business-partners/export-csv#bpName" : "/operations/" + resource + "/" + f,
+            true, [])));
         var constraints=source.Fields.SelectMany(f=>uses.Select(use=>new FieldPermissionConstraintsV1(f,use,
             FieldPermissionCheckV1.Allowed,FieldPermissionCheckV1.Allowed,FieldPermissionCheckV1.Allowed,
             FieldPermissionCheckV1.NotApplicable,FieldPermissionCheckV1.NotApplicable,FieldPermissionCheckV1.Allowed,FieldPermissionCheckV1.Allowed)));

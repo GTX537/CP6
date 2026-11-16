@@ -1,6 +1,6 @@
 # 当前 Main 字段与用途核销入口
 
-W678-01 建立，W679-01 核销个人表单/附件，W680-01 核销库存金额相关四组消费者，W681-01 补齐看板仓库名和库龄客户名的来源权限；接续 [W677 整卡复核](../../evidence/W677-01/DELIVERY.md)。本目录是当前实现的导航与核销记录，不是授权配置、第二套任务台账或全部入口已通过的证明。WP02-03 状态仍以 `roadmap.json` 为准。
+W678-01 从整卡复核接续建立此索引，W679 至 W681 核对了个人表单、库存金额和关联名称来源，W682 补齐业务伙伴档案及 CSV 权限。WP02-03 状态以 `roadmap.json` 为准。[W677 整卡复核](../../evidence/W677-01/DELIVERY.md)
 
 [resources.jsonl](resources.jsonl) 保存封存目录内每个资源的完整受控字段域、scope、四用途结论、候选源码和路由引用。[routes.jsonl](routes.jsonl) 保存实际 MVC descriptor 的路由、方法及直接声明的属性。`permission_attribute_route_ids` 只连接明确的菜单属性；Controller 通过服务调用 Owner 时可能没有该属性，空列表不意味着未授权。`lexical_source_candidates` 是字面量/Operations 常量检索的首个位置，包含定义和引用，不是调用图。
 
@@ -14,7 +14,7 @@ W678-01 建立，W679-01 核销个人表单/附件，W680-01 核销库存金额�
 | inquiry | 当前人工受理、撤回同意的 `InquiryIntakePermissionSourceV1` / `InquiryConsentPermissionSourceV1` 有 Write 映射；来源完整性沿已采用版本。 | `InquiryPrivacyPermissionSourceV1` 明确区分 Export/Download；`InquiryServicePermissionSourceV1` 有服务身份 Export 映射。跨仓消费者仍引用原询盘验收及 [W645](../../evidence/W645-01/DELIVERY.md)，本轮没有重新运行 CRM。其他用途保留待核对。 |
 | authoring | `FlowAuthoringOwnerV2`、`FormAuthoringOwnerV2`、`ApprovalBindingOwnerV2` 有各自 Read/Write 映射。 | 个人表单有独立消费边界，见下一行；没有从“名称相近”推导 Export/Download 通过。 |
 | personal-form | `PersonalFormOwnerV2` 使用当前 PostgreSQL 权限、封存的 Title/DataJson 域及已发布动态字段策略；读取投影、局部保存、原结果回读和最终 WF_AUTH 门均已追踪。收件箱的标题搜索、总数及代理读取采用同一当前可见集。 | 已核对 Controller 无表单导出入口；附件 v2 通过 FORM/DRAFT/RETURNED/TASK/HISTORY 的实际上下文及当前 upload 字段读取权下载，收件箱/查询下载另核授权成员集。它是已采用的上下文读取合同，不是独立 Download 用途映射。调用链与实际回归见 [W679](../../evidence/W679-01/DELIVERY.md)。 |
-| operations | `OperationsOwnerV1.AuthorityCoreAsync` 对整个注册域建立 Read/Write 决定；服务端动作与范围先验证，真实消费在各 `OperationsAccessV1.*` / Owner。 | 通用决定没有 Export/Download 映射。本清单只记录共享机制存在，不把所有派生 DTO、写回读或独立导出当作已逐项验证。优先核对有受控字段的实际输出路径。 |
+| operations | `OperationsOwnerV1.AuthorityCoreAsync` 对整个注册域建立 Read/Write 决定，实际输出由各 `OperationsAccessV1.*` / Owner 消费。 | 业务伙伴 CSV 有明确的 Export 映射。其他资源的独立用途依各自消费入口核对。 |
 | inventory-observation | WMS 看板金额要求自身 Amount 与来源 stock.UnitPrice；效期、呆滞库存参考值与来源单价相交，隐藏/缺价不伪造零值；VMI 历史金额、费率按已采用合同分别要求动作与字段权。实际范围、聚合前过滤及最终源权限见 [W680](../../evidence/W680-01/DELIVERY.md)。 | 已核对的四类 Controller 没有导出/下载入口；看板、呆滞库存只有读取，旧效期处置与 VMI 计算/确认在 PostgreSQL 明确拒绝。此分类仅核销这些消费者的注册字段，不代表正式处置、计费/Finance、其他主数据来源资源或全部业务卡已采用。 |
 | report-center | 当前 `owner-v1/stocks` / `owner-v1/transactions` 通过 ReportCenter Owner。旧 PostgreSQL 分析返回 `OWNER_READ_VERSION_REQUIRED`。 | CSV 当前动作门返回 `REPORT_SNAPSHOT_ADOPTION_UNPROVEN`，离线 `ExportCsv` 返回 `REPORT_EXPORT_CONTEXT_REQUIRED`，均未输出字节；不是“缺少导出字段检查却已放行”。新增快照能力仍属于未来业务采用。 |
 | file-download | `file-content` 与 `plm-controlled-document` 当前采用 Operations 的 Read/Write、父对象与当前安全状态。 | [文件 v1 已采用合同](../../file-content-v1.md) 明确使用 query/add/edit；`DownloadAsync` / `BoundDownload` 沿当前 query。归为已采用 v1 读取模型，不能声称已有独立 Download 决定；是否需下一版用途模型由 WP02-03 与对应文件/文档 Owner 合同共同核销，不在盘点时自动增权或关闭合法下载。 |
@@ -29,7 +29,9 @@ W681 核对了仓库/库位当前 Owner 的名称、地址、管理者、备注�
 
 看板的 WarehouseName 现在同时要求当前仓库 query、字段读取及 MasterWarehouses 真实范围；库龄客户分组名称要求自身 CustomerName 与业务伙伴 query/BpName/真实范围相交。只有明确无 query 权或字段不可读才隐藏名称，来源故障继续失败；名称来源加入同一事务的最终权限门。隐藏名称不会删除本来可见的库存分组，仍返回仓库码或客户码，金额和数量沿原合同。客户分组的 CustomerNameReadable 反映两端字段/动作交集，不证明每个来源对象均可见。没有把业务码显示关联升级成 UUID 身份或交易资格。见 [W681 交付](../../evidence/W681-01/DELIVERY.md)及 [#1206](https://github.com/GTX537/CP6/issues/1206)。
 
-1. 优先处理 [#1207](https://github.com/GTX537/CP6/issues/1207)：业务伙伴旧详情、列表、按名称筛选/排序、CSV 与写后回读没有被新身份 Owner 覆盖。源码已确认独立权限缺口；该 Issue 尚未完成独立 HTTP 红测和修复，不能把 W681 的身份来源核对记为整个资源通过。然后继续剩余 Operations 的派生 DTO、写回读及独立用途。
+W682 已修复业务伙伴旧入口权限。现有 `query` 继续授权最小身份查询和范围内查重。完整详情和列表另需 `profile-query`，CSV 再需 `export` 和独立 Export 字段决定。BpName 无权读取时详情和列表返回 null，CSV 名称列为空，名称筛选与排序请求拒绝。保存后只有当前档案查询权才能回读，同事务故障会回滚写入。两项新动作由迁移和种子登记，角色需显式分配。[W682 交付](../../evidence/W682-01/DELIVERY.md) · [#1207](https://github.com/GTX537/CP6/issues/1207)
+
+1. 继续 Operations 的派生 DTO、写回读及独立用途，优先核对库存、入库、出库单价的真实消费路径。其他业务伙伴档案消费者依各自合同核对。
 2. 文件/受控文档 v1 和表单附件 v2 保留各自已采用读取合同；独立用途模型继续按原 WP02-03 与对应 Owner 核销，不能把版本不同当成权限豁免或自动关闭合法下载。静态检索结果本身不判定安全或缺陷。
 3. 发现可重现的披露、越权或错误派生结果后，在 GitHub Issues 登记并定向修复。没有变更的已通过场景复用原证据，不因扩大导航清单重跑全部 PGT。
 
@@ -45,4 +47,4 @@ dotnet <private-build>/bin/MetadataProbe/debug/MetadataProbe.dll <main-package> 
 uv run --offline --python 3.13 python -B eng/wp02-03/field-coverage/index_coverage.py --metadata <metadata-output> --output docs/development/authorization/current-main
 ```
 
-生成器中的分类对应上表的已知边界，不自动发现所有调用或认定未知路径通过。新资源默认进入待核对组。元数据来源见 [W678 交付](../../evidence/W678-01/DELIVERY.md)；W679、W680 没有产品、目录或路由变更，复用同一采集输入更新已核对分类。W681 修改两个消费者的服务端名称投影，目录、权限注册和 MVC 路由输入未变，继续复用该元数据并再生成当前源码导航。[W679 交付](../../evidence/W679-01/DELIVERY.md) 记录个人表单、旧扫描修正；[W680 交付](../../evidence/W680-01/DELIVERY.md) 记录库存金额四组的真实消费与验证范围。
+生成器中的分类对应上表已核对的消费入口，新资源默认进入待核对组。W682 从当前 Main 候选程序集在 HostBuilt 重新采集，七个旧业务伙伴入口增加 Owner 结果处理属性，资源字段域和路由集合保持原结构。此前采集及验证范围见 [W678](../../evidence/W678-01/DELIVERY.md)、[W679](../../evidence/W679-01/DELIVERY.md)、[W680](../../evidence/W680-01/DELIVERY.md)、[W681](../../evidence/W681-01/DELIVERY.md)。

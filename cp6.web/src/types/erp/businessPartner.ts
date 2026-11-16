@@ -12,7 +12,7 @@ export enum BpOperationType {
 /** 1 取引先 1 個の DTO（全 Tab 字段を統合） */
 export interface BusinessPartnerDto {
   bpCd: string
-  bpName: string
+  bpName: string | null
   bpAbbrev?: string
   baseCd: string
   status: number
@@ -253,7 +253,7 @@ export interface BpListItemDto {
   rowNo: number
   status: number
   bpCd?: string
-  bpName?: string
+  bpName?: string | null
   bpAbbrev?: string
   salesWg?: string
   salesWgName?: string

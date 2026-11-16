@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+## 2026-11-16 UTC · W682 业务伙伴档案权限
+
+COORD 从 Main `2f6e885dc` 复用 DEV-1 / `codex/w682-01`，修复 #1207。18 个不同用例按最新适用结果通过（12 个 PostgreSQL，含 4 个实际 HTTP 场景，6 个种子和 ERP 单元回归），零跳过。vue-tsc 通过。正常 PR 采用后核对远端并执行 finish。WP02-03 保持 IN_PROGRESS，下一窗口优先库存和收发货单价消费者。 [W682 交付](evidence/W682-01/DELIVERY.md)
+
 ## 2026-11-16 UTC · W681 主数据名称来源权限
 
 COORD 从 Main `64cfb12b7` 复用 DEV-1 / `codex/w681-01`，完成 #1206 的库存关联名称权限修复及当前主数据限定核对，17/17 本地 PG/HTTP 通过；待正常 PR、远端核对、关闭 #1206 与 finish。WP02-03 保持 IN_PROGRESS；下一窗口优先处理独立 P0 #1207。没有其他执行对话、Actions 或部署。[交付](evidence/W681-01/DELIVERY.md)

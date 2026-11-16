@@ -16,6 +16,24 @@ internal sealed partial class OperationsAccessV1
             throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
     }
     internal bool BusinessPartnerNameReadable => authority.Fields.Fields.TryGetValue("BpName", out var field) && field.CanRead;
+    internal bool BusinessPartnerNameWritable => authority.Fields.Fields["BpName"].CanWrite;
+    internal bool BusinessPartnerNameExportable => authority.Fields.Fields["BpName"].CanExport;
+
+    internal Task<OperationsAccessV1?> BusinessPartnerReadbackAsync(CancellationToken ct)
+        => LinkedSource(OperationsOwnerV1.BusinessPartner, ct, OperationsOwnerV1.BusinessPartnerProfileQuery);
+
+    internal void RequireBusinessPartnerCreation()
+    {
+        // 旧新建请求没有可信的部门归属输入，不能从业务字段或人员名称猜测。
+        if (authority.Scope is not (1 or 5))
+            throw new OrderPriceCorrectionException("CREATION_DEPARTMENT_REQUIRED", 403);
+    }
+
+    internal void RequireBusinessPartnerAdministrator()
+    {
+        if (!authority.Actor.RoleIds.Contains(1))
+            throw new OrderPriceCorrectionException("BUSINESS_PARTNER_ADMIN_REQUIRED", 403);
+    }
     internal IQueryable<BusinessPartner> BusinessPartners(bool includeDeleted = false)
     {
         var rows = db.BusinessPartners.AsNoTracking().Where(p => includeDeleted || !p.IsDeleted);

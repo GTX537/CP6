@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-16，W682 修复 #1207 业务伙伴旧档案、列表、CSV 与写后回读权限。18 个不同用例按最新适用结果通过（12 个 PostgreSQL，含 4 个实际 HTTP 场景，6 个种子和 ERP 单元回归），零跳过。vue-tsc 通过。WP02-03 仍在推进，下一窗口优先库存与收发货单价消费者。 [W682 交付](../development/evidence/W682-01/DELIVERY.md)
+
 2026-11-16，W681 修复库存看板仓库名/库龄客户名来源权限缺口 #1206；17/17 本地 PG/HTTP 通过，当前主数据来源作限定核对。WP02-03 仍 IN_PROGRESS，下一窗口优先 P0 #1207 旧 BP 详情/列表/CSV/写回读权限。卡片/PGT/询盘计数保持。 [W681 交付](../development/evidence/W681-01/DELIVERY.md)
 
 2026-11-16，W680 核销 WMS 看板、效期、呆滞库存和 VMI 的注册字段及当前来源门；12 项定向 PostgreSQL 回归通过，零失败/跳过，产品权限未改。WP02-03 仍 IN_PROGRESS；剩余 Operations 继续核对，下一窗口优先主数据名称及直接消费者。卡片/PGT/询盘计数保持。 [W680 交付](../development/evidence/W680-01/DELIVERY.md)

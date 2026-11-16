@@ -84,10 +84,9 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
                     var partner = await partnerQuery.SingleOrDefaultAsync(ct);
                     ErpQuotationOrderFactory.RequireBusinessPartner(partner, command.AccountId, allowPreRegistered: true);
                     var service = new BusinessPartnerService(db);
-                    var dto = await service.GetByCdAsync(partner!.BpCd);
-                    var errors = new List<string>(); service.Validate(dto!, true, dto, errors);
+                    var errors = new List<string>(); service.ValidateExisting(partner!, errors);
                     if (errors.Count != 0) throw new ErpCommerceException("C03_BUSINESS_PARTNER_MASTER_DATA_REQUIRED");
-                    partner.Status = 1; partner.Modifier = "crm-integration"; partner.ModifyDate = now;
+                    partner!.Status = 1; partner.Modifier = "crm-integration"; partner.ModifyDate = now;
                     await db.SaveChangesAsync(ct);
                     var version = NextResultVersion(aggregate, command);
                     SaveOutcome(queue, command, previous, ErpEventContracts.BusinessPartnerSynchronized,
