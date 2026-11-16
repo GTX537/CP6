@@ -1,3 +1,4 @@
+using CP6.Core.EFDbContext;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.Platform;
 using Microsoft.AspNetCore.DataProtection;
@@ -133,7 +134,9 @@ public sealed partial class IamAdministrationV1
         }
     }
 
-    private Task RequireSealDurability(CancellationToken ct) => db.Database.ExecuteSqlRawAsync("""
+    private Task RequireSealDurability(CancellationToken ct) => RequireSealDurabilityAsync(db, ct);
+
+    internal static Task RequireSealDurabilityAsync(CP6Context db, CancellationToken ct) => db.Database.ExecuteSqlRawAsync("""
         SELECT set_config('synchronous_commit','on',true)
         WHERE current_setting('synchronous_commit') IN ('off','local')
         """, ct);

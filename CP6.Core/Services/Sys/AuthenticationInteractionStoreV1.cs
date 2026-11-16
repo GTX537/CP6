@@ -44,6 +44,25 @@ public sealed class AuthenticationInteractionStoreV1(CP6Context db)
         return new(proof, row.Purpose, row.Preparation);
     }
 
+    internal async Task<(AuthenticationInteractionV1 Interaction, Guid Lease)?> ReadAcceptedEnrollmentAsync(
+        string challenge, string binding, CancellationToken ct)
+    {
+        var row = await db.Database.SqlQuery<AcceptedEnrollmentRow>($"""
+            SELECT i.proof::text AS "Proof", i.preparation_hash AS "Preparation", i.lease AS "Lease"
+            FROM cp6_authentication_v1.interactions i
+            JOIN cp6_authentication_v1.pending_crm_user_seals p ON p.completion_id=i.completion_id
+            WHERE i.challenge_hash={Hash(challenge)} AND i.purpose='2fa_enroll' AND i.state='completing'
+              AND i.factor IS NOT NULL AND p.kind='challenge-enroll-2fa'
+            """).SingleOrDefaultAsync(ct);
+        if (row is null) return null;
+        var proof = JsonSerializer.Deserialize<AuthenticationProofV1>(row.Proof)!;
+        if (proof.ClientBinding != binding || proof.ExpiresAtUtc <= DateTimeOffset.UtcNow)
+            throw new InvalidOperationException("E-SEC-013");
+        return (new(proof, "2fa_enroll", row.Preparation), row.Lease);
+    }
+
+    private sealed record AcceptedEnrollmentRow(string Proof, string? Preparation, Guid Lease);
+
     public async Task ClaimAsync(Guid completion, Guid lease, CancellationToken ct)
     {
         RequireTransaction();

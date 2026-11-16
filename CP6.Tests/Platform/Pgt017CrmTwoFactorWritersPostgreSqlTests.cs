@@ -25,7 +25,10 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     public async Task PGT017_two_factor_credential_mutations_preserve_the_current_user_crm_seal()
     {
         var mode = Environment.GetEnvironmentVariable("CP6_W668_2FA_MODE")!;
-        var unavailable = Environment.GetEnvironmentVariable("CP6_W668_SCENARIO") == "crm-unavailable";
+        var scenario = Environment.GetEnvironmentVariable("CP6_W668_SCENARIO");
+        var close = scenario == "crm-unavailable-close";
+        var credentialFirst = scenario == "credential-first";
+        var unavailable = close || credentialFirst || scenario == "crm-unavailable";
         var native = mode.StartsWith("native-", StringComparison.Ordinal);
         var self = mode.EndsWith("-self", StringComparison.Ordinal) || mode.StartsWith("disable-self", StringComparison.Ordinal);
         var setup = mode.StartsWith("setup-", StringComparison.Ordinal) || mode.EndsWith("-setup", StringComparison.Ordinal);
@@ -156,6 +159,17 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var route = self ? "api/auth/2fa/" + (setup ? "setup-self" : disable ? "disable-self" : "enroll-self")
             : (native ? "api/client-auth/2fa/" : "api/auth/2fa/") + (setup ? "setup" : "enroll");
         var usesCrm = self || !setup;
+        if (scenario == "authority-first")
+        {
+            var floors = await Floors();
+            using var losing = await InMainOrder(authorityFirst: true);
+            Assert.Equal(HttpStatusCode.Unauthorized, losing.StatusCode);
+            Assert.Equal(before, await MainFacts());
+            Assert.Equal(floors, await Floors());
+            await Save("two-factor-main-authority-first.json", new { Mode = mode, Route = route, Before = before, After = await MainFacts(),
+                CredentialHttp = (int)losing.StatusCode, Floors = await Floors() });
+            return;
+        }
         if (unavailable) await SetSealLogin(false);
         try
         {
@@ -178,15 +192,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 && cookies.Any(cookie => cookie.StartsWith("cp6_at=", StringComparison.Ordinal));
             string? status = null;
             if (unavailable && !self && !setup && response.StatusCode == HttpStatusCode.ServiceUnavailable)
-            {
-                const string completion = "completion/status";
-                using var checkedStatus = native
-                    ? await NativePost("api/client-auth/" + completion,
-                        new NativeCompletionRecoveryRequest { Kind = "interaction", Credential = challenge!, Client = client })
-                    : await host.Send(Request(HttpMethod.Post, "api/auth/" + completion, pendingBrowser!, new { }));
-                Assert.Equal(HttpStatusCode.OK, checkedStatus.StatusCode);
-                status = (await checkedStatus.Content.ReadFromJsonAsync<AuthenticationRecoveryStatusV1>())!.State;
-            }
+                status = await Completion("status");
             await Save("two-factor-candidate.json", new
             {
                 Mode = mode, Route = route, Tenant = h.Tenant, Subject = actor.Id, Grants = grants, DeniedConnections = denials,
@@ -216,8 +222,20 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                         (after.Challenge.State, after.Challenge.HasLease, after.Challenge.Prepared,
                             after.Challenge.HasFactor, after.Challenge.Consumptions, after.Challenge.Sessions));
                 }
+                if (close)
+                {
+                    Assert.Equal("CLOSED", await Completion("close"));
+                    var closed = await MainFacts();
+                    Assert.Equal(0, closed.Pending);
+                    Assert.Equal(before.MainEffects, closed.MainEffects);
+                    Assert.Equal(("rejected", false, true, 1, 0),
+                        (closed.Challenge!.State, closed.Challenge.HasLease, closed.Challenge.HasFactor, closed.Challenge.Consumptions, closed.Challenge.Sessions));
+                    Assert.Equal(floorsBefore, await Floors());
+                    await Save("two-factor-closed.json", new { Mode = mode, Route = route, pending.OperationId, After = closed, Floors = await Floors() });
+                    return;
+                }
                 await SetSealLogin(true);
-                using var resumed = await Mutate();
+                using var resumed = credentialFirst ? await InMainOrder(authorityFirst: false) : await Mutate();
                 var recovered = await MainFacts();
                 await CheckCommitted(resumed, recovered);
                 var receipt = await h.Db.Database.SqlQuery<bool>($"""
@@ -243,6 +261,17 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             return host.Send(request);
         }
 
+        async Task<string> Completion(string action)
+        {
+            var endpoint = "completion/" + action;
+            using var response = native
+                ? await NativePost("api/client-auth/" + endpoint,
+                    new NativeCompletionRecoveryRequest { Kind = "interaction", Credential = challenge!, Client = client })
+                : await host.Send(Request(HttpMethod.Post, "api/auth/" + endpoint, pendingBrowser!, new { }));
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            return (await response.Content.ReadFromJsonAsync<AuthenticationRecoveryStatusV1>())!.State;
+        }
+
         Task<HttpResponseMessage> SendSetup() => native
             ? NativePost("api/client-auth/2fa/setup", new NativeChallengeRequest { ChallengeToken = challenge!, Client = client })
             : host.Send(Request(HttpMethod.Post, self ? "api/auth/2fa/setup-self" : "api/auth/2fa/setup",
@@ -254,6 +283,40 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             if (native) return NativePost(route, new NativeTwoFactorRequest { ChallengeToken = challenge!, Client = client, Code = submittedCode!, Method = "totp" });
             object body = disable ? new { CurrentPassword = password, Code = submittedCode, Method = email ? "email" : "totp" } : new { Code = submittedCode };
             return host.Send(Request(HttpMethod.Post, route, self ? originalBrowser! : pendingBrowser!, body));
+        }
+
+        async Task<HttpResponseMessage> InMainOrder(bool authorityFirst)
+        {
+            await using var held = new NpgsqlConnection(connection);
+            await using var observer = new NpgsqlConnection(connection);
+            await held.OpenAsync();
+            await observer.OpenAsync();
+            await using var transaction = await held.BeginTransactionAsync();
+            var statement = authorityFirst ? """SELECT 1 FROM public."Sys_Tenants" WHERE "Id"=@target FOR UPDATE"""
+                : """SELECT 1 FROM public."Sys_Users" WHERE "TenantId"=@tenant AND "Id"=@target FOR UPDATE""";
+            await using var command = new NpgsqlCommand(statement, held, transaction);
+            command.Parameters.AddWithValue("target", authorityFirst ? h.Tenant : actor.Id);
+            if (!authorityFirst) command.Parameters.AddWithValue("tenant", h.Tenant);
+            Assert.Equal(1, await command.ExecuteScalarAsync());
+            var first = authorityFirst ? Policy() : Mutate();
+            Task<HttpResponseMessage>? second = null;
+            try
+            {
+                var firstWriter = await WaitForMainBlock(observer, held.ProcessID,
+                    authorityFirst ? "%UPDATE%Sys_Tenants%" : "%UPDATE%Sys_Users%", first);
+                second = authorityFirst ? Mutate() : Policy();
+                var secondWriter = await WaitForMainBlock(observer, firstWriter, "%cp6_authentication_v1.acquire()%", second);
+                var waiting = await MainFacts();
+                Assert.Equal(before with { Pending = waiting.Pending }, waiting);
+                await Save("two-factor-main-wait.json", new { Mode = mode, AuthorityFirst = authorityFirst, FirstWriter = firstWriter, SecondWriter = secondWriter });
+            }
+            finally { await transaction.RollbackAsync(); }
+            using var authority = await (authorityFirst ? first : second!);
+            Assert.Equal(HttpStatusCode.OK, authority.StatusCode);
+            Assert.Equal(0, (await h.Db.Sys_Tenants.AsNoTracking().SingleAsync(row => row.Id == h.Tenant)).TwoFactorMode);
+            return await (authorityFirst ? second! : first);
+
+            Task<HttpResponseMessage> Policy() => host.Send(Request(HttpMethod.Put, "api/sys/two-factor-policy", independentBrowser, new { Mode = 0 }));
         }
 
         async Task CheckCommitted(HttpResponseMessage response, FactorMainProbe after)
