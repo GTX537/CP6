@@ -1033,7 +1033,8 @@ builder.Services.AddScoped(sp => new OrderWriteOwnerV1(sp.GetRequiredService<CP6
         .CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext, ct)));
 builder.Services.AddScoped(sp => new CP6.Core.Services.Integration.OperationsOwnerV1(sp.GetRequiredService<CP6Context>(),
     sp.GetRequiredService<IHttpContextAccessor>(), ct => CP6.WebApi.Services.OrderPriceCorrectionAuthenticationV1
-        .CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext, ct)));
+        .CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext, ct),
+    CP6.Core.Services.Sys.AuthorizationCatalogV1.Capture, new CP6.WebApi.Services.MesCompletionSessionAuthorityV1(sp)));
 builder.Services.AddScoped<IUnshippedOrderService, UnshippedOrderService>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.DictionaryMutationOwnerV1>(sp =>
 {

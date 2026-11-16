@@ -8,5 +8,6 @@ internal sealed record OperationsDelegationV1(CP6Context Context, Guid Tenant, G
     string Actor, string Resource, string Action, string Number, string PermissionVersion)
 {
     internal Guid? CompletionResultId {get;init;}
+    internal Guid? CompletionWorkOrderId {get;init;}
     internal decimal? CompletedQuantity {get;init;}
 }

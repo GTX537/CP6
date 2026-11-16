@@ -30,9 +30,10 @@ internal sealed partial class OperationsAccessV1(CP6Context db,OperationsOwnerV1
         {
             await RequireProductionWorkOrder(ticket.Number,ct);
             if(!await db.WorkOrders.AnyAsync(w=>w.WorkOrderNo==ticket.Number && !w.IsDeleted
-                && w.Status==WorkOrderStatus.Completed && w.CompletedQty==ticket.CompletedQuantity,ct)
+                && w.Status==WorkOrderStatus.Completed && w.CompletedQty==ticket.CompletedQuantity
+                && (ticket.CompletionWorkOrderId==null || w.Id==ticket.CompletionWorkOrderId),ct)
                 || !await db.ProductionResults.AnyAsync(r=>r.Id==ticket.CompletionResultId && r.WorkOrderNo==ticket.Number
-                    && !r.IsDeleted && r.ResultType==4 && r.Creator==Actor,ct))
+                    && !r.IsDeleted && r.ResultType==4 && r.Creator==ticket.Actor,ct))
                 throw new OrderPriceCorrectionException("DELEGATION_FORBIDDEN",403);
             var parent=await db.WorkOrders.AsNoTracking().SingleAsync(w=>w.WorkOrderNo==ticket.Number,ct);
             await RequireActiveAssociations(parent.WebOrderNo,null,ct);

@@ -257,6 +257,11 @@ public partial class ProductionResultService : IProductionResultService
         {
             if(resultType is 4 or 5)await RecalculateProcessHoursCoreAsync(req.WorkOrderNo,req.ProcessCd,req.TaskCd ?? proc.TaskCd,userName);
             var ticket=justCompleted ? access!.Delegate(wo.WorkOrderNo) with { CompletionResultId=pr.Id, CompletedQuantity=wo.CompletedQty } : null;
+            if (ticket != null && HasDurableFinanceCompletion)
+            {
+                Owner.StageMesCompletion(wo.Id, ticket);
+                await _db.SaveChangesAsync();
+            }
             effects.Add(()=>PublishOwnedResult(req,resultType,wo.Status,ticket));
             return resultNo;
         }

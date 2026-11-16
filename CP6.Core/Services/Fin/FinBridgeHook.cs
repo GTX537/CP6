@@ -16,16 +16,14 @@ public partial class FinBridgeHook : BridgeHookBase, IFinBridgeHook
     private readonly IArInvoiceService _ar;
     private readonly ICostCollectService _cost;
     private readonly ICostSettleService _settle;
-    private readonly OperationsOwnerV1? _operations;
 
     public FinBridgeHook(CP6Context db, IArInvoiceService ar, ICostCollectService cost, ICostSettleService settle,
-        ILogger<FinBridgeHook> logger, OperationsOwnerV1? operations = null)
+        ILogger<FinBridgeHook> logger)
         : base(db, logger)
     {
         _ar = ar;
         _cost = cost;
         _settle = settle;
-        _operations = operations;
     }
 
     public async Task<FinBridgeResult> OnShipmentConfirmedAsync(FinShipmentInvoiceRequest request, string? userName)
