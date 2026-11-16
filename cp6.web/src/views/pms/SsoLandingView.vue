@@ -5,7 +5,8 @@
       <template v-if="errorCode">
         <el-result icon="error" :title="t('sec.sso.landingError')" :sub-title="errorText">
           <template #extra>
-            <el-button type="primary" @click="backToLogin">{{ t('sec.sso.backToLogin') }}</el-button>
+            <el-button v-if="canRetry" type="primary" :disabled="busy" @click="retry">重新通过 SSO 验证</el-button>
+            <el-button :type="canRetry ? 'default' : 'primary'" :disabled="busy" @click="backToLogin">{{ mappingRecovery ? '结束本次登录' : t('sec.sso.backToLogin') }}</el-button>
           </template>
         </el-result>
         <el-alert v-if="identityNotice" :title="identityNotice" type="info" :closable="false" />
@@ -26,7 +27,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { recoverAuthentication } from '@/auth/browserAuthentication'
+import { closeSsoMappingRecovery, readSsoMappingRecovery, recoverAuthentication, requireCurrentSso, retrySsoMapping } from '@/auth/browserAuthentication'
 import { navigateAuthentication } from '@/auth/navigation'
 
 const { t, te } = useI18n()
@@ -36,26 +37,51 @@ const router = useRouter()
 // 回调失败时 302 到 /sso/landing?error=E-SEC-0xx；成功时无 error。
 const errorCode = ref<string>(typeof route.query.error === 'string' ? route.query.error : '')
 const identityNotice = ref('')
+const mappingRecovery = errorCode.value === 'SSO_IDENTITY_MAPPING_UNKNOWN'
+const canRetry = ref(false)
+const busy = ref(false)
 // A reference is only a support locator. Query parameters never prove an identity mapping or session.
 const operationRef = ref(typeof route.query.operationRef === 'string' && /^[a-f0-9]{64}$/i.test(route.query.operationRef) ? route.query.operationRef : '')
 // 已知错误码（E-SEC-020~029）走五语本地化；未知则原样显示。
-const errorText = computed(() => (errorCode.value && te(errorCode.value) ? t(errorCode.value) : errorCode.value))
+const errorText = computed(() => mappingRecovery
+  ? '首次身份映射结果待确认。可以重新验证同一身份，或结束本次登录。'
+  : errorCode.value && te(errorCode.value) ? t(errorCode.value) : errorCode.value)
 
-function backToLogin() {
-  router.replace('/login')
+async function backToLogin() {
+  busy.value = true
+  try {
+    if (mappingRecovery) await closeSsoMappingRecovery()
+    await router.replace('/login')
+  } catch {
+    identityNotice.value = '原登录交互尚未确认关闭，请重试。'
+  } finally { busy.value = false }
+}
+
+async function retry() {
+  busy.value = true
+  try {
+    const result = await retrySsoMapping()
+    requireCurrentSso(result)
+    window.location.assign(result.authorizeUrl)
+  } catch {
+    identityNotice.value = '无法重新发起验证，请重试或结束本次登录。'
+  } finally { busy.value = false }
 }
 
 onMounted(async () => {
   try {
     // The query is only a display hint. Owner status and the original attempt decide the next page.
     if (errorCode.value) {
-      const result = await recoverAuthentication(true)
-      if (result.identityState === 'IDENTITY_BOUND' || result.identityState === 'USER_PROVISIONED')
-        identityNotice.value = '原身份映射已完成并保留。本次登录已结束，可重新发起 SSO；后续登录仍需满足当前认证政策。'
-      else if (result.identityState === 'CLOSED') identityNotice.value = '已关闭此浏览器的原身份映射操作，迟到请求不能继续写入。'
-      if (errorCode.value === 'SSO_IDENTITY_MAPPING_UNKNOWN') {
-        errorCode.value = '首次身份映射结果曾中断。请保留原操作编号；若仍被阻止，请由本租户管理员查询或关闭该原操作。'
+      const result = mappingRecovery ? await readSsoMappingRecovery() : await recoverAuthentication(true)
+      if (!result) return
+      if (mappingRecovery) {
+        operationRef.value = result.identityOperationRef || ''
+        canRetry.value = result.canRetry === true
       }
+      if (result.identityState === 'IDENTITY_BOUND' || result.identityState === 'USER_PROVISIONED')
+        identityNotice.value = mappingRecovery ? '原身份映射已完成。结束本次交互后可重新发起 SSO。'
+          : '原身份映射已完成并保留。本次登录已结束，可重新发起 SSO；后续登录仍需满足当前认证政策。'
+      else if (result.identityState === 'CLOSED') identityNotice.value = '已关闭此浏览器的原身份映射操作，迟到请求不能继续写入。'
       return
     }
     const result = await recoverAuthentication()
@@ -63,7 +89,8 @@ onMounted(async () => {
     else if (result.state === 'PENDING') navigateAuthentication({ twoFactorRequired: true })
     else errorCode.value = '登录结果尚未确认，请检查状态或结束原交互。'
   } catch {
-    errorCode.value = '登录结果尚未确认，请检查状态或结束原交互。'
+    if (mappingRecovery) identityNotice.value = '登录结果尚未确认，请检查状态或结束原交互。'
+    else errorCode.value = '登录结果尚未确认，请检查状态或结束原交互。'
   }
 })
 

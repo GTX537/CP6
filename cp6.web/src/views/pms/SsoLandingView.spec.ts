@@ -2,18 +2,20 @@ import { mount, flushPromises } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const state = vi.hoisted(() => ({
-  query: {} as Record<string, string>, replace: vi.fn(), recover: vi.fn(), navigate: vi.fn(),
+  query: {} as Record<string, string>, replace: vi.fn(), recover: vi.fn(), navigate: vi.fn(), readMapping: vi.fn(), closeMapping: vi.fn(),
 }))
 vi.mock('vue-router', () => ({ useRoute: () => ({ query: state.query }), useRouter: () => ({ replace: state.replace }) }))
 vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (key: string) => key, te: () => false }) }))
-vi.mock('@/auth/browserAuthentication', () => ({ recoverAuthentication: state.recover }))
+vi.mock('@/auth/browserAuthentication', () => ({ recoverAuthentication: state.recover,
+  readSsoMappingRecovery: state.readMapping, closeSsoMappingRecovery: state.closeMapping }))
 vi.mock('@/auth/navigation', () => ({ navigateAuthentication: state.navigate }))
 import SsoLandingView from './SsoLandingView.vue'
 
 describe('SSO landing uses the server completion state', () => {
   beforeEach(() => { vi.clearAllMocks(); state.query = {}; localStorage.clear() })
   const render = () => mount(SsoLandingView, { global: {
-    stubs: { ElCard: { template: '<div><slot /></div>' }, ElResult: { props: ['subTitle'], template: '<div>{{ subTitle }}</div>' }, ElButton: true }, directives: { loading: () => {} },
+    stubs: { ElCard: { template: '<div><slot /></div>' }, ElResult: { props: ['subTitle'], template: '<div>{{ subTitle }}<slot name="extra" /></div>' },
+      ElButton: { template: '<button><slot /></button>' } }, directives: { loading: () => {} },
   } })
 
   it('routes a pending challenge only after the original capability confirms it', async () => {
@@ -49,5 +51,23 @@ describe('SSO landing uses the server completion state', () => {
     state.recover.mockResolvedValue({ state: 'CLOSED', identityState: 'IDENTITY_BOUND' })
     const view = render(); await flushPromises()
     expect(state.navigate).not.toHaveBeenCalled(); expect(view.text()).toContain('原操作编号'); view.unmount()
+  })
+  it('keeps an unknown mapping open until the browser owner explicitly ends the interaction', async () => {
+    const original = 'a'.repeat(64)
+    const urlHint = 'b'.repeat(64)
+    state.query = { error: 'SSO_IDENTITY_MAPPING_UNKNOWN', operationRef: urlHint }
+    state.readMapping.mockResolvedValue({ state: 'UNAVAILABLE', identityState: 'UNKNOWN', identityOperationRef: original, canRetry: true })
+    state.closeMapping.mockResolvedValue({ state: 'CLOSED', identityState: 'UNKNOWN', identityOperationRef: original })
+    const view = render(); await flushPromises()
+    expect(state.recover).not.toHaveBeenCalled()
+    expect(state.closeMapping).not.toHaveBeenCalled()
+    expect(view.text()).toContain(original)
+    expect(view.text()).not.toContain(urlHint)
+    expect(view.text()).toContain('重新通过 SSO 验证')
+    await view.findAll('button')[1]!.trigger('click'); await flushPromises()
+    expect(state.closeMapping).toHaveBeenCalledOnce()
+    expect(state.replace).toHaveBeenCalledWith('/login')
+    expect(state.navigate).not.toHaveBeenCalled()
+    view.unmount()
   })
 })

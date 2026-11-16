@@ -10,13 +10,20 @@ using CP6.Core.Services.Common;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.Platform;
 using CP6.Core.Services.Sys;
+using CP6.Core.Services.Wms;
 using CP6.Entity.DomainModels.Sys;
 using CP6.Tests.Erp;
+using CP6.WebApi.Controllers.Sys;
 using CP6.WebApi.Services;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
@@ -47,6 +54,16 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             Password = hasher.Hash(password), AuthenticationEpoch = Guid.NewGuid()
         };
         h.Db.Sys_Users.Add(independent);
+        if (scenario == "cold")
+        {
+            var supportMenu = await h.Db.Sys_Menus.SingleOrDefaultAsync(row => row.MenuKey == "sys-sso-config");
+            if (supportMenu is null)
+            {
+                supportMenu = new Sys_Menu { MenuId = 9888007, MenuKey = "sys-sso-config", MenuName = "SSO", Enable = true };
+                h.Db.Sys_Menus.Add(supportMenu);
+            }
+            h.Db.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = 72, MenuId = supportMenu.MenuId, ActionCode = "edit" });
+        }
         h.Db.Sys_TenantSsoConfigs.Add(new Sys_TenantSsoConfig
         {
             TenantId = h.Tenant, Authority = SignedSsoExchange.Issuer, ClientId = SignedSsoExchange.Client,
@@ -128,13 +145,24 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
 
                 var withdrawn = await idp.Start(subject, target.Email!);
                 await CheckPending(withdrawn);
+                var neverReturned = await idp.Start(subject, target.Email!, withdrawn.Key);
+                Assert.Equal(("UNKNOWN", withdrawn.Reference), await OriginalStatus(withdrawn));
                 var closed = await Status(withdrawn, close: true);
                 Assert.Equal(("CLOSED", withdrawn.Reference), (closed.IdentityState, closed.IdentityOperationRef));
+                Assert.Equal(2, await ReceiptCount(withdrawn.Reference, neverReturned.Reference));
                 Assert.Equal(initialFence, await Sign(grant.Access, target.Id, "intake:reject"));
                 Assert.Equal(initial, await Effects());
 
+                var earliest = DateTimeOffset.UtcNow;
                 var original = await idp.Start(subject, target.Email!);
                 await CheckPending(original);
+                var accepted = await Pending();
+                using var plan = JsonDocument.Parse(accepted.RequestProtected);
+                var deadline = plan.RootElement.GetProperty("Deadline").GetDateTimeOffset();
+                var pendingMinutes = new SecurityOptions().TwoFactor.PendingTokenMinutes;
+                Assert.InRange(deadline, earliest.AddMinutes(pendingMinutes), DateTimeOffset.UtcNow.AddMinutes(pendingMinutes));
+                await idp.Start(subject, target.Email!, original.Key); // A user returned before completing this IdP round trip.
+                Assert.Equal(("UNKNOWN", original.Reference), await OriginalStatus(original));
                 var otherBrowser = await idp.Start(subject, target.Email!);
                 var wrongBinding = await Assert.ThrowsAsync<SsoMappingRecoveryRequiredV1>(otherBrowser.Callback);
                 Assert.Equal(original.Reference, wrongBinding.OperationRef);
@@ -157,15 +185,30 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                     Assert.Equal(("UNKNOWN", original.Reference), await OriginalStatus(original));
                     Assert.Equal(initial, await Effects());
                     Assert.Equal(new[] { initial.UserVersion + 1, 1, 1 }, await Floors());
+                    var retained = await Pending();
+                    Assert.True(retained.SealStarted);
+                    Assert.Equal((accepted.OperationId, accepted.RequestProtected, accepted.SourceSeals),
+                        (retained.OperationId, retained.RequestProtected, retained.SourceSeals));
+                    using var close = Request(HttpMethod.Post, $"api/sys/sso-config/identity-operations/{original.Reference}/close", independentCookies);
+                    using var protectedClosure = await api.Send(close);
+                    Assert.Equal(HttpStatusCode.OK, protectedClosure.StatusCode);
+                    Assert.Equal(new SsoMappingStatusV1(original.Reference, "UNKNOWN"),
+                        await protectedClosure.Content.ReadFromJsonAsync<SsoMappingStatusV1>());
                 }
-                var retry = await idp.Start(subject, target.Email!, original.Key);
-                await CheckCommitted(original, await retry.Callback());
+                var httpPort = int.Parse(Environment.GetEnvironmentVariable("CP6_W673_SSO_HTTP_PORT")!);
+                var retry = await idp.ResumeThroughWeb(subject, target.Email!, original.Key, httpPort);
+                var evidence = await new AuthenticationInteractionStoreV1(h.Db).ReadSessionAsync(retry.AccessJti, default);
+                Assert.NotNull(evidence);
+                await CheckCommitted(original, evidence.Parse().Primary, freshSessions: 1);
                 Assert.Equal(1, await ReceiptCount(original.Reference, retry.Reference));
+                Assert.Equal(plan.RootElement.GetProperty("Epoch").GetGuid(), (await Effects()).Epoch);
+                Assert.Null(await IamCrmUserSealV1.ReadAsync(h.Db, h.Tenant, accepted.OperationId, default));
                 var replay = await idp.Start(subject, target.Email!);
                 Assert.Equal(target.Id, (await replay.Callback()).UserId);
                 Assert.Equal(1, (await Effects()).LinkAudits);
                 await Save("sso-link-cold.json", new { Original = original.Reference, Withdrawn = withdrawn.Reference,
-                    NativeCrmCommitAcknowledgementLost = relay is not null, Before = initial, After = await Effects(), Floors = await Floors() });
+                    NativeCrmCommitAcknowledgementLost = relay is not null, HttpResume = retry.Reference, OriginalDeadline = deadline,
+                    Before = initial, After = await Effects(), Floors = await Floors() });
             }
             finally { await SetSealLogin(true); }
         }
@@ -242,7 +285,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             Assert.Equal(initialFence, await Sign(unaffectedGrant.Access, independent.Id, "intake:reject"));
         }
 
-        async Task CheckCommitted(SsoLinkExchange attempt, AuthenticationProofV1 proof)
+        async Task CheckCommitted(SsoLinkExchange attempt, AuthenticationProofV1 proof, int freshSessions = 0)
         {
             Assert.Equal((h.Tenant, target.Id, AuthenticationPrimaryMethod.Sso, AuthenticationEntryServiceV1.WebBinding(attempt.Key)),
                 (proof.TenantId, proof.UserId, proof.PrimaryMethod, proof.ClientBinding));
@@ -252,7 +295,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             Assert.NotEqual(initial.Epoch, after.Epoch);
             Assert.Equal(subject, after.Subject);
             Assert.Equal(SignedSsoExchange.Issuer, after.Issuer);
-            Assert.Equal((initial.UserVersion + 1, initial.Outbox + aggregates.Length, grantIds.Length, 1, initial.Refresh),
+            Assert.Equal((initial.UserVersion + 1, initial.Outbox + aggregates.Length, grantIds.Length, 1, initial.Refresh + freshSessions),
                 (after.UserVersion, after.Outbox, after.RevokedGrants, after.LinkAudits, after.Refresh));
             Assert.Equal(new[] { after.UserVersion, 1, 1 }, await Floors());
             using var profile = await api.Profile(cookies["cp6_at"]);
@@ -262,6 +305,9 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
 
         Task<BrowserAuthenticationStatusV1> Status(SsoLinkExchange attempt, bool close = false)
             => new BrowserAuthenticationRecoveryV1(h.Db).ResolveAsync(attempt.Key, close, default);
+
+        async Task<IamCrmUserSealV1> Pending() => Assert.IsType<IamCrmUserSealV1>(
+            await IamCrmUserSealV1.ReadAsync(h.Db, h.Tenant, Guid.Empty, default, target.Id));
 
         async Task<(string? State, string? Reference)> OriginalStatus(SsoLinkExchange attempt)
         {
@@ -353,15 +399,25 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         private readonly SymmetricSecurityKey signingKey = new(RandomNumberGenerator.GetBytes(32));
         private readonly Dictionary<string, string> codes = [];
         private readonly string tenantCode;
+        private readonly CP6Context db;
+        private readonly TenantContext tenant;
+        private readonly BCryptPasswordHasher hasher;
+        private readonly ITenantSsoConfigService configuration;
+        private readonly IOptions<SecurityOptions> options;
         internal int ExchangeCount { get; private set; }
 
         internal SignedSsoExchange(CP6Context db, TenantContext tenant, BCryptPasswordHasher hasher, string tenantCode)
         {
             this.tenantCode = tenantCode;
-            var options = Options.Create(new SecurityOptions());
+            this.db = db;
+            this.tenant = tenant;
+            this.hasher = hasher;
+            options = Options.Create(new SecurityOptions());
+            options.Value.Sso.PublicBaseUrl = "https://cp6.test";
             var config = new Mock<ITenantSsoConfigService>();
             config.Setup(x => x.GetByTenantCodeAsync(tenantCode)).Returns(() => db.Sys_TenantSsoConfigs.AsNoTracking().SingleOrDefaultAsync());
             config.Setup(x => x.DecryptClientSecret(It.IsAny<Sys_TenantSsoConfig>())).Returns("fixture-secret");
+            configuration = config.Object;
             var discovery = new Mock<IOidcDiscovery>();
             discovery.Setup(x => x.GetAsync(Issuer)).ReturnsAsync(new OidcEndpoints(Issuer + "/authorize", Issuer + "/token", Issuer, [signingKey]));
             var tokens = new Mock<ISsoTokenClient>();
@@ -385,13 +441,71 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             var key = originalKey ?? AuthenticationInteractionStoreV1.NewChallenge();
             var binding = AuthenticationEntryServiceV1.WebBinding(key);
             await sso.BindStateAsync(state, "Web", binding);
-            var code = Guid.NewGuid().ToString("N");
-            var jwt = new JwtSecurityToken(Issuer, Client,
-                [new Claim("sub", subject), new Claim("email", email), new Claim("nonce", query["nonce"].ToString()), new Claim("email_verified", "true")],
-                expires: DateTime.UtcNow.AddMinutes(5), signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256));
-            codes.Add(code, new JwtSecurityTokenHandler().WriteToken(jwt));
+            var code = Issue(query["nonce"].ToString(), subject, email);
             return new(AuthenticationInteractionStoreV1.Hash(state), key,
                 () => sso.HandleVerifiedCallbackAsync(code, state, Redirect, "Web", binding));
+        }
+
+        internal async Task<(string Reference, string AccessJti)> ResumeThroughWeb(string subject, string email, string key, int port)
+        {
+            var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "Production", Args = [] });
+            builder.Logging.ClearProviders();
+            builder.WebHost.ConfigureKestrel(server => server.Listen(IPAddress.Loopback, port));
+            builder.Configuration["JWT:Secret"] = CrmOidcCrypto.RandomToken() + CrmOidcCrypto.RandomToken();
+            builder.Configuration["JWT:Issuer"] = "w673-sso-component";
+            builder.Configuration["JWT:Audience"] = "w673-sso-component";
+            builder.Services.AddAuthorization();
+            builder.Services.AddControllers().AddApplicationPart(typeof(AuthController).Assembly).AddControllersAsServices();
+            var policies = new AuthenticationPolicyServiceV1(db, options);
+            var cache = new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()));
+            var refresh = new RefreshTokenService(db, options, tenant);
+            var audit = new SecurityAuditService(db);
+            var login = new LoginSecurityService(db, options);
+            var factors = new TwoFactorService(db, new TotpService(options), new LogEmailSender(NullLogger<LogEmailSender>.Instance), cache, audit, options);
+            var permission = new Mock<ICurrentPermissionContext>();
+            permission.Setup(x => x.PrewarmAsync(It.IsAny<Guid>())).Returns((Guid user) => new PermissionAggregator(db).BuildAsync(user));
+            var sessions = new AuthSessionService(builder.Configuration, permission.Object, db, options);
+            builder.Services.AddSingleton(policies);
+            builder.Services.AddSingleton<IRefreshTokenService>(refresh);
+            builder.Services.AddSingleton(new AuthenticationEntryServiceV1(db, tenant, new(db, policies), new(db),
+                sessions, refresh, factors, login, Mock.Of<IClientDeviceService>()));
+            builder.Services.AddTransient<AuthController>(_ => new(db, builder.Configuration, permission.Object, tenant, hasher,
+                new PasswordPolicyService(db, options, hasher), login, audit, refresh, new CacheTokenBlacklistService(cache),
+                new AuthCookieWriter(options), options, configuration, sso, factors, new PendingTokenStore(cache, options), sessions));
+            await using var app = builder.Build();
+            app.MapControllers();
+            await app.StartAsync();
+            using var client = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false, UseCookies = false })
+                { BaseAddress = new Uri($"http://127.0.0.1:{port}") };
+            using var authorize = new HttpRequestMessage(HttpMethod.Get, "api/auth/sso/authorize?tenantCode=" + Uri.EscapeDataString(tenantCode));
+            authorize.Headers.Add("X-CP6-Authentication-Completion", key);
+            using var authorized = await client.SendAsync(authorize);
+            Assert.Equal(HttpStatusCode.OK, authorized.StatusCode);
+            var cookie = Assert.Single(authorized.Headers.GetValues("Set-Cookie"), value => value.StartsWith("cp6_sso=", StringComparison.Ordinal));
+            Assert.StartsWith("cp6_sso=" + key + ";", cookie, StringComparison.Ordinal);
+            var discoveryUrl = (await authorized.Content.ReadFromJsonAsync<JsonObject>())!["authorizeUrl"]!.GetValue<string>();
+            var query = QueryHelpers.ParseQuery(new Uri(discoveryUrl).Query);
+            var state = query["state"].ToString();
+            var code = Issue(query["nonce"].ToString(), subject, email);
+            using var callback = new HttpRequestMessage(HttpMethod.Get, $"api/auth/sso/callback?code={code}&state={Uri.EscapeDataString(state)}");
+            callback.Headers.Add("Cookie", cookie.Split(';', 2)[0]);
+            using var resumed = await client.SendAsync(callback);
+            Assert.Equal(HttpStatusCode.Redirect, resumed.StatusCode);
+            Assert.EndsWith("/sso/landing", resumed.Headers.Location!.AbsoluteUri, StringComparison.Ordinal);
+            var access = Assert.Single(resumed.Headers.GetValues("Set-Cookie"), value => value.StartsWith("cp6_at=", StringComparison.Ordinal));
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(access.Split(';', 2)[0]["cp6_at=".Length..]);
+            await app.StopAsync();
+            return (AuthenticationInteractionStoreV1.Hash(state), jwt.Id);
+        }
+
+        private string Issue(string nonce, string subject, string email)
+        {
+            var code = Guid.NewGuid().ToString("N");
+            var jwt = new JwtSecurityToken(Issuer, Client,
+                [new Claim("sub", subject), new Claim("email", email), new Claim("nonce", nonce), new Claim("email_verified", "true")],
+                expires: DateTime.UtcNow.AddMinutes(5), signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256));
+            codes.Add(code, new JwtSecurityTokenHandler().WriteToken(jwt));
+            return code;
         }
     }
 }
