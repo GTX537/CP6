@@ -454,6 +454,9 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IArInvoiceService, CP6.Core.Ser
 builder.Services.AddScoped<CP6.Core.Services.Fin.IReceiptService, CP6.Core.Services.Fin.ReceiptService>(); // 章04 §3 收款+预收+撤销
 builder.Services.AddScoped<CP6.Core.Services.Fin.IArSettlementService, CP6.Core.Services.Fin.ArSettlementService>(); // 章04 §3 应收核销+尾差+汇差
 builder.Services.AddScoped<CP6.Core.Services.Fin.IArReconcileService, CP6.Core.Services.Fin.ArReconcileService>(); // 章04 §3 子账↔GL 勾稽
+builder.Services.AddScoped(sp => new CP6.Core.Services.Fin.ManufacturingFinanceScopeV1(sp.GetRequiredService<CP6Context>(),
+    builder.Configuration["FinanceCosting:EnvironmentId"]));
+builder.Services.AddScoped<CP6.Core.Services.Fin.ManufacturingRateOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Fin.ICostCollectService, CP6.Core.Services.Fin.CostCollectService>(); // 章06 成本归集（料吃MES真实消耗×BOM单价+工费标准估算）
 builder.Services.AddScoped<CP6.Core.Services.Fin.ICostSettleService, CP6.Core.Services.Fin.CostSettleService>(); // 章06 完工结转（料工费→WIP→FG凭证+FG单位成本）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IFinReconciliationService, CP6.Core.Services.Fin.FinReconciliationService>(); // 章10 §5 每日对账（AP/AR子账↔GL+试算平衡）

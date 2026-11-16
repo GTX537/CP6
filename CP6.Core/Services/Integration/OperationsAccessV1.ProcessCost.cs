@@ -37,7 +37,9 @@ internal sealed partial class OperationsAccessV1
         return sheets.Where(sheet => versioned.Contains(sheet.Id)
             ? !sources.Any(source => source.CostSheetId == sheet.Id
                 && (!parents.Any(center => center.Id == source.WorkCenterId && center.WgCd == source.WorkCenter)
-                    || !rates.Any(rate => rate.Id == source.RateId && rate.WgCd == source.WorkCenter)))
+                    || (source.LedgerId != null
+                        ? authority.Scope == 1 && source.RateMaker != ActorId
+                        : !rates.Any(rate => rate.Id == source.RateId && rate.WgCd == source.WorkCenter))))
             :
             ((sheet.LaborActual == 0m && sheet.LaborStandard == 0m) || sheet.Lines.Any(line => line.Element == CostElement.Labor))
             && ((sheet.OverheadActual == 0m && sheet.OverheadStandard == 0m) || sheet.Lines.Any(line => line.Element == CostElement.Overhead))
@@ -57,6 +59,12 @@ internal sealed partial class OperationsAccessV1
     internal async Task RequireRateParent(string code, CancellationToken ct)
     {
         if (!await RateParents().AnyAsync(x => x.WgCd == code, ct)) throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
+    }
+    internal async Task RequirePublishedRateCenterAsync(Guid id, Guid maker, CancellationToken ct)
+    {
+        if (authority.Scope == 1 && maker != ActorId
+            || !await RateParents().AnyAsync(center => center.Id == id, ct))
+            throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
     }
     internal async Task RequireWorkCenter(Guid id, CancellationToken ct, bool includeDeleted = false)
     {
