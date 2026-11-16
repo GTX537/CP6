@@ -259,6 +259,10 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
               'lines', ARRAY(SELECT to_jsonb(r) FROM public."Fin_JournalLine" r WHERE r."TenantId"=@tenant ORDER BY r."Id"),
               'periods', ARRAY(SELECT to_jsonb(r) FROM public."Fin_FiscalPeriod" r WHERE r."TenantId"=@tenant ORDER BY r."Id"),
               'numbers', ARRAY(SELECT to_jsonb(r) FROM public."Fin_Sequence" r WHERE r."TenantId"=@tenant ORDER BY r."Id"),
+              'basis', ARRAY(SELECT to_jsonb(r) FROM cp6_fin_cost_basis_v1.versions r
+                WHERE r.tenant_id=@tenant ORDER BY r.cost_sheet_id,r.version),
+              'settlements', ARRAY(SELECT to_jsonb(r) FROM cp6_fin_cost_basis_v1.settlements r
+                WHERE r.tenant_id=@tenant ORDER BY r.cost_sheet_id),
               'audit', ARRAY(SELECT to_jsonb(r) FROM public."Sys_FieldAuditLogs" r WHERE r."TenantId"=@tenant
                 AND r."EntityName" IN ('CostSheet','CostSheetLine','JournalEntry','JournalLine','FiscalPeriod','FinSequence') ORDER BY r."Id")
             )::text

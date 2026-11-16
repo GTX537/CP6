@@ -1,6 +1,7 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.Integration;
+using CP6.Core.Services.Mes;
 using CP6.Entity.DomainModels.Fin;
 using CP6.Entity.DomainModels.Mes;
 using Microsoft.EntityFrameworkCore;
@@ -52,21 +53,15 @@ public partial class CostCollectService
         var rates = await access.SourceAsync(OperationsOwnerV1.ProcessCostRate, ct);
         rates.RequireUnmaskedRates();
         var date = order.ActualEndDate ?? order.PlanStartDate ?? order.CreateDate;
-        var visibleRates = rates.ProcessCostRates();
-        var candidates = await _db.ProcessCostRates.AsNoTracking()
-            .Where(row => !row.IsDeleted && centers.Contains(row.WgCd) && row.ValidFrom <= date
-                && (row.ValidTo == null || row.ValidTo >= date))
-            .OrderByDescending(row => row.ValidFrom)
-            .Select(row => new { row.Id, row.WgCd, Visible = visibleRates.Any(visible => visible.Id == row.Id) })
-            .ToArrayAsync(ct);
-        // 先选工单基准日实际应采用的费率，再核该记录的范围。不可见的费率不能改用另一条。
-        var selectedRates = candidates.GroupBy(row => row.WgCd).Select(group => group.First()).ToArray();
+        var selectedRates = await ProcessCostRateService.SelectEffectiveAsync(_db, centers, date, rates, ct);
         if (selectedRates.Any(row => !row.Visible))
             throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
+        if (selectedRates.Any(row => row.Ambiguous))
+            throw new OrderPriceCorrectionException("RATE_PERIOD_CONFLICT", 409);
         if (selectedRates.Length != centers.Distinct().Count())
             return FinResult.Fail("E-A2-RATE-002");
 
-        var selectedIds = selectedRates.Select(row => row.Id).ToArray();
+        var selectedIds = selectedRates.Select(row => row.Rate.Id).ToArray();
         List<CostSheetLine> lines;
         try
         {
@@ -95,7 +90,9 @@ public partial class CostCollectService
 
         for (var index = 0; index < lines.Count; index++)
             lines[index].LineNo = index + 1;
-        return await SaveCollectionAsync(order, sheet, lines, access.Actor, ct);
+        var rateUses = selectedRates.OrderBy(row => row.Rate.WgCd, StringComparer.Ordinal)
+            .Select(row => CostCollectionBasisV1.RateUseV1.Capture(row.Rate, row.WorkCenterId)).ToArray();
+        return await SaveCollectionAsync(order, sheet, lines, access.Actor, ct, (date, rateUses));
     }
 
     private async Task<(CostSheetLine Labor, CostSheetLine Overhead)[]> ReadExecutionCostsAsync(WorkOrder order,
@@ -118,7 +115,8 @@ public partial class CostCollectService
                 {
                     Element = CostElement.Labor, ProcessCd = step.ProcessCd, TaskCd = step.TaskCd, WgCd = step.WgCd,
                     Hours = Math.Round(labor, 8), StandardHours = Math.Round(stdLabor, 8), UnitPrice = rate.LaborRate,
-                    ActualAmount = Math.Round(labor * rate.LaborRate, 2), StandardAmount = Math.Round(stdLabor * rate.LaborRate, 2),
+                    ActualAmount = Math.Round(labor * rate.LaborRate, CostCollectionBasisV1.MoneyScale),
+                    StandardAmount = Math.Round(stdLabor * rate.LaborRate, CostCollectionBasisV1.MoneyScale),
                     RateValidFrom = rate.ValidFrom, HourSource = step.ActualLaborHour == null ? "StandardFallback" : step.ActualHourSource ?? "Derived",
                     WarningCode = step.ActualLaborHour == null ? "W-A2-COST-001" : null,
                     CalcNote = step.ActualLaborHour == null ? "实绩人工工时缺失，按标准工时计" : null,
@@ -127,7 +125,8 @@ public partial class CostCollectService
                 {
                     Element = CostElement.Overhead, ProcessCd = step.ProcessCd, TaskCd = step.TaskCd, WgCd = step.WgCd,
                     Hours = Math.Round(machine, 8), StandardHours = Math.Round(stdMachine, 8), UnitPrice = rate.OverheadRate,
-                    ActualAmount = Math.Round(machine * rate.OverheadRate, 2), StandardAmount = Math.Round(stdMachine * rate.OverheadRate, 2),
+                    ActualAmount = Math.Round(machine * rate.OverheadRate, CostCollectionBasisV1.MoneyScale),
+                    StandardAmount = Math.Round(stdMachine * rate.OverheadRate, CostCollectionBasisV1.MoneyScale),
                     RateValidFrom = rate.ValidFrom, HourSource = step.ActualMachineHour == null ? "StandardFallback" : step.ActualHourSource ?? "Derived",
                     WarningCode = step.ActualMachineHour == null ? "W-A2-COST-001" : null,
                     CalcNote = step.ActualMachineHour == null ? "实绩机时缺失，按标准工时计" : null,
@@ -153,7 +152,8 @@ public partial class CostCollectService
                 {
                     Element = CostElement.Material, ProcessCd = material.ProcessCd, MaterialCd = material.MaterialCd,
                     MaterialName = material.MaterialName, PlanQty = planned, ActualQty = material.ActualQty, UnitPrice = price,
-                    ActualAmount = Math.Round(material.ActualQty * price, 2), StandardAmount = Math.Round(planned * price, 2),
+                    ActualAmount = Math.Round(material.ActualQty * price, CostCollectionBasisV1.MoneyScale),
+                    StandardAmount = Math.Round(planned * price, CostCollectionBasisV1.MoneyScale),
                 },
             }).ToArrayAsync(ct);
         return rows.Select(row => (row.Line, row.HasPrice)).ToArray();
