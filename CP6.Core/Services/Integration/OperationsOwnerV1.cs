@@ -48,11 +48,12 @@ public sealed partial class OperationsOwnerV1
     private readonly Func<CancellationToken,Task<Guid>> currentActor;
     internal Task<Guid> CurrentSubjectAsync(CancellationToken ct)=>currentActor(ct);
     private readonly Func<AuthorizationCatalogSnapshotV1> catalog;
+    private readonly IMesCompletionSessionsV1? completionSessions;
     public OperationsOwnerV1(CP6Context db,IHttpContextAccessor http,Func<CancellationToken,Task<Guid>> currentActor)
         :this(db,http,currentActor,AuthorizationCatalogV1.Capture) { }
     internal OperationsOwnerV1(CP6Context db,IHttpContextAccessor http,Func<CancellationToken,Task<Guid>> currentActor,
-        Func<AuthorizationCatalogSnapshotV1> catalog)
-    {this.db=db;this.http=http;this.currentActor=currentActor;this.catalog=catalog;}
+        Func<AuthorizationCatalogSnapshotV1> catalog, IMesCompletionSessionsV1? completionSessions = null)
+    {this.db=db;this.http=http;this.currentActor=currentActor;this.catalog=catalog;this.completionSessions=completionSessions;}
     internal bool Owns(CP6Context context)=>ReferenceEquals(db,context);
     internal static T Freeze<T>(T input)=>JsonSerializer.Deserialize<T>(JsonSerializer.SerializeToUtf8Bytes(input))!;
     internal sealed record Authority(string Resource,string Action,UserPermissionContext Actor,FieldPermissionSourceV1 Source,
@@ -223,12 +224,16 @@ public sealed partial class OperationsOwnerV1
         {
             var current=await currentActor(ct);
             var final=await AuthorityCoreAsync(initial.Resource,initial.Action,current,false,ct,organizationContext);
-            if(final.Source.SubjectId!=initial.Source.SubjectId || final.Source.SourcePermissionVersion!=initial.Source.SourcePermissionVersion
-                || final.Source.RegistryVersion!=initial.Source.RegistryVersion || final.Scope!=initial.Scope
-                || final.OrganizationVersion!=initial.OrganizationVersion || final.Source.TenantExpiresAt<=DateTime.Now)
-                throw new OrderPriceCorrectionException("AUTHORITY_CHANGED",403);
+            RequireUnchangedAuthority(initial,final);
         }
         if(await currentActor(ct)!=subject)throw new OrderPriceCorrectionException("REAUTH_REQUIRED",401);
+    }
+    private static void RequireUnchangedAuthority(Authority initial,Authority final)
+    {
+        if(final.Source.SubjectId!=initial.Source.SubjectId || final.Source.SourcePermissionVersion!=initial.Source.SourcePermissionVersion
+            || final.Source.RegistryVersion!=initial.Source.RegistryVersion || final.Scope!=initial.Scope
+            || final.OrganizationVersion!=initial.OrganizationVersion || final.Source.TenantExpiresAt<=DateTime.Now)
+            throw new OrderPriceCorrectionException("AUTHORITY_CHANGED",403);
     }
     internal static bool IsExpectedOwnerFailure(Exception error,CancellationToken ct)
         => error is OrderPriceCorrectionException or DbUpdateConcurrencyException
@@ -242,8 +247,7 @@ public sealed partial class OperationsOwnerV1
         => action=="add" && (ticket.Resource=="order" && ticket.Action=="add" && resource is Mes or Outbound
             || ticket.Resource==Mes && ticket.Action=="issue" && resource==Outbound)
         || ticket.Resource==Production && ticket.Action=="complete" && ticket.CompletionResultId!=null
-            && (resource==Receipt && action=="post" || resource==Production && action=="backflush"
-                || resource==FinCost && action=="settle");
+            && (resource==Receipt && action=="post" || resource==Production && action=="backflush");
     private static bool IsBusiness(string name)=>BusinessTables.Contains(name) || name is "PlateMoldStock" or "RmaHeader" or "RmaDetail" or "ReplenishOrder" or "MobileTask" or "MobileTaskEvent" or "MobileTaskScanLog" or "TaskCommandReceipt" or "WorkCenter" or "ProcessCostRate" or "CrossDockOrder" or "SlottingPlan" or "VmiBilling" or "KitMaster" or "KitMasterComponent" or "KitOrder" or "SampleStock";
     private async Task LockGraph(bool write,CancellationToken ct,string? resource=null)
     {

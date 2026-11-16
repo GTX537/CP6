@@ -6,6 +6,7 @@ using CP6.Core.Services.Fin;
 using CP6.Core.Services;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Integration;
+using CP6.Core.Services.Mes;
 using CP6.Core.Services.Space.Observability;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wms;
@@ -132,18 +133,26 @@ public class IntegrationEventRetryWorker : BackgroundService
                   e.NextRetryAt <= now &&
                    e.Attempts < _opts.MaxAttempts))) ||
                 (native && e.Status == IntegrationEventStatus.Pending && e.Attempts == 0 && e.NextRetryAt <= now
-                 && e.SourceModule == "WMS"
-                 && ((e.TargetModule == "FIN" && (e.HookName == nameof(IFinBridgeHook.OnShipmentConfirmedAsync)
+                 && ((e.SourceModule == "MES" && e.TargetModule == "FIN" && e.HookName == MesCompletionFinanceIntentV1.Hook)
+                  || (e.SourceModule == "WMS"
+                    && ((e.TargetModule == "FIN" && (e.HookName == nameof(IFinBridgeHook.OnShipmentConfirmedAsync)
                        || e.HookName == nameof(IFinBridgeHook.OnShipmentCancelledAsync)
                        || (stockFinanceEnabled && e.HookName == nameof(IStockFinBridge.OnStockMovedAsync))))
                      || (shipmentProjectionEnabled && e.TargetModule == "ERP"
-                         && e.HookName == nameof(IErpBridgeHook.OnShipmentConfirmedAsync)))))
+                         && e.HookName == nameof(IErpBridgeHook.OnShipmentConfirmedAsync)))))))
             .OrderBy(e => e.NextRetryAt)
             .Take(50)
             .ToListAsync(ct);
 
         foreach (var evt in due)
         {
+            if (native && MesCompletionFinanceIntentV1.Matches(evt))
+            {
+                db.Entry(evt).State = EntityState.Detached;
+                await ResumeMesCompletionFinanceAsync(tenantId, evt.Id, now, ct);
+                continue;
+            }
+
             if (native && FinBridgeHook.IsShipmentEvent(evt))
             {
                 db.Entry(evt).State = EntityState.Detached;
@@ -221,6 +230,25 @@ public class IntegrationEventRetryWorker : BackgroundService
             throw new InvalidOperationException("WMS_FIN_OWNER_TRANSACTION_REQUIRED");
         if (await finance.ProcessShipmentAsync(eventId, now, _opts, ct) is { } dead)
             await sp.GetRequiredService<IDeadLetterNotifier>().NotifyAsync(dead, ct);
+    }
+
+    private async Task ResumeMesCompletionFinanceAsync(Guid tenantId, Guid eventId, DateTime now, CancellationToken ct)
+    {
+        using var scope = _scopeFactory.CreateScope();
+        var sp = scope.ServiceProvider;
+        sp.GetRequiredService<ITenantContext>().CurrentTenantId = tenantId;
+        try
+        {
+            if (sp.GetRequiredService<IProductionResultService>() is not ProductionResultService production)
+                throw new InvalidOperationException("FINANCE_OWNER_REQUIRED");
+            var outcome = await production.ResumeMesCompletionFinanceAsync(eventId, now, ct);
+            if (outcome is { Status: IntegrationEventStatus.DeadLetter })
+                await sp.GetRequiredService<IDeadLetterNotifier>().NotifyAsync(outcome, ct);
+        }
+        catch (Exception error) when (!ct.IsCancellationRequested)
+        {
+            _logger.LogWarning(error, "MES completion {EventId} did not return a recovery outcome", eventId);
+        }
     }
 
     private async Task ProcessErpShipmentEventAsync(Guid tenantId, Guid eventId, DateTime now, CancellationToken ct)

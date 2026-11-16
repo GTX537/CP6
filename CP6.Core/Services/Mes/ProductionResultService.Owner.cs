@@ -1,5 +1,4 @@
 using CP6.Core.Services.Erp;
-using CP6.Core.Services.Fin;
 using CP6.Core.Services.Integration;
 using CP6.Core.Services.Wms;
 using CP6.Entity.DTOs.Mes;
@@ -64,6 +63,15 @@ public partial class ProductionResultService
         if(type is 1 or 2 or 3 or 4)try{await _notifier.NotifyWorkOrderStatusChangedAsync(req.WorkOrderNo,status);}catch{}
         if(ticket==null)return;
         if(_wmsBridge is WmsBridgeHook bridge)try{await bridge.OnProductionCompletedOwnedAsync(ticket);}catch{}
+        if (HasDurableFinanceCompletion)
+        {
+            try { await ResumeMesCompletionFinanceAsync(ticket.CompletionResultId!.Value, DateTime.UtcNow, CancellationToken.None); }
+            catch (Exception error)
+            {
+                _logger?.LogWarning(error, "MES completion {ResultId} has no confirmed finance outcome", ticket.CompletionResultId);
+            }
+            return;
+        }
         var backflushOk=true;
         if(_backflush is BackflushService backflush)
         {
@@ -74,10 +82,7 @@ public partial class ProductionResultService
         {
             try
             {
-                if (_backflush is BackflushService && _finBridge is FinBridgeHook finance)
-                    await finance.OnWorkOrderCompletedOwnedAsync(ticket);
-                else
-                    await _finBridge.OnWorkOrderCompletedAsync(ticket.Number, ticket.Actor);
+                await _finBridge.OnWorkOrderCompletedAsync(ticket.Number, ticket.Actor);
             }
             catch (Exception error)
             {

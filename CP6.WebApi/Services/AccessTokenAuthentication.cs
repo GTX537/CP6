@@ -87,7 +87,7 @@ public static class AccessTokenAuthentication
             && (Value("is_platform_admin") == null || Value("is_platform_admin") == "true" && user.IsPlatformAdmin);
     }
 
-    private static async Task<Sys_User?> ActiveUserAsync(CP6Context db, Guid id, Guid tenant, CancellationToken ct)
+    internal static async Task<Sys_User?> ActiveUserAsync(CP6Context db, Guid id, Guid tenant, CancellationToken ct)
     {
         var user = await db.Sys_Users.IgnoreQueryFilters().AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.TenantId == tenant, ct);
         return user is { Enable: true } && !(user.LockedUntil > DateTime.Now)
