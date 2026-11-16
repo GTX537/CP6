@@ -1,5 +1,7 @@
 # 当前待办与优先级
 
+2026-11-15，合并并核对 PGT-017 正式单项验收记录。W673 已完成登记的 SSO 首绑实证。 [W673 交付](../development/evidence/W673-01/DELIVERY.md)
+
 2026-11-15，PGT-017 继续已有用户 SSO 首次绑定两库验证。锁定的原先后顺序和回复保持已有正式证据。 [W672 交付](../development/evidence/W672-01/DELIVERY.md)
 
 2026-11-15，PGT-017 继续实际登录锁定阈值及已存在用户的 SSO 首绑，QuickPIN 已有双库实证。 [W671 交付](../development/evidence/W671-01/DELIVERY.md)

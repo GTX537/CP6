@@ -1,5 +1,7 @@
 # 已完成能力与近期里程碑
 
+2026-11-15，W673 复用已验签 IdP 与原浏览器能力恢复 SSO 首绑。精确原状态、原期限、C02/Outbox 与原回执经实际首拒和 COMMIT 确认丢失验证。 [W673 交付](../development/evidence/W673-01/DELIVERY.md)
+
 2026-11-15，W672 登录锁定通过 14 项实际候选场景、13 项组件检查。覆盖真实待确认、原回执和已验 SSO 主证明恢复。 [W672 交付](../development/evidence/W672-01/DELIVERY.md)
 
 2026-11-15，W671 在 QuickPIN 的原设备权限内接入同用户原件。6 项定向验证通过，覆盖作用范围、真实双序、原恢复和旧设备合同。 [W671 交付](../development/evidence/W671-01/DELIVERY.md)

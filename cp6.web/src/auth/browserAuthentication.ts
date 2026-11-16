@@ -4,8 +4,10 @@ import { newRecoveryCapability, recoverySecret, forgetRecoveryCapability } from 
 
 export type BrowserAuthPhase = 'anonymous' | 'working' | 'pending' | 'sso' | 'active' | 'restricted' | 'unknown' | 'closing'
 type Attempt = { key: string; kind: 'login' | 'sso' | 'factor' | 'refresh' | 'identity' | 'password' }
+type SsoRequest = { tenantCode: string; returnUrl?: string }
 type RecordV1 = { version: 1; epoch: string; phase: BrowserAuthPhase; attempt?: Attempt;
   originKey?: string; currentKey?: string; purpose?: string; expiresAt?: string; setupIssued?: boolean; factorMethod?: 'email';
+  ssoRequest?: SsoRequest;
   impersonation?: { tenantName: string; userName: string; expiresAt: number } }
 type SafeStatus = { state: string; purpose?: string; expiresAt?: string; identityState?: string; identityOperationRef?: string }
 const HEADER = 'X-CP6-Authentication-Completion'
@@ -75,6 +77,7 @@ async function completeProfile(r: RecordV1, key: string): Promise<any> {
   assertCurrent(r)
   const retiredKey = r.currentKey && r.currentKey !== key && r.currentKey !== r.originKey ? r.currentKey : undefined
   r.currentKey = key; r.attempt = undefined; r.purpose = undefined; r.expiresAt = undefined; r.setupIssued = undefined; r.factorMethod = undefined
+  r.ssoRequest = undefined
   r.phase = profile.mustChangePassword ? 'restricted' : 'active'
   save(r)
   if (r.impersonation) {
@@ -137,7 +140,7 @@ async function failed(r: RecordV1, error: any, factor = false): Promise<never> {
   throw new AuthenticationRecoveryRequired()
 }
 
-async function fresh(kind: 'login' | 'sso', expectedEpoch: string | null): Promise<RecordV1> {
+async function fresh(kind: 'login' | 'sso', expectedEpoch: string | null, ssoRequest?: SsoRequest): Promise<RecordV1> {
   if (localStorage.getItem(AUTH_EPOCH) !== expectedEpoch) throw new AuthenticationChangedError()
   const previous = read()
   if (previous && ['working', 'sso', 'pending', 'unknown', 'closing'].includes(previous.phase)) throw new AuthenticationRecoveryRequired()
@@ -145,7 +148,7 @@ async function fresh(kind: 'login' | 'sso', expectedEpoch: string | null): Promi
   const key = await newRecoveryCapability()
   if (localStorage.getItem(AUTH_EPOCH) !== expectedEpoch) { await forgetRecoveryCapability(key); throw new AuthenticationChangedError() }
   const epoch = newEpoch()
-  const r: RecordV1 = { version: 1, epoch, phase: 'working', attempt: { kind, key }, originKey: key }
+  const r: RecordV1 = { version: 1, epoch, phase: 'working', attempt: { kind, key }, originKey: key, ssoRequest }
   save(r)
   return r
 }
@@ -170,13 +173,62 @@ export function browserLogin(data: { userName: string; password: string; tenantC
 export function browserSso(tenantCode: string, returnUrl?: string): Promise<{ authorizeUrl: string }> {
   const expectedEpoch = localStorage.getItem(AUTH_EPOCH)
   return exclusive(async () => {
-    const r = await fresh('sso', expectedEpoch)
+    const selection = { tenantCode, returnUrl }
+    const r = await fresh('sso', expectedEpoch, selection)
     try {
-      const result = await request('/auth/sso/authorize', { params: { tenantCode, returnUrl } }, r.attempt!.key)
-      assertCurrent(r); r.phase = 'sso'; save(r)
-      verifiedProfiles.set(result, r.epoch)
-      return result
+      return await authorizeSso(r, selection, r.attempt!.key)
     } catch (error) { return failed(r, error) }
+  })
+}
+
+async function authorizeSso(r: RecordV1, selection: SsoRequest, key: string): Promise<{ authorizeUrl: string }> {
+  const result = await request('/auth/sso/authorize', { params: selection }, key)
+  assertCurrent(r); r.phase = 'sso'; save(r)
+  verifiedProfiles.set(result, r.epoch)
+  return result
+}
+
+function originalSso(epoch: string | null) {
+  if (localStorage.getItem(AUTH_EPOCH) !== epoch) throw new AuthenticationChangedError()
+  const r = read()
+  if (r?.epoch === epoch && r?.originKey && r.attempt?.kind === 'sso' && r.attempt.key === r.originKey &&
+      (r.phase === 'sso' || r.phase === 'unknown')) return { record: r, key: r.originKey }
+  return null
+}
+
+export function readSsoMappingRecovery(): Promise<(SafeStatus & { canRetry: boolean }) | null> {
+  const epoch = localStorage.getItem(AUTH_EPOCH)
+  return exclusive(async () => {
+    const original = originalSso(epoch)
+    if (!original) return null
+    const outcome = await status(original.key)
+    assertCurrent(original.record)
+    return { ...outcome, canRetry: !!original.record.ssoRequest?.tenantCode && outcome.state !== 'CLOSED' &&
+      outcome.identityState === 'UNKNOWN' && !!outcome.identityOperationRef }
+  })
+}
+
+export function retrySsoMapping(): Promise<{ authorizeUrl: string }> {
+  const epoch = localStorage.getItem(AUTH_EPOCH)
+  return exclusive(async () => {
+    const original = originalSso(epoch)
+    if (!original?.record.ssoRequest?.tenantCode) throw new AuthenticationRecoveryRequired()
+    const { record, key } = original
+    const selection = original.record.ssoRequest
+    const outcome = await status(key)
+    assertCurrent(record)
+    if (outcome.state === 'CLOSED' || outcome.identityState !== 'UNKNOWN' || !outcome.identityOperationRef)
+      throw new AuthenticationRecoveryRequired()
+    try { return await authorizeSso(record, selection, key) }
+    catch (error) { assertCurrent(record); record.phase = 'unknown'; save(record); throw error }
+  })
+}
+
+export function closeSsoMappingRecovery(): Promise<SafeStatus | null> {
+  const epoch = localStorage.getItem(AUTH_EPOCH)
+  return exclusive(async () => {
+    const original = originalSso(epoch)
+    return original ? closeRecord(original.record) : null
   })
 }
 

@@ -3,7 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { AUTH_EPOCH, AUTH_RECORD } from './identity'
 import { authenticationTransport, browserLogin, browserFactor, browserSso, recoverAuthentication,
   logoutAuthentication, refreshAuthentication, authenticationSnapshot, requireCurrentProfile } from './browserAuthentication'
-import { switchBrowserIdentity, changePasswordAuthentication, requireCurrentSso } from './browserAuthentication'
+import { switchBrowserIdentity, changePasswordAuthentication, requireCurrentSso, readSsoMappingRecovery,
+  retrySsoMapping, closeSsoMappingRecovery } from './browserAuthentication'
 
 const capabilities = vi.hoisted(() => ({ values: new Map<string, string>(), counter: 0 }))
 vi.mock('./recoveryCapabilities', () => ({
@@ -51,6 +52,38 @@ describe('shared browser authentication Owner', () => {
     await browserSso('tenant')
     expect(await recoverAuthentication(true)).toEqual({ state: 'CLOSED', identityState: 'IDENTITY_BOUND', identityOperationRef: 'a'.repeat(64) })
     expect(authenticationSnapshot().phase).toBe('anonymous'); expect(localStorage.getItem('cp6_authed')).toBeNull()
+  })
+  it('resumes SSO through a fresh authorize request with the same browser capability and tenant', async () => {
+    const base = handler
+    const requests: { key: string; params: unknown }[] = []
+    const original = 'a'.repeat(64)
+    handler = async config => {
+      if (config.url === '/auth/sso/authorize') {
+        requests.push({ key: String(config.headers['X-CP6-Authentication-Completion']), params: config.params })
+        return { authorizeUrl: 'https://identity.example/authorize' }
+      }
+      if (config.url === '/auth/completion/browser/status') return { state: 'UNAVAILABLE', identityState: 'UNKNOWN', identityOperationRef: original }
+      return base(config)
+    }
+    const selection = { tenantCode: 'original-tenant', returnUrl: '/orders' }
+    await browserSso(selection.tenantCode, selection.returnUrl)
+    expect(await readSsoMappingRecovery()).toMatchObject({ canRetry: true, identityOperationRef: original })
+    const continued = await retrySsoMapping()
+    expect(() => requireCurrentSso(continued)).not.toThrow()
+    expect(requests).toHaveLength(2)
+    expect(requests[1]).toEqual({ key: requests[0]!.key, params: selection })
+    expect(capabilities.counter).toBe(1)
+    expect(calls).not.toContain('/auth/completion/browser/close')
+    expect(calls).not.toContain('/auth/profile')
+    expect(localStorage.getItem('cp6_authed')).toBeNull()
+
+    const legacy = JSON.parse(localStorage.getItem(AUTH_RECORD)!)
+    delete legacy.ssoRequest
+    localStorage.setItem(AUTH_RECORD, JSON.stringify(legacy))
+    expect(await readSsoMappingRecovery()).toMatchObject({ canRetry: false, identityOperationRef: original })
+    await expect(retrySsoMapping()).rejects.toThrow()
+    expect((await closeSsoMappingRecovery())?.state).toBe('CLOSED')
+    expect(authenticationSnapshot().phase).toBe('anonymous')
   })
   it('persists a secret before sending login and exposes only handles in cross-tab UI storage', async () => {
     const result = await browserLogin({ userName: 'user', password: 'never-persist-this' })
