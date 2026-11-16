@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+## 2026-11-16 UTC · W680 库存金额字段核销
+
+COORD 从已确认 Main `665e34e89` 复用 DEV-1 / `codex/w680-01`，完成四组库存金额相关注册字段及来源门核销，12/12 本地 PG 回归通过；待正常 PR 采用、远端核对及官方 finish。WP02-03 保持 IN_PROGRESS，下一窗口优先主数据名称及直接消费者。没有其他执行对话、Actions 或部署。[交付](evidence/W680-01/DELIVERY.md)
+
 ## 2026-11-16 UTC · W679 个人表单与旧扫描核销
 
 COORD 从已确认 Main `3f856aadd` 复用 DEV-1 / `codex/w679-01`。个人表单/附件当前字段边界与 #1202 所报入口已核对，修正扫描并完成 21/21 本地验证；待正常 PR 采用、远端核对及官方 finish。WP02-03 仍 IN_PROGRESS，下一窗口继续 Operations 派生输出和独立用途。没有其他执行对话、Actions 或部署。[交付](evidence/W679-01/DELIVERY.md)

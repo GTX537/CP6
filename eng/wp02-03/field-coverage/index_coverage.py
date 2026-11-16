@@ -44,6 +44,7 @@ def main():
         group = ('scope-only' if fields is None else 'empty-field-domain' if not fields else
                  'order' if resource == 'order' else 'inquiry' if resource.startswith('crm-') else
                  'personal-form' if resource == 'workflow-personal-form' else
+                 'inventory-observation' if resource in ('wms-dashboard', 'wms-expiry', 'wms-stock-dwell', 'wms-vmi') else
                  'authoring' if resource in ('approval-binding', 'workflow-definition', 'workflow-form-definition') else
                  'file-download' if resource in ('file-content', 'plm-controlled-document') else
                  'report-center' if resource == 'wms-report-center' else
@@ -60,6 +61,12 @@ def main():
                         write='CURRENT_OWNER_MASK_AND_FINAL_GATE',
                         export='NO_EXPORT_ENTRY_IN_REVIEWED_CONTROLLERS',
                         download='ADOPTED_V2_CONTEXTUAL_FILE_READ_NOT_INDEPENDENT_USE')
+        elif group == 'inventory-observation':
+            uses.update(query='REGISTERED_FIELDS_AND_SOURCE_GATES_REVIEWED',
+                        write='LEGACY_MUTATION_EXPLICITLY_CLOSED_ON_POSTGRESQL'
+                        if resource in ('wms-expiry', 'wms-vmi') else 'NO_WRITE_ENTRY_IN_REVIEWED_CONTROLLERS',
+                        export='NO_EXPORT_ENTRY_IN_REVIEWED_CONTROLLERS',
+                        download='NO_DOWNLOAD_ENTRY_IN_REVIEWED_CONTROLLERS')
         elif group in ('operations', 'authoring', 'file-download', 'report-center'):
             uses.update(query='READ_MAPPING_PRESENT', write='WRITE_MAPPING_PRESENT')
             if group == 'report-center':

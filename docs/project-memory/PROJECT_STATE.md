@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-16，W680 核销 WMS 看板、效期、呆滞库存和 VMI 的注册字段及当前来源门；12 项定向 PostgreSQL 回归通过，零失败/跳过，产品权限未改。WP02-03 仍 IN_PROGRESS；剩余 Operations 继续核对，下一窗口优先主数据名称及直接消费者。卡片/PGT/询盘计数保持。 [W680 交付](../development/evidence/W680-01/DELIVERY.md)
+
 2026-11-16，W679 核销个人表单 Title/DataJson、动态字段策略及上下文附件读取，修正 #1202 旧属性扫描；本地 21 通过、0 失败、0 跳过。产品权限未变，WP02-03 保持 IN_PROGRESS，下一步核对 Operations 派生输出及独立用途。原卡/PGT/询盘计数保持，简体中文继续为标准。 [W679 交付](../development/evidence/W679-01/DELIVERY.md)
 
 2026-11-16，W678 建立 81 资源、114 受控字段及实际 MVC 路由核销入口，补齐订单信用额度/预存销售数量检查的当前字段及对象范围。本次相关 54 项均有适用成功证据，原失败及额外历史扫描问题保留；WP02-03 仍 IN_PROGRESS，原卡/PGT/询盘计数保持。用户决定简体中文为项目标准，已写入 AGENTS，本轮订单提示已调整。 [W678 交付与余项](../development/evidence/W678-01/DELIVERY.md)
