@@ -62,6 +62,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             h.Db.Sys_RoleDataScopes.Add(new() { RoleId = 72, ResourceKey = key, ScopeType = 5 });
             catalog.RegisterScope(key, key, [1, 2, 3, 4, 5], 1); catalog.RegisterFields(key, fields.Select(f => new FieldRegistry.Field(f, f)));
         }
+        catalog.RegisterScope("erp-business-partner", "业务伙伴", [1, 2, 3, 4, 5], 1);
+        catalog.RegisterFields("erp-business-partner", [new FieldRegistry.Field("BpName", "名称")]);
         h.Db.WmsRoleScopes.Add(new() { RoleId = 72, WarehouseCd = "*", AreaCd = "*" });
         await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear(); catalog.Seal();
         return new(h.Db, new OperationsHttp { HttpContext = h.Http }, _ => Task.FromResult(h.User), catalog.Capture);
@@ -95,6 +97,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     public async Task Inventory_report_missing_price_and_hidden_fields_do_not_manufacture_zero_or_customer_names()
     {
         await using var h = await Seed(); var owner = await GrantInventoryReport(h); await SeedInventoryReport(h);
+        await GrantBusinessPartnerIdentity(h);
         h.Db.BusinessPartners.Add(new() { BpCd = "C", BpName = "Protected customer" });
         await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
         await h.Db.Stocks.ExecuteUpdateAsync(s => s.SetProperty(x => x.OwnerType, StockOwnerType.Customer).SetProperty(x => x.OwnerCd, "C"));

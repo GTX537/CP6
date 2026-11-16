@@ -36,6 +36,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             h.Db.Sys_RoleDataScopes.Add(new(){RoleId=72,ResourceKey=key,ScopeType=5});
             catalog.RegisterScope(key,key,[1,2,3,4,5],1);catalog.RegisterFields(key,fields.Select(f=>new FieldRegistry.Field(f,f)));
         }
+        catalog.RegisterScope("wms-warehouse","仓库",[1,2,3,4,5],1);
+        catalog.RegisterFields("wms-warehouse",new[]{"AddressText","ManagerCd","Remarks","WarehouseName"}.Select(f=>new FieldRegistry.Field(f,f)));
         h.Db.WmsRoleScopes.Add(new(){RoleId=72,WarehouseCd="*",AreaCd="*"});await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();catalog.Seal();
         return new(h.Db,new OperationsHttp{HttpContext=h.Http},_=>Task.FromResult(h.User),catalog.Capture);
     }

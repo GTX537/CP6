@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+## 2026-11-16 UTC · W681 主数据名称来源权限
+
+COORD 从 Main `64cfb12b7` 复用 DEV-1 / `codex/w681-01`，完成 #1206 的库存关联名称权限修复及当前主数据限定核对，17/17 本地 PG/HTTP 通过；待正常 PR、远端核对、关闭 #1206 与 finish。WP02-03 保持 IN_PROGRESS；下一窗口优先处理独立 P0 #1207。没有其他执行对话、Actions 或部署。[交付](evidence/W681-01/DELIVERY.md)
+
 ## 2026-11-16 UTC · W680 库存金额字段核销
 
 COORD 从已确认 Main `665e34e89` 复用 DEV-1 / `codex/w680-01`，完成四组库存金额相关注册字段及来源门核销，12/12 本地 PG 回归通过；待正常 PR 采用、远端核对及官方 finish。WP02-03 保持 IN_PROGRESS，下一窗口优先主数据名称及直接消费者。没有其他执行对话、Actions 或部署。[交付](evidence/W680-01/DELIVERY.md)

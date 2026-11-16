@@ -1,5 +1,6 @@
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.Integration;
+using CP6.Entity.DomainModels.Wms;
 using CP6.Entity.DTOs.Wms;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,7 +38,11 @@ public partial class StockDwellService
             var stocks = await queryable.Select(s => new StockDwellSource { ProductCd = s.ProductCd, OwnerType = s.OwnerType, OwnerCd = s.OwnerCd,
                 PhysicalQty = s.PhysicalQty, UnitPrice = s.UnitPrice, ReceiveDate = s.ReceiveDate!.Value }).ToListAsync(token);
             var readable = a.AmountReadable && source.PriceReadable;
-            var names = a.CustomerNameReadable && groupBy == StockDwellGroupBy.Customer ? await LoadCustomerNamesAsync(stocks, token) : new Dictionary<string, string>();
+            var nameReadable = a.CustomerNameReadable; Dictionary<string, string> names = [];
+            if (nameReadable && groupBy == StockDwellGroupBy.Customer)
+                (nameReadable, names) = await a.CustomerNamesAsync(stocks
+                    .Where(s => s.OwnerType == StockOwnerType.Customer && !string.IsNullOrWhiteSpace(s.OwnerCd))
+                    .Select(s => s.OwnerCd!).Distinct().ToArray(), token);
             int Age(StockDwellSource s) => Math.Max(0, (date - s.ReceiveDate.Date).Days);
             string Qty(IEnumerable<StockDwellSource> rows) => InventoryReportValuesV1.Sum(rows.Select(s => s.PhysicalQty)).ToString();
             string? Reference(IEnumerable<StockDwellSource> rows) => InventoryReportValuesV1.Reference(rows.Select(s => (s.PhysicalQty, s.UnitPrice)), readable);
@@ -46,7 +51,7 @@ public partial class StockDwellService
                 .ThenByDescending(g => InventoryReportValuesV1.Sum(g.Select(s => s.PhysicalQty))).ThenBy(g => g.Key, StringComparer.Ordinal);
             return new StockDwellObservationV1 { AsOfDate = date, GroupBy = groupBy, TotalQty = Qty(stocks), Over90Qty = Qty(stocks.Where(s => Age(s) > 90)),
                 ReferenceValue = Reference(stocks), Over90ReferenceValue = Reference(stocks.Where(s => Age(s) > 90)), ReferenceReadable = readable,
-                CustomerNameReadable = a.CustomerNameReadable, MissingPriceCount = readable ? stocks.Count(s => s.UnitPrice == null) : null,
+                CustomerNameReadable = nameReadable, MissingPriceCount = readable ? stocks.Count(s => s.UnitPrice == null) : null,
                 Rows = groups.Select(g => new StockDwellObservationRowV1 { GroupKey = g.Key, GroupLabel = ResolveGroupLabel(groupBy, g.Key, names),
                     TotalQty = Qty(g), ReferenceValue = Reference(g), Bucket0To30Qty = Qty(g.Where(s => Age(s) <= 30)),
                     Bucket31To60Qty = Qty(g.Where(s => Age(s) is >= 31 and <= 60)), Bucket61To90Qty = Qty(g.Where(s => Age(s) is >= 61 and <= 90)),

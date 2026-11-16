@@ -78,6 +78,13 @@ def main():
             if resource == 'crm-privacy':
                 uses.update(export='EXPLICIT_SOURCE_MAPPING_WITH_BOUNDED_EVIDENCE',
                             download='EXPLICIT_SOURCE_MAPPING_WITH_BOUNDED_EVIDENCE')
+        if resource in ('wms-warehouse', 'wms-location'):
+            uses.update(query='CURRENT_MASTER_OWNER_REVIEWED_OTHER_CONSUMERS_PENDING',
+                        write='NAME_AND_DRAFT_FIELD_GATES_REVIEWED_OTHER_CONSUMERS_PENDING')
+        elif resource == 'erp-business-partner':
+            uses.update(query='IDENTITY_OWNER_REVIEWED_LEGACY_READS_OPEN_ISSUE_1207',
+                        write='LEGACY_WRITE_AND_READBACK_REVIEW_OPEN_ISSUE_1207',
+                        export='LEGACY_CSV_BOUNDARY_OPEN_ISSUE_1207')
         records.append({**entry, 'review_group': group, 'uses': uses,
                         'lexical_source_candidates': refs, 'permission_attribute_route_ids': direct})
     args.output.mkdir(parents=True, exist_ok=True)

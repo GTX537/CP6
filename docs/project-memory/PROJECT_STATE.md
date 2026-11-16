@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-16，W681 修复库存看板仓库名/库龄客户名来源权限缺口 #1206；17/17 本地 PG/HTTP 通过，当前主数据来源作限定核对。WP02-03 仍 IN_PROGRESS，下一窗口优先 P0 #1207 旧 BP 详情/列表/CSV/写回读权限。卡片/PGT/询盘计数保持。 [W681 交付](../development/evidence/W681-01/DELIVERY.md)
+
 2026-11-16，W680 核销 WMS 看板、效期、呆滞库存和 VMI 的注册字段及当前来源门；12 项定向 PostgreSQL 回归通过，零失败/跳过，产品权限未改。WP02-03 仍 IN_PROGRESS；剩余 Operations 继续核对，下一窗口优先主数据名称及直接消费者。卡片/PGT/询盘计数保持。 [W680 交付](../development/evidence/W680-01/DELIVERY.md)
 
 2026-11-16，W679 核销个人表单 Title/DataJson、动态字段策略及上下文附件读取，修正 #1202 旧属性扫描；本地 21 通过、0 失败、0 跳过。产品权限未变，WP02-03 保持 IN_PROGRESS，下一步核对 Operations 派生输出及独立用途。原卡/PGT/询盘计数保持，简体中文继续为标准。 [W679 交付](../development/evidence/W679-01/DELIVERY.md)

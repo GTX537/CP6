@@ -114,7 +114,8 @@ public partial class WmsDashboardService : IWmsDashboardService
         return result;
     }
 
-    private async Task<List<WmsWarehouseValueDto>> GetWarehouseValueCoreAsync(WmsDashboardData? data=null)
+    private async Task<List<WmsWarehouseValueDto>> GetWarehouseValueCoreAsync(WmsDashboardData? data=null,
+        Func<string[],Task<Dictionary<string,string>>>? readNames=null)
     {
         var stockByWh = await (data?.Stocks ?? _db.Stocks.AsNoTracking())
             .Where(s => !s.IsDeleted && s.PhysicalQty != 0m)
@@ -127,7 +128,7 @@ public partial class WmsDashboardService : IWmsDashboardService
             })
             .ToListAsync();
 
-        var whNames = await _db.Warehouses.AsNoTracking()
+        var whNames = readNames != null ? await readNames(stockByWh.Select(x => x.WarehouseCd).ToArray()) : await _db.Warehouses.AsNoTracking()
             .Where(w => !w.IsDeleted)
             .ToDictionaryAsync(w => w.WarehouseCd, w => w.WarehouseName);
 
