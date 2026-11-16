@@ -7,6 +7,7 @@ using CP6.Core.Services.Common;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.Platform;
 using CP6.Core.Services.Sys;
+using CP6.Core.Services.Wms;
 using CP6.Entity.DomainModels.Sys;
 using CP6.Entity.DTOs.Client;
 using CP6.Tests.Erp;
