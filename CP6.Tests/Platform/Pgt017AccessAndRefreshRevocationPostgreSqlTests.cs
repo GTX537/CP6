@@ -27,7 +27,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var scenario = Environment.GetEnvironmentVariable("CP6_W667_SCENARIO")!;
         var baseline = Environment.GetEnvironmentVariable("CP6_W667_BASELINE") == "1";
         var auditFault = scenario == "unknown-cookie-audit-fault";
-        var exactAccess = scenario is "web-access" or "client-web-alias" || !baseline && (scenario == "unknown-cookie" || auditFault);
+        var exactAccess = scenario is "web-access" or "client-web-alias" or "web-access-duplicate" ||
+            !baseline && (scenario == "unknown-cookie" || auditFault);
         var reuse = scenario is "web-reuse" or "native-reuse";
         var affected = reuse ? 4 : exactAccess ? 2 : 0;
         var completionControlled = scenario == "rejected-completion";
@@ -189,6 +190,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Task<HttpResponseMessage> Act() => scenario switch
         {
             "web-access" => host.Send(Request(HttpMethod.Post, "api/auth/logout", NoWebRefresh(), new { })),
+            "web-access-duplicate" => DuplicateAccessLogout(),
             "client-web-alias" => host.Send(Native("logout", new NativeLogoutRequest { Client = client }, original["cp6_at"])),
             "native-access" => host.Send(Native("logout", new NativeLogoutRequest { Client = client }, native.AccessToken)),
             "unknown-cookie" or "unknown-cookie-local" or "unknown-cookie-audit-fault" => host.Send(Request(HttpMethod.Post, "api/auth/logout",
@@ -220,7 +222,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Assert.Equal(expectedStatus, result.StatusCode);
         var errorMessage = expectedError is null ? null : await RequireNativeError(result, expectedError);
         var cleared = result.Headers.TryGetValues("Set-Cookie", out var headers) ? headers.Count() : 0;
-        Assert.Equal(recovery != "worker" && (scenario is "web-access" or "unknown-cookie" or "unknown-cookie-local" or "unknown-cookie-audit-fault") ? 4 : 0, cleared);
+        Assert.Equal(recovery != "worker" && (scenario is "web-access" or "web-access-duplicate" or "unknown-cookie" or
+            "unknown-cookie-local" or "unknown-cookie-audit-fault") ? 4 : 0, cleared);
 
         var oldAccessDenied = reuse || exactAccess || scenario == "unknown-cookie";
         var currentNativeDenied = reuse || nativeClosed || scenario == "native-access";
@@ -260,6 +263,11 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         for (var i = 0; i < nativeGates.Length; i++)
             Assert.True(nativeGates[i] == (i >= affected), $"Original CRM intake permission at source slot {i} has the wrong native disposition.");
         Assert.Equal((affected, affected, affected), (after.CrmRevoked, after.Snapshots, after.Outbox));
+        if (affected > 0)
+        {
+            Assert.Null(await ReadOriginalPlan(completed: false));
+            Assert.NotNull(await ReadOriginalPlan(completed: true));
+        }
         if (recovery is not null)
         {
             Assert.Equal(originalRevision + affected * (recovery == "ack" ? 2 : 1), await CrmRevision());
@@ -645,13 +653,30 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
 
         async Task<HttpResponseMessage> SimultaneousLoser()
         {
+            var replies = await WaitTwoRequests(() => Request(HttpMethod.Post, "api/auth/refresh", current, new { }));
+            using var winner = Assert.Single(replies, r => r.StatusCode == HttpStatusCode.OK);
+            var failed = Assert.Single(replies, r => r.StatusCode != HttpStatusCode.OK);
+            await RequireDelivered(current["cp6_rt"], Cookies(winner)["cp6_rt"], "Web");
+            return failed;
+        }
+
+        async Task<HttpResponseMessage> DuplicateAccessLogout()
+        {
+            var replies = await WaitTwoRequests(() => Request(HttpMethod.Post, "api/auth/logout", NoWebRefresh(), new { }));
+            using var firstReply = replies[0];
+            Assert.Equal(HttpStatusCode.OK, firstReply.StatusCode);
+            return replies[1];
+        }
+
+        async Task<HttpResponseMessage[]> WaitTwoRequests(Func<HttpRequestMessage> request)
+        {
             await using var main = new NpgsqlConnection(h.Db.Database.GetConnectionString());
             await main.OpenAsync();
             await using var lockRoot = await main.BeginTransactionAsync();
             await using (var held = new NpgsqlCommand("SELECT cp6_authentication_v1.acquire()", main, lockRoot))
                 await held.ExecuteNonQueryAsync();
-            using var left = Request(HttpMethod.Post, "api/auth/refresh", current, new { });
-            using var right = Request(HttpMethod.Post, "api/auth/refresh", current, new { });
+            using var left = request();
+            using var right = request();
             var two = new[] { host.Send(left), host.Send(right) };
             try
             {
@@ -666,11 +691,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 while ((int)(await waiting.ExecuteScalarAsync(deadline.Token))! < 2) await Task.Delay(25, deadline.Token);
             }
             finally { await lockRoot.RollbackAsync(); }
-            var replies = await Task.WhenAll(two);
-            using var winner = Assert.Single(replies, r => r.StatusCode == HttpStatusCode.OK);
-            var failed = Assert.Single(replies, r => r.StatusCode != HttpStatusCode.OK);
-            await RequireDelivered(current["cp6_rt"], Cookies(winner)["cp6_rt"], "Web");
-            return failed;
+            return await Task.WhenAll(two);
         }
 
         async Task<SourceRetirementState> ReadState()

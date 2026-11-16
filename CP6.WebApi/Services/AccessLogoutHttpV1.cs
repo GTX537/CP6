@@ -54,13 +54,13 @@ internal static class AccessLogoutHttpV1
                 var auditTenant = Guid.Parse(identity.FindFirst("tenant_id")!.Value);
                 accepted = await store.TryStageAccessRetirementAsync(db, tenant, source, jti,
                     new(auditTenant, actor, audit.UserName, audit.ClientIp, audit.UserAgent, audit.Reason, bestEffort), ct);
-                if (accepted is not null)
+                if (accepted is { CompletedAtUtc: null })
                 {
                     if (!await AccessTokenAuthentication.CurrentStateAsync(db,
                         http.RequestServices.GetRequiredService<AuthenticationPolicyServiceV1>(), http.User, ct))
                         throw new InvalidOperationException("REAUTH_REQUIRED");
                 }
-                else if (!bestEffort) await local.RevokeAccessWithinRootAsync(jti, audit, bestEffort: false, ct);
+                else if (accepted is null && !bestEffort) await local.RevokeAccessWithinRootAsync(jti, audit, bestEffort: false, ct);
 
                 ct.ThrowIfCancellationRequested();
                 committing = true;
