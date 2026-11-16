@@ -65,9 +65,7 @@ public class TwoFactorService : ITwoFactorService
     {
         if (string.IsNullOrEmpty(user.TwoFactorSecret)) return false;
         if (!_totp.Verify(user.TwoFactorSecret, code)) return false;
-        user.TwoFactorEnabled = true;
-        user.TwoFactorEnrolledAt = DateTime.Now;
-        user.AuthenticationEpoch = Guid.NewGuid();
+        ApplyEnrollment(user, DateTime.Now, Guid.NewGuid());
         await _audit.LogAsync(SecurityEventType.TwoFactorEnrolled, user.Id, user.UserName, null, null, null);
         return true;
     }
@@ -138,6 +136,13 @@ public class TwoFactorService : ITwoFactorService
         user.TwoFactorSecret = null;
         user.TwoFactorEnrolledAt = null;
         user.AuthenticationEpoch = epoch ?? Guid.NewGuid();
+    }
+
+    internal static void ApplyEnrollment(Sys_User user, DateTime enrolledAt, Guid epoch)
+    {
+        user.TwoFactorEnabled = true;
+        user.TwoFactorEnrolledAt = enrolledAt;
+        user.AuthenticationEpoch = epoch;
     }
 
     private static string GenerateNumericOtp(int length)

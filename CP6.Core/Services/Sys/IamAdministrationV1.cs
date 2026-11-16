@@ -115,6 +115,11 @@ public sealed partial class IamAdministrationV1(CP6Context db, ICurrentPermissio
     public Task Store(Guid actor, IamCommandV1? command, IamOperationV1 result, CancellationToken ct)
     {
         var hash = command == null ? null : fingerprint.Protect(AuthenticationPolicyServiceV1.Hash((object)command));
+        return StoreOperationAsync(db, actor, hash, result, ct);
+    }
+
+    internal static Task StoreOperationAsync(CP6Context db, Guid actor, string? hash, IamOperationV1 result, CancellationToken ct)
+    {
         var json = JsonSerializer.Serialize(result);
         return db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO cp6_authentication_v1.iam_operations(tenant_id,operation_id,actor_id,kind,state,request_protected,result_json) VALUES({db.CurrentTenantId},{result.OperationId},{actor},{result.Kind},{result.State},{hash},{json})",ct);
     }

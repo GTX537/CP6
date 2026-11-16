@@ -49,15 +49,16 @@ public static class IamAdministrationHttpV1
     }
 
     internal static Task<LegacyCredentialSubjectV1?> WriteLegacyCredential(HttpContext http, Guid? target, string? passwordFingerprint,
-        Func<Sys_User, Task> validate, Func<Sys_User, LegacyCredentialPlanV1, Task> apply, Func<string>? createPasswordSalt = null)
+        Func<Sys_User, Task> validate, Func<Sys_User, LegacyCredentialPlanV1, Task> apply, Func<string>? createPasswordSalt = null,
+        LegacyCredentialFactorChangeV1? factor = null)
     {
         var services = http.RequestServices;
-        var request = new LegacyCredentialRequestV1(target, ClaimId("impersonator_id"), ClaimId("impersonator_tenant_id"), passwordFingerprint);
+        var request = new LegacyCredentialRequestV1(target, ClaimId("impersonator_id"), ClaimId("impersonator_tenant_id"), passwordFingerprint, factor?.Method);
         var permission = target is null ? null : http.GetEndpoint()?.Metadata.GetMetadata<RequirePermissionAttribute>()?.PermissionKey
             ?? throw IamAdministrationV1.Error(503, "IAM_AUTHORITY_UNAVAILABLE");
         return services.GetRequiredService<IamAdministrationV1>().WriteLegacyCredentialAsync(request, permission,
-            ct => CurrentActor(http, services, ct, allowImpersonation: true, allowRequiredPasswordChange: target is null),
-            ct => TenantAdministrationHttpV1.Complete(http, services, ct), validate, apply, createPasswordSalt, http.RequestAborted);
+            ct => CurrentActor(http, services, ct, allowImpersonation: true, allowRequiredPasswordChange: target is null && factor is null),
+            ct => TenantAdministrationHttpV1.Complete(http, services, ct), validate, apply, createPasswordSalt, http.RequestAborted, factor);
 
         Guid? ClaimId(string name) => http.User.FindFirstValue(name) is { } value ? Guid.Parse(value) : null;
     }

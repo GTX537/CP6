@@ -102,7 +102,7 @@ public partial class AuthController
 
     private async Task<IActionResult> PgWebFactorAsync(bool enroll, string? method, string code)
     {
-        var challenge = await PgPendingAsync(enroll ? "2fa_enroll" : "2fa_verify");
+        var challenge = await PgPendingAsync(enroll ? "2fa_enroll" : "2fa_verify", allowAcceptedEnrollment: enroll);
         return await PgWebOutputAsync(stage => Entries.CompleteFactorAsync(challenge, null, enroll, method, code,
             ClientIp, ClientUa, stage, HttpContext.RequestAborted, deferOutput: true));
     }
@@ -151,7 +151,7 @@ public partial class AuthController
         }
     }
 
-    private async Task<string> PgPendingAsync(string purpose)
+    private async Task<string> PgPendingAsync(string purpose, bool allowAcceptedEnrollment = false)
     {
         try
         {
@@ -167,7 +167,7 @@ public partial class AuthController
             var challenge = principal.FindFirstValue("jti") ?? throw new InvalidOperationException();
             if (Request.Headers.ContainsKey(AuthenticationRecoveryBindingV1.Header)
                 && AuthenticationRecoveryBindingV1.Challenge(Request) != challenge) throw new InvalidOperationException();
-            var pending = await Entries.ReadAsync(challenge, null, purpose, HttpContext.RequestAborted);
+            var pending = await Entries.ReadAsync(challenge, null, purpose, HttpContext.RequestAborted, allowAcceptedEnrollment);
             if (principal.FindFirstValue(ClaimTypes.NameIdentifier) != pending.Proof.UserId.ToString()
                 || principal.FindFirstValue("tenant_id") != pending.Proof.TenantId.ToString()
                 || principal.FindFirstValue("token_use") != pending.Purpose) throw new InvalidOperationException();

@@ -5,6 +5,7 @@ using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wms;
 using CP6.Entity.DomainModels.Sys;
 using CP6.Entity.DTOs.Client;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Services;
@@ -13,10 +14,10 @@ public sealed record AuthenticationEntryResultV1(AuthenticationProofV1 Proof, st
     string? Purpose, TokenSessionDto? Session);
 
 /// <summary>All PostgreSQL interactive issuers retain the original primary proof through one completion transaction.</summary>
-public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext tenant,
+public sealed partial class AuthenticationEntryServiceV1(CP6Context db, ITenantContext tenant,
     AuthenticationCompletionGateV1 gate, AuthenticationInteractionStoreV1 store,
     IAuthSessionService sessions, IRefreshTokenService refresh, ITwoFactorService factors,
-    ILoginSecurityService login, IClientDeviceService devices, ICrmOidcGrantStore? crmGrants = null)
+    ILoginSecurityService login, IClientDeviceService devices, ICrmOidcGrantStore? crmGrants = null, IDataProtectionProvider? protection = null)
 {
     public static string Binding(ClientContextDto client) => AuthenticationInteractionStoreV1.Hash(
         JsonSerializer.Serialize(new[] { client.ClientKind, client.DeviceId, client.AppVersion, client.PlatformVersion }));
@@ -56,10 +57,14 @@ public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext t
     }
 
     public async Task<AuthenticationInteractionV1> ReadAsync(string challenge, ClientContextDto? client,
-        string? purpose, CancellationToken ct)
+        string? purpose, CancellationToken ct, bool allowAcceptedEnrollment = false)
     {
         if (client != null) ClientContextValidator.Validate(client);
-        var pending = await store.ReadAsync(challenge, client == null ? WebBinding(challenge) : Binding(client), purpose, ct);
+        var binding = client == null ? WebBinding(challenge) : Binding(client);
+        AuthenticationInteractionV1? pending = null;
+        if (allowAcceptedEnrollment && purpose == "2fa_enroll")
+            pending = (await store.ReadAcceptedEnrollmentAsync(challenge, binding, ct))?.Interaction;
+        pending ??= await store.ReadAsync(challenge, binding, purpose, ct);
         RequireClient(pending.Proof, challenge, client);
         tenant.CurrentTenantId = pending.Proof.TenantId;
         return pending;
@@ -68,7 +73,7 @@ public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext t
     public async Task<object> SetupAsync(string challenge, ClientContextDto? client, CancellationToken ct)
     {
         var pending = await ReadAsync(challenge, client, "2fa_enroll", ct);
-        return await gate.ExecuteAsync<object>(pending.Proof, async (a, token) =>
+        return await WriteChallengeCredentialAsync<object>(pending.Proof, "challenge-setup-2fa", null, null, async (a, _, token) =>
         {
             await ReadAsync(challenge, client, "2fa_enroll", token);
             if (a.Decide() != AuthenticationDecisionV1.EnrollmentRequired) throw new InvalidOperationException("E-SEC-013");
@@ -76,7 +81,7 @@ public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext t
             await db.SaveChangesAsync(token);
             await store.SetPreparationAsync(a.Proof.CompletionRef, a.User.Id, a.User.TwoFactorSecret!, token);
             return new { otpauthUri = uri, secret = a.User.TwoFactorSecret };
-        }, ct);
+        }, null, ct);
     }
 
     public async Task SendEmailAsync(string challenge, ClientContextDto? client, CancellationToken ct)
@@ -96,6 +101,18 @@ public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext t
         bool enroll, string? method, string code, string? ip, string? ua,
         Action<AuthenticationEntryResultV1>? stage, CancellationToken ct, bool deferOutput = false)
     {
+        if (enroll)
+        {
+            if (client is not null) ClientContextValidator.Validate(client);
+            var accepted = await store.ReadAcceptedEnrollmentAsync(challenge,
+                client is null ? WebBinding(challenge) : Binding(client), ct);
+            if (accepted is { } original)
+            {
+                RequireClient(original.Interaction.Proof, challenge, client);
+                tenant.CurrentTenantId = original.Interaction.Proof.TenantId;
+                return await CompleteEnrollmentAsync(original.Interaction, original.Lease, code, client, ip, ua, stage, ct, deferOutput);
+            }
+        }
         var pending = await ReadAsync(challenge, client, enroll ? "2fa_enroll" : "2fa_verify", ct);
         var lease = Guid.NewGuid();
         // Claim commits before any externally consumed OTP. A later failure never restores this lease.
@@ -105,6 +122,8 @@ public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext t
             var expected = enroll ? AuthenticationDecisionV1.EnrollmentRequired : AuthenticationDecisionV1.SecondFactorPending;
             if (a.Decide() != expected || enroll && !await store.PreparationMatchesAsync(a.User.Id, a.User.TwoFactorSecret, pending.PreparationHash, token))
                 throw new InvalidOperationException("E-SEC-013");
+            if (enroll && await IamCrmUserSealV1.ExistsAsync(db, a.User.TenantId, a.User.Id, token))
+                throw new InvalidOperationException("AUTH_SESSION_AUTHORITY_UNAVAILABLE");
             await store.ClaimAsync(a.Proof.CompletionRef, lease, token);
             return true;
         }, ct);
@@ -128,26 +147,15 @@ public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext t
                 return true;
             }, ct);
             // A successful factor has its own durable receipt before enrollment/session/output.
+            if (enroll) return await CompleteEnrollmentAsync(pending, lease, code, client, ip, ua, stage, ct, deferOutput);
             return await gate.ExecuteAsync(pending.Proof, async (a, token) =>
             {
                 var verified = await store.ReadFactorAsync(a.Proof.CompletionRef, lease, token);
                 if (verified.AuthenticationVersion != a.Proof.AuthenticationVersion || verified.ClientBinding != a.Proof.ClientBinding
-                    || verified.UserId != a.User.Id || verified.TenantId != a.User.TenantId
-                    || enroll && !await store.PreparationMatchesAsync(a.User.Id, a.User.TwoFactorSecret, pending.PreparationHash, token))
+                    || verified.UserId != a.User.Id || verified.TenantId != a.User.TenantId)
                     throw new InvalidOperationException("E-SEC-013");
-                Guid? transition = null;
-                if (enroll)
-                {
-                    // The original proof is retained; only this claimed preparation may advance the epoch.
-                    a.User.TwoFactorEnabled = true;
-                    a.User.TwoFactorEnrolledAt = DateTime.Now;
-                    a.User.AuthenticationEpoch = Guid.NewGuid();
-                    await db.SaveChangesAsync(token); // reads generated CredentialRevision back
-                    transition = Guid.NewGuid();
-                }
-                var factor = verified with { AuthenticationVersion = AuthSessionVersion.For(a.User) };
-                Audit(a.User, enroll ? SecurityEventType.TwoFactorEnrolled : SecurityEventType.TwoFactorVerified, a.Proof, ip, ua);
-                var result = await IssueAsync(a, factor, transition, client, ip, ua, token, deferOutput);
+                Audit(a.User, SecurityEventType.TwoFactorVerified, a.Proof, ip, ua);
+                var result = await IssueAsync(a, verified, null, client, ip, ua, token, deferOutput);
                 await store.FinishAsync(a.Proof.CompletionRef, lease, true, token);
                 stage?.Invoke(result);
                 return result;
