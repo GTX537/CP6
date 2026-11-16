@@ -4,6 +4,8 @@ using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Logging;
+using Npgsql;
+using NpgsqlTypes;
 
 namespace CP6.Core.Services.Sys;
 
@@ -63,6 +65,8 @@ internal sealed record WebAuthenticationFamilyClosureV1(WebAuthenticationCloseKi
     {
         var targets = TargetRefreshHash is { } target ? new[] { target } : roots;
         var wholeOrigin = Kind == WebAuthenticationCloseKindV1.Logout;
+        var now = new NpgsqlParameter("web_close_now", NpgsqlDbType.Timestamp)
+            { Value = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified) };
         // Match RejectGenerationAsync's original seeds and descendant walk. A live refresh
         // outside that walk still authorizes the family and keeps this close local.
         var facts = await db.Database.SqlQuery<ClosureEffects>($"""
@@ -75,7 +79,7 @@ internal sealed record WebAuthenticationFamilyClosureV1(WebAuthenticationCloseKi
                       OR r."UserId" IS DISTINCT FROM {UserId} OR r."ClientKind" IS DISTINCT FROM 'Web') AS "ForeignGeneration",
                EXISTS(SELECT 1 FROM public."Sys_RefreshTokens" r WHERE r."BrowserSessionId"={FamilyId}
                    AND r."TenantId"={TenantId} AND r."UserId"={UserId} AND r."ClientKind"='Web'
-                   AND r."RevokedAt" IS NULL AND r."ExpiresAt">clock_timestamp()::timestamp
+                   AND r."RevokedAt" IS NULL AND r."ExpiresAt">{now}
                    AND NOT EXISTS(SELECT 1 FROM affected a WHERE a.refresh_hash=r."TokenHash")) AS "SurvivingRefresh"
             """).SingleAsync(ct);
         if (facts.ForeignGeneration) throw new InvalidOperationException("AUTH_SESSION_AUTHORITY_UNAVAILABLE");

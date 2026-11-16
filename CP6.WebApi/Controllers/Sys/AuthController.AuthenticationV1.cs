@@ -34,7 +34,8 @@ public partial class AuthController
     {
         if (!Request.Headers.ContainsKey(AuthenticationRecoveryBindingV1.Header)) throw new InvalidOperationException("REAUTH_REQUIRED");
         var key = AuthenticationRecoveryBindingV1.Challenge(Request);
-        return Ok(await new BrowserAuthenticationRecoveryV1(_context).ResolveAsync(key, close, HttpContext.RequestAborted));
+        var recovery = new BrowserAuthenticationRecoveryV1(_context);
+        return Ok(await ResolveWebFamilyAsync(close, defer => recovery.ResolveAsync(key, close, defer, HttpContext.RequestAborted)));
     }
 
     private async Task<IActionResult> PgCompletionRecoveryAsync(bool close)
@@ -62,8 +63,10 @@ public partial class AuthController
             }
             catch { throw AuthenticationEntryFailureAttribute.ToBusiness("REAUTH_REQUIRED"); }
         }
-        var result = await new AuthenticationCompletionRecoveryV1(_context).ResolveAsync(new(kind, credential, "Web", null,
-            kind == "interaction" ? AuthenticationEntryServiceV1.WebBinding(credential) : null), close, HttpContext.RequestAborted);
+        var recovery = new AuthenticationCompletionRecoveryV1(_context);
+        var request = new AuthenticationRecoveryRequestV1(kind, credential, "Web", null,
+            kind == "interaction" ? AuthenticationEntryServiceV1.WebBinding(credential) : null);
+        var result = await ResolveWebFamilyAsync(close, defer => recovery.ResolveAsync(request, close, defer, HttpContext.RequestAborted));
         return Ok(result);
     }
 

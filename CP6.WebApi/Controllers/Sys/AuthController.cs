@@ -642,6 +642,8 @@ public partial class AuthController : LocalizedControllerBase
             return Ok(new { code = 0, message = "OK" });
         }
 
+        var webClose = _context.Database.IsNpgsql() && !string.IsNullOrEmpty(raw) && await CloseRegisteredWebFamilyAsync(raw);
+
         // 1. access jti 入黑名单：TTL 取令牌剩余寿命（exp 推算），否则兜底一个完整 access 寿命
         var jti = User.FindFirst("jti")?.Value;
         if (!string.IsNullOrEmpty(jti))
@@ -656,15 +658,18 @@ public partial class AuthController : LocalizedControllerBase
         }
 
         // 2. 吊销 refresh 令牌（cp6_rt 不存在则静默）
-        if (!string.IsNullOrEmpty(raw))
+        if (!webClose && !string.IsNullOrEmpty(raw))
             await _refresh.RevokeAsync(raw);
 
         // 3. 清三 Cookie
         _cookies.ClearAuthCookies(Response);
 
         // 4. 安全审计（登出）
-        var uid = (await _perm.GetAsync()).UserId;
-        await _audit.LogAsync(SecurityEventType.Logout, uid, User.Identity?.Name, null, ClientIp, ClientUa);
+        if (!webClose)
+        {
+            var uid = (await _perm.GetAsync()).UserId;
+            await _audit.LogAsync(SecurityEventType.Logout, uid, User.Identity?.Name, null, ClientIp, ClientUa);
+        }
 
         return Ok(new { code = 0, message = "OK" });
     }

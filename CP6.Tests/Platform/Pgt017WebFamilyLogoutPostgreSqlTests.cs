@@ -7,6 +7,7 @@ using System.Text.Json.Nodes;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
+using CP6.Tests.Erp;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,9 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var auditFault = Environment.GetEnvironmentVariable("CP6_W665_AUDIT_FAULT") == "1";
         var survivor = Environment.GetEnvironmentVariable("CP6_W665_SURVIVOR") == "1";
         var impersonate = Environment.GetEnvironmentVariable("CP6_W665_IMPERSONATE") == "1";
+        var unknownRefresh = Environment.GetEnvironmentVariable("CP6_W665_UNKNOWN_REFRESH") == "1";
+        var ack = Environment.GetEnvironmentVariable("CP6_W665_ACK") == "1";
+        if (ack) Assert.True(cold && route == "raw");
         await using var h = await Seed();
         var pair = await GrantIntake(h);
         var user = await h.Db.Sys_Users.SingleAsync(u => u.Id == h.ActorId);
@@ -51,7 +55,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var seal = new NpgsqlConnectionStringBuilder(Environment.GetEnvironmentVariable("CP6_PGT017_SEAL_CONNECTION"));
         var crmReaderConnection = Environment.GetEnvironmentVariable("CP6_W665_CRM_READER");
         var readerRole = new NpgsqlConnectionStringBuilder(crmReaderConnection);
-        await using var crm = new NpgsqlConnection(Environment.GetEnvironmentVariable("CP6_PGT017_CRM_OBSERVER"));
+        var crmConnectionString = Environment.GetEnvironmentVariable("CP6_PGT017_CRM_OBSERVER");
+        await using var crm = new NpgsqlConnection(crmConnectionString);
         await crm.OpenAsync();
         Assert.Equal(("127.0.0.1", crm.Port, crm.Database, "w665_main_seal"), (seal.Host, seal.Port, seal.Database, seal.Username));
         Assert.Equal(("127.0.0.1", crm.Port, crm.Database), (readerRole.Host, readerRole.Port, readerRole.Database));
@@ -69,9 +74,20 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         }
 
         var environment = IdentityEnvironment(h.Tenant);
+        var main = new NpgsqlConnectionStringBuilder(h.Db.Database.GetConnectionString());
+        await using var mainRelay = ack ? new StockPostgresCommitRelay(main.Port, main.Username!,
+            int.Parse(Environment.GetEnvironmentVariable("CP6_W665_MAIN_ACK_PORT")!)) : null;
+        await using var crmRelay = ack ? new StockPostgresCommitRelay(seal.Port, seal.Username!,
+            int.Parse(Environment.GetEnvironmentVariable("CP6_W665_CRM_ACK_PORT")!)) : null;
+        if (mainRelay is not null)
+        {
+            main.Port = mainRelay.Port;
+            main.SslMode = SslMode.Disable;
+        }
         var binding = $"CrmInquiryTenantPause__Tenants__{h.Tenant:D}__";
         environment[binding + "StoreId"] = store.ToString("D");
-        environment[binding + "ConnectionString"] = seal.ConnectionString;
+        environment[binding + "ConnectionString"] = crmRelay is null ? seal.ConnectionString
+            : new NpgsqlConnectionStringBuilder(seal.ConnectionString) { Port = crmRelay.Port }.ConnectionString;
         environment["CrmOidc__Issuer"] = options.Issuer;
         environment["CrmOidc__Clients__0__SecretSha256"] = CrmOidcCrypto.Hash(clientSecret);
         environment["CrmOidc__Clients__0__RedirectUris__0"] = redirect;
@@ -147,6 +163,22 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
 
         var before = await ReadFamily();
         Assert.Equal(new WebFamilyReadback(3, 0, 2, 0, 0, 0, 0), before);
+        if (unknownRefresh)
+        {
+            Assert.Equal("raw", route);
+            await SetSealLogin(false);
+            var cookie = new Dictionary<string, string>(current) { ["cp6_rt"] = CrmOidcCrypto.RandomToken() };
+            using var local = await host.Send(Request(HttpMethod.Post, "api/auth/logout", cookie, new { }));
+            Assert.Equal(HttpStatusCode.OK, local.StatusCode);
+            Assert.Equal(4, local.Headers.GetValues("Set-Cookie").Count());
+            using var alias = await host.Profile(current["cp6_at"]);
+            Assert.Equal(HttpStatusCode.Unauthorized, alias.StatusCode);
+            Assert.Equal(before with { LogoutAudits = 1 }, await ReadFamily());
+            Assert.Null(await ReadIntent());
+            Assert.True(await GateCurrent(originalPermits[0]));
+            await SignedPermit(independent);
+            return;
+        }
         if (survivor)
         {
             Assert.Equal("browser", route);
@@ -171,14 +203,14 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         }
         if (auditFault)
         {
-            Assert.Equal("raw", route);
+            Assert.Contains(route, new[] { "raw", "browser" });
             await h.Db.Database.ExecuteSqlRawAsync($"""
-                CREATE FUNCTION public.w665_raw_audit_fault() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
+                CREATE FUNCTION public.w665_exit_audit_fault() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
                     IF NEW."TenantId"='{h.Tenant:D}'::uuid AND NEW."UserId"='{h.ActorId:D}'::uuid AND NEW."EventType"={(int)SecurityEventType.Logout}
-                    THEN RAISE EXCEPTION 'Inspected original Web logout audit rejection'; END IF;
+                    THEN RAISE EXCEPTION 'Owned original Web logout audit rejection'; END IF;
                     RETURN NEW; END $$;
-                CREATE TRIGGER w665_raw_audit_fault BEFORE INSERT ON public."Sys_SecurityLogs"
-                    FOR EACH ROW EXECUTE FUNCTION public.w665_raw_audit_fault();
+                CREATE TRIGGER w665_exit_audit_fault BEFORE INSERT ON public."Sys_SecurityLogs"
+                    FOR EACH ROW EXECUTE FUNCTION public.w665_exit_audit_fault();
                 """);
         }
         if (cold && route == "raw")
@@ -199,6 +231,18 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         }
 
         string? pending = null;
+        var originalRevision = await ReadCrmRevision();
+        if (auditFault && route == "browser")
+        {
+            using var refused = await host.Send(Close());
+            Assert.Equal(HttpStatusCode.ServiceUnavailable, refused.StatusCode);
+            Assert.NotNull(await ReadIntent());
+            Assert.Equal(before, await ReadFamily());
+            Assert.Equal(originalRevision, await ReadCrmRevision());
+            await NoCurrentFence(beforeRotation);
+            Assert.True(await GateCurrent(originalPermits[0]));
+            await h.Db.Database.ExecuteSqlRawAsync("""DROP TRIGGER w665_exit_audit_fault ON public."Sys_SecurityLogs" """);
+        }
         if (cold)
         {
             await SetSealLogin(false);
@@ -228,6 +272,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             pending = await ReadIntent();
             Assert.False(string.IsNullOrEmpty(pending));
             Assert.Equal(before, await ReadFamily());
+            Assert.Equal(originalRevision, await ReadCrmRevision());
             using var beforeWorker = await host.Profile(current["cp6_at"]);
             Assert.Equal(HttpStatusCode.OK, beforeWorker.StatusCode);
             await NoCurrentFence(beforeRotation);
@@ -235,7 +280,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             await SignedPermit(independent);
             Assert.True(await GateCurrent(originalPermits[0]));
             await host.StopAsync();
-            if (route == "raw") environment["Startup__SkipHostedServices"] = "false";
+            if (route == "raw" && !ack) environment["Startup__SkipHostedServices"] = "false";
         }
         await using var restarted = cold ? await StartMain() : null;
         if (restarted is not null)
@@ -246,9 +291,51 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             await NoCurrentFence(afterRotation);
             using (var fallback = await host.Send(route == "raw" ? CompletionCookie() : Close()))
                 Assert.Equal(HttpStatusCode.ServiceUnavailable, fallback.StatusCode);
+            if (route == "raw")
+            {
+                using var knownBrowser = await host.Send(BrowserAction("close"));
+                Assert.Equal(HttpStatusCode.ServiceUnavailable, knownBrowser.StatusCode);
+                Assert.Equal(before, await ReadFamily());
+            }
             Assert.Equal(pending, await ReadIntent());
             await SetSealLogin(true);
-            if (route == "raw")
+            if (mainRelay is not null && crmRelay is not null)
+            {
+                crmRelay.Arm();
+                using (var unknown = await host.Send(BrowserAction("close")))
+                {
+                    await crmRelay.Dropped.WaitAsync(TimeSpan.FromSeconds(8));
+                    Assert.Equal(HttpStatusCode.ServiceUnavailable, unknown.StatusCode);
+                }
+                Assert.Equal(pending, await ReadIntent());
+                Assert.Equal(before, await ReadFamily());
+                Assert.Equal(originalRevision + 2, await ReadCrmRevision());
+                Assert.False(await GateCurrent(originalPermits[0]));
+                Assert.False(await GateCurrent(originalPermits[1]));
+
+                await using var barrier = new NpgsqlConnection(crmConnectionString);
+                await barrier.OpenAsync();
+                await using var hold = await barrier.BeginTransactionAsync();
+                await using (var lockTenant = new NpgsqlCommand("SELECT crm_identity_lock_v1.hold_v1(@tenant)", barrier, hold))
+                {
+                    lockTenant.Parameters.AddWithValue("tenant", h.Tenant);
+                    await lockTenant.ExecuteNonQueryAsync();
+                }
+                var finishing = host.Send(BrowserAction("close"));
+                try
+                {
+                    await WaitForMainBlock(crm, barrier.ProcessID, "%advance_identity_v1%", finishing);
+                    mainRelay.Arm();
+                }
+                finally { await hold.RollbackAsync(); }
+                using var result = await finishing;
+                await mainRelay.Dropped.WaitAsync(TimeSpan.FromSeconds(8));
+                Assert.Equal(HttpStatusCode.ServiceUnavailable, result.StatusCode);
+                Assert.Null(await ReadIntent());
+                Assert.Equal(new WebFamilyReadback(3, 3, 2, 2, 2, 2, 1), await ReadFamily());
+                Assert.Equal(originalRevision + 4, await ReadCrmRevision());
+            }
+            else if (route == "raw")
             {
                 using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(25));
                 while (await ReadIntent() is not null) await Task.Delay(100, deadline.Token);
@@ -279,7 +366,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
 
         var after = await ReadFamily();
         Assert.Equal(route == "raw" ? 3 : 1, after.Rejected);
-        var audits = route == "completion" || auditFault || impersonated is not null ? 0 : 1;
+        var audits = route == "completion" || route == "raw" && auditFault || impersonated is not null ? 0 : 1;
         Assert.Equal(audits, after.LogoutAudits);
         if (impersonated is not null)
             Assert.Equal(1, await h.Db.Sys_SecurityLogs.IgnoreQueryFilters().CountAsync(row => row.TenantId == impersonated.TenantId &&
@@ -292,12 +379,27 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             Assert.Equal(after, await ReadFamily());
             Assert.Null(await ReadIntent());
         }
+        var exactCapabilityClosed = cold && route == "raw";
+        if (exactCapabilityClosed)
+        {
+            for (var repeat = 0; repeat < 2; repeat++)
+            {
+                using var exact = await host.Send(BrowserAction("close"));
+                Assert.Equal(HttpStatusCode.OK, exact.StatusCode);
+                Assert.Equal("CLOSED", (await exact.Content.ReadFromJsonAsync<AuthenticationRecoveryStatusV1>())!.State);
+            }
+            after = await ReadFamily();
+            Assert.Equal(++audits, after.LogoutAudits);
+        }
+        var finalRevision = await ReadCrmRevision();
+        Assert.Equal(originalRevision + (ack ? 4 : 2), finalRevision);
         var oldGrantStillCurrent = new[] { await GateCurrent(originalPermits[0]), await GateCurrent(originalPermits[1]) };
         var evidence = Environment.GetEnvironmentVariable("CP6_PGT017_BRIDGE")!;
         Directory.CreateDirectory(evidence);
         await File.WriteAllTextAsync(Path.Combine(evidence, "web-exit-facts.json"), JsonSerializer.Serialize(new
         {
-            Route = route, Cold = cold, AuditFault = auditFault, Impersonated = impersonate, Exit = (int)close.StatusCode, MainOriginal = (int)denied.StatusCode, MainOther = (int)unaffected.StatusCode,
+            Route = route, Cold = cold, Ack = ack, AuditFault = auditFault, Impersonated = impersonate, ExactCapabilityClosed = exactCapabilityClosed,
+            Exit = (int)close.StatusCode, MainOriginal = (int)denied.StatusCode, MainOther = (int)unaffected.StatusCode, CrmRevisionDelta = finalRevision - originalRevision,
             Before = before, After = after, OriginalCrmGate = oldGrantStillCurrent, OtherCrmGate = true
         }));
         Assert.All(oldGrantStillCurrent, currentGrant => Assert.False(currentGrant, "The Main-terminated original browser family still passes the native CRM identity gate."));
@@ -342,7 +444,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         }
 
         Task<AuthenticationApiProcess> StartMain()
-            => AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, environment, allowAutoRedirect: false);
+            => AuthenticationApiProcess.Start(main.ConnectionString, environment, allowAutoRedirect: false);
 
         HttpRequestMessage CompletionCookie() => Request(HttpMethod.Post, "api/auth/completion/close", current, new { });
 
@@ -361,9 +463,16 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         }
 
         Task<string?> ReadIntent() => h.Db.Database.SqlQuery<string?>($"""
-            SELECT request_hash || ':' || grant_plan::text AS "Value"
+            SELECT request_hash || ':' || grant_plan::text || ':' || web_close_plan::text AS "Value"
             FROM cp6_authentication_v1.crm_oidc_family_logouts_v1 WHERE tenant_id={h.Tenant} AND family_id={family} AND completed_at_utc IS NULL
             """).SingleOrDefaultAsync();
+
+        async Task<long> ReadCrmRevision()
+        {
+            await using var query = new NpgsqlCommand("""SELECT "Revision" FROM crm_auth."IdentityFenceV1" WHERE "TenantId"=@tenant""", crm);
+            query.Parameters.AddWithValue("tenant", h.Tenant);
+            return (long)(await query.ExecuteScalarAsync())!;
+        }
 
         async Task NoCurrentFence(string bearer)
         {
