@@ -53,7 +53,11 @@ public sealed class BrowserAuthenticationRecoveryV1(CP6Context db)
         if (!match) throw new InvalidOperationException("REAUTH_REQUIRED");
     }
 
-    public async Task<BrowserAuthenticationStatusV1> ResolveAsync(string key, bool close, CancellationToken ct)
+    public Task<BrowserAuthenticationStatusV1> ResolveAsync(string key, bool close, CancellationToken ct)
+        => ResolveAsync(key, close, null, ct);
+
+    internal async Task<BrowserAuthenticationStatusV1> ResolveAsync(string key, bool close,
+        Func<WebAuthenticationFamilyClosureV1, CancellationToken, Task<bool>>? deferWebClose, CancellationToken ct)
     {
         var hash = KeyHash(key);
         if (!db.Database.IsNpgsql() || db.Database.CurrentTransaction != null || db.ChangeTracker.HasChanges())
@@ -62,35 +66,22 @@ public sealed class BrowserAuthenticationRecoveryV1(CP6Context db)
         try
         {
             await AuthenticationCompletionGateV1.AcquireAsync(db, ct);
-            var mapping = await new SsoMappingRecoveryV1(db).ResolveBrowserAsync(hash, close, ct);
             var row = await db.Database.SqlQuery<Interaction>($"SELECT proof::text AS \"Proof\",purpose AS \"Purpose\",state AS \"State\" FROM cp6_authentication_v1.interactions WHERE challenge_hash={hash}").SingleOrDefaultAsync(ct);
             var proof = row == null ? null : JsonSerializer.Deserialize<AuthenticationProofV1>(row.Proof)!;
             if (proof != null && (proof.ClientKind != "Web" || proof.ClientBinding != hash)) throw new InvalidOperationException("REAUTH_REQUIRED");
             var rotation = await db.Database.SqlQuery<string>($"SELECT refresh_hash AS \"Value\" FROM cp6_authentication_v1.browser_rotations WHERE challenge_hash={hash}").SingleOrDefaultAsync(ct);
             var closed = await db.Database.SqlQuery<bool>($"SELECT EXISTS(SELECT 1 FROM cp6_authentication_v1.browser_closures WHERE challenge_hash={hash}) AS \"Value\"").SingleAsync(ct);
+            var web = close && deferWebClose is not null
+                ? await WebAuthenticationFamilyClosureV1.PrepareAsync(db, WebAuthenticationCloseKindV1.Browser, rotation,
+                    rotation, proof?.CompletionRef, hash, ct)
+                : null;
+            var deferred = web is not null && await deferWebClose!(web, ct);
+            var mapping = await new SsoMappingRecoveryV1(db).ResolveBrowserAsync(hash, close && !deferred, ct);
             string state;
-            if (close)
+            if (deferred) state = "COMPLETION_UNKNOWN";
+            else if (close)
             {
-                // Unlike 'not found', this durable fence proves a late request cannot register the key.
-                await db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO cp6_authentication_v1.browser_closures(challenge_hash) VALUES({hash}) ON CONFLICT DO NOTHING", ct);
-                var store = new AuthenticationInteractionStoreV1(db);
-                if (rotation != null) await store.RejectGenerationAsync(rotation, false, ct);
-                if (proof != null)
-                {
-                    await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_authentication_v1.interactions SET state='rejected',lease=NULL WHERE completion_id={proof.CompletionRef}", ct);
-                    var roots = await db.Database.SqlQuery<string>($"SELECT refresh_hash AS \"Value\" FROM cp6_authentication_v1.session_evidence WHERE completion_id={proof.CompletionRef} AND parent_refresh_hash IS NULL").ToListAsync(ct);
-                    foreach (var root in roots) await store.RejectGenerationAsync(root, false, ct);
-                }
-                var original = proof ?? (rotation == null ? null : (await store.ReadSessionByRefreshAsync(rotation, ct))?.Parse().Primary);
-                if (!closed && original != null)
-                {
-                    var name = await db.Sys_Users.IgnoreQueryFilters().AsNoTracking()
-                        .Where(x => x.Id == original.UserId && x.TenantId == original.TenantId).Select(x => x.UserName).SingleOrDefaultAsync(ct);
-                    db.Sys_SecurityLogs.Add(new Sys_SecurityLog { TenantId = original.TenantId, UserId = original.UserId, UserName = name,
-                        EventType = (int)SecurityEventType.Logout, CreatedAt = DateTime.Now, Reason = "browser authentication closure",
-                        ContextJson = JsonSerializer.Serialize(new { original.CompletionRef, scope = rotation == null ? "original-interaction" : "exact-rotation" }) });
-                    await db.SaveChangesAsync(ct);
-                }
+                await ApplyCloseWithinRootAsync(hash, rotation, proof, ct);
                 state = "CLOSED";
             }
             else if (closed || row?.State == "rejected") state = "CLOSED";
@@ -123,6 +114,23 @@ public sealed class BrowserAuthenticationRecoveryV1(CP6Context db)
             if (committing) throw new RefreshCompletionUnknownException(error);
             throw;
         }
+    }
+
+    internal async Task ApplyCloseWithinRootAsync(string hash, string? rotation, AuthenticationProofV1? proof, CancellationToken ct)
+    {
+        // This durable fence also closes an original capability that has no delivered session yet.
+        var inserted = await db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO cp6_authentication_v1.browser_closures(challenge_hash) VALUES({hash}) ON CONFLICT DO NOTHING", ct);
+        var store = new AuthenticationInteractionStoreV1(db);
+        if (rotation is not null) await store.RejectGenerationAsync(rotation, false, ct);
+        if (proof is not null) await AuthenticationCompletionRecoveryV1.ApplyCloseWithinRootAsync(db, proof.CompletionRef, null, ct);
+        var original = proof ?? (rotation is null ? null : (await store.ReadSessionByRefreshAsync(rotation, ct))?.Parse().Primary);
+        if (inserted != 1 || original is null) return;
+        var name = await db.Sys_Users.IgnoreQueryFilters().AsNoTracking()
+            .Where(x => x.Id == original.UserId && x.TenantId == original.TenantId).Select(x => x.UserName).SingleOrDefaultAsync(ct);
+        db.Sys_SecurityLogs.Add(new Sys_SecurityLog { TenantId = original.TenantId, UserId = original.UserId, UserName = name,
+            EventType = (int)SecurityEventType.Logout, CreatedAt = DateTime.Now, Reason = "browser authentication closure",
+            ContextJson = JsonSerializer.Serialize(new { original.CompletionRef, scope = rotation is null ? "original-interaction" : "exact-rotation" }) });
+        await db.SaveChangesAsync(ct);
     }
     public sealed class Interaction
     {

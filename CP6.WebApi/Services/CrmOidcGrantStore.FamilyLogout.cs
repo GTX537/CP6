@@ -25,11 +25,12 @@ internal sealed class CrmOidcFamilyLogoutV1
     public Guid SubjectId { get; init; }
     public Guid StoreId { get; init; }
     public string Issuer { get; init; } = "";
-    public Guid OriginalGrantId { get; init; }
-    public string ClientId { get; init; } = "";
-    public string NonceHash { get; init; } = "";
+    public Guid? OriginalGrantId { get; init; }
+    public string? ClientId { get; init; }
+    public string? NonceHash { get; init; }
     public string RequestHash { get; init; } = "";
     public string GrantPlanJson { get; init; } = "";
+    public string? WebClosePlanJson { get; init; }
     public DateTime? CompletedAtUtc { get; init; }
 }
 
@@ -148,6 +149,7 @@ public sealed partial class SqlCrmOidcGrantStore
 
     internal async Task CompleteAcceptedFamilyAsync(CrmOidcFamilyLogoutV1 accepted, CancellationToken ct)
     {
+        if (accepted.CompletedAtUtc.HasValue) return;
         var seal = _familySeal ?? throw new CrmOidcFamilyLogoutUnavailableException();
         if (_storeFence?.RegisteredStore(accepted.TenantId) != accepted.StoreId || _identity is null ||
             _identity.Options.Issuer != accepted.Issuer || !_identity.Options.Tenants.ContainsKey(accepted.TenantId))
@@ -160,23 +162,19 @@ public sealed partial class SqlCrmOidcGrantStore
         {
             var owner = await ReadAcceptedFamilyAsync(db, tx, accepted.TenantId, accepted.FamilyId, ct);
             if (owner is null || owner.RequestHash != accepted.RequestHash || owner.StoreId != accepted.StoreId ||
-                owner.GrantPlanJson != accepted.GrantPlanJson)
+                owner.GrantPlanJson != accepted.GrantPlanJson || owner.WebClosePlanJson != accepted.WebClosePlanJson)
                 throw new CrmOidcFamilyLogoutUnavailableException();
             if (owner.CompletedAtUtc.HasValue) return true;
 
-            var original = await db.QuerySingleOrDefaultAsync<CrmOidcGrant>(new CommandDefinition("""
-                SELECT * FROM public."CrmOidcGrant"
-                WHERE "Id"=@OriginalGrantId AND "OrganizationId"=@TenantId AND "SubjectId"=@SubjectId AND "Consumed"
-                """, owner, tx, cancellationToken: ct));
-            if (original is null || original.ClientId != owner.ClientId || CrmOidcCrypto.Hash(original.Nonce) != owner.NonceHash ||
-                (await ReadFamilyAsync(db, tx, original, ct))?.Id != owner.FamilyId)
-                throw new CrmOidcFamilyLogoutUnavailableException();
+            var webClose = ReadWebClose(owner);
+            if (webClose is null) await RequireOriginalOidcSourceAsync(db, tx, owner, ct);
 
             var current = await ReadFamilyGrantsAsync(db, tx, owner.TenantId, owner.SubjectId, owner.FamilyId,
                 expected.Select(g => g.GrantId).ToArray(), ct);
             if (!current.Select(g => (g.GrantId, g.AccessExpiresAtUtc)).SequenceEqual(expected.Select(g => (g.GrantId, g.AccessExpiresAtUtc))))
                 throw new CrmOidcFamilyLogoutUnavailableException();
 
+            if (webClose is not null) await ApplyWebCloseAsync(db, tx, webClose, ct);
             var alreadyRevoked = current.Where(g => g.Revoked).Select(g => g.GrantId).ToHashSet();
             if (crm is not null) await seal.SealAndAppendAsync(crm, db, tx, owner, expected, alreadyRevoked, ct);
             var pending = expected.Where(g => !alreadyRevoked.Contains(g.GrantId)).Select(g => g.GrantId).ToArray();
@@ -195,6 +193,17 @@ public sealed partial class SqlCrmOidcGrantStore
                 """, owner, tx, cancellationToken: ct));
             return true;
         }, ct);
+    }
+
+    private static async Task RequireOriginalOidcSourceAsync(DbConnection db, DbTransaction tx, CrmOidcFamilyLogoutV1 owner, CancellationToken ct)
+    {
+        var original = await db.QuerySingleOrDefaultAsync<CrmOidcGrant>(new CommandDefinition("""
+            SELECT * FROM public."CrmOidcGrant"
+            WHERE "Id"=@OriginalGrantId AND "OrganizationId"=@TenantId AND "SubjectId"=@SubjectId AND "Consumed"
+            """, owner, tx, cancellationToken: ct));
+        if (original is null || original.ClientId != owner.ClientId || CrmOidcCrypto.Hash(original.Nonce) != owner.NonceHash ||
+            (await ReadFamilyAsync(db, tx, original, ct))?.Id != owner.FamilyId)
+            throw new CrmOidcFamilyLogoutUnavailableException();
     }
 
     // Called inside the existing issuer root after validating the live native bearer grant.
@@ -273,7 +282,8 @@ public sealed partial class SqlCrmOidcGrantStore
     private const string FamilyLogoutSelect = """
         SELECT tenant_id AS "TenantId", family_id AS "FamilyId", subject_id AS "SubjectId", store_id AS "StoreId",
           issuer AS "Issuer", original_grant_id AS "OriginalGrantId", client_id AS "ClientId", nonce_hash AS "NonceHash",
-          request_hash AS "RequestHash", grant_plan::text AS "GrantPlanJson", completed_at_utc AS "CompletedAtUtc"
+          request_hash AS "RequestHash", grant_plan::text AS "GrantPlanJson", web_close_plan::text AS "WebClosePlanJson",
+          completed_at_utc AS "CompletedAtUtc"
         FROM cp6_authentication_v1.crm_oidc_family_logouts_v1
         """;
 
