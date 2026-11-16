@@ -1,5 +1,7 @@
 # 已完成能力与近期里程碑
 
+2026-11-15，W664 补齐旧菜单 POST、PUT、DELETE 的原件恢复、角色粒度新许可停发与原生两种提交顺序。310 文件本地发布及 PostgreSQL 18.6 启动检查通过。 [W664 交付](../development/evidence/W664-01/DELIVERY.md)
+
 ## 2026-11-15 W662-01 部门 C02 封存
 
 部门和子树在同一 CRM 事务确认原最低版本。冷断连、Main 重启、双端提交应答丢失、原键与旧别名、合法独立角色及旧 CAS 共 17 项实际通过。[W662-01 交付](../development/evidence/W662-01/DELIVERY.md)

@@ -14,6 +14,7 @@ public sealed class CrmInquiryTenantPauseBindingV1
 /// <summary>Records authority changes in the registered CRM store before the Main source commits.</summary>
 public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
 {
+    private const string AdvanceRoleSql = "SELECT crm_inquiry_tenant_pause_v1.advance_role_v1(@tenant,@store,@aggregate,@version)";
     private const string AdvanceIdentitySql = "SELECT crm_inquiry_tenant_pause_v1.advance_identity_v1(@tenant,@store,@aggregate,@version)";
     private readonly Dictionary<Guid, (Guid StoreId, NpgsqlDataSource Source)> bindings = [];
 
@@ -123,7 +124,7 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
     // CRM records the authority boundary while the Main source transaction is still open.
     internal Task AdvanceIdentityAsync(Guid tenant, string aggregate, int version, bool role, CancellationToken ct)
         => AdvanceVersionAsync(tenant, version, role
-            ? "SELECT crm_inquiry_tenant_pause_v1.advance_role_v1(@tenant,@store,@aggregate,@version)"
+            ? AdvanceRoleSql
             : AdvanceIdentitySql, ct, aggregate);
 
     internal Task AdvanceDeadlineAsync(Guid tenant, int version, CancellationToken ct)
@@ -160,14 +161,22 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
     internal static Task AdvanceConnectedRoleAsync(NpgsqlConnection connection, Guid tenant, Guid store,
         string aggregate, int version, CancellationToken ct)
         => AdvanceConnectedVersionAsync(connection, tenant, store, aggregate, version,
-            "SELECT crm_inquiry_tenant_pause_v1.advance_role_v1(@tenant,@store,@aggregate,@version)", ct);
+            AdvanceRoleSql, ct);
 
     internal static Task AdvanceConnectedIdentityAsync(NpgsqlConnection connection, Guid tenant, Guid store,
         string aggregate, int version, CancellationToken ct)
         => AdvanceConnectedVersionAsync(connection, tenant, store, aggregate, version, AdvanceIdentitySql, ct);
 
-    internal static async Task AdvanceConnectedIdentitiesAsync(NpgsqlConnection connection, Guid tenant, Guid store,
+    internal static Task AdvanceConnectedIdentitiesAsync(NpgsqlConnection connection, Guid tenant, Guid store,
         IReadOnlyList<(string Aggregate, int Version)> advances, CancellationToken ct)
+        => AdvanceConnectedBatchAsync(connection, tenant, store, advances, AdvanceIdentitySql, ct);
+
+    internal static Task AdvanceConnectedRolesAsync(NpgsqlConnection connection, Guid tenant, Guid store,
+        IReadOnlyList<(string Aggregate, int Version)> advances, CancellationToken ct)
+        => AdvanceConnectedBatchAsync(connection, tenant, store, advances, AdvanceRoleSql, ct);
+
+    private static async Task AdvanceConnectedBatchAsync(NpgsqlConnection connection, Guid tenant, Guid store,
+        IReadOnlyList<(string Aggregate, int Version)> advances, string sql, CancellationToken ct)
     {
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(ct);
         deadline.CancelAfter(TimeSpan.FromSeconds(8));
@@ -176,7 +185,7 @@ public sealed class CrmInquiryTenantPauseV1 : IAsyncDisposable
             await using var tx = await connection.BeginTransactionAsync(deadline.Token);
             await SetCommitDurabilityAsync(connection, tx, deadline.Token);
             foreach (var (aggregate, version) in advances)
-                await AdvanceVersionInTransactionAsync(connection, tx, tenant, store, version, AdvanceIdentitySql, deadline.Token, aggregate);
+                await AdvanceVersionInTransactionAsync(connection, tx, tenant, store, version, sql, deadline.Token, aggregate);
             await tx.CommitAsync(deadline.Token);
         }
         catch (Exception error) when (error is NpgsqlException or TimeoutException ||

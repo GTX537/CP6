@@ -1,5 +1,7 @@
 # 当前待办与优先级
 
+2026-11-15，继续 PGT-017 的普通网页退出和其他直接凭据写者。全局菜单批次已有真实原生证据，正式整项保持 NOT_RUN。 [W664 交付](../development/evidence/W664-01/DELIVERY.md)
+
 ## 2026-11-15 W662-01 后续验收
 
 已发送封存后，若独立原合法变更推进全树或引用版本，原键保持 UNKNOWN。PGT-017 后续验证全局菜单、普通网页退出与剩余权威。当前 26 PASS / 1 NOT_RUN。[W662-01 交付](../development/evidence/W662-01/DELIVERY.md)
