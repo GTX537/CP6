@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-15，PGT-017 完成 PostgreSQL 正式验收。正式矩阵 27/27，原询盘保持 60/60。 [PGT-017 正式验收](../development/evidence/W645-01/DELIVERY.md)
+
 2026-11-15，W673 已实测已有用户 SSO 首绑的原件恢复和真实双库顺序。登记的最后一个写者已有证据，PGT-017 进入正式总验收。 [W673 交付](../development/evidence/W673-01/DELIVERY.md)
 
 2026-11-15，W672 已验证 Web/native 密码和因子阈值、实际 Main 与 CRM 两库提交顺序、首拒原件与锁定期限。正式 PostgreSQL 仍为 26 项通过，PGT-017 待已存在用户的 SSO 首绑。 [W672 交付](../development/evidence/W672-01/DELIVERY.md)
