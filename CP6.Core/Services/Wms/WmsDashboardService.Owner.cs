@@ -35,7 +35,8 @@ public partial class WmsDashboardService
     public Task<List<WmsTrendPoint>> GetTransactionTrendAsync(int days=30)=>!_db.Database.IsNpgsql()?GetTransactionTrendCoreAsync(days):
         Owner.ExecuteAsync(OperationsOwnerV1.WmsDashboard,"query",false,async(a,ct)=>await GetTransactionTrendCoreAsync(days,await Data(a,false,false,false,ct)));
     public Task<List<WmsWarehouseValueDto>> GetWarehouseValueAsync()=>!_db.Database.IsNpgsql()?GetWarehouseValueCoreAsync():
-        Owner.ExecuteAsync(OperationsOwnerV1.WmsDashboard,"query",false,async(a,ct)=>await GetWarehouseValueCoreAsync(await Data(a,true,false,false,ct)));
+        Owner.ExecuteAsync(OperationsOwnerV1.WmsDashboard,"query",false,async(a,ct)=>await GetWarehouseValueCoreAsync(
+            await Data(a,true,false,false,ct),codes=>a.WarehouseNamesAsync(codes,ct)));
     public Task<WmsAlertSummaryDto> GetAlertsAsync()=>!_db.Database.IsNpgsql()?GetAlertsCoreAsync():
         Owner.ExecuteAsync(OperationsOwnerV1.WmsDashboard,"query",false,async(a,ct)=>await GetAlertsCoreAsync(await Data(a,false,true,false,ct)));
 }
