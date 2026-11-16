@@ -35,13 +35,27 @@ public class CostSettleService : ICostSettleService
         if (sheet == null || sheet.Status == CostSheetStatus.Draft) return FinResult.Fail("E-FIN-403");
         if (sheet.Status == CostSheetStatus.Settled) return FinResult.Fail("E-FIN-402");
 
-        var total = sheet.TotalActual;
+        var version = _db.Database.IsNpgsql() ? await CostCollectionBasisStoreV1.ReadLatestAsync(_db, sheet.Id) : null;
+        var currentAmounts = CostCollectionBasisV1.CostAmountsV1.Capture(sheet);
+        if (version != null)
+        {
+            if (_db.Database.CurrentTransaction == null || !Owns(_db))
+                return FinResult.Fail("FINANCE_OWNER_REQUIRED");
+            if (version.Basis.PolicyVersion != CostCollectionBasisV1.Policy)
+                return FinResult.Fail("COST_POLICY_VERSION_UNAVAILABLE");
+            if (version.Basis.Amounts != currentAmounts)
+                return FinResult.Fail("COST_COLLECTION_VERSION_CONFLICT");
+        }
+        var amounts = version?.Basis.Amounts ?? currentAmounts;
+        var total = amounts.TotalActual;
         if (total <= 0m)
         {
             sheet.Status = CostSheetStatus.Settled;          // 无成本可结转，仅置状态
             sheet.Modifier = user;
             sheet.ModifyDate = DateTime.Now;
             await _db.SaveChangesAsync();
+            if (version != null)
+                await CostCollectionBasisStoreV1.BindSettlementAsync(_db, sheet.Id, version.Number, null, null, null, user);
             return FinResult.Pass();
         }
 
@@ -52,14 +66,12 @@ public class CostSettleService : ICostSettleService
 
         // 拍板②：有标准成本时 FG 按【标准成本】资本化，实际与标准的差异结转 COGS（科目月末自然清零）。
         // 无标准成本（StandardCost<=0，未定义标准的品目）或差异=0 → 维持现状：FG 按实际全额、无差异凭证。
-        var standardCost = sheet.StandardCost;          // 标准料+标准工+标准费
-        var hasStandard = standardCost > 0m;
-        var variance = total - standardCost;            // >0 超支 / <0 有利
-        var fgAmount = hasStandard ? standardCost : total;
+        var variance = amounts.VarianceToExpense;     // >0 超支 / <0 有利
+        var fgAmount = amounts.FinishedGoods;
 
         // 差异腿要用的 COGS 前置解析：缺配置整体 fail 在任何过账前（避免 ①② 已提交后才 141，重试重复凭证）
         Guid? cogs = null;
-        if (hasStandard && variance != 0m)
+        if (variance != 0m)
         {
             cogs = await RoleIdAsync("COGS");
             if (cogs == null) return FinResult.Fail("E-FIN-141", "COGS");
@@ -76,23 +88,23 @@ public class CostSettleService : ICostSettleService
             Description = $"成本归集→在制品 {workOrderNo}",
             Lines = { new JournalLine { AccountId = wip.Value, Debit = total } },
         };
-        if (sheet.MaterialActual > 0m)
+        if (amounts.MaterialActual > 0m)
         {
             var inv = await RoleIdAsync("INVENTORY");
             if (inv == null) return FinResult.Fail("E-FIN-141", "INVENTORY");
-            collect.Lines.Add(new JournalLine { AccountId = inv.Value, Credit = sheet.MaterialActual });
+            collect.Lines.Add(new JournalLine { AccountId = inv.Value, Credit = amounts.MaterialActual });
         }
-        if (sheet.LaborActual > 0m)
+        if (amounts.LaborActual > 0m)
         {
             var lab = await RoleIdAsync("DIRECT_LABOR");
             if (lab == null) return FinResult.Fail("E-FIN-141", "DIRECT_LABOR");
-            collect.Lines.Add(new JournalLine { AccountId = lab.Value, Credit = sheet.LaborActual });
+            collect.Lines.Add(new JournalLine { AccountId = lab.Value, Credit = amounts.LaborActual });
         }
-        if (sheet.OverheadActual > 0m)
+        if (amounts.OverheadActual > 0m)
         {
             var oh = await RoleIdAsync("MFG_OVERHEAD");
             if (oh == null) return FinResult.Fail("E-FIN-141", "MFG_OVERHEAD");
-            collect.Lines.Add(new JournalLine { AccountId = oh.Value, Credit = sheet.OverheadActual });
+            collect.Lines.Add(new JournalLine { AccountId = oh.Value, Credit = amounts.OverheadActual });
         }
         var r1 = await _journal.AutoPostAsync(collect);
         if (!r1.Ok) return r1;
@@ -116,6 +128,7 @@ public class CostSettleService : ICostSettleService
         // ③ 成本差异结转 COGS（拍板②）：仅当有标准成本且差异非零（cogs 已前置解析）。
         //    超支(variance>0) 借 COGS / 贷 WIP；有利(variance<0) 反向 借 WIP / 贷 COGS（|差异|）。
         //    三腿合计 WIP 借贷净零：借WIP(actual) − 贷WIP(standard→FG) ∓ 差异腿 = 0。
+        Guid? varianceJournalId = null;
         if (cogs is Guid cogsId)
         {
             var varEntry = new JournalEntry
@@ -138,6 +151,7 @@ public class CostSettleService : ICostSettleService
             }
             var r3 = await _journal.AutoPostAsync(varEntry);
             if (!r3.Ok) return r3;
+            varianceJournalId = varEntry.Id;
         }
 
         sheet.Status = CostSheetStatus.Settled;
@@ -145,6 +159,8 @@ public class CostSettleService : ICostSettleService
         sheet.Modifier = user;
         sheet.ModifyDate = now;
         await _db.SaveChangesAsync();
+        if (version != null)
+            await CostCollectionBasisStoreV1.BindSettlementAsync(_db, sheet.Id, version.Number, collect.Id, settle.Id, varianceJournalId, user);
         return FinResult.Pass();
     }
 

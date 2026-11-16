@@ -152,7 +152,7 @@ public partial class CostCollectService : ICostCollectService
     }
 
     private async Task<FinResult> SaveCollectionAsync(WorkOrder wo, CostSheet? sheet, List<CostSheetLine> lines,
-        string actor, CancellationToken ct)
+        string actor, CancellationToken ct, (DateTime Date, CostCollectionBasisV1.RateUseV1[] Rates)? rateBasis = null)
     {
         var groups = lines.ToLookup(line => line.Element);
         (decimal Actual, decimal Standard) Totals(CostElement element) =>
@@ -196,6 +196,8 @@ public partial class CostCollectService : ICostCollectService
         foreach (var l in lines) { l.CostSheetId = sheet.Id; sheet.Lines.Add(l); }
 
         await _db.SaveChangesAsync(ct);
+        if (rateBasis is { } basis)
+            await CostCollectionBasisStoreV1.AppendAsync(_db, sheet, basis.Date, basis.Rates, ct);
         return FinResult.Pass();
     }
 

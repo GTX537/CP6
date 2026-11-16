@@ -1,4 +1,5 @@
 using CP6.Core.Services.Erp;
+using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
 using CP6.Entity.DomainModels.Mes;
 using Microsoft.EntityFrameworkCore;
@@ -28,10 +29,16 @@ internal sealed partial class OperationsAccessV1
         // 全租户费率读取权可以查看同租户的历史快照，包括旧库没有费率来源行的记录。
         if (authority.Scope == 5) return sheets;
 
-        // 受限范围仅显示全部工费来源当前可按原工作中心、有效日和保存值核对的成本单。
-        // 任何缺失或超范围的来源都会影响合计及完工单位成本，因而筛掉整张成本单。
+        // 新归集按保存的来源 UUID 读取，旧单仍按原有可证明的费率匹配。
         var rates = ProcessCostRates();
-        return sheets.Where(sheet =>
+        var parents = RateParents();
+        var versioned = CostCollectionBasisStoreV1.VersionedSheetIds(db);
+        var sources = CostCollectionBasisStoreV1.CurrentRates(db);
+        return sheets.Where(sheet => versioned.Contains(sheet.Id)
+            ? !sources.Any(source => source.CostSheetId == sheet.Id
+                && (!parents.Any(center => center.Id == source.WorkCenterId && center.WgCd == source.WorkCenter)
+                    || !rates.Any(rate => rate.Id == source.RateId && rate.WgCd == source.WorkCenter)))
+            :
             ((sheet.LaborActual == 0m && sheet.LaborStandard == 0m) || sheet.Lines.Any(line => line.Element == CostElement.Labor))
             && ((sheet.OverheadActual == 0m && sheet.OverheadStandard == 0m) || sheet.Lines.Any(line => line.Element == CostElement.Overhead))
             && !sheet.Lines.Any(line => (line.Element == CostElement.Labor || line.Element == CostElement.Overhead)
