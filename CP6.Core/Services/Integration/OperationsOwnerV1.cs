@@ -160,6 +160,8 @@ public sealed partial class OperationsOwnerV1
             || System.Transactions.Transaction.Current!=null || db.ChangeTracker.HasChanges()
             || readOnlyAuthorityFence && (write || delegation!=null || actionAtFence!=null)
             || db.ChangeTracker.Entries().Any(e=>IsBusiness(e.Entity.GetType().Name))
+            || resource==FinCost && db.ChangeTracker.Entries().Any(e=>e.Entity is CP6.Entity.DomainModels.Fin.CostSheet
+                or CP6.Entity.DomainModels.Fin.CostSheetLine or CP6.Entity.DomainModels.Fin.FinSequence)
             || resource is PlateMold or ToolSpecification && db.ChangeTracker.Entries<CP6.Entity.DomainModels.Erp.PlateMold>().Any()
             || resource==BusinessPartner && db.ChangeTracker.Entries<CP6.Entity.DomainModels.Erp.BusinessPartner>().Any()
             || resource==Product && db.ChangeTracker.Entries<CP6.Entity.DomainModels.Erp.ProductMaster>().Any()
@@ -247,21 +249,23 @@ public sealed partial class OperationsOwnerV1
         // Legacy soft references and stock writers do not yet share one row-lock protocol.
         // Bounded table fences include raw SQL writers; never perform external I/O inside this transaction.
         await db.Database.ExecuteSqlRawAsync("SET LOCAL lock_timeout = '10s'",ct);
-        var (business,masters)=GraphTableNames(db,resource);
+        var (business,masters)=GraphTableNames(db,resource,write);
         await db.Database.ExecuteSqlRawAsync("LOCK TABLE "+string.Join(",",business)
             +(write?" IN SHARE ROW EXCLUSIVE MODE":" IN SHARE MODE"),ct);
         await db.Database.ExecuteSqlRawAsync("LOCK TABLE "+string.Join(",",masters)
             +(write && resource is Warehouse or Location?" IN SHARE ROW EXCLUSIVE MODE":" IN SHARE MODE"),ct);
     }
 
-    internal static (string[] Business,string[] Masters) GraphTableNames(CP6Context db,string? resource)
+    internal static (string[] Business,string[] Masters) GraphTableNames(CP6Context db,string? resource,bool write=false)
     {
         string Name(string name)
         {
             var entity=db.Model.GetEntityTypes().Single(e=>e.ClrType.Name==name);
             return db.GetService<ISqlGenerationHelper>().DelimitIdentifier(entity.GetTableName()!,entity.GetSchema()??"public");
         }
-        string[] additional=resource switch { ToolInstance or PhysicalSite=>["PlateMoldStock","BusinessPartner","PlateMold"],ToolSpecification=>["PlateMold","PlateMoldStock","BusinessPartner"],PlateMold=>["PlateMold"],Sample=>["SampleStock"],Kitting=>["KitMaster","KitMasterComponent","KitOrder"],Vmi=>["VmiBilling"],Slotting=>["SlottingPlan"],CrossDock=>["CrossDockOrder"],StockDwell or BusinessPartner=>["BusinessPartner"],WorkCenter or ProcessCostRate or FinCost=>["WorkCenter","ProcessCostRate"],Rma=>["RmaHeader","RmaDetail"],Replenish=>["ReplenishOrder"],Mobile=>["MobileTask","MobileTaskEvent","MobileTaskScanLog","TaskCommandReceipt"],_=>[] };
+        string[] additional=resource switch { ToolInstance or PhysicalSite=>["PlateMoldStock","BusinessPartner","PlateMold"],ToolSpecification=>["PlateMold","PlateMoldStock","BusinessPartner"],PlateMold=>["PlateMold"],Sample=>["SampleStock"],Kitting=>["KitMaster","KitMasterComponent","KitOrder"],Vmi=>["VmiBilling"],Slotting=>["SlottingPlan"],CrossDock=>["CrossDockOrder"],StockDwell or BusinessPartner=>["BusinessPartner"],
+            FinCost when write=>["WorkCenter","ProcessCostRate","CostSheet","CostSheetLine","FinSequence"],
+            WorkCenter or ProcessCostRate or FinCost=>["WorkCenter","ProcessCostRate"],Rma=>["RmaHeader","RmaDetail"],Replenish=>["ReplenishOrder"],Mobile=>["MobileTask","MobileTaskEvent","MobileTaskScanLog","TaskCommandReceipt"],_=>[] };
         string[] Names(IEnumerable<string> entities)=>entities.Select(Name).Distinct().Order(StringComparer.Ordinal).ToArray();
         return (Names(BusinessTables.Concat(additional)),
             Names(["WmsRoleScope","Location","Warehouse","OutboundRoutingRule","ProductProcess","ProductMaterial","ProductMaster","MasterGenericCode","DefectCategory","InspectionTemplate"]));

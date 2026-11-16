@@ -11,6 +11,7 @@ public class FinSequenceService : IFinSequenceService
 {
     private readonly CP6Context _db;
     public FinSequenceService(CP6Context db) => _db = db;
+    internal bool Owns(CP6Context context) => ReferenceEquals(_db, context);
 
     public async Task<string> NextAsync(string seqKey, DateTime? date = null)
     {

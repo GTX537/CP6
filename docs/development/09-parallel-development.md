@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+## 2026-11-16 UTC · W686 实时工费归集
+
+COORD 从 Main `f0090ab5a` 复用 DEV-1 / `codex/w686-01`，交付原财务入口的实时归集。29 项定向用例按最终结果通过，其中 14 项真实 PostgreSQL、15 项成本组件回归，零跳过。正常 PR 采用、远端核对后 finish。WP02-03 继续。 [W686 交付](evidence/W686-01/DELIVERY.md)
+
 ## 2026-11-16 UTC · W685 工序费率与历史成本授权
 
 COORD 从 Main `30712bce0` 复用 DEV-1 / `codex/w685-01`，交付 #1214。25 项定向用例按最终结果通过，其中 10 项实际 PostgreSQL、15 项历史成本组件用例，零跳过。正常 PR 采用、远端核对、关闭 Issue 后 finish。WP02-03 继续。 [W685 交付](evidence/W685-01/DELIVERY.md)

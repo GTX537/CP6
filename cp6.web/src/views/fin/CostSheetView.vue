@@ -2,7 +2,7 @@
   <div class="cost-sheet">
     <div class="page-header">
       <h2>{{ t('成本核算') }}</h2>
-      <span class="subtitle">{{ t('料吃MES真实消耗×BOM单价，工费标准估算；完工结转 WIP→FG') }}</span>
+      <span class="subtitle">{{ t('按材料消耗、工时和有效费率归集成本，完工后单独结转') }}</span>
     </div>
 
     <el-card shadow="never">
@@ -117,7 +117,7 @@
         <el-form-item :label="t('标准制造费用')">
           <el-input-number v-model="form.overheadStd" :min="0" :precision="2" controls-position="right" style="width: 100%" />
         </el-form-item>
-        <el-alert type="info" :closable="false" :title="t('料成本自动取该工单 MES 实际消耗 × BOM 供给单价')" />
+        <el-alert type="info" :closable="false" :title="t('PostgreSQL 按工单实绩和有效费率归集，上方估算金额供历史系统兼容')" />
       </el-form>
       <template #footer>
         <el-button @click="collectVisible = false">{{ t('取消') }}</el-button>

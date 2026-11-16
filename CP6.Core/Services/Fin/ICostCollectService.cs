@@ -4,13 +4,13 @@ namespace CP6.Core.Services.Fin;
 
 /// <summary>
 /// 成本归集（章06 §2/§3）。★差异化卖点：料吃 MES 真实消耗（WorkOrderMaterial.ActualQty）× BOM 供给单价，
-/// 工费按标准估算（F3-D1）。按工单一单一成本单，可重复归集（覆盖，已结转的拒绝）。
+/// PostgreSQL 工费采用当前授权的工序费率。按工单一单一成本单，可重算未结转成本单。
 /// </summary>
 public interface ICostCollectService
 {
     /// <summary>
     /// 归集某工单的料工费 → 成本单：料 = Σ 实际用量×BOM供给单价（标准 = 计划用量×单价，差额即用量差异）；
-    /// 工/费 = 传入标准估算额。完工数取工单累计良品数。幂等（重复调用覆盖，已结转则 E-FIN-402）。
+    /// 人工和制造费用按工时乘以费率。传入估算额和操作者文本供历史迁移路径使用。
     /// </summary>
     Task<FinResult> CollectAsync(string workOrderNo, decimal laborStd, decimal overheadStd, string user);
 

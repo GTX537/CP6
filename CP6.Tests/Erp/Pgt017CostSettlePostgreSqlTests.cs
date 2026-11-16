@@ -159,7 +159,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
 
     [CurrentPermissionPostgresFact]
-    public async Task PGT017_cost_collect_still_rejects_before_any_native_write()
+    public async Task PGT017_cost_collect_without_work_order_query_rejects_before_any_native_write()
     {
         await using var writer = await Seed();
         await SeedCostSettlement(writer);
@@ -172,8 +172,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 
         using var response = await host.Send(OperationsRequest(actor, HttpMethod.Post,
             $"/api/fin/cost/{CostSettlementWorkOrder}/collect", new { LaborStd = 18.34m, OverheadStd = 6.50m }));
-        Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
-        Assert.Contains("FINANCE_OWNER_REQUIRED", await response.Content.ReadAsStringAsync());
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        Assert.Contains("ACTION_FORBIDDEN", await response.Content.ReadAsStringAsync());
         Assert.Equal(before, await ReadCostSettlement(observer, writer.Tenant));
     }
 

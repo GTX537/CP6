@@ -85,8 +85,10 @@ public partial class FinBridgeHook : BridgeHookBase, IFinBridgeHook
         var user = userName ?? "system";
         try
         {
-            // ① 成本归集：工费留 0（自动归集只吃料真实反冲消耗，工费/制费由财务补录标准估算后再结转）。
-            var collect = await _cost.CollectAsync(workOrderNo, 0m, 0m, user);
+            // MES 完工回调只有工单号和操作者文本，不能授予独立归集和结转权限。
+            var collect = Db.Database.IsNpgsql()
+                ? FinResult.Fail("FINANCE_OWNER_REQUIRED")
+                : await _cost.CollectAsync(workOrderNo, 0m, 0m, user);
             if (!collect.Ok)
             {
                 // E-FIN-402 = 成本单已结转（重复完工事件）→ 幂等跳过，不重复归集/结转。
