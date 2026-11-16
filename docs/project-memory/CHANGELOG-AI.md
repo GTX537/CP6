@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-16，W684 从 Main 0686fc6d5 复用 DEV-1，修复 #1211 的发货开票原生订单行价。9 项实际 PostgreSQL 定向用例按最终结果通过，零跳过。 [W684 交付](../development/evidence/W684-01/DELIVERY.md)
+
 2026-11-16，W683 从 Main 722fa775d 复用 DEV-1，把选中库存单价的来源权限纳入出库分配事务，修复 #1210。26 项本地 PostgreSQL 定向用例通过，含实际 Program/HTTP，零失败、零跳过。 [W683 交付](../development/evidence/W683-01/DELIVERY.md)
 
 2026-11-16，W682 从 Main 2f6e885dc 复用 DEV-1 并修复 #1207。新增 PostgreSQL 权限目录前向迁移，适配 Vue 保存和导出，并同步当前索引及台账。18 个不同用例按最新适用结果通过（12 个 PostgreSQL，含 4 个实际 HTTP 场景，6 个种子和 ERP 单元回归），零跳过。vue-tsc 通过。 [W682 交付](../development/evidence/W682-01/DELIVERY.md)

@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+## 2026-11-16 UTC · W684 发货开票单价匹配
+
+COORD 从 Main `0686fc6d5` 复用 DEV-1 / `codex/w684-01`，修复 #1211。9 项实际 PostgreSQL 定向用例按最终结果通过，零跳过。正常 PR 采用、远端核对、关闭 Issue 后 finish。WP02-03 继续。 [W684 交付](evidence/W684-01/DELIVERY.md)
+
 ## 2026-11-16 UTC · W683 库存与收发货单价
 
 COORD 从 Main `722fa775d` 复用 DEV-1 / `codex/w683-01`，完成 #1210。26 项本地 PostgreSQL 定向用例通过，含实际 Program/HTTP，零失败、零跳过。正常 PR 采用、远端核对、关闭 Issue 后 finish。WP02-03 继续，下一窗口 #1211。 [W683 交付](evidence/W683-01/DELIVERY.md)
