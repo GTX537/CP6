@@ -1,5 +1,7 @@
 # 当前待办与优先级
 
+2026-11-16，接续 W678 核销个人表单/附件、Operations 受控字段派生输出、文件与受控文档 v1 的用途边界；同时沿 [Issue1202](https://github.com/GTX537/CP6/issues/1202) 逐项核对两个旧属性扫描报告的真实入口。只修复确认缺口，复用已通过证据。后续界面/提示/文档以简体中文为标准，历史执行原文保留。 [核销入口](../development/authorization/current-main/README.md)
+
 2026-11-16，下一窗口核销当前 Main 的资源—字段—query/write/export/download—实际入口，复用已通过证据，随后只补确认缺口。旧 PGT-017、30 分钟缓存整改和“字段V1未接线”不再是当前待办。Space 专用组合沿 WP13-04 采用；不等待真实企业数据，不重跑未变 PGT。 [W677 复核](../development/evidence/W677-01/DELIVERY.md)
 
 2026-11-16，下一步正常合并 W676 并核对远端主线，登记 WP02-02 整卡 DONE；随后按原卡复核 WP02-03 的当前授权/撤权最终门、字段级来源及实际消费者。已通过的 PGT 和恢复实测直接复用，不将其他目标自动提升。 [W676 交付](../development/evidence/W676-01/DELIVERY.md)
