@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-16，W678 建立 81 资源、114 受控字段及实际 MVC 路由核销入口，补齐订单信用额度/预存销售数量检查的当前字段及对象范围。本次相关 54 项均有适用成功证据，原失败及额外历史扫描问题保留；WP02-03 仍 IN_PROGRESS，原卡/PGT/询盘计数保持。用户决定简体中文为项目标准，已写入 AGENTS，本轮订单提示已调整。 [W678 交付与余项](../development/evidence/W678-01/DELIVERY.md)
+
 2026-11-16，W676 已核对远端 Main 343624813，WP02-02 整卡 DONE；W677 复核后 WP02-03 进入 IN_PROGRESS，聚焦当前 Main 字段与四用途的实际消费者覆盖。实施卡 39 DONE / 1 IN_PROGRESS / 335 PLANNED；PGT 27/27、询盘 60/60、125 完整目标 0 DONE 保持。 [W677 复核](../development/evidence/W677-01/DELIVERY.md)
 
 2026-11-16，W676 的 RMA 存储 v2/v12 完整归档、五项关闭候选和同源恢复已在 PostgreSQL 18.6 通过；当前权限、失败回滚、同键原件和 B 租户保持。WP02-02 进入 VERIFYING，待正常 PR 远端回执结项；WP02-03 仍 PLANNED。PGT 27/27、询盘 60/60 保持。 [W676 交付](../development/evidence/W676-01/DELIVERY.md)

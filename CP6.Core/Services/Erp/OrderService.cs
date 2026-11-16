@@ -739,13 +739,22 @@ public partial class OrderService : IOrderService
         });
     }
 
-    public async Task<CreditCheckResultDto> CheckCreditAsync(string customerCd, decimal newOrderAmount)
+    public Task<CreditCheckResultDto> CheckCreditAsync(string customerCd, decimal newOrderAmount)
+        => _db.Database.IsNpgsql() ? ReadCreditAsync(customerCd, newOrderAmount)
+            : CheckCreditCoreAsync(customerCd, newOrderAmount);
+
+    private async Task<CreditCheckResultDto> CheckCreditCoreAsync(string customerCd, decimal newOrderAmount)
     {
-        // 与信マスタが存在しない環境ではダミー：得意先別 受注合計が 1,000万円 を超えると警告
-        const decimal defaultLimit = 10_000_000m;
+        // 保留原临时额度规则：客户订单余额与新增金额超过一千万时提示。
         var balance = await _db.OrderDetails.AsNoTracking()
             .Where(x => !x.IsDeleted && x.HaibaiNo2 == customerCd)
             .SumAsync(x => (decimal?)x.Amount ?? 0m);
+        return CreditResult(balance, newOrderAmount);
+    }
+
+    private static CreditCheckResultDto CreditResult(decimal balance, decimal newOrderAmount)
+    {
+        const decimal defaultLimit = 10_000_000m;
         var isOver = (balance + newOrderAmount) > defaultLimit;
         return new CreditCheckResultDto
         {
@@ -753,20 +762,23 @@ public partial class OrderService : IOrderService
             CreditLimit = defaultLimit,
             Balance = balance,
             Message = isOver
-                ? $"与信限度額 {defaultLimit:N0} を超過します（残高: {balance:N0} + 新規: {newOrderAmount:N0}）"
-                : "与信範囲内",
+                ? $"已超过信用额度 {defaultLimit:N0}（余额：{balance:N0} + 新增金额：{newOrderAmount:N0}）"
+                : "未超过信用额度",
         };
     }
 
-    public async Task<bool> CheckConsignedSalesQtyAsync(string webOrderNo, int webOrderDetailNo, decimal consignedSalesQty)
+    public Task<bool> CheckConsignedSalesQtyAsync(string webOrderNo, int webOrderDetailNo, decimal consignedSalesQty)
+        => _db.Database.IsNpgsql() ? ReadConsignedCheckAsync(webOrderNo, webOrderDetailNo, consignedSalesQty)
+            : CheckConsignedSalesQtyCoreAsync(webOrderNo, webOrderDetailNo, consignedSalesQty);
+
+    private async Task<bool> CheckConsignedSalesQtyCoreAsync(string webOrderNo, int webOrderDetailNo, decimal consignedSalesQty)
     {
-        // Rev4：預り売上数 ≤ 受注残数（=受注数量 − 既出荷数 − 既預り売上数）
-        // 出荷数の連携が無い環境では「預り売上数 ≤ 受注数量」のみで判定
+        // 保留原规则：未接入出货数量时，仅判断预存销售数量是否不超过订单数量。
         var d = await _db.OrderDetails.AsNoTracking()
             .Where(x => x.WebOrderNo == webOrderNo && x.WebOrderDetailNo == webOrderDetailNo && !x.IsDeleted)
             .Select(x => new { x.Quantity })
             .FirstOrDefaultAsync();
-        if (d == null) return true; // 新規行は OK
+        if (d == null) return true; // 尚未保存的新行保留原结果。
         var orderQty = d.Quantity ?? 0m;
         return consignedSalesQty <= orderQty;
     }

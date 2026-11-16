@@ -105,16 +105,18 @@ public class OrderController : LocalizedControllerBase
         return Ok(new { code = 0, message = "OK", data = r });
     }
 
-    /// <summary>与信チェック — GET /api/orders/credit-check</summary>
+    /// <summary>信用额度检查 — GET /api/orders/credit-check</summary>
     [HttpGet("credit-check")]
+    [RequirePermission("erp-order", "query")]
     public async Task<IActionResult> CreditCheck([FromQuery] string customerCd, [FromQuery] decimal amount)
     {
         var r = await _service.CheckCreditAsync(customerCd, amount);
         return Ok(new { code = 0, message = "OK", data = r });
     }
 
-    /// <summary>預り売上数チェック — GET /api/orders/consigned-check</summary>
+    /// <summary>预存销售数量检查 — GET /api/orders/consigned-check</summary>
     [HttpGet("consigned-check")]
+    [RequirePermission("erp-order", "query")]
     public async Task<IActionResult> ConsignedCheck(
         [FromQuery] string webOrderNo, [FromQuery] int detailNo, [FromQuery] decimal qty)
     {

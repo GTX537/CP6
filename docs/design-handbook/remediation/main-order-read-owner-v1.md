@@ -1,5 +1,7 @@
 # 普通订单读取 Owner v1
 
+2026-11-16 W678 扩展为内部映射 `Main.Order.Read.Owner.v1.1`。原入口、字段域和所有合法数据类型保持，新增 GET `/api/orders/credit-check` 与 `/api/orders/consigned-check` 的服务读取边界，均要求当前 `erp-order:query`。与信 `balance/isOver/message` 属于 Amount 派生披露，依赖 UnitPrice；完整客户集合中任何行不在当前 Owner 范围时整体拒绝，不能返回部分余额。数量检查不读受控价格字段，仍核对对象范围；真实不存在的新行保留原 true 语义。二者进入现有读取事务及最终授权门，不以 Controller 属性替代服务保护。原临时额度、输入、原生业务键与 decimal 精度不变；这不代表正式与信政策或外部集成已验收。见 [W678](../../development/evidence/W678-01/DELIVERY.md)。下文保留原 v1 采用范围。
+
 W34，Main ERP代码Owner／COORD维护。`Main.Order.Read.Owner.v1`仅批准本文普通订单读取用途，采用[SYS-IAM-01](../modules/SYS-IAM-01.md)完整字段域及[W33可信部门绑定](main-order-price-correction-owner-v2.md)。依据是同任务实现、相关行为验证及一次作者SPEC/QUALITY；不代替真实租户授权、正式外部合同或全业务验收。
 
 ## 实际入口与独立用途
