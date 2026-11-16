@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <Reference Include="$(PackageRoot)/CP6.Core.dll" Private="false" />
+    <Reference Include="$(PackageRoot)/Microsoft.Extensions.*.dll" />
+    <Reference Include="$(PackageRoot)/System.Diagnostics.DiagnosticSource.dll" />
+  </ItemGroup>
+  <Target Name="RequirePublishedPackage" BeforeTargets="ResolveReferences">
+    <Error Condition="!Exists('$(PackageRoot)/CP6.WebApi.dll')" Text="PackageRoot 必须指向已采用的 Main 程序集目录。" />
+  </Target>
+</Project>

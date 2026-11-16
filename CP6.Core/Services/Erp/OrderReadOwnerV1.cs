@@ -10,7 +10,7 @@ namespace CP6.Core.Services.Erp;
 /// <summary>Repository-owned ordinary Order read/export/download mapping; never a write grant.</summary>
 public sealed partial class OrderReadOwnerV1
 {
-    internal const string MappingVersion = "Main.Order.Read.Owner.v1";
+    internal const string MappingVersion = "Main.Order.Read.Owner.v1.1";
     private readonly CP6Context db;
     private readonly IHttpContextAccessor http;
     private readonly Func<CancellationToken, Task<Guid>> currentActor;
@@ -35,6 +35,9 @@ public sealed partial class OrderReadOwnerV1
             .Select(path => new FieldPermissionMappingV1("UnitPrice", FieldPermissionUseV1.Read,
                 "/order/details/*/" + path, true, [])))
         .Append(new("Amount", FieldPermissionUseV1.Read, "/order/details/*/amount", true, ["UnitPrice"]))
+        .Concat(new[] { "balance", "isOver", "message" }.Select(path =>
+            new FieldPermissionMappingV1("Amount", FieldPermissionUseV1.Read,
+                "/credit-check/" + path, true, ["UnitPrice"])))
         .ToArray();
 
     internal sealed record Access(IQueryable<OrderDetail> Rows, IQueryable<Order> Headers, bool Price, bool Amount);
