@@ -24,6 +24,8 @@ public class FiscalPeriodService : IFiscalPeriodService
         _fyStart = fiscalYearStartMonth is >= 1 and <= 12 ? fiscalYearStartMonth : 1;
     }
 
+    internal bool Owns(CP6Context context) => ReferenceEquals(_db, context);
+
     public (int FiscalYear, int PeriodNo) ComputeFiscal(int year, int month)
     {
         var periodNo = ((month - _fyStart + 12) % 12) + 1;

@@ -224,7 +224,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Empty(collect.Invocations);
         Assert.Empty(settle.Invocations);
         var error = await h.Db.IntegrationEvents.AsNoTracking().SingleAsync(x => x.SourceNo == number);
-        Assert.Equal(IntegrationEventStatus.Failed, error.Status);
+        Assert.Equal(IntegrationEventStatus.DeadLetter, error.Status);
+        Assert.Null(error.NextRetryAt);
         Assert.Equal("FINANCE_OWNER_REQUIRED", error.LastError);
         Assert.False(await h.Db.CostSheets.AnyAsync());
         Assert.False(await h.Db.FinSequences.AnyAsync());

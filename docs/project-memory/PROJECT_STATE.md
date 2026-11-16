@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-16，MES 最终工序完工与材料反冲后接入当前授权的财务归集和结转。24 项定向用例通过，其中 18 项使用 PostgreSQL，6 项为成本组件回归，零跳过。WP02-03 继续。 [W687 交付](../development/evidence/W687-01/DELIVERY.md)
+
 2026-11-16，现有 PostgreSQL 手工实时归集接入 Finance Owner。29 项定向用例按最终结果通过，其中 14 项真实 PostgreSQL、15 项成本组件回归，零跳过。WP02-03 继续。 [W686 交付](../development/evidence/W686-01/DELIVERY.md)
 
 2026-11-16，W685 修复 #1214，历史成本和派生金额接入当前财务及工序费率授权。25 项定向用例按最终结果通过，其中 10 项实际 PostgreSQL、15 项历史成本组件用例，零跳过。WP02-03 继续。 [W685 交付](../development/evidence/W685-01/DELIVERY.md)

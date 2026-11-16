@@ -151,6 +151,13 @@ public class IntegrationEventRetryWorker : BackgroundService
                 continue;
             }
 
+            if (native && FinBridgeHook.IsLegacyWorkOrderCompletionEvent(evt))
+            {
+                db.Entry(evt).State = EntityState.Detached;
+                await StopLegacyWorkOrderFinanceRetryAsync(tenantId, evt.Id, now, ct);
+                continue;
+            }
+
             if (native && ErpBridgeHook.IsShipmentProjectionEvent(evt))
             {
                 db.Entry(evt).State = EntityState.Detached;
@@ -225,6 +232,31 @@ public class IntegrationEventRetryWorker : BackgroundService
             throw new InvalidOperationException("WMS_ERP_OWNER_TRANSACTION_REQUIRED");
         if (await erp.ProcessShipmentProjectionAsync(eventId, now, _opts, ct) is { } dead)
             await sp.GetRequiredService<IDeadLetterNotifier>().NotifyAsync(dead, ct);
+    }
+
+    private async Task StopLegacyWorkOrderFinanceRetryAsync(Guid tenantId, Guid eventId, DateTime now, CancellationToken ct)
+    {
+        using var scope = _scopeFactory.CreateScope();
+        var sp = scope.ServiceProvider;
+        sp.GetRequiredService<ITenantContext>().CurrentTenantId = tenantId;
+        var db = sp.GetRequiredService<CP6Context>();
+        await using var txn = await db.Database.BeginTransactionAsync(ct);
+        await AuthenticationCompletionGateV1.AcquireAsync(db, ct);
+        var evt = await db.IntegrationEvents.SingleOrDefaultAsync(row => row.Id == eventId && row.TenantId == tenantId
+            && row.Status == IntegrationEventStatus.Failed && row.NextRetryAt <= now && row.Attempts < _opts.MaxAttempts, ct);
+        if (evt == null || !FinBridgeHook.IsLegacyWorkOrderCompletionEvent(evt))
+            return;
+
+        evt.Status = IntegrationEventStatus.DeadLetter;
+        evt.LastError = "FINANCE_OWNER_REQUIRED";
+        evt.NextRetryAt = null;
+        await db.SaveChangesAsync(ct);
+        if (!await db.Sys_Tenants.AsNoTracking().AnyAsync(row => row.Id == tenantId && row.Enable
+            && (row.ExpireDate == null || row.ExpireDate > DateTime.Now), ct))
+            return;
+
+        await txn.CommitAsync(ct);
+        await sp.GetRequiredService<IDeadLetterNotifier>().NotifyAsync(evt, ct);
     }
 
     private async Task ProcessStockFinanceEventAsync(Guid tenantId, Guid eventId, DateTime now, CancellationToken ct)

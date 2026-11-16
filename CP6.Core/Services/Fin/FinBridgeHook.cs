@@ -16,13 +16,16 @@ public partial class FinBridgeHook : BridgeHookBase, IFinBridgeHook
     private readonly IArInvoiceService _ar;
     private readonly ICostCollectService _cost;
     private readonly ICostSettleService _settle;
+    private readonly OperationsOwnerV1? _operations;
 
-    public FinBridgeHook(CP6Context db, IArInvoiceService ar, ICostCollectService cost, ICostSettleService settle, ILogger<FinBridgeHook> logger)
+    public FinBridgeHook(CP6Context db, IArInvoiceService ar, ICostCollectService cost, ICostSettleService settle,
+        ILogger<FinBridgeHook> logger, OperationsOwnerV1? operations = null)
         : base(db, logger)
     {
         _ar = ar;
         _cost = cost;
         _settle = settle;
+        _operations = operations;
     }
 
     public async Task<FinBridgeResult> OnShipmentConfirmedAsync(FinShipmentInvoiceRequest request, string? userName)
@@ -85,10 +88,14 @@ public partial class FinBridgeHook : BridgeHookBase, IFinBridgeHook
         var user = userName ?? "system";
         try
         {
-            // MES 完工回调只有工单号和操作者文本，不能授予独立归集和结转权限。
-            var collect = Db.Database.IsNpgsql()
-                ? FinResult.Fail("FINANCE_OWNER_REQUIRED")
-                : await _cost.CollectAsync(workOrderNo, 0m, 0m, user);
+            if (Db.Database.IsNpgsql())
+            {
+                await PersistEventAsync("MES", "FIN", nameof(OnWorkOrderCompletedAsync), workOrderNo, null,
+                    IntegrationEventStatus.DeadLetter, "FINANCE_OWNER_REQUIRED", corrId,
+                    new { workOrderNo, userName, step = "collect" }, userName);
+                return FinBridgeResult.Failed("FINANCE_OWNER_REQUIRED");
+            }
+            var collect = await _cost.CollectAsync(workOrderNo, 0m, 0m, user);
             if (!collect.Ok)
             {
                 // E-FIN-402 = 成本单已结转（重复完工事件）→ 幂等跳过，不重复归集/结转。
