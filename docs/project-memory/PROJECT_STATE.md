@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-15，W665 验证普通 Web 退出和两个既有完成入口的 CRM 家族封存，26 通过、0 跳过。正式 PostgreSQL 仍为 26 通过，PGT-017 待完成精确 access 退出、刷新重放和其他直接凭据写者。 [W665 交付](../development/evidence/W665-01/DELIVERY.md)
+
 2026-11-15，W664 验证全局旧菜单的三个写入口与两库 CRM 共享事务顺序，定向 19 项通过、0 跳过。PostgreSQL 正式矩阵仍为 26 通过，PGT-017 待完成普通 Web 退出及直接凭据写者。 [W664 交付](../development/evidence/W664-01/DELIVERY.md)
 
 ## 2026-11-15 W662-01 部门权限封存恢复

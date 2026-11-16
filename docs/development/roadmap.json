@@ -166207,6 +166207,11 @@
       "at": "2026-11-16T00:35:31.597590+00:00",
       "change": "W664 补齐全局旧菜单 POST/PUT/DELETE 的共享 PostgreSQL 授权根和两物理 CRM Store 原件封存，实测两种提交顺序及双 COMMIT 应答丢失。",
       "evidence": "docs/development/evidence/W664-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-16T01:01:49.583273+00:00",
+      "change": "W665 将普通 Web 退出和原 completion/browser capability 接入原 PostgreSQL 家族封存，实测原生两序、冷重启及两个提交应答丢失。",
+      "evidence": "docs/development/evidence/W665-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -212213,10 +212218,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W664",
-      "path": "docs/development/evidence/W664-01/DELIVERY.md",
-      "baseline_sha": "b396445131a330d1a8ddd4cc057d39dc4cb68b6c",
-      "registered_at": "2026-11-15T23:23:06.658300+00:00",
+      "id": "W665",
+      "path": "docs/development/evidence/W665-01/DELIVERY.md",
+      "baseline_sha": "70dd831ab58f75d66a67dc367e73bd09f83919c0",
+      "registered_at": "2026-11-15T23:43:44.520385+00:00",
       "phase": "BOUNDED_DELIVERIES_INTEGRATED",
       "assigned_chats": [
         "COORD"
@@ -212230,11 +212235,11 @@
       "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": true,
-      "next_action": "在 W665 验证普通 Web 家族关闭；与直接密码及管理员 2FA 重置的独立测试准备并行。",
+      "next_action": "在 W666 验证自助改密与管理员 2FA 重置，独立验证服务登记冷恢复并准备精确 access 退出和真实 refresh replay。",
       "windows": [
         {
-          "id": "W664-01",
-          "workspace_task": "W664-01",
+          "id": "W665-01",
+          "workspace_task": "W665-01",
           "related_tasks": [
             "PGT-017",
             "WP02-03"
@@ -212244,27 +212249,27 @@
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w664-01",
-          "planned_scope_ref": "docs/development/evidence/W664-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W664-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w665-01",
+          "planned_scope_ref": "docs/development/evidence/W665-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W665-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main 全局旧菜单及跨租户角色 C02",
-            "CRM 两物理 Store 的角色授权根"
+            "Main Web 刷新家族、原完成能力与 C02 存储",
+            "CRM 原家族 Grant、原生封存根及恢复 Worker"
           ],
           "main_branch_disposition": "pending-final-finish-record",
           "main_seat_released": false,
-          "validation_summary": "PostgreSQL 18.6 和实际签名 Kestrel 19 通过、0 跳过，实际 CRM 受理两种顺序、第二库拒接、两库精确封存、CRM 与 Main COMMIT 应答丢失、同原请求恢复。310 文件本地发布通过 200/401 和前向迁移。",
-          "remaining_scope": "普通 Web 退出及其他直接凭据写者继续实测。PGT-017 保持 NOT_RUN，WP02-03 独立记录。",
-          "main_tested_source_sha": "d256b373577bab5ac1d0edad407b4933e124c875"
+          "validation_summary": "PostgreSQL 18.6 与实际 Main/Kestrel 和已采用 CRM 共 26 通过、0 跳过，普通退出及两个完成入口覆盖首连拒接、进程重启、双 COMMIT 应答丢失和真实受理两种提交顺序；保留原权限、正常独立家族和各项审核语义。",
+          "remaining_scope": "只带 access 的退出、真正刷新重放和其他直接凭据写者按原权限及写效果继续验证。PGT-017 保持 NOT_RUN，WP02-03 独立记录。",
+          "main_tested_source_sha": "9d96c80d5121ab3567184e4da767b47787a4cc3f"
         }
       ],
       "storage": {
         "reuse_worktrees": [
-          "D:/CP6-worktrees/dev-2"
+          "D:/CP6-worktrees/wave17-dispatch-20261018"
         ],
         "new_worktrees": 0
       },
@@ -270382,6 +270387,66 @@
         "storage": {
           "reuse_worktrees": [
             "D:/CP6-worktrees/wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "product_integrated": true
+      },
+      {
+        "id": "W664",
+        "path": "docs/development/evidence/W664-01/DELIVERY.md",
+        "baseline_sha": "b396445131a330d1a8ddd4cc057d39dc4cb68b6c",
+        "registered_at": "2026-11-15T23:23:06.658300+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "next_action": "在 W665 验证普通 Web 家族关闭；与直接密码及管理员 2FA 重置的独立测试准备并行。",
+        "windows": [
+          {
+            "id": "W664-01",
+            "workspace_task": "W664-01",
+            "related_tasks": [
+              "PGT-017",
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w664-01",
+            "planned_scope_ref": "docs/development/evidence/W664-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W664-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main 全局旧菜单及跨租户角色 C02",
+              "CRM 两物理 Store 的角色授权根"
+            ],
+            "main_branch_disposition": "deleted-local-and-remote",
+            "main_seat_released": true,
+            "validation_summary": "PostgreSQL 18.6 和实际签名 Kestrel 19 通过、0 跳过，实际 CRM 受理两种顺序、第二库拒接、两库精确封存、CRM 与 Main COMMIT 应答丢失、同原请求恢复。310 文件本地发布通过 200/401 和前向迁移。",
+            "remaining_scope": "普通 Web 退出及其他直接凭据写者继续实测。PGT-017 保持 NOT_RUN，WP02-03 独立记录。",
+            "main_tested_source_sha": "d256b373577bab5ac1d0edad407b4933e124c875",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/1184",
+            "main_remote_main_sha": "a3a4e3ca179cfc0430e5f65e4b5e7ed400ed12c1"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:/CP6-worktrees/dev-2"
           ],
           "new_worktrees": 0
         },

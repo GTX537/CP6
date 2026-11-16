@@ -1,5 +1,7 @@
 # 当前待办与优先级
 
+2026-11-15，继续 PGT-017 自助改密、管理员 2FA 重置、精确 access 退出和实际 refresh replay。服务登记的受控重启恢复可并行核验。 [W665 交付](../development/evidence/W665-01/DELIVERY.md)
+
 2026-11-15，继续 PGT-017 的普通网页退出和其他直接凭据写者。全局菜单批次已有真实原生证据，正式整项保持 NOT_RUN。 [W664 交付](../development/evidence/W664-01/DELIVERY.md)
 
 ## 2026-11-15 W662-01 后续验收
