@@ -66,7 +66,9 @@ public sealed class AuthenticationCompletionRecoveryV1(CP6Context db)
                     state = rejected ? "CLOSED" : pending ? "COMPLETION_UNKNOWN" : state;
                 }
             }
-            if (close)
+            if (close && targetHash is null && await IamCrmUserSealV1.CompletionSealStartedAsync(db, completion, ct))
+                state = "COMPLETION_UNKNOWN";
+            else if (close)
             {
                 var web = request.ClientKind == "Web" && deferWebClose is not null
                     ? await WebAuthenticationFamilyClosureV1.PrepareAsync(db, WebAuthenticationCloseKindV1.Completion, originalHash,
@@ -99,6 +101,7 @@ public sealed class AuthenticationCompletionRecoveryV1(CP6Context db)
             await store.RejectGenerationAsync(targetHash, false, ct);
             return;
         }
+        await IamCrmUserSealV1.CloseCompletionAsync(db, completion, ct);
         await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_authentication_v1.interactions SET state='rejected',lease=NULL WHERE completion_id={completion}", ct);
         foreach (var root in await WebAuthenticationFamilyClosureV1.RootHashesAsync(db, completion, ct))
             await store.RejectGenerationAsync(root, false, ct);

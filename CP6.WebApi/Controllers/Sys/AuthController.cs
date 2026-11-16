@@ -470,6 +470,7 @@ public partial class AuthController : LocalizedControllerBase
     [Authorize]
     public async Task<IActionResult> TwoFactorSetupSelf()
     {
+        if (_context.Database.IsNpgsql()) return await PgSetupSelf();
         var uid = (await _perm.GetAsync()).UserId;
         var user = await _context.Sys_Users.FirstAsync(u => u.Id == uid);
         if (user.TwoFactorEnabled) throw new BizException("E-SEC-017");
@@ -485,6 +486,7 @@ public partial class AuthController : LocalizedControllerBase
     [Authorize]
     public async Task<IActionResult> TwoFactorEnrollSelf([FromBody] TwoFactorCodeRequest req)
     {
+        if (_context.Database.IsNpgsql()) return await PgEnrollSelf(req);
         var uid = (await _perm.GetAsync()).UserId;
         var user = await _context.Sys_Users.FirstAsync(u => u.Id == uid);
         if (!await _2fa.ConfirmEnrollmentAsync(user, req.Code))
@@ -498,6 +500,7 @@ public partial class AuthController : LocalizedControllerBase
     [Authorize]
     public async Task<IActionResult> TwoFactorDisableSelf([FromBody] DisableTwoFactorRequest req)
     {
+        if (_context.Database.IsNpgsql()) return await PgDisableSelf(req);
         var uid = (await _perm.GetAsync()).UserId;
         var user = await _context.Sys_Users.FirstAsync(u => u.Id == uid);
 

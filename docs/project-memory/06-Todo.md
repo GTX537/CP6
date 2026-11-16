@@ -1,5 +1,7 @@
 # 当前待办与优先级
 
+2026-11-15，继续 PGT-017 的已批准身份资料处置、QuickPIN、实际锁定与 SSO 首绑。2FA 的现有测试和实测原件证据已归档。 [W668 交付](../development/evidence/W668-01/DELIVERY.md)
+
 2026-11-15，PGT-017 继续剩余 2FA 原写者、已批准身份处置和其他已登记的当期权限变更。精确 access 和 refresh 重用已有真实双库证据。 [W667 交付](../development/evidence/W667-01/DELIVERY.md)
 
 2026-11-15，继续精确 access 退出、真实 refresh replay 和剩余凭据写者。W669 的 Basic V2 全宿主验证接续已有服务登记两库恢复。 [W669 交付](../development/evidence/W669-01/DELIVERY.md)
