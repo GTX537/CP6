@@ -81,6 +81,7 @@ public class CsrfMiddleware
            // This exact service endpoint uses explicit Basic credentials, never ambient cookies.
            || path.Equals("/connect/inquiry-service-permission", StringComparison.OrdinalIgnoreCase)
            || path.Equals("/connect/inquiry-service-context", StringComparison.OrdinalIgnoreCase)
+           || path.Equals("/connect/inquiry-service-context-v2", StringComparison.OrdinalIgnoreCase)
            // Dapr deliveries require the explicit sidecar token and never authenticate with cookies.
            || path.Equals("/internal/erp/v1/events", StringComparison.OrdinalIgnoreCase)
            || IsNativeAnonymousAuthPath(path)
