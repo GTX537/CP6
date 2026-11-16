@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-15，W670 保留原两人批准和操作键，精确用户封存先行，资料处置、C02、Outbox 与回执在 Main 同一事务完成。 [W670 交付](../development/evidence/W670-01/DELIVERY.md)
+
 2026-11-15，W668 保留已有 Web 与原生候选的原挑战和 factor 回执，在首次 CRM 连接前挂起精确写者，继续沿最终正式原件处理。 [W668 交付](../development/evidence/W668-01/DELIVERY.md)
 
 2026-11-15，W667 将精确 access 退出和实际 refresh 重用接入持久原件和 CRM 原生封存。沿原 URI、Cookie、审计与一次性认证父子证据判定。 [W667 交付](../development/evidence/W667-01/DELIVERY.md)

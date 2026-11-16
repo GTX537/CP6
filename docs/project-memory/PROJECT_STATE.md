@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-15，W670 核验已批准身份资料处置的两库事务和原回执，实测冷恢复、双序和 Main 应答丢失。PostgreSQL 正式仍 26 项通过，PGT-017 待其他已确认凭据写者。 [W670 交付](../development/evidence/W670-01/DELIVERY.md)
+
 2026-11-15，W668 实测 2FA 原准备、入会、自助停用及原挑战恢复，13 项原生和 16 项组件通过。PostgreSQL 正式矩阵仍 26 项通过，PGT-017 待已批准处置和其他实际凭据写者验收。 [W668 交付](../development/evidence/W668-01/DELIVERY.md)
 
 2026-11-15，W667 的精确 access 退出和实际 refresh 重用已通过双库业务两序和真实恢复，58 项通过、0 跳过。PostgreSQL 正式仍 26 项通过，PGT-017 继续剩余 2FA 和其他近期确认的凭据写者。 [W667 交付](../development/evidence/W667-01/DELIVERY.md)

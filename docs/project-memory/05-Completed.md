@@ -1,5 +1,7 @@
 # 已完成能力与近期里程碑
 
+2026-11-15，W670 将已批准身份资料处置的原生写入接入 CRM 用户封存。实际验证合法审批、原保留检查、两个提交顺序及原操作回执。 [W670 交付](../development/evidence/W670-01/DELIVERY.md)
+
 2026-11-15，W668 已将 2FA 准备、入会和自助停用接入现有用户事务封存，观察实际 Main 两种提交顺序、真实跨库拒接及现有原会话恢复。 [W668 交付](../development/evidence/W668-01/DELIVERY.md)
 
 2026-11-15，W667 采用精确 JTI 原件及 refresh 重用的主体范围，实际验证两种提交顺序、冷拒、重启恢复、两库 COMMIT 应答丢失及原会话对照。 [W667 交付](../development/evidence/W667-01/DELIVERY.md)
