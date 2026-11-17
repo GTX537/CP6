@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-17，WP02-13 拆卡；保留原定义及既有严格前置，新增余卡和台账拆卡门回归；无业务代码或原 AC 变更。 [WP02-13 核销](../development/evidence/WP02-13/card-closure/DELIVERY.md)
+
 2026-11-17，WP02-04 单卡核销；文档/台账变更，无业务代码、依赖图或原 AC 变更。 [WP02-04 核销](../development/evidence/WP02-04/card-closure/DELIVERY.md)
 
 2026-11-17，WP02-10 单卡核销；文档/台账变更，无业务代码、依赖图或原 AC 变更。 [WP02-10 核销](../development/evidence/WP02-10/card-closure/DELIVERY.md)

@@ -791,7 +791,67 @@
         "docs/development/assessments/20261011/implementation-assessment.json",
         "docs/design-handbook/modules/SYS-AUD-01.md",
         "docs/development/assessments/20261011/catalogs/foundation.json"
+      ],
+      "split_children": [
+        "WP02-13b"
+      ],
+      "split_delivered_scope": [
+        "已采用 Main 代表 Owner 的必需审计与业务/原结果/Outbox 同事务。",
+        "已登记 Machine 字段历史的当前安全详情投影、原件不改、未知映射拒绝。",
+        "PostgreSQL 请求旁路日志用独立上下文保存，拒绝业务不被日志保存再次提交。"
       ]
+    },
+    {
+      "id": "WP02-13b",
+      "package_id": "WP02",
+      "title": "审计完整身份与安全查询、导出及保留清理余项",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "SYS-AUD-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP02-13"
+      ],
+      "external_prerequisites": [],
+      "scope": [
+        "三类审计安全采集/脱敏、actual/effective/service 与原 operation/权限版本、明确 UTC 来源及旧时间兼容。",
+        "总数/列表/详情/搜索/导出/当前下载按同范围和独立能力授权，稳定分页和原证据/安全投影分离。",
+        "按各保留类 policy/hold/UNKNOWN/争议/必要引用决定清理，旧 Clear 和后台共门重核、最小收据及原 plan 恢复。"
+      ],
+      "outputs": [
+        "原 WP02-13 三组余项的完整实现、原接口/页面采用和 PostgreSQL 正反回归。",
+        "原 SYS-AUD-01 全部 21 AC 的精确核对；活动 BUG #1240 实际修复和远端闭环。"
+      ],
+      "code_paths": [
+        "CP6.Core/Services/Platform/GdprService.cs",
+        "CP6.Core/Services/Platform/TenantAdminService.cs",
+        "CP6.WebApi/BackgroundServices/OperLogCleanupService.cs"
+      ],
+      "new_paths": [],
+      "acceptance_positive": [
+        "三类实际事件保留可追溯主体和真实时间来源；当前安全查询计数/明细/导出一致；合法政策允许的清理原子保存处置收据，重复原键不重复效果。"
+      ],
+      "acceptance_negative": [
+        "秘密/未知 UTC 来源不伪装合法；跨租户、无权内容/导出/下载和未知 policy 拒绝；hold/UNKNOWN/必要引用或并发策略变化阻清理，提交未知不盲重删。"
+      ],
+      "exclusive_resources": [
+        "Main:audit-policy",
+        "file:Main:CP6.Core/Services/Platform/GdprService.cs",
+        "file:Main:CP6.Core/Services/Platform/TenantAdminService.cs",
+        "file:Main:CP6.WebApi/BackgroundServices/OperLogCleanupService.cs"
+      ],
+      "notes": "2026-11-17 从 WP02-13 已验证部分拆出，原 scope/全部原 AC 仍有效，不减业务深度；M≤4h、150%强制再拆，总预算不增加。其他具体业务 Owner 映射仍归其原卡。",
+      "prerequisite_bindings": [],
+      "source_refs": [
+        "docs/development/08-postgresql-baseline.md",
+        "docs/development/assessments/20261011/implementation-assessment.json",
+        "docs/design-handbook/modules/SYS-AUD-01.md",
+        "docs/development/assessments/20261011/catalogs/foundation.json",
+        "docs/development/evidence/WP02-13/card-closure/DELIVERY.md"
+      ],
+      "split_parent": "WP02-13"
     },
     {
       "id": "WP02-14",
