@@ -273,35 +273,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             Assert.Equal(FinanceCostCommandCanonicalV1.Bytes(result), FinanceCostCommandCanonicalV1.Bytes(replay));
             return id;
         }
-        async Task Rates(Guid policy, DateOnly from, DateOnly? until, decimal labor)
-        {
-            // 工序/费率是显式模拟上游批准输入；政策的送审、独立批准、发布及成本归集由真实 Owner 完成。
-            var steps = await (from p in h.Db.ProductProcesses where p.ProductCd == order.ProductCd
-                join s in h.Db.WorkOrderProcesses.Where(s => s.WorkOrderNo == number) on p.ProcessCd equals s.ProcessCd
-                join c in h.Db.WorkCenters on s.WgCd equals c.WgCd select new { Operation = p.Id, Center = c.Id, p.ProcessCd }).ToArrayAsync();
-            foreach (var step in steps)
-            {
-                var center = new CostCenter { Code = "W698-" + Guid.NewGuid().ToString("N")[..12], Name = "模拟批准中心", Type = CostCenterType.Process };
-                h.Db.CostCenters.Add(center); await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
-                var edition = Guid.NewGuid(); var rate = Guid.NewGuid(); var basis = Guid.NewGuid();
-                var actualRate = step.ProcessCd == "PRINT" ? labor : 10.00000001m;
-                await h.Db.Database.ExecuteSqlInterpolatedAsync($"""
-                    INSERT INTO cp6_fin_mfg_v1.center_versions (tenant_id,ledger_id,root_id,version_id,version,code,name,valid_from,to_exclusive,approval_id)
-                    VALUES ({h.Tenant},{ledger},{center.Id},{edition},1,{center.Code},{center.Name},{from},{until},{Guid.NewGuid()});
-                    INSERT INTO cp6_fin_mfg_v1.rate_bases (tenant_id,ledger_id,id,policy_version_id,approval_id,work_center_id,operation_id,valid_from,to_exclusive)
-                    VALUES ({h.Tenant},{ledger},{basis},{policy},{Guid.NewGuid()},{step.Center},{step.Operation},{from},{until});
-                    INSERT INTO cp6_fin_mfg_v1.rate_heads (tenant_id,ledger_id,work_center_id,operation_id)
-                    VALUES ({h.Tenant},{ledger},{step.Center},{step.Operation}) ON CONFLICT DO NOTHING;
-                    INSERT INTO cp6_fin_mfg_v1.rate_versions (tenant_id,ledger_id,id,work_center_id,operation_id,center_id,center_version_id,
-                        policy_version_id,basis_id,labor_rate,overhead_rate,valid_from,to_exclusive,maker,state,revision,reviewer,
-                        review_qualification_id,publisher,release_qualification_id,submitted_at,reviewed_at,review_original_actor)
-                    VALUES ({h.Tenant},{ledger},{rate},{step.Center},{step.Operation},{center.Id},{edition},{policy},{basis},{actualRate},3,
-                        {from},{until},{h.User},'RELEASED',4,{f.First},{Guid.NewGuid()},{f.Second},{Guid.NewGuid()},clock_timestamp(),clock_timestamp(),true);
-                    INSERT INTO cp6_fin_mfg_v1.timeline (tenant_id,ledger_id,work_center_id,operation_id,rate_id,valid_from,to_exclusive)
-                    VALUES ({h.Tenant},{ledger},{step.Center},{step.Operation},{rate},{from},{until});
-                    """);
-            }
-        }
+        Task Rates(Guid policy, DateOnly from, DateOnly? until, decimal labor)
+            => SeedApprovedPolicyRates(h, number, ledger, f.First, f.Second, policy, from, until, labor);
         Task<int> VersionCount() => h.Db.Database.SqlQuery<int>($"""
             SELECT count(*)::int AS "Value" FROM cp6_fin_cost_basis_v1.versions WHERE tenant_id={h.Tenant}
             """).SingleAsync();
@@ -324,4 +297,36 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             });
         }
     }
+    private static async Task SeedApprovedPolicyRates(Harness h, string number, Guid ledger, Guid reviewer, Guid publisher,
+        Guid policy, DateOnly from, DateOnly? until, decimal labor)
+    {
+        var order = await h.Db.WorkOrders.AsNoTracking().SingleAsync(row => row.WorkOrderNo == number);
+            // 工序/费率是显式模拟上游批准输入；政策的送审、独立批准、发布及成本归集由真实 Owner 完成。
+            var steps = await (from p in h.Db.ProductProcesses where p.ProductCd == order.ProductCd
+                join s in h.Db.WorkOrderProcesses.Where(s => s.WorkOrderNo == number) on p.ProcessCd equals s.ProcessCd
+                join c in h.Db.WorkCenters on s.WgCd equals c.WgCd select new { Operation = p.Id, Center = c.Id, p.ProcessCd }).ToArrayAsync();
+            foreach (var step in steps)
+            {
+                var center = new CostCenter { Code = "W698-" + Guid.NewGuid().ToString("N")[..12], Name = "模拟批准中心", Type = CostCenterType.Process };
+                h.Db.CostCenters.Add(center); await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
+                var edition = Guid.NewGuid(); var rate = Guid.NewGuid(); var basis = Guid.NewGuid();
+                var actualRate = step.ProcessCd == "PRINT" ? labor : 10.00000001m;
+                await h.Db.Database.ExecuteSqlInterpolatedAsync($"""
+                    INSERT INTO cp6_fin_mfg_v1.center_versions (tenant_id,ledger_id,root_id,version_id,version,code,name,valid_from,to_exclusive,approval_id)
+                    VALUES ({h.Tenant},{ledger},{center.Id},{edition},1,{center.Code},{center.Name},{from},{until},{Guid.NewGuid()});
+                    INSERT INTO cp6_fin_mfg_v1.rate_bases (tenant_id,ledger_id,id,policy_version_id,approval_id,work_center_id,operation_id,valid_from,to_exclusive)
+                    VALUES ({h.Tenant},{ledger},{basis},{policy},{Guid.NewGuid()},{step.Center},{step.Operation},{from},{until});
+                    INSERT INTO cp6_fin_mfg_v1.rate_heads (tenant_id,ledger_id,work_center_id,operation_id)
+                    VALUES ({h.Tenant},{ledger},{step.Center},{step.Operation}) ON CONFLICT DO NOTHING;
+                    INSERT INTO cp6_fin_mfg_v1.rate_versions (tenant_id,ledger_id,id,work_center_id,operation_id,center_id,center_version_id,
+                        policy_version_id,basis_id,labor_rate,overhead_rate,valid_from,to_exclusive,maker,state,revision,reviewer,
+                        review_qualification_id,publisher,release_qualification_id,submitted_at,reviewed_at,review_original_actor)
+                    VALUES ({h.Tenant},{ledger},{rate},{step.Center},{step.Operation},{center.Id},{edition},{policy},{basis},{actualRate},3,
+                        {from},{until},{h.User},'RELEASED',4,{reviewer},{Guid.NewGuid()},{publisher},{Guid.NewGuid()},clock_timestamp(),clock_timestamp(),true);
+                    INSERT INTO cp6_fin_mfg_v1.timeline (tenant_id,ledger_id,work_center_id,operation_id,rate_id,valid_from,to_exclusive)
+                    VALUES ({h.Tenant},{ledger},{step.Center},{step.Operation},{rate},{from},{until});
+                    """);
+            }
+    }
+
 }
