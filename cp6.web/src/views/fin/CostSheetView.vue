@@ -5,7 +5,13 @@
       <span class="subtitle">{{ t('按材料消耗、工时和有效费率归集成本，完工后单独结转') }}</span>
     </div>
 
-    <el-card shadow="never">
+    <nav v-if="canMaintain" class="table-toolbar" aria-label="成本核算工作区">
+      <el-button :type="maintenance ? 'default' : 'primary'" :aria-pressed="!maintenance" @click="maintenance = false">实际归集</el-button>
+      <el-button :type="maintenance ? 'primary' : 'default'" :aria-pressed="maintenance" @click="openMaintenance">制造成本维护</el-button>
+    </nav>
+    <ManufacturingCostWorkspace v-if="maintenanceOpened && canMaintain" v-show="maintenance" />
+
+    <el-card v-show="!maintenance || !canMaintain" shadow="never">
       <div class="table-toolbar">
         <el-select v-model="status" size="small" style="width: 140px" clearable :placeholder="t('全部状态')" @change="load">
           <el-option v-for="(lbl, v) in COST_SHEET_STATUS_LABEL" :key="v" :value="Number(v)" :label="t(lbl)" />
@@ -128,13 +134,25 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { costApi } from '@/api/fin/fin'
+import { usePermissionStore } from '@/stores/permission'
 import { COST_SHEET_STATUS_LABEL, COST_SHEET_STATUS_TAG, COST_ELEMENT_LABEL, type CostSheet } from '@/types/fin/fin'
+import ManufacturingCostWorkspace from './ManufacturingCostWorkspace.vue'
 
 const { t } = useI18n()
+const permission = usePermissionStore()
+const canMaintain = computed(() => permission.loaded && permission.has('fin-cost:view'))
+const maintenance = ref(false)
+const maintenanceOpened = ref(false)
+function openMaintenance() {
+  if (!canMaintain.value) return
+  maintenanceOpened.value = true
+  maintenance.value = true
+}
+watch(canMaintain, allowed => { if (!allowed) { maintenance.value = false; maintenanceOpened.value = false } })
 
 // 列表接口不带明细行（lines），展开时按工单号懒加载注入；_linesLoading 为前端临时标记
 type CostSheetRow = CostSheet & { _linesLoading?: boolean }

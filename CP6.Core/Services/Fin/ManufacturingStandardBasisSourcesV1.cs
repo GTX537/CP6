@@ -10,14 +10,17 @@ namespace CP6.Core.Services.Fin;
 internal sealed class ManufacturingStandardBasisSourcesV1(CP6Context db)
 {
     internal async Task<WorkOrder> RequireOrderAsync(Guid ledger, Guid id, OperationsAccessV1 access, CancellationToken ct)
+        => await (await OrdersInLedgerAsync(ledger, access, ct)).SingleOrDefaultAsync(row => row.Id == id, ct)
+            ?? throw Error("STANDARD_BASIS_WORK_ORDER_NOT_FOUND", 404);
+
+    internal async Task<IQueryable<WorkOrder>> OrdersInLedgerAsync(Guid ledger, OperationsAccessV1 access, CancellationToken ct)
     {
         var assignments = db.Database.SqlQuery<Guid>($"""
             SELECT work_order_id AS "Value" FROM cp6_fin_mfg_v1.work_orders
             WHERE tenant_id={db.CurrentTenantId} AND ledger_id={ledger}
             """);
         var orders = await access.SourceAsync(OperationsOwnerV1.Mes, ct);
-        return await orders.WorkOrders().AsNoTracking().SingleOrDefaultAsync(row => row.Id == id && assignments.Contains(row.Id), ct)
-            ?? throw Error("STANDARD_BASIS_WORK_ORDER_NOT_FOUND", 404);
+        return orders.WorkOrders().Where(row => assignments.Contains(row.Id));
     }
 
     internal async Task<StandardBasisBodyV1> BuildAsync(WorkOrder order, LedgerRow ledger, OperationsAccessV1 access,

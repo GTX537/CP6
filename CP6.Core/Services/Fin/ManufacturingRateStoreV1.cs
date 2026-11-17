@@ -10,15 +10,18 @@ internal sealed class ManufacturingRateStoreV1(CP6Context db)
     private Guid Tenant => db.CurrentTenantId;
 
     internal async Task<RateRow> RateAsync(Guid ledger, Guid id, CancellationToken ct)
-        => await db.Database.SqlQuery<RateRow>($"""
+        => await Versions(ledger).SingleOrDefaultAsync(row => row.Id == id, ct) ?? throw Error("RATE_VERSION_NOT_FOUND", 404);
+
+    internal IQueryable<RateRow> Versions(Guid ledger)
+        => db.Database.SqlQuery<RateRow>($"""
             SELECT id AS "Id",work_center_id AS "WorkCenterId",operation_id AS "OperationId",
                 center_id AS "CenterId",center_version_id AS "CenterVersionId",
                 policy_version_id AS "PolicyVersionId",basis_id AS "BasisId",maker AS "Maker",
                 labor_rate AS "LaborRate",overhead_rate AS "OverheadRate",valid_from AS "From",to_exclusive AS "ToExclusive",
                 state AS "State",revision AS "Revision",reviewer AS "Reviewer",review_qualification_id AS "ReviewQualificationId",
                 review_original_actor AS "ReviewOriginalActor"
-            FROM cp6_fin_mfg_v1.rate_versions WHERE tenant_id={Tenant} AND ledger_id={ledger} AND id={id}
-            """).SingleOrDefaultAsync(ct) ?? throw Error("RATE_VERSION_NOT_FOUND", 404);
+            FROM cp6_fin_mfg_v1.rate_versions WHERE tenant_id={Tenant} AND ledger_id={ledger}
+            """);
 
     internal async Task<bool> RequireInputsAsync(LedgerRow ledger, RateRow rate, CancellationToken ct)
     {

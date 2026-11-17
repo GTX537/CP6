@@ -18,6 +18,9 @@ internal sealed class ManufacturingStandardDocumentStoreV1(CP6Context db)
         => await DocumentsIn(ledger).SingleOrDefaultAsync(row => row.Id == id, ct)
             ?? throw Error("STANDARD_DOCUMENT_NOT_FOUND", 404);
 
+    internal Task<Document?> FindByWorkOrderAsync(Guid ledger, Guid workOrder, CancellationToken ct)
+        => DocumentsIn(ledger).SingleOrDefaultAsync(row => row.WorkOrderId == workOrder, ct);
+
     internal async Task CreateAsync(Guid ledger, Guid document, Guid workOrder, Guid actor, string reason, CancellationToken ct)
     {
         if (await db.Database.ExecuteSqlInterpolatedAsync($"""
