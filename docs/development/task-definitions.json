@@ -353,7 +353,64 @@
         "docs/design-handbook/remediation/assets/finance-recovery/contracts.schema.json",
         "docs/design-handbook/remediation/assets/finance-recovery/owner-adoption.json",
         "docs/development/assessments/20261011/catalogs/foundation.json"
+      ],
+      "split_children": [
+        "WP02-05b"
+      ],
+      "split_delivered_scope": [
+        "已登记身份写者的当前事务版本、快照、原字节和 Outbox 一致。",
+        "冻结来源的完整目录、水位、重建、首末一致及普通 PG/HTTP 采集已实证。",
+        "Main 实际 C2/目录与 CRM 原生宿主已按原来源接续；后续权威写者按原 C02 版本参与。"
       ]
+    },
+    {
+      "id": "WP02-05b",
+      "package_id": "WP02",
+      "title": "身份来源批准迁移与完整后继发布余项",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "INT-ID-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP02-05"
+      ],
+      "external_prerequisites": [],
+      "scope": [
+        "经批准的 tenant/slug/issuer/region/client 身份映射变更，固定准确原件及前后来源/版本，不将展示改名当身份迁移。",
+        "Main 发布完整后继目录、水位、发件原结果及旧身份/会话处置事实；CRM 实际采用仍归 WP02-06。"
+      ],
+      "outputs": [
+        "原 WP02-05 未完成来源迁移出口的实现及 PostgreSQL 正反回归，包含 INT-ID-01 对应原 AC 与 AC-TN04-04 的 Main 责任。"
+      ],
+      "code_paths": [
+        "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs"
+      ],
+      "new_paths": [],
+      "acceptance_positive": [
+        "合法批准的来源切换产生准确新权威版本和完整冻结目录，原键重传保持原来源/水位，旧身份处置事实可追溯。"
+      ],
+      "acceptance_negative": [
+        "未批准来源、漏项、未知版本、同版异内容及旧版冒充后继拒绝；无完整处置事实不得复活旧身份。"
+      ],
+      "exclusive_resources": [
+        "Main:identity-projection",
+        "file:Main:CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs"
+      ],
+      "notes": "2026-11-17 从 WP02-05 已验证部分拆出；原 scope/全部原 AC 有效，完整余项不减业务深度。M≤4h，150%强制再拆；总预算不增加。",
+      "prerequisite_bindings": [],
+      "source_refs": [
+        "docs/development/08-postgresql-baseline.md",
+        "docs/development/assessments/20261011/implementation-assessment.json",
+        "docs/design-handbook/modules/INT-ID-01.md",
+        "docs/design-handbook/remediation/03-transactions-and-recovery.md",
+        "docs/design-handbook/remediation/assets/finance-recovery/contracts.schema.json",
+        "docs/design-handbook/remediation/assets/finance-recovery/owner-adoption.json",
+        "docs/development/assessments/20261011/catalogs/foundation.json",
+        "docs/development/evidence/WP02-05/card-closure/DELIVERY.md"
+      ],
+      "split_parent": "WP02-05"
     },
     {
       "id": "WP02-06",

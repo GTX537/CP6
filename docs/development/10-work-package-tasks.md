@@ -5,7 +5,7 @@
 | 工作包 | 任务数 | 主体目标数 | 任务卡 |
 |---|---:|---:|---|
 | WP01 现有实现与设计对照 | 2 | 0 | [查看卡片](../../docs/development/task-plans/WP01.md) |
-| WP02 公共平台与系统基础 | 43 | 20 | [查看卡片](../../docs/development/task-plans/WP02.md) |
+| WP02 公共平台与系统基础 | 44 | 20 | [查看卡片](../../docs/development/task-plans/WP02.md) |
 | WP03 CRM客户经营 | 27 | 7 | [查看卡片](../../docs/development/task-plans/WP03.md) |
 | WP04 商业交易与订单 | 37 | 8 | [查看卡片](../../docs/development/task-plans/WP04.md) |
 | WP05 工程与产品生命周期 | 44 | 14 | [查看卡片](../../docs/development/task-plans/WP05.md) |
@@ -111,7 +111,7 @@
 | SYS-JOB-01 | WP02-21 |
 | SYS-TENANT-01 | WP02-02, WP02-04 |
 | SYS-IAM-01 | WP02-03, WP02-06, WP02-10 |
-| INT-ID-01 | WP02-05, WP02-06 |
+| INT-ID-01 | WP02-05, WP02-06, WP02-05b |
 | INT-OPS-01 | WP02-23, WP02-24 |
 | PLT-CTX-01 | WP02-01, WP02-02 |
 | PLT-HTTP-01 | WP02-11, WP02-29 |
