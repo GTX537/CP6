@@ -137,21 +137,30 @@ public sealed class ManufacturingRateOwnerV1(CP6Context db, OperationsOwnerV1 ow
         {
             var replay = await store.RequirePreviewAsync(ledger.Id, id, access.ActorId, command.PreviewToken, token);
             var rate = await store.RateAsync(ledger.Id, id, token);
-            if (replay)
+            if (replay.Released)
             {
                 await scope.QualificationAsync(ledger.Id, access.ActorId, Release, token);
-                await RequireSourcesAsync(ledger, access, rate, false, token);
+                await RequireSourceAuthorityAsync(access, rate, false, token, replay.SourceProductId);
                 return new ManufacturingRateStatusV1(id, rate.State, rate.Revision);
             }
-            var qualification = await RequireReleaseAsync(ledger, access, rate, token);
+            var release = await RequireReleaseAsync(ledger, access, rate, token);
             var head = await store.HeadAsync(ledger.Id, rate, token);
             var before = await store.SegmentsAsync(ledger.Id, rate, token);
-            await store.ReleaseAsync(ledger.Id, rate, access.ActorId, qualification, command.PreviewToken,
-                head, before, Replace(before, rate), token);
+            Guid? centerUse = null;
+            if (release.ManagedCenter)
+            {
+                var item = new ManufacturingCenterUseV1.Item(rate.Id, rate.Id, rate.CenterId, rate.CenterVersionId, rate.OperationId);
+                centerUse = await ManufacturingCenterUseV1.EnlistAsync(db,
+                    new(ledger.Id, access.ActorId, ledger.BusinessDate, ledger.Currency, [item]),
+                    ManufacturingCenterUseV1.RateRelease, id, head + 1, token);
+            }
+            await store.ReleaseAsync(ledger.Id, rate, access.ActorId, release.Qualification, command.PreviewToken,
+                head, before, Replace(before, rate), release.ProductId, centerUse, token);
             return new ManufacturingRateStatusV1(id, "RELEASED", rate.Revision + 1);
         }, ct);
 
-    private async Task<Guid> RequireReleaseAsync(LedgerRow ledger, OperationsAccessV1 access, RateRow rate, CancellationToken ct)
+    private async Task<(Guid Qualification, Guid ProductId, bool ManagedCenter)> RequireReleaseAsync(LedgerRow ledger,
+        OperationsAccessV1 access, RateRow rate, CancellationToken ct)
     {
         if (rate.State != "APPROVED")
             throw Error("RATE_APPROVAL_REQUIRED", 409);
@@ -159,13 +168,13 @@ public sealed class ManufacturingRateOwnerV1(CP6Context db, OperationsOwnerV1 ow
             throw Error("FINANCE_RATE_REVIEW_ORIGIN_UNPROVEN", 409);
         var qualification = await scope.QualificationAsync(ledger.Id, access.ActorId, Release, ct);
         await RequireReviewerAsync(ct);
-        await RequireSourcesAsync(ledger, access, rate, false, ct);
+        var (product, managed) = await RequireSourcesAsync(ledger, access, rate, false, ct);
         access.AtCommit(async final =>
         {
             await scope.QualificationAsync(ledger.Id, access.ActorId, Release, final);
             await RequireReviewerAsync(final);
         });
-        return qualification;
+        return (qualification, product, managed);
 
         async Task RequireReviewerAsync(CancellationToken token)
         {
@@ -175,7 +184,15 @@ public sealed class ManufacturingRateOwnerV1(CP6Context db, OperationsOwnerV1 ow
         }
     }
 
-    private async Task RequireSourcesAsync(LedgerRow ledger, OperationsAccessV1 access, RateRow rate, bool write, CancellationToken ct)
+    private async Task<(Guid ProductId, bool ManagedCenter)> RequireSourcesAsync(LedgerRow ledger, OperationsAccessV1 access,
+        RateRow rate, bool write, CancellationToken ct)
+    {
+        var product = await RequireSourceAuthorityAsync(access, rate, write, ct);
+        return (product, await store.RequireInputsAsync(ledger, rate, ct));
+    }
+
+    private async Task<Guid> RequireSourceAuthorityAsync(OperationsAccessV1 access, RateRow rate, bool write,
+        CancellationToken ct, Guid? recordedProduct = null)
     {
         var grants = await access.ActionAsync(OperationsOwnerV1.ProcessCostRate, write ? "edit" : "query", ct);
         if (write)
@@ -189,11 +206,13 @@ public sealed class ManufacturingRateOwnerV1(CP6Context db, OperationsOwnerV1 ow
 
         var products = await access.SourceAsync(OperationsOwnerV1.Product, ct);
         var visibleProducts = products.Products();
-        if (!await db.ProductProcesses.AnyAsync(step => step.Id == rate.OperationId && !step.IsDeleted
-            && visibleProducts.Any(product => product.ProductCd == step.ProductCd), ct))
-            throw Error("OPERATION_PROFILE_NOT_FOUND", 404);
-
-        await store.RequireInputsAsync(ledger, rate, ct);
+        var id = recordedProduct is Guid original
+            ? await visibleProducts.Where(product => product.Id == original).Select(product => (Guid?)product.Id).SingleOrDefaultAsync(ct)
+            : await (from step in db.ProductProcesses
+                join product in visibleProducts on step.ProductCd equals product.ProductCd
+                where step.Id == rate.OperationId && !step.IsDeleted
+                select (Guid?)product.Id).SingleOrDefaultAsync(ct);
+        return id ?? throw Error("OPERATION_PROFILE_NOT_FOUND", 404);
     }
 
     private static void Expect(RateRow rate, long revision, string state)

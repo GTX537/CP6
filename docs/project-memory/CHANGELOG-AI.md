@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-17，W692 从 Main 4d67ce858 复用 DEV-1，修复 #1226 并验证逐成本行分批采用。34 项定向用例通过，其中 28 项使用 PostgreSQL，6 项为成本组件回归，零跳过。 [W692 交付](../development/evidence/W692-01/DELIVERY.md)
+
 2026-11-17，W691 从 Main 7876e9cc 复用 DEV-1，修复 #1224 并交付成本中心和专业资格的实际发布链。33 项定向用例通过，其中 27 项使用 PostgreSQL，6 项为成本组件回归，零跳过。 [W691 交付](../development/evidence/W691-01/DELIVERY.md)
 
 2026-11-16，W690 从 Main f98e0767 复用 DEV-1，完成独立复核、发布和实际归集用版。账套级过账及开票保护返回明确状态。46 项定向用例通过，其中 33 项使用 PostgreSQL，13 项为成本组件回归，零跳过。 [W690 交付](../development/evidence/W690-01/DELIVERY.md)

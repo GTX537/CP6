@@ -20,10 +20,10 @@ internal sealed class ManufacturingRateStoreV1(CP6Context db)
             FROM cp6_fin_mfg_v1.rate_versions WHERE tenant_id={Tenant} AND ledger_id={ledger} AND id={id}
             """).SingleOrDefaultAsync(ct) ?? throw Error("RATE_VERSION_NOT_FOUND", 404);
 
-    internal async Task RequireInputsAsync(LedgerRow ledger, RateRow rate, CancellationToken ct)
+    internal async Task<bool> RequireInputsAsync(LedgerRow ledger, RateRow rate, CancellationToken ct)
     {
-        var center = await db.Database.SqlQuery<bool>($"""
-            SELECT EXISTS(SELECT 1 FROM cp6_fin_mfg_v1.current_center_versions v
+        var managedCenter = await db.Database.SqlQuery<bool?>($"""
+            SELECT (v.submission_id IS NOT NULL) AS "Value" FROM cp6_fin_mfg_v1.current_center_versions v
               WHERE v.tenant_id={Tenant} AND v.ledger_id={ledger.Id} AND v.root_id={rate.CenterId}
               AND v.version_id={rate.CenterVersionId} AND (v.operation_id IS NULL OR v.operation_id={rate.OperationId})
               AND v.effective_dates @> daterange({rate.From},{rate.ToExclusive},'[)')
@@ -31,9 +31,8 @@ internal sealed class ManufacturingRateStoreV1(CP6Context db)
                 WHERE competing.tenant_id=v.tenant_id AND competing.ledger_id=v.ledger_id AND competing.root_id=v.root_id
                   AND competing.version_id<>v.version_id AND competing.enabled
                   AND competing.effective_dates && datemultirange(daterange({rate.From},{rate.ToExclusive},'[)')))
-            ) AS "Value"
-            """).SingleAsync(ct);
-        if (!center)
+            """).SingleOrDefaultAsync(ct);
+        if (managedCenter == null)
             throw Error("COST_CENTER_VERSION_UNAVAILABLE", 409);
 
         if (!await db.Database.SqlQuery<bool>($"""
@@ -48,6 +47,7 @@ internal sealed class ManufacturingRateStoreV1(CP6Context db)
             ) AS "Value"
             """).SingleAsync(ct))
             throw Error("APPROVED_RATE_BASIS_REQUIRED", 422);
+        return managedCenter.Value;
     }
 
     internal async Task InsertAsync(Guid ledger, RateRow rate, CancellationToken ct)
@@ -100,29 +100,33 @@ internal sealed class ManufacturingRateStoreV1(CP6Context db)
             VALUES ({token},{Tenant},{ledger},{rate.Id},{subject},{rate.Revision},{head},clock_timestamp()+interval '10 minutes')
             """, ct);
 
-    internal async Task<bool> RequirePreviewAsync(Guid ledger, Guid id, Guid subject, Guid preview, CancellationToken ct)
+    internal async Task<(bool Released, Guid? SourceProductId)> RequirePreviewAsync(Guid ledger, Guid id, Guid subject,
+        Guid preview, CancellationToken ct)
     {
         var row = await db.Database.SqlQuery<PreviewRow>($"""
             SELECT p.rate_revision AS "RateRevision", p.timeline_revision AS "TimelineRevision",
                 r.revision AS "CurrentRateRevision", h.revision AS "CurrentTimelineRevision",
                 p.expires_at>clock_timestamp() AS "Live",
-                EXISTS(SELECT 1 FROM cp6_fin_mfg_v1.releases e WHERE e.preview_token=p.token) AS "Released"
+                (e.preview_token IS NOT NULL) AS "Released",e.source_product_id AS "SourceProductId"
             FROM cp6_fin_mfg_v1.release_previews p
             JOIN cp6_fin_mfg_v1.rate_versions r ON (r.tenant_id,r.ledger_id,r.id)=(p.tenant_id,p.ledger_id,p.rate_id)
             JOIN cp6_fin_mfg_v1.rate_heads h ON (h.tenant_id,h.ledger_id,h.work_center_id,h.operation_id)
                 =(r.tenant_id,r.ledger_id,r.work_center_id,r.operation_id)
+            LEFT JOIN cp6_fin_mfg_v1.releases e ON (e.tenant_id,e.ledger_id,e.rate_id,e.preview_token)
+                =(p.tenant_id,p.ledger_id,p.rate_id,p.token)
             WHERE p.tenant_id={Tenant} AND p.ledger_id={ledger} AND p.rate_id={id}
               AND p.subject_id={subject} AND p.token={preview}
             """).SingleOrDefaultAsync(ct) ?? throw Error("RATE_RELEASE_PREVIEW_NOT_FOUND", 404);
         if (row.Released)
-            return true;
+            return (true, row.SourceProductId);
         if (!row.Live || row.RateRevision != row.CurrentRateRevision || row.TimelineRevision != row.CurrentTimelineRevision)
             throw Error("RATE_RELEASE_PREVIEW_STALE", 412);
-        return false;
+        return (false, null);
     }
 
     internal async Task ReleaseAsync(Guid ledger, RateRow rate, Guid subject, Guid qualification,
-        Guid preview, long head, ManufacturingRateSegmentV1[] before, ManufacturingRateSegmentV1[] after, CancellationToken ct)
+        Guid preview, long head, ManufacturingRateSegmentV1[] before, ManufacturingRateSegmentV1[] after,
+        Guid sourceProductId, Guid? centerUse, CancellationToken ct)
     {
         await db.Database.ExecuteSqlInterpolatedAsync($"""
             UPDATE cp6_fin_mfg_v1.rate_versions SET state='RELEASED', revision=revision+1,
@@ -140,9 +144,10 @@ internal sealed class ManufacturingRateStoreV1(CP6Context db)
                 VALUES ({Tenant},{ledger},{rate.WorkCenterId},{rate.OperationId},{segment.RateId},{segment.From},{segment.ToExclusive})
                 """, ct);
         await db.Database.ExecuteSqlInterpolatedAsync($"""
-            INSERT INTO cp6_fin_mfg_v1.releases (tenant_id,ledger_id,rate_id,preview_token,timeline_revision,before_segments,after_segments)
+            INSERT INTO cp6_fin_mfg_v1.releases
+                (tenant_id,ledger_id,rate_id,preview_token,timeline_revision,before_segments,after_segments,source_product_id,center_use_effect_id)
             VALUES ({Tenant},{ledger},{rate.Id},{preview},{head+1},CAST({JsonSerializer.Serialize(before)} AS jsonb),
-                CAST({JsonSerializer.Serialize(after)} AS jsonb))
+                CAST({JsonSerializer.Serialize(after)} AS jsonb),{sourceProductId},{centerUse})
             """, ct);
     }
 
@@ -175,5 +180,6 @@ internal sealed class ManufacturingRateStoreV1(CP6Context db)
         public long CurrentTimelineRevision { get; set; }
         public bool Live { get; set; }
         public bool Released { get; set; }
+        public Guid? SourceProductId { get; set; }
     }
 }

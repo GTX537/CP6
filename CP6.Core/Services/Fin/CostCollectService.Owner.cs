@@ -87,6 +87,7 @@ public partial class CostCollectService
                 .Select(row => CostCollectionBasisV1.RateUseV1.Capture(row.Rate, row.WorkCenterId)).ToArray();
         }
         List<CostSheetLine> lines;
+        var centerItems = new List<ManufacturingCenterUseV1.Item>();
         try
         {
             var steps = await ReadExecutionCostsAsync(order, workSteps, executionRates, ct);
@@ -96,8 +97,15 @@ public partial class CostCollectService
             if (materials.Any(row => !row.HasPrice && (row.Line.PlanQty != 0m || row.Line.ActualQty != 0m)))
                 return FinResult.Fail("COST_MATERIAL_PRICE_REQUIRED");
             lines = materials.Select(row => row.Line).ToList();
-            foreach (var (labor, overhead) in steps)
+            foreach (var (stepId, labor, overhead) in steps)
             {
+                if (published?.ManagedCenters.TryGetValue(stepId, out var attribution) == true)
+                {
+                    labor.Id = Guid.NewGuid();
+                    overhead.Id = Guid.NewGuid();
+                    centerItems.Add(attribution.For(labor.Id));
+                    centerItems.Add(attribution.For(overhead.Id));
+                }
                 lines.Add(labor);
                 lines.Add(overhead);
             }
@@ -114,11 +122,14 @@ public partial class CostCollectService
 
         for (var index = 0; index < lines.Count; index++)
             lines[index].LineNo = index + 1;
+        var centerUse = published != null && centerItems.Count != 0
+            ? new ManufacturingCenterUseV1.Use(published.LedgerId, access.ActorId, DateOnly.FromDateTime(date),
+                published.Currency, centerItems.ToArray()) : null;
         return await SaveCollectionAsync(order, sheet, lines, access.Actor, ct,
-            (date, evidence, published?.LedgerId, published?.CenterId));
+            (date, evidence, published?.LedgerId, published?.CenterId), centerUse);
     }
 
-    private async Task<(CostSheetLine Labor, CostSheetLine Overhead)[]> ReadExecutionCostsAsync(WorkOrder order,
+    private async Task<(Guid StepId, CostSheetLine Labor, CostSheetLine Overhead)[]> ReadExecutionCostsAsync(WorkOrder order,
         IQueryable<WorkOrderProcess> workSteps, IQueryable<ExecutionRate> rates, CancellationToken ct)
     {
         var routing = _db.ProductProcesses.AsNoTracking().Where(row => !row.IsDeleted && row.ProductCd == order.ProductCd);
@@ -133,6 +144,7 @@ public partial class CostCollectService
             orderby step.SortOrder, step.ProcessCd, step.TaskCd
             select new
             {
+                StepId = step.Id,
                 Labor = new CostSheetLine
                 {
                     Element = CostElement.Labor, ProcessCd = step.ProcessCd, TaskCd = step.TaskCd, WgCd = step.WgCd,
@@ -154,7 +166,7 @@ public partial class CostCollectService
                     CalcNote = step.ActualMachineHour == null ? "实绩机时缺失，按标准工时计" : null,
                 },
             }).ToArrayAsync(ct);
-        return steps.Select(step => (step.Labor, step.Overhead)).ToArray();
+        return steps.Select(step => (step.StepId, step.Labor, step.Overhead)).ToArray();
     }
 
     private async Task<(CostSheetLine Line, bool HasPrice)[]> ReadMaterialCostsAsync(WorkOrder order, CancellationToken ct)

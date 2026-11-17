@@ -40,15 +40,22 @@ internal static class CostCollectionBasisStoreV1
 {
     internal sealed record Version(long Number, CostCollectionBasisV1 Basis);
 
+    internal static Task<long> NextAsync(CP6Context db, Guid sheetId, CancellationToken ct)
+        => db.Database.SqlQuery<long>($"""
+            SELECT COALESCE(MAX(version),0)+1 AS "Value" FROM cp6_fin_cost_basis_v1.versions
+            WHERE tenant_id={db.CurrentTenantId} AND cost_sheet_id={sheetId}
+            """).SingleAsync(ct);
+
     internal static Task AppendAsync(CP6Context db, CostSheet sheet, DateTime date,
-        CostCollectionBasisV1.RateUseV1[] rates, Guid? ledgerId, CancellationToken ct)
+        CostCollectionBasisV1.RateUseV1[] rates, Guid? ledgerId, long? explicitVersion, Guid? centerUseEffect, CancellationToken ct)
     {
         var basis = new CostCollectionBasisV1(CostCollectionBasisV1.Policy, date,
             CostCollectionBasisV1.CostAmountsV1.Capture(sheet), rates, ledgerId);
         var json = JsonSerializer.Serialize(basis);
         return db.Database.ExecuteSqlInterpolatedAsync($"""
-            INSERT INTO cp6_fin_cost_basis_v1.versions (tenant_id, cost_sheet_id, version, basis)
-            SELECT {db.CurrentTenantId}, {sheet.Id}, COALESCE(MAX(version),0)+1, CAST({json} AS jsonb)
+            INSERT INTO cp6_fin_cost_basis_v1.versions (tenant_id, cost_sheet_id, version, basis, center_use_effect_id)
+            SELECT {db.CurrentTenantId}, {sheet.Id}, COALESCE({explicitVersion},COALESCE(MAX(version),0)+1),
+                CAST({json} AS jsonb),{centerUseEffect}
             FROM cp6_fin_cost_basis_v1.versions
             WHERE tenant_id={db.CurrentTenantId} AND cost_sheet_id={sheet.Id}
             """, ct);

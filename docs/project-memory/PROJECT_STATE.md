@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-17，W692 接通制造费率和成本归集的中心采用。34 项定向用例通过，其中 28 项使用 PostgreSQL，6 项为成本组件回归，零跳过。WP02-03 继续。 [W692 交付](../development/evidence/W692-01/DELIVERY.md)
+
 2026-11-17，W691 接通财务专业资格和已批准工序成本中心版本。33 项定向用例通过，其中 27 项使用 PostgreSQL，6 项为成本组件回归，零跳过。WP02-03 继续。 [W691 交付](../development/evidence/W691-01/DELIVERY.md)
 
 2026-11-16，W690 完成账套、成本中心版本、费率复核发布及现行 PostgreSQL 归集用版。46 项定向用例通过，其中 33 项使用 PostgreSQL，13 项为成本组件回归，零跳过。WP02-03 继续。 [W690 交付](../development/evidence/W690-01/DELIVERY.md)
