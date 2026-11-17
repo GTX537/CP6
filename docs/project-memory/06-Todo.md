@@ -1,6 +1,6 @@
 # 当前待办与优先级
 
-2026-11-17，WP11-39 继续采用完整 COST-POLICY-1 专业政策原件，接上适用的质量、会计政策及外部来源引用。其他 R2 命令与 C65 进程内登记随真实调用链采用。WP11-40 接入 MAT、EXEC、OUTPUT 完整来源，WP11-41、WP11-42 推进分配、账套级 GL 结转和 C45 恢复。FM15 通用消费者登记沿 WP11-04 接续。WP02-03 继续核对其他权限用途。 [W697 交付](../development/evidence/W697-01/DELIVERY.md)
+2026-11-17，WP11-39 继续沿真实调用链接入正式 GL 会计政策/SourceContract 参与者及剩余 R2 费率和标准 Basis 命令；当前 GL 为显式 PostgreSQL 模拟参与者，正式环境缺 Owner 即拒绝。WP11-40 接续 MAT、EXEC、OUTPUT 完整来源及实际质量处置；WP11-41、WP11-42 接续分配、账套级 GL 结转和 C45 恢复。FM15 通用消费者登记沿 WP11-04 接续；WP02-03 继续核对其他权限用途。 [W698 交付](../development/evidence/W698-01/DELIVERY.md)
 
 2026-11-16，接续 WP02-03 核对库存、入库及出库单价实际消费，继续派生结果、写回读和独立用途。业务伙伴其他消费者、文件与附件用途、订单其他消费者和 Space WP13-04 依各自合同核对。 [W682 交付](../development/evidence/W682-01/DELIVERY.md)
 

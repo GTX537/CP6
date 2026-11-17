@@ -1,5 +1,7 @@
 # 已完成能力与近期里程碑
 
+2026-11-17，W698 完成完整成本政策原件、来源锁、回滚与取版的有界实现。最终 PostgreSQL 定向验收 3 项通过、零跳过；复用本轮先前通过的质量源撤销锁测试 1 项。 [W698 交付](../development/evidence/W698-01/DELIVERY.md)
+
 2026-11-17，W697 完成财务成本政策、费率依据、回查及相邻日期取版。PostgreSQL 4 项通过，零跳过。 [W697 交付](../development/evidence/W697-01/DELIVERY.md)
 
 2026-11-17，W696 完成标准成本单据身份绑定、原回执与同键恢复。PostgreSQL 9 项通过，零跳过。 [W696 交付](../development/evidence/W696-01/DELIVERY.md)
