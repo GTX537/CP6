@@ -11,7 +11,7 @@ namespace CP6.Tests.Erp;
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     [CurrentPermissionPostgresFact]
-    public async Task W694_standard_documents_freeze_approved_basis_with_original_command_and_preserve_actual_history()
+    public async Task W695_manufacturing_maintenance_discovers_scoped_versions_and_uses_the_real_owners()
     {
         await using var h = await Seed();
         var number = await SeedCompletedFinanceFlow(h);
@@ -150,6 +150,44 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         using (var pending = await Call(maker, $"{basis}/{first}"))
             Assert.False(pending.RootElement.GetProperty("selected").GetBoolean());
         await Publish(first);
+        const string rateMaintenance = "/api/fin/cost/owner-v1/rate-maintenance";
+        var workOrderMaintenance = $"/api/fin/cost/owner-v1/work-order-maintenance?workOrderNo={number}";
+        using (var choices = await Call(maker, $"{rateMaintenance}?search=W686-A"))
+        {
+            var selected = Assert.Single(choices.RootElement.GetProperty("choices").EnumerateArray());
+            Assert.Equal(policy, selected.GetProperty("policyVersionId").GetGuid());
+            Assert.Contains(choices.RootElement.GetProperty("centers").EnumerateArray(), row =>
+                row.GetProperty("operationId").GetGuid() == selected.GetProperty("operationId").GetGuid());
+            Assert.Contains(choices.RootElement.GetProperty("versions").EnumerateArray(), row =>
+                row.GetProperty("rateId").GetGuid() == originalPressRate && row.GetProperty("laborRate").GetString() == "100.00000000");
+            Assert.All(choices.RootElement.GetProperty("versions").EnumerateArray(), row =>
+                Assert.Equal("W686-A", row.GetProperty("wgCd").GetString()));
+        }
+        using (var choices = await Call(foreign, rateMaintenance))
+        {
+            Assert.Empty(choices.RootElement.GetProperty("choices").EnumerateArray());
+            Assert.Empty(choices.RootElement.GetProperty("versions").EnumerateArray());
+        }
+        using (var inputs = await Call(maker, workOrderMaintenance))
+        {
+            Assert.True(inputs.RootElement.GetProperty("basisInputsAvailable").GetBoolean());
+            Assert.Equal(policy, inputs.RootElement.GetProperty("policyVersionId").GetGuid());
+            Assert.Equal(material.Id, Assert.Single(inputs.RootElement.GetProperty("materials").EnumerateArray()).GetProperty("id").GetGuid());
+            Assert.Equal(first, Assert.Single(inputs.RootElement.GetProperty("basisVersions").EnumerateArray()).GetProperty("versionId").GetGuid());
+        }
+        using (await Call(foreign, workOrderMaintenance, expected: HttpStatusCode.NotFound,
+            error: "STANDARD_BASIS_WORK_ORDER_NOT_FOUND")) { }
+        await h.Db.Sys_RoleDataScopes.Where(row => row.RoleId == 72 && row.ResourceKey == "mes-process-cost-rate")
+            .ExecuteUpdateAsync(change => change.SetProperty(row => row.ScopeType, 1));
+        using (var choices = await Call(checker, rateMaintenance))
+            Assert.Empty(choices.RootElement.GetProperty("versions").EnumerateArray());
+        using (var inputs = await Call(checker, workOrderMaintenance))
+        {
+            Assert.False(inputs.RootElement.GetProperty("basisInputsAvailable").GetBoolean());
+            Assert.Empty(inputs.RootElement.GetProperty("basisVersions").EnumerateArray());
+        }
+        await h.Db.Sys_RoleDataScopes.Where(row => row.RoleId == 72 && row.ResourceKey == "mes-process-cost-rate")
+            .ExecuteUpdateAsync(change => change.SetProperty(row => row.ScopeType, 5));
         using (await Call(maker, collect, new { }, HttpStatusCode.Forbidden, "ACTION_FORBIDDEN")) { }
         await GrantLegacyAuthorityAction(h, "fin-cost", "basis-use");
         using (await Call(maker, collect, new { }, HttpStatusCode.Conflict, "STANDARD_BASIS_TARGET_MISMATCH")) { }
@@ -260,6 +298,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             Assert.Equal("STANDARD", result.GetProperty("basisClass").GetString());
             Assert.Equal(first, result.GetProperty("standardBasis").GetProperty("versionId").GetGuid());
             Assert.Equal("272.73000000", result.GetProperty("body").GetProperty("total").GetString());
+        }
+        using (var inputs = await Call(maker, workOrderMaintenance))
+        {
+            Assert.Equal(document, inputs.RootElement.GetProperty("document").GetProperty("id").GetGuid());
+            Assert.Equal("1", inputs.RootElement.GetProperty("document").GetProperty("version").GetString());
         }
         using (var found = await Call(maker, $"{commands}/{freeze.CommandId}"))
         {

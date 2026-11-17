@@ -66,6 +66,9 @@ internal sealed partial class OperationsAccessV1
             || !await RateParents().AnyAsync(center => center.Id == id, ct))
             throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
     }
+
+    internal IQueryable<WorkCenter> PublishedRateCenters() => RateParents();
+    internal bool PublishedRatesOwnedOnly => authority.Scope == 1;
     internal async Task RequireWorkCenter(Guid id, CancellationToken ct, bool includeDeleted = false)
     {
         if (!await WorkCenters(includeDeleted).AnyAsync(x => x.Id == id, ct)) throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);

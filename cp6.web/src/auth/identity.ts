@@ -28,6 +28,7 @@ export function clearTabIdentity(): void {
   sessionStorage.removeItem('cp6-personal-task-pending')
   sessionStorage.removeItem('cp6-native-inbox-read-pending')
   sessionStorage.removeItem('cp6-task-delegation-pending')
+  sessionStorage.removeItem('cp6-fin-standard-document-pending')
   for (const key of ['cp6_impersonating', 'cp6_oa_acting_as', 'cp6-login-transition']) sessionStorage.removeItem(key)
 }
 

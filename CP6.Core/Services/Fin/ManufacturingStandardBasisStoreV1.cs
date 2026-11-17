@@ -9,7 +9,7 @@ internal sealed class ManufacturingStandardBasisStoreV1(CP6Context db)
 {
     private Guid Tenant => db.CurrentTenantId;
 
-    private IQueryable<Row> Versions(Guid ledger) => db.Database.SqlQuery<Row>($"""
+    internal IQueryable<Row> Versions(Guid ledger) => db.Database.SqlQuery<Row>($"""
         SELECT v.id AS "Id",v.work_order_id AS "WorkOrderId",v.previous_id AS "PreviousId",v.policy_version_id AS "PolicyVersionId",
             v.sequence AS "Sequence",v.state AS "State",v.revision AS "Revision",v.body::text AS "Json",
             v.valid_from AS "From",v.to_exclusive AS "ToExclusive",v.maker AS "Maker",v.reviewer AS "Reviewer",
