@@ -957,7 +957,66 @@
         "docs/design-handbook/remediation/assets/shared-consumers/sidecar-1.0.0.schema.json",
         "docs/design-handbook/remediation/assets/shared-consumers/validation.json",
         "docs/development/assessments/20261011/catalogs/foundation.json"
+      ],
+      "split_children": [
+        "WP02-14b"
+      ],
+      "split_delivered_scope": [
+        "工程文件流式扫描、不可变内容及当前授权下载与损坏隔离已实证。",
+        "DOC 准确内容绑定与原命令随真实文档事务保存。",
+        "普通 FORM 草稿/提交/退回同事务绑定及当前对象字段下载已实际采用。"
       ]
+    },
+    {
+      "id": "WP02-14b",
+      "package_id": "WP02",
+      "title": "通用文件正式化、Owner 共门与完整引用清理余项",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "SYS-FILE-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP02-14"
+      ],
+      "external_prerequisites": [],
+      "scope": [
+        "通用当前 actor 草稿全集与正式化，源/目标双边权限/准确版本、冻结后新修订及原键/部分/UNKNOWN 恢复。",
+        "FILE 侧当前权/用途与 Owner 提交共门，ACT 仅采用 LOCAL_AUTHORITATIVE_GUARD；ACT 实际业务消费仍归 WP03-19，其他技术 Owner 按其原卡采用准确 manifest。",
+        "全部登记引用/hold、共享 blob、版本/衍生和 UNKNOWN/PROCESSING/必要证据约束下的处置、物理清理、tombstone/原收据及最终重核。"
+      ],
+      "outputs": [
+        "原 WP02-14 两组余项完整实现及 PostgreSQL 正反/并发回归，按原 SYS-FILE-01 的 30 AC 核对提供者与实际采用边界。"
+      ],
+      "code_paths": [
+        "CP6.Core/Services/Pub/AttachmentService.cs"
+      ],
+      "new_paths": [],
+      "acceptance_positive": [
+        "合法当前授权与合格扫描下原命令准确正式绑定，重复完成返回原结果；完整引用允许的处置留下准确原收据。"
+      ],
+      "acceptance_negative": [
+        "隔离或改字节同版、旧/跨租户授权、冻结错绑、缺引用/hold/未知处置均拒绝；未知提交不能换键再删或伪称无效果。"
+      ],
+      "exclusive_resources": [
+        "Main:attachment-owner",
+        "file:Main:CP6.Core/Services/Pub/AttachmentService.cs"
+      ],
+      "notes": "2026-11-17 从 WP02-14 已验证部分拆出；原 scope/全部原 AC 有效，完整余项不减业务深度。M≤4h，150%强制再拆；总预算不增加。",
+      "prerequisite_bindings": [],
+      "source_refs": [
+        "docs/development/08-postgresql-baseline.md",
+        "docs/development/assessments/20261011/implementation-assessment.json",
+        "docs/design-handbook/modules/SYS-FILE-01.md",
+        "docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+        "docs/design-handbook/remediation/assets/shared-consumers/acceptance.json",
+        "docs/design-handbook/remediation/assets/shared-consumers/sidecar-1.0.0.schema.json",
+        "docs/design-handbook/remediation/assets/shared-consumers/validation.json",
+        "docs/development/assessments/20261011/catalogs/foundation.json",
+        "docs/development/evidence/WP02-14/card-closure/DELIVERY.md"
+      ],
+      "split_parent": "WP02-14"
     },
     {
       "id": "WP02-15",
