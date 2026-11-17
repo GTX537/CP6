@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-17，W699 从 Main c62dbdd2 复用 DEV-1，增加 FinancePolicy 原生参与者、双方批准和同事务命令恢复。最终 PostgreSQL 原生来源验收及完整成本政策回归 2 项通过，零跳过；构建零错误，本地发布 HTTP 冒烟通过。 [W699 交付](../development/evidence/W699-01/DELIVERY.md)
+
 2026-11-17，W698 从 Main f8a22914 复用 DEV-1，完成完整政策来源在 Finance 原事务的采用和历史快照。最终 PostgreSQL 定向验收 3 项通过、零跳过；复用本轮先前通过的质量源撤销锁测试 1 项。 [W698 交付](../development/evidence/W698-01/DELIVERY.md)
 
 2026-11-17，W697 从 Main ce3da8cd 复用 DEV-1，接通财务政策及费率依据的版本发布。PostgreSQL 4 项通过，零跳过。 [W697 交付](../development/evidence/W697-01/DELIVERY.md)

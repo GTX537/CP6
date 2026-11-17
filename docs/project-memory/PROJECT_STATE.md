@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-17，W699 接通原生会计政策与双方来源合同，完整成本政策在 PostgreSQL 采用精确原件。GL 过账仍待对应任务。最终 PostgreSQL 原生来源验收及完整成本政策回归 2 项通过，零跳过；构建零错误，本地发布 HTTP 冒烟通过。 [W699 交付](../development/evidence/W699-01/DELIVERY.md)
+
 2026-11-17，W698 接通完整 COST-POLICY-1、质量规范和外域精确引用，PostgreSQL 实际归集按会计日取版。GL 为显式模拟参与者，正式采用仍待接续。最终 PostgreSQL 定向验收 3 项通过、零跳过；复用本轮先前通过的质量源撤销锁测试 1 项。 [W698 交付](../development/evidence/W698-01/DELIVERY.md)
 
 2026-11-17，W697 接通成本政策与费率依据的专业发布和实际归集取版。PostgreSQL 4 项通过，零跳过。WP02-03 继续。 [W697 交付](../development/evidence/W697-01/DELIVERY.md)

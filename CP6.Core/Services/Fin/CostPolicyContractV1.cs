@@ -37,7 +37,11 @@ public sealed record CostPolicyAdoptionV1(CostPolicyV1 Policy, CostQualitySource
 // 外域参与者负责原合同、当前权限及资格；采用时必须持有原 Owner 的数据库门至外层事务结束。
 // 不能以 HTTP 观察、客户端提交正文或独立连接的读取实现本接口。未安装 Owner 直接拒绝采用。
 public sealed record CostPolicySourceContextV1(CP6Context Database, FinanceScopeV1 Scope, Guid ActorId,
-    DateOnly BusinessDate, bool ForAdoption, Action<Func<CancellationToken, Task>> AtCommit);
+    DateOnly BusinessDate, bool ForAdoption, Action<Func<CancellationToken, Task>> AtCommit,
+    CostPolicyRefV1? ExpectedSourceContract = null)
+{
+    internal CP6.Core.Services.Integration.OperationsAccessV1 Access { get; init; } = null!;
+}
 public interface ICostPolicyExternalSourceV1
 {
     string Owner { get; }

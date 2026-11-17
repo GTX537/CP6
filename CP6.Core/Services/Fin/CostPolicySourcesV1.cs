@@ -66,7 +66,7 @@ public sealed class CostPolicySourcesV1(CP6Context db, QualitySpecificationAutho
                 if (candidates.Length != 1)
                     throw Error("COST_POLICY_SOURCE_OWNER_UNAVAILABLE", 503);
                 var source = await candidates[0].ReadInUowAsync(new(db, scope, access.ActorId, date, adopt,
-                    callback => access.AtCommit(callback)), reference, role, ct);
+                    callback => access.AtCommit(callback), definition.SourceContractRef) { Access = access }, reference, role, ct);
                 if (source.Reference != reference || source.Scope != scope || source.Role != role
                     || string.IsNullOrWhiteSpace(source.OriginalJson))
                     throw Error("COST_POLICY_SOURCE_IDENTITY_MISMATCH", 422);
