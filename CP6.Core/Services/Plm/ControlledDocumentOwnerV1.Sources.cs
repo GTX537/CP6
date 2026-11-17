@@ -6,8 +6,10 @@ namespace CP6.Core.Services.Plm;
 public sealed partial class ControlledDocumentOwnerV1
 {
     internal async Task<ControlledDocumentSnapshotV1> ReviewSource(OperationsAccessV1 access, EngineeringSourceRefV1 reference,
-        bool requireAvailable, CancellationToken ct)
+        bool requireAvailable, CancellationToken ct, string? expectedEnvironment = null)
     {
+        if(expectedEnvironment!=null && expectedEnvironment!=reviewScope.EnvironmentId.ToString("D"))
+            throw Error("DOCUMENT_ENVIRONMENT_MISMATCH",403);
         ControlledDocumentValuesV1.Ref(reference);
         var store=new ControlledDocumentStoreV1(db);await store.Fence(false,ct);
         var value=await Observe(access,await store.Read(reference.Id,Revision(reference.Version),ct),ct);

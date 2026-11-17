@@ -9,10 +9,12 @@ using static CP6.Core.Services.Fin.ManufacturingFinanceScopeV1;
 
 namespace CP6.Core.Services.Fin;
 
-public sealed class ManufacturingCostMasterOwnerV1(CP6Context db, OperationsOwnerV1 owner, ManufacturingFinanceScopeV1 scope)
+public sealed class ManufacturingCostMasterOwnerV1(CP6Context db, OperationsOwnerV1 owner, ManufacturingFinanceScopeV1 scope,
+    CostPolicySourcesV1? policySources = null)
 {
     private readonly ManufacturingCostMasterStoreV1 store = new(db);
     private readonly FinanceCostCommandJournalV1 journal = new(db);
+    private readonly CostPolicyOriginalV1 policies = new(db, policySources);
 
     public Task<JsonElement> SubmitPolicyAsync(Guid context, ManufacturingCostPolicySubmitV1 command, CancellationToken ct)
         => WriteAsync(context, "policy-submit", "SUBMIT_COST_POLICY",
@@ -26,6 +28,11 @@ public sealed class ManufacturingCostMasterOwnerV1(CP6Context db, OperationsOwne
                     || command.Variance is not ("VAR_TO_EXPENSE" or "RETAIN_WIP" or "ALLOCATE_OUTPUT")
                     || !ValidText(command.ApprovalBasisReference, 256))
                     throw Error("COST_POLICY_INPUT_INVALID", 422);
+                if (command.Definition != null)
+                {
+                    CostPolicySourcesV1.Validate(command.Definition);
+                    await policies.SourcesAsync(ledger.Scope(db.CurrentTenantId), access, command, false, token);
+                }
                 return await SubmitAsync(ledger.Id, Policy, command.PreviousVersionId, command.From,
                     access.ActorId, null, command, token);
             }, ct);
@@ -40,7 +47,7 @@ public sealed class ManufacturingCostMasterOwnerV1(CP6Context db, OperationsOwne
                     || command.ZeroJustification is not null && !ValidText(command.ZeroJustification, 1000))
                     throw Error("RATE_BASIS_INPUT_INVALID", 422);
                 var product = await RequireBasisSourceAsync(access, command, access.ActorId, null, token);
-                await RequireApprovedPolicyAsync(ledger, command, token);
+                await RequireApprovedPolicyAsync(ledger, command, access, token);
                 return await SubmitAsync(ledger.Id, RateBasis, command.PreviousVersionId, command.From,
                     access.ActorId, product, command, token);
             }, ct);
@@ -80,12 +87,15 @@ public sealed class ManufacturingCostMasterOwnerV1(CP6Context db, OperationsOwne
                 var row = await RequireDecisionAsync(ledger.Id, kind, id, "2", command, token);
                 var qualification = await scope.QualificationAsync(ledger.Id, access.ActorId, release, token);
                 await RequireReviewer(token);
-                await RequireCurrentBasisAsync(ledger, row, access, token);
+                if (kind != Policy) await RequireCurrentBasisAsync(ledger, row, access, token);
                 if (row.PredecessorId is Guid earlier && await store.HasSuccessorAsync(ledger.Id, earlier, token))
                     throw Error("COST_MASTER_SUCCESSOR_CONFLICT", 409);
 
                 if (kind == Policy)
+                {
                     await store.PublishPolicyAsync(ledger, row, row.Policy, token);
+                    row.FullPolicy = await policies.PublishAsync(ledger, row, access, token);
+                }
                 else
                     await store.PublishBasisAsync(ledger.Id, row, row.Basis, token);
                 await store.RecordReleaseAsync(ledger.Id, id, receipt, access.ActorId, qualification, command.Reason, token);
@@ -111,12 +121,13 @@ public sealed class ManufacturingCostMasterOwnerV1(CP6Context db, OperationsOwne
         {
             await access.ActionAsync(OperationsOwnerV1.FinCost, View, token);
             var row = await store.ReadAsync(ledger.Id, id, token);
-            await RequireVisibleSourcesAsync(row, access, token);
+            await RequireVisibleSourcesAsync(ledger.Scope(db.CurrentTenantId), row, access, token);
+            if (row.Kind == Policy && row.ReleaseId.HasValue) row.FullPolicy = await policies.ReadAsync(ledger.Id, id, token);
             return Snapshot(ledger, row);
         }, ct);
 
-    internal async Task RequireCommandSourcesAsync(Guid ledger, Guid version, OperationsAccessV1 access, CancellationToken ct)
-        => await RequireVisibleSourcesAsync(await store.ReadAsync(ledger, version, ct), access, ct);
+    internal async Task RequireCommandSourcesAsync(LedgerRow ledger, Guid version, OperationsAccessV1 access, CancellationToken ct)
+        => await RequireVisibleSourcesAsync(ledger.Scope(db.CurrentTenantId), await store.ReadAsync(ledger.Id, version, ct), access, ct);
 
     private Task<JsonElement> WriteAsync(Guid context, string action, string operation, FinanceCostCommandIdentityV1 identity,
         Func<LedgerRow, OperationsAccessV1, Guid, CancellationToken, Task<VersionRow>> write, CancellationToken ct)
@@ -131,7 +142,7 @@ public sealed class ManufacturingCostMasterOwnerV1(CP6Context db, OperationsOwne
                     throw Error("COMMAND_IDENTITY_CONFLICT", 409);
                 var terminal = await journal.ReadTerminalAsync(ledger.Id, identity.CommandId, token)
                     ?? throw Error("AUTHORITY_UNAVAILABLE", 503);
-                await RequireCommandSourcesAsync(ledger.Id, CommandVersion(terminal), access, token);
+                await RequireCommandSourcesAsync(ledger, CommandVersion(terminal), access, token);
                 if (!prior.Matches(access.ActorId, identity))
                     throw Error("COMMAND_IDENTITY_CONFLICT", 409);
                 return FinanceCostCommandJournalV1.JsonBody(terminal.Result);
@@ -175,7 +186,11 @@ public sealed class ManufacturingCostMasterOwnerV1(CP6Context db, OperationsOwne
                 end = previousBasis.ToExclusive;
             }
             else
+            {
+                if (previous.Policy.Definition != null && ((ManufacturingCostPolicySubmitV1)body).Definition == null)
+                    throw Error("COST_POLICY_CONTRACT_DOWNGRADE", 409);
                 end = previous.Policy.ToExclusive;
+            }
             if (end == null || from < end || await store.HasSuccessorAsync(ledger, predecessor, ct))
                 throw Error("COST_MASTER_SUCCESSOR_CONFLICT", 409);
             row.RootId = previous.RootId;
@@ -202,23 +217,30 @@ public sealed class ManufacturingCostMasterOwnerV1(CP6Context db, OperationsOwne
     private async Task RequireCurrentBasisAsync(LedgerRow ledger, VersionRow row, OperationsAccessV1 access, CancellationToken ct)
     {
         if (row.Kind == Policy)
+        {
+            await policies.SourcesAsync(ledger.Scope(db.CurrentTenantId), access, row.Policy, true, ct);
             return;
+        }
         var basis = row.Basis;
         if (await RequireBasisSourceAsync(access, basis, row.Maker, null, ct) != row.ProductId)
             throw Error("RATE_BASIS_SOURCE_CHANGED", 409);
-        await RequireApprovedPolicyAsync(ledger, basis, ct);
+        await RequireApprovedPolicyAsync(ledger, basis, access, ct);
     }
 
-    private async Task RequireApprovedPolicyAsync(LedgerRow ledger, ManufacturingRateBasisSubmitV1 basis, CancellationToken ct)
+    private async Task RequireApprovedPolicyAsync(LedgerRow ledger, ManufacturingRateBasisSubmitV1 basis,
+        OperationsAccessV1 access, CancellationToken ct)
     {
         if (!await store.AllowsBasisAsync(ledger, basis, ct))
             throw Error("APPROVED_RATE_BASIS_POLICY_REQUIRED", 422);
+        await policies.HoldAsync(ledger, basis.PolicyVersionId, access, null, ct);
     }
 
-    private async Task RequireVisibleSourcesAsync(VersionRow row, OperationsAccessV1 access, CancellationToken ct)
+    private async Task RequireVisibleSourcesAsync(FinanceScopeV1 scope, VersionRow row, OperationsAccessV1 access, CancellationToken ct)
     {
         if (row.Kind == RateBasis)
             await RequireBasisSourceAsync(access, row.Basis, row.Maker, row.ProductId, ct);
+        else
+            await policies.SourcesAsync(scope, access, row.Policy, false, ct);
     }
 
     private async Task<Guid> RequireBasisSourceAsync(OperationsAccessV1 access, ManufacturingRateBasisSubmitV1 basis,
@@ -247,6 +269,7 @@ public sealed class ManufacturingCostMasterOwnerV1(CP6Context db, OperationsOwne
             schema = "CP6-COST-MASTER-VERSION-1", versionId = row.Id, row.RootId, row.Kind,
             version = row.Sequence.ToString(CultureInfo.InvariantCulture), previousVersionId = row.PredecessorId,
             ledger.Currency, row.State, row.Revision, row.ApprovalId, row.ReleaseId, body = body.RootElement.Clone(),
+            row.FullPolicy,
         };
     }
 

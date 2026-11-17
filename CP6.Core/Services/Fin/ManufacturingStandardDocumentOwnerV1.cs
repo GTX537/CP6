@@ -7,7 +7,8 @@ using static CP6.Core.Services.Fin.StandardDocumentBinding;
 
 namespace CP6.Core.Services.Fin;
 
-public sealed class ManufacturingStandardDocumentOwnerV1(CP6Context db, OperationsOwnerV1 owner, ManufacturingFinanceScopeV1 scope)
+public sealed class ManufacturingStandardDocumentOwnerV1(CP6Context db, OperationsOwnerV1 owner, ManufacturingFinanceScopeV1 scope,
+    CostPolicySourcesV1? policySources = null)
 {
     private readonly ManufacturingStandardDocumentStoreV1 store = new(db);
     private readonly ManufacturingStandardBasisStoreV1 standards = new(db);
@@ -192,6 +193,7 @@ public sealed class ManufacturingStandardDocumentOwnerV1(CP6Context db, Operatio
             throw Error("STANDARD_BASIS_TARGET_MISMATCH", 409);
 
         await source.RequirePolicyAsync(ledger.Id, basis.PolicyVersionId, ledger.Currency, basis.From, basis.ToExclusive, ct);
+        await new CostPolicyOriginalV1(db, policySources).AdoptAsync(ledger, basis.PolicyVersionId, access, "STANDARD", ct);
         await RequireApprovals(ct);
         access.AtCommit(RequireApprovals);
 

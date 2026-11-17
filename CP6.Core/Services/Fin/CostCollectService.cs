@@ -23,6 +23,7 @@ public partial class CostCollectService : ICostCollectService
     private readonly IProcessCostRateService _rateSvc;
     private readonly OperationsOwnerV1? _owner;
     private readonly ManufacturingFinanceScopeV1? _financeScope;
+    private readonly CostPolicySourcesV1? _policySources;
     private const string SeqKey = "CS";
 
     /// <summary>
@@ -32,13 +33,14 @@ public partial class CostCollectService : ICostCollectService
     public bool StrictCostRate { get; set; } = false;
 
     public CostCollectService(CP6Context db, IFinSequenceService seq, IProcessCostRateService rateSvc,
-        OperationsOwnerV1? owner = null, ManufacturingFinanceScopeV1? financeScope = null)
+        OperationsOwnerV1? owner = null, ManufacturingFinanceScopeV1? financeScope = null, CostPolicySourcesV1? policySources = null)
     {
         _db = db;
         _seq = seq;
         _rateSvc = rateSvc;
         _owner = owner;
         _financeScope = financeScope;
+        _policySources = policySources;
     }
 
     public Task<FinResult> CollectAsync(string workOrderNo, decimal laborStd, decimal overheadStd, string user)

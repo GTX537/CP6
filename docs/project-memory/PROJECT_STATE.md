@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-17，W698 接通完整 COST-POLICY-1、质量规范和外域精确引用，PostgreSQL 实际归集按会计日取版。GL 为显式模拟参与者，正式采用仍待接续。最终 PostgreSQL 定向验收 3 项通过、零跳过；复用本轮先前通过的质量源撤销锁测试 1 项。 [W698 交付](../development/evidence/W698-01/DELIVERY.md)
+
 2026-11-17，W697 接通成本政策与费率依据的专业发布和实际归集取版。PostgreSQL 4 项通过，零跳过。WP02-03 继续。 [W697 交付](../development/evidence/W697-01/DELIVERY.md)
 
 2026-11-17，W696 接通标准成本单据的 R2 命令记录和回查。PostgreSQL 9 项通过，零跳过。WP02-03 继续。 [W696 交付](../development/evidence/W696-01/DELIVERY.md)

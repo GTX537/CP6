@@ -7,12 +7,13 @@ using static CP6.Core.Services.Fin.ManufacturingStandardBasisStoreV1;
 
 namespace CP6.Core.Services.Fin;
 
-public sealed class ManufacturingStandardBasisOwnerV1(CP6Context db, OperationsOwnerV1 owner, ManufacturingFinanceScopeV1 scope)
+public sealed class ManufacturingStandardBasisOwnerV1(CP6Context db, OperationsOwnerV1 owner, ManufacturingFinanceScopeV1 scope,
+    CostPolicySourcesV1? policySources = null)
 {
     private const string Review = "basis-review";
     private const string Release = "basis-release";
     private readonly ManufacturingStandardBasisStoreV1 store = new(db);
-    private readonly ManufacturingStandardBasisSourcesV1 sources = new(db);
+    private readonly ManufacturingStandardBasisSourcesV1 sources = new(db, policySources);
 
     public Task<StandardBasisStatusV1> SubmitAsync(Guid context, StandardBasisSubmissionV1 command, CancellationToken ct)
         => scope.WithContextAsync<StandardBasisStatusV1>(owner, context, "basis-submit", true, async (ledger, access, token) =>
@@ -55,6 +56,7 @@ public sealed class ManufacturingStandardBasisOwnerV1(CP6Context db, OperationsO
                     : throw Error("FINANCE_COMMAND_CONFLICT", 409);
             RequireState(row, command.ExpectedRevision, "SUBMITTED");
             await sources.RequirePolicyAsync(ledger.Id, row.PolicyVersionId, ledger.Currency, row.From, row.ToExclusive, token);
+            await new CostPolicyOriginalV1(db, policySources).AdoptAsync(ledger, row.PolicyVersionId, access, "STANDARD", token);
             access.AtCommit(async final => { await scope.QualificationAsync(ledger.Id, access.ActorId, Review, final); });
             await store.ApproveAsync(ledger.Id, id, access.ActorId, proven, command, token);
             return At(row, "APPROVED", 2);
@@ -76,6 +78,7 @@ public sealed class ManufacturingStandardBasisOwnerV1(CP6Context db, OperationsO
                 throw Error("STANDARD_BASIS_HEAD_STALE", 412);
             await sources.RequirePolicyAsync(ledger.Id, row.PolicyVersionId, ledger.Currency, row.From, row.ToExclusive, token);
             await RequireReviewerAsync(token);
+            await new CostPolicyOriginalV1(db, policySources).AdoptAsync(ledger, row.PolicyVersionId, access, "STANDARD", token);
             access.AtCommit(async final =>
             {
                 await scope.QualificationAsync(ledger.Id, access.ActorId, Release, final);
