@@ -462,6 +462,7 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.ManufacturingCostCenterOwnerV1>
 builder.Services.AddScoped<CP6.Core.Services.Fin.ManufacturingStandardBasisOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Fin.ManufacturingStandardDocumentOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Fin.ManufacturingCostMasterOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Fin.CostPolicySourcesV1>();
 builder.Services.AddScoped<CP6.Core.Services.Fin.FinanceCostCommandQueryOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Fin.ManufacturingCostMaintenanceV1>();
 builder.Services.AddScoped<CP6.Core.Services.Fin.ICostCollectService, CP6.Core.Services.Fin.CostCollectService>(); // 章06 成本归集（料吃MES真实消耗×BOM单价+工费标准估算）

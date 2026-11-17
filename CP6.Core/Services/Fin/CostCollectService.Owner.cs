@@ -58,7 +58,7 @@ public partial class CostCollectService
         var financeScope = _financeScope ?? new ManufacturingFinanceScopeV1(_db, null);
         await financeScope.GateAsync(false, ct);
         var ledger = await financeScope.AssignedLedgerAsync(order.Id, access.ActorId, ct);
-        var published = ledger == null ? null : await new ManufacturingRateConsumptionV1(_db)
+        var published = ledger == null ? null : await new ManufacturingRateConsumptionV1(_db, _policySources)
             .SelectAsync(order, workSteps, centers.Length, ledger, rates, ct);
         var comparison = published == null ? null : await ManufacturingStandardBasisComparisonV1.SelectAsync(_db, order,
             output.Id, output.QtyUnit, published, access, rates, ct);
@@ -98,6 +98,8 @@ public partial class CostCollectService
             var steps = await ReadExecutionCostsAsync(order, workSteps, executionRates, comparison != null, ct);
             if (steps.Length != centers.Length)
                 return FinResult.Fail("E-A2-COST-004");
+            if (evidence.Any(rate => rate.FullPolicy != null) && steps.Any(step => !step.HasActualHours))
+                return FinResult.Fail("COST_ACTUAL_HOURS_REQUIRED");
             var materials = await ReadMaterialCostsAsync(order, comparison != null, ct);
             if (materials.Any(row => !row.HasPrice && (row.Line.PlanQty != 0m || row.Line.ActualQty != 0m)))
                 return FinResult.Fail("COST_MATERIAL_PRICE_REQUIRED");

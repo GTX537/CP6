@@ -99,6 +99,8 @@ internal sealed class ManufacturingCostMasterStoreV1(CP6Context db)
         public Guid? Reviewer { get; set; }
         public Guid? ReviewQualificationId { get; set; }
         public Guid? ReleaseId { get; set; }
+        [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+        public CostPolicyAdoptionV1? FullPolicy { get; set; }
 
         internal string Revision => ReleaseId.HasValue ? "3" : ApprovalId.HasValue ? "2" : "1";
         internal string State => ReleaseId.HasValue ? "RELEASED" : ApprovalId.HasValue ? "APPROVED" : "SUBMITTED";

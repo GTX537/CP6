@@ -18,7 +18,7 @@ internal sealed record CostCollectionBasisV1(string PolicyVersion, DateTime Rate
     internal sealed record RateUseV1(Guid RateId, Guid WorkCenterId, string WorkCenter, DateTime ValidFrom,
         DateTime? ValidTo, decimal LaborRate, decimal OverheadRate, byte[]? SourceRowVersion, Guid? LedgerId = null,
         Guid? CostCenterId = null, Guid? CostCenterVersionId = null, Guid? PolicyVersionId = null, Guid? RateBasisId = null,
-        Guid? OperationProfileId = null, Guid? RateMaker = null)
+        Guid? OperationProfileId = null, Guid? RateMaker = null, CostPolicyAdoptionV1? FullPolicy = null)
     {
         internal static RateUseV1 Capture(ProcessCostRate row, Guid centerId)
             => new(row.Id, centerId, row.WgCd, row.ValidFrom, row.ValidTo, row.LaborRate, row.OverheadRate, row.RowVersion);

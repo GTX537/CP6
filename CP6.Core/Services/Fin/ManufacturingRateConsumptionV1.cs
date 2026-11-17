@@ -7,7 +7,7 @@ using static CP6.Core.Services.Fin.ManufacturingFinanceScopeV1;
 
 namespace CP6.Core.Services.Fin;
 
-internal sealed class ManufacturingRateConsumptionV1(CP6Context db)
+internal sealed class ManufacturingRateConsumptionV1(CP6Context db, CostPolicySourcesV1? policySources = null)
 {
     internal sealed record Selection(Guid LedgerId, DateTime Date, string Currency, IQueryable<ExecutionRate> Rates,
         CostCollectionBasisV1.RateUseV1[] Evidence, Guid? CenterId,
@@ -15,7 +15,7 @@ internal sealed class ManufacturingRateConsumptionV1(CP6Context db)
         Dictionary<Guid, CostCollectionBasisV1.RateUseV1> RatesByStep);
 
     internal async Task<Selection> SelectAsync(WorkOrder order, IQueryable<WorkOrderProcess> steps, int stepCount,
-        LedgerRow ledger, OperationsAccessV1 rateAccess, CancellationToken ct)
+        LedgerRow ledger, OperationsAccessV1 rateAccess, CancellationToken ct, string requestedClass = "ACTUAL")
     {
         var route = await (from step in steps
             join center in db.WorkCenters.AsNoTracking().Where(center => !center.IsDeleted) on step.WgCd equals center.WgCd
@@ -60,6 +60,7 @@ internal sealed class ManufacturingRateConsumptionV1(CP6Context db)
         var evidence = new Dictionary<Guid, CostCollectionBasisV1.RateUseV1>();
         var managedCenters = new Dictionary<Guid, ManufacturingCenterUseV1.Attribution>();
         var ratesByStep = new Dictionary<Guid, CostCollectionBasisV1.RateUseV1>();
+        var policies = new Dictionary<Guid, CostPolicyAdoptionV1?>();
         foreach (var entry in route)
         {
             var matched = candidates.Where(row => row.WorkCenterId == entry.WorkCenterId && row.OperationId == entry.OperationId).ToArray();
@@ -69,6 +70,12 @@ internal sealed class ManufacturingRateConsumptionV1(CP6Context db)
             await rateAccess.RequirePublishedRateCenterAsync(rate.WorkCenterId, rate.Maker, ct);
             if (!rate.PolicySupported)
                 throw Error("COST_POLICY_ADOPTION_REQUIRED", 409);
+            if (!policies.TryGetValue(rate.PolicyVersionId, out var policy))
+            {
+                policy = await new CostPolicyOriginalV1(db, policySources).AdoptAsync(ledger, rate.PolicyVersionId,
+                    rateAccess, requestedClass, ct);
+                policies.Add(rate.PolicyVersionId, policy);
+            }
             // The current A2 unit-price column is numeric(21,8). Keep the full released rate in its own store.
             if (rate.LaborRate > 9999999999999.99999999m || rate.OverheadRate > 9999999999999.99999999m)
                 throw Error("COST_VALUE_OUT_OF_RANGE", 422);
@@ -79,7 +86,7 @@ internal sealed class ManufacturingRateConsumptionV1(CP6Context db)
                 managedCenters.Add(entry.StepId, new(rate.RateId, rate.CenterId, rate.CenterVersionId, rate.OperationId));
             var use = new CostCollectionBasisV1.RateUseV1(rate.RateId, rate.WorkCenterId, entry.Code, from,
                 rate.ToExclusive?.ToDateTime(TimeOnly.MinValue), rate.LaborRate, rate.OverheadRate, null, ledger.Id,
-                rate.CenterId, rate.CenterVersionId, rate.PolicyVersionId, rate.BasisId, rate.OperationId, rate.Maker);
+                rate.CenterId, rate.CenterVersionId, rate.PolicyVersionId, rate.BasisId, rate.OperationId, rate.Maker, policy);
             ratesByStep.Add(entry.StepId, use);
             evidence.TryAdd(rate.RateId, use);
         }

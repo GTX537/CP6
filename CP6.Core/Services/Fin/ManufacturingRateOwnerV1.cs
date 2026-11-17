@@ -24,7 +24,8 @@ public sealed record ManufacturingRateStatusV1(Guid RateId, string State, long R
 public sealed record ManufacturingRatePreviewV1(Guid Token, Guid RateId, long TimelineRevision,
     ManufacturingRateSegmentV1[] Before, ManufacturingRateSegmentV1[] After);
 
-public sealed class ManufacturingRateOwnerV1(CP6Context db, OperationsOwnerV1 owner, ManufacturingFinanceScopeV1 scope)
+public sealed class ManufacturingRateOwnerV1(CP6Context db, OperationsOwnerV1 owner, ManufacturingFinanceScopeV1 scope,
+    CostPolicySourcesV1? policySources = null)
 {
     private readonly ManufacturingRateStoreV1 store = new(db);
     private const string Draft = "rate-draft";
@@ -169,6 +170,7 @@ public sealed class ManufacturingRateOwnerV1(CP6Context db, OperationsOwnerV1 ow
         var qualification = await scope.QualificationAsync(ledger.Id, access.ActorId, Release, ct);
         await RequireReviewerAsync(ct);
         var (product, managed) = await RequireSourcesAsync(ledger, access, rate, false, ct);
+        await new CostPolicyOriginalV1(db, policySources).HoldAsync(ledger, rate.PolicyVersionId, access, null, ct);
         access.AtCommit(async final =>
         {
             await scope.QualificationAsync(ledger.Id, access.ActorId, Release, final);

@@ -45,7 +45,7 @@ public sealed class FinanceCostCommandQueryOwnerV1(CP6Context db, OperationsOwne
             var terminal = await journal.ReadTerminalAsync(ledger.Id, command, token)
                 ?? throw Error("AUTHORITY_UNAVAILABLE", 503);
             if (master)
-                await masters.RequireCommandSourcesAsync(ledger.Id, ManufacturingCostMasterOwnerV1.CommandVersion(terminal), access, token);
+                await masters.RequireCommandSourcesAsync(ledger, ManufacturingCostMasterOwnerV1.CommandVersion(terminal), access, token);
 
             return result
                 ? FinanceCostCommandJournalV1.JsonBody(terminal.Result)

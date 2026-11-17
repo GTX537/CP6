@@ -7,7 +7,7 @@ using static CP6.Core.Services.Fin.ManufacturingFinanceScopeV1;
 
 namespace CP6.Core.Services.Fin;
 
-internal sealed class ManufacturingStandardBasisSourcesV1(CP6Context db)
+internal sealed class ManufacturingStandardBasisSourcesV1(CP6Context db, CostPolicySourcesV1? policySources = null)
 {
     internal async Task<WorkOrder> RequireOrderAsync(Guid ledger, Guid id, OperationsAccessV1 access, CancellationToken ct)
         => await (await OrdersInLedgerAsync(ledger, access, ct)).SingleOrDefaultAsync(row => row.Id == id, ct)
@@ -41,7 +41,7 @@ internal sealed class ManufacturingStandardBasisSourcesV1(CP6Context db)
         var stepCount = await workSteps.CountAsync(ct);
         if (stepCount == 0)
             throw Error("STANDARD_BASIS_SCOPE_MISMATCH", 422);
-        var selected = await new ManufacturingRateConsumptionV1(db).SelectAsync(order, workSteps, stepCount, ledger, rates, ct);
+        var selected = await new ManufacturingRateConsumptionV1(db, policySources).SelectAsync(order, workSteps, stepCount, ledger, rates, ct, "STANDARD");
         if (selected.Evidence.Any(rate => rate.PolicyVersionId != command.PolicyVersionId))
             throw Error("STANDARD_BASIS_POLICY_MISMATCH", 422);
 

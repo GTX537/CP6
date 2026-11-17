@@ -7,7 +7,8 @@ using static CP6.Core.Services.Fin.StandardBasisBodyV1;
 
 namespace CP6.Core.Services.Fin;
 
-public sealed class ManufacturingCostMaintenanceV1(CP6Context db, OperationsOwnerV1 owner, ManufacturingFinanceScopeV1 scope)
+public sealed class ManufacturingCostMaintenanceV1(CP6Context db, OperationsOwnerV1 owner, ManufacturingFinanceScopeV1 scope,
+    CostPolicySourcesV1? policySources = null)
 {
     private const int PageSize = 100;
 
@@ -124,7 +125,7 @@ public sealed class ManufacturingCostMaintenanceV1(CP6Context db, OperationsOwne
             {
                 try
                 {
-                    var selected = await new ManufacturingRateConsumptionV1(db).SelectAsync(order, steps, stepInputs.Length, ledger, rateAccess, token);
+                    var selected = await new ManufacturingRateConsumptionV1(db, policySources).SelectAsync(order, steps, stepInputs.Length, ledger, rateAccess, token, "STANDARD");
                     var policies = selected.Evidence.Select(row => row.PolicyVersionId).Distinct().ToArray();
                     if (policies.Length == 1)
                         policyVersionId = policies[0];

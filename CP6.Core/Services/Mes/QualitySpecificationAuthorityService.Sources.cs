@@ -56,8 +56,10 @@ public sealed partial class QualitySpecificationAuthorityService
     /// <summary>Same native connection and transaction. This is the exact source participant;
     /// it neither starts a nested transaction nor creates an HTTP final-use token.</summary>
     internal async Task<QualitySpecificationSourceProofV1> Source(OperationsAccessV1 root,EngineeringSourceRefV1 reference,
-        EngineeringProductRefV1? product,bool hold,CancellationToken ct)
+        EngineeringProductRefV1? product,bool hold,CancellationToken ct,string? expectedEnvironment=null,string? expectedMode=null)
     {
+        if(expectedEnvironment!=null && expectedEnvironment!=Environment.ToString("D") || expectedMode!=null && expectedMode!=runtime.EvidenceMode)
+            throw Error("QUALITY_SPEC_SCOPE_MISMATCH",403);
         Ref(reference);var a=await root.SourceAsync(OperationsOwnerV1.QualitySpecification,ct);
         var s=await Store(a,false,ct);var v=await View(a,s,reference.Id,Revision(reference.Version),ct);
         if(v.Version.Reference!=reference)throw Error("QUALITY_SPEC_REFERENCE_CHANGED",412);

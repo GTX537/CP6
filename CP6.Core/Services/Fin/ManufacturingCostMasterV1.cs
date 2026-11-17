@@ -6,7 +6,8 @@ namespace CP6.Core.Services.Fin;
 public sealed record ManufacturingCostPolicySubmitV1(Guid CommandId, Guid? PreviousVersionId,
     DateOnly From, DateOnly? ToExclusive, [property: JsonRequired] int CurrencyScale, string Rounding,
     string RateDateBasis, string Valuation, string Variance, [property: JsonRequired] bool AllowZeroRate,
-    string ApprovalBasisReference, string Reason);
+    string ApprovalBasisReference, string Reason,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] CostPolicyDefinitionV1? Definition = null);
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record ManufacturingRateBasisSubmitV1(Guid CommandId, Guid? PreviousVersionId,
