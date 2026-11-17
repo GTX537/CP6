@@ -47,7 +47,8 @@ internal sealed class ManufacturingRateConsumptionV1(CP6Context db)
             FROM cp6_fin_mfg_v1.timeline t
             JOIN cp6_fin_mfg_v1.rate_versions r ON (r.tenant_id,r.ledger_id,r.id)=(t.tenant_id,t.ledger_id,t.rate_id)
             JOIN cp6_fin_mfg_v1.policies p ON (p.tenant_id,p.ledger_id,p.version_id)=(r.tenant_id,r.ledger_id,r.policy_version_id)
-            JOIN cp6_fin_mfg_v1.rate_bases b ON (b.tenant_id,b.ledger_id,b.id)=(r.tenant_id,r.ledger_id,r.basis_id)
+            JOIN cp6_fin_mfg_v1.rate_bases b ON (b.tenant_id,b.ledger_id,b.id,b.policy_version_id,b.work_center_id,b.operation_id)
+                =(r.tenant_id,r.ledger_id,r.basis_id,r.policy_version_id,r.work_center_id,r.operation_id)
             JOIN cp6_fin_mfg_v1.current_center_versions v ON (v.tenant_id,v.ledger_id,v.root_id,v.version_id)
                 =(r.tenant_id,r.ledger_id,r.center_id,r.center_version_id)
             WHERE t.tenant_id={db.CurrentTenantId} AND t.ledger_id={ledger.Id}

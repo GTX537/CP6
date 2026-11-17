@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-17，W697 从 Main ce3da8cd 复用 DEV-1，接通财务政策及费率依据的版本发布。PostgreSQL 4 项通过，零跳过。 [W697 交付](../development/evidence/W697-01/DELIVERY.md)
+
 2026-11-17，W696 从 Main 900bb4c0 复用 DEV-1 并接入 D28/C28。PostgreSQL 9 项通过，零跳过。 [W696 交付](../development/evidence/W696-01/DELIVERY.md)
 
 2026-11-17，W695 从 Main 60b6264a 复用 DEV-1，接通标准成本和工序费率维护。PostgreSQL 4 项、Chrome 5 项、Vue 回归 19 项通过，零跳过。 [W695 交付](../development/evidence/W695-01/DELIVERY.md)

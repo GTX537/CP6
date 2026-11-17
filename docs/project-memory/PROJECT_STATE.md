@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-17，W697 接通成本政策与费率依据的专业发布和实际归集取版。PostgreSQL 4 项通过，零跳过。WP02-03 继续。 [W697 交付](../development/evidence/W697-01/DELIVERY.md)
+
 2026-11-17，W696 接通标准成本单据的 R2 命令记录和回查。PostgreSQL 9 项通过，零跳过。WP02-03 继续。 [W696 交付](../development/evidence/W696-01/DELIVERY.md)
 
 2026-11-17，W695 接通标准成本及工序费率维护。PostgreSQL 4 项、Chrome 5 项、Vue 回归 19 项通过，零跳过。WP02-03 继续。 [W695 交付](../development/evidence/W695-01/DELIVERY.md)
