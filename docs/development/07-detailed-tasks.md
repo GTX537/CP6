@@ -2,11 +2,11 @@
 
 台账日期：2026-11-17。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 378 项，已交付 45 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 379 项，已交付 46 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)，分配步骤见[多对话协作](09-parallel-development.md)。所有状态/领取/证据只在JSON登记；未领取的候选不自动READY。
 
-原 375 卡及其全部出口保留；已登记 3 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。
+原 375 卡及其全部出口保留；已登记 4 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。
 
 ## WP01 现有实现与设计对照
 
@@ -50,7 +50,8 @@
 | [WP02-14 文件不可变版本、扫描和Owner授权绑定](../../docs/development/task-plans/WP02.md#wp02-14) | Main | 已交付 | WP02-10 | CODE / M | COORD / WP02-14 |
 | [WP02-14b 通用文件正式化、Owner 共门与完整引用清理余项](../../docs/development/task-plans/WP02.md#wp02-14b) | Main | 待安排 | WP02-14 | CODE / M | 未领取 |
 | [WP02-15 隐私subject目录、导出与擦除编排](../../docs/development/task-plans/WP02.md#wp02-15) | Main | 待安排 | WP02-04, WP02-13, WP02-14 | CODE / M | COORD / W125-BUG-537 |
-| [WP02-16 编号原命令分配和生成器安全预览](../../docs/development/task-plans/WP02.md#wp02-16) | Main | 待安排 | WP02-10 | CODE / M | COORD / W65-01 |
+| [WP02-16 编号原命令分配和生成器安全预览](../../docs/development/task-plans/WP02.md#wp02-16) | Main | 已交付 | WP02-10 | CODE / M | COORD / WP02-16 |
+| [WP02-16b 完整编号域、受控切换恢复与规则管理余项](../../docs/development/task-plans/WP02.md#wp02-16b) | Main | 待安排 | WP02-16 | CODE / M | 未领取 |
 | [WP02-17 多语言维护、发布CAS与客户端精确缓存](../../docs/development/task-plans/WP02.md#wp02-17) | Main | 待安排 | WP02-10, WP02-14 | CODE / M | 未领取 |
 | [WP02-18 工作台菜单CAS与授权KPI查询](../../docs/development/task-plans/WP02.md#wp02-18) | Main | 待安排 | WP02-03 | CODE / M | D / WP02-18 第十三轮 菜单保存后的列表与当前浏览器导航刷新恢复 |
 | [WP02-19 客户端激活、nonce与身份完成门](../../docs/development/task-plans/WP02.md#wp02-19) | Main | 待安排 | WP02-03, WP02-04 | CODE / M | 未领取 |
