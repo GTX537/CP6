@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-17，W695 从 Main 60b6264a 复用 DEV-1，接通标准成本和工序费率维护。PostgreSQL 4 项、Chrome 5 项、Vue 回归 19 项通过，零跳过。 [W695 交付](../development/evidence/W695-01/DELIVERY.md)
+
 2026-11-17，W694 从 Main 75d369898 复用 DEV-1，接通独立标准单据和原命令恢复。PostgreSQL 5 项定向用例通过，零跳过。 [W694 交付](../development/evidence/W694-01/DELIVERY.md)
 
 2026-11-17，W693 从 Main e8560b79 复用 DEV-1，接通整单标准依据及 Finance Owner 历史。35 项定向用例通过，其中 PostgreSQL 29 项、成本组件 6 项，零跳过。 [W693 交付](../development/evidence/W693-01/DELIVERY.md)
