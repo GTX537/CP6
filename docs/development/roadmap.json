@@ -166392,6 +166392,11 @@
       "at": "2026-11-17T11:56:25.010116+00:00",
       "change": "用户决定启用单卡串行、严格前置和有效时间预算；WP02-03 按原定义 DONE，财务部分归回六张原卡，代码和依赖不变。",
       "evidence": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-17T12:05:27.589202+00:00",
+      "change": "WP02-10 按原卡定义核销 DONE；Main 代表 Owner 同事务、固定原结果/原键恢复、最终授权门和实际 writer 盘点已核销。",
+      "evidence": "docs/development/evidence/WP02-10/card-closure/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -184245,60 +184250,42 @@
         "file:Main:CP6.WebApi/Controllers/Sys/AuthController.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-10",
-      "entry_gate": "NOT_CHECKED",
+      "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W98-01",
+        "chat_label": "COORD / WP02-10",
         "repository": "Main",
-        "owning_task_repository": "Main",
-        "branch": "codex/w98-01",
-        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-24T04:17:25.688628+00:00",
-        "baseline_sha": "c7324fab629a4d66057d4b370ba522e891f3b680",
-        "entry_evidence": "docs/development/dispatch/20261024-wave98/README.md",
+        "branch": "codex/wp02-10",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-17T12:03:05.756979+00:00",
+        "baseline_sha": "17aa9250d46a0859fcb2ce8ddd4e5bec4b69c42b",
+        "entry_evidence": "docs/development/evidence/WP02-10/card-closure/DELIVERY.md",
         "phase": "CLOSED",
-        "dispatch_scope": "W98_01",
-        "bounded_window_gate": "CONFIRMED",
-        "full_task_gate_unchanged": true,
-        "worker_start_received": true,
-        "actual_start_ref": {
-          "commit": "f2fd4cf57af408466892a139e385a589829c903b",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T041725Z-wave98-start/MESSAGE.md",
-          "at": "2026-10-24T04:17:25.688628+00:00"
-        },
-        "reserved_write_resources": [
-          "Main:stock-MOVE-UI",
-          "Main:stock-HTTP-tests"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
-        "handoff_branch": "codex/w98-handoff",
-        "actions_authorized": false,
-        "deployment_authorized": false,
-        "existing_database_migration_authorized": false,
-        "worker_delivery_received": true,
-        "candidate_review_completed": true,
-        "candidate_integrated": true,
-        "resources_released": true,
-        "full_task_completed": false,
-        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/0b8a3ee014e7bcfb1fe58adf5b2792f4e61a7992/docs/development/evidence/W98-01/DELIVERY.md",
-        "source_candidate_sha": "98a4d468c264bcc050e2272ec798c6b3b6ab4072",
-        "remote_main_sha": "0b8a3ee014e7bcfb1fe58adf5b2792f4e61a7992",
-        "pull_request": "https://github.com/GTX537/CP6/pull/509",
-        "handoff_delivery_ref": {
-          "commit": "f2568b9927fe080eb206d65f5f4d24e7dce53ea9",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T042532Z-wave98-delivery/MESSAGE.md",
-          "at": "2026-10-24T04:25:32.073033+00:00",
-          "base": "codex/t02c-entry-handoff-20260921",
-          "branch": "codex/w98-handoff"
-        }
+        "dispatch_scope": "Main 代表 Owner 同事务、固定原结果/原键恢复、最终授权门和实际 writer 盘点已核销。",
+        "delivery_report": "docs/development/evidence/WP02-10/card-closure/DELIVERY.md",
+        "full_task_completed": true
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-10/card-closure/DELIVERY.md",
+          "source_sha": "17aa9250d46a0859fcb2ce8ddd4e5bec4b69c42b",
+          "result": "PASS",
+          "observed_at": "2026-11-17T12:05:27.589202+00:00",
+          "command": "Review adopted W43/W44/W50/W98/W435/W645 evidence and current Owner/journal paths; original AC mapping; strict prerequisites; docs/ledger validation",
+          "environment": "本次文档/台账核销；按原 SHA 和环境复用实际 PostgreSQL/宿主证据，无新产品执行",
+          "scope": "Main 代表 Owner 同事务、固定原结果/原键恢复、最终授权门和实际 writer 盘点已核销。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-10/card-closure/DELIVERY.md",
+        "source_sha": "17aa9250d46a0859fcb2ce8ddd4e5bec4b69c42b",
+        "remote_main_sha": "17aa9250d46a0859fcb2ce8ddd4e5bec4b69c42b",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1237",
+        "scope": "本报告核实的已交付实现均在准确远端主线中；所列 PR 是基线采用定位，本次卡核销 PR 另由 GitHub 和工作区 finish 记录。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
@@ -184720,6 +184707,53 @@
             "branch": "codex/w97-handoff"
           },
           "lifecycle_complete": true
+        },
+        {
+          "chat_label": "COORD / W98-01",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/w98-01",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-24T04:17:25.688628+00:00",
+          "baseline_sha": "c7324fab629a4d66057d4b370ba522e891f3b680",
+          "entry_evidence": "docs/development/dispatch/20261024-wave98/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "W98_01",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "f2fd4cf57af408466892a139e385a589829c903b",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T041725Z-wave98-start/MESSAGE.md",
+            "at": "2026-10-24T04:17:25.688628+00:00"
+          },
+          "reserved_write_resources": [
+            "Main:stock-MOVE-UI",
+            "Main:stock-HTTP-tests"
+          ],
+          "reserved_postgresql_ports": [
+            55435
+          ],
+          "handoff_branch": "codex/w98-handoff",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "existing_database_migration_authorized": false,
+          "worker_delivery_received": true,
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "resources_released": true,
+          "full_task_completed": false,
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/0b8a3ee014e7bcfb1fe58adf5b2792f4e61a7992/docs/development/evidence/W98-01/DELIVERY.md",
+          "source_candidate_sha": "98a4d468c264bcc050e2272ec798c6b3b6ab4072",
+          "remote_main_sha": "0b8a3ee014e7bcfb1fe58adf5b2792f4e61a7992",
+          "pull_request": "https://github.com/GTX537/CP6/pull/509",
+          "handoff_delivery_ref": {
+            "commit": "f2568b9927fe080eb206d65f5f4d24e7dce53ea9",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T042532Z-wave98-delivery/MESSAGE.md",
+            "at": "2026-10-24T04:25:32.073033+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w98-handoff"
+          }
         }
       ],
       "wave44_delivery": {
@@ -185088,13 +185122,13 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W310-01",
-        "as_of": "2026-11-08",
-        "classification": "IMPLEMENTATION_REMAINS",
-        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-10",
-        "delivered": "Main PG journal、Stock/PA090代表事务及W249有效。W326证明Stock只读路径采用可信租户登录。 W327验证原认证根和普通写者事务的数据库前置。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。 W336 已在实际宿主验证 V2 原创建上下文和调整使用普通事务，缺权限、原结果和合法旧请求有 PostgreSQL 证据。 W337 已验证实际 V2 移库目标创建、两腿独立归属、原货权和故障回滚。 W338 已验证实际公开直接库存调整使用普通事务，缺写权失败和原流水号回包均有实证。 W339 已验证实际公开直接库存移库使用普通事务，缺图锁失败及原双编号回包已有实证。 W340 已登记现有 Stock 写者和对象原生目录，核准 A/B 同业务键和全表消息唯一域。 W341 已实测实际 A/B 同业务键、独立原结果、物理池复用和租户 Outbox 路由。 W342 验证实际 Stock 入口错误 LOGIN、原生角色和 RLS 越权失败，原操作与业务状态不变。 W343 实测 Stock 旧池退出、A 同角色凭据轮换以及原结果延续，B 可读且保持实际状态。 W344 复测真实 Stock 事务取消、坏连接替换及两租户原键与状态恢复。  W346 现有 Stock 首装提交后丢弃 stdout，从另一个真实进程在准确物理库取回原安装 ID，驱动原写栅栏及后续已交付安装。孤立回执、未绑定登录读策略及目录/权限漂移拒绝。",
-        "remaining": "其他实际 Owner 的权限、共同事务、恢复和正式采纳按各合同待核。W346 支持已交付库存写入安装的原回执恢复。",
-        "next_action": "在 DEV-1 下一个独立窗实施原 RMA 租户业务 schema 首版迁移和 A/A 竞争及 B 独立实际验证。DEV-2 同时完成 W349 精确本地回退判定。",
+        "window": "WP02-10",
+        "as_of": "2026-11-17",
+        "classification": "CARD_DEFINITION_CLOSED",
+        "report": "docs/development/evidence/WP02-10/card-closure/DELIVERY.md",
+        "delivered": "Main 代表 Owner 同事务、固定原结果/原键恢复、最终授权门和实际 writer 盘点已核销。",
+        "remaining": "",
+        "next_action": "按原图和用户顺序进入 WP02-04",
         "evidence_refs": [
           "docs/development/evidence/W310-01/DELIVERY.md",
           "docs/development/evidence/W326-01/DELIVERY.md",
@@ -185116,11 +185150,49 @@
           "docs/development/evidence/W342-01/DELIVERY.md",
           "docs/development/evidence/W343-01/DELIVERY.md",
           "docs/development/evidence/W344-01/DELIVERY.md",
-          "docs/development/evidence/W346-01/DELIVERY.md"
+          "docs/development/evidence/W346-01/DELIVERY.md",
+          "docs/development/evidence/WP02-10/card-closure/DELIVERY.md"
         ],
-        "formal_state_changed": false,
+        "formal_state_changed": true,
         "new_product_validation": false,
-        "latest_window": "W346-01"
+        "latest_window": "WP02-10",
+        "review_history": [
+          {
+            "window": "W310-01",
+            "as_of": "2026-11-08",
+            "classification": "IMPLEMENTATION_REMAINS",
+            "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-10",
+            "delivered": "Main PG journal、Stock/PA090代表事务及W249有效。W326证明Stock只读路径采用可信租户登录。 W327验证原认证根和普通写者事务的数据库前置。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。 W336 已在实际宿主验证 V2 原创建上下文和调整使用普通事务，缺权限、原结果和合法旧请求有 PostgreSQL 证据。 W337 已验证实际 V2 移库目标创建、两腿独立归属、原货权和故障回滚。 W338 已验证实际公开直接库存调整使用普通事务，缺写权失败和原流水号回包均有实证。 W339 已验证实际公开直接库存移库使用普通事务，缺图锁失败及原双编号回包已有实证。 W340 已登记现有 Stock 写者和对象原生目录，核准 A/B 同业务键和全表消息唯一域。 W341 已实测实际 A/B 同业务键、独立原结果、物理池复用和租户 Outbox 路由。 W342 验证实际 Stock 入口错误 LOGIN、原生角色和 RLS 越权失败，原操作与业务状态不变。 W343 实测 Stock 旧池退出、A 同角色凭据轮换以及原结果延续，B 可读且保持实际状态。 W344 复测真实 Stock 事务取消、坏连接替换及两租户原键与状态恢复。  W346 现有 Stock 首装提交后丢弃 stdout，从另一个真实进程在准确物理库取回原安装 ID，驱动原写栅栏及后续已交付安装。孤立回执、未绑定登录读策略及目录/权限漂移拒绝。",
+            "remaining": "其他实际 Owner 的权限、共同事务、恢复和正式采纳按各合同待核。W346 支持已交付库存写入安装的原回执恢复。",
+            "next_action": "在 DEV-1 下一个独立窗实施原 RMA 租户业务 schema 首版迁移和 A/A 竞争及 B 独立实际验证。DEV-2 同时完成 W349 精确本地回退判定。",
+            "evidence_refs": [
+              "docs/development/evidence/W310-01/DELIVERY.md",
+              "docs/development/evidence/W326-01/DELIVERY.md",
+              "docs/development/evidence/W327-01/DELIVERY.md",
+              "docs/development/evidence/W328-01/DELIVERY.md",
+              "docs/development/evidence/W329-01/DELIVERY.md",
+              "docs/development/evidence/W330-01/DELIVERY.md",
+              "docs/development/evidence/W331-01/DELIVERY.md",
+              "docs/development/evidence/W332-01/DELIVERY.md",
+              "docs/development/evidence/W333-01/DELIVERY.md",
+              "docs/development/evidence/W334-01/DELIVERY.md",
+              "docs/development/evidence/W335-01/DELIVERY.md",
+              "docs/development/evidence/W336-01/DELIVERY.md",
+              "docs/development/evidence/W337-01/DELIVERY.md",
+              "docs/development/evidence/W338-01/DELIVERY.md",
+              "docs/development/evidence/W339-01/DELIVERY.md",
+              "docs/development/evidence/W340-01/DELIVERY.md",
+              "docs/development/evidence/W341-01/DELIVERY.md",
+              "docs/development/evidence/W342-01/DELIVERY.md",
+              "docs/development/evidence/W343-01/DELIVERY.md",
+              "docs/development/evidence/W344-01/DELIVERY.md",
+              "docs/development/evidence/W346-01/DELIVERY.md"
+            ],
+            "formal_state_changed": false,
+            "new_product_validation": false,
+            "latest_window": "W346-01"
+          }
+        ]
       },
       "wave530_delivery": {
         "report": "docs/development/evidence/W530-01/DELIVERY.md",
@@ -185132,6 +185204,25 @@
         "tested_source_sha": "e2e8a23a32345fedde6b44cb2ab72b533c25e0f7",
         "crm_remote_main_sha": "a4890974b3dce2fa9e978a62d3cbcfeb1958bf91",
         "actual_evidence": "D:/CP6-test-artifacts/W530-01/pg/57368780aa3788e88da9acc1193dbf59/pgt025-owner-recovery.json"
+      },
+      "remaining_scope": "",
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP02-10/card-closure/DELIVERY.md",
+        "started_at": "2026-11-17T12:03:05.756979+00:00",
+        "verified_at": "2026-11-17T12:05:27.589202+00:00",
+        "effective_seconds": 141.832,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600.0,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-02",
+          "WP02-03",
+          "WP02-07"
+        ],
+        "new_product_execution": false,
+        "preceding_integration_seconds": 400.747
       }
     },
     {
@@ -216142,7 +216233,7 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "WP02-03",
+      "id": "WP02-10",
       "phase": "CARD_DONE_PENDING_PR",
       "owner": "COORD",
       "mode": "SINGLE_CHAT_SERIAL",
@@ -216155,22 +216246,22 @@
         "COORD"
       ],
       "product_code_changed": false,
-      "report": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
-      "next_action": "正常合并 WP02-03 核销 PR 后按阶段 0 顺序进入 WP02-10。",
+      "report": "docs/development/evidence/WP02-10/card-closure/DELIVERY.md",
+      "next_action": "正常合并并核实远端后进入 WP02-04",
       "windows": [
         {
-          "id": "WP02-03",
-          "workspace_task": "WP02-03",
+          "id": "WP02-10",
+          "workspace_task": "WP02-10",
           "related_tasks": [
-            "WP02-03"
+            "WP02-10"
           ],
           "chat": "COORD",
           "phase": "CLOSED",
-          "branch": "codex/wp02-03",
+          "branch": "codex/wp02-10",
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "delivery_report": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/WP02-10/card-closure/DELIVERY.md",
           "review_completed": true,
           "full_task_completed": true,
           "integration_status": "PENDING_PROTECTED_PR",
@@ -276440,6 +276531,47 @@
         "integration_status": "MERGED",
         "remote_main_sha": "fc8b5a51da6f6fc8a8791a1f4bd7feb5fd3abb0d",
         "pr_url": "https://github.com/GTX537/CP6/pull/1236"
+      },
+      {
+        "id": "WP02-03",
+        "phase": "INTEGRATED",
+        "owner": "COORD",
+        "mode": "SINGLE_CHAT_SERIAL",
+        "windows_closed": true,
+        "active_implementation_chats": [],
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "product_code_changed": false,
+        "report": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
+        "next_action": "正常合并 WP02-03 核销 PR 后按阶段 0 顺序进入 WP02-10。",
+        "windows": [
+          {
+            "id": "WP02-03",
+            "workspace_task": "WP02-03",
+            "related_tasks": [
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "phase": "CLOSED",
+            "branch": "codex/wp02-03",
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "delivery_report": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
+            "review_completed": true,
+            "full_task_completed": true,
+            "integration_status": "MERGED",
+            "actions_authorized": false,
+            "deployment_authorized": false
+          }
+        ],
+        "integration_status": "MERGED",
+        "remote_main_sha": "17aa9250d46a0859fcb2ce8ddd4e5bec4b69c42b",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1237"
       }
     ],
     "development_priority": {
@@ -287832,14 +287964,15 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 750.046,
+      "effective_seconds": 1292.625,
       "closed_cards": [
-        "WP02-03"
+        "WP02-03",
+        "WP02-10"
       ],
       "closed_targets": [],
       "new_splits": [],
       "current_stage": "PHASE_0",
-      "next_card": "WP02-10",
+      "next_card": "WP02-04",
       "no_module_freeze": true,
       "phases": {
         "A": [

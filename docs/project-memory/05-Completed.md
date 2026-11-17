@@ -1,5 +1,7 @@
 # 已完成能力与近期里程碑
 
+2026-11-17，WP02-10 卡 DONE：Main 代表 Owner 同事务、固定原结果/原键恢复、最终授权门和实际 writer 盘点已核销。 原证据按实际范围复用，未重跑产品。 [WP02-10 核销](../development/evidence/WP02-10/card-closure/DELIVERY.md)
+
 2026-11-17，WP02-03 卡 DONE：当前身份/版本/共同撤权门、字段 MIN 后默认和四用途决定及当前原结果披露已核销，复用原实际证据。 [WP02-03 核销](../development/evidence/WP02-03/card-closure/DELIVERY.md)
 
 2026-11-17，W699 完成会计政策/来源合同专业批准、不可变原件、当前来源门及成本用版子集。最终 PostgreSQL 原生来源验收及完整成本政策回归 2 项通过，零跳过；构建零错误，本地发布 HTTP 冒烟通过。 [W699 交付](../development/evidence/W699-01/DELIVERY.md)
