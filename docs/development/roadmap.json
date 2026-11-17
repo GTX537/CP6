@@ -166444,6 +166444,11 @@
       "at": "2026-11-17T13:02:58.947852+00:00",
       "change": "WP02-16 拆卡：原号 DONE 仅核销已验证部分，完整余项 WP02-16b；原定义和既有严格前置保留。",
       "evidence": "docs/development/evidence/WP02-16/card-closure/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-17T13:18:25.811429+00:00",
+      "change": "WP01-01 按原卡定义核销 DONE；核对已采纳 v1.2 的准确来源与 125 目标覆盖/不覆盖边界；579 项新依据只适用 ITER/REL，旧 30/48 缺件及机器/运行门保留。阶段 0 证据核对收尾，严格前置不降级。",
+      "evidence": "docs/development/evidence/WP01-01/card-closure/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -166483,56 +166488,42 @@
         "coordination:roadmap"
       ],
       "coverage_role": "COORDINATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP01.md",
       "card_anchor": "wp01-01",
-      "entry_gate": "NOT_CHECKED",
+      "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "A / WP01-01 第九轮 验收工具按阶段加载信任配置",
+        "chat_label": "COORD / WP01-01",
         "repository": "Main",
-        "owning_task_repository": "Main",
-        "branch": "codex/wp01-01-trust-stages-20261015",
-        "worktree": "D:/CP6-worktrees/wp01-01-trust-stages-20261015",
-        "claimed_at": "2026-10-15T15:10:23.577941+00:00",
-        "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
-        "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
-        "entry_evidence": "docs/development/dispatch/20261015-wave9/WP01-01.md",
-        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
-        "dispatch_scope": "STAGE_SCOPED_ACCEPTANCE_TRUST",
-        "bounded_window_gate": "CLOSED",
-        "full_task_gate_unchanged": true,
-        "worker_start_received": true,
-        "allowed_write_paths": [
-          "docs/development/tools/acceptance_basis.py",
-          "docs/development/tools/test_acceptance_basis.py",
-          "docs/development/tools/manage_roadmap.py",
-          "docs/development/tools/test_manage_roadmap.py",
-          "docs/development/evidence/WP01-01/adoption-v1.2/OPERATOR.md",
-          "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md"
-        ],
-        "reserved_write_resources": [
-          "Main:acceptance-basis-gate"
-        ],
-        "reserved_postgresql_ports": [],
-        "handoff_branch": "codex/dev-handoff-wp01-01",
-        "actions_authorized": false,
-        "formal_publication_authorized": false,
-        "delivery_report": "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md",
-        "worker_start_ref": {
-          "commit": "e6a10d2207418258c869d03f1d84b0144983e4c3",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261016T113733Z-wave9-start/MESSAGE.md"
-        },
-        "coordinator_received_at": "2026-10-16T12:15:59.049568+00:00",
-        "execution_baseline_sha": "37d84b4b6eaeefe7e8b35c21df26a8b1f8c119d5",
-        "handoff_delivery": {
-          "commit": "ade901ec90c7a1e2a1d97e5ece9156c947a2afc1",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261016T114328Z-wave9-delivery/MESSAGE.md"
-        },
-        "window_closed_at": "2026-10-16T12:17:14.768909+00:00"
+        "branch": "codex/wp01-01",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-17T13:13:51.898374+00:00",
+        "baseline_sha": "2e1d038f1cdf6db29a81e5e540334a3084589712",
+        "entry_evidence": "docs/development/evidence/WP01-01/card-closure/DELIVERY.md",
+        "phase": "CLOSED",
+        "dispatch_scope": "核对已采纳 v1.2 的准确来源与 125 目标覆盖/不覆盖边界；579 项新依据只适用 ITER/REL，旧 30/48 缺件及机器/运行门保留。阶段 0 证据核对收尾，严格前置不降级。",
+        "delivery_report": "docs/development/evidence/WP01-01/card-closure/DELIVERY.md",
+        "full_task_completed": true
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP01-01/card-closure/DELIVERY.md",
+          "source_sha": "2e1d038f1cdf6db29a81e5e540334a3084589712",
+          "result": "PASS",
+          "observed_at": "2026-11-17T13:18:25.811429+00:00",
+          "command": "wp01-close-audit.py；manage_roadmap.py --write/--report/--basis-report；集中 diff 与必要链接核对（无产品执行）",
+          "environment": "本地 Windows / Python 3.14；真实采纳依据和目录读取；无独立信任配置；无产品执行",
+          "scope": "核对已采纳 v1.2 的准确来源与 125 目标覆盖/不覆盖边界；579 项新依据只适用 ITER/REL，旧 30/48 缺件及机器/运行门保留。阶段 0 证据核对收尾，严格前置不降级。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP01-01/card-closure/DELIVERY.md",
+        "source_sha": "2e1d038f1cdf6db29a81e5e540334a3084589712",
+        "remote_main_sha": "2e1d038f1cdf6db29a81e5e540334a3084589712",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1244",
+        "scope": "本报告核实的已交付实现均在准确远端主线中；所列 PR 是基线采用定位，本次卡核销 PR 另由 GitHub 和工作区 finish 记录。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "PLM-ITER/REL替代验收设计已审查采纳",
@@ -166661,6 +166652,49 @@
           "execution_baseline_sha": "b3eb755bc43e370f697480a6ea41474c3d978488",
           "coordinator_received_at": "2026-10-15T07:40:11.809888+00:00",
           "window_closed_at": "2026-10-15T07:40:11.809888+00:00"
+        },
+        {
+          "chat_label": "A / WP01-01 第九轮 验收工具按阶段加载信任配置",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/wp01-01-trust-stages-20261015",
+          "worktree": "D:/CP6-worktrees/wp01-01-trust-stages-20261015",
+          "claimed_at": "2026-10-15T15:10:23.577941+00:00",
+          "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+          "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+          "entry_evidence": "docs/development/dispatch/20261015-wave9/WP01-01.md",
+          "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
+          "dispatch_scope": "STAGE_SCOPED_ACCEPTANCE_TRUST",
+          "bounded_window_gate": "CLOSED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "allowed_write_paths": [
+            "docs/development/tools/acceptance_basis.py",
+            "docs/development/tools/test_acceptance_basis.py",
+            "docs/development/tools/manage_roadmap.py",
+            "docs/development/tools/test_manage_roadmap.py",
+            "docs/development/evidence/WP01-01/adoption-v1.2/OPERATOR.md",
+            "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md"
+          ],
+          "reserved_write_resources": [
+            "Main:acceptance-basis-gate"
+          ],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/dev-handoff-wp01-01",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "delivery_report": "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md",
+          "worker_start_ref": {
+            "commit": "e6a10d2207418258c869d03f1d84b0144983e4c3",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261016T113733Z-wave9-start/MESSAGE.md"
+          },
+          "coordinator_received_at": "2026-10-16T12:15:59.049568+00:00",
+          "execution_baseline_sha": "37d84b4b6eaeefe7e8b35c21df26a8b1f8c119d5",
+          "handoff_delivery": {
+            "commit": "ade901ec90c7a1e2a1d97e5ece9156c947a2afc1",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP01-01/messages/20261016T114328Z-wave9-delivery/MESSAGE.md"
+          },
+          "window_closed_at": "2026-10-16T12:17:14.768909+00:00"
         }
       ],
       "preparation_delivery_history": [
@@ -166719,9 +166753,9 @@
         "record": "docs/development/evidence/authorized-adoption-release-20261015/authorization.json",
         "manifest_sha256": "ad811cc0af66c77b4953b0ec2b9fe6393f50e9823225e17bfc3f67ea914e3883",
         "machine_trust_state": "INDEPENDENT_VERIFIER_UNCONFIGURED",
-        "remaining_scope": "User adoption is now decided; independently governed trust policy/attestation is not provisioned, so automatic inventory closure and full WP01 completion remain unverified. Do not request the same adoption decision again. Business runtime belongs to consumer tasks."
+        "remaining_scope": "本卡的准确用户采纳与125目标适用性核对已完成。独立 authority/execution 配置与真实业务验证继续按既有完整门处理；机器采纳和运行尚未验证，不提升目标或 WP01 工作包。"
       },
-      "remaining_scope": "独立维护者的实际 authority registry/公钥/有效签名尚未配置；真实业务运行未验收。用户采纳已决定，不再重问；完整 WP01-01 保持 PLANNED/NOT_CHECKED。",
+      "remaining_scope": "",
       "wave9_delivery": {
         "status": "MERGED",
         "source_candidate_sha": "c8c33a3115cd760bdf08381c81913616351f54b1",
@@ -166741,19 +166775,77 @@
         "remote_verified_at": "2026-10-16T12:17:14.768909+00:00"
       },
       "scope_reconciliation": {
-        "window": "W310-01",
-        "as_of": "2026-11-08",
-        "classification": "CONTRACT_OR_EVIDENCE_PENDING",
-        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp01-01",
-        "delivered": "有版本替代资产、信任阶段及579项义务ITER/REL划分已采用。",
-        "remaining": "逐125目标核对替代覆盖与不能覆盖范围；不可恢复历史原件仍缺失，不能用模拟数据或新签名冒充。",
-        "next_action": "按原目标逐项核准已有采用和缺件，不重做替代方案。",
+        "window": "WP01-01",
+        "as_of": "2026-11-17",
+        "classification": "CARD_DEFINITION_CLOSED",
+        "report": "docs/development/evidence/WP01-01/card-closure/DELIVERY.md",
+        "delivered": "核对已采纳 v1.2 的准确来源与 125 目标覆盖/不覆盖边界；579 项新依据只适用 ITER/REL，旧 30/48 缺件及机器/运行门保留。阶段 0 证据核对收尾，严格前置不降级。",
+        "remaining": "",
+        "next_action": "按原图和用户顺序进入 WP02-05b",
         "evidence_refs": [
           "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md",
-          "docs/development/evidence/W310-01/DELIVERY.md"
+          "docs/development/evidence/W310-01/DELIVERY.md",
+          "docs/development/evidence/WP01-01/card-closure/DELIVERY.md"
         ],
-        "formal_state_changed": false,
-        "new_product_validation": false
+        "formal_state_changed": true,
+        "new_product_validation": false,
+        "review_history": [
+          {
+            "window": "W310-01",
+            "as_of": "2026-11-08",
+            "classification": "CONTRACT_OR_EVIDENCE_PENDING",
+            "report": "docs/development/evidence/W310-01/DELIVERY.md#wp01-01",
+            "delivered": "有版本替代资产、信任阶段及579项义务ITER/REL划分已采用。",
+            "remaining": "逐125目标核对替代覆盖与不能覆盖范围；不可恢复历史原件仍缺失，不能用模拟数据或新签名冒充。",
+            "next_action": "按原目标逐项核准已有采用和缺件，不重做替代方案。",
+            "evidence_refs": [
+              "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md",
+              "docs/development/evidence/W310-01/DELIVERY.md"
+            ],
+            "formal_state_changed": false,
+            "new_product_validation": false
+          }
+        ],
+        "latest_window": "WP01-01"
+      },
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP01-01/card-closure/DELIVERY.md",
+        "started_at": "2026-11-17T13:13:51.898374+00:00",
+        "verified_at": "2026-11-17T13:18:25.811429+00:00",
+        "effective_seconds": 273.913,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600.0,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP05-01"
+        ],
+        "new_product_execution": false,
+        "preceding_integration_seconds": 652.951
+      },
+      "adoption_closeout": {
+        "report": "docs/development/evidence/WP01-01/card-closure/DELIVERY.md",
+        "target_count": 125,
+        "original_route_targets": 123,
+        "new_basis_targets": [
+          "PLM-ITER-01",
+          "PLM-REL-01"
+        ],
+        "new_obligations": 579,
+        "original_gaps_preserved": true,
+        "observed_machine_predicates": {
+          "basis_adoption_valid": false,
+          "inventory_coverage_valid": true,
+          "target_runtime_valid": {
+            "PLM-ITER-01": false,
+            "PLM-REL-01": false
+          },
+          "errors": [
+            "INDEPENDENT_VERIFIER_UNCONFIGURED"
+          ]
+        },
+        "business_tests_executed": false
       }
     },
     {
@@ -216848,8 +216940,8 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "WP02-16",
-      "phase": "CARD_SPLIT_PENDING_PR",
+      "id": "WP01-01",
+      "phase": "CARD_DONE_PENDING_PR",
       "owner": "COORD",
       "mode": "SINGLE_CHAT_SERIAL",
       "windows_closed": true,
@@ -216861,24 +216953,24 @@
         "COORD"
       ],
       "product_code_changed": false,
-      "report": "docs/development/evidence/WP02-16/card-closure/DELIVERY.md",
-      "next_action": "下一实施 WP02-13b；阶段 0 继续 WP03-02 证据核对，完整前置未满足不实现/不假关卡。",
+      "report": "docs/development/evidence/WP01-01/card-closure/DELIVERY.md",
+      "next_action": "正常合并并核实远端后进入 WP02-05b",
       "windows": [
         {
-          "id": "WP02-16",
-          "workspace_task": "WP02-16",
+          "id": "WP01-01",
+          "workspace_task": "WP01-01",
           "related_tasks": [
-            "WP02-16"
+            "WP01-01"
           ],
           "chat": "COORD",
           "phase": "CLOSED",
-          "branch": "codex/wp02-16",
+          "branch": "codex/wp01-01",
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "delivery_report": "docs/development/evidence/WP02-16/card-closure/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/WP01-01/card-closure/DELIVERY.md",
           "review_completed": true,
-          "full_task_completed": false,
+          "full_task_completed": true,
           "integration_status": "PENDING_PROTECTED_PR",
           "actions_authorized": false,
           "deployment_authorized": false
@@ -277392,6 +277484,47 @@
         "integration_status": "MERGED",
         "remote_main_sha": "b173cc6501b580b86df10cddb889e6a71600dc15",
         "pr_url": "https://github.com/GTX537/CP6/pull/1243"
+      },
+      {
+        "id": "WP02-16",
+        "phase": "INTEGRATED",
+        "owner": "COORD",
+        "mode": "SINGLE_CHAT_SERIAL",
+        "windows_closed": true,
+        "active_implementation_chats": [],
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "product_code_changed": false,
+        "report": "docs/development/evidence/WP02-16/card-closure/DELIVERY.md",
+        "next_action": "下一实施 WP02-13b；阶段 0 继续 WP03-02 证据核对，完整前置未满足不实现/不假关卡。",
+        "windows": [
+          {
+            "id": "WP02-16",
+            "workspace_task": "WP02-16",
+            "related_tasks": [
+              "WP02-16"
+            ],
+            "chat": "COORD",
+            "phase": "CLOSED",
+            "branch": "codex/wp02-16",
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "delivery_report": "docs/development/evidence/WP02-16/card-closure/DELIVERY.md",
+            "review_completed": true,
+            "full_task_completed": false,
+            "integration_status": "MERGED",
+            "actions_authorized": false,
+            "deployment_authorized": false
+          }
+        ],
+        "integration_status": "MERGED",
+        "remote_main_sha": "2e1d038f1cdf6db29a81e5e540334a3084589712",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1244"
       }
     ],
     "development_priority": {
@@ -288784,7 +288917,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 4743.984,
+      "effective_seconds": 5670.848,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -288792,7 +288925,8 @@
         "WP02-13",
         "WP02-05",
         "WP02-14",
-        "WP02-16"
+        "WP02-16",
+        "WP01-01"
       ],
       "closed_targets": [],
       "new_splits": [
@@ -288829,8 +288963,8 @@
           "reason": "阶段 0 定位实际未完成出口，主动拆卡；原 scope/AC 保留。"
         }
       ],
-      "current_stage": "PHASE_0",
-      "next_card": "WP02-13b",
+      "current_stage": "A",
+      "next_card": "WP02-05b",
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -288894,7 +289028,138 @@
         "空间",
         "全链验收"
       ],
-      "phase0_next_review": "WP03-02"
+      "phase0_status": "COMPLETE",
+      "phase0_completed_at": "2026-11-17T13:18:25.811429+00:00",
+      "phase0_readonly_reviews": {
+        "WP02-06": {
+          "status": "READ_ONLY_PREREQUISITE_PENDING",
+          "evidence": [
+            "docs/development/evidence/W131-01/DELIVERY.md",
+            "docs/development/evidence/W246-01/DELIVERY.md",
+            "docs/development/evidence/W253-01/DELIVERY.md",
+            "docs/development/evidence/W645-01/DELIVERY.md"
+          ],
+          "verified": "CRM 原生 PostgreSQL、正式 PreCheckpoint 早退前内容门、完整原字节/历史来源、实际本地撤权 fence 与双组织旧会话失效已有实际证据；CRM 58c4ac76f5517c8d432290fde081d21f9ca2bacb/e5a8157f20e5817f58b33242a4bd6188f1c58461 已是 origin/main 5f09533b9168ee614a6df1f75629b39635585f86 祖先。",
+          "gaps": [
+            "严格前置 WP02-05b 未 DONE；其批准身份来源后继发布完成后，CRM 须实际采用准确新来源/完整目录，并验证旧会话不因重建复活（AC-ID01-01/04/05/06、ID05-02/03、AC-TN04-04 的 CRM 责任）。现有切组织/物理数据库重绑不能替代该变更。"
+          ],
+          "product_execution": false
+        },
+        "WP02-09": {
+          "status": "READ_ONLY_PREREQUISITE_PENDING",
+          "evidence": [
+            "docs/development/evidence/W117-01/DELIVERY.md",
+            "docs/development/evidence/W118-01/DELIVERY.md",
+            "docs/development/evidence/W530-01/DELIVERY.md",
+            "docs/development/evidence/W645-01/DELIVERY.md"
+          ],
+          "verified": "配置/H01 全图、原回执/审计/Outbox 真实 PG 原子性、失败回滚、COMMIT 响应丢失原键恢复、当前权与跨租户/精度已有 W117/W530/PGT-017 实证；W234 外部持久模拟消费者明确不写 CRM 业务表。",
+          "gaps": [
+            "严格前置 WP02-06（含 WP02-05b 来源后继）未 DONE，当前不能关卡或实施。",
+            "实际 CRM 业务消息入站 Owner 的 Inbox、业务全图、审计、原回执及 Outbox 同一本仓 PostgreSQL 事务仍缺实际采用证据；须按已接受真实业务路由验证重复并发、后段回滚、未知提交和撤权竞争，身份 Inbox/公开 HTTP/外部通知 fixture 不作替代。"
+          ],
+          "product_execution": false
+        },
+        "WP02-15": {
+          "status": "READ_ONLY_PREREQUISITE_PENDING",
+          "evidence": [
+            "docs/development/evidence/W311-01/DELIVERY.md",
+            "docs/development/evidence/W313-01/DELIVERY.md",
+            "docs/development/evidence/W314-01/DELIVERY.md",
+            "docs/development/evidence/W315-01/DELIVERY.md",
+            "docs/development/evidence/W320-01/DELIVERY.md",
+            "docs/development/evidence/W324-01/DELIVERY.md"
+          ],
+          "verified": "Main 已接 Owner 的稳定 subject/逐来源 Manifest、显式 PARTIAL/UNKNOWN、当前分权下载、独立计划/审批/hold、准确执行和墓碑/真实恢复候选已实证。W324 已补租户载荷恢复，不能仍列为缺代码。",
+          "gaps": [
+            "严格前置 WP02-13b 和 WP02-14b 未 DONE；当前不得关卡。前置完整交付后，按实际审计/文件清理变更核对已接隐私 Owner 的 hold、UNKNOWN 责任、原收据和恢复墓碑影响并跑受影响回归。"
+          ],
+          "consumer_followups": "原卡明定各域适配随消费者另接；OA/PLM/CRM/FILE 具体业务适配与完整环境/WAL/外部副本不在本阶段核对中扩大为 WP02-15 新实现范围，整体范围必须如实标 PARTIAL，目标原22AC届时逐项核对。",
+          "product_execution": false
+        },
+        "WP03-02": {
+          "status": "READ_ONLY_PREREQUISITE_PENDING",
+          "evidence": [
+            "docs/development/evidence/W117-01/DELIVERY.md",
+            "docs/development/evidence/W118-01/DELIVERY.md",
+            "docs/development/evidence/W135-01/DELIVERY.md",
+            "docs/development/evidence/W234-01/DELIVERY.md",
+            "docs/development/evidence/W645-01/DELIVERY.md"
+          ],
+          "verified": "冻结公开/H01 的持久 Attempt、CSRF、同意/Submission/Lead 全图、原字节回执与原键 UNKNOWN 恢复有真实 PG/HTTP/浏览器证据；原询盘60/60保持。W135按原有效合同确认 LeadNo 可空且公开路径无附件，不创造 NUM/FILE 调用。",
+          "gaps": [
+            "严格前置 WP02-09 和 WP02-16b 未 DONE，原直接依赖保持；既有冻结流程的适用判断不作为前置豁免。待真实提供者交付后按实际调用复核精确版本/当前输出门与受影响回归，不能仅凭60/60关闭整卡。"
+          ],
+          "product_execution": false
+        },
+        "WP03-04": {
+          "status": "READ_ONLY_PREREQUISITE_PENDING",
+          "evidence": [
+            "docs/development/evidence/W127-01/DELIVERY.md",
+            "docs/development/evidence/W482-01/DELIVERY.md",
+            "docs/development/evidence/W488-01/DELIVERY.md",
+            "docs/development/evidence/W491-01/DELIVERY.md",
+            "docs/development/evidence/W496-01/DELIVERY.md",
+            "docs/development/evidence/W497-01/DELIVERY.md",
+            "docs/development/evidence/W545-01/DELIVERY.md",
+            "docs/development/evidence/W582-01/DELIVERY.md",
+            "docs/development/evidence/W645-01/DELIVERY.md"
+          ],
+          "verified": "W482/W497 已实际覆盖导出20/30/90/99和单次下载；W491/W496 有原四种处置、Lead24日历月、墓碑/全图与制品清理、hold/回滚/原unit恢复实证，W488补原消息恢复，W545/W582/PGT-017补Main当前权威共同门。W310所列导出和月度保留缺代码描述已被后继证据取代。",
+          "gaps": [
+            "严格前置 WP02-09、WP02-14b、WP02-15 未 DONE；当前不关闭整卡。待这些原提供者/实际入站责任完成后，按真实调用检查精确版本与受影响同意/导出/保留回归。"
+          ],
+          "product_execution": false
+        }
+      },
+      "next_card_selection": {
+        "rule": "严格前置全部DONE；当前阶段可开工者按下游最长链，等长按原序列",
+        "baseline_sha": "2e1d038f1cdf6db29a81e5e540334a3084589712",
+        "selected": "WP02-05b",
+        "candidates": [
+          {
+            "card": "WP02-05b",
+            "global_edges": 44,
+            "phase_edges": 3,
+            "phase_path": [
+              "WP02-05b",
+              "WP02-06",
+              "WP02-09",
+              "WP03-02"
+            ]
+          },
+          {
+            "card": "WP02-13b",
+            "global_edges": 43,
+            "phase_edges": 2,
+            "phase_path": [
+              "WP02-13b",
+              "WP02-15",
+              "WP03-04"
+            ]
+          },
+          {
+            "card": "WP02-14b",
+            "global_edges": 41,
+            "phase_edges": 2,
+            "phase_path": [
+              "WP02-14b",
+              "WP02-15",
+              "WP03-04"
+            ]
+          },
+          {
+            "card": "WP02-16b",
+            "global_edges": 36,
+            "phase_edges": 1,
+            "phase_path": [
+              "WP02-16b",
+              "WP03-02"
+            ]
+          }
+        ]
+      },
+      "phase0_user_confirmation": "2026-11-17 用户确认：先按证据核销或拆卡，列清缺口；完成阶段0核对后再按顺序实施剩余卡。"
     }
   },
   "acceptance_basis": {

@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-17，WP01-01 卡 DONE；核对已采纳 v1.2 的准确来源与 125 目标覆盖/不覆盖边界；579 项新依据只适用 ITER/REL，旧 30/48 缺件及机器/运行门保留。阶段 0 证据核对收尾，严格前置不降级。 当前 47/379 张登记卡 DONE、0/125 目标 DONE；下一卡 WP02-05b。 [WP01-01 核销](../development/evidence/WP01-01/card-closure/DELIVERY.md)
+
 2026-11-17，WP02-16 拆卡（原号已验证部分 DONE）；原号核销编号提供者/规则 CAS/真实会话 HTTP 和 CodeGen 预览/元数据；完整编号治理转 WP02-16b，按原稿纠正自动落文件不属于必要出口。 当前 46/379 张登记卡 DONE、0/125 目标 DONE；下一卡 WP02-13b。 [WP02-16 核销](../development/evidence/WP02-16/card-closure/DELIVERY.md)
 
 2026-11-17，WP02-14 拆卡（原号已验证部分 DONE）；原号核销扫描/不可变内容、DOC 准确绑定和 FORM 草稿提交下载；通用正式化/FILE 共门与完整引用物理清理转 WP02-14b。 当前 45/378 张登记卡 DONE、0/125 目标 DONE；下一卡 WP02-13b。 [WP02-14 核销](../development/evidence/WP02-14/card-closure/DELIVERY.md)
