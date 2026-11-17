@@ -137457,7 +137457,7 @@
           "scope": "OA-DEF-01: fixed Main/CRM/Platform/candidate evidence; known implementation delta, not exhaustive runtime conformance. Actual per-file source SHA is in the report."
         }
       ],
-      "delivery_state": "PLANNED",
+      "delivery_state": "DONE",
       "blockers": [],
       "runtime_case_ids": [],
       "original_acceptance_inventory": {
@@ -137471,8 +137471,20 @@
             "id": "OA-DEF-01::AC-D01-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D01-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "5cde29b1653f84e344211c03a258e00f2fd9ca2a",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "新 head/draft 默认停用；同事务原命令、审计与回执；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/0"
@@ -137482,8 +137494,20 @@
             "id": "OA-DEF-01::AC-D01-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D01-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "5cde29b1653f84e344211c03a258e00f2fd9ca2a",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "同命令原结果；异输入冲突无新效果；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/1"
@@ -137493,8 +137517,20 @@
             "id": "OA-DEF-01::AC-D01-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D01-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "53e0c31522161738b70fab53ad703ff18bb39773",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "两名真实作者、独立 PG 连接，同 token 一胜一冲突；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/2"
@@ -137504,8 +137540,20 @@
             "id": "OA-DEF-01::AC-D01-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D01-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "7751db2fe60f245b32b77ed84b2b12b3da550780",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "准确旧发布版克隆，目标新身份且停用，不复制实例历史；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/3"
@@ -137515,8 +137563,20 @@
             "id": "OA-DEF-01::AC-D01-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D01-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "f02d43b84720f77cedc32cfa190d1a39e1b1ec21",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "原图预演及致命错误准确节点/边定位，合法未完成草稿保留；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/4"
@@ -137526,8 +137586,20 @@
             "id": "OA-DEF-01::AC-D01-06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D01-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "f02d43b84720f77cedc32cfa190d1a39e1b1ec21",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "资源/权限预测为只读解释；零业务效果；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/5"
@@ -137537,8 +137609,20 @@
             "id": "OA-DEF-01::AC-D02-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D02-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "6355c84d6ae6c986ed623cab628a289d95c6bf91",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "完整 schema/表格/布局/默认值/扩展往返，原数字词元保留；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/6"
@@ -137548,8 +137632,20 @@
             "id": "OA-DEF-01::AC-D02-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D02-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "06b1b458889213f939025f783b48bf461e7b385a",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "重复字段、嵌套表格、超过 200 条等错误保准确路径；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/7"
@@ -137559,8 +137655,20 @@
             "id": "OA-DEF-01::AC-D02-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D02-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "06b1b458889213f939025f783b48bf461e7b385a",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "按序规则后端复算；disabled 不是权限；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/8"
@@ -137570,8 +137678,20 @@
             "id": "OA-DEF-01::AC-D02-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D02-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "0b2a21d42a8a085ad62a9ee2d320842e18218290",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "新草稿不重解释旧数据；legacy 显式来源映射与准确原 schema；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/9"
@@ -137581,8 +137701,20 @@
             "id": "OA-DEF-01::AC-D02-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D02-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "cd2a12364c7837ff0f916ab2fbc1bea5be636ac3",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "真实 FORM 文件绑定/当前权限；隐藏与无权不发 downloadRef；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/10"
@@ -137592,8 +137724,20 @@
             "id": "OA-DEF-01::AC-D03-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D03-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "5cde29b1653f84e344211c03a258e00f2fd9ca2a",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "GET 纯读，不暗建草稿；旧入口不能旁路；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/11"
@@ -137603,8 +137747,20 @@
             "id": "OA-DEF-01::AC-D03-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D03-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "0b2a21d42a8a085ad62a9ee2d320842e18218290",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "准确预览发布一版；依赖 pin、回执和审计同事务；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/12"
@@ -137614,8 +137770,20 @@
             "id": "OA-DEF-01::AC-D03-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D03-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "0b2a21d42a8a085ad62a9ee2d320842e18218290",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "旧 token/预览/依赖及最终 WF_AUTH 撤权/到期原子拒绝；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/13"
@@ -137625,8 +137793,20 @@
             "id": "OA-DEF-01::AC-D03-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D03-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "53e0c31522161738b70fab53ad703ff18bb39773",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "旧 helper/设计器写口已处置；真实 Chrome 使用新 Owner；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/14"
@@ -137636,8 +137816,20 @@
             "id": "OA-DEF-01::AC-D03-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D03-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "0b2a21d42a8a085ad62a9ee2d320842e18218290",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "发布不启动、不启用、不改旧 activation/实例 pin；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/15"
@@ -137647,8 +137839,20 @@
             "id": "OA-DEF-01::AC-D03-06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D03-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "0b2a21d42a8a085ad62a9ee2d320842e18218290",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "COMMIT 未知按原键恢复；UI 未知后 403/409 保留原意图；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/16"
@@ -137658,8 +137862,20 @@
             "id": "OA-DEF-01::AC-D04-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D04-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "0b2a21d42a8a085ad62a9ee2d320842e18218290",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "已发布版本不可变，建新稿不覆盖原版；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/17"
@@ -137669,8 +137885,20 @@
             "id": "OA-DEF-01::AC-D04-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D04-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "bf7bf9d3dfe5ccb83a23016ff0f555a2094a5e77",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "运行根/子实例采用固定版本；真实页面到 PG 链；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/18"
@@ -137680,8 +137908,20 @@
             "id": "OA-DEF-01::AC-D04-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D04-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "53e0c31522161738b70fab53ad703ff18bb39773",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "双作者争下一稿只有一版号，原命令按作者分槽；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/19"
@@ -137691,8 +137931,20 @@
             "id": "OA-DEF-01::AC-D04-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D04-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "53e0c31522161738b70fab53ad703ff18bb39773",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "旧 head 重建和映射显式标 UNVERIFIED_LEGACY，不冒认证历史；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/20"
@@ -137702,8 +137954,20 @@
             "id": "OA-DEF-01::AC-D04-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D04-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "7751db2fe60f245b32b77ed84b2b12b3da550780",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "指定旧发布版到新稿，源版本保持不变；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/21"
@@ -137713,8 +137977,20 @@
             "id": "OA-DEF-01::AC-D05-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D05-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "0d4cd5b4c5f39efadf5f56b384d8df8939883f92",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "唯一 active form-flow 绑定；两 PG 连接竞争和改绑回滚；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/22"
@@ -137724,8 +138000,20 @@
             "id": "OA-DEF-01::AC-D05-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D05-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "0d4cd5b4c5f39efadf5f56b384d8df8939883f92",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "停用仅阻止新根，已有根/子任务保原 pin；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/23"
@@ -137735,8 +138023,20 @@
             "id": "OA-DEF-01::AC-D05-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D05-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "f11a66146dc1d544bb99c3361f9a457eae226454",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "缺发布版或准确依赖拒绝启用；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/24"
@@ -137746,8 +138046,20 @@
             "id": "OA-DEF-01::AC-D05-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D05-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "0d4cd5b4c5f39efadf5f56b384d8df8939883f92",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "同启用命令不重复；旧 token 冲突无暗改绑；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/25"
@@ -137757,8 +138069,20 @@
             "id": "OA-DEF-01::AC-D05-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-D05-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+                "source_sha": "b445a2c672253ff11025106aca97fb30645ea520",
+                "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+                "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "页面真实状态/冲突反馈及原意图恢复；组件和浏览器证据分列；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/13/cases/26"
@@ -137766,8 +138090,38 @@
           }
         ]
       },
-      "implementation_evidence": [],
-      "delivery_evidence": null
+      "implementation_evidence": [
+        {
+          "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+          "source_sha": "5cde29b1653f84e344211c03a258e00f2fd9ca2a",
+          "command": "复用对应 W 报告及 final-validation.json 的实际 PostgreSQL/HTTP/浏览器/组件命令；本次逐原 AC 阅读核对",
+          "environment": "原独占 PostgreSQL18、Main HTTP、Vue/Chrome；模拟业务及 IAM 输入，组件模拟与真实浏览器分列",
+          "observed_at": "2026-11-17T13:56:58.806351+00:00",
+          "scope": "新 head/draft 默认停用；同事务原命令、审计与回执；准确来源、实际命令及原执行时间见本报告对应行及来源报告；observed_at 仅为此次核对时间。",
+          "result": "PASS",
+          "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+          "new_product_execution": false
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+        "source_sha": "11a98c2c641ad56d6fff76d61949b8432a330b52",
+        "remote_main_sha": "cebf6702661eeba2596463e0534d6069dc447fb9",
+        "pr_url": "https://github.com/GTX537/CP6/pull/738",
+        "scope": "本目标全部原 AC/必需修订及当前远端采用核对；跨多个源码的准确引用见报告，不以单一回执冒全目标实现。",
+        "observed_at": "2026-11-17T13:56:58.806351+00:00",
+        "reviewed_remote_main_sha": "1a1f2021c8975bd3555d579dd7312eb9d67fdfcd"
+      },
+      "completion_audit": {
+        "result": "DONE",
+        "reviewed_at": "2026-11-17T13:56:58.806351+00:00",
+        "report": "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+        "original_cases_reviewed": 27,
+        "required_revision_cases": 0,
+        "gaps": [],
+        "new_product_execution": false,
+        "classification": "BUSINESS"
+      }
     },
     {
       "id": "OA-FORM-01",
@@ -142203,26 +142557,24 @@
       "implementation_evidence": [],
       "delivery_evidence": null,
       "completion_audit": {
-        "as_of": "2026-11-17",
+        "result": "GAPS_ASSIGNED",
+        "reviewed_at": "2026-11-17T13:56:58.806351+00:00",
         "report": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md",
-        "result": "ORIGINAL_AC_EVIDENCE_PENDING",
-        "reviewed_original_cases": 23,
+        "original_cases_reviewed": 23,
         "required_revision_cases": 0,
-        "owning_cards_done": [
-          "WP02-02",
-          "WP02-04"
-        ],
+        "recheck_on_task_done": "WP02-06",
         "gaps": [
           {
             "case_id": "SYS-TENANT-01::AC-TN04-04",
-            "gap": "region/issuer 获准新映射的版本切换与旧会话处置缺完整实际证据；冻结/拒绝覆盖不能替代获准切换。",
-            "follow_up_tasks": [
-              "WP02-05",
-              "WP02-06"
-            ]
+            "owner_task_id": "WP02-05b",
+            "gap": "Main 批准 region/issuer/身份来源映射变更后的准确新来源、完整后继目录、原命令事实和旧会话处置。"
+          },
+          {
+            "case_id": "SYS-TENANT-01::AC-TN04-04",
+            "owner_task_id": "WP02-06",
+            "gap": "CRM 实际采用批准后的准确来源/目录，验证旧会话不因重建复活；本卡 DONE PR 重新核对 SYS-TENANT-01 全部原 AC 后关闭。"
           }
-        ],
-        "accepted_scope_unchanged": true
+        ]
       }
     },
     {
@@ -143889,7 +144241,39 @@
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "GAPS_ASSIGNED",
+        "reviewed_at": "2026-11-17T13:56:58.806351+00:00",
+        "report": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-CTX-01.md",
+        "original_cases_reviewed": 28,
+        "required_revision_cases": 0,
+        "gaps": [
+          {
+            "case_ids": [
+              "PLT-CTX-01::CTX02-A5"
+            ],
+            "owner_task_id": "WP02-05b",
+            "gap": "批准 slug/身份来源映射变更的正向链：稳定租户 GUID、准确新来源和完整后继目录，不自动迁移 region 数据。冻结配置/错误来源拒绝不能替代批准变更。"
+          },
+          {
+            "case_ids": [
+              "PLT-CTX-01::CTX04-A1",
+              "PLT-CTX-01::CTX04-A2",
+              "PLT-CTX-01::CTX04-A3"
+            ],
+            "owner_task_id": "WP02-29",
+            "gap": "CRM 实际 HTTP/worker/消息入口的平台包、准确配置、加载身份和原生 Owner 边界采用未整卡闭合；已有 W132/W143 部分采用保留，不把模块文件匹配或受控加载器当完整实际宿主资格。"
+          },
+          {
+            "case_ids": [
+              "PLT-CTX-01::CTX04-A7"
+            ],
+            "owner_task_id": "WP02-24",
+            "gap": "CRM 三种 typed replay action 的 native type/digest/队列版本、当前读取与新调度权限分流，以及实际 Owner 原业务/技术结果仍缺完整采用；身份 Inbox 恢复不是三种动作全覆盖。"
+          }
+        ]
+      }
     },
     {
       "id": "PLT-HTTP-01",
@@ -146331,7 +146715,7 @@
           "scope": "PLT-TEST-01: fixed Main/CRM/Platform/candidate evidence; known implementation delta, not exhaustive runtime conformance. Actual per-file source SHA is in the report."
         }
       ],
-      "delivery_state": "PLANNED",
+      "delivery_state": "DONE",
       "blockers": [],
       "runtime_case_ids": [],
       "original_acceptance_inventory": {
@@ -146345,8 +146729,20 @@
             "id": "PLT-TEST-01::TEST01-A1",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST01-A1",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "原四类 outcome 与新有限 terminal 均有回归；既有 API 不被新 helper 静默替换；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/0"
@@ -146356,8 +146752,20 @@
             "id": "PLT-TEST-01::TEST01-A2",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST01-A2",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "新 helper 仅 in-memory 有限终端，不接受任意网络后备；旧 DI 的 Test/CI 门由原回归核实；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/1"
@@ -146367,8 +146775,20 @@
             "id": "PLT-TEST-01::TEST01-A3",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST01-A3",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "精确 Test/CI 注册、同实例重复与异实例冲突回归；直接构造与生产引用限制分别核对；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/2"
@@ -146378,8 +146798,20 @@
             "id": "PLT-TEST-01::TEST01-A4",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST01-A4",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "脚本调用与内层终端计数、耗尽显式失败；不冒真实网络发送次数；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/3"
@@ -146389,8 +146821,20 @@
             "id": "PLT-TEST-01::TEST01-A5",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST01-A5",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "每 case clock/random/script 独立；本地序号不推导业务提交顺序；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/4"
@@ -146400,8 +146844,20 @@
             "id": "PLT-TEST-01::TEST01-A6",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST01-A6",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "虚拟时钟、取消及重试在 handler 内外的放置实际回归；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/5"
@@ -146411,8 +146867,20 @@
             "id": "PLT-TEST-01::TEST01-A7",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST01-A7",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "原 HTTP retry/Unknown/幂等预期保持；PG 原回执和注入 ACK 丢失分列，真实 HTTP Owner 另有 W131/W246；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/6"
@@ -146422,8 +146890,20 @@
             "id": "PLT-TEST-01::TEST01-A8",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST01-A8",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "库不宣称真实业务事务/fence；独占 PG 六项为真实服务器 fixture，无生产故障接口；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/7"
@@ -146433,8 +146913,20 @@
             "id": "PLT-TEST-01::TEST02-A1",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST02-A1",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "原 recorder 兼容回归；新 ExactValue 保 CLR/原字节/任意精度，序号不当 commit 顺序；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/8"
@@ -146444,8 +146936,20 @@
             "id": "PLT-TEST-01::TEST02-A2",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST02-A2",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "原 direct-chain 限制明确保留；新 Activity DAG 含中间 span、扇出、retry、receive/apply；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/9"
@@ -146455,8 +146959,20 @@
             "id": "PLT-TEST-01::TEST02-A3",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST02-A3",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "cp6 tag 与禁词断言仅其限定范围；全输出渠道另以 A4 实际 canary 补证；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/10"
@@ -146466,8 +146982,20 @@
             "id": "PLT-TEST-01::TEST02-A4",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST02-A4",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "CRM W132 真实 Kestrel/HTTP 自动 span、body/query/凭据/baggage/log/exception 合成 canary；最终安全导出无敏感标记且 Owner 原结果不变；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/11"
@@ -146477,8 +147005,20 @@
             "id": "PLT-TEST-01::TEST02-A5",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST02-A5",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "并发 listener 隔离及数量/字节/时限界限；overflow/跨 case/遗漏不可 Complete；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/12"
@@ -146488,8 +147028,20 @@
             "id": "PLT-TEST-01::TEST02-A6",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST02-A6",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "Dispose 后停止捕获；活动 span/重入/cleanup 等失败不串 case、不提前 Complete；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/13"
@@ -146499,8 +147051,20 @@
             "id": "PLT-TEST-01::TEST02-A7",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST02-A7",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "技术 success、PG rollback/commit、原 receipt 三轴分列，不推断实际业务应用；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/14"
@@ -146510,8 +147074,20 @@
             "id": "PLT-TEST-01::TEST02-A8",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST02-A8",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "observer 异常不改 terminal 返回但证据 Incomplete；内存快照不冒生产或远端保留；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/15"
@@ -146521,8 +147097,20 @@
             "id": "PLT-TEST-01::TEST03-A1",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST03-A1",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "98 项架构实测含 IsPackable=false、正式包集合/生产源码排除；TEST_ONLY 不计正式业务功能完成数；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/16"
@@ -146532,8 +147120,20 @@
             "id": "PLT-TEST-01::TEST03-A2",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST03-A2",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "原 SC23/SC24 及业务 Owner 引用保留；库、Host、生产采用层明确分列，未提升原247场景；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/17"
@@ -146543,8 +147143,20 @@
             "id": "PLT-TEST-01::TEST03-A3",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST03-A3",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "实际 Main W699/CRM W569 发布 deps 无 Testing；当前生产项目/锁文件/源码无测试 helper 注入。后续 CRM 项目变更仅增加两个 SQL 嵌入资源，未改变包依赖或引入 Testing；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/18"
@@ -146554,8 +147166,20 @@
             "id": "PLT-TEST-01::TEST03-A4",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST03-A4",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "原独占 PG 身份、受限 DML、隔离合成输入和停止条件有实际记录；真实客户数据不必需；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/19"
@@ -146565,8 +147189,20 @@
             "id": "PLT-TEST-01::TEST03-A5",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST03-A5",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "原 S6 read/precheckpoint/fence/typed replay 预期逐条保持。W131/W246 已执行部分与 WP02-24 未完成消费明确分列，不将工具完成当三种 replay 完成；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/20"
@@ -146576,8 +147212,20 @@
             "id": "PLT-TEST-01::TEST03-A6",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST03-A6",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "取消、输入/捕获不完整、cleanup 失败不可 PASS/Complete；初次 provision 失败和未知退出码保持；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/21"
@@ -146587,8 +147235,20 @@
             "id": "PLT-TEST-01::TEST03-A7",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST03-A7",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "冻结原字节和不可覆盖 journal 保 prior failure/attempt 血缘；原目录和首次失败日志仍在；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/22"
@@ -146598,8 +147258,20 @@
             "id": "PLT-TEST-01::TEST03-A8",
             "kind": "ORIGINAL_AC",
             "source_case_id": "TEST03-A8",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+                "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+                "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+                "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+                "observed_at": "2026-11-17T13:56:58.806351+00:00",
+                "scope": "Required-TEST-01..07 按证据层核对：准确输入/授权/依赖、实际适配范围、完整捕获和清理及独立原审查齐备；无高层证据则不声明高层 PASS；无业务 UI/API/生产副作用；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+                "result": "PASS",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/19/cases/23"
@@ -146607,8 +147279,39 @@
           }
         ]
       },
-      "implementation_evidence": [],
-      "delivery_evidence": null
+      "implementation_evidence": [
+        {
+          "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+          "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+          "command": "复用 WP02-26 final-01 的 unit/pg/architecture 及 W132/W569/W699 实际结果，读取当前源与发布依赖；原命令见报告",
+          "environment": "原 SDK8.0.424，独占 PG18.6/55429；合成数据、内存终端；W132 真实 HTTP/PG；Main/CRM 本地正式宿主发布，非生产部署",
+          "observed_at": "2026-11-17T13:56:58.806351+00:00",
+          "scope": "原四类 outcome 与新有限 terminal 均有回归；既有 API 不被新 helper 静默替换；observed_at 是本次核对时间，未新运行产品；原执行与静态约束核对分别列在报告。",
+          "result": "PASS",
+          "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+          "new_product_execution": false
+        }
+      ],
+      "delivery_evidence": {
+        "source_sha": "5ec6e733039bfbb3b52a492a3f96f3604b8c19fb",
+        "remote_main_sha": "66480fe24d51c706708be971e7e9d75a684a3bc4",
+        "pr_url": "https://github.com/GTX537/CP6.Platform/pull/72",
+        "observed_at": "2026-11-17T13:56:58.806351+00:00",
+        "repository": "GTX537/CP6.Platform",
+        "path": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+        "scope": "本目标全部原 AC/必需修订及当前远端采用核对；跨多个源码的准确引用见报告，不以单一回执冒全目标实现。",
+        "reviewed_remote_main_sha": "f3fbe4be67d40641f7a8a969d74be65a95541819"
+      },
+      "completion_audit": {
+        "result": "DONE",
+        "reviewed_at": "2026-11-17T13:56:58.806351+00:00",
+        "report": "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md",
+        "original_cases_reviewed": 24,
+        "required_revision_cases": 0,
+        "gaps": [],
+        "new_product_execution": false,
+        "classification": "TEST_ONLY"
+      }
     },
     {
       "id": "ENG-TOOL-01",
@@ -182963,7 +183666,8 @@
       "remaining_scope": [
         "经批准的 tenant/slug/issuer/region/client 身份映射变更，固定准确原件及前后来源/版本，不将展示改名当身份迁移。",
         "Main 发布完整后继目录、水位、发件原结果及旧身份/会话处置事实；CRM 实际采用仍归 WP02-06。"
-      ]
+      ],
+      "card_budget_seconds": 14276.798
     },
     {
       "id": "WP02-06",
@@ -186204,7 +186908,8 @@
         "总数/列表/详情/搜索/导出/当前下载按同范围和独立能力授权，稳定分页和原证据/安全投影分离。",
         "按各保留类 policy/hold/UNKNOWN/争议/必要引用决定清理，旧 Clear 和后台共门重核、最小收据及原 plan 恢复。"
       ],
-      "active_issue": "https://github.com/GTX537/CP6/issues/1240"
+      "active_issue": "https://github.com/GTX537/CP6/issues/1240",
+      "card_budget_seconds": 13912.711
     },
     {
       "id": "WP02-14",
@@ -186551,7 +187256,8 @@
         "通用当前 actor 草稿全集与正式化，源/目标双边权限/准确版本、冻结后新修订及原键/部分/UNKNOWN 恢复。",
         "FILE 侧当前权/用途与 Owner 提交共门，ACT 仅采用 LOCAL_AUTHORITATIVE_GUARD；ACT 实际业务消费仍归 WP03-19，其他技术 Owner 按其原卡采用准确 manifest。",
         "全部登记引用/hold、共享 blob、版本/衍生和 UNKNOWN/PROCESSING/必要证据约束下的处置、物理清理、tombstone/原收据及最终重核。"
-      ]
+      ],
+      "card_budget_seconds": 14305.753
     },
     {
       "id": "WP02-15",
@@ -187556,7 +188262,8 @@
         "逐编号调用入口登记准确 sourceOwner/原 allocator/tenant-global/业务法人仓库域/周期时区及 KEEP_EXISTING 或 ADAPTER_REQUIRED 理由。",
         "需要切换的域提供单写者、未决原 operation 归属/查询及 allocation/外露号恢复治理；真实业务消费者仍在其原卡采用，不强制统一所有原 allocator。",
         "规则生效/影响范围/已用数量、周期与时区兼容政策和 scope 管理视图，实际管理页面的未占号/跨周期提示、412 草稿及 UNKNOWN 恢复。"
-      ]
+      ],
+      "card_budget_seconds": 14264.456
     },
     {
       "id": "WP02-17",
@@ -288917,7 +289624,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 5670.848,
+      "effective_seconds": 7197.394,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -288928,7 +289635,10 @@
         "WP02-16",
         "WP01-01"
       ],
-      "closed_targets": [],
+      "closed_targets": [
+        "OA-DEF-01",
+        "PLT-TEST-01"
+      ],
       "new_splits": [
         {
           "parent": "WP02-13",
@@ -289159,7 +289869,75 @@
           }
         ]
       },
-      "phase0_user_confirmation": "2026-11-17 用户确认：先按证据核销或拆卡，列清缺口；完成阶段0核对后再按顺序实施剩余卡。"
+      "phase0_user_confirmation": "2026-11-17 用户确认：先按证据核销或拆卡，列清缺口；完成阶段0核对后再按顺序实施剩余卡。",
+      "budget_rule": "余卡上限=父卡上限−父卡已用有效时间（不足0按0计，超出计缓冲）；同一原号的分配守恒。第二次拆分先报总负责，不自动追加卡池。",
+      "checkpoint_counting": "原号 DONE 与完整 DONE 并列；完整要求原号及全部余卡 DONE，余卡不重复计原号。",
+      "budget_baseline_done_task_ids": [
+        "WP01-02",
+        "S01-01",
+        "S01-02",
+        "S01-03",
+        "S01-04",
+        "S01-05",
+        "S01-06",
+        "S01-07",
+        "S01-08",
+        "S01-09",
+        "S01-10",
+        "S01-11",
+        "S01-12",
+        "S02-00",
+        "WP02-01",
+        "WP02-02",
+        "WP02-07",
+        "WP02-08",
+        "WP02-11",
+        "WP02-12",
+        "WP02-25",
+        "WP02-26",
+        "WP02-27",
+        "WP02-28",
+        "WP03-01",
+        "WP03-03",
+        "WP05-01",
+        "WP05-16",
+        "WP09-11",
+        "WP12-01",
+        "WP12-02",
+        "WP12-03",
+        "WP12-04",
+        "WP12-06",
+        "WP12-07",
+        "WP12-08",
+        "WP12-10",
+        "WP12-19",
+        "WP14-01"
+      ],
+      "target_review_20261117": {
+        "task": "TARGET-REVIEW-20261117",
+        "limit_seconds": 10800,
+        "started_at": "2026-11-17T13:34:16.591293+00:00",
+        "reports": [
+          "docs/development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md",
+          "docs/development/evidence/TARGET-REVIEW-20261117/PLT-CTX-01.md",
+          "docs/development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md"
+        ],
+        "budget_pool": "target_review_hours",
+        "reviewed_at": "2026-11-17T13:56:58.806351+00:00",
+        "result": "2_DONE_1_GAPS_ASSIGNED",
+        "remaining_review_hours_before": 125,
+        "verified_at": "2026-11-17T13:59:43.137759+00:00",
+        "effective_seconds": 1526.546,
+        "remaining_review_hours": 124.575959
+      },
+      "target_review_effective_seconds": 1526.546,
+      "last_checkpoint_counts": {
+        "original_done": 47,
+        "fully_done": 43,
+        "targets_done": 2,
+        "new_splits": 4,
+        "periodic_checkpoint_due": false
+      }
     }
   },
   "acceptance_basis": {

@@ -1,5 +1,7 @@
 # 已完成能力与近期里程碑
 
+2026-11-17，阶段0总负责审查后的三目标核对：OA-DEF-01、PLT-TEST-01（TEST_ONLY支撑）DONE；PLT-CTX-01 三项缺口归 WP02-05b/29/24。SYS-TENANT-01 缺口归 WP02-05b/06，在 WP02-06 DONE PR 重核关闭。原号 DONE / 完整 DONE = 47 / 43；47/379登记卡、2/125目标（含1支撑目标）。余卡预算扣原号已用时间，2,052h卡池不增；下一卡 WP02-05b。 [核对与预算](../development/planning/20261117-card-execution.md#阶段-0-总负责审查后的补充核对)
+
 2026-11-17，WP01-01 卡 DONE：核对已采纳 v1.2 的准确来源与 125 目标覆盖/不覆盖边界；579 项新依据只适用 ITER/REL，旧 30/48 缺件及机器/运行门保留。阶段 0 证据核对收尾，严格前置不降级。 原证据按实际范围复用，未重跑产品。 [WP01-01 核销](../development/evidence/WP01-01/card-closure/DELIVERY.md)
 
 2026-11-17，WP02-16 拆卡（原号已验证部分 DONE）：原号核销编号提供者/规则 CAS/真实会话 HTTP 和 CodeGen 预览/元数据；完整编号治理转 WP02-16b，按原稿纠正自动落文件不属于必要出口。 原证据按实际范围复用，未重跑产品。 [WP02-16 核销](../development/evidence/WP02-16/card-closure/DELIVERY.md)

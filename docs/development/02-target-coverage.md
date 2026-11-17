@@ -76,7 +76,7 @@
 | [FIN-AR-01](../../docs/design-handbook/modules/FIN-AR-01.md) | 应收、收款与核销 | WP11 | CHANGE_REQUIRED | 待安排 | 11 |
 | [FIN-INV-01](../../docs/design-handbook/modules/FIN-INV-01.md) | 库存计价与业务对账 | WP11 | CHANGE_REQUIRED | 待安排 | 18 |
 | [FIN-FX-01](../../docs/design-handbook/modules/FIN-FX-01.md) | 汇率与外币重估 | WP11 | CHANGE_REQUIRED | 待安排 | 4 |
-| [OA-DEF-01](../../docs/design-handbook/modules/OA-DEF-01.md) | 流程和表单定义 | WP12 | CHANGE_REQUIRED | 待安排 | 0 |
+| [OA-DEF-01](../../docs/design-handbook/modules/OA-DEF-01.md) | 流程和表单定义 | WP12 | CHANGE_REQUIRED | 已交付 | 0 |
 | [OA-FORM-01](../../docs/design-handbook/modules/OA-FORM-01.md) | 表单发起与查询 | WP12 | CHANGE_REQUIRED | 待安排 | 0 |
 | [OA-TASK-01](../../docs/design-handbook/modules/OA-TASK-01.md) | 待办、代理与时限 | WP12 | CHANGE_REQUIRED | 待安排 | 0 |
 | [OA-APP-01](../../docs/design-handbook/modules/OA-APP-01.md) | 业务审批绑定与回调 | WP12 | CHANGE_REQUIRED | 待安排 | 4 |
@@ -98,7 +98,7 @@
 | [PLT-DEL-01](../../docs/design-handbook/modules/PLT-DEL-01.md) | 可靠收发与消息存储 | WP02 | CHANGE_REQUIRED | 待安排 | 2 |
 | [PLT-OBS-01](../../docs/design-handbook/modules/PLT-OBS-01.md) | 可观测性与运行身份 | WP02 | CHANGE_REQUIRED | 待安排 | 0 |
 | [PLT-RELEASE-01](../../docs/design-handbook/modules/PLT-RELEASE-01.md) | 包信任与部署验证 | WP02 | CHANGE_REQUIRED | 待安排 | 0 |
-| [PLT-TEST-01](../../docs/design-handbook/modules/PLT-TEST-01.md) | 故障注入与测试辅助 | WP02 | CHANGE_REQUIRED | 待安排 | 0 |
+| [PLT-TEST-01](../../docs/design-handbook/modules/PLT-TEST-01.md) | 故障注入与测试辅助 | WP02 | CHANGE_REQUIRED | 已交付 | 0 |
 | [ENG-TOOL-01](../../docs/design-handbook/modules/ENG-TOOL-01.md) | 版模工程主数据 | WP05 | CHANGE_REQUIRED | 待安排 | 2 |
 | [ERP-FSC-01](../../docs/design-handbook/modules/ERP-FSC-01.md) | FSC清单与行业证明 | WP04 | CHANGE_REQUIRED | 待安排 | 2 |
 | [ERP-PRICE-01](../../docs/design-handbook/modules/ERP-PRICE-01.md) | 板纸单价与行业价格参数 | WP04 | CHANGE_REQUIRED | 待安排 | 4 |
