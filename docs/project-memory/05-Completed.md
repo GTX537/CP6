@@ -1,5 +1,7 @@
 # 已完成能力与近期里程碑
 
+2026-11-17，W697 完成财务成本政策、费率依据、回查及相邻日期取版。PostgreSQL 4 项通过，零跳过。 [W697 交付](../development/evidence/W697-01/DELIVERY.md)
+
 2026-11-17，W696 完成标准成本单据身份绑定、原回执与同键恢复。PostgreSQL 9 项通过，零跳过。 [W696 交付](../development/evidence/W696-01/DELIVERY.md)
 
 2026-11-17，W695 完成制造成本维护界面及原命令回查。PostgreSQL 4 项、Chrome 5 项、Vue 回归 19 项通过，零跳过。 [W695 交付](../development/evidence/W695-01/DELIVERY.md)
