@@ -1,5 +1,7 @@
 # 当前待办与优先级
 
+2026-11-17，WP01-01 核销后按严格前置接续 WP02-05b；其他卡保持原出口，详见单卡执行计划。 [WP01-01 核销](../development/evidence/WP01-01/card-closure/DELIVERY.md)
+
 2026-11-17，WP02-16 核销后按严格前置接续 WP02-13b；其他卡保持原出口，详见单卡执行计划。 [WP02-16 核销](../development/evidence/WP02-16/card-closure/DELIVERY.md)
 
 2026-11-17，WP02-14 核销后按严格前置接续 WP02-13b；其他卡保持原出口，详见单卡执行计划。 [WP02-14 核销](../development/evidence/WP02-14/card-closure/DELIVERY.md)
