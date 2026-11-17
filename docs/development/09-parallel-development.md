@@ -1,5 +1,11 @@
 # 多对话任务分配与交付
 
+## 2026-11-17 · 单卡串行接替局部窗口
+
+仅本对话串行；规则见 AGENTS 和[执行计划](planning/20261117-card-execution.md)。WP02-03 按原卡定义 DONE，财务已交付及余项归回原卡，原代码不动；前置严格保持。当前一卡一分支一 PR，结束仅 DONE/拆卡，台账只在交付 PR 更新。[本卡报告](evidence/WP02-03/card-closure/DELIVERY.md)
+
+以下旧窗口保留真实历史，不作为继续并行或扩展本卡范围的授权。
+
 ## 2026-11-17 UTC · W699 原生会计政策与双方来源合同
 
 COORD 从 Main c62dbdd2 复用 DEV-1 / codex/w699-01。Main Finance 已签发不可变会计政策及双方来源合同，完整 COST-POLICY-1 在原 PostgreSQL 事务采用精确版本。专业资格、来源撤销、当前读权及命令结果恢复由真实 Owner 执行。最终 PostgreSQL 原生来源验收及完整成本政策回归 2 项通过，零跳过；构建零错误，本地发布 HTTP 冒烟通过。 [W699 交付](evidence/W699-01/DELIVERY.md)

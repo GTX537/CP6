@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "baseline_id": "CP6-DEV-ROADMAP-20261011/R1",
-  "as_of": "2026-11-16",
+  "as_of": "2026-11-17",
   "scope": "125已接受设计目标的全量大任务计划与进度登记。247仅为修订运行场景；原模块验收需继续盘点。不是125目标实现已完成的证明。",
   "main_baseline_sha": "90ea752e9029d171e6a0307fcda06c66c3e04a69",
   "sources": [
@@ -166387,6 +166387,11 @@
       "at": "2026-11-17T04:26:11.620801-05:00",
       "change": "Main Finance 已签发不可变会计政策及双方来源合同，完整 COST-POLICY-1 在原 PostgreSQL 事务采用精确版本。专业资格、来源撤销、当前读权及命令结果恢复由真实 Owner 执行。最终 PostgreSQL 原生来源验收及完整成本政策回归 2 项通过，零跳过；构建零错误，本地发布 HTTP 冒烟通过。",
       "evidence": "docs/development/evidence/W699-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-17T11:56:25.010116+00:00",
+      "change": "用户决定启用单卡串行、严格前置和有效时间预算；WP02-03 按原定义 DONE，财务部分归回六张原卡，代码和依赖不变。",
+      "evidence": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -171572,24 +171577,22 @@
         "file:Main:CP6.WebApi/Controllers/Sys/AuthController.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "IN_PROGRESS",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-03",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W699-01",
+        "chat_label": "COORD / WP02-03",
         "repository": "Main",
-        "branch": "codex/w699-01",
-        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-11-17T04:26:11.620801-05:00",
-        "baseline_sha": "c62dbdd2cd626d20b1272bc01085dd93da209320",
-        "entry_evidence": "docs/development/evidence/W699-01/DELIVERY.md",
+        "branch": "codex/wp02-03",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-17T11:48:14.926569+00:00",
+        "baseline_sha": "fc8b5a51da6f6fc8a8791a1f4bd7feb5fd3abb0d",
+        "entry_evidence": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
         "phase": "CLOSED",
-        "dispatch_scope": "Main Finance 正式会计政策与双方来源合同原件、独立专业批准和 PostgreSQL 成本采用",
-        "bounded_window_gate": "CONFIRMED",
-        "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W699-01/DELIVERY.md",
-        "full_task_completed": false
+        "dispatch_scope": "按原卡定义核销并归回财务交付；仅治理和状态记录",
+        "delivery_report": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
+        "full_task_completed": true
       },
       "blockers": [],
       "validation_evidence": [
@@ -171799,14 +171802,29 @@
           "scope": "Main Finance 已签发不可变会计政策及双方来源合同，完整 COST-POLICY-1 在原 PostgreSQL 事务采用精确版本。专业资格、来源撤销、当前读权及命令结果恢复由真实 Owner 执行。最终 PostgreSQL 原生来源验收及完整成本政策回归 2 项通过，零跳过；构建零错误，本地发布 HTTP 冒烟通过。",
           "environment": "Windows / .NET 8 / PostgreSQL 18.6，业务资料模拟、原生 FinancePolicy 与成本同事务采用。",
           "observed_at": "2026-11-17T10:01:25.208822+00:00"
+        },
+        {
+          "path": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
+          "source_sha": "fc8b5a51da6f6fc8a8791a1f4bd7feb5fd3abb0d",
+          "result": "PASS",
+          "observed_at": "2026-11-17T11:56:25.010116+00:00",
+          "command": "Review adopted W18/W26/W28/W29/W30/W31/W34/W277/W305/W645/W678-W685/W699 evidence; unchanged-input reuse; docs and ledger structural check",
+          "environment": "当前 Main 精确源码与历史隔离 PostgreSQL/HTTP/前端实证复用；本 PR 文档记录，无新产品执行",
+          "scope": "本卡两项 scope 和正反出口核销；保持原目标 AC、后续业务消费者及所有财务余项。"
         }
       ],
-      "delivery_evidence": null,
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
+        "source_sha": "fc8b5a51da6f6fc8a8791a1f4bd7feb5fd3abb0d",
+        "remote_main_sha": "fc8b5a51da6f6fc8a8791a1f4bd7feb5fd3abb0d",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1236",
+        "scope": "已核实当前远端 Main 合并树包含本报告引用的权限/身份/字段/最终门能力；PR1236 仅为精确主线采用定位，不是本次核销 PR。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
-      "remaining_scope": "WP11-39 接续剩余 R2 费率和标准 Basis 命令、维护入口及其业务采用；本轮会计政策和双方来源合同已由原生 FinancePolicy 参与者提供。WP11-14 仍需 GL 来源接收、完整 R-GL02 执行条件、OA 应用、规则/科目映射/矩阵/期间和最终过账门；配置原件批准不表示凭证已经过账。WP11-40 接续 MAT、EXEC、OUTPUT 完整来源及实际质量处置；WP11-41/42 接续分配、账套级 GL 结转和 C45 恢复。FM15 通用采用沿 WP11-04，WP02-03 继续其他权限用途。",
+      "remaining_scope": "",
       "wave10_delivery": {
         "status": "MERGED",
         "source_candidate_sha": "d29721d20e3ddc4eac46e9b40434e3b680326605",
@@ -176864,6 +176882,21 @@
           "worker_start_received": true,
           "delivery_report": "docs/development/evidence/W698-01/DELIVERY.md",
           "full_task_completed": false
+        },
+        {
+          "chat_label": "COORD / W699-01",
+          "repository": "Main",
+          "branch": "codex/w699-01",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-11-17T04:26:11.620801-05:00",
+          "baseline_sha": "c62dbdd2cd626d20b1272bc01085dd93da209320",
+          "entry_evidence": "docs/development/evidence/W699-01/DELIVERY.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "Main Finance 正式会计政策与双方来源合同原件、独立专业批准和 PostgreSQL 成本采用",
+          "bounded_window_gate": "CONFIRMED",
+          "worker_start_received": true,
+          "delivery_report": "docs/development/evidence/W699-01/DELIVERY.md",
+          "full_task_completed": false
         }
       ],
       "wave13_delivery": {
@@ -178086,13 +178119,13 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W699-01",
+        "window": "WP02-03",
         "as_of": "2026-11-17",
-        "classification": "CONSUMER_RECONCILIATION_REMAINS",
-        "report": "docs/development/evidence/W699-01/DELIVERY.md",
-        "delivered": "Main Finance 已签发不可变会计政策及双方来源合同，完整 COST-POLICY-1 在原 PostgreSQL 事务采用精确版本。专业资格、来源撤销、当前读权及命令结果恢复由真实 Owner 执行。最终 PostgreSQL 原生来源验收及完整成本政策回归 2 项通过，零跳过；构建零错误，本地发布 HTTP 冒烟通过。",
-        "remaining": "WP11-39 接续剩余 R2 费率和标准 Basis 命令、维护入口及其业务采用；本轮会计政策和双方来源合同已由原生 FinancePolicy 参与者提供。WP11-14 仍需 GL 来源接收、完整 R-GL02 执行条件、OA 应用、规则/科目映射/矩阵/期间和最终过账门；配置原件批准不表示凭证已经过账。WP11-40 接续 MAT、EXEC、OUTPUT 完整来源及实际质量处置；WP11-41/42 接续分配、账套级 GL 结转和 C45 恢复。FM15 通用采用沿 WP11-04，WP02-03 继续其他权限用途。",
-        "next_action": "WP11-39 接续剩余 R2 费率和标准 Basis 命令、维护入口及其业务采用；本轮会计政策和双方来源合同已由原生 FinancePolicy 参与者提供。WP11-14 仍需 GL 来源接收、完整 R-GL02 执行条件、OA 应用、规则/科目映射/矩阵/期间和最终过账门；配置原件批准不表示凭证已经过账。WP11-40 接续 MAT、EXEC、OUTPUT 完整来源及实际质量处置；WP11-41/42 接续分配、账套级 GL 结转和 C45 恢复。FM15 通用采用沿 WP11-04，WP02-03 继续其他权限用途。",
+        "classification": "CARD_DEFINITION_CLOSED",
+        "report": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
+        "delivered": "用户/组织/角色/委派当前版本、认证和业务共同门、完整字段源 MIN 后默认及四用途决定、当前原结果披露已核销。",
+        "remaining": "",
+        "next_action": "前置远端 DONE 后接续 WP02-10；财务交付及余项见对应原卡。",
         "evidence_refs": [
           "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
           "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
@@ -178192,11 +178225,12 @@
           "docs/development/evidence/W696-01/DELIVERY.md",
           "docs/development/evidence/W697-01/DELIVERY.md",
           "docs/development/evidence/W698-01/DELIVERY.md",
-          "docs/development/evidence/W699-01/DELIVERY.md"
+          "docs/development/evidence/W699-01/DELIVERY.md",
+          "docs/development/evidence/WP02-03/card-closure/DELIVERY.md"
         ],
-        "formal_state_changed": false,
-        "new_product_validation": true,
-        "latest_window": "W699-01",
+        "formal_state_changed": true,
+        "new_product_validation": false,
+        "latest_window": "WP02-03",
         "review_history": [
           {
             "window": "W310-01",
@@ -180445,6 +180479,119 @@
             "formal_state_changed": false,
             "new_product_validation": true,
             "latest_window": "W698-01"
+          },
+          {
+            "window": "W699-01",
+            "as_of": "2026-11-17",
+            "classification": "CONSUMER_RECONCILIATION_REMAINS",
+            "report": "docs/development/evidence/W699-01/DELIVERY.md",
+            "delivered": "Main Finance 已签发不可变会计政策及双方来源合同，完整 COST-POLICY-1 在原 PostgreSQL 事务采用精确版本。专业资格、来源撤销、当前读权及命令结果恢复由真实 Owner 执行。最终 PostgreSQL 原生来源验收及完整成本政策回归 2 项通过，零跳过；构建零错误，本地发布 HTTP 冒烟通过。",
+            "remaining": "WP11-39 接续剩余 R2 费率和标准 Basis 命令、维护入口及其业务采用；本轮会计政策和双方来源合同已由原生 FinancePolicy 参与者提供。WP11-14 仍需 GL 来源接收、完整 R-GL02 执行条件、OA 应用、规则/科目映射/矩阵/期间和最终过账门；配置原件批准不表示凭证已经过账。WP11-40 接续 MAT、EXEC、OUTPUT 完整来源及实际质量处置；WP11-41/42 接续分配、账套级 GL 结转和 C45 恢复。FM15 通用采用沿 WP11-04，WP02-03 继续其他权限用途。",
+            "next_action": "WP11-39 接续剩余 R2 费率和标准 Basis 命令、维护入口及其业务采用；本轮会计政策和双方来源合同已由原生 FinancePolicy 参与者提供。WP11-14 仍需 GL 来源接收、完整 R-GL02 执行条件、OA 应用、规则/科目映射/矩阵/期间和最终过账门；配置原件批准不表示凭证已经过账。WP11-40 接续 MAT、EXEC、OUTPUT 完整来源及实际质量处置；WP11-41/42 接续分配、账套级 GL 结转和 C45 恢复。FM15 通用采用沿 WP11-04，WP02-03 继续其他权限用途。",
+            "evidence_refs": [
+              "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
+              "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
+              "docs/development/evidence/WP02-03/consistent-permission-read/DELIVERY.md",
+              "docs/development/evidence/WP02-03/platform-admin-transaction/DELIVERY.md",
+              "docs/development/evidence/WP02-03/user-create-whitelist/DELIVERY.md",
+              "docs/development/evidence/WP02-03/platform-admin-current-actor/DELIVERY.md",
+              "docs/development/evidence/WP02-03/impersonation-final-gate/DELIVERY.md",
+              "docs/development/evidence/WP02-03/session-authentication-current-state/DELIVERY.md",
+              "docs/development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md",
+              "docs/development/evidence/WP02-03/authentication-entry-completion/DELIVERY.md",
+              "docs/development/evidence/WP02-03/authentication-session-continuity/DELIVERY.md",
+              "docs/development/evidence/WP02-03/authentication-browser-recovery/DELIVERY.md",
+              "docs/development/evidence/WP02-03/sso-admission-policy/DELIVERY.md",
+              "docs/development/evidence/WP02-03/sso-identity-admission/DELIVERY.md",
+              "docs/development/evidence/WP02-03/iam-user-assignments/DELIVERY.md",
+              "docs/development/evidence/WP02-03/organization-administration/DELIVERY.md",
+              "docs/development/evidence/WP02-03/role-administration/DELIVERY.md",
+              "docs/development/evidence/WP02-03/integer-role-identity/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-cancel-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/operations-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/production-inbound-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/menu-action-administration/DELIVERY.md",
+              "docs/development/evidence/WP02-03/trusted-field-source/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-price-correction-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-department-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-read-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-write-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/stocktake-dashboard-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/defect-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/quality-owners/DELIVERY.md",
+              "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
+              "docs/development/evidence/WP02-03/mes-realtime/DELIVERY.md",
+              "docs/development/evidence/WP02-03/wms-hub-scope/DELIVERY.md",
+              "docs/development/evidence/WP02-03/machine-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/oee-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/planning-owner/DELIVERY.md",
+              "docs/development/evidence/W136-01/DELIVERY.md",
+              "docs/development/evidence/W137-01/DELIVERY.md",
+              "docs/development/evidence/W138-01/DELIVERY.md",
+              "docs/development/evidence/W139-01/DELIVERY.md",
+              "docs/development/evidence/W140-01/DELIVERY.md",
+              "docs/development/evidence/W141-01/DELIVERY.md",
+              "docs/development/evidence/W148-01/DELIVERY.md",
+              "docs/development/evidence/W310-01/DELIVERY.md",
+              "docs/development/evidence/W435-01/DELIVERY.md",
+              "docs/development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md",
+              "docs/development/evidence/BUG-881-DEVICE-LIFECYCLE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-887-BARCODE-CONFIG-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-889-LABEL-RECOVERY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-891-WCS-TASK-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-897-PAPER-ROLL-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-899-REMNANT-LIFECYCLE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-903-WMS-FEATURE-REQUEST-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-905-WMS-FEATURE-QUERY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-907-OPERLOG-AUTHORITY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-909-FIELD-AUDIT-LIST-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-911-DICT-MUTATION-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-913-SPACE-CODE-WRITE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-915-SPACE-SITE-FLOOR-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-917-SPACE-HIERARCHY-GEOMETRY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-927-SPACE-LOCATION-ADOPT-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-929-SPACE-LOCATION-DEACTIVATE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-931-SPACE-TOPOLOGY-DELETE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md",
+              "docs/development/evidence/W645-01/DELIVERY.md",
+              "docs/development/evidence/W677-01/DELIVERY.md",
+              "docs/development/evidence/W678-01/DELIVERY.md",
+              "docs/development/evidence/W679-01/DELIVERY.md",
+              "docs/development/evidence/W680-01/DELIVERY.md",
+              "docs/development/evidence/W681-01/DELIVERY.md",
+              "docs/development/evidence/W682-01/DELIVERY.md",
+              "docs/development/evidence/W683-01/DELIVERY.md",
+              "docs/development/evidence/W684-01/DELIVERY.md",
+              "docs/development/evidence/W685-01/DELIVERY.md",
+              "docs/development/evidence/W686-01/DELIVERY.md",
+              "docs/development/evidence/W687-01/DELIVERY.md",
+              "docs/development/evidence/W688-01/DELIVERY.md",
+              "docs/development/evidence/W689-01/DELIVERY.md",
+              "docs/development/evidence/W690-01/DELIVERY.md",
+              "docs/development/evidence/W691-01/DELIVERY.md",
+              "docs/development/evidence/W692-01/DELIVERY.md",
+              "docs/development/evidence/W693-01/DELIVERY.md",
+              "docs/development/evidence/W694-01/DELIVERY.md",
+              "docs/development/evidence/W695-01/DELIVERY.md",
+              "docs/development/evidence/W696-01/DELIVERY.md",
+              "docs/development/evidence/W697-01/DELIVERY.md",
+              "docs/development/evidence/W698-01/DELIVERY.md",
+              "docs/development/evidence/W699-01/DELIVERY.md"
+            ],
+            "formal_state_changed": false,
+            "new_product_validation": true,
+            "latest_window": "W699-01"
           }
         ]
       },
@@ -181306,6 +181453,21 @@
         "scope": "会计政策和双方来源合同的原生签发与成本采用子集",
         "full_task_completed": false,
         "remaining": "WP11-39 接续剩余 R2 费率和标准 Basis 命令、维护入口及其业务采用；本轮会计政策和双方来源合同已由原生 FinancePolicy 参与者提供。WP11-14 仍需 GL 来源接收、完整 R-GL02 执行条件、OA 应用、规则/科目映射/矩阵/期间和最终过账门；配置原件批准不表示凭证已经过账。WP11-40 接续 MAT、EXEC、OUTPUT 完整来源及实际质量处置；WP11-41/42 接续分配、账套级 GL 结转和 C45 恢复。FM15 通用采用沿 WP11-04，WP02-03 继续其他权限用途。"
+      },
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
+        "started_at": "2026-11-17T11:43:54.964043+00:00",
+        "verified_at": "2026-11-17T11:56:25.010116+00:00",
+        "effective_seconds": 750.046,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-02"
+        ],
+        "new_product_execution": false
       }
     },
     {
@@ -206043,7 +206205,31 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：Main当前授权/完整Scope、PostgreSQL原生UoW共同锁序与最终fence、原键/UNKNOWN恢复、可靠Outbox",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "inherited_partial_delivery": {
+        "from_task": "WP02-03",
+        "decision_date": "2026-11-17",
+        "report": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
+        "delivered_scope": "本地中心版本、专业资格和同事务制造采用",
+        "remaining_scope": "完整 FIN-MASTER/FM15 通用控制与采用协议。",
+        "full_task_completed": false,
+        "code_changed": false,
+        "evidence": [
+          {
+            "path": "docs/development/evidence/W690-01/DELIVERY.md",
+            "source_sha": "1104c664df4eaab6a4ce4804869855bd6f356aec"
+          },
+          {
+            "path": "docs/development/evidence/W691-01/DELIVERY.md",
+            "source_sha": "5b802afae645755f8e0778207efc9fd9fdde3f24"
+          },
+          {
+            "path": "docs/development/evidence/W692-01/DELIVERY.md",
+            "source_sha": "d3878975f0b17b5d0ae08ed6f53f8b4d936db052"
+          }
+        ]
+      },
+      "remaining_scope": "完整 FIN-MASTER/FM15 通用控制与采用协议。"
     },
     {
       "id": "WP11-05",
@@ -206440,7 +206626,23 @@
         "scope": "会计政策和双方来源合同的原生签发与成本采用子集",
         "full_task_completed": false,
         "remaining": "WP11-39 接续剩余 R2 费率和标准 Basis 命令、维护入口及其业务采用；本轮会计政策和双方来源合同已由原生 FinancePolicy 参与者提供。WP11-14 仍需 GL 来源接收、完整 R-GL02 执行条件、OA 应用、规则/科目映射/矩阵/期间和最终过账门；配置原件批准不表示凭证已经过账。WP11-40 接续 MAT、EXEC、OUTPUT 完整来源及实际质量处置；WP11-41/42 接续分配、账套级 GL 结转和 C45 恢复。FM15 通用采用沿 WP11-04，WP02-03 继续其他权限用途。"
-      }
+      },
+      "inherited_partial_delivery": {
+        "from_task": "WP02-03",
+        "decision_date": "2026-11-17",
+        "report": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
+        "delivered_scope": "原生会计政策和双方来源合同；尚未执行凭证过账",
+        "remaining_scope": "GL 来源接收、完整 R-GL02、OA 应用、规则/科目映射/矩阵/期间和最终过账。",
+        "full_task_completed": false,
+        "code_changed": false,
+        "evidence": [
+          {
+            "path": "docs/development/evidence/W699-01/DELIVERY.md",
+            "source_sha": "59899fd204a90061286b0b9b9ab7acce88447dba"
+          }
+        ]
+      },
+      "remaining_scope": "GL 来源接收、完整 R-GL02、OA 应用、规则/科目映射/矩阵/期间和最终过账。"
     },
     {
       "id": "WP11-15",
@@ -207575,7 +207777,63 @@
         "scope": "会计政策和双方来源合同的原生签发与成本采用子集",
         "full_task_completed": false,
         "remaining": "WP11-39 接续剩余 R2 费率和标准 Basis 命令、维护入口及其业务采用；本轮会计政策和双方来源合同已由原生 FinancePolicy 参与者提供。WP11-14 仍需 GL 来源接收、完整 R-GL02 执行条件、OA 应用、规则/科目映射/矩阵/期间和最终过账门；配置原件批准不表示凭证已经过账。WP11-40 接续 MAT、EXEC、OUTPUT 完整来源及实际质量处置；WP11-41/42 接续分配、账套级 GL 结转和 C45 恢复。FM15 通用采用沿 WP11-04，WP02-03 继续其他权限用途。"
-      }
+      },
+      "inherited_partial_delivery": {
+        "from_task": "WP02-03",
+        "decision_date": "2026-11-17",
+        "report": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
+        "delivered_scope": "现行政策、费率、资格、中心、标准依据/单据、完整 COST-POLICY-1 和来源原件",
+        "remaining_scope": "剩余 R2 费率/标准 Basis 命令、维护与完整成本政策业务采用。",
+        "full_task_completed": false,
+        "code_changed": false,
+        "evidence": [
+          {
+            "path": "docs/development/evidence/W689-01/DELIVERY.md",
+            "source_sha": "8597f43679197b86746607d0746ef397857bbffd"
+          },
+          {
+            "path": "docs/development/evidence/W690-01/DELIVERY.md",
+            "source_sha": "1104c664df4eaab6a4ce4804869855bd6f356aec"
+          },
+          {
+            "path": "docs/development/evidence/W691-01/DELIVERY.md",
+            "source_sha": "5b802afae645755f8e0778207efc9fd9fdde3f24"
+          },
+          {
+            "path": "docs/development/evidence/W692-01/DELIVERY.md",
+            "source_sha": "d3878975f0b17b5d0ae08ed6f53f8b4d936db052"
+          },
+          {
+            "path": "docs/development/evidence/W693-01/DELIVERY.md",
+            "source_sha": "be7581a0481c9be201c2bc78ac35af0906720b2c"
+          },
+          {
+            "path": "docs/development/evidence/W694-01/DELIVERY.md",
+            "source_sha": "17c8695186af75e750756f5a1975f81dd96e66bb"
+          },
+          {
+            "path": "docs/development/evidence/W695-01/DELIVERY.md",
+            "source_sha": "3627b4da51d08f6c8c8b2cb37f004357cf07e8ec"
+          },
+          {
+            "path": "docs/development/evidence/W696-01/DELIVERY.md",
+            "source_sha": "68a0a47ee747f6f3a486ffd4b061840524c8946a"
+          },
+          {
+            "path": "docs/development/evidence/W697-01/DELIVERY.md",
+            "source_sha": "a5b08f1642b425bf90af52830ff376efe07686f3"
+          },
+          {
+            "path": "docs/development/evidence/W698-01/DELIVERY.md",
+            "source_sha": "69782dba4c2a2807444d3898c7f525f5963a78eb"
+          },
+          {
+            "path": "docs/development/evidence/W699-01/DELIVERY.md",
+            "source_sha": "59899fd204a90061286b0b9b9ab7acce88447dba"
+          }
+        ]
+      },
+      "remaining_scope": "剩余 R2 费率/标准 Basis 命令、维护与完整成本政策业务采用。"
     },
     {
       "id": "WP11-40",
@@ -207616,7 +207874,43 @@
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "inherited_partial_delivery": {
+        "from_task": "WP02-03",
+        "decision_date": "2026-11-17",
+        "report": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
+        "delivered_scope": "现行归集、完工反冲后采用、计算快照、标准依据和质量规范引用",
+        "remaining_scope": "MAT/EXEC/OUTPUT 完整原件及实际质量处置；规范批准不等于产出通过。",
+        "full_task_completed": false,
+        "code_changed": false,
+        "evidence": [
+          {
+            "path": "docs/development/evidence/W686-01/DELIVERY.md",
+            "source_sha": "1912e3bad3541d037dff64ecf10e5729c3043d96"
+          },
+          {
+            "path": "docs/development/evidence/W687-01/DELIVERY.md",
+            "source_sha": "fffe0066779fcdbecb4f8d1dd393bd4fd7568933"
+          },
+          {
+            "path": "docs/development/evidence/W688-01/DELIVERY.md",
+            "source_sha": "f0bd4e0d0a4fb60bd95511a2c2ab541ae1bcfb59"
+          },
+          {
+            "path": "docs/development/evidence/W689-01/DELIVERY.md",
+            "source_sha": "8597f43679197b86746607d0746ef397857bbffd"
+          },
+          {
+            "path": "docs/development/evidence/W693-01/DELIVERY.md",
+            "source_sha": "be7581a0481c9be201c2bc78ac35af0906720b2c"
+          },
+          {
+            "path": "docs/development/evidence/W698-01/DELIVERY.md",
+            "source_sha": "69782dba4c2a2807444d3898c7f525f5963a78eb"
+          }
+        ]
+      },
+      "remaining_scope": "MAT/EXEC/OUTPUT 完整原件及实际质量处置；规范批准不等于产出通过。"
     },
     {
       "id": "WP11-41",
@@ -207658,7 +207952,23 @@
         "WP08/WP09：输出用途、等价完成度/试制/报废真实证据",
         "WP12：成本分配与结转专业批准",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "inherited_partial_delivery": {
+        "from_task": "WP02-03",
+        "decision_date": "2026-11-17",
+        "report": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
+        "delivered_scope": "可复用已保存成本/费率版本输入，未交付完整 R2 分配",
+        "remaining_scope": "原分配方法、精度/残差、成本对象和原 AC 全部保留。",
+        "full_task_completed": false,
+        "code_changed": false,
+        "evidence": [
+          {
+            "path": "docs/development/evidence/W689-01/DELIVERY.md",
+            "source_sha": "8597f43679197b86746607d0746ef397857bbffd"
+          }
+        ]
+      },
+      "remaining_scope": "原分配方法、精度/残差、成本对象和原 AC 全部保留。"
     },
     {
       "id": "WP11-42",
@@ -207696,7 +208006,31 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：Main当前授权/完整Scope、PostgreSQL原生UoW共同锁序与最终fence、原键/UNKNOWN恢复、可靠Outbox",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "inherited_partial_delivery": {
+        "from_task": "WP02-03",
+        "decision_date": "2026-11-17",
+        "report": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
+        "delivered_scope": "现行完工财务收尾、重启恢复和保存版结转绑定",
+        "remaining_scope": "账套级 GL 结转、C45 及正式恢复；现行收尾不等于原生 GL 过账。",
+        "full_task_completed": false,
+        "code_changed": false,
+        "evidence": [
+          {
+            "path": "docs/development/evidence/W687-01/DELIVERY.md",
+            "source_sha": "fffe0066779fcdbecb4f8d1dd393bd4fd7568933"
+          },
+          {
+            "path": "docs/development/evidence/W688-01/DELIVERY.md",
+            "source_sha": "f0bd4e0d0a4fb60bd95511a2c2ab541ae1bcfb59"
+          },
+          {
+            "path": "docs/development/evidence/W689-01/DELIVERY.md",
+            "source_sha": "8597f43679197b86746607d0746ef397857bbffd"
+          }
+        ]
+      },
+      "remaining_scope": "账套级 GL 结转、C45 及正式恢复；现行收尾不等于原生 GL 过账。"
     },
     {
       "id": "WP11-43",
@@ -215808,65 +216142,42 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W699",
-      "path": "docs/development/evidence/W699-01/DELIVERY.md",
-      "baseline_sha": "c62dbdd2cd626d20b1272bc01085dd93da209320",
-      "registered_at": "2026-11-17T04:26:11.620801-05:00",
-      "phase": "LOCAL_VERIFIED_PENDING_INTEGRATION",
+      "id": "WP02-03",
+      "phase": "CARD_DONE_PENDING_PR",
+      "owner": "COORD",
+      "mode": "SINGLE_CHAT_SERIAL",
+      "windows_closed": true,
+      "active_implementation_chats": [],
       "assigned_chats": [
         "COORD"
       ],
       "authorized_implementation_chats": [
         "COORD"
       ],
-      "authorized_review_chats": [
-        "COORD"
-      ],
-      "active_implementation_chats": [],
-      "workers_started": true,
-      "windows_closed": true,
-      "product_code_changed": true,
-      "next_action": "正常合并受保护 PR、核对远端和释放席位；后续沿 R2 成本命令及 GL 采用继续。",
+      "product_code_changed": false,
+      "report": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
+      "next_action": "正常合并 WP02-03 核销 PR 后按阶段 0 顺序进入 WP02-10。",
       "windows": [
         {
-          "id": "W699-01",
-          "workspace_task": "W699-01",
+          "id": "WP02-03",
+          "workspace_task": "WP02-03",
           "related_tasks": [
-            "WP02-03",
-            "WP11-14",
-            "WP11-39"
+            "WP02-03"
           ],
           "chat": "COORD",
-          "mode": "SINGLE_CHAT",
           "phase": "CLOSED",
+          "branch": "codex/wp02-03",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w699-01",
-          "planned_scope_ref": "docs/development/evidence/W699-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W699-01/DELIVERY.md",
-          "full_task_completed": false,
-          "actions_authorized": false,
-          "deployment_authorized": false,
-          "exclusive_resources": [
-            "Main:roadmap-and-project-state",
-            "Main:finance-command-journal",
-            "Main:fin-gl-policy-owner",
-            "Main:fin-cost-owner",
-            "Main:postgreSql-core-migrations"
-          ],
+          "delivery_report": "docs/development/evidence/WP02-03/card-closure/DELIVERY.md",
           "review_completed": true,
+          "full_task_completed": true,
           "integration_status": "PENDING_PROTECTED_PR",
-          "validation_summary": "最终 PostgreSQL 原生来源验收及完整成本政策回归 2 项通过，零跳过；构建零错误，本地发布 HTTP 冒烟通过。",
-          "remaining_scope": "WP11-39 接续剩余 R2 费率和标准 Basis 命令、维护入口及其业务采用；本轮会计政策和双方来源合同已由原生 FinancePolicy 参与者提供。WP11-14 仍需 GL 来源接收、完整 R-GL02 执行条件、OA 应用、规则/科目映射/矩阵/期间和最终过账门；配置原件批准不表示凭证已经过账。WP11-40 接续 MAT、EXEC、OUTPUT 完整来源及实际质量处置；WP11-41/42 接续分配、账套级 GL 结转和 C45 恢复。FM15 通用采用沿 WP11-04，WP02-03 继续其他权限用途。"
+          "actions_authorized": false,
+          "deployment_authorized": false
         }
-      ],
-      "storage": {
-        "reuse_worktrees": [
-          "D:\\CP6-worktrees\\wave17-dispatch-20261018"
-        ],
-        "new_worktrees": 0
-      }
+      ]
     },
     "wave_history": [
       {
@@ -276065,6 +276376,70 @@
           ],
           "new_worktrees": 0
         }
+      },
+      {
+        "id": "W699",
+        "path": "docs/development/evidence/W699-01/DELIVERY.md",
+        "baseline_sha": "c62dbdd2cd626d20b1272bc01085dd93da209320",
+        "registered_at": "2026-11-17T04:26:11.620801-05:00",
+        "phase": "INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_code_changed": true,
+        "next_action": "正常合并受保护 PR、核对远端和释放席位；后续沿 R2 成本命令及 GL 采用继续。",
+        "windows": [
+          {
+            "id": "W699-01",
+            "workspace_task": "W699-01",
+            "related_tasks": [
+              "WP02-03",
+              "WP11-14",
+              "WP11-39"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w699-01",
+            "planned_scope_ref": "docs/development/evidence/W699-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W699-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:roadmap-and-project-state",
+              "Main:finance-command-journal",
+              "Main:fin-gl-policy-owner",
+              "Main:fin-cost-owner",
+              "Main:postgreSql-core-migrations"
+            ],
+            "review_completed": true,
+            "integration_status": "PENDING_PROTECTED_PR",
+            "validation_summary": "最终 PostgreSQL 原生来源验收及完整成本政策回归 2 项通过，零跳过；构建零错误，本地发布 HTTP 冒烟通过。",
+            "remaining_scope": "WP11-39 接续剩余 R2 费率和标准 Basis 命令、维护入口及其业务采用；本轮会计政策和双方来源合同已由原生 FinancePolicy 参与者提供。WP11-14 仍需 GL 来源接收、完整 R-GL02 执行条件、OA 应用、规则/科目映射/矩阵/期间和最终过账门；配置原件批准不表示凭证已经过账。WP11-40 接续 MAT、EXEC、OUTPUT 完整来源及实际质量处置；WP11-41/42 接续分配、账套级 GL 结转和 C45 恢复。FM15 通用采用沿 WP11-04，WP02-03 继续其他权限用途。"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:\\CP6-worktrees\\wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        },
+        "integration_status": "MERGED",
+        "remote_main_sha": "fc8b5a51da6f6fc8a8791a1f4bd7feb5fd3abb0d",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1236"
       }
     ],
     "development_priority": {
@@ -276094,7 +276469,8 @@
       "whole_wp02_completion_required_before_business": false,
       "full_task_and_acceptance_gates_unchanged": true,
       "new_implementation_windows_authorized_by_this_plan": false,
-      "calendar_estimates_pending": true
+      "calendar_estimates_pending": true,
+      "superseded_by": "CP6-CARD-EXECUTION-20261117"
     },
     "workspace_policy": {
       "effective_date": "2026-10-18",
@@ -282375,376 +282751,16 @@
       "closeout_report": "docs/development/evidence/W480-01/DELIVERY.md"
     },
     "next_execution_plan": {
-      "id": "CP6-12H-20261111",
-      "path": "docs/development/planning/20261111-codex-12h-business-chain.md",
-      "state": "SETTLED",
+      "id": "CP6-CARD-EXECUTION-20261117",
+      "path": "docs/development/planning/20261117-card-execution.md",
+      "state": "IN_PROGRESS",
       "execution_owner": "COORD_SINGLE_CHAT_SERIAL",
-      "budget_unit": "CODEX_EFFECTIVE_EXECUTION_SECONDS",
-      "capacity_hours": 12,
-      "capacity_seconds": 43200,
-      "baseline_main": "42072bffb5205c4eabb371264f026f58728275d2",
-      "baseline_counts": {
-        "DONE": 38,
-        "IN_PROGRESS": 1,
-        "PLANNED": 336
-      },
-      "original_task_count": 375,
+      "budget_unit": "EFFECTIVE_EXECUTION_SECONDS",
+      "capacity_hours": 2503.55,
+      "phase0_capacity_hours": 12,
       "first_business_target": "CRM-INQ-01",
-      "started_at": "2026-11-11T13:56:49.786330+00:00",
-      "native_goal_started_at": "2026-11-11T13:55:39Z",
-      "checkpoints_seconds": [
-        14400,
-        28800,
-        43200
-      ],
-      "whole_project_complete": false,
-      "windows": [
-        {
-          "id": "W481-01",
-          "state": "CLOSED",
-          "related_tasks": [
-            "WP02-02"
-          ],
-          "branch": "codex/w481-01",
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "started_at": "2026-11-11T13:56:49.786330+00:00",
-          "delivery": "docs/development/evidence/W481-01/DELIVERY.md",
-          "scope": "同一v11在单个关闭候选组合ERP/Core/RMA原journal/FileContent并恢复四类回执和独立文件；错误顺序与晚段回滚通过；现行撤权及全局键实测，真实epoch变化仍未运行。",
-          "adopted_main": "cfdde8f8f2bf8dea457bb692962e41e479202eb4",
-          "pr": "https://github.com/GTX537/CP6/pull/949",
-          "branch_disposition": "deleted-local-and-remote",
-          "workspace_status": "fixed-seat-detached-for-reuse",
-          "seat_released": true
-        },
-        {
-          "id": "W482-01",
-          "state": "CLOSED",
-          "related_tasks": [
-            "WP03-02",
-            "WP03-04"
-          ],
-          "branch": "codex/w482-01",
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "started_at": "2026-11-11T14:51:31.574879+00:00",
-          "delivery": "docs/development/evidence/W482-01/DELIVERY.md",
-          "scope": "原生询盘现有实现、原验收差距与隐私导出必要缺口；一项完整任务内连续验证和实施。",
-          "repositories": {
-            "Main": "cfdde8f8f2bf8dea457bb692962e41e479202eb4",
-            "CRM": "0cd83eb09826552fc1dc8d631a7c82484ec40363"
-          },
-          "adopted_main": "7a8cd529f255a762f33fca11488e1e93dd6762c6",
-          "crm_adopted_main": "8c78760ef7ae746a55bdf34d81a17439f7307715",
-          "pr": "https://github.com/GTX537/CP6/pull/950",
-          "branch_disposition": "deleted-local-and-remote",
-          "workspace_status": "fixed-seat-detached-for-reuse",
-          "seat_released": true
-        },
-        {
-          "id": "W483-01",
-          "state": "CLOSED",
-          "related_tasks": [
-            "WP03-04"
-          ],
-          "branch": "codex/w483-01",
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "started_at": "2026-11-11T18:16:59.051154+00:00",
-          "delivery": "docs/development/evidence/W483-01/DELIVERY.md",
-          "scope": "真实刷新/重新登录的原导出恢复及必要版本化只读上下文；R1终态与当前授权保持。",
-          "repositories": {
-            "Main": "7a8cd529f255a762f33fca11488e1e93dd6762c6",
-            "CRM": "8c78760ef7ae746a55bdf34d81a17439f7307715"
-          },
-          "crm_adoption": {
-            "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
-            "pr": "https://github.com/GTX537/CP6.CRM/pull/170",
-            "commit": "8edb41fee2a300a5177eb142ced397253aeeeb07",
-            "target_head": "8edb41fee2a300a5177eb142ced397253aeeeb07"
-          },
-          "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/170",
-          "crm_seat_released": true,
-          "adopted_main": "0a30d55436a5169174da95e905a8163abaf51b86",
-          "crm_adopted_main": "8edb41fee2a300a5177eb142ced397253aeeeb07",
-          "pr": "https://github.com/GTX537/CP6/pull/951",
-          "branch_disposition": "deleted-local-and-remote",
-          "workspace_status": "fixed-seat-detached-for-reuse",
-          "seat_released": true
-        },
-        {
-          "id": "W484-01",
-          "state": "CLOSED",
-          "related_tasks": [
-            "WP03-04"
-          ],
-          "branch": "codex/w484-01",
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "started_at": "2026-11-11T19:02:30.928746+00:00",
-          "delivery": "docs/development/evidence/W484-01/DELIVERY.md",
-          "scope": "原四disposition/Lead日历月/持久完整子图与原60AC/R1准确采用，真实失败最小修正；不缩期/改时钟或冒完整前置。",
-          "repositories": {
-            "Main": "0a30d55436a5169174da95e905a8163abaf51b86",
-            "CRM": "8edb41fee2a300a5177eb142ced397253aeeeb07"
-          },
-          "crm_adoption": {
-            "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
-            "pr": "https://github.com/GTX537/CP6.CRM/pull/172",
-            "commit": "a992004e984252d94049e9bf17b458c2427118a6",
-            "target_head": "a992004e984252d94049e9bf17b458c2427118a6"
-          },
-          "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/172",
-          "crm_seat_released": true,
-          "adopted_main": "4fa6d2713ddbe0bf2783dca589b425c6be336ccb",
-          "crm_adopted_main": "a992004e984252d94049e9bf17b458c2427118a6",
-          "pr": "https://github.com/GTX537/CP6/pull/952",
-          "branch_disposition": "deleted-local-and-remote",
-          "workspace_status": "fixed-seat-detached-for-reuse",
-          "seat_released": true
-        },
-        {
-          "id": "W485-01",
-          "state": "CLOSED",
-          "related_tasks": [
-            "WP03-04"
-          ],
-          "branch": "codex/w485-01",
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "started_at": "2026-11-11T20:24:16.748007+00:00",
-          "delivery": "docs/development/evidence/W485-01/DELIVERY.md",
-          "scope": "Rejected原60分钟保留的实际原生PG链：拒绝原结果、撤回、导出和回执联合清除及不复活；等待期间核原完整AC证据。原政策/业务时钟不缩改。 补实际Next整站构建/宿主及页面路由→原生公共/受理/隐私衔接，因既有浏览器只覆盖真实组件/BFF而未执行整站SSR/路由；明确模拟身份输入，实际应用/PG；真实失败最小修复。",
-          "repositories": {
-            "Main": "4fa6d2713ddbe0bf2783dca589b425c6be336ccb",
-            "CRM": "a992004e984252d94049e9bf17b458c2427118a6"
-          },
-          "adopted_main": "2905582874aa520665b4b6e596e478f1c9c81d77",
-          "crm_adopted_main": "d0183afd23a200f49f536a23fb31f1c853fcc8a0",
-          "branch_disposition": "deleted-local-and-remote",
-          "workspace_status": "fixed-seat-detached-for-reuse",
-          "seat_released": true
-        },
-        {
-          "id": "W486-01",
-          "state": "CLOSED",
-          "related_tasks": [
-            "WP03-02"
-          ],
-          "branch": "codex/w486-01",
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "started_at": "2026-11-11T22:14:35.790336+00:00",
-          "delivery": "docs/development/evidence/W486-01/DELIVERY.md",
-          "scope": "原Schema/Owner接受的合法政策字段组合与固定必填公开输入兼容：真实配置激活/公共请求先重现，按原合同最小修正；可选字段策略和导出字段不扩张，原键/事务/权限/合法域保持。",
-          "repositories": {
-            "Main": "2905582874aa520665b4b6e596e478f1c9c81d77",
-            "CRM": "d0183afd23a200f49f536a23fb31f1c853fcc8a0"
-          },
-          "product_integrated": true,
-          "crm_adopted_main": "1d952a579d06404bac17315d99113d2734f2f0f9",
-          "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/176",
-          "full_task_completed": false,
-          "adopted_main": "d90c324b3a26bda3963297d32f3fa2cdcbd123b4",
-          "branch_disposition": "deleted-local-and-remote",
-          "workspace_status": "fixed-seat-detached-for-reuse",
-          "seat_released": true
-        },
-        {
-          "id": "W487-01",
-          "state": "CLOSED",
-          "related_tasks": [
-            "S01-08",
-            "WP03-02"
-          ],
-          "branch": "codex/w487-01",
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "started_at": "2026-11-11T22:45:28.885407+00:00",
-          "delivery": "docs/development/evidence/W487-01/DELIVERY.md",
-          "scope": "核AC-INQ-054实际C#集合合同和权威使用边界：构造/with后的别名修改、null条目及严格wire，真实缺口才修生成入口；保留完整合法域和当前权限，不逐层重复防御。",
-          "repositories": {
-            "Main": "d90c324b3a26bda3963297d32f3fa2cdcbd123b4",
-            "CRM": "1d952a579d06404bac17315d99113d2734f2f0f9"
-          },
-          "product_integrated": true,
-          "crm_adopted_main": "526817f7a9fa05ea4391b683f35466f360348927",
-          "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/178",
-          "full_task_completed": false,
-          "adopted_main": "a4324b0df2c7cdaef221b77b16e40fd01deb49d4",
-          "branch_disposition": "deleted-local-and-remote",
-          "workspace_status": "fixed-seat-detached-for-reuse",
-          "seat_released": true
-        },
-        {
-          "id": "W488-01",
-          "state": "CLOSED",
-          "related_tasks": [
-            "WP03-04"
-          ],
-          "branch": "codex/w488-01",
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "started_at": "2026-11-11T23:07:20.737734+00:00",
-          "delivery": "docs/development/evidence/W488-01/DELIVERY.md",
-          "scope": "新增privacy-export路由真实Owner原事件到HTTP sidecar确认/丢回执恢复；原一分钟租约实际到期前后保持原Request和已发送事实，不重复Job/H01/业务事务。已有其他路由成功按原范围复用。",
-          "repositories": {
-            "Main": "a4324b0df2c7cdaef221b77b16e40fd01deb49d4",
-            "CRM": "526817f7a9fa05ea4391b683f35466f360348927"
-          },
-          "product_integrated": true,
-          "crm_adopted_main": "65993e5e48c9b7a2d3a4b7d2ae11fea9fe1fefdd",
-          "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/179",
-          "full_task_completed": false,
-          "adopted_main": "66ba654e79b4c21fcf1f37125e5522465147ecfe",
-          "branch_disposition": "deleted-local-and-remote",
-          "workspace_status": "fixed-seat-detached-for-reuse",
-          "seat_released": true
-        },
-        {
-          "id": "W489-01",
-          "state": "CLOSED",
-          "related_tasks": [
-            "WP03-01",
-            "WP03-02"
-          ],
-          "branch": "codex/w489-01",
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "started_at": "2026-11-11T23:30:00.160843+00:00",
-          "delivery": "docs/development/evidence/W489-01/DELIVERY.md",
-          "scope": "核合法政策组合下配置预览与公开页面固定必填字段的一致性，实际React/BFF/PG先重现再最小修；保存/预览/生效继续保持原政策列表，不暗中扩字段或缩合法域。",
-          "repositories": {
-            "Main": "66ba654e79b4c21fcf1f37125e5522465147ecfe",
-            "CRM": "65993e5e48c9b7a2d3a4b7d2ae11fea9fe1fefdd"
-          },
-          "product_integrated": true,
-          "crm_adopted_main": "21239ca957b54f41b7cc988164e99a92b7c1bfe0",
-          "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/181",
-          "full_task_completed": false,
-          "adopted_main": "f196c8092231b720b6a13861267238645ad4f197",
-          "pr": "https://github.com/GTX537/CP6/pull/957",
-          "branch_disposition": "deleted-local-and-remote",
-          "workspace_status": "fixed-seat-detached-for-reuse",
-          "seat_released": true
-        },
-        {
-          "id": "W490-01",
-          "state": "IN_PROGRESS",
-          "related_tasks": [
-            "WP02-02",
-            "WP03-04"
-          ],
-          "branch": "codex/w490-01",
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "started_at": "2026-11-12T00:00:14.571688+00:00",
-          "delivery": "docs/development/evidence/W490-01/DELIVERY.md",
-          "scope": "核对本轮业务链的原验收与实际证据、正式包及活动BUG直接前置，形成下一项Stock 0.10.4采用计划；汇总12小时真实结果，正常合入并释放席位。",
-          "repositories": {
-            "Main": "f196c8092231b720b6a13861267238645ad4f197"
-          },
-          "full_task_completed": false
-        }
-      ],
-      "checkpoints": [
-        {
-          "native_seconds": 28869,
-          "native_elapsed": "8h01m09s",
-          "state": "ACTIVE",
-          "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/174",
-          "crm_remote_main": "d0183afd23a200f49f536a23fb31f1c853fcc8a0",
-          "main_closeout": "W485 coordination adoption/official finish pending",
-          "original_inquiry_cases_accepted_locally": 25,
-          "original_inquiry_cases_total": 60,
-          "revision_runtime_pass": 2,
-          "revision_runtime_total": 247,
-          "full_tasks_done": 38,
-          "postgresql_pass": 16,
-          "postgresql_not_run": 11,
-          "next_scope": "先收妥W485；随后按原合法政策字段组合/必填输入兼容做实际公开链RED再最小修复，余量核AC-INQ-054集合合同实际范围；不改合同域、不全仓防御重构；最后一小时用于当前任务完整交付/收尾。"
-        },
-        {
-          "native_seconds": 39678,
-          "native_elapsed": "11h01m18s",
-          "state": "ACTIVE_CLOSEOUT",
-          "original_inquiry_pass": 39,
-          "original_inquiry_total": 60,
-          "inquiry_runtime_revision_pass": 2,
-          "inquiry_runtime_revision_total": 2,
-          "global_runtime_pass": 2,
-          "global_runtime_total": 247,
-          "full_tasks_done": 38,
-          "postgresql_pass": 16,
-          "postgresql_not_run": 11,
-          "platform_remote_main": "f3fbe4be67d40641f7a8a969d74be65a95541819",
-          "scope": "11h后不再开启新产品实现；完成本轮证据适用/计划/台账/正常Main采用与官方生命周期。正式发布仅在收到本次明确授权且准入条件满足后按精确请求处理。"
-        },
-        {
-          "native_seconds": 43210,
-          "native_elapsed": "12h00m10s",
-          "recorded_at": "2026-11-12T01:56:26.493661+00:00",
-          "budget_seconds": 43200,
-          "state": "EXECUTION_BUDGET_MET",
-          "full_business_target_complete": false,
-          "original_inquiry_pass": 39,
-          "original_inquiry_total": 60,
-          "inquiry_runtime_revision_pass": 2,
-          "inquiry_runtime_revision_total": 2,
-          "original_tasks_done": 38,
-          "original_tasks_remaining": 337,
-          "postgresql_pass": 16,
-          "postgresql_not_run": 11,
-          "main_adoption_at_snapshot": "PENDING_FINAL_PR_AND_OFFICIAL_FINISH",
-          "final_lifecycle_evidence": "https://github.com/GTX537/CP6/pull/958",
-          "scope": "12h执行预算结算；含收尾最终读数及准确Main源/合并SHA、分支/工作区/席位结果在同一PR最终补记。完整询盘/原卡/正式PG余项不提前关闭。"
-        }
-      ],
-      "recommended_follow_up": [
-        {
-          "id": "W491-01",
-          "state": "NOT_STARTED",
-          "original_task": "WP03-04",
-          "scope": "询盘四处置原生保留及合法模拟历史初始图",
-          "plan": "docs/superpowers/plans/2026-11-11-inquiry-native-retention.md",
-          "estimated_hours": [
-            3,
-            5
-          ]
-        },
-        {
-          "id": "W492-01",
-          "state": "NOT_STARTED",
-          "original_task": "WP02-02",
-          "scope": "独立Main PostgreSQL本地构建入口",
-          "plan": "docs/superpowers/plans/2026-11-11-postgresql-local-build.md",
-          "estimated_hours": [
-            1,
-            2
-          ]
-        },
-        {
-          "id": "W493-01",
-          "state": "NOT_STARTED",
-          "original_task": "WP02-02",
-          "scope": "正式0.10.4消费及Main Stock #844回归",
-          "plan": "docs/superpowers/plans/2026-11-11-stock-outbox-0.10.4-adoption.md",
-          "estimated_hours": [
-            2,
-            4
-          ],
-          "formal_publication_requires_new_authorization": true
-        }
-      ],
-      "settlement": {
-        "native_seconds": 43210,
-        "native_elapsed": "12h00m10s",
-        "recorded_at": "2026-11-12T01:56:26.493661+00:00",
-        "budget_seconds": 43200,
-        "state": "EXECUTION_BUDGET_MET",
-        "full_business_target_complete": false,
-        "original_inquiry_pass": 39,
-        "original_inquiry_total": 60,
-        "inquiry_runtime_revision_pass": 2,
-        "inquiry_runtime_revision_total": 2,
-        "original_tasks_done": 38,
-        "original_tasks_remaining": 337,
-        "postgresql_pass": 16,
-        "postgresql_not_run": 11,
-        "main_adoption_at_snapshot": "PENDING_FINAL_PR_AND_OFFICIAL_FINISH",
-        "final_lifecycle_evidence": "https://github.com/GTX537/CP6/pull/958",
-        "scope": "12h执行预算结算；含收尾最终读数及准确Main源/合并SHA、分支/工作区/席位结果在同一PR最终补记。完整询盘/原卡/正式PG余项不提前关闭。"
-      }
+      "original_task_count": 375,
+      "whole_project_complete": false
     },
     "execution_plan_history": [
       {
@@ -287416,8 +287432,474 @@
           "recorded_seconds_are_pre_delivery_sample": true
         },
         "native_goal_time_used_seconds": 80111
+      },
+      {
+        "id": "CP6-12H-20261111",
+        "path": "docs/development/planning/20261111-codex-12h-business-chain.md",
+        "state": "SETTLED",
+        "execution_owner": "COORD_SINGLE_CHAT_SERIAL",
+        "budget_unit": "CODEX_EFFECTIVE_EXECUTION_SECONDS",
+        "capacity_hours": 12,
+        "capacity_seconds": 43200,
+        "baseline_main": "42072bffb5205c4eabb371264f026f58728275d2",
+        "baseline_counts": {
+          "DONE": 38,
+          "IN_PROGRESS": 1,
+          "PLANNED": 336
+        },
+        "original_task_count": 375,
+        "first_business_target": "CRM-INQ-01",
+        "started_at": "2026-11-11T13:56:49.786330+00:00",
+        "native_goal_started_at": "2026-11-11T13:55:39Z",
+        "checkpoints_seconds": [
+          14400,
+          28800,
+          43200
+        ],
+        "whole_project_complete": false,
+        "windows": [
+          {
+            "id": "W481-01",
+            "state": "CLOSED",
+            "related_tasks": [
+              "WP02-02"
+            ],
+            "branch": "codex/w481-01",
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "started_at": "2026-11-11T13:56:49.786330+00:00",
+            "delivery": "docs/development/evidence/W481-01/DELIVERY.md",
+            "scope": "同一v11在单个关闭候选组合ERP/Core/RMA原journal/FileContent并恢复四类回执和独立文件；错误顺序与晚段回滚通过；现行撤权及全局键实测，真实epoch变化仍未运行。",
+            "adopted_main": "cfdde8f8f2bf8dea457bb692962e41e479202eb4",
+            "pr": "https://github.com/GTX537/CP6/pull/949",
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          },
+          {
+            "id": "W482-01",
+            "state": "CLOSED",
+            "related_tasks": [
+              "WP03-02",
+              "WP03-04"
+            ],
+            "branch": "codex/w482-01",
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "started_at": "2026-11-11T14:51:31.574879+00:00",
+            "delivery": "docs/development/evidence/W482-01/DELIVERY.md",
+            "scope": "原生询盘现有实现、原验收差距与隐私导出必要缺口；一项完整任务内连续验证和实施。",
+            "repositories": {
+              "Main": "cfdde8f8f2bf8dea457bb692962e41e479202eb4",
+              "CRM": "0cd83eb09826552fc1dc8d631a7c82484ec40363"
+            },
+            "adopted_main": "7a8cd529f255a762f33fca11488e1e93dd6762c6",
+            "crm_adopted_main": "8c78760ef7ae746a55bdf34d81a17439f7307715",
+            "pr": "https://github.com/GTX537/CP6/pull/950",
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          },
+          {
+            "id": "W483-01",
+            "state": "CLOSED",
+            "related_tasks": [
+              "WP03-04"
+            ],
+            "branch": "codex/w483-01",
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "started_at": "2026-11-11T18:16:59.051154+00:00",
+            "delivery": "docs/development/evidence/W483-01/DELIVERY.md",
+            "scope": "真实刷新/重新登录的原导出恢复及必要版本化只读上下文；R1终态与当前授权保持。",
+            "repositories": {
+              "Main": "7a8cd529f255a762f33fca11488e1e93dd6762c6",
+              "CRM": "8c78760ef7ae746a55bdf34d81a17439f7307715"
+            },
+            "crm_adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6.CRM/pull/170",
+              "commit": "8edb41fee2a300a5177eb142ced397253aeeeb07",
+              "target_head": "8edb41fee2a300a5177eb142ced397253aeeeb07"
+            },
+            "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/170",
+            "crm_seat_released": true,
+            "adopted_main": "0a30d55436a5169174da95e905a8163abaf51b86",
+            "crm_adopted_main": "8edb41fee2a300a5177eb142ced397253aeeeb07",
+            "pr": "https://github.com/GTX537/CP6/pull/951",
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          },
+          {
+            "id": "W484-01",
+            "state": "CLOSED",
+            "related_tasks": [
+              "WP03-04"
+            ],
+            "branch": "codex/w484-01",
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "started_at": "2026-11-11T19:02:30.928746+00:00",
+            "delivery": "docs/development/evidence/W484-01/DELIVERY.md",
+            "scope": "原四disposition/Lead日历月/持久完整子图与原60AC/R1准确采用，真实失败最小修正；不缩期/改时钟或冒完整前置。",
+            "repositories": {
+              "Main": "0a30d55436a5169174da95e905a8163abaf51b86",
+              "CRM": "8edb41fee2a300a5177eb142ced397253aeeeb07"
+            },
+            "crm_adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6.CRM/pull/172",
+              "commit": "a992004e984252d94049e9bf17b458c2427118a6",
+              "target_head": "a992004e984252d94049e9bf17b458c2427118a6"
+            },
+            "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/172",
+            "crm_seat_released": true,
+            "adopted_main": "4fa6d2713ddbe0bf2783dca589b425c6be336ccb",
+            "crm_adopted_main": "a992004e984252d94049e9bf17b458c2427118a6",
+            "pr": "https://github.com/GTX537/CP6/pull/952",
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          },
+          {
+            "id": "W485-01",
+            "state": "CLOSED",
+            "related_tasks": [
+              "WP03-04"
+            ],
+            "branch": "codex/w485-01",
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "started_at": "2026-11-11T20:24:16.748007+00:00",
+            "delivery": "docs/development/evidence/W485-01/DELIVERY.md",
+            "scope": "Rejected原60分钟保留的实际原生PG链：拒绝原结果、撤回、导出和回执联合清除及不复活；等待期间核原完整AC证据。原政策/业务时钟不缩改。 补实际Next整站构建/宿主及页面路由→原生公共/受理/隐私衔接，因既有浏览器只覆盖真实组件/BFF而未执行整站SSR/路由；明确模拟身份输入，实际应用/PG；真实失败最小修复。",
+            "repositories": {
+              "Main": "4fa6d2713ddbe0bf2783dca589b425c6be336ccb",
+              "CRM": "a992004e984252d94049e9bf17b458c2427118a6"
+            },
+            "adopted_main": "2905582874aa520665b4b6e596e478f1c9c81d77",
+            "crm_adopted_main": "d0183afd23a200f49f536a23fb31f1c853fcc8a0",
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          },
+          {
+            "id": "W486-01",
+            "state": "CLOSED",
+            "related_tasks": [
+              "WP03-02"
+            ],
+            "branch": "codex/w486-01",
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "started_at": "2026-11-11T22:14:35.790336+00:00",
+            "delivery": "docs/development/evidence/W486-01/DELIVERY.md",
+            "scope": "原Schema/Owner接受的合法政策字段组合与固定必填公开输入兼容：真实配置激活/公共请求先重现，按原合同最小修正；可选字段策略和导出字段不扩张，原键/事务/权限/合法域保持。",
+            "repositories": {
+              "Main": "2905582874aa520665b4b6e596e478f1c9c81d77",
+              "CRM": "d0183afd23a200f49f536a23fb31f1c853fcc8a0"
+            },
+            "product_integrated": true,
+            "crm_adopted_main": "1d952a579d06404bac17315d99113d2734f2f0f9",
+            "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/176",
+            "full_task_completed": false,
+            "adopted_main": "d90c324b3a26bda3963297d32f3fa2cdcbd123b4",
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          },
+          {
+            "id": "W487-01",
+            "state": "CLOSED",
+            "related_tasks": [
+              "S01-08",
+              "WP03-02"
+            ],
+            "branch": "codex/w487-01",
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "started_at": "2026-11-11T22:45:28.885407+00:00",
+            "delivery": "docs/development/evidence/W487-01/DELIVERY.md",
+            "scope": "核AC-INQ-054实际C#集合合同和权威使用边界：构造/with后的别名修改、null条目及严格wire，真实缺口才修生成入口；保留完整合法域和当前权限，不逐层重复防御。",
+            "repositories": {
+              "Main": "d90c324b3a26bda3963297d32f3fa2cdcbd123b4",
+              "CRM": "1d952a579d06404bac17315d99113d2734f2f0f9"
+            },
+            "product_integrated": true,
+            "crm_adopted_main": "526817f7a9fa05ea4391b683f35466f360348927",
+            "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/178",
+            "full_task_completed": false,
+            "adopted_main": "a4324b0df2c7cdaef221b77b16e40fd01deb49d4",
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          },
+          {
+            "id": "W488-01",
+            "state": "CLOSED",
+            "related_tasks": [
+              "WP03-04"
+            ],
+            "branch": "codex/w488-01",
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "started_at": "2026-11-11T23:07:20.737734+00:00",
+            "delivery": "docs/development/evidence/W488-01/DELIVERY.md",
+            "scope": "新增privacy-export路由真实Owner原事件到HTTP sidecar确认/丢回执恢复；原一分钟租约实际到期前后保持原Request和已发送事实，不重复Job/H01/业务事务。已有其他路由成功按原范围复用。",
+            "repositories": {
+              "Main": "a4324b0df2c7cdaef221b77b16e40fd01deb49d4",
+              "CRM": "526817f7a9fa05ea4391b683f35466f360348927"
+            },
+            "product_integrated": true,
+            "crm_adopted_main": "65993e5e48c9b7a2d3a4b7d2ae11fea9fe1fefdd",
+            "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/179",
+            "full_task_completed": false,
+            "adopted_main": "66ba654e79b4c21fcf1f37125e5522465147ecfe",
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          },
+          {
+            "id": "W489-01",
+            "state": "CLOSED",
+            "related_tasks": [
+              "WP03-01",
+              "WP03-02"
+            ],
+            "branch": "codex/w489-01",
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "started_at": "2026-11-11T23:30:00.160843+00:00",
+            "delivery": "docs/development/evidence/W489-01/DELIVERY.md",
+            "scope": "核合法政策组合下配置预览与公开页面固定必填字段的一致性，实际React/BFF/PG先重现再最小修；保存/预览/生效继续保持原政策列表，不暗中扩字段或缩合法域。",
+            "repositories": {
+              "Main": "66ba654e79b4c21fcf1f37125e5522465147ecfe",
+              "CRM": "65993e5e48c9b7a2d3a4b7d2ae11fea9fe1fefdd"
+            },
+            "product_integrated": true,
+            "crm_adopted_main": "21239ca957b54f41b7cc988164e99a92b7c1bfe0",
+            "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/181",
+            "full_task_completed": false,
+            "adopted_main": "f196c8092231b720b6a13861267238645ad4f197",
+            "pr": "https://github.com/GTX537/CP6/pull/957",
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          },
+          {
+            "id": "W490-01",
+            "state": "IN_PROGRESS",
+            "related_tasks": [
+              "WP02-02",
+              "WP03-04"
+            ],
+            "branch": "codex/w490-01",
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "started_at": "2026-11-12T00:00:14.571688+00:00",
+            "delivery": "docs/development/evidence/W490-01/DELIVERY.md",
+            "scope": "核对本轮业务链的原验收与实际证据、正式包及活动BUG直接前置，形成下一项Stock 0.10.4采用计划；汇总12小时真实结果，正常合入并释放席位。",
+            "repositories": {
+              "Main": "f196c8092231b720b6a13861267238645ad4f197"
+            },
+            "full_task_completed": false
+          }
+        ],
+        "checkpoints": [
+          {
+            "native_seconds": 28869,
+            "native_elapsed": "8h01m09s",
+            "state": "ACTIVE",
+            "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/174",
+            "crm_remote_main": "d0183afd23a200f49f536a23fb31f1c853fcc8a0",
+            "main_closeout": "W485 coordination adoption/official finish pending",
+            "original_inquiry_cases_accepted_locally": 25,
+            "original_inquiry_cases_total": 60,
+            "revision_runtime_pass": 2,
+            "revision_runtime_total": 247,
+            "full_tasks_done": 38,
+            "postgresql_pass": 16,
+            "postgresql_not_run": 11,
+            "next_scope": "先收妥W485；随后按原合法政策字段组合/必填输入兼容做实际公开链RED再最小修复，余量核AC-INQ-054集合合同实际范围；不改合同域、不全仓防御重构；最后一小时用于当前任务完整交付/收尾。"
+          },
+          {
+            "native_seconds": 39678,
+            "native_elapsed": "11h01m18s",
+            "state": "ACTIVE_CLOSEOUT",
+            "original_inquiry_pass": 39,
+            "original_inquiry_total": 60,
+            "inquiry_runtime_revision_pass": 2,
+            "inquiry_runtime_revision_total": 2,
+            "global_runtime_pass": 2,
+            "global_runtime_total": 247,
+            "full_tasks_done": 38,
+            "postgresql_pass": 16,
+            "postgresql_not_run": 11,
+            "platform_remote_main": "f3fbe4be67d40641f7a8a969d74be65a95541819",
+            "scope": "11h后不再开启新产品实现；完成本轮证据适用/计划/台账/正常Main采用与官方生命周期。正式发布仅在收到本次明确授权且准入条件满足后按精确请求处理。"
+          },
+          {
+            "native_seconds": 43210,
+            "native_elapsed": "12h00m10s",
+            "recorded_at": "2026-11-12T01:56:26.493661+00:00",
+            "budget_seconds": 43200,
+            "state": "EXECUTION_BUDGET_MET",
+            "full_business_target_complete": false,
+            "original_inquiry_pass": 39,
+            "original_inquiry_total": 60,
+            "inquiry_runtime_revision_pass": 2,
+            "inquiry_runtime_revision_total": 2,
+            "original_tasks_done": 38,
+            "original_tasks_remaining": 337,
+            "postgresql_pass": 16,
+            "postgresql_not_run": 11,
+            "main_adoption_at_snapshot": "PENDING_FINAL_PR_AND_OFFICIAL_FINISH",
+            "final_lifecycle_evidence": "https://github.com/GTX537/CP6/pull/958",
+            "scope": "12h执行预算结算；含收尾最终读数及准确Main源/合并SHA、分支/工作区/席位结果在同一PR最终补记。完整询盘/原卡/正式PG余项不提前关闭。"
+          }
+        ],
+        "recommended_follow_up": [
+          {
+            "id": "W491-01",
+            "state": "NOT_STARTED",
+            "original_task": "WP03-04",
+            "scope": "询盘四处置原生保留及合法模拟历史初始图",
+            "plan": "docs/superpowers/plans/2026-11-11-inquiry-native-retention.md",
+            "estimated_hours": [
+              3,
+              5
+            ]
+          },
+          {
+            "id": "W492-01",
+            "state": "NOT_STARTED",
+            "original_task": "WP02-02",
+            "scope": "独立Main PostgreSQL本地构建入口",
+            "plan": "docs/superpowers/plans/2026-11-11-postgresql-local-build.md",
+            "estimated_hours": [
+              1,
+              2
+            ]
+          },
+          {
+            "id": "W493-01",
+            "state": "NOT_STARTED",
+            "original_task": "WP02-02",
+            "scope": "正式0.10.4消费及Main Stock #844回归",
+            "plan": "docs/superpowers/plans/2026-11-11-stock-outbox-0.10.4-adoption.md",
+            "estimated_hours": [
+              2,
+              4
+            ],
+            "formal_publication_requires_new_authorization": true
+          }
+        ],
+        "settlement": {
+          "native_seconds": 43210,
+          "native_elapsed": "12h00m10s",
+          "recorded_at": "2026-11-12T01:56:26.493661+00:00",
+          "budget_seconds": 43200,
+          "state": "EXECUTION_BUDGET_MET",
+          "full_business_target_complete": false,
+          "original_inquiry_pass": 39,
+          "original_inquiry_total": 60,
+          "inquiry_runtime_revision_pass": 2,
+          "inquiry_runtime_revision_total": 2,
+          "original_tasks_done": 38,
+          "original_tasks_remaining": 337,
+          "postgresql_pass": 16,
+          "postgresql_not_run": 11,
+          "main_adoption_at_snapshot": "PENDING_FINAL_PR_AND_OFFICIAL_FINISH",
+          "final_lifecycle_evidence": "https://github.com/GTX537/CP6/pull/958",
+          "scope": "12h执行预算结算；含收尾最终读数及准确Main源/合并SHA、分支/工作区/席位结果在同一PR最终补记。完整询盘/原卡/正式PG余项不提前关闭。"
+        }
       }
-    ]
+    ],
+    "card_execution_policy": {
+      "id": "CP6-CARD-EXECUTION-20261117",
+      "path": "docs/development/planning/20261117-card-execution.md",
+      "rules": "AGENTS.md",
+      "mode": "SINGLE_CHAT_SERIAL",
+      "original_task_count": 375,
+      "original_target_count": 125,
+      "accepted_designs_unchanged": true,
+      "strict_prerequisites": true,
+      "baseline_counts": {
+        "DONE": 39,
+        "IN_PROGRESS": 1,
+        "PLANNED": 335
+      },
+      "size_budget_hours": {
+        "M": 4,
+        "L": 8
+      },
+      "split_at_ratio": 1.5,
+      "checkpoint_effective_hours": 24,
+      "base_card_hours": 2052,
+      "target_review_hours": 125,
+      "buffer_hours": 326.55,
+      "total_hours": 2503.55,
+      "phase0_hours": 12,
+      "started_at": "2026-11-17T11:43:54.964043+00:00",
+      "effective_seconds": 750.046,
+      "closed_cards": [
+        "WP02-03"
+      ],
+      "closed_targets": [],
+      "new_splits": [],
+      "current_stage": "PHASE_0",
+      "next_card": "WP02-10",
+      "no_module_freeze": true,
+      "phases": {
+        "A": [
+          "WP02-10",
+          "WP02-04",
+          "WP02-13",
+          "WP02-05",
+          "WP02-06",
+          "WP02-09",
+          "WP02-14",
+          "WP02-15",
+          "WP02-16",
+          "WP03-02",
+          "WP03-04"
+        ],
+        "B": [
+          "WP02-19",
+          "WP02-21",
+          "WP02-29",
+          "WP02-20",
+          "WP02-18",
+          "WP02-17"
+        ],
+        "C": [
+          "WP11-01",
+          "WP11-65",
+          "WP03-05",
+          "WP04-01",
+          "WP03-08",
+          "WP04-02",
+          "WP03-10",
+          "WP03-09",
+          "WP02-22",
+          "WP03-21",
+          "WP03-17",
+          "WP04-03",
+          "WP02-23",
+          "WP03-12",
+          "WP03-06",
+          "WP03-13",
+          "WP03-07",
+          "WP03-14",
+          "WP03-15",
+          "WP03-16",
+          "WP03-11"
+        ]
+      },
+      "phase0_final_card": "WP01-01",
+      "following_stages": [
+        "OA",
+        "工程/PLM",
+        "订单+CRM对接",
+        "仓储",
+        "采购质量",
+        "计划制造",
+        "财务",
+        "空间",
+        "全链验收"
+      ]
+    }
   },
   "acceptance_basis": {
     "manifest": {
