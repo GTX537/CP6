@@ -166429,6 +166429,11 @@
       "at": "2026-11-17T12:26:27.177779+00:00",
       "change": "WP02-13 拆卡：原号 DONE 仅核销已验证部分，完整余项 WP02-13b；原 375 卡和依赖保留，新增余卡并落实严格前置门。",
       "evidence": "docs/development/evidence/WP02-13/card-closure/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-17T12:42:14.927771+00:00",
+      "change": "WP02-05 拆卡：原号 DONE 仅核销已验证部分，完整余项 WP02-05b；原定义和既有严格前置保留。",
+      "evidence": "docs/development/evidence/WP02-05/card-closure/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -181871,70 +181876,42 @@
         "file:Main:CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-05",
-      "entry_gate": "NOT_CHECKED",
+      "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W22-01 Main身份写者覆盖",
+        "chat_label": "COORD / WP02-05",
         "repository": "Main",
-        "owning_task_repository": "Main",
-        "branch": "codex/bug-304-identity-menu-fanout-20261019",
-        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-19T05:48:43.584949+00:00",
-        "baseline_sha": "0b400c8670dbba7a23c6d8f57d0d28e7f9669d43",
-        "entry_evidence": "docs/development/dispatch/20261019-wave22/README.md",
+        "branch": "codex/wp02-05",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-17T12:40:11.726120+00:00",
+        "baseline_sha": "ff8ded7262e0e69bf90e5332fe2e4fd71829427c",
+        "entry_evidence": "docs/development/evidence/WP02-05/card-closure/DELIVERY.md",
         "phase": "CLOSED",
-        "dispatch_scope": "IDENTITY_WRITER_COVERAGE",
-        "bounded_window_gate": "CONFIRMED",
-        "full_task_gate_unchanged": true,
-        "worker_start_received": true,
-        "allowed_write_paths": [
-          "CP6.Core/Services/CrmIdentity/IdentityChangeCapture.cs",
-          "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
-          "CP6.Core/Services/CrmIdentity/IdentityPermissionSnapshot.cs",
-          "CP6.Core/EFDbContext/CP6Context.cs",
-          "CP6.Tests/CrmIdentityChangeCaptureTests.cs",
-          "CP6.Tests/CrmIdentityWriterPostgreSqlTests.cs",
-          "CP6.Tests/Persistence/Tenancy/IdentityWriterBaselinePostgresTests.cs",
-          "docs/development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md"
-        ],
-        "reserved_write_resources": [],
-        "reserved_postgresql_ports": [],
-        "handoff_branch": "codex/dev-coordination-20261012",
-        "actions_authorized": false,
-        "formal_publication_authorized": false,
-        "existing_database_migration_authorized": false,
-        "deployment_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md",
-        "candidate_review_completed": true,
-        "candidate_integrated": true,
-        "actual_start_ref": {
-          "commit": "ca7fa0dbd2f5ea033c43c46b83f617deee1949b2",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T055134Z-wave22-start/MESSAGE.md",
-          "kind": "START",
-          "at": "2026-10-19T05:51:34.679905+00:00"
-        },
-        "active_issue": 304,
-        "worker_delivery_received": true,
-        "candidate_review_verdict": "READY_TO_MERGE",
-        "ports": {},
-        "integration": {
-          "source": "7a4e248d5bcbf9f525889b503eba3de621a257a3",
-          "main": "0b6da3853f3b09a4397ca9f2c6da460b701ba2fb",
-          "pr": "https://github.com/GTX537/CP6/pull/305"
-        },
-        "delivery_ref": {
-          "commit": "33d439b768e3af091a2a24a7094e41e30b8cd3a7",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T062122Z-wave22-delivery/MESSAGE.md",
-          "kind": "DELIVERY",
-          "at": "2026-10-19T06:21:22.749596+00:00"
-        },
-        "related_issue_closed": true
+        "dispatch_scope": "原号核销真实身份写者、完整目录/水位/原字节及宿主来源；批准身份来源迁移与后继发布转 WP02-05b。",
+        "delivery_report": "docs/development/evidence/WP02-05/card-closure/DELIVERY.md",
+        "full_task_completed": false
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-05/card-closure/DELIVERY.md",
+          "source_sha": "ff8ded7262e0e69bf90e5332fe2e4fd71829427c",
+          "result": "PASS",
+          "observed_at": "2026-11-17T12:42:14.927771+00:00",
+          "command": "Review original identity writer/directory/baseline/W130 and W645 evidence plus current sources; preserve definitions and strict dependencies; docs/ledger review; no new product execution",
+          "environment": "本次文档/台账核销；按原 SHA 和环境复用实际 PostgreSQL/宿主证据，无新产品执行",
+          "scope": "原号核销真实身份写者、完整目录/水位/原字节及宿主来源；批准身份来源迁移与后继发布转 WP02-05b。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-05/card-closure/DELIVERY.md",
+        "source_sha": "ff8ded7262e0e69bf90e5332fe2e4fd71829427c",
+        "remote_main_sha": "ff8ded7262e0e69bf90e5332fe2e4fd71829427c",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1241",
+        "scope": "本报告核实的已交付实现均在准确远端主线中；所列 PR 是基线采用定位，本次卡核销 PR 另由 GitHub 和工作区 finish 记录。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
@@ -182489,6 +182466,63 @@
             "at": "2026-10-19T05:24:24.891571+00:00"
           },
           "related_issue_closed": true
+        },
+        {
+          "chat_label": "COORD / W22-01 Main身份写者覆盖",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/bug-304-identity-menu-fanout-20261019",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-19T05:48:43.584949+00:00",
+          "baseline_sha": "0b400c8670dbba7a23c6d8f57d0d28e7f9669d43",
+          "entry_evidence": "docs/development/dispatch/20261019-wave22/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "IDENTITY_WRITER_COVERAGE",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "allowed_write_paths": [
+            "CP6.Core/Services/CrmIdentity/IdentityChangeCapture.cs",
+            "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+            "CP6.Core/Services/CrmIdentity/IdentityPermissionSnapshot.cs",
+            "CP6.Core/EFDbContext/CP6Context.cs",
+            "CP6.Tests/CrmIdentityChangeCaptureTests.cs",
+            "CP6.Tests/CrmIdentityWriterPostgreSqlTests.cs",
+            "CP6.Tests/Persistence/Tenancy/IdentityWriterBaselinePostgresTests.cs",
+            "docs/development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md"
+          ],
+          "reserved_write_resources": [],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/dev-coordination-20261012",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false,
+          "deployment_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md",
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "actual_start_ref": {
+            "commit": "ca7fa0dbd2f5ea033c43c46b83f617deee1949b2",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T055134Z-wave22-start/MESSAGE.md",
+            "kind": "START",
+            "at": "2026-10-19T05:51:34.679905+00:00"
+          },
+          "active_issue": 304,
+          "worker_delivery_received": true,
+          "candidate_review_verdict": "READY_TO_MERGE",
+          "ports": {},
+          "integration": {
+            "source": "7a4e248d5bcbf9f525889b503eba3de621a257a3",
+            "main": "0b6da3853f3b09a4397ca9f2c6da460b701ba2fb",
+            "pr": "https://github.com/GTX537/CP6/pull/305"
+          },
+          "delivery_ref": {
+            "commit": "33d439b768e3af091a2a24a7094e41e30b8cd3a7",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T062122Z-wave22-delivery/MESSAGE.md",
+            "kind": "DELIVERY",
+            "at": "2026-10-19T06:21:22.749596+00:00"
+          },
+          "related_issue_closed": true
         }
       ],
       "wave19_directory_delivery": {
@@ -182694,13 +182728,13 @@
         "seat_released": true
       },
       "scope_reconciliation": {
-        "window": "W310-01",
-        "as_of": "2026-11-08",
-        "classification": "CONTRACT_OR_EVIDENCE_PENDING",
-        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-05",
-        "delivered": "完整快照/目录/基线/水位/原字节及BUG419/543修复有效；本轮身份处置亦实际发布撤权快照。",
-        "remaining": "tenant/org/user/permission/issuer全部权威及旧维护写者到向量的覆盖仍待逐入口核准。",
-        "next_action": "补写者到权威版本和原字节的映射；只对无有效证据路径追加执行。",
+        "window": "WP02-05",
+        "as_of": "2026-11-17",
+        "classification": "SPLIT_VERIFIED_PART",
+        "report": "docs/development/evidence/WP02-05/card-closure/DELIVERY.md",
+        "delivered": "原号核销真实身份写者、完整目录/水位/原字节及宿主来源；批准身份来源迁移与后继发布转 WP02-05b。",
+        "remaining": "完整原出口剩余见 WP02-05b；原号 DONE 仅指已验证部分。",
+        "next_action": "余项 WP02-05b；阶段 0 未满足完整前置卡仅只读核对。",
         "evidence_refs": [
           "docs/development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md",
           "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md",
@@ -182716,10 +182750,42 @@
           "docs/development/evidence/BUG-419/DELIVERY.md",
           "docs/development/evidence/BUG-543/DELIVERY.md",
           "docs/development/evidence/W130-01/DELIVERY.md",
-          "docs/development/evidence/W310-01/DELIVERY.md"
+          "docs/development/evidence/W310-01/DELIVERY.md",
+          "docs/development/evidence/WP02-05/card-closure/DELIVERY.md"
         ],
-        "formal_state_changed": false,
-        "new_product_validation": false
+        "formal_state_changed": true,
+        "new_product_validation": false,
+        "review_history": [
+          {
+            "window": "W310-01",
+            "as_of": "2026-11-08",
+            "classification": "CONTRACT_OR_EVIDENCE_PENDING",
+            "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-05",
+            "delivered": "完整快照/目录/基线/水位/原字节及BUG419/543修复有效；本轮身份处置亦实际发布撤权快照。",
+            "remaining": "tenant/org/user/permission/issuer全部权威及旧维护写者到向量的覆盖仍待逐入口核准。",
+            "next_action": "补写者到权威版本和原字节的映射；只对无有效证据路径追加执行。",
+            "evidence_refs": [
+              "docs/development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md",
+              "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md",
+              "docs/development/evidence/WP02-05/directory-consistency/DELIVERY.md",
+              "docs/development/evidence/WP02-05/trusted-directory-reader/DELIVERY.md",
+              "docs/development/evidence/WP02-05/directory-http-integration/DELIVERY.md",
+              "docs/development/evidence/WP02-05/directory-host/DELIVERY.md",
+              "docs/development/evidence/WP02-05/directory-configured-matrix/DELIVERY.md",
+              "docs/development/evidence/WP02-05/baseline-contract/DELIVERY.md",
+              "docs/development/evidence/WP02-05/baseline-raw-http/DELIVERY.md",
+              "docs/development/evidence/WP02-05/baseline-collector/DELIVERY.md",
+              "docs/development/evidence/WP02-05/baseline-integration/DELIVERY.md",
+              "docs/development/evidence/BUG-419/DELIVERY.md",
+              "docs/development/evidence/BUG-543/DELIVERY.md",
+              "docs/development/evidence/W130-01/DELIVERY.md",
+              "docs/development/evidence/W310-01/DELIVERY.md"
+            ],
+            "formal_state_changed": false,
+            "new_product_validation": false
+          }
+        ],
+        "latest_window": "WP02-05"
       },
       "target_acceptance_followups": [
         {
@@ -182730,6 +182796,71 @@
           "status": "EVIDENCE_PENDING",
           "new_implementation_authorized": false
         }
+      ],
+      "remaining_scope": "完整原出口剩余见 WP02-05b；原号 DONE 仅指已验证部分。",
+      "card_execution": {
+        "result": "SPLIT",
+        "report": "docs/development/evidence/WP02-05/card-closure/DELIVERY.md",
+        "started_at": "2026-11-17T12:40:11.726120+00:00",
+        "verified_at": "2026-11-17T12:42:14.927771+00:00",
+        "effective_seconds": 123.202,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600.0,
+        "new_splits": [
+          "WP02-05b"
+        ],
+        "strict_prerequisites": [
+          "S01-09",
+          "WP02-03",
+          "WP02-04"
+        ],
+        "new_product_execution": false,
+        "preceding_integration_seconds": 824.548
+      },
+      "split_children": [
+        "WP02-05b"
+      ],
+      "split_delivered_scope": [
+        "已登记身份写者的当前事务版本、快照、原字节和 Outbox 一致。",
+        "冻结来源的完整目录、水位、重建、首末一致及普通 PG/HTTP 采集已实证。",
+        "Main 实际 C2/目录与 CRM 原生宿主已按原来源接续；后续权威写者按原 C02 版本参与。"
+      ]
+    },
+    {
+      "id": "WP02-05b",
+      "package_id": "WP02",
+      "title": "身份来源批准迁移与完整后继发布余项",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "INT-ID-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP02-05"
+      ],
+      "exclusive_resources": [
+        "Main:identity-projection",
+        "file:Main:CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs"
+      ],
+      "coverage_role": "IMPLEMENTATION",
+      "state": "PLANNED",
+      "entry_gate": "NOT_CHECKED",
+      "assignment": null,
+      "blockers": [],
+      "validation_evidence": [],
+      "delivery_evidence": null,
+      "plan_path": "docs/development/task-plans/WP02.md",
+      "card_anchor": "wp02-05b",
+      "entry_conditions": [
+        "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
+        "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
+      ],
+      "split_parent": "WP02-05",
+      "remaining_scope": [
+        "经批准的 tenant/slug/issuer/region/client 身份映射变更，固定准确原件及前后来源/版本，不将展示改名当身份迁移。",
+        "Main 发布完整后继目录、水位、发件原结果及旧身份/会话处置事实；CRM 实际采用仍归 WP02-06。"
       ]
     },
     {
@@ -216159,7 +216290,8 @@
       "target_id": "INT-ID-01",
       "implementation_task_ids": [
         "WP02-05",
-        "WP02-06"
+        "WP02-06",
+        "WP02-05b"
       ]
     },
     {
@@ -216473,7 +216605,7 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "WP02-13",
+      "id": "WP02-05",
       "phase": "CARD_SPLIT_PENDING_PR",
       "owner": "COORD",
       "mode": "SINGLE_CHAT_SERIAL",
@@ -216486,22 +216618,22 @@
         "COORD"
       ],
       "product_code_changed": false,
-      "report": "docs/development/evidence/WP02-13/card-closure/DELIVERY.md",
-      "next_action": "下一实施 WP02-13b；阶段 0 继续原顺序只读证据核对及可核销卡交付，不消费未完成余项。",
+      "report": "docs/development/evidence/WP02-05/card-closure/DELIVERY.md",
+      "next_action": "下一实施 WP02-13b；阶段 0 继续 WP02-06 证据核对，完整前置未满足不实现/不假关卡。",
       "windows": [
         {
-          "id": "WP02-13",
-          "workspace_task": "WP02-13",
+          "id": "WP02-05",
+          "workspace_task": "WP02-05",
           "related_tasks": [
-            "WP02-13"
+            "WP02-05"
           ],
           "chat": "COORD",
           "phase": "CLOSED",
-          "branch": "codex/wp02-13",
+          "branch": "codex/wp02-05",
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "delivery_report": "docs/development/evidence/WP02-13/card-closure/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/WP02-05/card-closure/DELIVERY.md",
           "review_completed": true,
           "full_task_completed": false,
           "integration_status": "PENDING_PROTECTED_PR",
@@ -276894,6 +277026,47 @@
         "integration_status": "MERGED",
         "remote_main_sha": "66b92018889889ce76438c3280283bcad008e7ab",
         "pr_url": "https://github.com/GTX537/CP6/pull/1239"
+      },
+      {
+        "id": "WP02-13",
+        "phase": "INTEGRATED",
+        "owner": "COORD",
+        "mode": "SINGLE_CHAT_SERIAL",
+        "windows_closed": true,
+        "active_implementation_chats": [],
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "product_code_changed": false,
+        "report": "docs/development/evidence/WP02-13/card-closure/DELIVERY.md",
+        "next_action": "下一实施 WP02-13b；阶段 0 继续原顺序只读证据核对及可核销卡交付，不消费未完成余项。",
+        "windows": [
+          {
+            "id": "WP02-13",
+            "workspace_task": "WP02-13",
+            "related_tasks": [
+              "WP02-13"
+            ],
+            "chat": "COORD",
+            "phase": "CLOSED",
+            "branch": "codex/wp02-13",
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "delivery_report": "docs/development/evidence/WP02-13/card-closure/DELIVERY.md",
+            "review_completed": true,
+            "full_task_completed": false,
+            "integration_status": "MERGED",
+            "actions_authorized": false,
+            "deployment_authorized": false
+          }
+        ],
+        "integration_status": "MERGED",
+        "remote_main_sha": "ff8ded7262e0e69bf90e5332fe2e4fd71829427c",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1241"
       }
     ],
     "development_priority": {
@@ -288286,12 +288459,13 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 2552.214,
+      "effective_seconds": 3499.964,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
         "WP02-04",
-        "WP02-13"
+        "WP02-13",
+        "WP02-05"
       ],
       "closed_targets": [],
       "new_splits": [
@@ -288302,6 +288476,14 @@
           ],
           "report": "docs/development/evidence/WP02-13/card-closure/DELIVERY.md",
           "reason": "阶段 0 定位实际未完成出口；保留原完整 scope/AC，主动拆卡。"
+        },
+        {
+          "parent": "WP02-05",
+          "children": [
+            "WP02-05b"
+          ],
+          "report": "docs/development/evidence/WP02-05/card-closure/DELIVERY.md",
+          "reason": "阶段 0 定位实际未完成出口，主动拆卡；原 scope/AC 保留。"
         }
       ],
       "current_stage": "PHASE_0",
@@ -288314,6 +288496,7 @@
           "WP02-13",
           "WP02-13b",
           "WP02-05",
+          "WP02-05b",
           "WP02-06",
           "WP02-09",
           "WP02-14",
@@ -288366,7 +288549,7 @@
         "空间",
         "全链验收"
       ],
-      "phase0_next_review": "WP02-05"
+      "phase0_next_review": "WP02-06"
     }
   },
   "acceptance_basis": {
