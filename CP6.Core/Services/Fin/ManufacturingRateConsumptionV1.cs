@@ -7,20 +7,16 @@ using static CP6.Core.Services.Fin.ManufacturingFinanceScopeV1;
 
 namespace CP6.Core.Services.Fin;
 
-internal sealed class ManufacturingRateConsumptionV1(CP6Context db, ManufacturingFinanceScopeV1 scope)
+internal sealed class ManufacturingRateConsumptionV1(CP6Context db)
 {
     internal sealed record Selection(Guid LedgerId, DateTime Date, string Currency, IQueryable<ExecutionRate> Rates,
         CostCollectionBasisV1.RateUseV1[] Evidence, Guid? CenterId,
-        Dictionary<Guid, ManufacturingCenterUseV1.Attribution> ManagedCenters);
+        Dictionary<Guid, ManufacturingCenterUseV1.Attribution> ManagedCenters,
+        Dictionary<Guid, CostCollectionBasisV1.RateUseV1> RatesByStep);
 
-    internal async Task<Selection?> SelectAsync(WorkOrder order, IQueryable<WorkOrderProcess> steps, int stepCount,
-        OperationsAccessV1 access, OperationsAccessV1 rateAccess, CancellationToken ct)
+    internal async Task<Selection> SelectAsync(WorkOrder order, IQueryable<WorkOrderProcess> steps, int stepCount,
+        LedgerRow ledger, OperationsAccessV1 rateAccess, CancellationToken ct)
     {
-        await scope.GateAsync(false, ct);
-        var ledger = await scope.AssignedLedgerAsync(order.Id, access.ActorId, ct);
-        if (ledger == null)
-            return null;
-
         var route = await (from step in steps
             join center in db.WorkCenters.AsNoTracking().Where(center => !center.IsDeleted) on step.WgCd equals center.WgCd
             join profile in db.ProductProcesses.AsNoTracking().Where(profile => profile.ProductCd == order.ProductCd && !profile.IsDeleted)
@@ -62,6 +58,7 @@ internal sealed class ManufacturingRateConsumptionV1(CP6Context db, Manufacturin
         var execution = new List<ExecutionRate>(route.Length);
         var evidence = new Dictionary<Guid, CostCollectionBasisV1.RateUseV1>();
         var managedCenters = new Dictionary<Guid, ManufacturingCenterUseV1.Attribution>();
+        var ratesByStep = new Dictionary<Guid, CostCollectionBasisV1.RateUseV1>();
         foreach (var entry in route)
         {
             var matched = candidates.Where(row => row.WorkCenterId == entry.WorkCenterId && row.OperationId == entry.OperationId).ToArray();
@@ -79,9 +76,11 @@ internal sealed class ManufacturingRateConsumptionV1(CP6Context db, Manufacturin
             execution.Add(new() { StepId = entry.StepId, LaborRate = rate.LaborRate, OverheadRate = rate.OverheadRate, ValidFrom = from });
             if (rate.ManagedCenter)
                 managedCenters.Add(entry.StepId, new(rate.RateId, rate.CenterId, rate.CenterVersionId, rate.OperationId));
-            evidence.TryAdd(rate.RateId, new(rate.RateId, rate.WorkCenterId, entry.Code, from,
+            var use = new CostCollectionBasisV1.RateUseV1(rate.RateId, rate.WorkCenterId, entry.Code, from,
                 rate.ToExclusive?.ToDateTime(TimeOnly.MinValue), rate.LaborRate, rate.OverheadRate, null, ledger.Id,
-                rate.CenterId, rate.CenterVersionId, rate.PolicyVersionId, rate.BasisId, rate.OperationId, rate.Maker));
+                rate.CenterId, rate.CenterVersionId, rate.PolicyVersionId, rate.BasisId, rate.OperationId, rate.Maker);
+            ratesByStep.Add(entry.StepId, use);
+            evidence.TryAdd(rate.RateId, use);
         }
 
         var ids = evidence.Values.Select(row => row.CostCenterId).Distinct().ToArray();
@@ -91,7 +90,7 @@ internal sealed class ManufacturingRateConsumptionV1(CP6Context db, Manufacturin
                 ("StepId" uuid, "LaborRate" numeric, "OverheadRate" numeric, "ValidFrom" timestamp without time zone)
             """);
         return new(ledger.Id, day.ToDateTime(TimeOnly.MinValue), ledger.Currency, rates,
-            evidence.Values.OrderBy(row => row.RateId).ToArray(), ids.Length == 1 ? ids[0] : null, managedCenters);
+            evidence.Values.OrderBy(row => row.RateId).ToArray(), ids.Length == 1 ? ids[0] : null, managedCenters, ratesByStep);
     }
 
     internal sealed class ExecutionRate

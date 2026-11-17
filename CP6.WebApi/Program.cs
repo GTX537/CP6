@@ -459,6 +459,7 @@ builder.Services.AddScoped(sp => new CP6.Core.Services.Fin.ManufacturingFinanceS
 builder.Services.AddScoped<CP6.Core.Services.Fin.ManufacturingRateOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Fin.ManufacturingQualificationOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Fin.ManufacturingCostCenterOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Fin.ManufacturingStandardBasisOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Fin.ICostCollectService, CP6.Core.Services.Fin.CostCollectService>(); // 章06 成本归集（料吃MES真实消耗×BOM单价+工费标准估算）
 builder.Services.AddScoped<CP6.Core.Services.Fin.ICostSettleService, CP6.Core.Services.Fin.CostSettleService>(); // 章06 完工结转（料工费→WIP→FG凭证+FG单位成本）
 builder.Services.AddScoped<CP6.Core.Services.Fin.IFinReconciliationService, CP6.Core.Services.Fin.FinReconciliationService>(); // 章10 §5 每日对账（AP/AR子账↔GL+试算平衡）

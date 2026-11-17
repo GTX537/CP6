@@ -49,14 +49,19 @@ public partial class CostCollectService
             return FinResult.Fail("E-A2-COST-001");
 
         var product = await access.SourceAsync(OperationsOwnerV1.Product, ct);
-        if (!await product.Products().AnyAsync(row => row.ProductCd == order.ProductCd, ct))
-            throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
+        var output = await product.Products().Where(row => row.ProductCd == order.ProductCd)
+            .Select(row => new { row.Id, row.QtyUnit }).SingleOrDefaultAsync(ct)
+            ?? throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
         var rates = await access.SourceAsync(OperationsOwnerV1.ProcessCostRate, ct);
         rates.RequireUnmaskedRates();
         var date = order.ActualEndDate ?? order.PlanStartDate ?? order.CreateDate;
         var financeScope = _financeScope ?? new ManufacturingFinanceScopeV1(_db, null);
-        var published = await new ManufacturingRateConsumptionV1(_db, financeScope)
-            .SelectAsync(order, workSteps, centers.Length, access, rates, ct);
+        await financeScope.GateAsync(false, ct);
+        var ledger = await financeScope.AssignedLedgerAsync(order.Id, access.ActorId, ct);
+        var published = ledger == null ? null : await new ManufacturingRateConsumptionV1(_db)
+            .SelectAsync(order, workSteps, centers.Length, ledger, rates, ct);
+        var comparison = published == null ? null : await ManufacturingStandardBasisComparisonV1.SelectAsync(_db, order,
+            output.Id, output.QtyUnit, published, access, rates, ct);
         IQueryable<ExecutionRate> executionRates;
         CostCollectionBasisV1.RateUseV1[] evidence;
         if (published != null)
@@ -90,15 +95,29 @@ public partial class CostCollectService
         var centerItems = new List<ManufacturingCenterUseV1.Item>();
         try
         {
-            var steps = await ReadExecutionCostsAsync(order, workSteps, executionRates, ct);
+            var steps = await ReadExecutionCostsAsync(order, workSteps, executionRates, comparison != null, ct);
             if (steps.Length != centers.Length)
                 return FinResult.Fail("E-A2-COST-004");
-            var materials = await ReadMaterialCostsAsync(order, ct);
+            var materials = await ReadMaterialCostsAsync(order, comparison != null, ct);
             if (materials.Any(row => !row.HasPrice && (row.Line.PlanQty != 0m || row.Line.ActualQty != 0m)))
                 return FinResult.Fail("COST_MATERIAL_PRICE_REQUIRED");
             lines = materials.Select(row => row.Line).ToList();
-            foreach (var (stepId, labor, overhead) in steps)
+            if (comparison != null)
+                foreach (var (occurrence, unit, priceUnit, line, _) in materials)
+                {
+                    if (line.ActualQty != 0m && unit != priceUnit)
+                        throw new OrderPriceCorrectionException("STANDARD_BASIS_UNIT_MISMATCH", 409);
+                    comparison.ApplyMaterial(occurrence, unit, line);
+                }
+            foreach (var (stepId, hasActualHours, labor, overhead) in steps)
             {
+                if (comparison != null)
+                {
+                    if (!hasActualHours) return FinResult.Fail("STANDARD_BASIS_ACTUAL_HOURS_REQUIRED");
+                    var actualRate = published!.RatesByStep[stepId];
+                    comparison.ApplyTime(stepId, actualRate, labor);
+                    comparison.ApplyTime(stepId, actualRate, overhead);
+                }
                 if (published?.ManagedCenters.TryGetValue(stepId, out var attribution) == true)
                 {
                     labor.Id = Guid.NewGuid();
@@ -109,6 +128,7 @@ public partial class CostCollectService
                 lines.Add(labor);
                 lines.Add(overhead);
             }
+            comparison?.RequireComplete();
         }
         catch (OverflowException)
         {
@@ -126,18 +146,18 @@ public partial class CostCollectService
             ? new ManufacturingCenterUseV1.Use(published.LedgerId, access.ActorId, DateOnly.FromDateTime(date),
                 published.Currency, centerItems.ToArray()) : null;
         return await SaveCollectionAsync(order, sheet, lines, access.Actor, ct,
-            (date, evidence, published?.LedgerId, published?.CenterId), centerUse);
+            (date, evidence, published?.LedgerId, published?.CenterId), centerUse, comparison?.Reference);
     }
 
-    private async Task<(Guid StepId, CostSheetLine Labor, CostSheetLine Overhead)[]> ReadExecutionCostsAsync(WorkOrder order,
-        IQueryable<WorkOrderProcess> workSteps, IQueryable<ExecutionRate> rates, CancellationToken ct)
+    private async Task<(Guid StepId, bool HasActualHours, CostSheetLine Labor, CostSheetLine Overhead)[]> ReadExecutionCostsAsync(WorkOrder order,
+        IQueryable<WorkOrderProcess> workSteps, IQueryable<ExecutionRate> rates, bool approvedStandard, CancellationToken ct)
     {
         var routing = _db.ProductProcesses.AsNoTracking().Where(row => !row.IsDeleted && row.ProductCd == order.ProductCd);
         // 工时乘法和行金额舍入在 PostgreSQL numeric 上计算，先保留完整乘积再舍入。
         var steps = await (from step in workSteps
             join standard in routing on new { step.ProcessCd, step.TaskCd } equals new { standard.ProcessCd, standard.TaskCd }
             join rate in rates on step.Id equals rate.StepId
-            let stdMachine = (standard.SetupHour ?? 0m) + order.CompletedQty * (standard.CycleTime ?? 0m)
+            let stdMachine = approvedStandard ? 0m : (standard.SetupHour ?? 0m) + order.CompletedQty * (standard.CycleTime ?? 0m)
             let stdLabor = stdMachine * (standard.StandardCrewSize ?? 1m)
             let machine = step.ActualMachineHour ?? stdMachine
             let labor = step.ActualLaborHour ?? stdLabor
@@ -145,6 +165,7 @@ public partial class CostCollectService
             select new
             {
                 StepId = step.Id,
+                HasActualHours = step.ActualLaborHour != null && step.ActualMachineHour != null,
                 Labor = new CostSheetLine
                 {
                     Element = CostElement.Labor, ProcessCd = step.ProcessCd, TaskCd = step.TaskCd, WgCd = step.WgCd,
@@ -166,10 +187,11 @@ public partial class CostCollectService
                     CalcNote = step.ActualMachineHour == null ? "实绩机时缺失，按标准工时计" : null,
                 },
             }).ToArrayAsync(ct);
-        return steps.Select(step => (step.StepId, step.Labor, step.Overhead)).ToArray();
+        return steps.Select(step => (step.StepId, step.HasActualHours, step.Labor, step.Overhead)).ToArray();
     }
 
-    private async Task<(CostSheetLine Line, bool HasPrice)[]> ReadMaterialCostsAsync(WorkOrder order, CancellationToken ct)
+    private async Task<(Guid Occurrence, string? Unit, string? PriceUnit, CostSheetLine Line, bool HasPrice)[]>
+        ReadMaterialCostsAsync(WorkOrder order, bool approvedStandard, CancellationToken ct)
     {
         var bom = _db.ProductMaterials.AsNoTracking().Where(row => !row.IsDeleted && row.ProductCd == order.ProductCd);
         var rows = await (from material in _db.WorkOrderMaterials.AsNoTracking()
@@ -177,10 +199,11 @@ public partial class CostCollectService
             join source in bom on new { material.ProcessCd, material.MaterialCd } equals new { source.ProcessCd, source.MaterialCd } into matches
             from source in matches.DefaultIfEmpty()
             let price = source.SupplyPrice ?? 0m
-            let planned = material.PlanQty ?? 0m
+            let planned = approvedStandard ? 0m : material.PlanQty ?? 0m
             orderby material.SortOrder, material.ProcessCd, material.MaterialCd
             select new
             {
+                Occurrence = material.Id, material.Unit, PriceUnit = source.UsageUnit,
                 HasPrice = source.SupplyPrice != null,
                 Line = new CostSheetLine
                 {
@@ -190,6 +213,6 @@ public partial class CostCollectService
                     StandardAmount = Math.Round(planned * price, CostCollectionBasisV1.MoneyScale),
                 },
             }).ToArrayAsync(ct);
-        return rows.Select(row => (row.Line, row.HasPrice)).ToArray();
+        return rows.Select(row => (row.Occurrence, row.Unit, row.PriceUnit, row.Line, row.HasPrice)).ToArray();
     }
 }
