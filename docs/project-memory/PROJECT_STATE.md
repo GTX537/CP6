@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-17，W693 接通标准成本依据批准、完工归集及历史差异。35 项定向用例通过，其中 PostgreSQL 29 项、成本组件 6 项，零跳过。WP02-03 继续。 [W693 交付](../development/evidence/W693-01/DELIVERY.md)
+
 2026-11-17，W692 接通制造费率和成本归集的中心采用。34 项定向用例通过，其中 28 项使用 PostgreSQL，6 项为成本组件回归，零跳过。WP02-03 继续。 [W692 交付](../development/evidence/W692-01/DELIVERY.md)
 
 2026-11-17，W691 接通财务专业资格和已批准工序成本中心版本。33 项定向用例通过，其中 27 项使用 PostgreSQL，6 项为成本组件回归，零跳过。WP02-03 继续。 [W691 交付](../development/evidence/W691-01/DELIVERY.md)
