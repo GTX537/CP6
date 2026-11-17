@@ -12,6 +12,7 @@ public sealed class ManufacturingStandardDocumentOwnerV1(CP6Context db, Operatio
     private readonly ManufacturingStandardDocumentStoreV1 store = new(db);
     private readonly ManufacturingStandardBasisStoreV1 standards = new(db);
     private readonly ManufacturingStandardBasisSourcesV1 source = new(db);
+    private readonly FinanceCostCommandJournalV1 journal = new(db);
 
     public Task<StandardDocumentReplyV1> CreateAsync(Guid context, StandardDocumentCreateV1 command, CancellationToken ct)
         => WriteAsync(context, StandardDocumentBinding.Create(command.CommandId, "/" + Documents, command,
@@ -96,20 +97,70 @@ public sealed class ManufacturingStandardDocumentOwnerV1(CP6Context db, Operatio
             return new { kind = "FOUND", reply = original.ToReply(command, false) };
         }, ct);
 
+    public Task<object> ReadFormalCommandAsync(Guid context, Guid command, CancellationToken ct)
+        => ReadFormalAsync(context, command, false, ct);
+
+    public Task<object> ReadFormalCommandResultAsync(Guid context, Guid command, CancellationToken ct)
+        => ReadFormalAsync(context, command, true, ct);
+
+    private Task<object> ReadFormalAsync(Guid context, Guid command, bool result, CancellationToken ct)
+        => scope.WithContextAsync<object>(owner, context, "view", false, async (ledger, access, token) =>
+        {
+            await access.ActionAsync(OperationsOwnerV1.FinCost, "basis-view", token);
+            var binding = await journal.FindAsync(ledger.Id, command, token);
+            if (binding == null)
+            {
+                if (result)
+                    throw Error("NOT_FOUND_OR_NOT_VISIBLE", 404);
+                return new
+                {
+                    kind = "NOT_OBSERVED", commandId = command,
+                    observedAt = FinanceCostCommandCanonicalV1.Time(DateTimeOffset.UtcNow),
+                    provesPermanentNoEffect = false,
+                };
+            }
+
+            var original = await store.ReadCommandAsync(ledger.Id, command, token)
+                ?? throw Error("NOT_FOUND_OR_NOT_VISIBLE", 404);
+            await RequireOriginalScopeAsync(ledger.Id, original, access, token);
+            if (!binding.AcceptedAt.HasValue)
+                throw Error("OWNER_PARTICIPANT_UNPROVEN", 503);
+
+            var terminal = await journal.ReadTerminalAsync(ledger.Id, command, token)
+                ?? throw Error("AUTHORITY_UNAVAILABLE", 503);
+            return result
+                ? FinanceCostCommandJournalV1.JsonBody(terminal.Result)
+                : FinanceCostCommandJournalV1.Found(original.ReceiptId, terminal.Receipt);
+        }, ct);
+
     private Task<StandardDocumentReplyV1> WriteAsync(Guid context, StandardDocumentBinding binding,
         Func<LedgerRow, OperationsAccessV1, StandardDocumentBinding, CancellationToken, Task<StandardDocumentReplyV1>> write, CancellationToken ct)
-        => scope.WithContextAsync(owner, context, "collect", true, async (ledger, access, token) =>
+    {
+        FinanceCostCommandJournalV1.Binding? prior = null;
+        return scope.WithContextAsync(owner, context, "collect", true, async (ledger, access, token) =>
         {
-            await access.ActionAsync(OperationsOwnerV1.FinCost, "basis-use", token);
-            var original = await store.ReadCommandAsync(ledger.Id, binding.CommandId, token);
-            if (original == null)
-                return await write(ledger, access, binding, token);
+            await access.ActionAsync(OperationsOwnerV1.FinCost,
+                prior?.AcceptedAt == null ? "basis-use" : "basis-view", token);
+            if (prior == null)
+            {
+                await journal.BindAsync(ledger.Id, access.ActorId, binding, token);
+                var reply = await write(ledger, access, binding, token);
+                await journal.RecordAsync(ledger.Id, binding, reply, token);
+                return reply;
+            }
 
+            var original = await store.ReadCommandAsync(ledger.Id, binding.CommandId, token)
+                ?? throw Error("COMMAND_IDENTITY_CONFLICT", 409);
             await RequireOriginalScopeAsync(ledger.Id, original, access, token);
-            if (!original.Matches(access.ActorId, binding))
+            if (!prior.Matches(access.ActorId, binding))
                 throw Error("COMMAND_IDENTITY_CONFLICT", 409);
             return original.ToReply(binding.CommandId, true);
-        }, ct);
+        }, ct, async (ledger, token) =>
+        {
+            prior = await journal.FindAsync(ledger.Id, binding.CommandId, token);
+            return prior?.AcceptedAt == null ? "collect" : "view";
+        });
+    }
 
     private async Task<(Document Document, WorkOrder Order)> LoadDocumentAsync(Guid ledger, Guid id,
         OperationsAccessV1 access, CancellationToken ct)

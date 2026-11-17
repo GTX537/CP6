@@ -76,8 +76,7 @@ internal sealed class ManufacturingStandardDocumentStoreV1(CP6Context db)
 
     internal Task<Command?> ReadCommandAsync(Guid ledger, Guid command, CancellationToken ct)
         => db.Database.SqlQuery<Command>($"""
-            SELECT c.document_id AS "DocumentId",c.receipt_id AS "ReceiptId",c.principal AS "Principal",c.method AS "Method",
-                c.route AS "Route",c.body_digest AS "BodyDigest",c.expected_digest AS "ExpectedDigest",c.operation AS "Operation",
+            SELECT c.document_id AS "DocumentId",c.receipt_id AS "ReceiptId",c.operation AS "Operation",
                 c.plan_id AS "PlanId",c.version AS "Version",p.expires_at AS "ExpiresAt",p.standard_basis_id AS "StandardBasisId"
             FROM cp6_fin_mfg_v1.standard_document_commands c LEFT JOIN cp6_fin_mfg_v1.standard_collection_plans p
                 ON (p.tenant_id,p.ledger_id,p.document_id,p.id)=(c.tenant_id,c.ledger_id,c.document_id,c.plan_id)
@@ -90,9 +89,9 @@ internal sealed class ManufacturingStandardDocumentStoreV1(CP6Context db)
         var receipt = Guid.NewGuid();
         if (await db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_fin_mfg_v1.standard_document_commands
-                (tenant_id,ledger_id,command_id,receipt_id,principal,method,route,body_digest,expected_digest,operation,document_id,plan_id,version)
+                (tenant_id,ledger_id,command_id,receipt_id,principal,method,route,body_digest,expected_digest,operation,document_id,plan_id,version,r2_bound)
             VALUES ({Tenant},{ledger},{binding.CommandId},{receipt},{actor},'POST',{binding.Route},{binding.BodyDigest},
-                {binding.ExpectedDigest},{operation},{document},{plan},{version})
+                {binding.ExpectedDigest},{operation},{document},{plan},{version},true)
             """, ct) != 1)
             throw Error("STANDARD_DOCUMENT_COMMAND_NOT_WRITTEN", 409);
         return new(binding.CommandId, receipt, operation, document, VersionText(version), plan, expiresAt, false);
@@ -124,20 +123,11 @@ internal sealed class ManufacturingStandardDocumentStoreV1(CP6Context db)
     {
         public Guid DocumentId { get; set; }
         public Guid ReceiptId { get; set; }
-        public Guid Principal { get; set; }
-        public string Method { get; set; } = null!;
-        public string Route { get; set; } = null!;
-        public byte[] BodyDigest { get; set; } = null!;
-        public byte[] ExpectedDigest { get; set; } = null!;
         public string Operation { get; set; } = null!;
         public Guid? PlanId { get; set; }
         public long? Version { get; set; }
         public DateTimeOffset? ExpiresAt { get; set; }
         public Guid? StandardBasisId { get; set; }
-
-        internal bool Matches(Guid actor, StandardDocumentBinding binding)
-            => Principal == actor && Method == "POST" && Route == binding.Route
-                && BodyDigest.AsSpan().SequenceEqual(binding.BodyDigest) && ExpectedDigest.AsSpan().SequenceEqual(binding.ExpectedDigest);
 
         internal StandardDocumentReplyV1 ToReply(Guid command, bool replayed) => new(command, ReceiptId, Operation,
             DocumentId, VersionText(Version), PlanId, Operation == "PREPARE" ? ExpiresAt : null, replayed);

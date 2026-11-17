@@ -22,7 +22,8 @@ public sealed record StandardDocumentReplyV1(Guid CommandId, Guid ReceiptId, str
     public string Kind => "COMMITTED";
 }
 
-internal sealed record StandardDocumentBinding(Guid CommandId, string Route, byte[] BodyDigest, byte[] ExpectedDigest)
+internal sealed record StandardDocumentBinding(Guid CommandId, string Route, byte[] BodyDigest, byte[] ExpectedDigest,
+    byte[] R2BodyDigest, byte[] R2ExpectedDigest)
 {
     internal const string Documents = "api/fin/cost/owner-v1/standard-documents";
     internal const string Commands = "api/fin/cost/owner-v1/standard-document-commands";
@@ -31,7 +32,8 @@ internal sealed record StandardDocumentBinding(Guid CommandId, string Route, byt
     {
         if (id == Guid.Empty || string.IsNullOrWhiteSpace(reason) || reason.Length > 1000)
             throw Error("STANDARD_DOCUMENT_COMMAND_INVALID", 422);
-        return new(id, route, Digest(request), Digest(expected));
+        return new(id, route, Digest(request), Digest(expected),
+            FinanceCostCommandCanonicalV1.Digest(request), FinanceCostCommandCanonicalV1.Digest(expected));
     }
 
     // Numeric quantities and revision numbers on this wire are strings.

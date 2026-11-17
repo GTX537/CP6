@@ -1,4 +1,6 @@
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
@@ -11,7 +13,7 @@ namespace CP6.Tests.Erp;
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     [CurrentPermissionPostgresFact]
-    public async Task W695_manufacturing_maintenance_discovers_scoped_versions_and_uses_the_real_owners()
+    public async Task W696_standard_cost_commands_share_one_finance_identity_and_recover_the_original_result()
     {
         await using var h = await Seed();
         var number = await SeedCompletedFinanceFlow(h);
@@ -195,11 +197,25 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 
         const string documents = "/api/fin/cost/owner-v1/standard-documents";
         const string commands = "/api/fin/cost/owner-v1/standard-document-commands";
-        var create = new { CommandId = Guid.NewGuid(), WorkOrderId = order.Id, Reason = "按批准标准建立独立成本单" };
+        const string r2 = "/api/fin/cost/v1/commands";
+        var create = new { CommandId = Guid.NewGuid(), WorkOrderId = order.Id, Reason = "按批准标准建立独立成本单 cafe\u0301 🧪" };
         using (await Call(foreign, documents, create, HttpStatusCode.NotFound, "STANDARD_BASIS_WORK_ORDER_NOT_FOUND")) { }
+        await AssertNotObserved(foreign, create.CommandId);
         using var created = await Call(maker, documents, create, HttpStatusCode.Created);
         var document = created.RootElement.GetProperty("documentId").GetGuid();
         var documentPath = $"{documents}/{document}";
+        var firstAccepted = await AcceptedAt(create.CommandId);
+        var createBody = $$"""{"commandId":"{{create.CommandId:D}}","reason":"按批准标准建立独立成本单 café 🧪","workOrderId":"{{order.Id:D}}"}""";
+        var createReceipt = await AssertFormalReceipt(create.CommandId, "CREATE_STANDARD_DOCUMENT", created.RootElement, createBody);
+        Assert.Equal(DigestExact($$"""{"workOrderId":"{{order.Id:D}}"}"""),
+            await h.Db.Database.SqlQuery<string>($"""
+                SELECT encode(expected_digest,'hex') AS "Value" FROM cp6_fin_mfg_v1.finance_command_bindings
+                WHERE (tenant_id,ledger_id,command_id)=({h.Tenant},{ledger},{create.CommandId})
+                """).SingleAsync());
+        using (var replay = await Call(maker, documents, create with { Reason = "按批准标准建立独立成本单 café 🧪" }, HttpStatusCode.Created))
+            Assert.True(replay.RootElement.GetProperty("replayed").GetBoolean());
+        Assert.Equal(firstAccepted, await AcceptedAt(create.CommandId));
+
         var prepare = new { CommandId = Guid.NewGuid(), ExpectedVersion = (string?)null,
             StandardBasisVersionId = first, Reason = "冻结批准整单标准" };
         using (await Call(maker, $"{documentPath}/collection-plans", prepare, HttpStatusCode.Conflict, "STANDARD_BASIS_TARGET_MISMATCH")) { }
@@ -221,6 +237,43 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             .ExecuteUpdateAsync(change => change.SetProperty(row => row.ActualMachineHour, (decimal?)null));
         using var prepared = await Call(maker, $"{documentPath}/collection-plans", prepare, HttpStatusCode.Created);
         var plan = prepared.RootElement.GetProperty("planId").GetGuid();
+        var prepareBody = $$"""{"commandId":"{{prepare.CommandId:D}}","expectedVersion":null,"reason":"冻结批准整单标准","standardBasisVersionId":"{{first:D}}"}""";
+        await AssertFormalReceipt(prepare.CommandId, "PREPARE_STANDARD_COLLECTION", prepared.RootElement, prepareBody);
+
+        // Previous native writer omits the new columns and retains its digest and result format.
+        var legacy = prepare with { CommandId = Guid.NewGuid(), Reason = "已有准备原件" };
+        var legacyPlan = Guid.NewGuid();
+        var legacyReceipt = Guid.NewGuid();
+        var prepareRoute = $"{documentPath}/collection-plans";
+        var legacyBinding = StandardDocumentBinding.Create(legacy.CommandId, prepareRoute, legacy,
+            new { legacy.ExpectedVersion, legacy.StandardBasisVersionId }, legacy.Reason);
+        await h.Db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO cp6_fin_mfg_v1.standard_collection_plans
+                (tenant_id,ledger_id,document_id,id,work_order_id,expected_version,standard_basis_id,accounting_date,actor_id,expires_at,reason)
+            VALUES ({h.Tenant},{ledger},{document},{legacyPlan},{order.Id},NULL,{first},{day},{h.User},
+                clock_timestamp()+interval '15 minutes',{legacy.Reason});
+            INSERT INTO cp6_fin_mfg_v1.standard_document_commands
+                (tenant_id,ledger_id,command_id,receipt_id,principal,method,route,body_digest,expected_digest,operation,document_id,plan_id)
+            VALUES ({h.Tenant},{ledger},{legacy.CommandId},{legacyReceipt},{h.User},'POST',{prepareRoute},
+                {legacyBinding.BodyDigest},{legacyBinding.ExpectedDigest},'PREPARE',{document},{legacyPlan});
+            """);
+        using (var original = await Call(maker, $"{commands}/{legacy.CommandId}"))
+            Assert.Equal(legacyReceipt, original.RootElement.GetProperty("reply").GetProperty("receiptId").GetGuid());
+        using (var replay = await Call(maker, prepareRoute, legacy, HttpStatusCode.Created))
+        {
+            Assert.True(replay.RootElement.GetProperty("replayed").GetBoolean());
+            Assert.Equal(legacyPlan, replay.RootElement.GetProperty("planId").GetGuid());
+        }
+        using (var unavailable = await Call(maker, $"{r2}/{legacy.CommandId}", expected: HttpStatusCode.ServiceUnavailable))
+        {
+            Assert.Equal("UNKNOWN", unavailable.RootElement.GetProperty("kind").GetString());
+            var problem = unavailable.RootElement.GetProperty("problem");
+            Assert.Equal("OWNER_PARTICIPANT_UNPROVEN", problem.GetProperty("code").GetString());
+            Assert.NotEqual(Guid.Empty, problem.GetProperty("traceId").GetGuid());
+            Assert.Equal("UNKNOWN", problem.GetProperty("commitKnowledge").GetString());
+            Assert.Equal($"{r2}/{legacy.CommandId}", problem.GetProperty("originalQuery").GetString());
+        }
+
         using var competingPlan = await Call(maker, $"{documentPath}/collection-plans",
             prepare with { CommandId = Guid.NewGuid() }, HttpStatusCode.Created);
         var freeze = new { CommandId = Guid.NewGuid(), PlanId = plan, ExpectedVersion = (string?)null, Reason = "确认标准成本" };
@@ -243,6 +296,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             using var query = await Call(maker, $"{commands}/{freeze.CommandId}");
             Assert.Equal("NOT_OBSERVED", query.RootElement.GetProperty("kind").GetString());
             Assert.False(query.RootElement.GetProperty("provesPermanentNoEffect").GetBoolean());
+            await AssertNotObserved(maker, freeze.CommandId);
             using var draft = await Call(maker, documentPath);
             Assert.Equal("DRAFT", draft.RootElement.GetProperty("state").GetString());
         }
@@ -254,13 +308,12 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
                 """);
         }
         await h.Db.Database.ExecuteSqlRawAsync("""
-            CREATE FUNCTION cp6_fin_mfg_v1.w694_reject_standard_commit() RETURNS trigger LANGUAGE plpgsql AS $$
+            CREATE FUNCTION cp6_fin_mfg_v1.w696_reject_formal_commit() RETURNS trigger LANGUAGE plpgsql AS $$
             BEGIN
-                RAISE EXCEPTION 'W694_DEFERRED_COMMIT_FAILURE';
+                RAISE EXCEPTION 'W696_DEFERRED_COMMIT_FAILURE';
             END; $$;
-            CREATE CONSTRAINT TRIGGER w694_reject_standard_commit AFTER INSERT ON cp6_fin_mfg_v1.standard_document_commands
-                DEFERRABLE INITIALLY DEFERRED FOR EACH ROW WHEN (NEW.operation='FREEZE')
-                EXECUTE FUNCTION cp6_fin_mfg_v1.w694_reject_standard_commit();
+            CREATE CONSTRAINT TRIGGER w696_reject_formal_commit AFTER INSERT ON cp6_fin_mfg_v1.finance_command_receipts
+                DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION cp6_fin_mfg_v1.w696_reject_formal_commit();
             """);
         try
         {
@@ -270,18 +323,21 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             Assert.Equal($"{commands}/{freeze.CommandId}", queryPath);
             using var after = await Call(maker, queryPath!);
             Assert.Equal("NOT_OBSERVED", after.RootElement.GetProperty("kind").GetString());
+            await AssertNotObserved(maker, freeze.CommandId);
         }
         finally
         {
             await h.Db.Database.ExecuteSqlRawAsync("""
-                DROP TRIGGER w694_reject_standard_commit ON cp6_fin_mfg_v1.standard_document_commands;
-                DROP FUNCTION cp6_fin_mfg_v1.w694_reject_standard_commit();
+                DROP TRIGGER w696_reject_formal_commit ON cp6_fin_mfg_v1.finance_command_receipts;
+                DROP FUNCTION cp6_fin_mfg_v1.w696_reject_formal_commit();
                 """);
         }
         var repeatedFreeze = await Task.WhenAll(Call(maker, $"{documentPath}/freeze", freeze),
             Call(maker, $"{documentPath}/freeze", freeze));
         Assert.Single(repeatedFreeze, reply => reply.RootElement.GetProperty("replayed").GetBoolean());
         Assert.Single(repeatedFreeze.Select(reply => reply.RootElement.GetProperty("receiptId").GetGuid()).Distinct());
+        var freezeBody = $$"""{"commandId":"{{freeze.CommandId:D}}","expectedVersion":null,"planId":"{{plan:D}}","reason":"确认标准成本"}""";
+        var freezeReceipt = await AssertFormalReceipt(freeze.CommandId, "FREEZE_STANDARD_DOCUMENT", repeatedFreeze[0].RootElement, freezeBody);
         foreach (var reply in repeatedFreeze)
         {
             using (reply)
@@ -289,6 +345,38 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         }
         using (await Call(maker, $"{documentPath}/freeze", freeze with { Reason = "同键改变原内容" },
             HttpStatusCode.Conflict, "COMMAND_IDENTITY_CONFLICT")) { }
+        using (await Call(checker, $"{documentPath}/freeze", freeze, HttpStatusCode.Conflict, "COMMAND_IDENTITY_CONFLICT")) { }
+        using (var reader = await Call(checker, $"{r2}/{freeze.CommandId}"))
+            Assert.Equal(freezeReceipt, reader.RootElement.GetProperty("reply").GetProperty("receipt").GetRawText());
+        var financeMenu = await h.Db.Sys_Menus.Where(row => row.MenuKey == "fin-cost").Select(row => row.MenuId).SingleAsync();
+        await h.Db.Sys_RoleActions.Where(row => row.RoleId == 72 && row.MenuId == financeMenu
+            && (row.ActionCode == "collect" || row.ActionCode == "basis-use")).ExecuteDeleteAsync();
+        using (var replay = await Call(maker, $"{documentPath}/freeze", freeze))
+            Assert.True(replay.RootElement.GetProperty("replayed").GetBoolean());
+        using (await Call(maker, $"{documentPath}/freeze", freeze with { CommandId = Guid.NewGuid() },
+            HttpStatusCode.Forbidden, "ACTION_FORBIDDEN")) { }
+        await GrantLegacyAuthorityAction(h, "fin-cost", "collect");
+        await GrantLegacyAuthorityAction(h, "fin-cost", "basis-use");
+        await AssertNotObserved(foreign, freeze.CommandId);
+        using (await Call(foreign, $"{r2}/{freeze.CommandId}/result", expected: HttpStatusCode.NotFound,
+            error: "NOT_FOUND_OR_NOT_VISIBLE")) { }
+        await h.Db.Sys_RoleDataScopes.Where(row => row.RoleId == 72 && row.ResourceKey == "mes-process-cost-rate")
+            .ExecuteUpdateAsync(change => change.SetProperty(row => row.ScopeType, 1));
+        using (await Call(checker, $"{r2}/{freeze.CommandId}", expected: HttpStatusCode.NotFound,
+            error: "NOT_FOUND_OR_NOT_VISIBLE")) { }
+        using (await Call(checker, $"{r2}/{freeze.CommandId}/result", expected: HttpStatusCode.NotFound,
+            error: "NOT_FOUND_OR_NOT_VISIBLE")) { }
+        await h.Db.Sys_RoleDataScopes.Where(row => row.RoleId == 72 && row.ResourceKey == "mes-process-cost-rate")
+            .ExecuteUpdateAsync(change => change.SetProperty(row => row.ScopeType, 5));
+        var immutable = await Assert.ThrowsAsync<PostgresException>(() => h.Db.Database.ExecuteSqlInterpolatedAsync($"""
+            UPDATE cp6_fin_mfg_v1.finance_command_bindings SET accepted_at=clock_timestamp()
+            WHERE (tenant_id,ledger_id,command_id)=({h.Tenant},{ledger},{freeze.CommandId})
+            """));
+        Assert.Equal("55000", immutable.SqlState);
+        var scopeChange = await Assert.ThrowsAsync<PostgresException>(() => h.Db.Database.ExecuteSqlInterpolatedAsync($"""
+            UPDATE cp6_fin_mfg_v1.ledgers SET ledger_key='MOVED' WHERE (tenant_id,id)=({h.Tenant},{ledger})
+            """));
+        Assert.Equal("FINANCE_VERSION_IMMUTABLE", scopeChange.MessageText);
         using (await Call(maker, $"{documentPath}/freeze", freeze with { CommandId = Guid.NewGuid(),
                 PlanId = competingPlan.RootElement.GetProperty("planId").GetGuid() },
             HttpStatusCode.PreconditionFailed, "HEAD_CHANGED")) { }
@@ -407,6 +495,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         using (await Call(releaser, $"{basis}/{zero}/revoke", revoke)) { }
         using (var originalReply = await Call(maker, $"{documentPath}/freeze", zeroFreeze))
             Assert.True(originalReply.RootElement.GetProperty("replayed").GetBoolean());
+        using (var originalCreate = await Call(maker, $"{r2}/{create.CommandId}"))
+            Assert.Equal(createReceipt, originalCreate.RootElement.GetProperty("reply").GetProperty("receipt").GetRawText());
         using (await Call(maker, $"{documentPath}/versions/1")) { }
         using (await Call(maker, $"{documentPath}/collection-plans",
             zeroPrepare with { CommandId = Guid.NewGuid(), ExpectedVersion = "2" },
@@ -423,6 +513,58 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             """);
         using (await Call(maker, $"{comparison}/1", expected: HttpStatusCode.NotFound, error: "FINANCE_CONTEXT_NOT_FOUND")) { }
         using (await Call(maker, $"{commands}/{freeze.CommandId}", expected: HttpStatusCode.NotFound, error: "FINANCE_CONTEXT_NOT_FOUND")) { }
+        using (await Call(maker, $"{r2}/{freeze.CommandId}", expected: HttpStatusCode.NotFound,
+            error: "NOT_FOUND_OR_NOT_VISIBLE")) { }
+
+        Task<DateTimeOffset> AcceptedAt(Guid id) => h.Db.Database.SqlQuery<DateTimeOffset>($"""
+            SELECT accepted_at AS "Value" FROM cp6_fin_mfg_v1.finance_command_bindings
+            WHERE (tenant_id,ledger_id,command_id)=({h.Tenant},{ledger},{id})
+            """).SingleAsync();
+
+        async Task AssertNotObserved((Dictionary<string, string> Cookies, Guid? Context) actor, Guid id)
+        {
+            using var response = await Call(actor, $"{r2}/{id}");
+            var query = response.RootElement;
+            Assert.Equal("NOT_OBSERVED", query.GetProperty("kind").GetString());
+            Assert.Equal(id, query.GetProperty("commandId").GetGuid());
+            Assert.Matches(@"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$", query.GetProperty("observedAt").GetString());
+            Assert.False(query.GetProperty("provesPermanentNoEffect").GetBoolean());
+        }
+
+        async Task<string> AssertFormalReceipt(Guid id, string operation, JsonElement native, string canonicalBody)
+        {
+            using var response = await Call(maker, $"{r2}/{id}");
+            var query = response.RootElement;
+            Assert.Equal("FOUND", query.GetProperty("kind").GetString());
+            var reply = query.GetProperty("reply");
+            Assert.Equal("COMMITTED", reply.GetProperty("kind").GetString());
+            var receipt = reply.GetProperty("receipt");
+            Assert.Equal("COST-COMMAND-1", receipt.GetProperty("schema").GetString());
+            Assert.Equal(native.GetProperty("receiptId").GetGuid(), receipt.GetProperty("id").GetGuid());
+            Assert.Equal(id, receipt.GetProperty("commandId").GetGuid());
+            Assert.Equal(operation, receipt.GetProperty("operation").GetString());
+            Assert.Equal(document, receipt.GetProperty("businessKey").GetGuid());
+            Assert.Equal(DigestExact(canonicalBody), receipt.GetProperty("bodyDigest").GetString());
+            Assert.Equal("APPLIED", receipt.GetProperty("outcome").GetString());
+            Assert.Equal(JsonValueKind.Null, receipt.GetProperty("problem").ValueKind);
+            Assert.NotEqual(Guid.Empty, receipt.GetProperty("uowId").GetGuid());
+            Assert.Matches(@"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$", receipt.GetProperty("recordedAt").GetString());
+            var receiptRef = reply.GetProperty("receiptRef");
+            Assert.Equal(receipt.GetProperty("id").GetGuid(), receiptRef.GetProperty("id").GetGuid());
+            Assert.Equal(DigestExact(receipt.GetRawText()), receiptRef.GetProperty("digest").GetString());
+            var resultRef = receipt.GetProperty("resultRef");
+            Assert.Equal("Finance Costing", resultRef.GetProperty("owner").GetString());
+            Assert.Equal(id, resultRef.GetProperty("id").GetGuid());
+            using var stored = await Call(maker, $"{r2}/{id}/result");
+            Assert.Equal(document, stored.RootElement.GetProperty("documentId").GetGuid());
+            Assert.Equal(native.GetProperty("version").GetString(), stored.RootElement.GetProperty("version").GetString());
+            Assert.Equal(native.GetProperty("planId").ToString(), stored.RootElement.GetProperty("planId").ToString());
+            Assert.Equal(DigestExact(stored.RootElement.GetRawText()), resultRef.GetProperty("digest").GetString());
+            return receipt.GetRawText();
+        }
+
+        static string DigestExact(string json)
+            => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes("COST-CANON-1\n" + json))).ToLowerInvariant();
 
         async Task<Guid> Submit(StandardBasisSubmissionV1 draft)
         {
