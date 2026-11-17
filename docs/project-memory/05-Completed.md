@@ -1,5 +1,7 @@
 # 已完成能力与近期里程碑
 
+2026-11-17，W694 完成独立标准成本单据和同事务命令结果。PostgreSQL 5 项定向用例通过，零跳过。 [W694 交付](../development/evidence/W694-01/DELIVERY.md)
+
 2026-11-17，W693 完成已绑定账套整单产出按批准标准归集。35 项定向用例通过，其中 PostgreSQL 29 项、成本组件 6 项，零跳过。 [W693 交付](../development/evidence/W693-01/DELIVERY.md)
 
 2026-11-17，W692 完成成本中心同事务采用与原发布结果重放。34 项定向用例通过，其中 28 项使用 PostgreSQL，6 项为成本组件回归，零跳过。 [W692 交付](../development/evidence/W692-01/DELIVERY.md)

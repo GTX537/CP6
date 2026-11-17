@@ -118,6 +118,19 @@ internal sealed class ManufacturingStandardBasisSourcesV1(CP6Context db)
             await rates.RequirePublishedRateCenterAsync(rate.WorkCenterId!.Value, rate.RateMaker!.Value, ct);
     }
 
+    internal static async Task<(StandardBasisBodyV1 Body, string ProductCode, string? CurrentUnit)> ReadVisibleBasisAsync(
+        ManufacturingStandardBasisStoreV1.Row row, OperationsAccessV1 access, CancellationToken ct)
+    {
+        var body = row.ReadBody();
+        var products = await access.SourceAsync(OperationsOwnerV1.Product, ct);
+        var product = await products.Products().Where(product => product.Id == body.ProductId)
+            .Select(product => new { product.ProductCd, product.QtyUnit }).SingleOrDefaultAsync(ct)
+            ?? throw Error("STANDARD_BASIS_OUTPUT_NOT_FOUND", 404);
+        var rates = await access.SourceAsync(OperationsOwnerV1.ProcessCostRate, ct);
+        await RequireOriginalRatesAsync(rates, body, ct);
+        return (body, product.ProductCd, product.QtyUnit);
+    }
+
     private static Dictionary<Guid, T> BuildMap<T>(T[] items, Func<T, Guid> key) where T : class
     {
         var map = new Dictionary<Guid, T>();
