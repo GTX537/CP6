@@ -16,8 +16,10 @@ namespace CP6.Core.Persistence.Tenancy;
 /// Authentication/current reader authorization remain the host's responsibility.
 /// </summary>
 internal sealed class TenantIdentityDirectoryReader(TenantConnectionManager manager, CrmIdentityRuntime runtime,
-    IDataProtectionProvider protection, IdentityDirectoryDatabaseIdentity? installedIdentity = null) : IIdentitySnapshotReader, IIdentityRawSnapshotReader
+    IDataProtectionProvider protection, IdentityDirectoryDatabaseIdentity? installedIdentity = null) : IIdentitySnapshotReader, IIdentityRawSnapshotReader, IIdentitySourcePublicationReaderV1
 {
+    public Task<byte[]?> ReadPublicationAsync(Guid tenant, long revision, CancellationToken ct = default)
+        => ReadAsync(tenant, (db, token) => new IdentitySourcePublicationReaderV1(db, runtime).ReadPublicationAsync(tenant, revision, token), ct);
     public Task<IdentityVersionPage> ReadVersionsAsync(Guid tenant, string? cursor, int size = 200, CancellationToken cancellationToken = default)
         => ReadAsync(tenant, (db, ct) => new IdentitySnapshotReader(db, runtime, protection).ReadVersionsAsync(tenant, cursor, size, ct), cancellationToken);
     public Task<IdentitySnapshot?> ReadSnapshotAsync(Guid tenant, string aggregate, CancellationToken cancellationToken = default)
@@ -73,7 +75,8 @@ internal sealed class TenantIdentityDirectoryReader(TenantConnectionManager mana
                     // Carry only fixed public contract errors across the storage sanitization boundary.
                     // Unknown exceptions still fail closed through TenantConnectionManager.Safe.
                     catch (IdentityReadException error) when (error.Message is "C02_INVALID_PAGE_SIZE" or "C02_INVALID_CURSOR" or
-                        "C02_INVALID_AGGREGATE" or "C02_BOOTSTRAP_NOT_READY" or "C02_SNAPSHOT_BOUNDARY_CHANGED" or "C02_IDENTITY_STORE_UNAVAILABLE")
+                        "C02_INVALID_AGGREGATE" or "C02_BOOTSTRAP_NOT_READY" or "C02_SNAPSHOT_BOUNDARY_CHANGED" or "C02_IDENTITY_STORE_UNAVAILABLE" or
+                        "C02_SOURCE_VERSION_INVALID" or "C02_SOURCE_NOT_APPROVED" or "C02_SOURCE_SCHEMA_REQUIRED" or "C02_SOURCE_ENROLLMENT_REQUIRED")
                     { return new ReadResult<T>(default, error.Message); }
                 }, token).ConfigureAwait(false);
                 if (read.Error is null) await transaction.CommitAsync(token).ConfigureAwait(false);

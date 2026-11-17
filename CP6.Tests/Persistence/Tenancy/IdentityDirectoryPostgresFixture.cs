@@ -118,6 +118,19 @@ public class IdentityDirectoryPostgresFixture : IAsyncLifetime
         catch { await Server.DisposeAsync(); throw; }
     }
     public Task DisposeAsync() => Server.DisposeAsync();
+    internal static async Task EnrollFixtureSource(CP6Context db, CrmIdentityRuntime runtime)
+    {
+        // 夹具明确批准其已知初始来源；不得借生产 Bootstrap 的自动首次登记认领已有模拟快照。
+        foreach (var (tenant, source) in runtime.Options.SourceBindings)
+        {
+            var bytes = IdentitySourceAuthorityV1.Bytes(source);
+            await db.Database.ExecuteSqlInterpolatedAsync($"""
+                INSERT INTO cp6_identity_source_v1.registrations(tenant_id,revision,binding_bytes,binding_hash)
+                VALUES({tenant},0,{bytes},sha256({bytes})) ON CONFLICT(tenant_id) DO NOTHING
+                """);
+            await IdentitySourceAuthorityV1.RequireCurrentAsync(db, runtime, tenant);
+        }
+    }
     internal static async Task Sql(NpgsqlConnection connection, string sql)
     { await using var command = new NpgsqlCommand(sql, connection); await command.ExecuteNonQueryAsync(); }
     internal static async Task<T> Scalar<T>(NpgsqlConnection connection, string sql)

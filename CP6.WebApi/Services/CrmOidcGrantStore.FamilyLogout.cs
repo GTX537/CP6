@@ -88,7 +88,14 @@ public sealed partial class SqlCrmOidcGrantStore
 
     private Task SavePostgreSqlGrantAsync(CrmOidcGrant grant) => InAuthenticationRootAsync(async (db, tx) =>
     {
+        if (_identity is not null && _identity.Options.Tenants.ContainsKey(grant.OrganizationId))
+            await IdentitySourceAuthorityV1.RequireCurrentAsync(db, tx, _identity, grant.OrganizationId, CancellationToken.None);
         var family = await ReadFamilyAsync(db, tx, grant, CancellationToken.None);
+        if (_identity is not null && _identity.Options.RequireSourceRegistration && await db.ExecuteScalarAsync<bool>("""
+            SELECT EXISTS(SELECT FROM cp6_identity_source_v1.registrations s WHERE s.tenant_id=@OrganizationId AND s.revision>0
+              AND (@family IS NULL OR EXISTS(SELECT FROM cp6_identity_source_v1.retired_browser_sessions r
+                WHERE r.tenant_id=@OrganizationId AND r.family_id=@family)))
+            """, new { grant.OrganizationId, family = (Guid?)family?.Id }, tx)) throw new CrmOidcFamilyAdmissionClosedException();
         if (family?.Pending == true || RequiresNativeFamilyLogout(grant.OrganizationId) && (family is null || family.LoggedOut))
             throw new CrmOidcFamilyAdmissionClosedException();
         if (await db.ExecuteScalarAsync<bool>("""

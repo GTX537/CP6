@@ -166,6 +166,12 @@ internal static class ServiceRevocationInstallation
             GRANT SELECT,INSERT,UPDATE ON crm_identity."Snapshot",public."CrmIdentityTenantGenerations" TO {{roles}};
             GRANT SELECT,INSERT ON crm_identity_priority."Cp6_OutboxMessage" TO {{roles}};
             """);
+        await using (var source = new NpgsqlCommand("SELECT to_regprocedure('cp6_identity_source_v1.read_hash(uuid)') IS NOT NULL", connection, tx))
+            if (await source.ExecuteScalarAsync(ct).ConfigureAwait(false) is true)
+                await Execute($$"""
+                    GRANT USAGE ON SCHEMA cp6_identity_source_v1 TO {{roles}},{{issuer}};
+                    GRANT EXECUTE ON FUNCTION cp6_identity_source_v1.read_hash(uuid) TO {{roles}},{{issuer}};
+                    """);
         if (!serviceTokens) await Execute($$"""
             GRANT INSERT,SELECT ON crm_identity."ServiceToken" TO {{issuer}};
             CREATE POLICY issue_insert_v1 ON crm_identity."ServiceToken" FOR INSERT TO {{issuer}} WITH CHECK (true);

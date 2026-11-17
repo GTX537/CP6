@@ -161,6 +161,13 @@ internal sealed class IdentityDirectoryConfiguredHttpHost : IAsyncDisposable
             });
         }
         var app = builder.Build(); var requests = new RequestCounters();
+        // 此宿主夹具显式准备获准的初始来源；生产宿主不自动接纳已有目录的新配置。
+        await using (var sourceSetup = await control.Database.BeginTransactionAsync())
+        {
+            var configuredSource = app.Services.GetRequiredService<CrmIdentityRuntime>();
+            await IdentityDirectoryPostgresFixture.EnrollFixtureSource(control, configuredSource);
+            await sourceSetup.CommitAsync();
+        }
         app.Use(async (context, next) =>
         {
             // Explicit local TLS-termination fixture only. This does not verify TLS/deployment;

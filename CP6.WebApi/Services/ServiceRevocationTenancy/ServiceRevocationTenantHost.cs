@@ -43,6 +43,9 @@ public sealed class ServiceRevocationTenantHost : IAsyncDisposable
         _runtime = new(new CrmIdentityOptions { Enabled = true, Issuer = configuration.Issuer,
             Tenants = configuration.Clients.Values.Select(x => (x.Tenant, x.Region)).Distinct().ToDictionary(x => x.Tenant, x => x.Region),
             ProjectionReaderClientIds = ["bounded-service-revocation"], PasswordMaxAgeDays = 0 }, runtime.Validator, clock);
+        foreach (var tenant in _runtime.Options.Tenants.Keys)
+            if (runtime.Options.SourceBindings.TryGetValue(tenant, out var source)) _runtime.Options.SourceBindings.Add(tenant, source);
+        _runtime.Options.RequireSourceRegistration = runtime.Options.RequireSourceRegistration;
         _authority = new(this); _verifier = new(this);
         _executor = new(_authority, _accessor, clock);
         _connections = new(configuration.Host, _accessor, configuration.Catalog,

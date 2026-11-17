@@ -60,6 +60,21 @@ public static class CrmIdentityConfiguration
         var directory = Path.Combine(AppContext.BaseDirectory, "contracts/events/platform");
         var bundle = Cp6ContractBundle.Load(directory);
         var validator = new IdentityEventValidator(bundle, oidc.Issuer);
+        options.SourceBindings.Clear();
+        var bundleHash = IdentityEventContracts.Hash(File.ReadAllBytes(Path.Combine(directory, Cp6ContractBundle.IndexFileName)));
+        foreach (var (tenant, region) in options.Tenants)
+        {
+            var organization = oidc.Organizations.Single(o => o.TenantId == tenant && o.CrmEnabled);
+            var clients = oidc.ServiceClients.Where(c => c.TenantId == tenant && c.Enabled)
+                .Select(c => c.ClientId).Order(StringComparer.Ordinal).ToArray();
+            options.SourceBindings.Add(tenant, new(tenant, organization.Slug, oidc.Issuer, region, clients,
+                options.ProjectionReaderClientIds.Where(clients.Contains).Order(StringComparer.Ordinal).ToArray(), bundleHash));
+        }
+        // 历史独立 service-token/revocation 数据布局沿用固定来源合同；有 Main 来源登记时仍严格校验。
+        // 它们不能在缺少本次 Core 前向迁移的布局上执行来源批准发布。
+        options.RequireSourceRegistration = database.Provider == DatabaseProvider.PostgreSql
+            && !configuration.GetValue<bool>("CrmIdentity:ServiceTokenTenancy:Enabled")
+            && !configuration.GetValue<bool>("CrmIdentity:ServiceRevocationTenancy:Enabled");
         services.AddSingleton(validator);
         services.AddSingleton(provider => new CrmIdentityRuntime(options, validator, provider.GetService<TimeProvider>(), directory,
             provider.GetService<CP6.Core.Services.Platform.CrmInquiryTenantPauseV1>()));

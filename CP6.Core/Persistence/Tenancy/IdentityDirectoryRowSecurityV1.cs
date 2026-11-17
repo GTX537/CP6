@@ -153,13 +153,15 @@ internal static class IdentityDirectoryRowSecurityV1
             [true, true, true, true, true, true, true, true, true], ["TenantId", "AggregateId"]);
         await ValidateColumns(Tables[2], ["TenantId", "Generation"], ["uuid", "int8"], [true, true], ["TenantId"]);
         await Require("""
-            SELECT (SELECT count(*) FROM pg_catalog.pg_trigger t WHERE t.tgrelid=ANY(@tables::regclass[]) AND NOT t.tgisinternal)=3
+            SELECT (SELECT count(*) FROM pg_catalog.pg_trigger t WHERE t.tgrelid=ANY(@tables::regclass[]) AND NOT t.tgisinternal)=3+CASE WHEN @completeCoreLayout THEN 1 ELSE 0 END
               AND (SELECT count(*) FROM pg_catalog.pg_trigger t WHERE t.tgrelid=ANY(@tables::regclass[]) AND NOT t.tgisinternal
                 AND t.tgenabled='O' AND t.tgnargs=0 AND t.tgqual IS NULL AND NOT t.tgdeferrable
                 AND ((t.tgrelid IN ('crm_identity."Bootstrap"'::regclass,'crm_identity."Snapshot"'::regclass)
                     AND t.tgname='cp6_rowversion_v1' AND t.tgfoid='cp6_storage_core.set_rowversion_v1()'::regprocedure AND t.tgtype=23)
                   OR (t.tgrelid='crm_identity."Snapshot"'::regclass AND t.tgname='cp6_identity_generation_v1'
-                    AND t.tgfoid='cp6_storage_core.advance_identity_generation_v1()'::regprocedure AND t.tgtype=29)))=3
+                    AND t.tgfoid='cp6_storage_core.advance_identity_generation_v1()'::regprocedure AND t.tgtype=29)
+                  OR (@completeCoreLayout AND t.tgrelid='crm_identity."Snapshot"'::regclass AND t.tgname='source_writer'
+                    AND t.tgfoid=to_regprocedure('cp6_identity_source_v1.require_writer()') AND t.tgtype=23)))=3+CASE WHEN @completeCoreLayout THEN 1 ELSE 0 END
             """);
         await Execute(PostgreSqlMigrationPrerequisitesV1.InstallSql);
         if (completeCoreLayout)
@@ -192,12 +194,18 @@ internal static class IdentityDirectoryRowSecurityV1
             GRANT USAGE ON SCHEMA public,crm_identity,cp6_tenancy_v1 TO {{quotedRoles}};
             GRANT EXECUTE ON FUNCTION cp6_tenancy_v1.current_tenant_id() TO {{quotedRoles}};
             """);
+        if (completeCoreLayout)
+            await Execute($$"""
+                GRANT USAGE ON SCHEMA cp6_identity_source_v1 TO {{quotedRoles}};
+                GRANT EXECUTE ON FUNCTION cp6_identity_source_v1.read_hash(uuid),cp6_identity_source_v1.read_publication(uuid,bigint) TO {{quotedRoles}};
+                """);
         await TenantLoginDirectoryV1.ValidateAsync(connection, transaction, bindings, ct).ConfigureAwait(false);
         await Require("""
             SELECT NOT EXISTS(SELECT FROM pg_catalog.pg_roles r WHERE r.rolname=ANY(@roles) AND (
               pg_catalog.has_database_privilege(r.oid,current_database(),'CREATE,TEMP')
               OR EXISTS(SELECT FROM pg_catalog.pg_namespace n WHERE n.nspname !~ '^pg_' AND n.nspname<>'information_schema' AND
-                (pg_catalog.has_schema_privilege(r.oid,n.oid,'CREATE') OR (n.nspname NOT IN ('public','crm_identity','cp6_tenancy_v1') AND pg_catalog.has_schema_privilege(r.oid,n.oid,'USAGE'))))
+                (pg_catalog.has_schema_privilege(r.oid,n.oid,'CREATE') OR (n.nspname NOT IN ('public','crm_identity','cp6_tenancy_v1') AND
+                    NOT (@completeCoreLayout AND n.nspname='cp6_identity_source_v1') AND pg_catalog.has_schema_privilege(r.oid,n.oid,'USAGE'))))
               OR EXISTS(SELECT FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
                 WHERE n.nspname !~ '^pg_' AND n.nspname<>'information_schema' AND CASE WHEN c.relkind IN ('r','v','m','f','p') THEN
                   ((c.oid<>ALL(@tables::regclass[]) AND pg_catalog.has_any_column_privilege(r.oid,c.oid,'SELECT'))
@@ -207,7 +215,10 @@ internal static class IdentityDirectoryRowSecurityV1
                 THEN pg_catalog.has_sequence_privilege(r.oid,c.oid,'USAGE,SELECT,UPDATE') ELSE false END)
               OR EXISTS(SELECT FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
                 WHERE n.nspname !~ '^pg_' AND n.nspname<>'information_schema'
-                  AND p.oid<>'cp6_tenancy_v1.current_tenant_id()'::regprocedure AND pg_catalog.has_function_privilege(r.oid,p.oid,'EXECUTE'))))
+                  AND p.oid<>'cp6_tenancy_v1.current_tenant_id()'::regprocedure
+                  AND NOT (@completeCoreLayout AND p.oid=ANY(ARRAY[
+                    to_regprocedure('cp6_identity_source_v1.read_hash(uuid)'),to_regprocedure('cp6_identity_source_v1.read_publication(uuid,bigint)')]))
+                  AND pg_catalog.has_function_privilege(r.oid,p.oid,'EXECUTE'))))
             """);
 
         async Task Execute(string sql)

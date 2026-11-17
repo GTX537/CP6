@@ -2,6 +2,7 @@ using System.Security.Claims;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Sys;
+using CP6.Core.Services.CrmIdentity;
 using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,13 +15,20 @@ public sealed record CrmContextDto(Guid OrganizationId, string OrganizationSlug,
     Guid[] DepartmentIds, bool IsSupervisor, CrmOwnerDto[] EligibleOwners, CrmDepartmentDto[] Departments);
 
 public sealed class CrmOidcDirectory(CP6Context db, ITenantContext tenant, ITokenBlacklistService blacklist,
-    IPasswordPolicyService passwords, CrmOidcOptions options) : ICrmOidcServiceDirectory
+    IPasswordPolicyService passwords, CrmOidcOptions options, CrmIdentityRuntime? identity = null) : ICrmOidcServiceDirectory
 {
+    private async Task<bool> SourceCurrent(Guid id, CancellationToken ct = default)
+    {
+        if (identity is null || !identity.Options.Tenants.ContainsKey(id)) return true;
+        try { await IdentitySourceAuthorityV1.RequireCurrentAsync(db, identity, id, ct); return true; }
+        catch (IdentityReadException e) when (e.Message == "C02_SOURCE_NOT_APPROVED") { return false; }
+    }
     public async Task<bool> IsServiceTenantActiveAsync(Guid tenantId, DateTime utcNow,
         CancellationToken cancellationToken = default)
     {
         if (!options.Enabled || !options.Organizations.Any(o => o.TenantId == tenantId && o.CrmEnabled))
             return false;
+        if (!await SourceCurrent(tenantId, cancellationToken)) return false;
         var localNow = DateTime.SpecifyKind(utcNow, DateTimeKind.Utc).ToLocalTime();
         return await db.Sys_Tenants.AsNoTracking().AnyAsync(t => t.Id == tenantId && t.Enable
             && (t.ExpireDate == null || t.ExpireDate > localNow), cancellationToken);
@@ -30,6 +38,7 @@ public sealed class CrmOidcDirectory(CP6Context db, ITenantContext tenant, IToke
     {
         var mapping = options.Organizations.SingleOrDefault(o => o.Slug == slug && o.CrmEnabled);
         if (!options.Enabled || mapping == null) return null;
+        if (!await SourceCurrent(mapping.TenantId)) return null;
         var organization = await db.Sys_Tenants.AsNoTracking().SingleOrDefaultAsync(t => t.Id == mapping.TenantId && t.Enable);
         if (organization == null || organization.ExpireDate <= DateTime.Now) return null;
         return new { organizationId = mapping.TenantId, organizationSlug = mapping.Slug, region = mapping.Region, crmEnabled = true };
@@ -96,6 +105,7 @@ public sealed class CrmOidcDirectory(CP6Context db, ITenantContext tenant, IToke
     {
         if (!options.Enabled || !options.Organizations.Any(o => o.TenantId == organizationId && o.CrmEnabled)
             || string.IsNullOrWhiteSpace(sourceJti) || await blacklist.IsBlacklistedAsync(sourceJti)) return null;
+        if (!await SourceCurrent(organizationId)) return null;
         if (db.Database.IsNpgsql() && await new AuthenticationInteractionStoreV1(db).IsAccessRevokedAsync(sourceJti))
             return null;
         var organization = await db.Sys_Tenants.AsNoTracking().SingleOrDefaultAsync(t => t.Id == organizationId);

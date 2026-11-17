@@ -9,6 +9,7 @@ public sealed class IdentityEventValidator : ICp6OutboxEnvelopeValidator, ICp6In
 {
     private readonly Cp6CloudEventValidator platform;
     private readonly string issuer;
+    private readonly Cp6ContractBundle bundle;
     private static readonly HashSet<string> SensitiveNames = new(StringComparer.OrdinalIgnoreCase)
     {
         "name", "displayname", "username", "nickname", "email", "emailaddress", "phone", "phonenumber",
@@ -22,8 +23,11 @@ public sealed class IdentityEventValidator : ICp6OutboxEnvelopeValidator, ICp6In
             !string.IsNullOrEmpty(uri.Query) || !string.IsNullOrEmpty(uri.Fragment))
             throw new ArgumentException("Identity issuer must be an absolute HTTPS URI.", nameof(issuer));
         platform = new(bundle);
+        this.bundle = bundle;
         this.issuer = issuer;
     }
+
+    internal IdentityEventValidator ForIssuer(string approvedIssuer) => approvedIssuer == issuer ? this : new(bundle, approvedIssuer);
 
     public bool IsValid(ReadOnlyMemory<byte> payload)
         => IsValidEnvelope(payload, enforceTransportLimit: true);

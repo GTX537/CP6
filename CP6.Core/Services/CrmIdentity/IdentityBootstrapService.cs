@@ -52,6 +52,7 @@ public sealed class IdentityBootstrapService(CP6Context db, CrmIdentityRuntime r
         var state = db.Database.IsNpgsql()
             ? await LoadStoredStateAsync(states, tenant, cancellationToken)
             : await states.SingleOrDefaultAsync(cancellationToken);
+        await IdentitySourceAuthorityV1.EnrollInitialAsync(db, runtime, tenant, state is null, cancellationToken);
         if (state?.CompletedAtUtc is not null && state.ContractBundleSha256 == runtime.ContractBundleSha256)
         {
             await transaction.CommitAsync(cancellationToken);
