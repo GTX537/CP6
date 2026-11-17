@@ -9,6 +9,9 @@ public sealed class CrmIdentityOptions
     public string Issuer { get; set; } = "";
     public Dictionary<Guid, string> Tenants { get; set; } = [];
     public string[] ProjectionReaderClientIds { get; set; } = [];
+    // 由宿主从已验证的 OIDC/identity 配置合成，不从客户端请求绑定。
+    public Dictionary<Guid, IdentitySourceBindingV1> SourceBindings { get; } = [];
+    internal bool RequireSourceRegistration { get; set; }
     public int PasswordMaxAgeDays { get; set; }
     public string DaprHttpEndpoint { get; set; } = "http://127.0.0.1:3500";
     public string DaprGrpcEndpoint { get; set; } = "http://127.0.0.1:50001";

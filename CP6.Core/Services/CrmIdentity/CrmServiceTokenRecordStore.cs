@@ -17,15 +17,24 @@ public sealed class CrmServiceTokenRecordStore(CP6Context db, CrmIdentityRuntime
     {
         if (!runtime.Options.Tenants.ContainsKey(tenantId)) return;
         if (issuer != runtime.Options.Issuer) throw new InvalidOperationException("C02_SERVICE_ISSUER_MISMATCH");
+        if (db.Database.IsNpgsql())
+        {
+            await using var tx = await db.Database.BeginTransactionAsync(cancellationToken);
+            await IdentitySourceAuthorityV1.RequireWriterAsync(db, runtime, tenantId, cancellationToken);
+            await RecordCoreAsync(db, issuer, clientId, tenantId, jti, expiry, cancellationToken);
+            await tx.CommitAsync(cancellationToken);
+            return;
+        }
         await RecordCoreAsync(db, issuer, clientId, tenantId, jti, expiry, cancellationToken);
     }
 
-    internal static Task RecordInTransactionAsync(CP6Context db, CrmIdentityRuntime runtime,
+    internal static async Task RecordInTransactionAsync(CP6Context db, CrmIdentityRuntime runtime,
         string issuer, string clientId, Guid tenantId, string jti, DateTimeOffset expiry, CancellationToken cancellationToken)
     {
         if (db.Database.CurrentTransaction is null || !runtime.Options.Tenants.ContainsKey(tenantId)
             || issuer != runtime.Options.Issuer) throw new InvalidOperationException("C02_SERVICE_TRANSACTION_REQUIRED");
-        return RecordCoreAsync(db, issuer, clientId, tenantId, jti, expiry, cancellationToken);
+        await IdentitySourceAuthorityV1.RequireCurrentAsync(db, runtime, tenantId, cancellationToken);
+        await RecordCoreAsync(db, issuer, clientId, tenantId, jti, expiry, cancellationToken);
     }
 
     private static async Task RecordCoreAsync(CP6Context db, string issuer, string clientId, Guid tenantId,

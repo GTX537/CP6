@@ -17,9 +17,11 @@ public sealed class IdentityEventDispatchWorker(CrmIdentityRuntime runtime, ICon
         using var dapr = new DaprClientBuilder().UseHttpEndpoint(runtime.Options.DaprHttpEndpoint)
             .UseGrpcEndpoint(runtime.Options.DaprGrpcEndpoint).Build();
         using var invocation = new HttpClient { BaseAddress = new Uri(runtime.Options.DaprHttpEndpoint), Timeout = TimeSpan.FromSeconds(10) };
-        var publisher = new IdentityDaprPublisher(new Cp6DaprTransport(dapr, invocation), runtime.Validator);
-        var ordinary = new Cp6OutboxDispatcher<CP6Context>(CreateOrdinaryContextFactory(database, connection), runtime.Validator, publisher, Options(32));
-        var priority = new Cp6OutboxDispatcher<IdentityMessagingContext>(CreatePriorityContextFactory(database, connection), runtime.Validator, publisher, Options(16));
+        var factory = CreateOrdinaryContextFactory(database, connection);
+        var validator = new IdentitySourceOutboxValidatorV1(factory, runtime);
+        var publisher = new IdentityDaprPublisher(new Cp6DaprTransport(dapr, invocation), validator);
+        var ordinary = new Cp6OutboxDispatcher<CP6Context>(factory, validator, publisher, Options(32));
+        var priority = new Cp6OutboxDispatcher<IdentityMessagingContext>(CreatePriorityContextFactory(database, connection), validator, publisher, Options(16));
         // Independent asynchronous loops: a blocked ordinary publish never consumes the priority budget.
         await Task.WhenAll(LoopAsync("priority", priority.DispatchBatchAsync, stoppingToken),
             LoopAsync("ordinary", ordinary.DispatchBatchAsync, stoppingToken));
@@ -74,7 +76,7 @@ public sealed class IdentityEventDispatchWorker(CrmIdentityRuntime runtime, ICon
     }
 }
 
-public sealed class IdentityDaprPublisher(ICp6DaprTransport transport, IdentityEventValidator validator) : ICp6OutboxPublisher
+public sealed class IdentityDaprPublisher(ICp6DaprTransport transport, ICp6OutboxEnvelopeValidator validator) : ICp6OutboxPublisher
 {
     public async Task PublishAsync(Cp6OutboxDispatchMessage message, CancellationToken cancellationToken = default)
     {

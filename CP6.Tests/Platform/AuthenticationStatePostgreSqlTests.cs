@@ -265,6 +265,9 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
     }
     internal static async Task<AuthenticationApiProcess> Start(string connection, IReadOnlyDictionary<string,string>? environment = null, bool allowAutoRedirect = true)
     {
+        const string sourceFixture = "CP6_FIXTURE_APPROVED_INITIAL_IDENTITY_SOURCE";
+        if (environment?.GetValueOrDefault(sourceFixture) == "true")
+            await PrepareApprovedInitialIdentityFixture(connection, environment);
         var directory = Path.Combine(Environment.GetEnvironmentVariable("CP6_PERMISSION_PG_ROOT")!, "actual-api", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
         var secret = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
@@ -283,7 +286,8 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
             ["Security__Cookie__Secure"] = "false", ["Security__Csrf__Enabled"] = "true", ["CrmOidc__Enabled"] = "false"
             , ["Space__Files__RootPath"] = Path.Combine(directory, "space-files")
         }) start.Environment[pair.Key] = pair.Value;
-        if (environment != null) foreach (var pair in environment) start.Environment[pair.Key] = pair.Value;
+        if (environment != null) foreach (var pair in environment)
+            if (pair.Key != sourceFixture) start.Environment[pair.Key] = pair.Value;
         var ready = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
         var log = new StringBuilder(); var child = new Process { StartInfo = start, EnableRaisingEvents = true };
         void Read(string? line)
@@ -310,6 +314,31 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
             await child.WaitForExitAsync(); child.Dispose();
             lock(log) File.WriteAllText(Path.Combine(directory, "startup.log"), log.ToString());
             throw;
+        }
+    }
+    private static async Task PrepareApprovedInitialIdentityFixture(string connection, IReadOnlyDictionary<string,string> environment)
+    {
+        // 显式测试输入：按每个场景最终配置准备已批准的模拟初始来源，不覆盖既有批准版本。
+        // 标记不传入产品进程；生产没有自动认领历史来源的配置开关。
+        var config = new ConfigurationBuilder().AddInMemoryCollection(environment.ToDictionary(x=>x.Key.Replace("__",":"),x=>(string?)x.Value)).Build();
+        var identity = CP6.WebApi.Configuration.CrmIdentityConfiguration.BindOptions(config);
+        if (!identity.Enabled) return;
+        var oidc = config.GetSection("CrmOidc").Get<CP6.WebApi.Services.CrmOidcOptions>()!;
+        var bundle = CP6.Core.Services.CrmIdentity.IdentityEventContracts.Hash(File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory,"contracts/events/platform",CP6.Platform.Messaging.Cp6ContractBundle.IndexFileName)));
+        await using var db = new Npgsql.NpgsqlConnection(connection); await db.OpenAsync();
+        foreach (var (tenant, region) in identity.Tenants)
+        {
+            var organization = oidc.Organizations.Single(x=>x.TenantId==tenant && x.CrmEnabled);
+            var clients = oidc.ServiceClients.Where(x=>x.TenantId==tenant && x.Enabled).Select(x=>x.ClientId).Order(StringComparer.Ordinal).ToArray();
+            var source = new CP6.Core.Services.CrmIdentity.IdentitySourceBindingV1(tenant,organization.Slug,oidc.Issuer,region,clients,
+                identity.ProjectionReaderClientIds.Where(clients.Contains).Order(StringComparer.Ordinal).ToArray(),bundle);
+            var bytes = CP6.Core.Services.CrmIdentity.IdentitySourceAuthorityV1.Bytes(source);
+            await using var insert = new Npgsql.NpgsqlCommand("""
+                INSERT INTO cp6_identity_source_v1.registrations(tenant_id,revision,binding_bytes,binding_hash)
+                VALUES(@tenant,0,@bytes,sha256(@bytes)) ON CONFLICT(tenant_id) DO NOTHING
+                """,db);
+            insert.Parameters.AddWithValue("tenant",tenant); insert.Parameters.AddWithValue("bytes",bytes);
+            await insert.ExecuteNonQueryAsync();
         }
     }
     internal async Task StopAsync()

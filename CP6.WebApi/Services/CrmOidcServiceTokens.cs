@@ -94,6 +94,7 @@ public sealed class CrmOidcServiceTokens
 
     private static bool IsDatabaseUnavailable(Exception exception)
     {
+        if (exception is IdentityReadException) return true;
         if (exception is DbException or TimeoutException) return true;
         if (exception is DbUpdateException { InnerException: { } updateInner }) return IsDatabaseUnavailable(updateInner);
         if (exception is RetryLimitExceededException retry)

@@ -5,8 +5,8 @@ namespace CP6.Core.Persistence.Tenancy;
 /// <summary>Verified function and trigger catalog of the complete PostgreSQL Core migration layout.</summary>
 internal static class IdentityDirectoryCoreCatalogV1
 {
-    // PostgreSQL 18 migrated through 20261114030500_StockOrdinaryWriteAuthorityV1.
-    private const string Fingerprint = "a7244dc8b3a3f7aff90e6529d8b0419ca02d9b9c323abb354c7f874591fad619";
+    // PostgreSQL 18 已执行到 20261117110000_IdentitySourcePublicationV1；本卡实际迁移目录取值。
+    private const string Fingerprint = "a08eb44592c403335c7b76dfe19c4945ef3e40dc023bf663eb3abd14dabd1742";
 
     internal static async Task<bool> MatchesAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct)
     {

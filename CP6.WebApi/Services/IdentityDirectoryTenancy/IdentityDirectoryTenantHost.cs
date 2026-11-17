@@ -38,6 +38,9 @@ public sealed class IdentityDirectoryTenantHost : IAsyncDisposable
         _connections = new(configuration.Host, _accessor, configuration.Catalog, new Credentials(configuration.Passwords), new(32, 64, 2));
         var ownRuntime = new CrmIdentityRuntime(new CrmIdentityOptions { Enabled = true, Issuer = configuration.Issuer,
             Tenants = configuration.Regions.ToDictionary(x => x.Key, x => x.Value), ProjectionReaderClientIds = configuration.Clients.Keys.ToArray() }, runtime.Validator, clock);
+        foreach (var tenant in configuration.Regions.Keys)
+            if (runtime.Options.SourceBindings.TryGetValue(tenant, out var source)) ownRuntime.Options.SourceBindings.Add(tenant, source);
+        ownRuntime.Options.RequireSourceRegistration = runtime.Options.RequireSourceRegistration;
         _authorization = new(_connections, configuration.Identity); _directory = new(_connections, ownRuntime, protection, configuration.Identity);
     }
 

@@ -19,6 +19,8 @@ public sealed class IdentityDirectoryBusinessFunctionsPostgresTests(IdentityDire
             SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
             WHERE n.nspname !~ '^pg_' AND n.nspname<>'information_schema'
               AND p.oid<>'cp6_tenancy_v1.current_tenant_id()'::regprocedure
+              AND p.oid<>ALL(ARRAY['cp6_identity_source_v1.read_hash(uuid)'::regprocedure,
+                'cp6_identity_source_v1.read_publication(uuid,bigint)'::regprocedure])
               AND (has_function_privilege('directory_a',p.oid,'EXECUTE') OR has_function_privilege('directory_b',p.oid,'EXECUTE'))
             """,owner,tx);
         Assert.Equal(0L,await command.ExecuteScalarAsync());await tx.RollbackAsync();

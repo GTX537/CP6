@@ -109,7 +109,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     internal static Dictionary<string,string> IdentityEnvironment(Guid tenant)
     {
         using var rsa=RSA.Create(2048);var hash=Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
-        return new(){["CrmOidc__Enabled"]="true",["CrmOidc__Issuer"]="https://iam-writer.example.test",["CrmOidc__ActiveKeyId"]="fixture",
+        return new(){["CP6_FIXTURE_APPROVED_INITIAL_IDENTITY_SOURCE"]="true",
+            ["CrmOidc__Enabled"]="true",["CrmOidc__Issuer"]="https://iam-writer.example.test",["CrmOidc__ActiveKeyId"]="fixture",
             ["CrmOidc__Keys__0__Kid"]="fixture",["CrmOidc__Keys__0__Pem"]=rsa.ExportRSAPrivateKeyPem(),
             ["CrmOidc__Clients__0__ClientId"]="CP6.Web",["CrmOidc__Clients__0__SecretSha256"]=hash,["CrmOidc__Clients__0__RedirectUris__0"]="https://iam.example.test/callback",
             ["CrmOidc__Organizations__0__TenantId"]=tenant.ToString("D"),["CrmOidc__Organizations__0__Slug"]="iam-fixture",["CrmOidc__Organizations__0__Region"]="us",["CrmOidc__Organizations__0__CrmEnabled"]="true",

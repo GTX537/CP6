@@ -19,6 +19,7 @@ internal sealed class IdentityRawSnapshotReader(CP6Context db, CrmIdentityRuntim
     public async Task<IdentityBaselinePageV1> ReadBaselinePageAsync(Guid tenant, string? cursor, int size = 200, CancellationToken ct = default)
     {
         RequireSource(tenant);
+        await using var sourceLease = await IdentitySourceAuthorityV1.ReadLeaseAsync(db, runtime, tenant, ct);
         if (size is < 1 or > 200) throw new IdentityReadException("C02_INVALID_PAGE_SIZE");
         var position = Decode(cursor);
         var all = db.CrmIdentitySnapshots.AsNoTracking().Where(x => x.TenantId == tenant);
@@ -51,6 +52,7 @@ internal sealed class IdentityRawSnapshotReader(CP6Context db, CrmIdentityRuntim
     public async Task<IdentityRawSnapshotV1?> ReadRawSnapshotAsync(Guid tenant, string aggregate, CancellationToken ct = default)
     {
         RequireSource(tenant);
+        await using var sourceLease = await IdentitySourceAuthorityV1.ReadLeaseAsync(db, runtime, tenant, ct);
         if (!Aggregate(aggregate)) throw new IdentityReadException("C02_INVALID_AGGREGATE");
         var observation = await (from state in db.CrmIdentityBootstrapStates.AsNoTracking()
             where state.TenantId == tenant && state.CompletedAtUtc != null && state.ContractBundleSha256 == source.ContractBundleSha256

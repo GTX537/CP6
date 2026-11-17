@@ -1,5 +1,7 @@
 # 已完成能力与近期里程碑
 
+2026-11-17，WP02-05b 卡 DONE：Main 批准准确身份来源并冻结完整后继目录/原命令/原Outbox，旧CRM身份处置与真实PostgreSQL取版已验证；343项唯一相关验证通过、零跳过。原号DONE / 完整DONE = 47 / 44，48/379登记卡、2/125目标。PLT-CTX-01剩WP02-29/24；SYS-TENANT-01剩WP02-06并在其DONE PR重核关闭。规则4等长按原序列，下一卡WP02-13b。 [本卡报告](../development/evidence/WP02-05b/DELIVERY.md)
+
 2026-11-17，阶段0总负责审查后的三目标核对：OA-DEF-01、PLT-TEST-01（TEST_ONLY支撑）DONE；PLT-CTX-01 三项缺口归 WP02-05b/29/24。SYS-TENANT-01 缺口归 WP02-05b/06，在 WP02-06 DONE PR 重核关闭。原号 DONE / 完整 DONE = 47 / 43；47/379登记卡、2/125目标（含1支撑目标）。余卡预算扣原号已用时间，2,052h卡池不增；下一卡 WP02-05b。 [核对与预算](../development/planning/20261117-card-execution.md#阶段-0-总负责审查后的补充核对)
 
 2026-11-17，WP01-01 卡 DONE：核对已采纳 v1.2 的准确来源与 125 目标覆盖/不覆盖边界；579 项新依据只适用 ITER/REL，旧 30/48 缺件及机器/运行门保留。阶段 0 证据核对收尾，严格前置不降级。 原证据按实际范围复用，未重跑产品。 [WP01-01 核销](../development/evidence/WP01-01/card-closure/DELIVERY.md)

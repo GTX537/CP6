@@ -14,13 +14,16 @@ public sealed record IdentitySnapshot(Guid TenantId, string AggregateId, string 
 
 public sealed class IdentityReadException(string code) : Exception(code);
 
-public sealed class IdentitySnapshotReader(CP6Context db, CrmIdentityRuntime runtime, IDataProtectionProvider protection) : IIdentitySnapshotReader
+public sealed class IdentitySnapshotReader(CP6Context db, CrmIdentityRuntime runtime, IDataProtectionProvider protection) : IIdentitySnapshotReader, IIdentitySourcePublicationReaderV1
 {
+    public Task<byte[]?> ReadPublicationAsync(Guid tenant, long revision, CancellationToken ct = default)
+        => new IdentitySourcePublicationReaderV1(db, runtime).ReadPublicationAsync(tenant, revision, ct);
     private readonly IDataProtector protector = protection.CreateProtector("CP6.C02.IdentityVersions.Cursor.v2");
 
     public async Task<IdentityVersionPage> ReadVersionsAsync(Guid tenant, string? cursor, int size = 200, CancellationToken cancellationToken = default)
     {
         if (size is < 1 or > 200) throw new IdentityReadException("C02_INVALID_PAGE_SIZE");
+        await using var sourceLease = await IdentitySourceAuthorityV1.ReadLeaseAsync(db, runtime, tenant, cancellationToken);
         var position = DecodeCursor(tenant, cursor);
         if (db.Database.IsNpgsql())
         {
@@ -73,6 +76,7 @@ public sealed class IdentitySnapshotReader(CP6Context db, CrmIdentityRuntime run
 
     public async Task<IdentitySnapshot?> ReadSnapshotAsync(Guid tenant, string aggregate, CancellationToken cancellationToken = default)
     {
+        await using var sourceLease = await IdentitySourceAuthorityV1.ReadLeaseAsync(db, runtime, tenant, cancellationToken);
         if (aggregate.Length is < 1 or > 128 || aggregate.Any(c => !char.IsAsciiLetterOrDigit(c) && c is not ('.' or '_' or ':' or '-')))
             throw new IdentityReadException("C02_INVALID_AGGREGATE");
         CP6.Entity.DomainModels.Sys.CrmIdentitySnapshot? row;

@@ -99,6 +99,13 @@ internal sealed class IdentityDirectoryHttpHost : IAsyncDisposable
         });
         builder.Services.AddControllers().AddApplicationPart(typeof(CrmIdentityController).Assembly);
         var app = builder.Build();
+        // 明确的模拟来源初始登记，不以运行时配置覆盖既存来源。
+        await using (var sourceSetup = await control.Database.BeginTransactionAsync())
+        {
+            var configuredSource = app.Services.GetRequiredService<CrmIdentityRuntime>();
+            await IdentityDirectoryPostgresFixture.EnrollFixtureSource(control, configuredSource);
+            await sourceSetup.CommitAsync();
+        }
         app.UseAuthentication(); app.UseAuthorization();
         app.Use(async (http, next) =>
         {

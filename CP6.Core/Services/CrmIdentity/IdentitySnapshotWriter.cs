@@ -34,6 +34,9 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
     public Task WriteCurrentAsync(Guid tenant, string aggregate, CancellationToken cancellationToken = default)
         => WriteCurrentCoreAsync(tenant, aggregate, false, cancellationToken);
 
+    internal Task AdvanceSourceBoundaryAsync(Guid tenant, CancellationToken ct)
+        => WriteCurrentCoreAsync(tenant, "tenant:" + tenant.ToString("D"), true, ct);
+
     // Native privacy writes avoid copying old profile values into EF field-audit rows.
     internal async Task WriteInvalidatedUserAsync(Guid tenant,Guid user,CancellationToken ct)
     {
@@ -281,6 +284,9 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
     {
         if (db.Database.IsNpgsql())
         {
+            if (CP6.Core.Persistence.Tenancy.ServiceRevocationTransaction.TryGet(db, out _))
+                await IdentitySourceAuthorityV1.RequireCurrentAsync(db, runtime, tenant, cancellationToken);
+            else await IdentitySourceAuthorityV1.RequireWriterAsync(db, runtime, tenant, cancellationToken);
             if (CP6.Core.Persistence.Tenancy.ServiceRevocationTransaction.TryGet(db, out var managed))
                 await managed.AcquireSnapshotLockAsync(db, $"cp6:c02:snapshot:{tenant:N}:{aggregate}", cancellationToken).ConfigureAwait(false);
             // FOR UPDATE cannot lock a missing row. The transaction resource also protects the

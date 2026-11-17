@@ -24,7 +24,7 @@ internal static class ServiceRevocationIssuerV1
             allowed(classid,objid,privilege_type) AS (
               SELECT 'pg_database'::regclass,oid,'CONNECT' FROM db
               UNION ALL SELECT 'pg_namespace'::regclass,oid,'USAGE' FROM pg_catalog.pg_namespace
-                WHERE @installed AND nspname IN ('public','crm_identity','cp6_storage_core')
+                WHERE @installed AND nspname IN ('public','crm_identity','cp6_storage_core','cp6_identity_source_v1')
               UNION ALL SELECT 'pg_class'::regclass,c.oid,p.privilege_type
                 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace,
                   (VALUES ('SELECT'),('INSERT')) p(privilege_type)
@@ -35,7 +35,8 @@ internal static class ServiceRevocationIssuerV1
               UNION ALL SELECT 'pg_proc'::regclass,p.oid,'EXECUTE'
                 FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
                 WHERE @installed AND ((n.nspname='public' AND p.proname='cp6_cp936_length_v1' AND p.proargtypes='25'::oidvector)
-                  OR (n.nspname='cp6_storage_core' AND p.proname='set_rowversion_v1' AND p.pronargs=0))
+                  OR (n.nspname='cp6_storage_core' AND p.proname='set_rowversion_v1' AND p.pronargs=0)
+                  OR (n.nspname='cp6_identity_source_v1' AND p.proname='read_hash' AND p.proargtypes='2950'::oidvector))
             ), grants(classid,objid,objsubid,grantee,privilege_type,is_grantable) AS (
               SELECT 'pg_database'::regclass,d.oid,0,a.grantee,a.privilege_type,a.is_grantable
                 FROM pg_catalog.pg_database d,LATERAL pg_catalog.aclexplode(d.datacl) a

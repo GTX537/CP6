@@ -23,6 +23,15 @@ public sealed class CrmIdentityController(CP6Context db, CrmOidcOptions oidc,
 {
     public const string Scheme = "C02.Services";
 
+    [HttpGet("source/v1/publications/{revision:long}")]
+    public Task<IActionResult> SourcePublication(long revision) => ReadAsync(async (tenant, currentReader) =>
+    {
+        if (Request.Query.Count != 0) return BadRequest(new { code = "C02_INVALID_REQUEST" });
+        if (currentReader is not IIdentitySourcePublicationReaderV1 source) return NotFound();
+        var bytes = await source.ReadPublicationAsync(tenant, revision, HttpContext.RequestAborted);
+        return bytes is null ? NotFound(new { code = "C02_SOURCE_VERSION_NOT_FOUND" }) : File(bytes, "application/json");
+    });
+
     [HttpGet("directory/v1/versions")]
     public async Task<IActionResult> BaselineVersions([FromQuery] string? cursor = null, [FromQuery] int pageSize = 200)
     {
@@ -113,8 +122,8 @@ public sealed class CrmIdentityController(CP6Context db, CrmOidcOptions oidc,
 
     private ObjectResult ReadFailure(IdentityReadException error) => StatusCode(error.Message switch
     {
-        "C02_BOOTSTRAP_NOT_READY" or "C02_IDENTITY_STORE_UNAVAILABLE" => 503,
-        "C02_SNAPSHOT_BOUNDARY_CHANGED" => 409,
+        "C02_BOOTSTRAP_NOT_READY" or "C02_IDENTITY_STORE_UNAVAILABLE" or "C02_SOURCE_SCHEMA_REQUIRED" or "C02_SOURCE_ENROLLMENT_REQUIRED" => 503,
+        "C02_SNAPSHOT_BOUNDARY_CHANGED" or "C02_SOURCE_NOT_APPROVED" => 409,
         _ => 400
     }, new { code = error.Message });
 
