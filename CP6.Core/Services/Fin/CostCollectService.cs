@@ -156,7 +156,8 @@ public partial class CostCollectService : ICostCollectService
 
     private async Task<FinResult> SaveCollectionAsync(WorkOrder wo, CostSheet? sheet, List<CostSheetLine> lines,
         string actor, CancellationToken ct,
-        (DateTime Date, CostCollectionBasisV1.RateUseV1[] Rates, Guid? LedgerId, Guid? CenterId)? rateBasis = null)
+        (DateTime Date, CostCollectionBasisV1.RateUseV1[] Rates, Guid? LedgerId, Guid? CenterId)? rateBasis = null,
+        ManufacturingCenterUseV1.Use? centerUse = null)
     {
         var groups = lines.ToLookup(line => line.Element);
         (decimal Actual, decimal Standard) Totals(CostElement element) =>
@@ -199,10 +200,19 @@ public partial class CostCollectService : ICostCollectService
         (sheet.OverheadActual, sheet.OverheadStandard) = overhead;
         sheet.Status = CostSheetStatus.Collected;
         foreach (var l in lines) { l.CostSheetId = sheet.Id; sheet.Lines.Add(l); }
+        _db.CostSheetLines.AddRange(lines);
 
+        long? basisVersion = null;
+        Guid? useEffect = null;
+        if (centerUse != null)
+        {
+            basisVersion = await CostCollectionBasisStoreV1.NextAsync(_db, sheet.Id, ct);
+            useEffect = await ManufacturingCenterUseV1.EnlistAsync(_db, centerUse, ManufacturingCenterUseV1.CostCollection,
+                sheet.Id, basisVersion.Value, ct);
+        }
         await _db.SaveChangesAsync(ct);
         if (rateBasis is { } basis)
-            await CostCollectionBasisStoreV1.AppendAsync(_db, sheet, basis.Date, basis.Rates, basis.LedgerId, ct);
+            await CostCollectionBasisStoreV1.AppendAsync(_db, sheet, basis.Date, basis.Rates, basis.LedgerId, basisVersion, useEffect, ct);
         return FinResult.Pass();
     }
 

@@ -9,8 +9,9 @@ namespace CP6.Core.Services.Fin;
 
 internal sealed class ManufacturingRateConsumptionV1(CP6Context db, ManufacturingFinanceScopeV1 scope)
 {
-    internal sealed record Selection(Guid LedgerId, DateTime Date, IQueryable<ExecutionRate> Rates,
-        CostCollectionBasisV1.RateUseV1[] Evidence, Guid? CenterId);
+    internal sealed record Selection(Guid LedgerId, DateTime Date, string Currency, IQueryable<ExecutionRate> Rates,
+        CostCollectionBasisV1.RateUseV1[] Evidence, Guid? CenterId,
+        Dictionary<Guid, ManufacturingCenterUseV1.Attribution> ManagedCenters);
 
     internal async Task<Selection?> SelectAsync(WorkOrder order, IQueryable<WorkOrderProcess> steps, int stepCount,
         OperationsAccessV1 access, OperationsAccessV1 rateAccess, CancellationToken ct)
@@ -34,7 +35,7 @@ internal sealed class ManufacturingRateConsumptionV1(CP6Context db, Manufacturin
         var candidates = await db.Database.SqlQuery<PublishedRate>($"""
             SELECT r.id AS "RateId",r.work_center_id AS "WorkCenterId",r.operation_id AS "OperationId",
                 r.center_id AS "CenterId",r.center_version_id AS "CenterVersionId",r.policy_version_id AS "PolicyVersionId",
-                r.basis_id AS "BasisId",r.maker AS "Maker",
+                r.basis_id AS "BasisId",r.maker AS "Maker",(v.submission_id IS NOT NULL) AS "ManagedCenter",
                 r.labor_rate AS "LaborRate",r.overhead_rate AS "OverheadRate",r.valid_from AS "From",r.to_exclusive AS "ToExclusive",
                 (r.state='RELEASED' AND p.enabled AND b.enabled AND (v.operation_id IS NULL OR v.operation_id=r.operation_id)
                  AND p.currency={ledger.Currency}
@@ -60,6 +61,7 @@ internal sealed class ManufacturingRateConsumptionV1(CP6Context db, Manufacturin
 
         var execution = new List<ExecutionRate>(route.Length);
         var evidence = new Dictionary<Guid, CostCollectionBasisV1.RateUseV1>();
+        var managedCenters = new Dictionary<Guid, ManufacturingCenterUseV1.Attribution>();
         foreach (var entry in route)
         {
             var matched = candidates.Where(row => row.WorkCenterId == entry.WorkCenterId && row.OperationId == entry.OperationId).ToArray();
@@ -75,6 +77,8 @@ internal sealed class ManufacturingRateConsumptionV1(CP6Context db, Manufacturin
 
             var from = rate.From.ToDateTime(TimeOnly.MinValue);
             execution.Add(new() { StepId = entry.StepId, LaborRate = rate.LaborRate, OverheadRate = rate.OverheadRate, ValidFrom = from });
+            if (rate.ManagedCenter)
+                managedCenters.Add(entry.StepId, new(rate.RateId, rate.CenterId, rate.CenterVersionId, rate.OperationId));
             evidence.TryAdd(rate.RateId, new(rate.RateId, rate.WorkCenterId, entry.Code, from,
                 rate.ToExclusive?.ToDateTime(TimeOnly.MinValue), rate.LaborRate, rate.OverheadRate, null, ledger.Id,
                 rate.CenterId, rate.CenterVersionId, rate.PolicyVersionId, rate.BasisId, rate.OperationId, rate.Maker));
@@ -86,8 +90,8 @@ internal sealed class ManufacturingRateConsumptionV1(CP6Context db, Manufacturin
             SELECT * FROM jsonb_to_recordset(CAST({json} AS jsonb)) AS result
                 ("StepId" uuid, "LaborRate" numeric, "OverheadRate" numeric, "ValidFrom" timestamp without time zone)
             """);
-        return new(ledger.Id, day.ToDateTime(TimeOnly.MinValue), rates, evidence.Values.OrderBy(row => row.RateId).ToArray(),
-            ids.Length == 1 ? ids[0] : null);
+        return new(ledger.Id, day.ToDateTime(TimeOnly.MinValue), ledger.Currency, rates,
+            evidence.Values.OrderBy(row => row.RateId).ToArray(), ids.Length == 1 ? ids[0] : null, managedCenters);
     }
 
     internal sealed class ExecutionRate
@@ -114,5 +118,6 @@ internal sealed class ManufacturingRateConsumptionV1(CP6Context db, Manufacturin
         public DateOnly? ToExclusive { get; set; }
         public bool Eligible { get; set; }
         public bool PolicySupported { get; set; }
+        public bool ManagedCenter { get; set; }
     }
 }

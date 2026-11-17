@@ -116,8 +116,16 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             "10.00000001", "3.125", day, null);
         using (await Call(maker, makerContext, rates, packRate with { CostCenter = locators[printCenter.Id] },
             HttpStatusCode.Conflict, "COST_CENTER_VERSION_UNAVAILABLE")) { }
-        await PublishRate(printRate, checkOriginalActor: true);
+        var originalRelease = await PublishRate(printRate, checkOriginalActor: true);
         await PublishRate(packRate, checkOriginalActor: false);
+        var originalUse = await h.Db.Database.SqlQuery<string>($"""
+            SELECT r.adopted::text AS "Value" FROM cp6_fin_mfg_v1.releases e
+            JOIN cp6_fin_mfg_v1.center_use_receipts r
+              ON (r.tenant_id,r.ledger_id,r.effect_id)=(e.tenant_id,e.ledger_id,e.center_use_effect_id)
+            WHERE (e.tenant_id,e.ledger_id,e.rate_id)=({h.Tenant},{ledger},{originalRelease.RateId})
+            """).SingleAsync();
+        using (var use = JsonDocument.Parse(originalUse))
+            Assert.Equal(printEdition, use.RootElement[0].GetProperty("Version").GetProperty("version_id").GetGuid());
 
         using (var completed = await CompleteForFinance(host, maker, number))
             Assert.True(completed.StatusCode == HttpStatusCode.OK, await completed.Content.ReadAsStringAsync());
@@ -129,6 +137,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         using (var basis = JsonDocument.Parse(originalBasis))
             Assert.Equal(new[] { printEdition, packEdition }.Order(),
                 basis.RootElement.GetProperty("Rates").EnumerateArray().Select(row => row.GetProperty("CostCenterVersionId").GetGuid()).Order());
+        Assert.Equal(4, await h.Db.Database.SqlQuery<int>($"""
+            SELECT e.item_count AS "Value" FROM cp6_fin_cost_basis_v1.versions v
+            JOIN cp6_fin_mfg_v1.center_use_effects e ON (e.tenant_id,e.id)=(v.tenant_id,v.center_use_effect_id)
+            WHERE (v.tenant_id,v.cost_sheet_id,v.version)=({h.Tenant},{sheet.Id},1)
+            """).SingleAsync());
 
         await h.Db.ProductProcesses.Where(row => row.Id == print.Id)
             .ExecuteUpdateAsync(update => update.SetProperty(row => row.ProcessNote1, "工序原件已改版"));
@@ -136,6 +149,16 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             Assert.Equal(packEdition, ReadLocator(Assert.Single(afterDrift.RootElement.GetProperty("masters").EnumerateArray())).VersionId);
         using (await Call(maker, makerContext, $"/api/fin/cost/{number}/collect", new { },
             HttpStatusCode.Conflict, "PUBLISHED_RATE_UNAVAILABLE")) { }
+        using (await Call(releaser, publisherContext, $"{rates}/{originalRelease.RateId}/publish",
+            new ManufacturingRatePublishV1(originalRelease.PreviewToken))) { }
+        using (await Call(maker, makerContext, $"{rates}/{originalRelease.RateId}/publish",
+            new ManufacturingRatePublishV1(originalRelease.PreviewToken), HttpStatusCode.NotFound, "RATE_RELEASE_PREVIEW_NOT_FOUND")) { }
+        Assert.Equal(originalUse, await h.Db.Database.SqlQuery<string>($"""
+            SELECT r.adopted::text AS "Value" FROM cp6_fin_mfg_v1.releases e
+            JOIN cp6_fin_mfg_v1.center_use_receipts r
+              ON (r.tenant_id,r.ledger_id,r.effect_id)=(e.tenant_id,e.ledger_id,e.center_use_effect_id)
+            WHERE (e.tenant_id,e.ledger_id,e.rate_id)=({h.Tenant},{ledger},{originalRelease.RateId})
+            """).SingleAsync());
         Assert.Equal(originalBasis, await ReadW689Basis(h, sheet.Id, 1));
 
         var noReplacement = await Submit(sourceDraft with { CommandId = Guid.NewGuid() });
@@ -182,7 +205,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             return id;
         }
 
-        async Task PublishRate(ManufacturingRateDraftV1 draft, bool checkOriginalActor)
+        async Task<(Guid RateId, Guid PreviewToken)> PublishRate(ManufacturingRateDraftV1 draft, bool checkOriginalActor)
         {
             using var drafted = await Call(maker, makerContext, rates, draft, HttpStatusCode.Created);
             var id = drafted.RootElement.GetProperty("rateId").GetGuid();
@@ -216,8 +239,39 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
                     HttpStatusCode.Conflict, "FINANCE_RATE_REVIEW_ORIGIN_UNPROVEN")) { }
             }
             using var preview = await Call(releaser, publisherContext, $"{rates}/{id}/release-preview", new ManufacturingRateTransitionV1(3));
+            var previewToken = preview.RootElement.GetProperty("token").GetGuid();
+            if (checkOriginalActor)
+            {
+                await h.Db.Database.ExecuteSqlRawAsync("""
+                    CREATE FUNCTION cp6_fin_mfg_v1.w692_drop_release() RETURNS trigger LANGUAGE plpgsql AS $$
+                    BEGIN
+                        IF EXISTS(SELECT 1 FROM cp6_fin_mfg_v1.ledgers WHERE tenant_id=NEW.tenant_id AND id=NEW.ledger_id
+                            AND environment_id='w691-installed') THEN RETURN NULL; END IF;
+                        RETURN NEW;
+                    END; $$;
+                    CREATE TRIGGER w692_drop_release BEFORE INSERT ON cp6_fin_mfg_v1.releases
+                        FOR EACH ROW EXECUTE FUNCTION cp6_fin_mfg_v1.w692_drop_release();
+                    """);
+                try
+                {
+                    using (await Call(releaser, publisherContext, $"{rates}/{id}/publish", new ManufacturingRatePublishV1(previewToken),
+                        HttpStatusCode.ServiceUnavailable, "OPERATIONS_OUTCOME_UNKNOWN")) { }
+                }
+                finally
+                {
+                    await h.Db.Database.ExecuteSqlRawAsync("""
+                        DROP TRIGGER w692_drop_release ON cp6_fin_mfg_v1.releases;
+                        DROP FUNCTION cp6_fin_mfg_v1.w692_drop_release();
+                        """);
+                }
+                Assert.False(await h.Db.Database.SqlQuery<bool>($"""
+                    SELECT EXISTS(SELECT 1 FROM cp6_fin_mfg_v1.center_use_effects WHERE tenant_id={h.Tenant}
+                        AND ledger_id={ledger} AND result_id={id}) AS "Value"
+                    """).SingleAsync());
+            }
             using (await Call(releaser, publisherContext, $"{rates}/{id}/publish",
-                new ManufacturingRatePublishV1(preview.RootElement.GetProperty("token").GetGuid()))) { }
+                new ManufacturingRatePublishV1(previewToken))) { }
+            return (id, previewToken);
         }
 
         async Task<Guid> Context(Dictionary<string, string> cookies)
