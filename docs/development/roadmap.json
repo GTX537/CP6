@@ -142201,7 +142201,29 @@
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "as_of": "2026-11-17",
+        "report": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md",
+        "result": "ORIGINAL_AC_EVIDENCE_PENDING",
+        "reviewed_original_cases": 23,
+        "required_revision_cases": 0,
+        "owning_cards_done": [
+          "WP02-02",
+          "WP02-04"
+        ],
+        "gaps": [
+          {
+            "case_id": "SYS-TENANT-01::AC-TN04-04",
+            "gap": "region/issuer 获准新映射的版本切换与旧会话处置缺完整实际证据；冻结/拒绝覆盖不能替代获准切换。",
+            "follow_up_tasks": [
+              "WP02-05",
+              "WP02-06"
+            ]
+          }
+        ],
+        "accepted_scope_unchanged": true
+      }
     },
     {
       "id": "SYS-IAM-01",
@@ -166397,6 +166419,11 @@
       "at": "2026-11-17T12:05:27.589202+00:00",
       "change": "WP02-10 按原卡定义核销 DONE；Main 代表 Owner 同事务、固定原结果/原键恢复、最终授权门和实际 writer 盘点已核销。",
       "evidence": "docs/development/evidence/WP02-10/card-closure/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-17T12:13:16.708976+00:00",
+      "change": "WP02-04 按原卡定义核销 DONE；租户创建模板/原命令、配置 CAS、暂停恢复与共同门、管理审计和删除防绕过已按原出口核销；目标原 AC 映射另留一项证据缺口。",
+      "evidence": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -181495,89 +181522,42 @@
         "file:Main:CP6.WebApi/Controllers/Sys/AuthController.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-04",
-      "entry_gate": "NOT_CHECKED",
+      "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W25-01 租户管理当前平台actor共同事务",
+        "chat_label": "COORD / WP02-04",
         "repository": "Main",
-        "owning_task_repository": "Main",
-        "branch": "codex/wave25-01-tenant-final-gate-20261019",
-        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-19T08:56:46.233363+00:00",
-        "baseline_sha": "dcf7cb45029af329f13df72a5b0de7fd5d0fa6bb",
-        "entry_evidence": "docs/development/dispatch/20261019-wave25/README.md",
+        "branch": "codex/wp02-04",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-17T12:09:24.408475+00:00",
+        "baseline_sha": "ab3c7da128d1f33fabb34b92f5c1ea9ffd532116",
+        "entry_evidence": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md",
         "phase": "CLOSED",
-        "dispatch_scope": "W25_01",
-        "bounded_window_gate": "CONFIRMED",
-        "full_task_gate_unchanged": true,
-        "worker_start_received": true,
-        "allowed_write_paths": [
-          "CP6.Core/Services/Platform/TenantAdminService.cs",
-          "CP6.Core/Services/Platform/PlatformAdminMutationV1.cs",
-          "CP6.WebApi/Controllers/Platform/TenantController.cs",
-          "CP6.Tests/Platform/TenantManagementAuditPostgreSqlTests.cs",
-          "CP6.Tests/Platform/TenantManagementCurrentActorPostgreSqlTests.cs",
-          "docs/development/evidence/WP02-04/current-actor-final-gate/DELIVERY.md"
-        ],
-        "reserved_write_resources": [],
-        "reserved_postgresql_ports": [],
-        "handoff_branch": "codex/dev-coordination-20261012",
-        "actions_authorized": false,
-        "formal_publication_authorized": false,
-        "existing_database_migration_authorized": false,
-        "deployment_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-04/current-actor-final-gate/DELIVERY.md",
-        "candidate_review_completed": true,
-        "candidate_integrated": true,
-        "actual_start_ref": {
-          "commit": "5a406e4bae04ccc397b36469f8adbc1363bacb1a",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-04/messages/20261019T090242Z-wave25-01-start/MESSAGE.md",
-          "at": "2026-10-19T09:02:42.880749+00:00"
-        },
-        "active_issue": null,
-        "worker_delivery_received": true,
-        "candidate_review_verdict": "READY_TO_MERGE",
-        "integration": {
-          "result": "PASS",
-          "repository": "GTX537/CP6",
-          "source": "f9f54ee51c8d237d403a8e0ef2c16eb5ae2e12df",
-          "main": "1974bcb4ee9f179c6539dd032b09329037cd5002",
-          "pr": "https://github.com/GTX537/CP6/pull/320",
-          "paths": [
-            "CP6.Core/Services/Platform/PlatformAdminMutationV1.cs",
-            "CP6.Core/Services/Platform/TenantAdminService.cs",
-            "CP6.Tests/Platform/TenantManagementAuditPostgreSqlTests.cs",
-            "CP6.Tests/Platform/TenantManagementCurrentActorPostgreSqlTests.cs",
-            "CP6.WebApi/Controllers/Platform/TenantController.cs",
-            "docs/development/dispatch/20261019-wave25/README.md",
-            "docs/development/evidence/WP02-04/current-actor-final-gate/DELIVERY.md",
-            "docs/development/roadmap.json",
-            "docs/project-memory/05-Completed.md",
-            "docs/project-memory/06-Todo.md",
-            "docs/project-memory/CHANGELOG-AI.md",
-            "docs/project-memory/PROJECT_STATE.md"
-          ],
-          "observed_at": "2026-10-19T09:15:17.268759+00:00"
-        },
-        "delivery_ref": {
-          "commit": "05c1a603bee2ef7ce4e929ea9fbfcbfdf9f64394",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-04/messages/20261019T091728Z-wave25-01-delivery/MESSAGE.md",
-          "at": "2026-10-19T09:17:28.756527+00:00"
-        },
-        "resolved_issue": {
-          "number": 319,
-          "state": "CLOSED",
-          "url": "https://github.com/GTX537/CP6/issues/319"
-        },
-        "resources_released": true,
-        "closed_at": "2026-10-19T10:30:18.745522+00:00",
-        "full_task_completed": false
+        "dispatch_scope": "租户创建模板/原命令、配置 CAS、暂停恢复与共同门、管理审计和删除防绕过已按原出口核销；目标原 AC 映射另留一项证据缺口。",
+        "delivery_report": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md",
+        "full_task_completed": true
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md",
+          "source_sha": "ab3c7da128d1f33fabb34b92f5c1ea9ffd532116",
+          "result": "PASS",
+          "observed_at": "2026-11-17T12:13:16.708976+00:00",
+          "command": "Review W18/W264/W265/W313/W435/W529/W649/W645 evidence and current tenant entry points; source adoption; original scope and all 23 target AC review; ledger/docs checks",
+          "environment": "本次文档/台账核销；按原 SHA 和环境复用实际 PostgreSQL/宿主证据，无新产品执行",
+          "scope": "租户创建模板/原命令、配置 CAS、暂停恢复与共同门、管理审计和删除防绕过已按原出口核销；目标原 AC 映射另留一项证据缺口。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md",
+        "source_sha": "ab3c7da128d1f33fabb34b92f5c1ea9ffd532116",
+        "remote_main_sha": "ab3c7da128d1f33fabb34b92f5c1ea9ffd532116",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1238",
+        "scope": "本报告核实的已交付实现均在准确远端主线中；所列 PR 是基线采用定位，本次卡核销 PR 另由 GitHub 和工作区 finish 记录。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
@@ -181656,27 +181636,125 @@
           "remote_main_sha": "d77d8c030ee2fd17b8e2f6c8e24d476112d5f0d9",
           "pull_request": "https://github.com/GTX537/CP6/pull/278",
           "issue_state": "CLOSED"
+        },
+        {
+          "chat_label": "COORD / W25-01 租户管理当前平台actor共同事务",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/wave25-01-tenant-final-gate-20261019",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-19T08:56:46.233363+00:00",
+          "baseline_sha": "dcf7cb45029af329f13df72a5b0de7fd5d0fa6bb",
+          "entry_evidence": "docs/development/dispatch/20261019-wave25/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "W25_01",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "allowed_write_paths": [
+            "CP6.Core/Services/Platform/TenantAdminService.cs",
+            "CP6.Core/Services/Platform/PlatformAdminMutationV1.cs",
+            "CP6.WebApi/Controllers/Platform/TenantController.cs",
+            "CP6.Tests/Platform/TenantManagementAuditPostgreSqlTests.cs",
+            "CP6.Tests/Platform/TenantManagementCurrentActorPostgreSqlTests.cs",
+            "docs/development/evidence/WP02-04/current-actor-final-gate/DELIVERY.md"
+          ],
+          "reserved_write_resources": [],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/dev-coordination-20261012",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false,
+          "deployment_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-04/current-actor-final-gate/DELIVERY.md",
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "actual_start_ref": {
+            "commit": "5a406e4bae04ccc397b36469f8adbc1363bacb1a",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-04/messages/20261019T090242Z-wave25-01-start/MESSAGE.md",
+            "at": "2026-10-19T09:02:42.880749+00:00"
+          },
+          "active_issue": null,
+          "worker_delivery_received": true,
+          "candidate_review_verdict": "READY_TO_MERGE",
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "f9f54ee51c8d237d403a8e0ef2c16eb5ae2e12df",
+            "main": "1974bcb4ee9f179c6539dd032b09329037cd5002",
+            "pr": "https://github.com/GTX537/CP6/pull/320",
+            "paths": [
+              "CP6.Core/Services/Platform/PlatformAdminMutationV1.cs",
+              "CP6.Core/Services/Platform/TenantAdminService.cs",
+              "CP6.Tests/Platform/TenantManagementAuditPostgreSqlTests.cs",
+              "CP6.Tests/Platform/TenantManagementCurrentActorPostgreSqlTests.cs",
+              "CP6.WebApi/Controllers/Platform/TenantController.cs",
+              "docs/development/dispatch/20261019-wave25/README.md",
+              "docs/development/evidence/WP02-04/current-actor-final-gate/DELIVERY.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-19T09:15:17.268759+00:00"
+          },
+          "delivery_ref": {
+            "commit": "05c1a603bee2ef7ce4e929ea9fbfcbfdf9f64394",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-04/messages/20261019T091728Z-wave25-01-delivery/MESSAGE.md",
+            "at": "2026-10-19T09:17:28.756527+00:00"
+          },
+          "resolved_issue": {
+            "number": 319,
+            "state": "CLOSED",
+            "url": "https://github.com/GTX537/CP6/issues/319"
+          },
+          "resources_released": true,
+          "closed_at": "2026-10-19T10:30:18.745522+00:00",
+          "full_task_completed": false
         }
       ],
       "scope_reconciliation": {
-        "window": "W310-01",
-        "as_of": "2026-11-08",
-        "classification": "IMPLEMENTATION_REMAINS",
-        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-04",
-        "delivered": "W264启停/配置CAS及W265固定模板创建V1、同事务强审计/原结果、真实HTTP和页面已交付。",
-        "remaining": "其他配置Owner、旧兼容入口的版本/原命令、全业务共同fence、跨系统传播和worker恢复尚非全覆盖。",
-        "next_action": "先盘旧入口真实调用再逐个采用；旧CreateAsync未知不能自动重放，不重复V1创建。",
+        "window": "WP02-04",
+        "as_of": "2026-11-17",
+        "classification": "CARD_DEFINITION_CLOSED",
+        "report": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md",
+        "delivered": "租户创建模板/原命令、配置 CAS、暂停恢复与共同门、管理审计和删除防绕过已按原出口核销；目标原 AC 映射另留一项证据缺口。",
+        "remaining": "",
+        "next_action": "按原图和用户顺序进入 WP02-13",
         "evidence_refs": [
           "docs/development/evidence/WP02-04/current-actor-final-gate/DELIVERY.md",
           "docs/development/evidence/WP02-04/tenant-management-audit/DELIVERY.md",
           "docs/development/evidence/W264-01/DELIVERY.md",
           "docs/development/evidence/W265-01/DELIVERY.md",
-          "docs/development/evidence/W310-01/DELIVERY.md"
+          "docs/development/evidence/W310-01/DELIVERY.md",
+          "docs/development/evidence/WP02-04/card-closure/DELIVERY.md"
         ],
-        "formal_state_changed": false,
-        "new_product_validation": false
+        "formal_state_changed": true,
+        "new_product_validation": false,
+        "review_history": [
+          {
+            "window": "W310-01",
+            "as_of": "2026-11-08",
+            "classification": "IMPLEMENTATION_REMAINS",
+            "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-04",
+            "delivered": "W264启停/配置CAS及W265固定模板创建V1、同事务强审计/原结果、真实HTTP和页面已交付。",
+            "remaining": "其他配置Owner、旧兼容入口的版本/原命令、全业务共同fence、跨系统传播和worker恢复尚非全覆盖。",
+            "next_action": "先盘旧入口真实调用再逐个采用；旧CreateAsync未知不能自动重放，不重复V1创建。",
+            "evidence_refs": [
+              "docs/development/evidence/WP02-04/current-actor-final-gate/DELIVERY.md",
+              "docs/development/evidence/WP02-04/tenant-management-audit/DELIVERY.md",
+              "docs/development/evidence/W264-01/DELIVERY.md",
+              "docs/development/evidence/W265-01/DELIVERY.md",
+              "docs/development/evidence/W310-01/DELIVERY.md"
+            ],
+            "formal_state_changed": false,
+            "new_product_validation": false
+          }
+        ],
+        "latest_window": "WP02-04"
       },
-      "remaining_scope": "W264配置/启停与W265创建V1已交付。WP02-04仍有其他配置Owner、旧兼容入口全面版本/原命令采用、全部业务writer共同fence、跨系统映射/传播、worker恢复及整卡验收；命令历史保留/擦除归相应治理任务。旧CreateAsync不具备原命令恢复，未知不得自动重放；现有默认模板Owner管理不在本期新增审批流程。",
+      "remaining_scope": "",
       "wave264_tenant_management": {
         "status": "MERGED",
         "report": "docs/development/evidence/W264-01/DELIVERY.md",
@@ -181750,6 +181828,22 @@
         "full_task_completed": false,
         "tested_source_sha": "23db035bd78e6e8f4698b34918139958b87edfea",
         "actual_evidence": "D:/CP6-test-artifacts/W529-01/results/pgt011-final.trx"
+      },
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md",
+        "started_at": "2026-11-17T12:09:24.408475+00:00",
+        "verified_at": "2026-11-17T12:13:16.708976+00:00",
+        "effective_seconds": 232.301,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600.0,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-03"
+        ],
+        "new_product_execution": false,
+        "preceding_integration_seconds": 236.819
       }
     },
     {
@@ -182621,7 +182715,17 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
-      }
+      },
+      "target_acceptance_followups": [
+        {
+          "target_id": "SYS-TENANT-01",
+          "case_id": "SYS-TENANT-01::AC-TN04-04",
+          "report": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md",
+          "scope": "核对原卡 issuer/映射权威向量和新版本实际采用/旧会话处置。",
+          "status": "EVIDENCE_PENDING",
+          "new_implementation_authorized": false
+        }
+      ]
     },
     {
       "id": "WP02-06",
@@ -183200,7 +183304,17 @@
         "validation": "11 unique relevant PostgreSQL/HTTP scenarios passed,0 skipped: final8 review boundary/rollback cases,final1 browser login/switch case,and2 unchanged original decision cases from acceptance batch. Signed mock IdP/policy/business inputs;actual CRM OIDC/cookie/session/Owner/PG graph executed. Review/capability clocks controlled;IAM/retention/disclosure use real clocks. One author full SPEC/QUALITY review;no UI changes,Actions or deployment.",
         "full_task_completed": false,
         "scope": "Actual HTTP login/organization switch and durable stale session denial"
-      }
+      },
+      "target_acceptance_followups": [
+        {
+          "target_id": "SYS-TENANT-01",
+          "case_id": "SYS-TENANT-01::AC-TN04-04",
+          "report": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md",
+          "scope": "核对原卡 issuer/映射权威向量和新版本实际采用/旧会话处置。",
+          "status": "EVIDENCE_PENDING",
+          "new_implementation_authorized": false
+        }
+      ]
     },
     {
       "id": "WP02-07",
@@ -216233,7 +216347,7 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "WP02-10",
+      "id": "WP02-04",
       "phase": "CARD_DONE_PENDING_PR",
       "owner": "COORD",
       "mode": "SINGLE_CHAT_SERIAL",
@@ -216246,22 +216360,22 @@
         "COORD"
       ],
       "product_code_changed": false,
-      "report": "docs/development/evidence/WP02-10/card-closure/DELIVERY.md",
-      "next_action": "正常合并并核实远端后进入 WP02-04",
+      "report": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md",
+      "next_action": "正常合并并核实远端后进入 WP02-13",
       "windows": [
         {
-          "id": "WP02-10",
-          "workspace_task": "WP02-10",
+          "id": "WP02-04",
+          "workspace_task": "WP02-04",
           "related_tasks": [
-            "WP02-10"
+            "WP02-04"
           ],
           "chat": "COORD",
           "phase": "CLOSED",
-          "branch": "codex/wp02-10",
+          "branch": "codex/wp02-04",
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "delivery_report": "docs/development/evidence/WP02-10/card-closure/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md",
           "review_completed": true,
           "full_task_completed": true,
           "integration_status": "PENDING_PROTECTED_PR",
@@ -276572,6 +276686,47 @@
         "integration_status": "MERGED",
         "remote_main_sha": "17aa9250d46a0859fcb2ce8ddd4e5bec4b69c42b",
         "pr_url": "https://github.com/GTX537/CP6/pull/1237"
+      },
+      {
+        "id": "WP02-10",
+        "phase": "INTEGRATED",
+        "owner": "COORD",
+        "mode": "SINGLE_CHAT_SERIAL",
+        "windows_closed": true,
+        "active_implementation_chats": [],
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "product_code_changed": false,
+        "report": "docs/development/evidence/WP02-10/card-closure/DELIVERY.md",
+        "next_action": "正常合并并核实远端后进入 WP02-04",
+        "windows": [
+          {
+            "id": "WP02-10",
+            "workspace_task": "WP02-10",
+            "related_tasks": [
+              "WP02-10"
+            ],
+            "chat": "COORD",
+            "phase": "CLOSED",
+            "branch": "codex/wp02-10",
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "delivery_report": "docs/development/evidence/WP02-10/card-closure/DELIVERY.md",
+            "review_completed": true,
+            "full_task_completed": true,
+            "integration_status": "MERGED",
+            "actions_authorized": false,
+            "deployment_authorized": false
+          }
+        ],
+        "integration_status": "MERGED",
+        "remote_main_sha": "ab3c7da128d1f33fabb34b92f5c1ea9ffd532116",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1238"
       }
     ],
     "development_priority": {
@@ -287964,15 +288119,16 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 1292.625,
+      "effective_seconds": 1761.745,
       "closed_cards": [
         "WP02-03",
-        "WP02-10"
+        "WP02-10",
+        "WP02-04"
       ],
       "closed_targets": [],
       "new_splits": [],
       "current_stage": "PHASE_0",
-      "next_card": "WP02-04",
+      "next_card": "WP02-13",
       "no_module_freeze": true,
       "phases": {
         "A": [

@@ -1,5 +1,7 @@
 # 项目当前状态
 
+2026-11-17，WP02-04 卡 DONE；租户创建模板/原命令、配置 CAS、暂停恢复与共同门、管理审计和删除防绕过已按原出口核销；目标原 AC 映射另留一项证据缺口。 当前 42/375 卡 DONE、0/125 目标 DONE；下一卡 WP02-13。 [WP02-04 核销](../development/evidence/WP02-04/card-closure/DELIVERY.md)
+
 2026-11-17，WP02-10 卡 DONE；Main 代表 Owner 同事务、固定原结果/原键恢复、最终授权门和实际 writer 盘点已核销。 当前 41/375 卡 DONE、0/125 目标 DONE；下一卡 WP02-04。 [WP02-10 核销](../development/evidence/WP02-10/card-closure/DELIVERY.md)
 
 2026-11-17，按用户决定改为单卡串行。WP02-03 按原卡出口核销 DONE，财务局部交付归回六张原卡，业务代码及严格前置不变；当前 40/375 卡 DONE、0/125 目标 DONE。下一卡 WP02-10。 [WP02-03 核销](../development/evidence/WP02-03/card-closure/DELIVERY.md)

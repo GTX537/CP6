@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-17，WP02-04 单卡核销；文档/台账变更，无业务代码、依赖图或原 AC 变更。 [WP02-04 核销](../development/evidence/WP02-04/card-closure/DELIVERY.md)
+
 2026-11-17，WP02-10 单卡核销；文档/台账变更，无业务代码、依赖图或原 AC 变更。 [WP02-10 核销](../development/evidence/WP02-10/card-closure/DELIVERY.md)
 
 2026-11-17，保存用户单卡执行决定、预算及阶段序列；WP02-03 核销并迁移财务交付归属。只调整文档和台账，无产品改动/新业务测试。 [WP02-03 核销](../development/evidence/WP02-03/card-closure/DELIVERY.md)

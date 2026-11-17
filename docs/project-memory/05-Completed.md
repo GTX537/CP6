@@ -1,5 +1,7 @@
 # 已完成能力与近期里程碑
 
+2026-11-17，WP02-04 卡 DONE：租户创建模板/原命令、配置 CAS、暂停恢复与共同门、管理审计和删除防绕过已按原出口核销；目标原 AC 映射另留一项证据缺口。 原证据按实际范围复用，未重跑产品。 [WP02-04 核销](../development/evidence/WP02-04/card-closure/DELIVERY.md)
+
 2026-11-17，WP02-10 卡 DONE：Main 代表 Owner 同事务、固定原结果/原键恢复、最终授权门和实际 writer 盘点已核销。 原证据按实际范围复用，未重跑产品。 [WP02-10 核销](../development/evidence/WP02-10/card-closure/DELIVERY.md)
 
 2026-11-17，WP02-03 卡 DONE：当前身份/版本/共同撤权门、字段 MIN 后默认和四用途决定及当前原结果披露已核销，复用原实际证据。 [WP02-03 核销](../development/evidence/WP02-03/card-closure/DELIVERY.md)
