@@ -1,5 +1,7 @@
 # 已完成能力与近期里程碑
 
+2026-11-17，W696 完成标准成本单据身份绑定、原回执与同键恢复。PostgreSQL 9 项通过，零跳过。 [W696 交付](../development/evidence/W696-01/DELIVERY.md)
+
 2026-11-17，W695 完成制造成本维护界面及原命令回查。PostgreSQL 4 项、Chrome 5 项、Vue 回归 19 项通过，零跳过。 [W695 交付](../development/evidence/W695-01/DELIVERY.md)
 
 2026-11-17，W694 完成独立标准成本单据和同事务命令结果。PostgreSQL 5 项定向用例通过，零跳过。 [W694 交付](../development/evidence/W694-01/DELIVERY.md)
