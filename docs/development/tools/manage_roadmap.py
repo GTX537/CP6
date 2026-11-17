@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import collections
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 import json
 from pathlib import Path
 import re
@@ -534,6 +535,86 @@ def validate_definitions(data, root: Path, targets):
         strict = current_card_execution(task, policy.get("card_execution_policy", {}))
         errors.extend(validate_prerequisites(task, definition, tasks, root, strict=strict,
                                             remainders=split_remainders(task, entries) if strict else ()))
+    errors.extend(validate_target_gaps(data.get("target_task_coverage", []), targets, tasks, entries))
+    errors.extend(validate_card_budgets(policy.get("card_execution_policy", {}), tasks, entries))
+    return errors
+
+
+def fully_done(tid, tasks, definitions):
+    """定义中的拆分图已通过 validate_splits；原号和全部余卡共同构成完整 DONE。"""
+    return (tid in tasks and tasks[tid]["state"] == "DONE"
+            and all(fully_done(child, tasks, definitions)
+                    for child in definitions.get(tid, {}).get("split_children", [])))
+
+
+def card_completion_counts(tasks, definitions):
+    originals = [tid for tid in tasks if not definitions.get(tid, {}).get("split_parent")]
+    return {"original_done": sum(tasks[tid]["state"] == "DONE" for tid in originals),
+            "fully_done": sum(fully_done(tid, tasks, definitions) for tid in originals),
+            "original_total": len(originals)}
+
+
+def validate_target_gaps(coverage, targets, tasks, definitions):
+    errors = []
+    for row in coverage:
+        tid = row["target_id"]
+        if tid not in targets:
+            continue  # 覆盖集合错误由主校验边界报告。
+        owners = row.get("implementation_task_ids", [])
+        complete = bool(owners) and all(fully_done(owner, tasks, definitions) for owner in owners)
+        target = targets[tid]
+        if target["delivery_state"] == "DONE":
+            if not complete:
+                errors.append(f"{tid}: target DONE with unfinished split remainders")
+            continue
+        if not complete:
+            continue
+        audit = target.get("completion_audit")
+        gaps = audit.get("gaps") if isinstance(audit, dict) else None
+        if not isinstance(gaps, list) or not 1 <= len(gaps) <= 5:
+            errors.append(f"{tid}: open target with complete coverage requires gap owners")
+            continue
+        for gap in gaps:
+            owner = gap.get("owner_task_id") if isinstance(gap, dict) else None
+            if (not isinstance(owner, str) or owner not in tasks or tasks[owner]["state"] == "DONE"
+                    or not isinstance(gap.get("gap"), str) or not gap["gap"].strip()):
+                errors.append(f"{tid}: gap owner must be one existing unfinished task")
+    return errors
+
+
+def validate_card_budgets(policy, tasks, definitions):
+    """只分配原剩余卡池；原号历史 cap 保留，余卡不能重新获得 M/L 全额。"""
+    excluded = policy.get("budget_baseline_done_task_ids")
+    if excluded is None:
+        return []  # 尚未采用预算策略的历史台账。
+    if (not string_list(excluded) or len(excluded) != len(set(excluded))
+            or any(tid not in tasks or definitions.get(tid, {}).get("split_parent") for tid in excluded)):
+        return ["invalid card budget baseline exclusions"]
+    errors = []
+    try:
+        caps = {}
+        for tid, task in tasks.items():
+            if tid in excluded:
+                continue
+            cap = (task.get("card_budget_seconds") if definitions.get(tid, {}).get("split_parent")
+                   else Decimal(str(policy["size_budget_hours"][task["relative_size"]])) * 3600)
+            caps[tid] = Decimal(str(cap))
+            if not caps[tid].is_finite() or caps[tid] < 0:
+                raise ValueError("nonfinite or negative cap")
+        total = sum(cap for tid, cap in caps.items() if not definitions.get(tid, {}).get("split_parent"))
+        if total != Decimal(str(policy["base_card_hours"])) * 3600:
+            errors.append("card budget total differs from original remaining-card pool")
+        for tid, definition in definitions.items():
+            children = definition.get("split_children", [])
+            if not children:
+                continue
+            spent = Decimal(str(tasks[tid]["card_execution"]["effective_seconds"]))
+            if not spent.is_finite() or spent < 0:
+                raise ValueError("nonfinite or negative effective time")
+            if sum(caps[child] for child in children) != max(Decimal(0), caps[tid] - spent):
+                errors.append(f"{tid}: split budgets must conserve parent cap minus effective time")
+    except (KeyError, TypeError, ValueError, InvalidOperation):
+        errors.append("invalid card budget or missing split effective time")
     return errors
 
 
@@ -608,9 +689,9 @@ def metrics(data):
     return {"packages": len(data["work_packages"]), "targets": len(data["targets"]), "targets_assessed": sum(t["assessment"] not in {"PENDING", "DECISION_REQUIRED"} for t in data["targets"]), "targets_delivered": sum(t["delivery_state"] == "DONE" for t in data["targets"]), "original_inventories_complete": sum(t["original_acceptance_inventory"]["state"] == "COMPLETE" for t in data["targets"]), "revision_runtime": len(runtime), "runtime_states": dict(sorted(collections.Counter(c["state"] for c in runtime).items())), "historical_static": sum(c["kind"] == "HISTORICAL_STATIC" for c in data["revision_acceptances"])}
 
 
-def render(data):
+def render(data, definitions=None):
     m = metrics(data)
-    overview = ["# 开发进度", "", f"台账日期：{data['as_of']}；基线：`{data['baseline_id']}`。由 roadmap.json 生成，按实际记录更新。", "", "| 指标 | 当前记录 |", "|---|---:|", f"| 大任务及目标归属已建立 | {m['packages']} 个 / {m['targets']} 个 |", f"| 逐目标实现差异已确认 | {m['targets_assessed']}/{m['targets']} |", f"| 原模块完整验收清单已登记 | {m['original_inventories_complete']}/{m['targets']} |", f"| 已确认完成本轮目标交付 | {m['targets_delivered']}/{m['targets']} |", f"| 修订运行场景已有真实 PASS | {m['runtime_states'].get('PASS', 0)}/{m['revision_runtime']} |", f"| 历史静态检查引用 | {m['historical_static']} 条，不计业务运行进度 |", "", "上述是本轮台账的证据登记数。0项已确认交付不表示既有代码为零；目标大小不同，不以目标数或大任务数计算总工作量百分比。247条仅为修订场景，原模块业务验收另行登记。", "", "| 大任务 | 目标数 | 状态 | 已确认交付 | 初步规模 |", "|---|---:|---|---:|---|"]
+    overview = ["# 开发进度", "", f"台账日期：{data['as_of']}；基线：`{data['baseline_id']}`。由 roadmap.json 生成，按实际记录更新。", "", "| 指标 | 当前记录 |", "|---|---:|", f"| 大任务及目标归属已建立 | {m['packages']} 个 / {m['targets']} 个 |", f"| 逐目标实现差异已确认 | {m['targets_assessed']}/{m['targets']} |", f"| 原模块完整验收清单已登记 | {m['original_inventories_complete']}/{m['targets']} |", f"| 已确认完成本轮目标交付 | {m['targets_delivered']}/{m['targets']} |", f"| 修订运行场景已有真实 PASS | {m['runtime_states'].get('PASS', 0)}/{m['revision_runtime']} |", f"| 历史静态检查引用 | {m['historical_static']} 条，不计业务运行进度 |", "", "上述是本轮台账的证据登记数。未关闭目标不表示既有代码为零；目标大小不同，不以目标数或大任务数计算总工作量百分比。247条仅为修订场景，原模块业务验收另行登记。", "", "| 大任务 | 目标数 | 状态 | 已确认交付 | 初步规模 |", "|---|---:|---|---:|---|"]
     details = ["# 开发大任务评估", "", "14项是业务工作包。WP01负责全局评估，WP14负责跨域验收协调，其余12项各自拥有目标；跨域合同可以有多个参与方，但一个Target只有一个归属。", "", "规模L/XL是相对范围与风险，不是工期；置信度均为LOW。已有实现入口是复用候选，未代替逐目标语义核对和实际测试。", ""]
     for p in data["work_packages"]:
         own = [t for t in data["targets"] if t["package_id"] == p["id"]]
@@ -632,6 +713,13 @@ def render(data):
     split_count = len(data.get('dispatch_policy', {}).get('card_execution_policy', {}).get('new_splits', []))
     if split_count:
         task_view += [f"原 375 卡及其全部出口保留；已登记 {split_count} 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。", ""]
+    if definitions is not None:
+        counts = card_completion_counts({t['id']: t for t in tasks}, {d['id']: d for d in definitions['tasks']})
+        count_text = (f"原号 DONE {counts['original_done']}/{counts['original_total']}；"
+                      f"完整 DONE {counts['fully_done']}/{counts['original_total']}。"
+                      "完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。")
+        task_view += [count_text, ""]
+        overview += ["", count_text, ""]
     for package in data["work_packages"]:
         group = [t for t in tasks if t.get("package_id", "WP02") == package["id"]]
         if not group:
@@ -680,9 +768,11 @@ def main():
         args.basis_report.parent.mkdir(parents=True, exist_ok=True)
         args.basis_report.write_text(json.dumps(basis_result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     errors = validate(data, root, _basis_result=basis_result)
-    views = render(data) if not errors else {}
+    definitions = None
     if not errors and "definition_path" in data.get("dispatch_policy", {}):
         definitions = read_json(root / data["dispatch_policy"]["definition_path"])
+    views = render(data, definitions) if not errors else {}
+    if definitions is not None:
         views.update(render_cards(definitions, data))
     for name, text in views.items():
         path = root / "docs/development" / name
@@ -692,6 +782,10 @@ def main():
         elif not path.exists() or path.read_text(encoding="utf-8") != text:
             errors.append(f"derived view out of date: {name}; run with --write")
     result = {"result": "FAIL" if errors else "PASS", "scope": "ledger/source traceability, structural evidence requirements and generated view consistency only", "business_tests_executed": False, "metrics": metrics(data), "errors": errors}
+    if definitions is not None:
+        result['metrics']['cards'] = card_completion_counts(
+            {t['id']: t for t in data.get('implementation_tasks', [])},
+            {d['id']: d for d in definitions['tasks']})
     if args.report:
         args.report.parent.mkdir(parents=True, exist_ok=True)
         args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
