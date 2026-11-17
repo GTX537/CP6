@@ -1,5 +1,0 @@
-做了什么：保存 2026-11-17 主线优先决定；对照 CP6 远端 main `8d9fdbc2e`、CRM 远端 main `5f09533b`、roadmap 和当前源码，整理[23 个主线目标](../../../superpowers/plans/2026-11-17-order-to-cost-mainline.md)，逐项列明现状、缺口、依赖、关闭卡片、1–3 天估时和 A/B 分道。新增独立的 17 步 Playwright 骨架，固定同一笔订单的数量与成本预期，并登记周五一页汇报格式。本轮没有业务代码改动，没有修改 roadmap 状态、四份周更文件或 09 顶部日志。
-
-怎么验证：在固定 DEV-2 本地完成一次完整差异审查、卡片存在/状态和文档链接核对。对 `playwright.mainline.config.ts`、`e2e-mainline/order-to-cost.spec.ts` 执行 TypeScript 严格类型检查，通过；`npm exec --no -- playwright test --config playwright.mainline.config.ts --list` 发现 1 个用例。实际 Chrome 执行同一配置，结果为 1 个失败、0 个跳过；在第 1 步报 `MAINLINE_NOT_CONNECTED`，附件记录 0/17，符合用户允许失败骨架的要求，不能算业务通过。原始 JSON、截图和 trace 保存在 `D:/CP6-test-artifacts/MAINLINE-PLAN-20261117/mainline-red/`，未重新包装或生成哈希清单。已核对候选与远端 main 的工作流相同：普通流程只手动触发，R2 候选仅发布 tag 触发，其他 R2 流程保持手动；本任务没有排队运行可取消，没有改变触发器或运行 Actions。
-
-还剩什么：等待用户确认清单后，协调对话从表内选择首批业务目标并接通测试驱动；本轮未执行 PostgreSQL 全链路、业务验收或 DEV/生产部署，不将已有分模块测试冒称本轮通过。周五汇报规则从 2026-11-20 起执行，当前工具不能创建独立周期汇报任务，自动唤醒/推送尚未设置。提案和骨架按一个准备任务保存，业务目标保持未开工；分支、工作区和席位处置以本任务最终交付消息及工作区登记为准。
