@@ -36,24 +36,23 @@ internal sealed class ManufacturingRateConsumptionV1(CP6Context db, Manufacturin
                 r.center_id AS "CenterId",r.center_version_id AS "CenterVersionId",r.policy_version_id AS "PolicyVersionId",
                 r.basis_id AS "BasisId",r.maker AS "Maker",
                 r.labor_rate AS "LaborRate",r.overhead_rate AS "OverheadRate",r.valid_from AS "From",r.to_exclusive AS "ToExclusive",
-                (r.state='RELEASED' AND p.enabled AND b.enabled AND v.enabled AND c."IsActive"
+                (r.state='RELEASED' AND p.enabled AND b.enabled AND (v.operation_id IS NULL OR v.operation_id=r.operation_id)
                  AND p.currency={ledger.Currency}
-                 AND daterange(v.valid_from,v.to_exclusive,'[)') @> {day}
+                 AND v.effective_dates @> {day}
                  AND daterange(p.valid_from,p.to_exclusive,'[)') @> {day}
                  AND daterange(b.valid_from,b.to_exclusive,'[)') @> {day}
-                 AND NOT EXISTS(SELECT 1 FROM cp6_fin_mfg_v1.center_versions alternate
+                 AND NOT EXISTS(SELECT 1 FROM cp6_fin_mfg_v1.center_calendar alternate
                      WHERE alternate.tenant_id=v.tenant_id AND alternate.ledger_id=v.ledger_id AND alternate.root_id=v.root_id
                        AND alternate.version_id<>v.version_id AND alternate.enabled
-                       AND daterange(alternate.valid_from,alternate.to_exclusive,'[)') @> {day})) AS "Eligible",
+                       AND alternate.effective_dates @> {day})) AS "Eligible",
                 (p.currency_scale=2 AND p.rounding='HALF_UP' AND p.rate_date_basis='APPROVED_ACCOUNTING_DATE'
                  AND p.valuation='STANDARD_OUTPUT_WITH_VARIANCE' AND p.variance='VAR_TO_EXPENSE') AS "PolicySupported"
             FROM cp6_fin_mfg_v1.timeline t
             JOIN cp6_fin_mfg_v1.rate_versions r ON (r.tenant_id,r.ledger_id,r.id)=(t.tenant_id,t.ledger_id,t.rate_id)
             JOIN cp6_fin_mfg_v1.policies p ON (p.tenant_id,p.ledger_id,p.version_id)=(r.tenant_id,r.ledger_id,r.policy_version_id)
             JOIN cp6_fin_mfg_v1.rate_bases b ON (b.tenant_id,b.ledger_id,b.id)=(r.tenant_id,r.ledger_id,r.basis_id)
-            JOIN cp6_fin_mfg_v1.center_versions v ON (v.tenant_id,v.ledger_id,v.root_id,v.version_id)
+            JOIN cp6_fin_mfg_v1.current_center_versions v ON (v.tenant_id,v.ledger_id,v.root_id,v.version_id)
                 =(r.tenant_id,r.ledger_id,r.center_id,r.center_version_id)
-            JOIN public."Fin_CostCenter" c ON c."TenantId"=r.tenant_id AND c."Id"=r.center_id
             WHERE t.tenant_id={db.CurrentTenantId} AND t.ledger_id={ledger.Id}
               AND t.work_center_id=ANY({centers}) AND t.operation_id=ANY({operations})
               AND daterange(t.valid_from,t.to_exclusive,'[)') @> {day}

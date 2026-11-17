@@ -166342,6 +166342,11 @@
       "at": "2026-11-16T16:02:04.700298+00:00",
       "change": "W690 接通账套、成本中心版本、独立费率批准、发布及归集。46 项定向用例通过，其中 33 项使用 PostgreSQL，13 项为成本组件回归，零跳过。账套过账沿正式任务接续。",
       "evidence": "docs/development/evidence/W690-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-17T00:28:15.585124+00:00",
+      "change": "已接通有权人员签发和撤销财务资格，以及工序成本中心的独立复核、发布和明确后继。费率及归集采用当前精确工序、中心批准版和专业证据。修复 #1224 的原操作者检查。33 项定向用例通过，其中 27 项使用 PostgreSQL，6 项为成本组件回归，零跳过。",
+      "evidence": "docs/development/evidence/W691-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -171532,18 +171537,18 @@
       "card_anchor": "wp02-03",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W690-01",
+        "chat_label": "COORD / W691-01",
         "repository": "Main",
-        "branch": "codex/w690-01",
+        "branch": "codex/w691-01",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-11-16T16:02:04.700298+00:00",
-        "baseline_sha": "f98e07675906ff4d35c99acf9fb3fc80a2a243ac",
-        "entry_evidence": "docs/development/evidence/W690-01/DELIVERY.md",
+        "claimed_at": "2026-11-17T00:28:15.585124+00:00",
+        "baseline_sha": "7876e9cca7dd84ffbe334fe71eec263f096132d7",
+        "entry_evidence": "docs/development/evidence/W691-01/DELIVERY.md",
         "phase": "CLOSED",
-        "dispatch_scope": "接通可信账套和成本中心版本，验证专业复核、费率发布及归集用版",
+        "dispatch_scope": "专业资格签发、撤销和工序成本中心批准版登记，验证费率发布及归集使用实际原件",
         "bounded_window_gate": "CONFIRMED",
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W690-01/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/W691-01/DELIVERY.md",
         "full_task_completed": false
       },
       "blockers": [],
@@ -171673,6 +171678,15 @@
           "scope": "已绑定账套的工单按获批会计日读取精确工序的已发布费率。账套与成本中心凭据绑定到当前人员及精确版本。制订、独立复核及发布使用各自授权，发布区间可预览、拒绝陈旧提交并幂等重放。46 项定向用例通过，其中 33 项使用 PostgreSQL，13 项为成本组件回归，零跳过。",
           "environment": "Windows/.NET 8/PostgreSQL 18.6，端口 57377，实际迁移、API 和完工，模拟业务数据。",
           "observed_at": "2026-11-16T16:45:38.385591+00:00"
+        },
+        {
+          "path": "docs/development/evidence/W691-01/DELIVERY.md",
+          "result": "PASS",
+          "source_sha": "5b802afae645755f8e0778207efc9fd9fdde3f24",
+          "command": "dotnet build CP6.Tests + targeted PostgreSQL W691 professional authority, center versions, finance collection and related regressions",
+          "scope": "已接通有权人员签发和撤销财务资格，以及工序成本中心的独立复核、发布和明确后继。费率及归集采用当前精确工序、中心批准版和专业证据。修复 #1224 的原操作者检查。33 项定向用例通过，其中 27 项使用 PostgreSQL，6 项为成本组件回归，零跳过。",
+          "environment": "Windows/.NET 8/PostgreSQL 18.6，端口 57378，实际迁移、签名 HTTP 和完工，模拟业务数据。",
+          "observed_at": "2026-11-17T00:55:30.013235+00:00"
         }
       ],
       "delivery_evidence": null,
@@ -171680,7 +171694,7 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
-      "remaining_scope": "继续 WP11-39 的 Finance Master 版本登记与专业资格来源采用、FIN-COST-01 R2 完整命令和费率维护界面、标准依据。按 WP11-40 至 WP11-42 接续原始来源、分配及账套级 GL 过账与恢复。WP02-03 保留其他派生读写和独立用途。",
+      "remaining_scope": "WP11-39 接续完整 FIN-MASTER 控制、父级与其他类型、完整 R2 命令和界面、正式 StandardBasis。资格外部原件核验和账套主登记沿各自 Owner 推进。WP11-40 至 WP11-42 接续原始来源、分配及账套级 GL 过账与恢复。WP02-03 保留其他用途核对。",
       "wave10_delivery": {
         "status": "MERGED",
         "source_candidate_sha": "d29721d20e3ddc4eac46e9b40434e3b680326605",
@@ -176603,6 +176617,21 @@
           "worker_start_received": true,
           "delivery_report": "docs/development/evidence/W689-01/DELIVERY.md",
           "full_task_completed": false
+        },
+        {
+          "chat_label": "COORD / W690-01",
+          "repository": "Main",
+          "branch": "codex/w690-01",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-11-16T16:02:04.700298+00:00",
+          "baseline_sha": "f98e07675906ff4d35c99acf9fb3fc80a2a243ac",
+          "entry_evidence": "docs/development/evidence/W690-01/DELIVERY.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "接通可信账套和成本中心版本，验证专业复核、费率发布及归集用版",
+          "bounded_window_gate": "CONFIRMED",
+          "worker_start_received": true,
+          "delivery_report": "docs/development/evidence/W690-01/DELIVERY.md",
+          "full_task_completed": false
         }
       ],
       "wave13_delivery": {
@@ -177825,13 +177854,13 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W690-01",
-        "as_of": "2026-11-16",
+        "window": "W691-01",
+        "as_of": "2026-11-17",
         "classification": "CONSUMER_RECONCILIATION_REMAINS",
-        "report": "docs/development/evidence/W690-01/DELIVERY.md",
-        "delivered": "已绑定账套的工单按获批会计日读取精确工序的已发布费率。账套与成本中心凭据绑定到当前人员及精确版本。制订、独立复核及发布使用各自授权，发布区间可预览、拒绝陈旧提交并幂等重放。46 项定向用例通过，其中 33 项使用 PostgreSQL，13 项为成本组件回归，零跳过。",
-        "remaining": "继续 WP11-39 的 Finance Master 版本登记与专业资格来源采用、FIN-COST-01 R2 完整命令和费率维护界面、标准依据。按 WP11-40 至 WP11-42 接续原始来源、分配及账套级 GL 过账与恢复。WP02-03 保留其他派生读写和独立用途。",
-        "next_action": "继续 WP11-39 的 Finance Master 版本登记与专业资格来源采用、FIN-COST-01 R2 完整命令和费率维护界面、标准依据。按 WP11-40 至 WP11-42 接续原始来源、分配及账套级 GL 过账与恢复。WP02-03 保留其他派生读写和独立用途。",
+        "report": "docs/development/evidence/W691-01/DELIVERY.md",
+        "delivered": "已接通有权人员签发和撤销财务资格，以及工序成本中心的独立复核、发布和明确后继。费率及归集采用当前精确工序、中心批准版和专业证据。修复 #1224 的原操作者检查。33 项定向用例通过，其中 27 项使用 PostgreSQL，6 项为成本组件回归，零跳过。",
+        "remaining": "WP11-39 接续完整 FIN-MASTER 控制、父级与其他类型、完整 R2 命令和界面、正式 StandardBasis。资格外部原件核验和账套主登记沿各自 Owner 推进。WP11-40 至 WP11-42 接续原始来源、分配及账套级 GL 过账与恢复。WP02-03 保留其他用途核对。",
+        "next_action": "WP11-39 接续完整 FIN-MASTER 控制、父级与其他类型、完整 R2 命令和界面、正式 StandardBasis。资格外部原件核验和账套主登记沿各自 Owner 推进。WP11-40 至 WP11-42 接续原始来源、分配及账套级 GL 过账与恢复。WP02-03 保留其他用途核对。",
         "evidence_refs": [
           "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
           "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
@@ -177922,11 +177951,12 @@
           "docs/development/evidence/W687-01/DELIVERY.md",
           "docs/development/evidence/W688-01/DELIVERY.md",
           "docs/development/evidence/W689-01/DELIVERY.md",
-          "docs/development/evidence/W690-01/DELIVERY.md"
+          "docs/development/evidence/W690-01/DELIVERY.md",
+          "docs/development/evidence/W691-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W690-01",
+        "latest_window": "W691-01",
         "review_history": [
           {
             "window": "W310-01",
@@ -179203,6 +179233,110 @@
             "formal_state_changed": false,
             "new_product_validation": true,
             "latest_window": "W689-01"
+          },
+          {
+            "window": "W690-01",
+            "as_of": "2026-11-16",
+            "classification": "CONSUMER_RECONCILIATION_REMAINS",
+            "report": "docs/development/evidence/W690-01/DELIVERY.md",
+            "delivered": "已绑定账套的工单按获批会计日读取精确工序的已发布费率。账套与成本中心凭据绑定到当前人员及精确版本。制订、独立复核及发布使用各自授权，发布区间可预览、拒绝陈旧提交并幂等重放。46 项定向用例通过，其中 33 项使用 PostgreSQL，13 项为成本组件回归，零跳过。",
+            "remaining": "继续 WP11-39 的 Finance Master 版本登记与专业资格来源采用、FIN-COST-01 R2 完整命令和费率维护界面、标准依据。按 WP11-40 至 WP11-42 接续原始来源、分配及账套级 GL 过账与恢复。WP02-03 保留其他派生读写和独立用途。",
+            "next_action": "继续 WP11-39 的 Finance Master 版本登记与专业资格来源采用、FIN-COST-01 R2 完整命令和费率维护界面、标准依据。按 WP11-40 至 WP11-42 接续原始来源、分配及账套级 GL 过账与恢复。WP02-03 保留其他派生读写和独立用途。",
+            "evidence_refs": [
+              "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
+              "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
+              "docs/development/evidence/WP02-03/consistent-permission-read/DELIVERY.md",
+              "docs/development/evidence/WP02-03/platform-admin-transaction/DELIVERY.md",
+              "docs/development/evidence/WP02-03/user-create-whitelist/DELIVERY.md",
+              "docs/development/evidence/WP02-03/platform-admin-current-actor/DELIVERY.md",
+              "docs/development/evidence/WP02-03/impersonation-final-gate/DELIVERY.md",
+              "docs/development/evidence/WP02-03/session-authentication-current-state/DELIVERY.md",
+              "docs/development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md",
+              "docs/development/evidence/WP02-03/authentication-entry-completion/DELIVERY.md",
+              "docs/development/evidence/WP02-03/authentication-session-continuity/DELIVERY.md",
+              "docs/development/evidence/WP02-03/authentication-browser-recovery/DELIVERY.md",
+              "docs/development/evidence/WP02-03/sso-admission-policy/DELIVERY.md",
+              "docs/development/evidence/WP02-03/sso-identity-admission/DELIVERY.md",
+              "docs/development/evidence/WP02-03/iam-user-assignments/DELIVERY.md",
+              "docs/development/evidence/WP02-03/organization-administration/DELIVERY.md",
+              "docs/development/evidence/WP02-03/role-administration/DELIVERY.md",
+              "docs/development/evidence/WP02-03/integer-role-identity/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-cancel-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/operations-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/production-inbound-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/menu-action-administration/DELIVERY.md",
+              "docs/development/evidence/WP02-03/trusted-field-source/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-price-correction-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-department-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-read-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/order-write-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/stocktake-dashboard-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/defect-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/quality-owners/DELIVERY.md",
+              "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
+              "docs/development/evidence/WP02-03/mes-realtime/DELIVERY.md",
+              "docs/development/evidence/WP02-03/wms-hub-scope/DELIVERY.md",
+              "docs/development/evidence/WP02-03/machine-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/oee-owner/DELIVERY.md",
+              "docs/development/evidence/WP02-03/planning-owner/DELIVERY.md",
+              "docs/development/evidence/W136-01/DELIVERY.md",
+              "docs/development/evidence/W137-01/DELIVERY.md",
+              "docs/development/evidence/W138-01/DELIVERY.md",
+              "docs/development/evidence/W139-01/DELIVERY.md",
+              "docs/development/evidence/W140-01/DELIVERY.md",
+              "docs/development/evidence/W141-01/DELIVERY.md",
+              "docs/development/evidence/W148-01/DELIVERY.md",
+              "docs/development/evidence/W310-01/DELIVERY.md",
+              "docs/development/evidence/W435-01/DELIVERY.md",
+              "docs/development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md",
+              "docs/development/evidence/BUG-881-DEVICE-LIFECYCLE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-883-SERIAL-LIFECYCLE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-885-PALLET-WRITE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-887-BARCODE-CONFIG-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-889-LABEL-RECOVERY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-891-WCS-TASK-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-897-PAPER-ROLL-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-899-REMNANT-LIFECYCLE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-903-WMS-FEATURE-REQUEST-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-905-WMS-FEATURE-QUERY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-907-OPERLOG-AUTHORITY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-909-FIELD-AUDIT-LIST-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-911-DICT-MUTATION-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-913-SPACE-CODE-WRITE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-915-SPACE-SITE-FLOOR-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-917-SPACE-HIERARCHY-GEOMETRY-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-923-SPACE-SCENE-DELTA-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-925-SPACE-LOCATION-PUBLISH-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-927-SPACE-LOCATION-ADOPT-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-929-SPACE-LOCATION-DEACTIVATE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-931-SPACE-TOPOLOGY-DELETE-FENCE/DELIVERY.md",
+              "docs/development/evidence/BUG-933-SPACE-TOPOLOGY-DEACTIVATE-FENCE/DELIVERY.md",
+              "docs/development/evidence/W645-01/DELIVERY.md",
+              "docs/development/evidence/W677-01/DELIVERY.md",
+              "docs/development/evidence/W678-01/DELIVERY.md",
+              "docs/development/evidence/W679-01/DELIVERY.md",
+              "docs/development/evidence/W680-01/DELIVERY.md",
+              "docs/development/evidence/W681-01/DELIVERY.md",
+              "docs/development/evidence/W682-01/DELIVERY.md",
+              "docs/development/evidence/W683-01/DELIVERY.md",
+              "docs/development/evidence/W684-01/DELIVERY.md",
+              "docs/development/evidence/W685-01/DELIVERY.md",
+              "docs/development/evidence/W686-01/DELIVERY.md",
+              "docs/development/evidence/W687-01/DELIVERY.md",
+              "docs/development/evidence/W688-01/DELIVERY.md",
+              "docs/development/evidence/W689-01/DELIVERY.md",
+              "docs/development/evidence/W690-01/DELIVERY.md"
+            ],
+            "formal_state_changed": false,
+            "new_product_validation": true,
+            "latest_window": "W690-01"
           }
         ]
       },
@@ -180006,6 +180140,13 @@
         "report": "docs/development/evidence/W690-01/DELIVERY.md",
         "source_sha": "1104c664df4eaab6a4ce4804869855bd6f356aec",
         "scope": "正式账套和成本中心用版，独立费率复核、发布和现行 Finance Owner 归集",
+        "full_task_completed": false
+      },
+      "wave691_delivery": {
+        "report": "docs/development/evidence/W691-01/DELIVERY.md",
+        "source_sha": "5b802afae645755f8e0778207efc9fd9fdde3f24",
+        "issue": 1224,
+        "scope": "专业资格登记，工序成本中心批准、发布和当前消费以及真实操作者修复",
         "full_task_completed": false
       }
     },
@@ -214459,10 +214600,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W690",
-      "path": "docs/development/evidence/W690-01/DELIVERY.md",
-      "baseline_sha": "f98e07675906ff4d35c99acf9fb3fc80a2a243ac",
-      "registered_at": "2026-11-16T16:02:04.700298+00:00",
+      "id": "W691",
+      "path": "docs/development/evidence/W691-01/DELIVERY.md",
+      "baseline_sha": "7876e9cca7dd84ffbe334fe71eec263f096132d7",
+      "registered_at": "2026-11-17T00:28:15.585124+00:00",
       "phase": "LOCAL_VERIFIED_PENDING_INTEGRATION",
       "assigned_chats": [
         "COORD"
@@ -214477,11 +214618,11 @@
       "workers_started": true,
       "windows_closed": true,
       "product_code_changed": true,
-      "next_action": "通过受保护 PR 合并并核对远端与席位，随后接续 WP02-03。",
+      "next_action": "受保护 PR 合并并核对远端和席位，随后继续 WP02-03。",
       "windows": [
         {
-          "id": "W690-01",
-          "workspace_task": "W690-01",
+          "id": "W691-01",
+          "workspace_task": "W691-01",
           "related_tasks": [
             "WP02-03"
           ],
@@ -214491,9 +214632,9 @@
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w690-01",
-          "planned_scope_ref": "docs/development/evidence/W690-01/DELIVERY.md",
-          "delivery_report": "docs/development/evidence/W690-01/DELIVERY.md",
+          "branch": "codex/w691-01",
+          "planned_scope_ref": "docs/development/evidence/W691-01/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/W691-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
@@ -214503,8 +214644,8 @@
           ],
           "review_completed": true,
           "integration_status": "PENDING_PROTECTED_PR",
-          "validation_summary": "46 项定向用例通过，其中 33 项使用 PostgreSQL，13 项为成本组件回归，零跳过。",
-          "remaining_scope": "继续 WP11-39 的 Finance Master 版本登记与专业资格来源采用、FIN-COST-01 R2 完整命令和费率维护界面、标准依据。按 WP11-40 至 WP11-42 接续原始来源、分配及账套级 GL 过账与恢复。WP02-03 保留其他派生读写和独立用途。"
+          "validation_summary": "33 项定向用例通过，其中 27 项使用 PostgreSQL，6 项为成本组件回归，零跳过。",
+          "remaining_scope": "WP11-39 接续完整 FIN-MASTER 控制、父级与其他类型、完整 R2 命令和界面、正式 StandardBasis。资格外部原件核验和账套主登记沿各自 Owner 推进。WP11-40 至 WP11-42 接续原始来源、分配及账套级 GL 过账与恢复。WP02-03 保留其他用途核对。"
         }
       ],
       "storage": {
@@ -274193,6 +274334,62 @@
             "integration_status": "PENDING_PROTECTED_PR",
             "validation_summary": "31 项定向用例按最终结果通过，其中 25 项使用 PostgreSQL，6 项为成本组件回归，零跳过。",
             "remaining_scope": "FIN-COST-01 R2 继续核对 WP11-39 的真实账套、工序与资源引用、专业批准和 Finance Master 采用。WP11-40 至 WP11-42 的原始来源、标准基准、完整分配与 GL 完成采用沿对应任务推进。WP02-03 继续其他派生读写与独立用途。"
+          }
+        ],
+        "storage": {
+          "reuse_worktrees": [
+            "D:\\CP6-worktrees\\wave17-dispatch-20261018"
+          ],
+          "new_worktrees": 0
+        }
+      },
+      {
+        "id": "W690",
+        "path": "docs/development/evidence/W690-01/DELIVERY.md",
+        "baseline_sha": "f98e07675906ff4d35c99acf9fb3fc80a2a243ac",
+        "registered_at": "2026-11-16T16:02:04.700298+00:00",
+        "phase": "LOCAL_VERIFIED_PENDING_INTEGRATION",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_code_changed": true,
+        "next_action": "通过受保护 PR 合并并核对远端与席位，随后接续 WP02-03。",
+        "windows": [
+          {
+            "id": "W690-01",
+            "workspace_task": "W690-01",
+            "related_tasks": [
+              "WP02-03"
+            ],
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w690-01",
+            "planned_scope_ref": "docs/development/evidence/W690-01/DELIVERY.md",
+            "delivery_report": "docs/development/evidence/W690-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:roadmap-and-project-state",
+              "Main:cost-source-versions"
+            ],
+            "review_completed": true,
+            "integration_status": "PENDING_PROTECTED_PR",
+            "validation_summary": "46 项定向用例通过，其中 33 项使用 PostgreSQL，13 项为成本组件回归，零跳过。",
+            "remaining_scope": "继续 WP11-39 的 Finance Master 版本登记与专业资格来源采用、FIN-COST-01 R2 完整命令和费率维护界面、标准依据。按 WP11-40 至 WP11-42 接续原始来源、分配及账套级 GL 过账与恢复。WP02-03 保留其他派生读写和独立用途。"
           }
         ],
         "storage": {

@@ -1,5 +1,6 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Erp;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +21,18 @@ public sealed record CostCenterSelectionV1(CostCenterVersionLocatorV1 Locator, s
 public sealed class ManufacturingFinanceScopeV1(CP6Context db, string? environmentId)
 {
     internal static OrderPriceCorrectionException Error(string code, int status) => new(code, status);
+
+    internal Task<T> WithContextAsync<T>(OperationsOwnerV1 owner, Guid context, string action, bool write,
+        Func<LedgerRow, OperationsAccessV1, CancellationToken, Task<T>> body, CancellationToken ct)
+        => owner.ExecuteAsync(OperationsOwnerV1.FinCost, action, true, async (access, token) =>
+        {
+            if (write)
+                owner.RequireOriginalFinanceActor();
+            await GateAsync(write, token);
+            var ledger = await RequireContextAsync(context, access.ActorId, token);
+            access.AtCommit(async final => { await RequireContextAsync(context, access.ActorId, final); });
+            return await body(ledger, access, token);
+        }, ct);
 
     internal Task GateAsync(bool write, CancellationToken ct)
     {
@@ -96,6 +109,18 @@ public sealed class ManufacturingFinanceScopeV1(CP6Context db, string? environme
                 AND m.enabled AND l.enabled AND l.mode='REAL' AND l.environment_id={environmentId}) AS "Value"
             """).SingleAsync(ct);
 
+    internal async Task<Guid> QualificationAsync(Guid ledger, Guid subject, string action, CancellationToken ct)
+        => await db.Database.SqlQuery<Guid?>($"""
+            SELECT q.qualification_id AS "Value" FROM cp6_fin_mfg_v1.qualifications q
+            JOIN cp6_fin_mfg_v1.members m USING(tenant_id,ledger_id,subject_id)
+            WHERE q.tenant_id={db.CurrentTenantId} AND q.ledger_id={ledger} AND q.subject_id={subject} AND q.action={action}
+                AND q.enabled AND m.enabled AND q.expires_at>clock_timestamp()
+                AND (q.action IN ('rate-review','rate-release') OR EXISTS(
+                    SELECT 1 FROM cp6_fin_mfg_v1.qualification_decisions decision
+                    WHERE (decision.tenant_id,decision.ledger_id,decision.subject_id,decision.action,decision.id)=
+                          (q.tenant_id,q.ledger_id,q.subject_id,q.action,q.qualification_id) AND decision.enabled))
+            """).SingleOrDefaultAsync(ct) ?? throw Error("FINANCE_QUALIFICATION_REQUIRED", 403);
+
     internal IQueryable<CostSheet> CostSheetsInScope(IQueryable<CostSheet> sheets, Guid subject)
     {
         var assignments = db.Database.SqlQuery<WorkOrderScopeRow>($"""
@@ -116,10 +141,9 @@ public sealed class ManufacturingFinanceScopeV1(CP6Context db, string? environme
     {
         var centers = await db.Database.SqlQuery<CenterRow>($"""
             SELECT v.root_id AS "RootId",v.version_id AS "VersionId",v.code AS "Code",v.name AS "Name"
-            FROM cp6_fin_mfg_v1.center_versions v
-            JOIN public."Fin_CostCenter" c ON c."TenantId"=v.tenant_id AND c."Id"=v.root_id AND c."IsActive"
-            WHERE v.tenant_id={db.CurrentTenantId} AND v.ledger_id={ledger} AND v.enabled
-              AND daterange(v.valid_from,v.to_exclusive,'[)') @> {date}
+            FROM cp6_fin_mfg_v1.current_center_versions v
+            WHERE v.tenant_id={db.CurrentTenantId} AND v.ledger_id={ledger}
+              AND v.effective_dates @> {date}
             ORDER BY v.code,v.root_id,v.version DESC
             """).ToArrayAsync(ct);
         if (centers.GroupBy(row => row.RootId).Any(group => group.Count() != 1))

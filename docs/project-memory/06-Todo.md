@@ -1,6 +1,6 @@
 # 当前待办与优先级
 
-2026-11-16，继续 WP11-39 的 Finance Master 版本登记与专业资格来源采用、FIN-COST-01 R2 完整命令和费率维护界面、标准依据。按 WP11-40 至 WP11-42 接续原始来源、分配及账套级 GL 过账与恢复。WP02-03 保留其他派生读写和独立用途。 [W690 交付](../development/evidence/W690-01/DELIVERY.md)
+2026-11-17，WP11-39 接续完整 FIN-MASTER 控制、父级与其他类型、完整 R2 命令和界面、正式 StandardBasis。资格外部原件核验和账套主登记沿各自 Owner 推进。WP11-40 至 WP11-42 接续原始来源、分配及账套级 GL 过账与恢复。WP02-03 保留其他用途核对。 [W691 交付](../development/evidence/W691-01/DELIVERY.md)
 
 2026-11-16，接续 WP02-03 核对库存、入库及出库单价实际消费，继续派生结果、写回读和独立用途。业务伙伴其他消费者、文件与附件用途、订单其他消费者和 Space WP13-04 依各自合同核对。 [W682 交付](../development/evidence/W682-01/DELIVERY.md)
 
