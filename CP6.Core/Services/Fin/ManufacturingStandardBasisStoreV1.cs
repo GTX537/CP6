@@ -14,7 +14,8 @@ internal sealed class ManufacturingStandardBasisStoreV1(CP6Context db)
             v.sequence AS "Sequence",v.state AS "State",v.revision AS "Revision",v.body::text AS "Json",
             v.valid_from AS "From",v.to_exclusive AS "ToExclusive",v.maker AS "Maker",v.reviewer AS "Reviewer",
             v.review_qualification_id AS "ReviewQualificationId",v.review_key AS "ReviewKey",v.review_reason AS "ReviewReason",
-            v.publisher AS "Publisher",v.release_key AS "ReleaseKey",v.revoker AS "Revoker",v.revoke_key AS "RevokeKey",
+            v.publisher AS "Publisher",v.release_qualification_id AS "ReleaseQualificationId",
+            v.release_key AS "ReleaseKey",v.revoker AS "Revoker",v.revoke_key AS "RevokeKey",
             v.revoke_reason AS "RevokeReason",(h.basis_id=v.id) IS TRUE AS "Selected"
         FROM cp6_fin_mfg_v1.standard_basis_versions v LEFT JOIN cp6_fin_mfg_v1.standard_basis_heads h
             ON (h.tenant_id,h.ledger_id,h.work_order_id)=(v.tenant_id,v.ledger_id,v.work_order_id)
@@ -126,6 +127,7 @@ internal sealed class ManufacturingStandardBasisStoreV1(CP6Context db)
         public Guid? ReviewKey { get; set; }
         public string? ReviewReason { get; set; }
         public Guid? Publisher { get; set; }
+        public Guid? ReleaseQualificationId { get; set; }
         public Guid? ReleaseKey { get; set; }
         public Guid? Revoker { get; set; }
         public Guid? RevokeKey { get; set; }

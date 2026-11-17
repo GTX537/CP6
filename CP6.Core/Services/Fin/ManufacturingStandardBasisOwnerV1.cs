@@ -127,7 +127,7 @@ public sealed class ManufacturingStandardBasisOwnerV1(CP6Context db, OperationsO
             if (version == null || version.Basis.LedgerId != ledger.Id || version.Basis.StandardBasis == null)
                 throw Error("STANDARD_COMPARISON_NOT_FOUND", 404);
             var row = await store.ReadAsync(ledger.Id, version.Basis.StandardBasis.VersionId, token);
-            var body = await RequireVisibleBodyAsync(row, access, token);
+            var (body, _, _) = await ManufacturingStandardBasisSourcesV1.ReadVisibleBasisAsync(row, access, token);
             var rates = await access.SourceAsync(OperationsOwnerV1.ProcessCostRate, token);
             foreach (var rate in version.Basis.Rates)
                 await rates.RequirePublishedRateCenterAsync(rate.WorkCenterId, rate.RateMaker!.Value, token);
@@ -143,17 +143,7 @@ public sealed class ManufacturingStandardBasisOwnerV1(CP6Context db, OperationsO
     private async Task<StandardBasisBodyV1> RequireVisibleAsync(Guid ledger, Row row, OperationsAccessV1 access, CancellationToken ct)
     {
         await sources.RequireOrderAsync(ledger, row.WorkOrderId, access, ct);
-        return await RequireVisibleBodyAsync(row, access, ct);
-    }
-
-    private async Task<StandardBasisBodyV1> RequireVisibleBodyAsync(Row row, OperationsAccessV1 access, CancellationToken ct)
-    {
-        var body = row.ReadBody();
-        var products = await access.SourceAsync(OperationsOwnerV1.Product, ct);
-        if (!await products.Products().AnyAsync(product => product.Id == body.ProductId, ct))
-            throw Error("STANDARD_BASIS_OUTPUT_NOT_FOUND", 404);
-        var rateAccess = await access.SourceAsync(OperationsOwnerV1.ProcessCostRate, ct);
-        await ManufacturingStandardBasisSourcesV1.RequireOriginalRatesAsync(rateAccess, body, ct);
+        var (body, _, _) = await ManufacturingStandardBasisSourcesV1.ReadVisibleBasisAsync(row, access, ct);
         return body;
     }
 

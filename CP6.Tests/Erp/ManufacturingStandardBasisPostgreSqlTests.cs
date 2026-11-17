@@ -11,7 +11,7 @@ namespace CP6.Tests.Erp;
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     [CurrentPermissionPostgresFact]
-    public async Task W693_approved_standard_basis_is_used_by_completion_and_recollection_with_exact_history()
+    public async Task W694_standard_documents_freeze_approved_basis_with_original_command_and_preserve_actual_history()
     {
         await using var h = await Seed();
         var number = await SeedCompletedFinanceFlow(h);
@@ -155,6 +155,19 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         using (await Call(maker, collect, new { }, HttpStatusCode.Conflict, "STANDARD_BASIS_TARGET_MISMATCH")) { }
         Assert.False(await h.Db.CostSheets.AnyAsync());
 
+        const string documents = "/api/fin/cost/owner-v1/standard-documents";
+        const string commands = "/api/fin/cost/owner-v1/standard-document-commands";
+        var create = new { CommandId = Guid.NewGuid(), WorkOrderId = order.Id, Reason = "按批准标准建立独立成本单" };
+        using (await Call(foreign, documents, create, HttpStatusCode.NotFound, "STANDARD_BASIS_WORK_ORDER_NOT_FOUND")) { }
+        using var created = await Call(maker, documents, create, HttpStatusCode.Created);
+        var document = created.RootElement.GetProperty("documentId").GetGuid();
+        var documentPath = $"{documents}/{document}";
+        var prepare = new { CommandId = Guid.NewGuid(), ExpectedVersion = (string?)null,
+            StandardBasisVersionId = first, Reason = "冻结批准整单标准" };
+        using (await Call(maker, $"{documentPath}/collection-plans", prepare, HttpStatusCode.Conflict, "STANDARD_BASIS_TARGET_MISMATCH")) { }
+        using (await Call(maker, $"{documentPath}/collection-plans", prepare with { CommandId = create.CommandId },
+            HttpStatusCode.Conflict, "COMMAND_IDENTITY_CONFLICT")) { }
+
         using (var complete = await CompleteForFinance(host, maker.Cookies, number))
             Assert.True(complete.StatusCode == HttpStatusCode.OK, await complete.Content.ReadAsStringAsync());
         var finance = await h.Db.IntegrationEvents.AsNoTracking().SingleAsync(row => row.TargetModule == "FIN" && row.SourceNo == number);
@@ -165,6 +178,101 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(210m, firstSheet.LaborStandard);
         Assert.Equal(51.37m, firstSheet.OverheadStandard);
         var firstRecord = await ReadW689Basis(h, firstSheet.Id, 1);
+        // 独立标准单据按审批原件取值，实绩工时临时缺失仍可冻结。
+        await h.Db.WorkOrderProcesses.Where(row => row.Id == steps[0].Id)
+            .ExecuteUpdateAsync(change => change.SetProperty(row => row.ActualMachineHour, (decimal?)null));
+        using var prepared = await Call(maker, $"{documentPath}/collection-plans", prepare, HttpStatusCode.Created);
+        var plan = prepared.RootElement.GetProperty("planId").GetGuid();
+        using var competingPlan = await Call(maker, $"{documentPath}/collection-plans",
+            prepare with { CommandId = Guid.NewGuid() }, HttpStatusCode.Created);
+        var freeze = new { CommandId = Guid.NewGuid(), PlanId = plan, ExpectedVersion = (string?)null, Reason = "确认标准成本" };
+        using (await Call(checker, $"{documentPath}/freeze", freeze, HttpStatusCode.NotFound, "STANDARD_DOCUMENT_PLAN_NOT_FOUND")) { }
+        await SetBusinessDate(successorDay);
+        using (await Call(maker, $"{documentPath}/freeze", freeze, HttpStatusCode.PreconditionFailed, "STANDARD_DOCUMENT_PLAN_STALE")) { }
+        await SetBusinessDate(day);
+        await h.Db.Database.ExecuteSqlRawAsync("""
+            CREATE FUNCTION cp6_fin_mfg_v1.w694_drop_standard_command() RETURNS trigger LANGUAGE plpgsql AS $$
+            BEGIN
+                IF NEW.operation='FREEZE' THEN RETURN NULL; END IF;
+                RETURN NEW;
+            END; $$;
+            CREATE TRIGGER w694_drop_standard_command BEFORE INSERT ON cp6_fin_mfg_v1.standard_document_commands
+                FOR EACH ROW EXECUTE FUNCTION cp6_fin_mfg_v1.w694_drop_standard_command();
+            """);
+        try
+        {
+            using (await Call(maker, $"{documentPath}/freeze", freeze, HttpStatusCode.Conflict, "STANDARD_DOCUMENT_COMMAND_NOT_WRITTEN")) { }
+            using var query = await Call(maker, $"{commands}/{freeze.CommandId}");
+            Assert.Equal("NOT_OBSERVED", query.RootElement.GetProperty("kind").GetString());
+            Assert.False(query.RootElement.GetProperty("provesPermanentNoEffect").GetBoolean());
+            using var draft = await Call(maker, documentPath);
+            Assert.Equal("DRAFT", draft.RootElement.GetProperty("state").GetString());
+        }
+        finally
+        {
+            await h.Db.Database.ExecuteSqlRawAsync("""
+                DROP TRIGGER w694_drop_standard_command ON cp6_fin_mfg_v1.standard_document_commands;
+                DROP FUNCTION cp6_fin_mfg_v1.w694_drop_standard_command();
+                """);
+        }
+        await h.Db.Database.ExecuteSqlRawAsync("""
+            CREATE FUNCTION cp6_fin_mfg_v1.w694_reject_standard_commit() RETURNS trigger LANGUAGE plpgsql AS $$
+            BEGIN
+                RAISE EXCEPTION 'W694_DEFERRED_COMMIT_FAILURE';
+            END; $$;
+            CREATE CONSTRAINT TRIGGER w694_reject_standard_commit AFTER INSERT ON cp6_fin_mfg_v1.standard_document_commands
+                DEFERRABLE INITIALLY DEFERRED FOR EACH ROW WHEN (NEW.operation='FREEZE')
+                EXECUTE FUNCTION cp6_fin_mfg_v1.w694_reject_standard_commit();
+            """);
+        try
+        {
+            using var uncertain = await Call(maker, $"{documentPath}/freeze", freeze, HttpStatusCode.Accepted);
+            Assert.Equal("OUTCOME_UNKNOWN", uncertain.RootElement.GetProperty("kind").GetString());
+            var queryPath = uncertain.RootElement.GetProperty("queryPath").GetString();
+            Assert.Equal($"{commands}/{freeze.CommandId}", queryPath);
+            using var after = await Call(maker, queryPath!);
+            Assert.Equal("NOT_OBSERVED", after.RootElement.GetProperty("kind").GetString());
+        }
+        finally
+        {
+            await h.Db.Database.ExecuteSqlRawAsync("""
+                DROP TRIGGER w694_reject_standard_commit ON cp6_fin_mfg_v1.standard_document_commands;
+                DROP FUNCTION cp6_fin_mfg_v1.w694_reject_standard_commit();
+                """);
+        }
+        var repeatedFreeze = await Task.WhenAll(Call(maker, $"{documentPath}/freeze", freeze),
+            Call(maker, $"{documentPath}/freeze", freeze));
+        Assert.Single(repeatedFreeze, reply => reply.RootElement.GetProperty("replayed").GetBoolean());
+        Assert.Single(repeatedFreeze.Select(reply => reply.RootElement.GetProperty("receiptId").GetGuid()).Distinct());
+        foreach (var reply in repeatedFreeze)
+        {
+            using (reply)
+                Assert.Equal("1", reply.RootElement.GetProperty("version").GetString());
+        }
+        using (await Call(maker, $"{documentPath}/freeze", freeze with { Reason = "同键改变原内容" },
+            HttpStatusCode.Conflict, "COMMAND_IDENTITY_CONFLICT")) { }
+        using (await Call(maker, $"{documentPath}/freeze", freeze with { CommandId = Guid.NewGuid(),
+                PlanId = competingPlan.RootElement.GetProperty("planId").GetGuid() },
+            HttpStatusCode.PreconditionFailed, "HEAD_CHANGED")) { }
+        using (var stored = await Call(maker, $"{documentPath}/versions/1"))
+        {
+            var result = stored.RootElement;
+            Assert.Equal("STANDARD", result.GetProperty("basisClass").GetString());
+            Assert.Equal(first, result.GetProperty("standardBasis").GetProperty("versionId").GetGuid());
+            Assert.Equal("272.73000000", result.GetProperty("body").GetProperty("total").GetString());
+        }
+        using (var found = await Call(maker, $"{commands}/{freeze.CommandId}"))
+        {
+            Assert.Equal("FOUND", found.RootElement.GetProperty("kind").GetString());
+            Assert.Equal("FREEZE", found.RootElement.GetProperty("reply").GetProperty("operation").GetString());
+        }
+        using (var unobserved = await Call(foreign, $"{commands}/{freeze.CommandId}"))
+            Assert.Equal("NOT_OBSERVED", unobserved.RootElement.GetProperty("kind").GetString());
+        using (await Call(foreign, documentPath, expected: HttpStatusCode.NotFound)) { }
+        await h.Db.WorkOrderProcesses.Where(row => row.Id == steps[0].Id)
+            .ExecuteUpdateAsync(change => change.SetProperty(row => row.ActualMachineHour, steps[0].ActualMachineHour));
+        Assert.Equal(firstRecord, await ReadW689Basis(h, firstSheet.Id, 1));
+
         using (var original = await Call(maker, $"{comparison}/1"))
         {
             var result = original.RootElement;
@@ -228,6 +336,13 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await Approve(competing);
         await Approve(zero);
         await Publish(zero);
+        var zeroPrepare = prepare with { CommandId = Guid.NewGuid(), ExpectedVersion = "1", StandardBasisVersionId = zero };
+        using var zeroPrepared = await Call(maker, $"{documentPath}/collection-plans", zeroPrepare, HttpStatusCode.Created);
+        var zeroFreeze = freeze with { CommandId = Guid.NewGuid(), ExpectedVersion = "1",
+            PlanId = zeroPrepared.RootElement.GetProperty("planId").GetGuid() };
+        using (await Call(maker, $"{documentPath}/freeze", zeroFreeze)) { }
+        using (var zeroDocument = await Call(maker, $"{documentPath}/versions/2"))
+            Assert.Equal("0.00000000", zeroDocument.RootElement.GetProperty("body").GetProperty("total").GetString());
         using (await Call(releaser, $"{basis}/{competing}/publish", new StandardBasisReleaseV1(Guid.NewGuid(), 2),
             HttpStatusCode.PreconditionFailed, "STANDARD_BASIS_HEAD_STALE")) { }
         using (await Call(maker, collect, new { })) { }
@@ -247,6 +362,12 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var revoke = new StandardBasisReviewV1(Guid.NewGuid(), 3, "撤销当前标准，等待后续版本");
         using (await Call(releaser, $"{basis}/{zero}/revoke", revoke)) { }
         using (await Call(releaser, $"{basis}/{zero}/revoke", revoke)) { }
+        using (var originalReply = await Call(maker, $"{documentPath}/freeze", zeroFreeze))
+            Assert.True(originalReply.RootElement.GetProperty("replayed").GetBoolean());
+        using (await Call(maker, $"{documentPath}/versions/1")) { }
+        using (await Call(maker, $"{documentPath}/collection-plans",
+            zeroPrepare with { CommandId = Guid.NewGuid(), ExpectedVersion = "2" },
+            HttpStatusCode.Conflict, "STANDARD_BASIS_REVOKED")) { }
         using (await Call(maker, collect, new { }, HttpStatusCode.Conflict, "STANDARD_BASIS_REVOKED")) { }
         using (var historical = await Call(maker, $"{comparison}/1"))
             Assert.Equal("272.73000000", historical.RootElement.GetProperty("standard").GetString());
@@ -258,6 +379,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             UPDATE cp6_fin_mfg_v1.members SET enabled=false WHERE (tenant_id,ledger_id,subject_id)=({h.Tenant},{ledger},{h.User})
             """);
         using (await Call(maker, $"{comparison}/1", expected: HttpStatusCode.NotFound, error: "FINANCE_CONTEXT_NOT_FOUND")) { }
+        using (await Call(maker, $"{commands}/{freeze.CommandId}", expected: HttpStatusCode.NotFound, error: "FINANCE_CONTEXT_NOT_FOUND")) { }
 
         async Task<Guid> Submit(StandardBasisSubmissionV1 draft)
         {
