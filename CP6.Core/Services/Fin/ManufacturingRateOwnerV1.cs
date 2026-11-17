@@ -67,7 +67,7 @@ public sealed class ManufacturingRateOwnerV1(CP6Context db, OperationsOwnerV1 ow
         }, ct);
 
     public Task<object> CentersAsync(Guid context, DateOnly? businessDate, CancellationToken ct)
-        => WithContext<object>(context, "view", false, async (ledger, access, token) => new
+        => scope.WithContextAsync<object>(owner, context, "view", false, async (ledger, access, token) => new
         {
             items = Array.Empty<object>(), masters = await scope.ListCentersAsync(ledger.Id, access.ActorId,
                 businessDate ?? ledger.BusinessDate, token), nextCursor = (string?)null,
@@ -75,7 +75,7 @@ public sealed class ManufacturingRateOwnerV1(CP6Context db, OperationsOwnerV1 ow
         }, ct);
 
     public Task<ManufacturingRateStatusV1> DraftAsync(Guid context, ManufacturingRateDraftV1 command, CancellationToken ct)
-        => WithContext(context, Draft, true, async (ledger, access, token) =>
+        => scope.WithContextAsync(owner, context, Draft, true, async (ledger, access, token) =>
         {
             if (command.CostCenter == null || command.From == default || command.ToExclusive <= command.From)
                 throw Error("RATE_DRAFT_INVALID", 422);
@@ -94,7 +94,7 @@ public sealed class ManufacturingRateOwnerV1(CP6Context db, OperationsOwnerV1 ow
         }, ct);
 
     public Task<ManufacturingRateStatusV1> SubmitAsync(Guid context, Guid id, ManufacturingRateTransitionV1 command, CancellationToken ct)
-        => WithContext(context, Draft, true, async (ledger, access, token) =>
+        => scope.WithContextAsync(owner, context, Draft, true, async (ledger, access, token) =>
         {
             var rate = await store.RateAsync(ledger.Id, id, token);
             Expect(rate, command.ExpectedRevision, "DRAFT");
@@ -106,21 +106,21 @@ public sealed class ManufacturingRateOwnerV1(CP6Context db, OperationsOwnerV1 ow
         }, ct);
 
     public Task<ManufacturingRateStatusV1> ReviewAsync(Guid context, Guid id, ManufacturingRateTransitionV1 command, CancellationToken ct)
-        => WithContext(context, Review, true, async (ledger, access, token) =>
+        => scope.WithContextAsync(owner, context, Review, true, async (ledger, access, token) =>
         {
             var rate = await store.RateAsync(ledger.Id, id, token);
             Expect(rate, command.ExpectedRevision, "SUBMITTED");
             if (rate.Maker == access.ActorId)
                 throw Error("RATE_REVIEW_INDEPENDENCE_REQUIRED", 403);
-            var qualification = await store.QualificationAsync(ledger.Id, access.ActorId, Review, token);
+            var qualification = await scope.QualificationAsync(ledger.Id, access.ActorId, Review, token);
             await RequireSourcesAsync(ledger, access, rate, false, token);
-            access.AtCommit(async final => { await store.QualificationAsync(ledger.Id, access.ActorId, Review, final); });
+            access.AtCommit(async final => { await scope.QualificationAsync(ledger.Id, access.ActorId, Review, final); });
             await store.ApproveAsync(ledger.Id, rate, access.ActorId, qualification, token);
             return new ManufacturingRateStatusV1(id, "APPROVED", rate.Revision + 1);
         }, ct);
 
     public Task<ManufacturingRatePreviewV1> PreviewAsync(Guid context, Guid id, ManufacturingRateTransitionV1 command, CancellationToken ct)
-        => WithContext(context, Release, true, async (ledger, access, token) =>
+        => scope.WithContextAsync(owner, context, Release, true, async (ledger, access, token) =>
         {
             var rate = await store.RateAsync(ledger.Id, id, token);
             Expect(rate, command.ExpectedRevision, "APPROVED");
@@ -133,13 +133,13 @@ public sealed class ManufacturingRateOwnerV1(CP6Context db, OperationsOwnerV1 ow
         }, ct);
 
     public Task<ManufacturingRateStatusV1> PublishAsync(Guid context, Guid id, ManufacturingRatePublishV1 command, CancellationToken ct)
-        => WithContext(context, Release, true, async (ledger, access, token) =>
+        => scope.WithContextAsync(owner, context, Release, true, async (ledger, access, token) =>
         {
             var replay = await store.RequirePreviewAsync(ledger.Id, id, access.ActorId, command.PreviewToken, token);
             var rate = await store.RateAsync(ledger.Id, id, token);
             if (replay)
             {
-                await store.QualificationAsync(ledger.Id, access.ActorId, Release, token);
+                await scope.QualificationAsync(ledger.Id, access.ActorId, Release, token);
                 await RequireSourcesAsync(ledger, access, rate, false, token);
                 return new ManufacturingRateStatusV1(id, rate.State, rate.Revision);
             }
@@ -151,34 +151,26 @@ public sealed class ManufacturingRateOwnerV1(CP6Context db, OperationsOwnerV1 ow
             return new ManufacturingRateStatusV1(id, "RELEASED", rate.Revision + 1);
         }, ct);
 
-    private Task<T> WithContext<T>(Guid context, string action, bool write,
-        Func<LedgerRow, OperationsAccessV1, CancellationToken, Task<T>> body, CancellationToken ct)
-        => owner.ExecuteAsync(OperationsOwnerV1.FinCost, action, true, async (access, token) =>
-        {
-            await scope.GateAsync(write, token);
-            var ledger = await scope.RequireContextAsync(context, access.ActorId, token);
-            access.AtCommit(async final => { await scope.RequireContextAsync(context, access.ActorId, final); });
-            return await body(ledger, access, token);
-        }, ct);
-
     private async Task<Guid> RequireReleaseAsync(LedgerRow ledger, OperationsAccessV1 access, RateRow rate, CancellationToken ct)
     {
         if (rate.State != "APPROVED")
             throw Error("RATE_APPROVAL_REQUIRED", 409);
-        var qualification = await store.QualificationAsync(ledger.Id, access.ActorId, Release, ct);
+        if (!rate.ReviewOriginalActor)
+            throw Error("FINANCE_RATE_REVIEW_ORIGIN_UNPROVEN", 409);
+        var qualification = await scope.QualificationAsync(ledger.Id, access.ActorId, Release, ct);
         await RequireReviewerAsync(ct);
         await RequireSourcesAsync(ledger, access, rate, false, ct);
         access.AtCommit(async final =>
         {
-            await store.QualificationAsync(ledger.Id, access.ActorId, Release, final);
+            await scope.QualificationAsync(ledger.Id, access.ActorId, Release, final);
             await RequireReviewerAsync(final);
         });
         return qualification;
 
         async Task RequireReviewerAsync(CancellationToken token)
         {
-            await owner.RequireCurrentRateReviewerAsync(rate.Reviewer!.Value, token);
-            if (await store.QualificationAsync(ledger.Id, rate.Reviewer.Value, Review, token) != rate.ReviewQualificationId)
+            await owner.RequireCurrentFinanceReviewerAsync(Review, rate.Reviewer!.Value, token);
+            if (await scope.QualificationAsync(ledger.Id, rate.Reviewer.Value, Review, token) != rate.ReviewQualificationId)
                 throw Error("FINANCE_QUALIFICATION_REQUIRED", 403);
         }
     }

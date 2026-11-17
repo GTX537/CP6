@@ -15,22 +15,22 @@ internal sealed class ManufacturingRateStoreV1(CP6Context db)
                 center_id AS "CenterId",center_version_id AS "CenterVersionId",
                 policy_version_id AS "PolicyVersionId",basis_id AS "BasisId",maker AS "Maker",
                 labor_rate AS "LaborRate",overhead_rate AS "OverheadRate",valid_from AS "From",to_exclusive AS "ToExclusive",
-                state AS "State",revision AS "Revision",reviewer AS "Reviewer",review_qualification_id AS "ReviewQualificationId"
+                state AS "State",revision AS "Revision",reviewer AS "Reviewer",review_qualification_id AS "ReviewQualificationId",
+                review_original_actor AS "ReviewOriginalActor"
             FROM cp6_fin_mfg_v1.rate_versions WHERE tenant_id={Tenant} AND ledger_id={ledger} AND id={id}
             """).SingleOrDefaultAsync(ct) ?? throw Error("RATE_VERSION_NOT_FOUND", 404);
 
     internal async Task RequireInputsAsync(LedgerRow ledger, RateRow rate, CancellationToken ct)
     {
         var center = await db.Database.SqlQuery<bool>($"""
-            SELECT EXISTS(SELECT 1 FROM cp6_fin_mfg_v1.center_versions v
-              JOIN public."Fin_CostCenter" c ON c."TenantId"=v.tenant_id AND c."Id"=v.root_id AND c."IsActive"
+            SELECT EXISTS(SELECT 1 FROM cp6_fin_mfg_v1.current_center_versions v
               WHERE v.tenant_id={Tenant} AND v.ledger_id={ledger.Id} AND v.root_id={rate.CenterId}
-              AND v.version_id={rate.CenterVersionId} AND v.enabled
-              AND daterange(v.valid_from,v.to_exclusive,'[)') @> daterange({rate.From},{rate.ToExclusive},'[)')
-              AND NOT EXISTS(SELECT 1 FROM cp6_fin_mfg_v1.center_versions competing
+              AND v.version_id={rate.CenterVersionId} AND (v.operation_id IS NULL OR v.operation_id={rate.OperationId})
+              AND v.effective_dates @> daterange({rate.From},{rate.ToExclusive},'[)')
+              AND NOT EXISTS(SELECT 1 FROM cp6_fin_mfg_v1.center_calendar competing
                 WHERE competing.tenant_id=v.tenant_id AND competing.ledger_id=v.ledger_id AND competing.root_id=v.root_id
                   AND competing.version_id<>v.version_id AND competing.enabled
-                  AND daterange(competing.valid_from,competing.to_exclusive,'[)') && daterange({rate.From},{rate.ToExclusive},'[)'))
+                  AND competing.effective_dates && datemultirange(daterange({rate.From},{rate.ToExclusive},'[)')))
             ) AS "Value"
             """).SingleAsync(ct);
         if (!center)
@@ -49,14 +49,6 @@ internal sealed class ManufacturingRateStoreV1(CP6Context db)
             """).SingleAsync(ct))
             throw Error("APPROVED_RATE_BASIS_REQUIRED", 422);
     }
-
-    internal async Task<Guid> QualificationAsync(Guid ledger, Guid actor, string action, CancellationToken ct)
-        => await db.Database.SqlQuery<Guid?>($"""
-            SELECT q.qualification_id AS "Value" FROM cp6_fin_mfg_v1.qualifications q
-            JOIN cp6_fin_mfg_v1.members m USING(tenant_id,ledger_id,subject_id)
-            WHERE q.tenant_id={Tenant} AND q.ledger_id={ledger} AND q.subject_id={actor} AND q.action={action}
-                AND q.enabled AND m.enabled AND q.expires_at>clock_timestamp()
-            """).SingleOrDefaultAsync(ct) ?? throw Error("FINANCE_QUALIFICATION_REQUIRED", 403);
 
     internal async Task InsertAsync(Guid ledger, RateRow rate, CancellationToken ct)
     {
@@ -83,7 +75,7 @@ internal sealed class ManufacturingRateStoreV1(CP6Context db)
     internal Task<int> ApproveAsync(Guid ledger, RateRow rate, Guid reviewer, Guid qualification, CancellationToken ct)
         => db.Database.ExecuteSqlInterpolatedAsync($"""
             UPDATE cp6_fin_mfg_v1.rate_versions SET state='APPROVED', revision=revision+1,
-                reviewer={reviewer},review_qualification_id={qualification},reviewed_at=clock_timestamp()
+                reviewer={reviewer},review_qualification_id={qualification},reviewed_at=clock_timestamp(),review_original_actor=true
             WHERE tenant_id={Tenant} AND ledger_id={ledger} AND id={rate.Id} AND revision={rate.Revision}
             """, ct);
 
@@ -172,6 +164,7 @@ internal sealed class ManufacturingRateStoreV1(CP6Context db)
         public long Revision { get; set; } = 1;
         public Guid? Reviewer { get; set; }
         public Guid? ReviewQualificationId { get; set; }
+        public bool ReviewOriginalActor { get; set; }
     }
 
     internal sealed class PreviewRow

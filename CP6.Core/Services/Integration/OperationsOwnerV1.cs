@@ -63,8 +63,14 @@ public sealed partial class OperationsOwnerV1
     {
         var subject=await currentActor(ct);return await AuthorityCoreAsync(resource,action,subject,false,ct);
     }
-    internal async Task RequireCurrentRateReviewerAsync(Guid subject, CancellationToken ct)
-        => await AuthorityCoreAsync(FinCost, "rate-review", subject, true, ct);
+    internal async Task RequireCurrentFinanceReviewerAsync(string action, Guid subject, CancellationToken ct)
+        => await AuthorityCoreAsync(FinCost, action, subject, true, ct);
+
+    internal void RequireOriginalFinanceActor()
+    {
+        if (http.HttpContext?.User.HasClaim(claim => claim.Type == "impersonator_id") == true)
+            throw new OrderPriceCorrectionException("FINANCE_ORIGINAL_ACTOR_REQUIRED", 403);
+    }
     // Stored Owner decisions supply the subject; this path cannot execute a user command.
     internal Task<Authority> AssociationReceiptAuthorityAsync(string resource,string action,Guid actor,CancellationToken ct)
         => action=="query" || resource==ToolInstance && action=="engineering-link" || resource==ToolSpecification && action=="instance-associate"
