@@ -16,6 +16,9 @@ public static class FinCostViewSeed
             ("view", "查看成本单"), ("rate-draft", "制订费率"), ("rate-review", "专业复核"), ("rate-release", "发布费率"),
             ("qualification-admin", "签发或撤销财务专业资格"), ("center-submit", "登记工序成本中心版本"),
             ("center-review", "复核工序成本中心版本"), ("center-release", "发布工序成本中心版本"),
+            ("basis-submit", "登记标准成本依据"), ("basis-review", "独立复核标准成本依据"),
+            ("basis-release", "启用批准标准成本依据"), ("basis-revoke", "撤销标准成本依据"),
+            ("basis-view", "查询标准成本依据及历史比较"), ("basis-use", "按批准标准依据归集"),
         };
         foreach (var (code, name) in actions)
         {

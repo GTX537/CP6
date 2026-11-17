@@ -22,7 +22,7 @@ public sealed class ManufacturingQualificationOwnerV1(CP6Context db, OperationsO
         CancellationToken ct) => scope.WithContextAsync(owner, context, "qualification-admin", true, async (ledger, access, token) =>
     {
         if (command.CommandId == Guid.Empty || command.SubjectId == Guid.Empty
-            || command.Purpose is not ("rate-review" or "rate-release" or "center-review" or "center-release")
+            || command.Purpose is not ("rate-review" or "rate-release" or "center-review" or "center-release" or "basis-review" or "basis-release")
             || string.IsNullOrWhiteSpace(command.Reason) || command.Reason.Length > 1000
             || string.IsNullOrWhiteSpace(command.EvidenceReference) || command.EvidenceReference.Length > 256
             || command.Grant != command.ExpiresAt.HasValue)

@@ -93,7 +93,7 @@ public sealed partial class OperationsOwnerV1
                 await sessions.RequireCurrentAsync(session, tenant, ct);
 
                 Task<Authority> ReadFinanceSource(string resource, string action, CancellationToken token)
-                    => finance && (resource == FinCost && action is "collect" or "settle"
+                    => finance && (resource == FinCost && action is "collect" or "settle" or "basis-use"
                         || resource is Mes or Product or ProcessCostRate && action == "query")
                         ? AuthorityCoreAsync(resource, action, session.Subject, true, token)
                         : throw new OrderPriceCorrectionException("DELEGATION_FORBIDDEN", 403);

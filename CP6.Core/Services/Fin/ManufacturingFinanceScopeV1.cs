@@ -42,13 +42,15 @@ public sealed class ManufacturingFinanceScopeV1(CP6Context db, string? environme
                 LOCK TABLE public."Fin_CostCenter", cp6_fin_mfg_v1.ledgers, cp6_fin_mfg_v1.members, cp6_fin_mfg_v1.center_versions,
                     cp6_fin_mfg_v1.policies, cp6_fin_mfg_v1.rate_bases, cp6_fin_mfg_v1.qualifications,
                     cp6_fin_mfg_v1.work_orders, cp6_fin_mfg_v1.rate_heads, cp6_fin_mfg_v1.rate_versions,
-                    cp6_fin_mfg_v1.timeline IN SHARE ROW EXCLUSIVE MODE
+                    cp6_fin_mfg_v1.timeline, cp6_fin_mfg_v1.standard_basis_versions, cp6_fin_mfg_v1.standard_basis_heads
+                    IN SHARE ROW EXCLUSIVE MODE
                 """
             : """
                 LOCK TABLE public."Fin_CostCenter", cp6_fin_mfg_v1.ledgers, cp6_fin_mfg_v1.members, cp6_fin_mfg_v1.center_versions,
                     cp6_fin_mfg_v1.policies, cp6_fin_mfg_v1.rate_bases, cp6_fin_mfg_v1.qualifications,
                     cp6_fin_mfg_v1.work_orders, cp6_fin_mfg_v1.rate_heads, cp6_fin_mfg_v1.rate_versions,
-                    cp6_fin_mfg_v1.timeline IN SHARE MODE
+                    cp6_fin_mfg_v1.timeline, cp6_fin_mfg_v1.standard_basis_versions, cp6_fin_mfg_v1.standard_basis_heads
+                    IN SHARE MODE
                 """, ct);
     }
 

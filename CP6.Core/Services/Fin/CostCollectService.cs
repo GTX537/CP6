@@ -157,7 +157,7 @@ public partial class CostCollectService : ICostCollectService
     private async Task<FinResult> SaveCollectionAsync(WorkOrder wo, CostSheet? sheet, List<CostSheetLine> lines,
         string actor, CancellationToken ct,
         (DateTime Date, CostCollectionBasisV1.RateUseV1[] Rates, Guid? LedgerId, Guid? CenterId)? rateBasis = null,
-        ManufacturingCenterUseV1.Use? centerUse = null)
+        ManufacturingCenterUseV1.Use? centerUse = null, StandardBasisReferenceV1? standardBasis = null)
     {
         var groups = lines.ToLookup(line => line.Element);
         (decimal Actual, decimal Standard) Totals(CostElement element) =>
@@ -198,6 +198,7 @@ public partial class CostCollectService : ICostCollectService
         (sheet.MaterialActual, sheet.MaterialStandard) = material;
         (sheet.LaborActual, sheet.LaborStandard) = labor;
         (sheet.OverheadActual, sheet.OverheadStandard) = overhead;
+        sheet.HasApprovedStandardBasis = standardBasis != null;
         sheet.Status = CostSheetStatus.Collected;
         foreach (var l in lines) { l.CostSheetId = sheet.Id; sheet.Lines.Add(l); }
         _db.CostSheetLines.AddRange(lines);
@@ -212,20 +213,38 @@ public partial class CostCollectService : ICostCollectService
         }
         await _db.SaveChangesAsync(ct);
         if (rateBasis is { } basis)
-            await CostCollectionBasisStoreV1.AppendAsync(_db, sheet, basis.Date, basis.Rates, basis.LedgerId, basisVersion, useEffect, ct);
+            await CostCollectionBasisStoreV1.AppendAsync(_db, sheet, basis.Date, basis.Rates, basis.LedgerId,
+                basisVersion, useEffect, standardBasis, ct);
         return FinResult.Pass();
     }
 
     public Task<CostSheet?> GetByWorkOrderAsync(string workOrderNo)
-        => ReadHistoryAsync((sheets, ct) => sheets.Include(s => s.Lines)
-            .FirstOrDefaultAsync(s => s.WorkOrderNo == workOrderNo, ct));
+        => ReadHistoryAsync(async (sheets, ct) =>
+        {
+            var sheet = await sheets.Include(s => s.Lines).FirstOrDefaultAsync(s => s.WorkOrderNo == workOrderNo, ct);
+            if (sheet != null)
+                await MarkApprovedZeroStandardsAsync([sheet], ct);
+            return sheet;
+        });
 
     public Task<List<CostSheet>> ListAsync(CostSheetStatus? status = null)
-        => ReadHistoryAsync((sheets, ct) =>
+        => ReadHistoryAsync(async (sheets, ct) =>
         {
             if (status is CostSheetStatus filter) sheets = sheets.Where(sheet => sheet.Status == filter);
-            return sheets.AsNoTracking().OrderByDescending(sheet => sheet.CreateDate).ToListAsync(ct);
+            var rows = await sheets.AsNoTracking().OrderByDescending(sheet => sheet.CreateDate).ToListAsync(ct);
+            await MarkApprovedZeroStandardsAsync(rows, ct);
+            return rows;
         });
+
+    private async Task MarkApprovedZeroStandardsAsync(IReadOnlyCollection<CostSheet> sheets, CancellationToken ct)
+    {
+        var zero = sheets.Where(sheet => sheet.StandardCost == 0m).ToDictionary(sheet => sheet.Id);
+        if (zero.Count == 0 || !_db.Database.IsNpgsql())
+            return;
+        var approved = await CostCollectionBasisStoreV1.SheetsWithApprovedStandardAsync(_db, zero.Keys.ToArray(), ct);
+        foreach (var id in approved)
+            zero[id].HasApprovedStandardBasis = true;
+    }
 
     private Task<T> ReadHistoryAsync<T>(Func<IQueryable<CostSheet>, CancellationToken, Task<T>> read)
     {

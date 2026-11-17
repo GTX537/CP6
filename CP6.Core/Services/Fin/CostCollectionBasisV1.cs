@@ -1,5 +1,6 @@
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Erp;
 using CP6.Entity.DomainModels.Fin;
 using CP6.Entity.DomainModels.Mes;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,8 @@ namespace CP6.Core.Services.Fin;
 
 // Exact inputs and results of the current A2 calculation. Each successful collection appends one version.
 internal sealed record CostCollectionBasisV1(string PolicyVersion, DateTime RateDate,
-    CostCollectionBasisV1.CostAmountsV1 Amounts, CostCollectionBasisV1.RateUseV1[] Rates, Guid? LedgerId = null)
+    CostCollectionBasisV1.CostAmountsV1 Amounts, CostCollectionBasisV1.RateUseV1[] Rates, Guid? LedgerId = null,
+    StandardBasisReferenceV1? StandardBasis = null)
 {
     internal const string Policy = "CP6.A2.v1";
     internal const int MoneyScale = 2;
@@ -46,31 +48,48 @@ internal static class CostCollectionBasisStoreV1
             WHERE tenant_id={db.CurrentTenantId} AND cost_sheet_id={sheetId}
             """).SingleAsync(ct);
 
-    internal static Task AppendAsync(CP6Context db, CostSheet sheet, DateTime date,
-        CostCollectionBasisV1.RateUseV1[] rates, Guid? ledgerId, long? explicitVersion, Guid? centerUseEffect, CancellationToken ct)
+    internal static async Task AppendAsync(CP6Context db, CostSheet sheet, DateTime date,
+        CostCollectionBasisV1.RateUseV1[] rates, Guid? ledgerId, long? explicitVersion, Guid? centerUseEffect,
+        StandardBasisReferenceV1? standardBasis, CancellationToken ct)
     {
         var basis = new CostCollectionBasisV1(CostCollectionBasisV1.Policy, date,
-            CostCollectionBasisV1.CostAmountsV1.Capture(sheet), rates, ledgerId);
+            CostCollectionBasisV1.CostAmountsV1.Capture(sheet), rates, ledgerId, standardBasis);
         var json = JsonSerializer.Serialize(basis);
-        return db.Database.ExecuteSqlInterpolatedAsync($"""
-            INSERT INTO cp6_fin_cost_basis_v1.versions (tenant_id, cost_sheet_id, version, basis, center_use_effect_id)
+        var inserted = await db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO cp6_fin_cost_basis_v1.versions (tenant_id, cost_sheet_id, version, basis, center_use_effect_id, standard_basis_id)
             SELECT {db.CurrentTenantId}, {sheet.Id}, COALESCE({explicitVersion},COALESCE(MAX(version),0)+1),
-                CAST({json} AS jsonb),{centerUseEffect}
+                CAST({json} AS jsonb),{centerUseEffect},{standardBasis?.VersionId}
             FROM cp6_fin_cost_basis_v1.versions
             WHERE tenant_id={db.CurrentTenantId} AND cost_sheet_id={sheet.Id}
             """, ct);
+        if (inserted != 1)
+            throw new OrderPriceCorrectionException("COST_COLLECTION_VERSION_NOT_WRITTEN", 409);
     }
 
-    internal static async Task<Version?> ReadLatestAsync(CP6Context db, Guid sheetId)
+    internal static Task<Version?> ReadLatestAsync(CP6Context db, Guid sheetId)
+        => ReadAsync(db, sheetId, null, default);
+
+    internal static async Task<Version?> ReadAsync(CP6Context db, Guid sheetId, long? number, CancellationToken ct)
     {
         var row = await db.Database.SqlQuery<BasisRow>($"""
             SELECT version AS "Number", basis::text AS "Json"
             FROM cp6_fin_cost_basis_v1.versions
             WHERE tenant_id={db.CurrentTenantId} AND cost_sheet_id={sheetId}
+                AND version=COALESCE({number}, version)
             ORDER BY version DESC LIMIT 1
-            """).SingleOrDefaultAsync();
+            """).SingleOrDefaultAsync(ct);
         return row is null ? null : new(row.Number, JsonSerializer.Deserialize<CostCollectionBasisV1>(row.Json)!);
     }
+
+    internal static Task<Guid[]> SheetsWithApprovedStandardAsync(CP6Context db, Guid[] sheets, CancellationToken ct)
+        => db.Database.SqlQuery<Guid>($"""
+            SELECT cost_sheet_id AS "Value" FROM (
+                SELECT DISTINCT ON (cost_sheet_id) cost_sheet_id, standard_basis_id
+                FROM cp6_fin_cost_basis_v1.versions
+                WHERE tenant_id={db.CurrentTenantId} AND cost_sheet_id=ANY({sheets})
+                ORDER BY cost_sheet_id, version DESC
+            ) latest WHERE standard_basis_id IS NOT NULL
+            """).ToArrayAsync(ct);
 
     internal static IQueryable<Guid> VersionedSheetIds(CP6Context db) => db.Database.SqlQuery<Guid>($"""
         SELECT DISTINCT cost_sheet_id AS "Value"

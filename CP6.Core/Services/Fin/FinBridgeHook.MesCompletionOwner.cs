@@ -30,7 +30,7 @@ public partial class FinBridgeHook
 
         var sheet = Db.CostSheets.Local.Single(row => row.WorkOrderNo == evt.SourceNo);
         evt.TargetNo = sheet.No;
-        if (sheet.TotalActual <= 0m)
+        if (sheet.TotalActual <= 0m && !sheet.HasApprovedStandardBasis)
         {
             evt.Status = IntegrationEventStatus.Skipped;
             evt.LastError = "zero total cost";
