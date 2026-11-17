@@ -1,5 +1,7 @@
 # 当前待办与优先级
 
+2026-11-17，WP02-10 核销后按严格前置接续 WP02-04；其他卡保持原出口，详见单卡执行计划。 [WP02-10 核销](../development/evidence/WP02-10/card-closure/DELIVERY.md)
+
 2026-11-17，按单卡序列先 WP02-10，再逐卡核对阶段 A；财务余项登记到 WP11-39/14/40/41/42/04，等待各自原前置 DONE 后实施，不在 WP02-03 延伸。阶段 0 最后核销 WP01-01；缺口每卡最多 5 条。 [WP02-03 核销](../development/evidence/WP02-03/card-closure/DELIVERY.md)
 
 2026-11-16，接续 WP02-03 核对库存、入库及出库单价实际消费，继续派生结果、写回读和独立用途。业务伙伴其他消费者、文件与附件用途、订单其他消费者和 Space WP13-04 依各自合同核对。 [W682 交付](../development/evidence/W682-01/DELIVERY.md)
