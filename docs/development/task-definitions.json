@@ -1111,7 +1111,61 @@
         "docs/development/assessments/20261011/implementation-assessment.json",
         "docs/design-handbook/modules/SYS-NUM-01.md",
         "docs/development/assessments/20261011/catalogs/foundation.json"
+      ],
+      "split_children": [
+        "WP02-16b"
+      ],
+      "split_delivered_scope": [
+        "新登记 Main 编号域按原命令持久唯一分配、不回收，规则版本 CAS 与当前真实会话管理 HTTP 已实证。",
+        "CodeGen 固定模板/摘要/差异/建议路径和覆盖白名单纯预览已交付，不自动写文件。",
+        "元数据当前权限/租户/CAS/原键恢复和旧原件显式采用已实证。"
       ]
+    },
+    {
+      "id": "WP02-16b",
+      "package_id": "WP02",
+      "title": "完整编号域、受控切换恢复与规则管理余项",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "SYS-NUM-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP02-16"
+      ],
+      "external_prerequisites": [],
+      "scope": [
+        "逐编号调用入口登记准确 sourceOwner/原 allocator/tenant-global/业务法人仓库域/周期时区及 KEEP_EXISTING 或 ADAPTER_REQUIRED 理由。",
+        "需要切换的域提供单写者、未决原 operation 归属/查询及 allocation/外露号恢复治理；真实业务消费者仍在其原卡采用，不强制统一所有原 allocator。",
+        "规则生效/影响范围/已用数量、周期与时区兼容政策和 scope 管理视图，实际管理页面的未占号/跨周期提示、412 草稿及 UNKNOWN 恢复。"
+      ],
+      "outputs": [
+        "原 WP02-16 编号治理余项及 PostgreSQL 正反/并发/恢复检查，原 SYS-NUM-01 16 AC 精确核对；不新增原设计排除的自动代码应用。"
+      ],
+      "code_paths": [
+        "CP6.Core/Services/Pub/SeqService.cs"
+      ],
+      "new_paths": [],
+      "acceptance_positive": [
+        "已登记各 scope 的原 Owner 与兼容决定可追溯，批准切换单写者且原未决结果可查；规则管理显示准确影响与原结果。"
+      ],
+      "acceptance_negative": [
+        "同名域不得暗合并、切换不得双写或换号，恢复不靠最大业务号回收外露/跳号；预览不预留、旧版本/未知提交不冒新完成。"
+      ],
+      "exclusive_resources": [
+        "Main:numbering"
+      ],
+      "notes": "2026-11-17 从 WP02-16 已验证部分拆出；原 scope/全部原 AC 有效，完整余项不减业务深度。M≤4h，150%强制再拆；总预算不增加。",
+      "prerequisite_bindings": [],
+      "source_refs": [
+        "docs/development/08-postgresql-baseline.md",
+        "docs/development/assessments/20261011/implementation-assessment.json",
+        "docs/design-handbook/modules/SYS-NUM-01.md",
+        "docs/development/assessments/20261011/catalogs/foundation.json",
+        "docs/development/evidence/WP02-16/card-closure/DELIVERY.md"
+      ],
+      "split_parent": "WP02-16"
     },
     {
       "id": "WP02-17",
