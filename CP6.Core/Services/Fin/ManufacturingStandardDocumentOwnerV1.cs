@@ -97,41 +97,13 @@ public sealed class ManufacturingStandardDocumentOwnerV1(CP6Context db, Operatio
             return new { kind = "FOUND", reply = original.ToReply(command, false) };
         }, ct);
 
-    public Task<object> ReadFormalCommandAsync(Guid context, Guid command, CancellationToken ct)
-        => ReadFormalAsync(context, command, false, ct);
-
-    public Task<object> ReadFormalCommandResultAsync(Guid context, Guid command, CancellationToken ct)
-        => ReadFormalAsync(context, command, true, ct);
-
-    private Task<object> ReadFormalAsync(Guid context, Guid command, bool result, CancellationToken ct)
-        => scope.WithContextAsync<object>(owner, context, "view", false, async (ledger, access, token) =>
-        {
-            await access.ActionAsync(OperationsOwnerV1.FinCost, "basis-view", token);
-            var binding = await journal.FindAsync(ledger.Id, command, token);
-            if (binding == null)
-            {
-                if (result)
-                    throw Error("NOT_FOUND_OR_NOT_VISIBLE", 404);
-                return new
-                {
-                    kind = "NOT_OBSERVED", commandId = command,
-                    observedAt = FinanceCostCommandCanonicalV1.Time(DateTimeOffset.UtcNow),
-                    provesPermanentNoEffect = false,
-                };
-            }
-
-            var original = await store.ReadCommandAsync(ledger.Id, command, token)
-                ?? throw Error("NOT_FOUND_OR_NOT_VISIBLE", 404);
-            await RequireOriginalScopeAsync(ledger.Id, original, access, token);
-            if (!binding.AcceptedAt.HasValue)
-                throw Error("OWNER_PARTICIPANT_UNPROVEN", 503);
-
-            var terminal = await journal.ReadTerminalAsync(ledger.Id, command, token)
-                ?? throw Error("AUTHORITY_UNAVAILABLE", 503);
-            return result
-                ? FinanceCostCommandJournalV1.JsonBody(terminal.Result)
-                : FinanceCostCommandJournalV1.Found(original.ReceiptId, terminal.Receipt);
-        }, ct);
+    internal async Task RequireCommandVisibilityAsync(Guid ledger, Guid command, OperationsAccessV1 access, CancellationToken ct)
+    {
+        await access.ActionAsync(OperationsOwnerV1.FinCost, "basis-view", ct);
+        var original = await store.ReadCommandAsync(ledger, command, ct)
+            ?? throw Error("NOT_FOUND_OR_NOT_VISIBLE", 404);
+        await RequireOriginalScopeAsync(ledger, original, access, ct);
+    }
 
     private Task<StandardDocumentReplyV1> WriteAsync(Guid context, StandardDocumentBinding binding,
         Func<LedgerRow, OperationsAccessV1, StandardDocumentBinding, CancellationToken, Task<StandardDocumentReplyV1>> write, CancellationToken ct)
@@ -143,16 +115,16 @@ public sealed class ManufacturingStandardDocumentOwnerV1(CP6Context db, Operatio
                 prior?.AcceptedAt == null ? "basis-use" : "basis-view", token);
             if (prior == null)
             {
-                await journal.BindAsync(ledger.Id, access.ActorId, binding, token);
+                await journal.BindAsync(ledger.Id, access.ActorId, binding.Formal, token);
                 var reply = await write(ledger, access, binding, token);
-                await journal.RecordAsync(ledger.Id, binding, reply, token);
+                await RecordAsync(ledger.Id, binding.Formal, reply, token);
                 return reply;
             }
 
             var original = await store.ReadCommandAsync(ledger.Id, binding.CommandId, token)
                 ?? throw Error("COMMAND_IDENTITY_CONFLICT", 409);
             await RequireOriginalScopeAsync(ledger.Id, original, access, token);
-            if (!prior.Matches(access.ActorId, binding))
+            if (!prior.Matches(access.ActorId, prior.AcceptedAt.HasValue ? binding.Formal : binding.Legacy))
                 throw Error("COMMAND_IDENTITY_CONFLICT", 409);
             return original.ToReply(binding.CommandId, true);
         }, ct, async (ledger, token) =>
@@ -160,6 +132,24 @@ public sealed class ManufacturingStandardDocumentOwnerV1(CP6Context db, Operatio
             prior = await journal.FindAsync(ledger.Id, binding.CommandId, token);
             return prior?.AcceptedAt == null ? "collect" : "view";
         });
+    }
+
+    private Task RecordAsync(Guid ledger, FinanceCostCommandIdentityV1 binding, StandardDocumentReplyV1 reply, CancellationToken ct)
+    {
+        var operation = reply.Operation switch
+        {
+            "CREATE" => "CREATE_STANDARD_DOCUMENT",
+            "PREPARE" => "PREPARE_STANDARD_COLLECTION",
+            "FREEZE" => "FREEZE_STANDARD_DOCUMENT",
+            _ => throw new InvalidOperationException("标准成本单据命令未知。"),
+        };
+        return journal.RecordAsync(ledger, binding, reply.ReceiptId, operation, reply.DocumentId,
+            "STANDARD_DOCUMENT_COMMAND_RESULT", new
+            {
+                schema = "CP6-STANDARD-DOCUMENT-COMMAND-RESULT-1",
+                reply.CommandId, reply.DocumentId, reply.Version, reply.PlanId,
+                expiresAt = reply.ExpiresAt is { } expires ? FinanceCostCommandCanonicalV1.Time(expires) : null,
+            }, ct);
     }
 
     private async Task<(Document Document, WorkOrder Order)> LoadDocumentAsync(Guid ledger, Guid id,

@@ -27,6 +27,8 @@ internal sealed record StandardDocumentBinding(Guid CommandId, string Route, byt
 {
     internal const string Documents = "api/fin/cost/owner-v1/standard-documents";
     internal const string Commands = "api/fin/cost/owner-v1/standard-document-commands";
+    internal FinanceCostCommandIdentityV1 Formal => new(CommandId, Route, R2BodyDigest, R2ExpectedDigest);
+    internal FinanceCostCommandIdentityV1 Legacy => new(CommandId, Route, BodyDigest, ExpectedDigest);
 
     internal static StandardDocumentBinding Create(Guid id, string route, object request, object expected, string? reason)
     {

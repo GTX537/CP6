@@ -9,17 +9,17 @@ namespace CP6.WebApi.Controllers.Fin;
 
 [ApiController, Authorize, OrderOwnerResult]
 [Route(FinanceCostCommandJournalV1.Commands)]
-public sealed class FinanceCostCommandController(ManufacturingStandardDocumentOwnerV1 documents) : ControllerBase
+public sealed class FinanceCostCommandController(FinanceCostCommandQueryOwnerV1 commands) : ControllerBase
 {
     private const string Context = "X-Finance-Context";
 
     [HttpGet("{command:guid}")]
     public Task<IActionResult> Read([FromHeader(Name = Context)] Guid context, Guid command, CancellationToken ct)
-        => ReadAsync(command, () => documents.ReadFormalCommandAsync(context, command, ct));
+        => ReadAsync(command, () => commands.ReadAsync(context, command, false, ct));
 
     [HttpGet("{command:guid}/result")]
     public Task<IActionResult> ReadResult([FromHeader(Name = Context)] Guid context, Guid command, CancellationToken ct)
-        => ReadAsync(command, () => documents.ReadFormalCommandResultAsync(context, command, ct));
+        => ReadAsync(command, () => commands.ReadAsync(context, command, true, ct));
 
     private async Task<IActionResult> ReadAsync(Guid command, Func<Task<object>> read)
     {
