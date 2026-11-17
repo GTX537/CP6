@@ -162,12 +162,13 @@ public sealed partial class OperationsOwnerV1
 
     internal async Task<T> ExecuteAsync<T>(string resource,string action,bool write,
         Func<OperationsAccessV1,CancellationToken,Task<T>> body,CancellationToken ct=default, OperationsDelegationV1? delegation=null,
-        Func<CancellationToken,Task<string>>? actionAtFence=null,bool readOnlyAuthorityFence=false)
+        Func<CancellationToken,Task<string>>? actionAtFence=null,bool readOnlyAuthorityFence=false,
+        Func<Guid,CancellationToken,Task<string>>? scopedActionAtFence=null)
     {
         using var linked=CancellationTokenSource.CreateLinkedTokenSource(ct,http.HttpContext?.RequestAborted??CancellationToken.None);ct=linked.Token;
         if((resource is not (ReturnCorrection or ReturnQuality or LocationRule or EngineeringBaseline or EngineeringIteration or RequirementSet or EngineeringRequirement or QualitySpecification or ControlledDocument or FileContent or EngineeringOutputRelations or EngineeringManufacturing or EngineeringBom or EngineeringRouting or BusinessPartner or ToolInstance or ToolSpecification or PlateMold or ConfigurationRule or EngineeringRevision or EngineeringProduct or PhysicalSite or CurrencyPolicy or UomProfile or InventoryIdentity or TransferEnvironment or TransferSource or TransferRequest or Product or Mes or Outbound or Production or Inbound or Receipt or Stock or StockTake or WmsDashboard or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or Rma or Replenish or Mobile or WorkCenter or ProcessCostRate or FinCost or StockDwell or Expiry or MaterialShortage or LotTrace or CrossDock or Slotting or Vmi or Kitting or ReportCenter or Warehouse or Location or Routing or Packaging or Sample) && !CP6.Core.Services.Wms.ReturnDispositionOwnersV2.ContainsResource(resource)) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
             || System.Transactions.Transaction.Current!=null || db.ChangeTracker.HasChanges()
-            || readOnlyAuthorityFence && (write || delegation!=null || actionAtFence!=null)
+            || readOnlyAuthorityFence && (write || delegation!=null || actionAtFence!=null || scopedActionAtFence!=null)
             || db.ChangeTracker.Entries().Any(e=>IsBusiness(e.Entity.GetType().Name))
             || resource==FinCost && db.ChangeTracker.Entries().Any(e=>e.Entity is CP6.Entity.DomainModels.Fin.CostSheet
                 or CP6.Entity.DomainModels.Fin.CostSheetLine or CP6.Entity.DomainModels.Fin.FinSequence)
@@ -197,7 +198,9 @@ public sealed partial class OperationsOwnerV1
             // Original-result lookup occurs only after the same native authority/business fences.
             // Only the assembly-internal caller selects query for an existing immutable operation.
             var selectedAction=actionAtFence==null?action:await actionAtFence(ct);
-            var authority=await AuthorityAsync(delegation?.Resource??resource,delegation?.Action??selectedAction,ct);
+            var subject=await currentActor(ct);
+            if(scopedActionAtFence!=null)selectedAction=await scopedActionAtFence(subject,ct);
+            var authority=await AuthorityCoreAsync(delegation?.Resource??resource,delegation?.Action??selectedAction,subject,false,ct);
             var access=new OperationsAccessV1(db,this,authority);
             if(delegation!=null)
             {

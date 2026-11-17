@@ -23,16 +23,29 @@ public sealed class ManufacturingFinanceScopeV1(CP6Context db, string? environme
     internal static OrderPriceCorrectionException Error(string code, int status) => new(code, status);
 
     internal Task<T> WithContextAsync<T>(OperationsOwnerV1 owner, Guid context, string action, bool write,
-        Func<LedgerRow, OperationsAccessV1, CancellationToken, Task<T>> body, CancellationToken ct)
-        => owner.ExecuteAsync(OperationsOwnerV1.FinCost, action, true, async (access, token) =>
+        Func<LedgerRow, OperationsAccessV1, CancellationToken, Task<T>> body, CancellationToken ct,
+        Func<LedgerRow, CancellationToken, Task<string>>? selectAction = null)
+    {
+        LedgerRow? resolved = null;
+        return owner.ExecuteAsync(OperationsOwnerV1.FinCost, action, true, async (access, token) =>
         {
             if (write)
                 owner.RequireOriginalFinanceActor();
-            await GateAsync(write, token);
-            var ledger = await RequireContextAsync(context, access.ActorId, token);
+            var ledger = resolved ?? await Resolve(access.ActorId, token);
             access.AtCommit(async final => { await RequireContextAsync(context, access.ActorId, final); });
             return await body(ledger, access, token);
-        }, ct);
+        }, ct, scopedActionAtFence: selectAction == null ? null : async (actor, token) =>
+        {
+            resolved = await Resolve(actor, token);
+            return await selectAction(resolved, token);
+        });
+
+        async Task<LedgerRow> Resolve(Guid actor, CancellationToken token)
+        {
+            await GateAsync(write, token);
+            return await RequireContextAsync(context, actor, token);
+        }
+    }
 
     internal Task GateAsync(bool write, CancellationToken ct)
     {
