@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import collections
+from datetime import datetime
 import json
 from pathlib import Path
 import re
@@ -342,7 +343,7 @@ def adopted_delivery(record, repository, root):
     return evidence_ok([{"path": report, "source_sha": source, "scope": "existing delivery"}], root)
 
 
-def validate_prerequisites(task, definition, tasks, root):
+def validate_prerequisites(task, definition, tasks, root, *, strict=False, remainders=()):
     """The coordinator reviews scope; this boundary checks its exact recorded references."""
     errors, required, accepted = [], set(), set()
     tid = task["id"]
@@ -374,9 +375,66 @@ def validate_prerequisites(task, definition, tasks, root):
         accepted.add(pair)
     satisfied = {dep for dep, _ in required if {pair for pair in required if pair[0] == dep} <= accepted}
     if task["state"] in {"READY", "IN_PROGRESS", "VERIFYING", "DONE"} and any(
-            dep not in tasks or (tasks[dep]["state"] != "DONE" and dep not in satisfied)
-            for dep in task.get("dependencies", [])):
+            dep not in tasks or (tasks[dep]["state"] != "DONE" and (strict or dep not in satisfied))
+            for dep in set(task.get("dependencies", [])) | set(remainders)):
         errors.append(f"{tid}: unfinished task dependencies")
+    return errors
+
+
+def current_card_execution(task, policy):
+    """新窗口严格前置；历史已交付的当时准入事实不追改。"""
+    if not policy.get("strict_prerequisites"):
+        return False
+    if task["state"] != "DONE" or task.get("card_execution"):
+        return True
+    claimed = (task.get("assignment") or {}).get("claimed_at", "")
+    if not claimed:
+        return False  # 无新领取记录的既有 DONE 保留历史事实。
+    try:
+        return datetime.fromisoformat(claimed) >= datetime.fromisoformat(policy.get("started_at", "2026-11-17T00:00:00Z"))
+    except (TypeError, ValueError):
+        return True  # 无法证明发生在旧准入期间，不接受局部交付豁免。
+
+
+def split_remainders(task, definitions):
+    """消费原卡须等其全部余卡；余卡自身可在已核销父卡后开工。"""
+    ancestors, current = set(), task["id"]
+    while current in definitions and current not in ancestors:
+        ancestors.add(current)
+        current = definitions[current].get("split_parent")
+    pending, required = list(task.get("dependencies", [])), set()
+    while pending:
+        dep = pending.pop()
+        if dep in required:
+            continue
+        required.add(dep)
+        if dep not in ancestors:
+            pending.extend(definitions.get(dep, {}).get("split_children", []))
+    return required
+
+
+def validate_splits(definitions):
+    errors = []
+    for tid, definition in definitions.items():
+        parent = definition.get("split_parent")
+        suffix = re.fullmatch(r"(WP[0-9]{2}-[0-9]{2,})([b-z])", tid)
+        if parent is not None or suffix:
+            if (not suffix or not isinstance(parent, str) or parent not in definitions
+                    or not isinstance(definitions[parent].get("split_children"), list)
+                    or tid not in definitions[parent]["split_children"]
+                    or re.sub(r"[b-z]$", "", parent) != suffix[1]):
+                errors.append(f"{tid}: invalid split parent")
+        children = definition.get("split_children", [])
+        if (not string_list(children) or len(set(children)) != len(children)
+                or any(child not in definitions or definitions[child].get("split_parent") != tid for child in children)):
+            errors.append(f"{tid}: invalid split children")
+        seen, current = set(), tid
+        while isinstance(current, str) and current in definitions:
+            if current in seen:
+                errors.append(f"{tid}: split cycle")
+                break
+            seen.add(current)
+            current = definitions[current].get("split_parent")
     return errors
 
 
@@ -413,6 +471,9 @@ def validate_definitions(data, root: Path, targets):
         entries[tid] = row
     if set(entries) != set(new_tasks):
         errors.append("definition task IDs differ from roadmap WP tasks")
+    split_errors = validate_splits(entries)
+    if split_errors:
+        return errors + split_errors
     plans = policy.get("package_plans", {})
     for package in data["work_packages"]:
         pid = package["id"]
@@ -429,7 +490,7 @@ def validate_definitions(data, root: Path, targets):
             if key in definition:
                 errors.append(f"{tid}: mutable ledger field in definition: {key}")
         pid = definition.get("package_id")
-        if not re.fullmatch(r"WP[0-9]{2}-[0-9]{2,}", tid) or not tid.startswith(f"{pid}-"):
+        if not re.fullmatch(r"WP[0-9]{2}-[0-9]{2,}[b-z]?", tid) or not tid.startswith(f"{pid}-"):
             errors.append(f"{tid}: invalid definition task identity")
         if task.get("card_anchor") != tid.lower() or task.get("plan_path") != f"docs/development/task-plans/{pid}.md":
             errors.append(f"{tid}: definition card locator differs")
@@ -470,7 +531,9 @@ def validate_definitions(data, root: Path, targets):
             if binding["mode"] == "TASK_DELIVERY":
                 if not refs or set(refs) - set(task.get("dependencies", [])):
                     errors.append(f"{tid}: TASK_DELIVERY binding missing dependency")
-        errors.extend(validate_prerequisites(task, definition, tasks, root))
+        strict = current_card_execution(task, policy.get("card_execution_policy", {}))
+        errors.extend(validate_prerequisites(task, definition, tasks, root, strict=strict,
+                                            remainders=split_remainders(task, entries) if strict else ()))
     return errors
 
 
@@ -511,6 +574,13 @@ def render_cards(definitions, data):
                           f"仓库：{definition['repository']}；类型：{definition['kind']}；相对规模：{definition['relative_size']}。",
                           f"目标：{', '.join(definition['target_ids']) or '全局协调，不另占业务目标'}。", ""])
             section(lines, "直接前置", [task_link(dep) for dep in definition["dependencies"]])
+            if definition.get("split_children"):
+                section(lines, "拆卡后的完整出口", [
+                    "原 scope/验收保持有效；原卡 DONE 只核销已验证部分，完整前置须同时等待以下余卡 DONE："
+                    + ", ".join(task_link(child) for child in definition["split_children"])])
+                section(lines, "原卡已验证部分", definition.get("split_delivered_scope", []))
+            if definition.get("split_parent"):
+                section(lines, "原范围来源", [task_link(definition["split_parent"]) + " 的未完成出口；不减少原 AC。"])
             section(lines, "设计与验收来源", [doc_link(ref) for ref in definition["source_refs"]])
             section(lines, "实施范围", definition["scope"])
             section(lines, "交付输出", definition["outputs"])
@@ -559,6 +629,9 @@ def render(data):
     s01 = [t for t in tasks if t["id"].startswith("S01-")]
     delivered = sum(t["state"] == "DONE" for t in s01)
     task_view = ["# 细分任务进度", "", f"台账日期：{data['as_of']}。由 roadmap.json 生成；S01 已交付：{delivered}/{len(s01)}。S02-00 多租户设计前置保留。", "", f"全部已登记任务 {len(tasks)} 项，已交付 {sum(t['state']=='DONE' for t in tasks)} 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。", "", "任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)，分配步骤见[多对话协作](09-parallel-development.md)。所有状态/领取/证据只在JSON登记；未领取的候选不自动READY。", ""]
+    split_count = len(data.get('dispatch_policy', {}).get('card_execution_policy', {}).get('new_splits', []))
+    if split_count:
+        task_view += [f"原 375 卡及其全部出口保留；已登记 {split_count} 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。", ""]
     for package in data["work_packages"]:
         group = [t for t in tasks if t.get("package_id", "WP02") == package["id"]]
         if not group:

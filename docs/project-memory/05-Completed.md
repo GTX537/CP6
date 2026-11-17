@@ -1,5 +1,7 @@
 # 已完成能力与近期里程碑
 
+2026-11-17，WP02-13 拆卡（原号已验证部分 DONE）：原号仅核销真实 Owner 强审计、字段详情安全投影和旁路日志隔离；完整身份/时间、统一读取导出及保留清理转 WP02-13b。 原证据按实际范围复用，未重跑产品。 [WP02-13 核销](../development/evidence/WP02-13/card-closure/DELIVERY.md)
+
 2026-11-17，WP02-04 卡 DONE：租户创建模板/原命令、配置 CAS、暂停恢复与共同门、管理审计和删除防绕过已按原出口核销；目标原 AC 映射另留一项证据缺口。 原证据按实际范围复用，未重跑产品。 [WP02-04 核销](../development/evidence/WP02-04/card-closure/DELIVERY.md)
 
 2026-11-17，WP02-10 卡 DONE：Main 代表 Owner 同事务、固定原结果/原键恢复、最终授权门和实际 writer 盘点已核销。 原证据按实际范围复用，未重跑产品。 [WP02-10 核销](../development/evidence/WP02-10/card-closure/DELIVERY.md)

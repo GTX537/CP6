@@ -166424,6 +166424,11 @@
       "at": "2026-11-17T12:13:16.708976+00:00",
       "change": "WP02-04 按原卡定义核销 DONE；租户创建模板/原命令、配置 CAS、暂停恢复与共同门、管理审计和删除防绕过已按原出口核销；目标原 AC 映射另留一项证据缺口。",
       "evidence": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-17T12:26:27.177779+00:00",
+      "change": "WP02-13 拆卡：原号 DONE 仅核销已验证部分，完整余项 WP02-13b；原 375 卡和依赖保留，新增余卡并落实严格前置门。",
+      "evidence": "docs/development/evidence/WP02-13/card-closure/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -185542,72 +185547,42 @@
         "file:Main:CP6.WebApi/BackgroundServices/OperLogCleanupService.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-13",
-      "entry_gate": "NOT_CHECKED",
+      "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W64-01",
+        "chat_label": "COORD / WP02-13",
         "repository": "Main",
-        "owning_task_repository": "Main",
-        "branch": "codex/bug-433-field-audit-owner",
-        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-23T11:20:34.497204+00:00",
-        "baseline_sha": "b23e5e111d1f1f77936a76a74ff6acfb707bd067",
-        "entry_evidence": "docs/development/dispatch/20261023-wave64/README.md",
-        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
-        "dispatch_scope": "W64_01",
-        "bounded_window_gate": "CONFIRMED",
-        "full_task_gate_unchanged": true,
-        "worker_start_received": true,
-        "actual_start_ref": {
-          "commit": "6c315bc1fc6be6a3b7fc5942897e9174a096e42d",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T112759Z-wave64-start/MESSAGE.md",
-          "at": "2026-10-23T11:27:59.800088+00:00"
-        },
-        "allowed_write_paths": [
-          "CP6.Core/Services/Sys/",
-          "CP6.WebApi/Controllers/Sys/FieldAuditController.cs",
-          "CP6.WebApi/Program.cs",
-          "CP6.WebApi/Seed/I18nSecAuditScreenSeed.cs",
-          "CP6.Tests/",
-          "cp6.web/src/",
-          "docs/development/",
-          "docs/project-memory/"
-        ],
-        "reserved_write_resources": [
-          "Main:field-audit-read-owner",
-          "Main:Program"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
-        "handoff_branch": "codex/w64-handoff",
-        "actions_authorized": false,
-        "deployment_authorized": false,
-        "existing_database_migration_authorized": false,
-        "worker_delivery_received": true,
-        "candidate_review_completed": true,
-        "candidate_integrated": true,
-        "resources_released": true,
-        "full_task_completed": false,
-        "issue": "https://github.com/GTX537/CP6/issues/433",
-        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/a8a31bccdb57fb3a9a87da5aadb99be7b1673653/docs/development/evidence/W64-01/DELIVERY.md",
-        "source_candidate_sha": "183750bc45f39ce81499a11411914d3cf46de3aa",
-        "remote_main_sha": "a8a31bccdb57fb3a9a87da5aadb99be7b1673653",
-        "pull_request": "https://github.com/GTX537/CP6/pull/434",
-        "handoff_delivery_ref": {
-          "commit": "217106e4e6cad6a23847a6b12c22e76ed6ad7e9c",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T114302Z-wave64-delivery/MESSAGE.md",
-          "at": "2026-10-23T11:43:02.185390+00:00",
-          "base": "codex/t02c-entry-handoff-20260921",
-          "branch": "codex/w64-handoff"
-        },
-        "lifecycle_complete": true
+        "branch": "codex/wp02-13",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-17T12:18:19.888304+00:00",
+        "baseline_sha": "66b92018889889ce76438c3280283bcad008e7ab",
+        "entry_evidence": "docs/development/evidence/WP02-13/card-closure/DELIVERY.md",
+        "phase": "CLOSED",
+        "dispatch_scope": "拆卡：原号仅核销真实 Owner 强审计、字段详情安全投影和旁路日志隔离；完整身份/时间、统一读取导出及保留清理转 WP02-13b。",
+        "delivery_report": "docs/development/evidence/WP02-13/card-closure/DELIVERY.md",
+        "full_task_completed": false
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-13/card-closure/DELIVERY.md",
+          "source_sha": "66b92018889889ce76438c3280283bcad008e7ab",
+          "result": "PASS",
+          "observed_at": "2026-11-17T12:26:27.177779+00:00",
+          "command": "Review W64/W264/W265/W269/W290/W307/W460 and current audit paths; split gate red/green and registrar regressions; docs/ledger review; no new product execution",
+          "environment": "本次文档/台账核销；按原 SHA 和环境复用实际 PostgreSQL/宿主证据，无新产品执行",
+          "scope": "拆卡：原号仅核销真实 Owner 强审计、字段详情安全投影和旁路日志隔离；完整身份/时间、统一读取导出及保留清理转 WP02-13b。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-13/card-closure/DELIVERY.md",
+        "source_sha": "66b92018889889ce76438c3280283bcad008e7ab",
+        "remote_main_sha": "66b92018889889ce76438c3280283bcad008e7ab",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1239",
+        "scope": "本报告核实的已交付实现均在准确远端主线中；所列 PR 是基线采用定位，本次卡核销 PR 另由 GitHub 和工作区 finish 记录。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
@@ -185720,23 +185695,45 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W310-01",
-        "as_of": "2026-11-08",
-        "classification": "IMPLEMENTATION_REMAINS",
-        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-13",
-        "delivered": "多类实际Owner业务/原结果/审计同事务；FORM、TASK、DOC和隐私最小回执本轮已采用。 W460 PostgreSQL操作日志降级使用独立DI作用域及新Context，传递原已确认请求租户，只保存日志。拒绝后未提交业务不被日志写入带入数据库，正常/日志故障及原字段、异常状态映射、Kafka路径和历史非PG保持。",
-        "remaining": "全域actor/effectiveActor/UTC/脱敏、计数/明细/导出同授权及policy/hold/unknown清理收据仍未完整纳管。",
-        "next_action": "继续WP02-13必需原子审计、实际授权出口和保留治理，并沿WP02-03真实余项推进；本窗旁路日志隔离不替代业务原子审计、全场景当前权限、完整PGT-017、导出/hold/跨仓及生产传输验收。",
+        "window": "WP02-13",
+        "as_of": "2026-11-17",
+        "classification": "SPLIT_VERIFIED_PART",
+        "report": "docs/development/evidence/WP02-13/card-closure/DELIVERY.md",
+        "delivered": "拆卡：原号仅核销真实 Owner 强审计、字段详情安全投影和旁路日志隔离；完整身份/时间、统一读取导出及保留清理转 WP02-13b。",
+        "remaining": "完整原出口剩余见 WP02-13b；原号 DONE 仅指已验证部分。",
+        "next_action": "完整余项 WP02-13b；阶段 0 其余未满足前置卡仅做只读证据核对。",
         "evidence_refs": [
           "docs/development/evidence/W135-01/DELIVERY.md",
           "docs/development/evidence/W153-01/DELIVERY.md",
           "docs/development/evidence/W64-01/DELIVERY.md",
           "docs/development/evidence/W310-01/DELIVERY.md",
-          "docs/development/evidence/BUG-921-OPERLOG-FALLBACK-ISOLATION/DELIVERY.md"
+          "docs/development/evidence/BUG-921-OPERLOG-FALLBACK-ISOLATION/DELIVERY.md",
+          "docs/development/evidence/WP02-13/card-closure/DELIVERY.md"
         ],
-        "formal_state_changed": false,
-        "new_product_validation": true,
-        "latest_window": "W460-01"
+        "formal_state_changed": true,
+        "new_product_validation": false,
+        "latest_window": "WP02-13",
+        "review_history": [
+          {
+            "window": "W310-01",
+            "as_of": "2026-11-08",
+            "classification": "IMPLEMENTATION_REMAINS",
+            "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-13",
+            "delivered": "多类实际Owner业务/原结果/审计同事务；FORM、TASK、DOC和隐私最小回执本轮已采用。 W460 PostgreSQL操作日志降级使用独立DI作用域及新Context，传递原已确认请求租户，只保存日志。拒绝后未提交业务不被日志写入带入数据库，正常/日志故障及原字段、异常状态映射、Kafka路径和历史非PG保持。",
+            "remaining": "全域actor/effectiveActor/UTC/脱敏、计数/明细/导出同授权及policy/hold/unknown清理收据仍未完整纳管。",
+            "next_action": "继续WP02-13必需原子审计、实际授权出口和保留治理，并沿WP02-03真实余项推进；本窗旁路日志隔离不替代业务原子审计、全场景当前权限、完整PGT-017、导出/hold/跨仓及生产传输验收。",
+            "evidence_refs": [
+              "docs/development/evidence/W135-01/DELIVERY.md",
+              "docs/development/evidence/W153-01/DELIVERY.md",
+              "docs/development/evidence/W64-01/DELIVERY.md",
+              "docs/development/evidence/W310-01/DELIVERY.md",
+              "docs/development/evidence/BUG-921-OPERLOG-FALLBACK-ISOLATION/DELIVERY.md"
+            ],
+            "formal_state_changed": false,
+            "new_product_validation": true,
+            "latest_window": "W460-01"
+          }
+        ]
       },
       "wave269_definition_audit_adoption": {
         "status": "CLOSED",
@@ -185846,7 +185843,135 @@
         "branch_disposition": "deleted-local-and-remote",
         "workspace_status": "fixed-seat-detached-for-reuse",
         "seat_released": true
-      }
+      },
+      "assignment_history": [
+        {
+          "chat_label": "COORD / W64-01",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/bug-433-field-audit-owner",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-23T11:20:34.497204+00:00",
+          "baseline_sha": "b23e5e111d1f1f77936a76a74ff6acfb707bd067",
+          "entry_evidence": "docs/development/dispatch/20261023-wave64/README.md",
+          "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
+          "dispatch_scope": "W64_01",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "6c315bc1fc6be6a3b7fc5942897e9174a096e42d",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T112759Z-wave64-start/MESSAGE.md",
+            "at": "2026-10-23T11:27:59.800088+00:00"
+          },
+          "allowed_write_paths": [
+            "CP6.Core/Services/Sys/",
+            "CP6.WebApi/Controllers/Sys/FieldAuditController.cs",
+            "CP6.WebApi/Program.cs",
+            "CP6.WebApi/Seed/I18nSecAuditScreenSeed.cs",
+            "CP6.Tests/",
+            "cp6.web/src/",
+            "docs/development/",
+            "docs/project-memory/"
+          ],
+          "reserved_write_resources": [
+            "Main:field-audit-read-owner",
+            "Main:Program"
+          ],
+          "reserved_postgresql_ports": [
+            55435
+          ],
+          "handoff_branch": "codex/w64-handoff",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "existing_database_migration_authorized": false,
+          "worker_delivery_received": true,
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "resources_released": true,
+          "full_task_completed": false,
+          "issue": "https://github.com/GTX537/CP6/issues/433",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/a8a31bccdb57fb3a9a87da5aadb99be7b1673653/docs/development/evidence/W64-01/DELIVERY.md",
+          "source_candidate_sha": "183750bc45f39ce81499a11411914d3cf46de3aa",
+          "remote_main_sha": "a8a31bccdb57fb3a9a87da5aadb99be7b1673653",
+          "pull_request": "https://github.com/GTX537/CP6/pull/434",
+          "handoff_delivery_ref": {
+            "commit": "217106e4e6cad6a23847a6b12c22e76ed6ad7e9c",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T114302Z-wave64-delivery/MESSAGE.md",
+            "at": "2026-10-23T11:43:02.185390+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w64-handoff"
+          },
+          "lifecycle_complete": true
+        }
+      ],
+      "remaining_scope": "完整原出口剩余见 WP02-13b；原号 DONE 仅指已验证部分。",
+      "card_execution": {
+        "result": "SPLIT",
+        "report": "docs/development/evidence/WP02-13/card-closure/DELIVERY.md",
+        "started_at": "2026-11-17T12:18:19.888304+00:00",
+        "verified_at": "2026-11-17T12:26:27.177779+00:00",
+        "effective_seconds": 487.289,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600.0,
+        "new_splits": [
+          "WP02-13b"
+        ],
+        "strict_prerequisites": [
+          "WP02-10"
+        ],
+        "new_product_execution": false,
+        "preceding_integration_seconds": 303.179
+      },
+      "split_children": [
+        "WP02-13b"
+      ],
+      "split_delivered_scope": [
+        "已采用 Main 代表 Owner 的必需审计与业务/原结果/Outbox 同事务。",
+        "已登记 Machine 字段历史的当前安全详情投影、原件不改、未知映射拒绝。",
+        "PostgreSQL 请求旁路日志用独立上下文保存，拒绝业务不被日志保存再次提交。"
+      ]
+    },
+    {
+      "id": "WP02-13b",
+      "package_id": "WP02",
+      "title": "审计完整身份与安全查询、导出及保留清理余项",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "SYS-AUD-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP02-13"
+      ],
+      "exclusive_resources": [
+        "Main:audit-policy",
+        "file:Main:CP6.Core/Services/Platform/GdprService.cs",
+        "file:Main:CP6.Core/Services/Platform/TenantAdminService.cs",
+        "file:Main:CP6.WebApi/BackgroundServices/OperLogCleanupService.cs"
+      ],
+      "coverage_role": "IMPLEMENTATION",
+      "state": "PLANNED",
+      "plan_path": "docs/development/task-plans/WP02.md",
+      "card_anchor": "wp02-13b",
+      "entry_gate": "NOT_CHECKED",
+      "assignment": null,
+      "blockers": [],
+      "validation_evidence": [],
+      "delivery_evidence": null,
+      "entry_conditions": [
+        "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
+        "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
+      ],
+      "split_parent": "WP02-13",
+      "remaining_scope": [
+        "三类审计安全采集/脱敏、actual/effective/service 与原 operation/权限版本、明确 UTC 来源及旧时间兼容。",
+        "总数/列表/详情/搜索/导出/当前下载按同范围和独立能力授权，稳定分页和原证据/安全投影分离。",
+        "按各保留类 policy/hold/UNKNOWN/争议/必要引用决定清理，旧 Clear 和后台共门重核、最小收据及原 plan 恢复。"
+      ],
+      "active_issue": "https://github.com/GTX537/CP6/issues/1240"
     },
     {
       "id": "WP02-14",
@@ -215980,7 +216105,8 @@
     {
       "target_id": "SYS-AUD-01",
       "implementation_task_ids": [
-        "WP02-13"
+        "WP02-13",
+        "WP02-13b"
       ]
     },
     {
@@ -216347,8 +216473,8 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "WP02-04",
-      "phase": "CARD_DONE_PENDING_PR",
+      "id": "WP02-13",
+      "phase": "CARD_SPLIT_PENDING_PR",
       "owner": "COORD",
       "mode": "SINGLE_CHAT_SERIAL",
       "windows_closed": true,
@@ -216360,24 +216486,24 @@
         "COORD"
       ],
       "product_code_changed": false,
-      "report": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md",
-      "next_action": "正常合并并核实远端后进入 WP02-13",
+      "report": "docs/development/evidence/WP02-13/card-closure/DELIVERY.md",
+      "next_action": "下一实施 WP02-13b；阶段 0 继续原顺序只读证据核对及可核销卡交付，不消费未完成余项。",
       "windows": [
         {
-          "id": "WP02-04",
-          "workspace_task": "WP02-04",
+          "id": "WP02-13",
+          "workspace_task": "WP02-13",
           "related_tasks": [
-            "WP02-04"
+            "WP02-13"
           ],
           "chat": "COORD",
           "phase": "CLOSED",
-          "branch": "codex/wp02-04",
+          "branch": "codex/wp02-13",
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "delivery_report": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md",
+          "delivery_report": "docs/development/evidence/WP02-13/card-closure/DELIVERY.md",
           "review_completed": true,
-          "full_task_completed": true,
+          "full_task_completed": false,
           "integration_status": "PENDING_PROTECTED_PR",
           "actions_authorized": false,
           "deployment_authorized": false
@@ -276727,6 +276853,47 @@
         "integration_status": "MERGED",
         "remote_main_sha": "ab3c7da128d1f33fabb34b92f5c1ea9ffd532116",
         "pr_url": "https://github.com/GTX537/CP6/pull/1238"
+      },
+      {
+        "id": "WP02-04",
+        "phase": "INTEGRATED",
+        "owner": "COORD",
+        "mode": "SINGLE_CHAT_SERIAL",
+        "windows_closed": true,
+        "active_implementation_chats": [],
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "product_code_changed": false,
+        "report": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md",
+        "next_action": "正常合并并核实远端后进入 WP02-13",
+        "windows": [
+          {
+            "id": "WP02-04",
+            "workspace_task": "WP02-04",
+            "related_tasks": [
+              "WP02-04"
+            ],
+            "chat": "COORD",
+            "phase": "CLOSED",
+            "branch": "codex/wp02-04",
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "delivery_report": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md",
+            "review_completed": true,
+            "full_task_completed": true,
+            "integration_status": "MERGED",
+            "actions_authorized": false,
+            "deployment_authorized": false
+          }
+        ],
+        "integration_status": "MERGED",
+        "remote_main_sha": "66b92018889889ce76438c3280283bcad008e7ab",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1239"
       }
     ],
     "development_priority": {
@@ -288119,22 +288286,33 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 1761.745,
+      "effective_seconds": 2552.214,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
-        "WP02-04"
+        "WP02-04",
+        "WP02-13"
       ],
       "closed_targets": [],
-      "new_splits": [],
+      "new_splits": [
+        {
+          "parent": "WP02-13",
+          "children": [
+            "WP02-13b"
+          ],
+          "report": "docs/development/evidence/WP02-13/card-closure/DELIVERY.md",
+          "reason": "阶段 0 定位实际未完成出口；保留原完整 scope/AC，主动拆卡。"
+        }
+      ],
       "current_stage": "PHASE_0",
-      "next_card": "WP02-13",
+      "next_card": "WP02-13b",
       "no_module_freeze": true,
       "phases": {
         "A": [
           "WP02-10",
           "WP02-04",
           "WP02-13",
+          "WP02-13b",
           "WP02-05",
           "WP02-06",
           "WP02-09",
@@ -288187,7 +288365,8 @@
         "财务",
         "空间",
         "全链验收"
-      ]
+      ],
+      "phase0_next_review": "WP02-05"
     }
   },
   "acceptance_basis": {
