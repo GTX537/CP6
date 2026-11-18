@@ -1,5 +1,11 @@
 # 本地验证与 GitHub Actions 触发策略
 
+## 日常推送与 PR 检查
+
+确认 `origin` 后执行 `git fetch --no-tags origin main`。在已提交的任务分支运行 `node scripts/check-workflows.mjs`，检查候选与远端主线两个确切提交，并查看实际变更路径。可复用同一工作流和依赖内容的既有审查。工作流、调用的本地脚本或 action 有变化时，结合报告的事件、`uses` 引用及 diff 核对影响。此命令检查 Git 中的触发配置，运行队列按任务另查。
+
+默认输出到终端。需要保存完整 JSON 时传入报告路径，例如 `node scripts/check-workflows.mjs <本卡报告路径>`。Node 的 YAML 依赖来自 `cp6.web/package-lock.json`。
+
 ## 当前交付状态（2026-09-10）
 
 Core 政策 PR #99 已合入；七个普通工作流已恢复为仅手动入口，Azure 桥保持手动。C01/C02 交付分别完成：Core PR #100/#101、CRM PR #59/#60、Platform PR #57。Platform 的五项普通必需检查按同一授权移除，主验证入口改为仅手动；CRM 普通验证保持暂停。其他分支保护、正式发布、签名和生产审批保持原要求。

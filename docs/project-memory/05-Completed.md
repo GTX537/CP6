@@ -1,5 +1,18 @@
 # 已完成能力与近期里程碑
 
+<!-- cp6:roadmap -->
+## 最近交付
+
+- [WP02-06 CRM身份投影、撤权fence与会话恢复](../development/evidence/WP02-06/DELIVERY.md)（DONE），核对时间 `2026-11-18T02:28:08.1627353+00:00`。
+
+### 已关闭目标
+
+- [OA-DEF-01 流程和表单定义](../development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md)
+- [SYS-AUD-01 操作、安全与字段审计](../development/evidence/WP02-13b/DELIVERY.md)
+- [SYS-TENANT-01 租户管理](../development/evidence/WP02-06/DELIVERY.md)
+- [PLT-TEST-01 故障注入与测试辅助](../development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md)（测试支撑）
+<!-- /cp6:roadmap -->
+
 2026-11-17，WP02-06 卡 DONE。CRM 实际采用批准的新身份来源，旧会话封存，新会话按当前权限读取原业务结果。本地 77 项通过，零跳过。SYS-TENANT-01 原 23 条复核通过。INT-ID-01 和 SYS-IAM-01 的待补验收已归入现有卡。原号 DONE / 完整 DONE 为 48 / 46，目标 4/125。下一卡 WP02-09。 [本卡报告](../development/evidence/WP02-06/DELIVERY.md)
 
 2026-11-17，WP02-13b 卡 DONE，SYS-AUD-01 原 21 AC 全部通过。本卡交付三类审计的原引用、安全读写边界与 PostgreSQL 原计划处置。原号 DONE / 完整 DONE = 47 / 45，登记卡 49/379、目标 3/125。下一卡 WP02-06，DONE 时重核 SYS-TENANT-01。 [本卡报告](../development/evidence/WP02-13b/DELIVERY.md)

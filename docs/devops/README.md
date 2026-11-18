@@ -45,7 +45,7 @@
 
 仓库内同时存在更完整的 GitHub R2 发布链：
 
-- PR/main 合同门禁：`.github/workflows/client-contract.yml`、`wms-production-sql.yml`。
+- 客户端合同与 WMS SQL 验证保留在 `.github/workflows/client-contract.yml` 和 `wms-production-sql.yml`，普通分支和 PR 按本地策略验证。这两个远程入口仅供获准的手动运行。
 - 版本冻结：`.github/workflows/r2-freeze.yml`。
 - 候选制品、GHCR 镜像、SBOM、漏洞扫描和签名：`.github/workflows/r2-candidate.yml`。
 - 受保护环境、数据库初始化、digest 部署和运行身份验证：`.github/workflows/r2-deploy.yml`。

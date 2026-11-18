@@ -12,6 +12,7 @@ import subprocess
 from urllib.parse import quote
 
 import acceptance_basis
+import project_memory
 
 
 STATES = {"PLANNED", "READY", "IN_PROGRESS", "VERIFYING", "BLOCKED", "DONE"}
@@ -709,8 +710,13 @@ def render(data, definitions=None):
     tasks = data.get("implementation_tasks", [])
     s01 = [t for t in tasks if t["id"].startswith("S01-")]
     delivered = sum(t["state"] == "DONE" for t in s01)
-    task_view = ["# 细分任务进度", "", f"台账日期：{data['as_of']}。由 roadmap.json 生成；S01 已交付：{delivered}/{len(s01)}。S02-00 多租户设计前置保留。", "", f"全部已登记任务 {len(tasks)} 项，已交付 {sum(t['state']=='DONE' for t in tasks)} 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。", "", "任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)，分配步骤见[多对话协作](09-parallel-development.md)。所有状态/领取/证据只在JSON登记；未领取的候选不自动READY。", ""]
-    split_count = len(data.get('dispatch_policy', {}).get('card_execution_policy', {}).get('new_splits', []))
+    card_policy = data.get("dispatch_policy", {}).get("card_execution_policy", {})
+    if card_policy.get("mode") == "SINGLE_CHAT_SERIAL":
+        execution_link = "按[单卡串行计划](planning/20261117-card-execution.md)核对完整前置并选择下一卡。"
+    else:
+        execution_link = "分配步骤见[多对话协作](09-parallel-development.md)。"
+    task_view = ["# 细分任务进度", "", f"台账日期：{data['as_of']}。由 roadmap.json 生成；S01 已交付：{delivered}/{len(s01)}。S02-00 多租户设计前置保留。", "", f"全部已登记任务 {len(tasks)} 项，已交付 {sum(t['state']=='DONE' for t in tasks)} 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。", "", f"任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)。{execution_link}", ""]
+    split_count = len(card_policy.get("new_splits", []))
     if split_count:
         task_view += [f"原 375 卡及其全部出口保留；已登记 {split_count} 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。", ""]
     if definitions is not None:
@@ -774,18 +780,22 @@ def main():
     views = render(data, definitions) if not errors else {}
     if definitions is not None:
         views.update(render_cards(definitions, data))
+        counts = card_completion_counts(
+            {t["id"]: t for t in data["implementation_tasks"]},
+            {d["id"]: d for d in definitions["tasks"]})
+        errors.extend(project_memory.synchronize(root / "docs/project-memory", data, counts, write=args.write))
     for name, text in views.items():
         path = root / "docs/development" / name
+        if path.exists() and path.read_text(encoding="utf-8") == text:
+            continue
         if args.write:
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(text, encoding="utf-8")
-        elif not path.exists() or path.read_text(encoding="utf-8") != text:
+        else:
             errors.append(f"derived view out of date: {name}; run with --write")
     result = {"result": "FAIL" if errors else "PASS", "scope": "ledger/source traceability, structural evidence requirements and generated view consistency only", "business_tests_executed": False, "metrics": metrics(data), "errors": errors}
     if definitions is not None:
-        result['metrics']['cards'] = card_completion_counts(
-            {t['id']: t for t in data.get('implementation_tasks', [])},
-            {d['id']: d for d in definitions['tasks']})
+        result['metrics']['cards'] = counts
     if args.report:
         args.report.parent.mkdir(parents=True, exist_ok=True)
         args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
