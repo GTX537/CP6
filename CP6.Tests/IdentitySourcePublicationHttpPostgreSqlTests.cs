@@ -1,5 +1,7 @@
 using System.Net;
+using System.Diagnostics;
 using System.Text.Json;
+using System.Xml.Linq;
 using CP6.Core.Services.CrmIdentity;
 using CP6.Platform.Messaging;
 using CP6.Tests.Platform;
@@ -25,6 +27,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
@@ -34,12 +37,22 @@ namespace CP6.Tests.Erp;
 
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
+    private const string SourceBrowserSecret = "wp02-06-local-browser-fixture";
+    private const string SourceRedirect = "https://iam.example.test/callback";
+
     [CurrentPermissionPostgresFact]
     public async Task Approved_source_publication_keeps_tenant_exact_directory_and_original_command_over_http()
     {
         await using var h = await TenantManagementSeed();
+        var crmAssembly = Environment.GetEnvironmentVariable("CP6_WP0206_CRM_ASSEMBLY");
+        if (crmAssembly is not null)
+        {
+            var epoch = Guid.NewGuid();
+            await h.Db.Sys_Users.Where(x => x.Id == h.User).ExecuteUpdateAsync(update => update.SetProperty(user => user.AuthenticationEpoch, epoch));
+        }
         var environment = IamUserAssignmentsPostgreSqlTests.IdentityEnvironment(h.Tenant);
         environment["CrmOidc__ServiceClients__0__SecretSha256"] = IdentityEventContracts.Hash(Encoding.UTF8.GetBytes("Source1!Secret"));
+        environment["CrmOidc__Clients__0__SecretSha256"] = CrmOidcCrypto.Hash(SourceBrowserSecret);
         environment["CrmOidc__TrustedTokenProxyAddresses__0"] = "127.0.0.1";
         environment["JWT__Secret"] = Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32));
         var old = new IdentitySourceBindingV1(h.Tenant, "iam-fixture", "https://iam-writer.example.test", "us",
@@ -51,9 +64,25 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var cookies = await Login(host, h);
         using var initialToken = await SourceToken(host, "fixture-reader");
         Assert.True(initialToken.StatusCode == HttpStatusCode.OK, await initialToken.Content.ReadAsStringAsync());
-        using var initialGrant = await SourceAuthorize(host, cookies);
+        var oldVerifier = crmAssembly is null ? null : CrmOidcCrypto.RandomToken();
+        using var initialGrant = await SourceAuthorize(host, cookies, oldVerifier);
         Assert.Equal(HttpStatusCode.Redirect, initialGrant.StatusCode);
         Assert.Contains("code=", initialGrant.Headers.Location!.Query);
+        string? previousAccess = null;
+        object[]? previousItems = null;
+        string? previousBoundary = null;
+        if (oldVerifier is not null)
+        {
+            previousAccess = await RedeemSourceGrant(host, initialGrant.Headers.Location, oldVerifier);
+            var rows = await h.Db.CrmIdentitySnapshots.AsNoTracking().Where(x => x.TenantId == h.Tenant).ToArrayAsync();
+            previousItems = rows.Select(row => (object)new
+            {
+                item = new IdentityVersion(row.AggregateId, row.EventType, row.Version, row.PayloadSha256, row.IsDeleted),
+                payloadBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(row.PayloadJson))
+            }).ToArray();
+            var generation = await h.Db.CrmIdentityTenantGenerations.Where(x => x.TenantId == h.Tenant).Select(x => x.Generation).SingleAsync();
+            previousBoundary = generation.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
         var path = $"api/platform/tenant/{h.Tenant:D}/identity-source-v1";
         using var before = await host.Send(OperationsRequest(cookies, HttpMethod.Get, path));
         Assert.True(before.StatusCode == HttpStatusCode.OK, await before.Content.ReadAsStringAsync());
@@ -105,7 +134,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(HttpStatusCode.Redirect, retiredGrant.StatusCode);
         Assert.Contains("error=login_required", retiredGrant.Headers.Location!.Query);
         var nextCookies = await Login(nextHost, h);
-        using var freshGrant = await SourceAuthorize(nextHost, nextCookies);
+        var newVerifier = crmAssembly is null ? null : CrmOidcCrypto.RandomToken();
+        using var freshGrant = await SourceAuthorize(nextHost, nextCookies, newVerifier);
         Assert.Equal(HttpStatusCode.Redirect, freshGrant.StatusCode);
         Assert.Contains("code=", freshGrant.Headers.Location!.Query);
         using var nextCurrent = await nextHost.Send(OperationsRequest(nextCookies, HttpMethod.Get, path));
@@ -126,6 +156,19 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             using var response = await readerHost.Client.SendAsync(read);
             Assert.Equal(version == 1 ? HttpStatusCode.OK : HttpStatusCode.NotFound, response.StatusCode);
             if (version == 1) Assert.Equal(bytes, await response.Content.ReadAsByteArrayAsync());
+        }
+        if (crmAssembly is not null)
+        {
+            var newAccess = await RedeemSourceGrant(nextHost, freshGrant.Headers.Location, newVerifier!);
+            var epoch = await h.Db.Sys_Users.Where(x => x.Id == h.User).Select(x => x.AuthenticationEpoch).SingleAsync();
+            await ObserveCrmAdoption(crmAssembly, new
+            {
+                tenant = h.Tenant, previousIssuer = old.Issuer, previousRegion = old.Region, issuer = next.Issuer, region = next.Region,
+                bundle = old.ContractBundleSha256, previousBoundary, previousItems, previousAccess, access = newAccess, epoch,
+                readerOrigin = readerHost.Client.BaseAddress!.AbsoluteUri, readerAccess = accessToken,
+                publicationSha256 = IdentityEventContracts.Hash(bytes), expectedCount = items.Length,
+                boundary = long.Parse(result.RootElement.GetProperty("boundary").GetString()!, System.Globalization.CultureInfo.InvariantCulture)
+            });
         }
         using var original = await nextHost.Send(OperationsRequest(nextCookies, HttpMethod.Post, path + "/commands/read", new { command.OperationRef }));
         Assert.Equal(HttpStatusCode.OK, original.StatusCode);
@@ -202,11 +245,65 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         return host.Send(request);
     }
 
-    private static Task<HttpResponseMessage> SourceAuthorize(AuthenticationApiProcess host, Dictionary<string, string> cookies)
+    private static Task<HttpResponseMessage> SourceAuthorize(AuthenticationApiProcess host, Dictionary<string, string> cookies, string? verifier = null)
         => host.Send(OperationsRequest(cookies, HttpMethod.Get,
             "api/auth/crm-authorize?client_id=CP6.Web&redirect_uri=https%3A%2F%2Fiam.example.test%2Fcallback&response_type=code" +
-            "&code_challenge_method=S256&code_challenge=" + new string('A', 43) +
+            "&code_challenge_method=S256&code_challenge=" + (verifier is null ? new string('A', 43) : CrmOidcCrypto.Challenge(verifier)) +
             "&state=source-test-state-1&nonce=source-test-nonce-1&scope=openid%20profile%20crm&prompt=none"));
+
+    private static async Task<string> RedeemSourceGrant(AuthenticationApiProcess host, Uri location, string verifier)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Post, "connect/token")
+        {
+            Content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                ["grant_type"] = "authorization_code", ["redirect_uri"] = SourceRedirect,
+                ["code"] = QueryHelpers.ParseQuery(location.Query)["code"].ToString(), ["code_verifier"] = verifier
+            })
+        };
+        request.Headers.Authorization = new AuthenticationHeaderValue("Basic",
+            Convert.ToBase64String(Encoding.UTF8.GetBytes("CP6.Web:" + SourceBrowserSecret)));
+        using var response = await host.Send(request);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var result = JsonDocument.Parse(await response.Content.ReadAsByteArrayAsync());
+        return result.RootElement.GetProperty("access_token").GetString()!;
+    }
+
+    private static async Task ObserveCrmAdoption(string assembly, object input)
+    {
+        Assert.True(File.Exists(assembly));
+        Assert.True(File.Exists(Environment.GetEnvironmentVariable("CP6_CRM_PG_SETTINGS")));
+        var results = Path.GetFullPath(Environment.GetEnvironmentVariable("CP6_WP0206_RESULTS")
+            ?? throw new InvalidOperationException("需要 CRM 独立验收输出目录。"));
+        Directory.CreateDirectory(results);
+        var dotnet = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH")
+            ?? throw new InvalidOperationException("需要已确认的本机 .NET 可执行路径。");
+        var start = new ProcessStartInfo(dotnet)
+        {
+            UseShellExecute = false, CreateNoWindow = true, WorkingDirectory = Path.GetDirectoryName(Path.GetFullPath(assembly))!,
+            RedirectStandardOutput = true, RedirectStandardError = true
+        };
+        foreach (var argument in new[] { "vstest", assembly, "--TestCaseFilter:FullyQualifiedName~Actual_Main_approved_source_is_adopted",
+            "--Logger:trx;LogFileName=crm-actual-main.trx", "--ResultsDirectory:" + results })
+            start.ArgumentList.Add(argument);
+        // 短期令牌通过子进程环境传递，仅将测试结果写入证据目录。
+        start.Environment["CP6_WP0206_MAIN_SOURCE"] = JsonSerializer.Serialize(input, IdentityEventContracts.Json);
+        using var child = Process.Start(start)!;
+        var stdout = child.StandardOutput.ReadToEndAsync();
+        var stderr = child.StandardError.ReadToEndAsync();
+        try
+        {
+            using var timeout = new CancellationTokenSource(TimeSpan.FromMinutes(2));
+            await child.WaitForExitAsync(timeout.Token);
+        }
+        finally { if (!child.HasExited) { child.Kill(entireProcessTree: true); await child.WaitForExitAsync(); } }
+        var diagnostics = await stdout + await stderr;
+        await File.WriteAllTextAsync(Path.Combine(results, "crm-actual-main.log"), diagnostics);
+        Assert.True(child.ExitCode == 0, diagnostics);
+        XNamespace ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
+        var row = Assert.Single(XDocument.Load(Path.Combine(results, "crm-actual-main.trx")).Descendants(ns + "UnitTestResult"));
+        Assert.Equal("Passed", (string?)row.Attribute("outcome"));
+    }
 
     [TenantManagementPostgresTheory]
     [InlineData("revision", "C02_SOURCE_VERSION_CHANGED")]
