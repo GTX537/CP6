@@ -1,23 +1,12 @@
-# CP6 Agent Context
+# CP6 Agent 入口
 
-Repository-wide rules remain authoritative in `AGENTS.md`. This file records the deploy configuration detected and approved for the current CP6 workflow.
+仓库范围的开工、验证、PR 及席位规则见 [AGENTS.md](AGENTS.md)。当前采用单卡串行，使用已登记的固定工作区。
 
-## Deploy Configuration
+## 部署相关入口
 
-- Platform: custom Azure Pipelines YAML on the dedicated Windows `CP6-Deploy` agent, deploying to local Docker Desktop.
-- CI workflow: `azure-pipelines.yml` (`GTX537.CP6`), triggered by `main`; CI does not deploy.
-- DEV CD workflow: `azure-pipelines-dev.yml` (`CP6 DEV CD`), with manual and pipeline-completion modes.
-- DEV target: Docker Compose project `cp6-dev`; database `CP6_DEV`; local API `http://127.0.0.1:19991`; local Web `http://127.0.0.1:18080`.
-- Public daytime-test URL: `https://cp6.uk`; API health: `https://api.cp6.uk/health/ready`. This is a home-hosted DEV endpoint, not production.
-- Public connector: dedicated Compose project `cp6-public-tunnel` attached only to `cp6-dev_default`. The one-time cutover is manual and must never run implicitly from DEV CD.
-- Automatic deployment control: Azure Pipeline variable `CP6_DEV_AUTO_DEPLOY_ENABLED`, initially `false`. Manual runs remain available. A manual older-version deployment requires this variable to be `false`.
-- Public verification control: Azure Pipeline variable `CP6_DEV_PUBLIC_VERIFICATION_ENABLED`, initially `false`; set to `true` only after the dedicated Tunnel cutover is verified.
-- Environment serialization: Azure Environment `cp6-dev` must have an external Exclusive lock check; YAML uses `lockBehavior: sequential`.
-- Merge method: normal PR merge into protected `main`; no direct development on `main`.
-- Local status command: `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-Cp6LabEnvironment.ps1 -Environment dev -Action Status`.
-- Tunnel status command: `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-Cp6PublicTunnel.ps1 -Action Status`.
-- Manual DEV snapshot export: `scripts/Export-Cp6DevSnapshot.ps1`.
-- Manual local side-by-side import: `scripts/Import-Cp6DevSnapshot.ps1`; target must be `CP6DEV_IMPORT_yyyyMMdd_HHmmss` and must never overwrite or merge into `CP6DB`.
-- Production authority: unchanged GitHub R2/GHCR workflows under `.github/workflows/` and `docs/client/r2/`. Azure home DEV is not a production release authority and must not deploy UAT/PROD from locally rebuilt images.
-
-Do not run a real deploy, Tunnel cutover, database restore, remote branch deletion, or production action unless the user explicitly authorizes that external mutation.
+| 任务 | 入口与行为 |
+| --- | --- |
+| 转存 DEV 运行包 | [Azure CI 制品桥](azure-pipelines.yml)仅手动运行，从成功的 GitHub 工作流下载对应源码 SHA 的制品，校验后转存。 |
+| 在本地 DEV 发布 | [DEV CD](azure-pipelines-dev.yml)支持手动运行，也监听指定上游的 `main` 运行完成。自动部署受 `CP6_DEV_AUTO_DEPLOY_ENABLED` 控制，实际环境、锁和操作命令见 [DEV 操作手册](docs/devops/DEV-AUTOMATIC-DEPLOYMENT.md)。 |
+| 管理演示站与 Tunnel | `cp6.uk` 的演示环境见 [demo 手册](deploy/demo/README.md)。部署、Tunnel 切换和数据库恢复须取得用户的明确授权。 |
+| 生成或推广生产候选 | 遵循 [DevOps 入口](docs/devops/README.md)、[发布权威决策](docs/devops/adr/ADR-DEVOPS-001-RELEASE-AUTHORITY-AND-REGISTRY.md)和 [R2 主规范](docs/client/r2/README.md)。 |
