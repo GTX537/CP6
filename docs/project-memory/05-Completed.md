@@ -3,12 +3,13 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP02-15 隐私subject目录、导出与擦除编排](../development/evidence/WP02-15/DELIVERY.md)（DONE），核对时间 `2026-11-18T05:51:56.5882920+00:00`。
+- [WP02-16b 完整编号域、受控切换恢复与规则管理余项](../development/evidence/WP02-16b/DELIVERY.md)（DONE），核对时间 `2026-11-18T08:53:49.0666706+00:00`。
 
 ### 已关闭目标
 
 - [OA-DEF-01 流程和表单定义](../development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md)
 - [SYS-AUD-01 操作、安全与字段审计](../development/evidence/WP02-13b/DELIVERY.md)
+- [SYS-NUM-01 编号与开发辅助生成](../development/evidence/WP02-16b/DELIVERY.md)
 - [SYS-TENANT-01 租户管理](../development/evidence/WP02-06/DELIVERY.md)
 - [PLT-TEST-01 故障注入与测试辅助](../development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md)（测试支撑）
 <!-- /cp6:roadmap -->

@@ -29,9 +29,21 @@ internal sealed partial class NumberAllocationStoreV1(CP6Context db, NumberAlloc
     {
         try
         {
-            return await db.Database.SqlQuery<int?>($"""
+            var current = await db.Database.SqlQuery<int?>($"""
                 SELECT current_value AS "Value" FROM cp6_number_allocation_v1.periods
                   WHERE rule_id={scope.RuleId} AND period_key={period} FOR UPDATE
+                """).SingleOrDefaultAsync(ct);
+            if (scope.CutoverBasis != NumberAllocationOwnerV1.ApprovedPubCutover) return current;
+            await RequireCutoverInventory(ct);
+            if (current != null) return current;
+            if (await db.Database.SqlQuery<bool>($"""
+                SELECT EXISTS(SELECT FROM cp6_number_allocation_v1.receipts
+                 WHERE rule_id={scope.RuleId} AND period_key={period}) AS "Value"
+                """).SingleAsync(ct))
+                throw new NumberAllocationExceptionV1("NUMBER_COUNTER_UNAVAILABLE", 503);
+            return await db.Database.SqlQuery<int?>($"""
+                SELECT NULLIF(last_issued,0) AS "Value" FROM cp6_number_allocation_v1.prior_periods
+                 WHERE rule_id={scope.RuleId} AND period_key={period}
                 """).SingleOrDefaultAsync(ct);
         }
         catch (PostgresException e) when (e.SqlState == PostgresErrorCodes.UndefinedTable)
@@ -45,7 +57,20 @@ internal sealed partial class NumberAllocationStoreV1(CP6Context db, NumberAlloc
                 throw new NumberAllocationExceptionV1("NUMBER_COUNTER_UNAVAILABLE", 503);
             await db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO cp6_number_allocation_v1.periods(rule_id,period_key,current_value) VALUES({scope.RuleId},{period},{next})", ct);
         }
-        else await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_number_allocation_v1.periods SET current_value={next} WHERE rule_id={scope.RuleId} AND period_key={period}", ct);
+        else
+        {
+            var changed = await db.Database.ExecuteSqlInterpolatedAsync($"""
+                UPDATE cp6_number_allocation_v1.periods SET current_value={next}
+                 WHERE rule_id={scope.RuleId} AND period_key={period} AND current_value={previous.Value}
+                """, ct);
+            if (changed == 0 && scope.CutoverBasis == NumberAllocationOwnerV1.ApprovedPubCutover)
+                changed = await db.Database.ExecuteSqlInterpolatedAsync($"""
+                    INSERT INTO cp6_number_allocation_v1.periods(rule_id,period_key,current_value)
+                    SELECT rule_id,period_key,{next} FROM cp6_number_allocation_v1.prior_periods
+                     WHERE rule_id={scope.RuleId} AND period_key={period} AND last_issued={previous.Value}
+                    """, ct);
+            if (changed != 1) throw new NumberAllocationExceptionV1("NUMBER_COUNTER_UNAVAILABLE", 503);
+        }
     }
     internal async Task Save(NumberAllocationCommandV1 command, Guid actor, NumberAllocationReceiptV1 receipt, CancellationToken ct)
     {
@@ -60,5 +85,7 @@ internal sealed partial class NumberAllocationStoreV1(CP6Context db, NumberAlloc
         }
         catch (PostgresException e) when (e.SqlState == PostgresErrorCodes.UniqueViolation && e.ConstraintName == "number_unique")
         { throw new NumberAllocationExceptionV1("NUMBER_HISTORY_COLLISION", 409, e); }
+        catch (PostgresException e) when (e.SqlState == PostgresErrorCodes.CheckViolation && e.ConstraintName == "number_predecessor_history")
+        { throw new NumberAllocationExceptionV1("NUMBER_PREDECESSOR_HISTORY", 409, e); }
     }
 }

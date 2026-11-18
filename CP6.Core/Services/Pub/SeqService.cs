@@ -110,7 +110,7 @@ public class SeqService : ISeqService
         }
     }
 
-    private static string PeriodKey(int resetCycle, DateTime now) => resetCycle switch
+    public static string PeriodKey(int resetCycle, DateTime now) => resetCycle switch
     {
         1 => now.ToString("yyyyMMdd"),   // 每日
         2 => now.ToString("yyyyMM"),     // 每月
