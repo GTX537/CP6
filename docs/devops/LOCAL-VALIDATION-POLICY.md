@@ -6,6 +6,8 @@
 
 默认输出到终端。需要保存完整 JSON 时传入报告路径，例如 `node scripts/check-workflows.mjs <本卡报告路径>`。Node 的 YAML 依赖来自 `cp6.web/package-lock.json`。
 
+改动客户端合同的 Web 步骤时，可在装有 `cp6.web` 锁定依赖和 PowerShell Core 的本地环境运行 `node --test scripts/test-client-web-workflow.mjs`。回归按真实 YAML 的步骤边界分别模拟安装、类型检查、测试和构建失败，核对退出码与后续命令。生成 DEV 制品仍需通过[客户端框架升级门禁](../client/NET10-UPGRADE-GATE.md)及该工作流的其他验证。
+
 ## 当前交付状态（2026-09-10）
 
 Core 政策 PR #99 已合入；七个普通工作流已恢复为仅手动入口，Azure 桥保持手动。C01/C02 交付分别完成：Core PR #100/#101、CRM PR #59/#60、Platform PR #57。Platform 的五项普通必需检查按同一授权移除，主验证入口改为仅手动；CRM 普通验证保持暂停。其他分支保护、正式发布、签名和生产审批保持原要求。
