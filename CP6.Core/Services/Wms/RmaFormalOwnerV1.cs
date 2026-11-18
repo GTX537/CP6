@@ -110,7 +110,7 @@ public sealed partial class RmaFormalOwnerV1(CP6Context db, OperationsOwnerV1 ow
             result.Add(new(line.LineId, version, selected.OutboundId, line.OriginalSelectionRef, source, ranges.ToArray(),
                 new(Text(requested), source.BaseQty.Uom), line.ReasonDetail, line.EvidenceRefs));
         }
-        foreach (var reference in input.SelectMany(x => x.EvidenceRefs).Distinct()) await Evidence(a, reference, ct);
+        foreach (var reference in input.SelectMany(x => x.EvidenceRefs).Distinct()) await Evidence(a, reference, ct, requireAvailable: true);
         return result.ToArray();
     }
     public Task<RmaFormalApplicationV1> CreateAsync(Guid command, RmaFormalCreateV1 c, CancellationToken ct = default)

@@ -21,6 +21,7 @@ internal sealed class FileContentRowV1
     public string MediaType { get; init; } = "";
     public string StorePath { get; init; } = "";
     public long Revision { get; init; }
+    public string? Disposition { get; init; }
 }
 internal sealed class FileContentStoreV1(CP6Context db)
 {
@@ -33,16 +34,25 @@ internal sealed class FileContentStoreV1(CP6Context db)
     internal async Task Fence(bool write, CancellationToken ct)
     {
         Transaction(false); await new EngineeringRevisionStoreV1(db).Fence(false, ct);
-        await db.Database.ExecuteSqlRawAsync(write ? "LOCK TABLE cp6_file_content_v1.contents,cp6_file_content_v1.heads,cp6_file_content_v1.events IN SHARE ROW EXCLUSIVE MODE"
-            : "LOCK TABLE cp6_file_content_v1.contents,cp6_file_content_v1.heads,cp6_file_content_v1.events IN SHARE MODE", ct);
-        if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_file_content_v1.ready() AS \"Value\"").SingleAsync(ct)) throw Error("FILE_STORE_UNAVAILABLE", 503);
+        const string tables = """
+            LOCK TABLE cp6_file_content_v1.contents,cp6_file_content_v1.heads,cp6_file_content_v1.events,
+              cp6_file_content_v1.draft_sets,cp6_file_content_v1.draft_items,cp6_file_content_v1.draft_bindings,
+              cp6_file_content_v1.dispositions,cp6_file_content_v1.disposition_attempts,cp6_file_content_v1.disposition_completions
+            """;
+        await db.Database.ExecuteSqlRawAsync(tables + (write ? " IN SHARE ROW EXCLUSIVE MODE" : " IN SHARE MODE"), ct);
+        if (!await db.Database.SqlQueryRaw<bool>("""
+            SELECT cp6_file_content_v1.ready() AND cp6_file_content_v1.workflow_ready() AS "Value"
+            """).SingleAsync(ct)) throw Error("FILE_STORE_UNAVAILABLE", 503);
         fenced = db.Database.CurrentTransaction;
     }
     internal static IQueryable<FileContentRowV1> Rows(CP6Context db) => db.Database.SqlQuery<FileContentRowV1>($"""
         SELECT c.file_id AS "Id",c.creator_id AS "CreatorId",c.parent_id AS "ParentId",c.parent_version AS "ParentVersion",
           c.parent_digest AS "ParentDigest",c.file_name AS "FileName",c.digest AS "Digest",c.byte_length AS "ByteLength",
-          c.media_type AS "MediaType",c.store_path AS "StorePath",h.revision AS "Revision"
-        FROM cp6_file_content_v1.contents c JOIN cp6_file_content_v1.heads h USING(tenant_id,file_id) WHERE c.tenant_id={db.CurrentTenantId}
+          c.media_type AS "MediaType",c.store_path AS "StorePath",h.revision AS "Revision",CASE WHEN done.operation_id IS NOT NULL THEN 'DELETED' ELSE p.initial_state END AS "Disposition"
+        FROM cp6_file_content_v1.contents c JOIN cp6_file_content_v1.heads h USING(tenant_id,file_id)
+        LEFT JOIN cp6_file_content_v1.dispositions p USING(tenant_id,file_id)
+        LEFT JOIN cp6_file_content_v1.disposition_completions done USING(tenant_id,file_id)
+        WHERE c.tenant_id={db.CurrentTenantId}
         """);
     internal async Task<FileContentRowV1> Row(Guid id, CancellationToken ct)
     { Transaction(); return await Rows(db).SingleOrDefaultAsync(x => x.Id == id, ct) ?? throw Error("OBJECT_FORBIDDEN", 403); }
@@ -63,7 +73,7 @@ internal sealed class FileContentStoreV1(CP6Context db)
         var availability = v.Held ? "HELD" : v.Inspection.Status == "CLEAN" ? "AVAILABLE" : v.Inspection.Status == "PENDING" ? "PENDING_INSPECTION" : "QUARANTINED";
         return new(db.CurrentTenantId, new(FileContentBytesV1.Owner, id, "1", "SHA256", row.Digest, row.ByteLength, row.MediaType),
             new(EngineeringRevisionValuesV1.RevisionOwner, row.ParentId, row.ParentVersion, row.ParentDigest), row.FileName,
-            v.Version, v.Etag, v.Inspection, v.Held, availability, v.ActorId, v.RecordedAt, v.Action, v.Reason, selected == row.Revision, raw.Digest);
+            v.Version, v.Etag, v.Inspection, v.Held, row.Disposition ?? availability, v.ActorId, v.RecordedAt, v.Action, v.Reason, selected == row.Revision, raw.Digest);
     }
     internal async Task<FileContentSnapshotV1> Create(FileUploadV1 input, Guid actor, string path, string media, FileInspectionV1 inspection, CancellationToken ct)
     {

@@ -149,10 +149,11 @@ public sealed partial class RmaFormalOwnerV1
     }
     private static async Task RequireOutbound(OperationsAccessV1 a, Guid id, CancellationToken ct)
     { if (!await a.Outbounds().AnyAsync(x => x.Id == id, ct)) throw Error("OBJECT_FORBIDDEN", 403); }
-    private async Task Evidence(OperationsAccessV1 a, FulfilmentRefV1 reference, CancellationToken ct)
+    private async Task Evidence(OperationsAccessV1 a, FulfilmentRefV1 reference, CancellationToken ct, bool requireAvailable = false)
     {
         if (reference.Owner != FileContentBytesV1.Owner || !Guid.TryParse(reference.Id, out var id)) throw Error("EVIDENCE_OWNER_UNAVAILABLE", 503);
         var content = await files.ReadOwnedAsync(a, id, ct);
         if (content.ContentRef.Version != reference.Version || content.ContentRef.Digest != reference.Digest) throw Error("EVIDENCE_REFERENCE_CHANGED", 412);
+        if (requireAvailable && content.Availability != "AVAILABLE") throw Error("FILE_CONTENT_NOT_AVAILABLE", 409);
     }
 }

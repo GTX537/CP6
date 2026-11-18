@@ -16,7 +16,7 @@ internal sealed partial class OperationsAccessV1
     internal IQueryable<FileContentRowV1> FileContents()
     {
         RequireFileFields(false);
-        if (authority.Source.TenantId != db.CurrentTenantId || authority.Action is not ("query" or "add" or "edit")) throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
+        if (authority.Source.TenantId != db.CurrentTenantId || authority.Action is not ("query" or "add" or "edit" or "delete")) throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
         var rows = FileContentStoreV1.Rows(db);
         if (authority.Scope == 1) return rows.Where(x => x.CreatorId == ActorId);
         if (authority.Scope == 5) return rows;

@@ -2,13 +2,13 @@
 
 台账日期：2026-11-17。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 380 项，已交付 51 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 380 项，已交付 52 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)。按[单卡串行计划](planning/20261117-card-execution.md)核对完整前置并选择下一卡。
 
 原 375 卡及其全部出口保留；已登记 5 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。
 
-原号 DONE 49/375；完整 DONE 46/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。
+原号 DONE 49/375；完整 DONE 47/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。
 
 ## WP01 现有实现与设计对照
 
@@ -51,7 +51,7 @@
 | [WP02-13 审计写入、授权查询和保留清理](../../docs/development/task-plans/WP02.md#wp02-13) | Main | 已交付 | WP02-10 | CODE / M | COORD / WP02-13 |
 | [WP02-13b 审计完整身份与安全查询、导出及保留清理余项](../../docs/development/task-plans/WP02.md#wp02-13b) | Main | 已交付 | WP02-13 | CODE / M | COORD / WP02-13b |
 | [WP02-14 文件不可变版本、扫描和Owner授权绑定](../../docs/development/task-plans/WP02.md#wp02-14) | Main | 已交付 | WP02-10 | CODE / M | COORD / WP02-14 |
-| [WP02-14b 通用文件正式化、Owner 共门与完整引用清理余项](../../docs/development/task-plans/WP02.md#wp02-14b) | Main | 待安排 | WP02-14 | CODE / M | 未领取 |
+| [WP02-14b 通用文件正式化、Owner 共门与完整引用清理余项](../../docs/development/task-plans/WP02.md#wp02-14b) | Main | 已交付 | WP02-14 | CODE / M | COORD / WP02-14b |
 | [WP02-15 隐私subject目录、导出与擦除编排](../../docs/development/task-plans/WP02.md#wp02-15) | Main | 待安排 | WP02-04, WP02-13, WP02-14 | CODE / M | COORD / W125-BUG-537 |
 | [WP02-16 编号原命令分配和生成器安全预览](../../docs/development/task-plans/WP02.md#wp02-16) | Main | 已交付 | WP02-10 | CODE / M | COORD / WP02-16 |
 | [WP02-16b 完整编号域、受控切换恢复与规则管理余项](../../docs/development/task-plans/WP02.md#wp02-16b) | Main | 待安排 | WP02-16 | CODE / M | 未领取 |

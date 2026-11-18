@@ -3,17 +3,19 @@ using CP6.Core.EFDbContext;
 using CP6.Core.Services.Integration;
 using CP6.Core.Services.Plm;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using static CP6.Core.Services.Plm.EngineeringProductValuesV1;
 
 namespace CP6.Core.Services.Pub;
 
-public sealed class FileContentOwnerV1(CP6Context db, OperationsOwnerV1 owner, IFileStore files, IFileContentInspectorV1 inspector)
+public sealed partial class FileContentOwnerV1(CP6Context db, OperationsOwnerV1 owner, IFileStore files, IFileContentInspectorV1 inspector,
+    IOptions<FileDispositionOptionsV1>? dispositionOptions = null)
 {
     private const string Contract = "Main.File.Content.commands.v1";
     private OperationsOwnerV1 Authority => owner.Owns(db) ? owner : throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);
     public Task<EngineeringProductScopeV1> ScopeAsync(CancellationToken ct = default) => Authority.ExecuteAsync(
         OperationsOwnerV1.FileContent, "query", false, (a, _) => { a.RequireFileFields(false); return Task.FromResult(new EngineeringProductScopeV1(db.CurrentTenantId, a.ActorId)); }, ct, readOnlyAuthorityFence: true);
-    private async Task Parent(OperationsAccessV1 root, EngineeringRevisionRefV1 reference, bool write, CancellationToken ct)
+    private async Task<EngineeringRevisionSnapshotV1> Parent(OperationsAccessV1 root, EngineeringRevisionRefV1 reference, bool write, CancellationToken ct)
     {
         var a = await root.ActionAsync(OperationsOwnerV1.EngineeringRevision, write ? "edit" : "query", ct);
         await a.RequireEngineeringRevision(reference.Id, ct); a.AtCommit(t => a.RequireEngineeringRevision(reference.Id, t));
@@ -26,11 +28,25 @@ public sealed class FileContentOwnerV1(CP6Context db, OperationsOwnerV1 owner, I
             var p = await root.SourceAsync(OperationsOwnerV1.EngineeringProduct, ct);
             await p.RequireEngineeringProduct(product.Id, ct); p.AtCommit(t => p.RequireEngineeringProduct(product.Id, t));
         }
+        return value;
     }
     private async Task<FileContentSnapshotV1> Observe(OperationsAccessV1 a, FileContentSnapshotV1 value, CancellationToken ct)
     {
-        await a.RequireFileContent(value.ContentRef.Id, ct); a.AtCommit(t => a.RequireFileContent(value.ContentRef.Id, t));
-        await Parent(a, value.Parent, false, ct); return value;
+        await a.RequireFileContent(value.ContentRef.Id, ct);
+        return await ObserveVisibleContent(a, value, ct);
+    }
+
+    private async Task<FileContentSnapshotV1> ReadVisibleContent(OperationsAccessV1 access, FileContentStoreV1 store, Guid id, CancellationToken ct)
+    {
+        await access.RequireFileContent(id, ct);
+        return await ObserveVisibleContent(access, await store.Read(id, null, ct), ct);
+    }
+
+    private async Task<FileContentSnapshotV1> ObserveVisibleContent(OperationsAccessV1 access, FileContentSnapshotV1 value, CancellationToken ct)
+    {
+        access.AtCommit(token => access.RequireFileContent(value.ContentRef.Id, token));
+        await Parent(access, value.Parent, false, ct);
+        return value;
     }
     public Task<FileContentSnapshotV1[]> ListAsync(Guid parent, int page = 1, CancellationToken ct = default)
     {
