@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP02-09 CRM首个Owner真实共同事务与授权门](../development/evidence/WP02-09/DELIVERY.md)（拆卡，余项 WP02-09b），核对时间 `2026-11-18T02:57:05.1227401+00:00`。
+- [WP02-14b 通用文件正式化、Owner 共门与完整引用清理余项](../development/evidence/WP02-14b/DELIVERY.md)（DONE），核对时间 `2026-11-18T04:11:42.9129918+00:00`。
 
 ### 已关闭目标
 
