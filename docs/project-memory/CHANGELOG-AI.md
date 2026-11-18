@@ -1,5 +1,7 @@
 # AI 可读变更日志
 
+2026-11-17，WP02-09 拆卡。原号核销 CRM 配置、公开及人工 H01 的共同事务和原结果。实际业务消息入站的同事务写入和最终授权归 WP02-09b，现因入口与前置冲突受阻。本地 25 项通过，零跳过。原号 DONE / 完整 DONE 为 49 / 46，登记卡 51/380，目标 4/125。下一张可开工卡为 WP02-14b。 [本卡报告](../development/evidence/WP02-09/DELIVERY.md)
+
 2026-11-17，WP02-06 卡 DONE。CRM 实际采用批准的新身份来源，旧会话封存，新会话按当前权限读取原业务结果。本地 77 项通过，零跳过。SYS-TENANT-01 原 23 条复核通过。INT-ID-01 和 SYS-IAM-01 的待补验收已归入现有卡。原号 DONE / 完整 DONE 为 48 / 46，目标 4/125。下一卡 WP02-09。 [本卡报告](../development/evidence/WP02-06/DELIVERY.md)
 
 2026-11-17，WP02-13b 卡 DONE，SYS-AUD-01 原 21 AC 全部通过。本卡交付三类审计的原引用、安全读写边界与 PostgreSQL 原计划处置。原号 DONE / 完整 DONE = 47 / 45，登记卡 49/379、目标 3/125。下一卡 WP02-06，DONE 时重核 SYS-TENANT-01。 [本卡报告](../development/evidence/WP02-13b/DELIVERY.md)
