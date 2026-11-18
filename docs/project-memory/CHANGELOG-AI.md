@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP02-09 CRM首个Owner真实共同事务与授权门](../development/evidence/WP02-09/DELIVERY.md)（拆卡，余项 WP02-09b），核对时间 `2026-11-18T02:57:05.1227401+00:00`。
 - [WP02-06 CRM身份投影、撤权fence与会话恢复](../development/evidence/WP02-06/DELIVERY.md)（DONE），核对时间 `2026-11-18T02:28:08.1627353+00:00`。
 - [WP02-13b 审计完整身份与安全查询、导出及保留清理余项](../development/evidence/WP02-13b/DELIVERY.md)（DONE），核对时间 `2026-11-18T01:32:06.281283+00:00`。
 - [WP02-05b 身份来源批准迁移与完整后继发布余项](../development/evidence/WP02-05b/DELIVERY.md)（DONE），核对时间 `2026-11-17T16:22:25.185112+00:00`。

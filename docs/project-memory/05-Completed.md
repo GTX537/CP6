@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP02-06 CRM身份投影、撤权fence与会话恢复](../development/evidence/WP02-06/DELIVERY.md)（DONE），核对时间 `2026-11-18T02:28:08.1627353+00:00`。
+- [WP02-09 CRM首个Owner真实共同事务与授权门](../development/evidence/WP02-09/DELIVERY.md)（拆卡，余项 WP02-09b），核对时间 `2026-11-18T02:57:05.1227401+00:00`。
 
 ### 已关闭目标
 
