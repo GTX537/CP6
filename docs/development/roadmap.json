@@ -142527,7 +142527,7 @@
           "scope": "SYS-TENANT-01: fixed Main/CRM/Platform/candidate evidence; known implementation delta, not exhaustive runtime conformance. Actual per-file source SHA is in the report."
         }
       ],
-      "delivery_state": "PLANNED",
+      "delivery_state": "DONE",
       "blockers": [],
       "runtime_case_ids": [],
       "original_acceptance_inventory": {
@@ -142541,8 +142541,19 @@
             "id": "SYS-TENANT-01::AC-TN01-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN01-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W265-01/DELIVERY.md",
+                "source_sha": "52516a1c5b24543c2f7ad56605ac3b584dcf7bef",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "租户、管理员、角色菜单和原回执同事务。 仅复用该报告覆盖的原场景。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/0"
@@ -142552,8 +142563,29 @@
             "id": "SYS-TENANT-01::AC-TN01-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN01-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W264-01/DELIVERY.md",
+                "source_sha": "3de1106f33b31ef0a15ac5b6bb9be55939db2f09",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "实际边界拒绝空值、长度、重码、时区与部分保存。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W265-01/DELIVERY.md",
+                "source_sha": "52516a1c5b24543c2f7ad56605ac3b584dcf7bef",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "实际边界拒绝空值、长度、重码、时区与部分保存。 仅复用该报告覆盖的原场景。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/1"
@@ -142563,8 +142595,19 @@
             "id": "SYS-TENANT-01::AC-TN01-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN01-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W265-01/DELIVERY.md",
+                "source_sha": "52516a1c5b24543c2f7ad56605ac3b584dcf7bef",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "同操作恢复原租户，异义冲突，回查保护临时密码。 仅复用该报告覆盖的原场景。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/2"
@@ -142574,8 +142617,19 @@
             "id": "SYS-TENANT-01::AC-TN01-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN01-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W264-01/DELIVERY.md",
+                "source_sha": "3de1106f33b31ef0a15ac5b6bb9be55939db2f09",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "真实并发与 ABA，旧版 412，原 Id/Code 保持。 仅复用该报告覆盖的原场景。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/3"
@@ -142585,8 +142639,29 @@
             "id": "SYS-TENANT-01::AC-TN01-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN01-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W265-01/DELIVERY.md",
+                "source_sha": "52516a1c5b24543c2f7ad56605ac3b584dcf7bef",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "平台、普通、模拟会话各自通过当前权限边界，首管理员为租户身份。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W529-01/DELIVERY.md",
+                "source_sha": "79902225a5c07c02d582e5bfd00ad8ea77a31461",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "平台、普通、模拟会话各自通过当前权限边界，首管理员为租户身份。 仅复用该报告覆盖的原场景。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/4"
@@ -142596,8 +142671,39 @@
             "id": "SYS-TENANT-01::AC-TN01-06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN01-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-04/tenant-management-audit/DELIVERY.md",
+                "source_sha": "cfa30476fa10445ea70c5995e9ce5fe4d527f708",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "历史审计缺陷的实际红绿与当前原子失败分别留证。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W264-01/DELIVERY.md",
+                "source_sha": "3de1106f33b31ef0a15ac5b6bb9be55939db2f09",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "历史审计缺陷的实际红绿与当前原子失败分别留证。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W265-01/DELIVERY.md",
+                "source_sha": "52516a1c5b24543c2f7ad56605ac3b584dcf7bef",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "历史审计缺陷的实际红绿与当前原子失败分别留证。 仅复用该报告覆盖的原场景。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/5"
@@ -142607,8 +142713,39 @@
             "id": "SYS-TENANT-01::AC-TN02-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN02-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W435-01/DELIVERY.md",
+                "source_sha": "74565ac21a5c29d1e9de0151344c246e14332c0d",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "库存与暂停双序、CRM 与 Main 的当前共同门均有真实事务证据。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W649-01/DELIVERY.md",
+                "source_sha": "2918e0b1c88d092eea06004992ddfd2fb57238ae",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "库存与暂停双序、CRM 与 Main 的当前共同门均有真实事务证据。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W645-01/DELIVERY.md",
+                "source_sha": "d3d9ac8090aa90b3cc4c2c51daf5683a6aec3d22",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "库存与暂停双序、CRM 与 Main 的当前共同门均有真实事务证据。 仅复用该报告覆盖的原场景。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/6"
@@ -142618,8 +142755,29 @@
             "id": "SYS-TENANT-01::AC-TN02-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN02-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W529-01/DELIVERY.md",
+                "source_sha": "79902225a5c07c02d582e5bfd00ad8ea77a31461",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "合法当前权读取暂停前原结果；旧会话的新效果被拒。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W649-01/DELIVERY.md",
+                "source_sha": "2918e0b1c88d092eea06004992ddfd2fb57238ae",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "合法当前权读取暂停前原结果；旧会话的新效果被拒。 仅复用该报告覆盖的原场景。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/7"
@@ -142629,8 +142787,29 @@
             "id": "SYS-TENANT-01::AC-TN02-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN02-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W264-01/DELIVERY.md",
+                "source_sha": "3de1106f33b31ef0a15ac5b6bb9be55939db2f09",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "恢复推进权威版本，需要新登录；未确认的 CRM 新效果保持关闭。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W649-01/DELIVERY.md",
+                "source_sha": "2918e0b1c88d092eea06004992ddfd2fb57238ae",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "恢复推进权威版本，需要新登录；未确认的 CRM 新效果保持关闭。 仅复用该报告覆盖的原场景。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/8"
@@ -142640,8 +142819,29 @@
             "id": "SYS-TENANT-01::AC-TN02-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN02-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W649-01/DELIVERY.md",
+                "source_sha": "2918e0b1c88d092eea06004992ddfd2fb57238ae",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "跨库确认缺失时新许可关闭，合法历史读取沿原门。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W645-01/DELIVERY.md",
+                "source_sha": "d3d9ac8090aa90b3cc4c2c51daf5683a6aec3d22",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "跨库确认缺失时新许可关闭，合法历史读取沿原门。 仅复用该报告覆盖的原场景。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/9"
@@ -142651,8 +142851,29 @@
             "id": "SYS-TENANT-01::AC-TN02-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN02-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W264-01/DELIVERY.md",
+                "source_sha": "3de1106f33b31ef0a15ac5b6bb9be55939db2f09",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "固定原操作键，未知提交回查原件，未观察不代表未执行。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W649-01/DELIVERY.md",
+                "source_sha": "2918e0b1c88d092eea06004992ddfd2fb57238ae",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "固定原操作键，未知提交回查原件，未观察不代表未执行。 仅复用该报告覆盖的原场景。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/10"
@@ -142662,8 +142883,29 @@
             "id": "SYS-TENANT-01::AC-TN02-06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN02-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W264-01/DELIVERY.md",
+                "source_sha": "3de1106f33b31ef0a15ac5b6bb9be55939db2f09",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "Enable 与过期日期保独立字段，后台须当前批准。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W529-01/DELIVERY.md",
+                "source_sha": "79902225a5c07c02d582e5bfd00ad8ea77a31461",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "Enable 与过期日期保独立字段，后台须当前批准。 仅复用该报告覆盖的原场景。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/11"
@@ -142673,8 +142915,29 @@
             "id": "SYS-TENANT-01::AC-TN03-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN03-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W426-01/DELIVERY.md",
+                "source_sha": "9f863e8bf1a97e3bc8af04f47d99838ee49e5f4f",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "普通 A/B 角色绑定保护 Owner 归属，API/浏览器拒绝选择头。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W514-01/DELIVERY.md",
+                "source_sha": "12811c528af9f2a33e77d3cb064e5c1357387ed3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "普通 A/B 角色绑定保护 Owner 归属，API/浏览器拒绝选择头。 仅复用该报告覆盖的原场景。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/12"
@@ -142684,8 +142947,19 @@
             "id": "SYS-TENANT-01::AC-TN03-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN03-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W514-01/DELIVERY.md",
+                "source_sha": "12811c528af9f2a33e77d3cb064e5c1357387ed3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "缺失、未知或伪造 tenant、issuer、region 在连接前拒绝。 仅复用该报告覆盖的原场景。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/13"
@@ -142695,8 +142969,39 @@
             "id": "SYS-TENANT-01::AC-TN03-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN03-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W645-01/DELIVERY.md",
+                "source_sha": "d3d9ac8090aa90b3cc4c2c51daf5683a6aec3d22",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "正式写者清单与已采用可信入口可追溯，保留历史兼容入口的实际范围。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/authorization/current-main/README.md",
+                "source_sha": "9cda4c0b327d6da5067752c814a83e2c6689a35a",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "正式写者清单与已采用可信入口可追溯，保留历史兼容入口的实际范围。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W514-01/DELIVERY.md",
+                "source_sha": "12811c528af9f2a33e77d3cb064e5c1357387ed3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "正式写者清单与已采用可信入口可追溯，保留历史兼容入口的实际范围。 仅复用该报告覆盖的原场景。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/14"
@@ -142706,8 +143011,19 @@
             "id": "SYS-TENANT-01::AC-TN03-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN03-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W253-01/DELIVERY.md",
+                "source_sha": "9db6eeed9a6838da1063622cd35bdb813a58cd42",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "实际登录切组织，旧 Cookie 查询和写入都返回 401，新 B 查 A 返回 404。 仅复用该报告覆盖的原场景。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/15"
@@ -142717,8 +143033,39 @@
             "id": "SYS-TENANT-01::AC-TN03-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN03-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W516-01/DELIVERY.md",
+                "source_sha": "bef0eea2acad42006aebd710b198a51022582483",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "未知和他租对象统一拒绝，平台管理仍需当前三道闸。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W265-01/DELIVERY.md",
+                "source_sha": "52516a1c5b24543c2f7ad56605ac3b584dcf7bef",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "未知和他租对象统一拒绝，平台管理仍需当前三道闸。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W529-01/DELIVERY.md",
+                "source_sha": "79902225a5c07c02d582e5bfd00ad8ea77a31461",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "未知和他租对象统一拒绝，平台管理仍需当前三道闸。 仅复用该报告覆盖的原场景。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/16"
@@ -142728,8 +143075,48 @@
             "id": "SYS-TENANT-01::AC-TN04-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN04-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W131-01/DELIVERY.md",
+                "source_sha": "4b7f8c40628adcecdb453c6787ffd45a94c5b4e6",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "真实 Main、CRM 及服务主体/来源配置一致，采用先后均有运行记录。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W649-01/DELIVERY.md",
+                "source_sha": "2918e0b1c88d092eea06004992ddfd2fb57238ae",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "真实 Main、CRM 及服务主体/来源配置一致，采用先后均有运行记录。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W627-01/DELIVERY.md",
+                "source_sha": "c08c33f7c5f8263f35cbd92002dd8a3c69269a50",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "真实 Main、CRM 及服务主体/来源配置一致，采用先后均有运行记录。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/WP02-06/DELIVERY.md",
+                "source_sha": "9a07b96409eb4a98df22064c784b2fa9fb7a4dff",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "environment": "Windows、.NET 8.0.424、PostgreSQL 18.6、真实 HTTP 与运行时、隔离模拟业务数据",
+                "command": "两仓本地构建及 VSTest。真实 Main 批准/取版及独立 CRM HTTP/PG；77 项通过，零跳过。入口和 TRX 见报告。",
+                "scope": "真实 Main、CRM 及服务主体/来源配置一致，采用先后均有运行记录。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/17"
@@ -142739,8 +143126,38 @@
             "id": "SYS-TENANT-01::AC-TN04-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN04-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W130-01/DELIVERY.md",
+                "source_sha": "10da4994fd58dfc6f1ee2d07b1555da88706516f",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "缺目录、错源、旧版或内容不完整拒绝发布，已注册来源不被覆盖。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W131-01/DELIVERY.md",
+                "source_sha": "4b7f8c40628adcecdb453c6787ffd45a94c5b4e6",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "缺目录、错源、旧版或内容不完整拒绝发布，已注册来源不被覆盖。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/WP02-06/DELIVERY.md",
+                "source_sha": "9a07b96409eb4a98df22064c784b2fa9fb7a4dff",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "environment": "Windows、.NET 8.0.424、PostgreSQL 18.6、真实 HTTP 与运行时、隔离模拟业务数据",
+                "command": "两仓本地构建及 VSTest。真实 Main 批准/取版及独立 CRM HTTP/PG；77 项通过，零跳过。入口和 TRX 见报告。",
+                "scope": "缺目录、错源、旧版或内容不完整拒绝发布，已注册来源不被覆盖。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/18"
@@ -142750,8 +143167,28 @@
             "id": "SYS-TENANT-01::AC-TN04-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN04-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W131-01/DELIVERY.md",
+                "source_sha": "4b7f8c40628adcecdb453c6787ffd45a94c5b4e6",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "同版异摘要先在正式 precheckpoint 隔离，保留原摘要并撤当前发布。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/WP02-06/DELIVERY.md",
+                "source_sha": "9a07b96409eb4a98df22064c784b2fa9fb7a4dff",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "environment": "Windows、.NET 8.0.424、PostgreSQL 18.6、真实 HTTP 与运行时、隔离模拟业务数据",
+                "command": "两仓本地构建及 VSTest。真实 Main 批准/取版及独立 CRM HTTP/PG；77 项通过，零跳过。入口和 TRX 见报告。",
+                "scope": "同版异摘要先在正式 precheckpoint 隔离，保留原摘要并撤当前发布。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/19"
@@ -142761,8 +143198,38 @@
             "id": "SYS-TENANT-01::AC-TN04-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN04-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W264-01/DELIVERY.md",
+                "source_sha": "3de1106f33b31ef0a15ac5b6bb9be55939db2f09",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "普通改名保原 Id；变更 slug、issuer、region 和 reader 须批准并按准确新来源采用。旧会话封存及原业务结果经实测。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/WP02-05b/DELIVERY.md",
+                "source_sha": "021911b466eb48dcf960e6e100ecc7c70324908d",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "普通改名保原 Id；变更 slug、issuer、region 和 reader 须批准并按准确新来源采用。旧会话封存及原业务结果经实测。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/WP02-06/DELIVERY.md",
+                "source_sha": "9a07b96409eb4a98df22064c784b2fa9fb7a4dff",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "environment": "Windows、.NET 8.0.424、PostgreSQL 18.6、真实 HTTP 与运行时、隔离模拟业务数据",
+                "command": "两仓本地构建及 VSTest。真实 Main 批准/取版及独立 CRM HTTP/PG；77 项通过，零跳过。入口和 TRX 见报告。",
+                "scope": "普通改名保原 Id；变更 slug、issuer、region 和 reader 须批准并按准确新来源采用。旧会话封存及原业务结果经实测。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/20"
@@ -142772,8 +143239,48 @@
             "id": "SYS-TENANT-01::AC-TN04-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN04-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W649-01/DELIVERY.md",
+                "source_sha": "2918e0b1c88d092eea06004992ddfd2fb57238ae",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "恢复、重建及原报文重放维持撤权和旧会话拒绝，原业务归属和原件可追溯。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W253-01/DELIVERY.md",
+                "source_sha": "9db6eeed9a6838da1063622cd35bdb813a58cd42",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "恢复、重建及原报文重放维持撤权和旧会话拒绝，原业务归属和原件可追溯。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W627-01/DELIVERY.md",
+                "source_sha": "c08c33f7c5f8263f35cbd92002dd8a3c69269a50",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "恢复、重建及原报文重放维持撤权和旧会话拒绝，原业务归属和原件可追溯。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/WP02-06/DELIVERY.md",
+                "source_sha": "9a07b96409eb4a98df22064c784b2fa9fb7a4dff",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "environment": "Windows、.NET 8.0.424、PostgreSQL 18.6、真实 HTTP 与运行时、隔离模拟业务数据",
+                "command": "两仓本地构建及 VSTest。真实 Main 批准/取版及独立 CRM HTTP/PG；77 项通过，零跳过。入口和 TRX 见报告。",
+                "scope": "恢复、重建及原报文重放维持撤权和旧会话拒绝，原业务归属和原件可追溯。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/21"
@@ -142783,8 +143290,48 @@
             "id": "SYS-TENANT-01::AC-TN04-06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-TN04-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W131-01/DELIVERY.md",
+                "source_sha": "4b7f8c40628adcecdb453c6787ffd45a94c5b4e6",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "实际交付分别核对代码、登记、启用、运行，原生消费者和恢复目标使用唯一的当前写者。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W645-01/DELIVERY.md",
+                "source_sha": "d3d9ac8090aa90b3cc4c2c51daf5683a6aec3d22",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "实际交付分别核对代码、登记、启用、运行，原生消费者和恢复目标使用唯一的当前写者。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/W627-01/DELIVERY.md",
+                "source_sha": "c08c33f7c5f8263f35cbd92002dd8a3c69269a50",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "command": "本次核对远端采用的原报告，实际运行命令、环境和时间见该历史报告。",
+                "environment": "沿用历史报告所列实际运行环境",
+                "reused": true,
+                "scope": "实际交付分别核对代码、登记、启用、运行，原生消费者和恢复目标使用唯一的当前写者。 仅复用该报告覆盖的原场景。"
+              },
+              {
+                "path": "docs/development/evidence/WP02-06/DELIVERY.md",
+                "source_sha": "9a07b96409eb4a98df22064c784b2fa9fb7a4dff",
+                "result": "PASS",
+                "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+                "environment": "Windows、.NET 8.0.424、PostgreSQL 18.6、真实 HTTP 与运行时、隔离模拟业务数据",
+                "command": "两仓本地构建及 VSTest。真实 Main 批准/取版及独立 CRM HTTP/PG；77 项通过，零跳过。入口和 TRX 见报告。",
+                "scope": "实际交付分别核对代码、登记、启用、运行，原生消费者和恢复目标使用唯一的当前写者。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/9/cases/22"
@@ -142792,22 +143339,34 @@
           }
         ]
       },
-      "implementation_evidence": [],
-      "delivery_evidence": null,
+      "implementation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-06/DELIVERY.md",
+          "source_sha": "9a07b96409eb4a98df22064c784b2fa9fb7a4dff",
+          "result": "PASS",
+          "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+          "environment": "Windows、.NET 8.0.424、PostgreSQL 18.6、真实 HTTP 与运行时、隔离模拟业务数据",
+          "command": "两仓本地构建及 VSTest。真实 Main 批准/取版及独立 CRM HTTP/PG；77 项通过，零跳过。入口和 TRX 见报告。",
+          "scope": "准确批准发布与完整目录、旧会话封存和新会话下当前授权原结果；身份入口 precheckpoint 与共同撤权 fence。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-06/DELIVERY.md",
+        "source_sha": "9a07b96409eb4a98df22064c784b2fa9fb7a4dff",
+        "remote_main_sha": "ac8a2706a018317eafce8247aff1e7fe5e416329",
+        "pr_url": "https://github.com/GTX537/CP6.CRM/pull/239",
+        "scope": "CRM 实现已正常合并，按官方 finish 核对远端。Main 正向发布使用已核对主线中的 WP02-05b 原实现。",
+        "main_source_sha": "effeac4f80c6576f82d92343b18e49ba335b9f8b",
+        "main_verified_sha": "56feafdc99d5757d678830928c69a5416106f920",
+        "main_approval_pr": "https://github.com/GTX537/CP6/pull/1247"
+      },
       "completion_audit": {
-        "result": "GAPS_ASSIGNED",
-        "reviewed_at": "2026-11-17T13:56:58.806351+00:00",
-        "report": "docs/development/evidence/WP02-04/card-closure/DELIVERY.md",
+        "result": "DONE",
+        "reviewed_at": "2026-11-18T02:28:08.1627353+00:00",
+        "report": "docs/development/evidence/WP02-06/DELIVERY.md",
         "original_cases_reviewed": 23,
         "required_revision_cases": 0,
-        "recheck_on_task_done": "WP02-06",
-        "gaps": [
-          {
-            "case_id": "SYS-TENANT-01::AC-TN04-04",
-            "owner_task_id": "WP02-06",
-            "gap": "CRM 实际采用批准后的准确来源/目录，验证旧会话不因重建复活；本卡 DONE PR 重新核对 SYS-TENANT-01 全部原 AC 后关闭。"
-          }
-        ],
+        "gaps": [],
         "resolved_gaps": [
           {
             "case_id": "SYS-TENANT-01::AC-TN04-04",
@@ -142816,10 +143375,18 @@
             "resolved_at": "2026-11-17T16:22:25.185112+00:00",
             "report": "docs/development/evidence/WP02-05b/DELIVERY.md",
             "source_sha": "effeac4f80c6576f82d92343b18e49ba335b9f8b"
+          },
+          {
+            "case_id": "SYS-TENANT-01::AC-TN04-04",
+            "owner_task_id": "WP02-06",
+            "gap": "CRM 实际采用批准后的准确来源/目录，验证旧会话不因重建复活；本卡 DONE PR 重新核对 SYS-TENANT-01 全部原 AC 后关闭。",
+            "resolved_at": "2026-11-18T02:28:08.1627353+00:00",
+            "report": "docs/development/evidence/WP02-06/DELIVERY.md",
+            "source_sha": "9a07b96409eb4a98df22064c784b2fa9fb7a4dff"
           }
         ],
-        "last_gap_resolution_at": "2026-11-17T16:22:25.185112+00:00",
-        "last_gap_resolution_report": "docs/development/evidence/WP02-05b/DELIVERY.md"
+        "new_product_execution": true,
+        "classification": "BUSINESS"
       }
     },
     {
@@ -143300,7 +143867,26 @@
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "GAPS_ASSIGNED",
+        "reviewed_at": "2026-11-18T02:28:08.1627353+00:00",
+        "report": "docs/development/evidence/WP02-06/DELIVERY.md",
+        "original_cases_reviewed": 40,
+        "required_revision_cases": 2,
+        "gaps": [
+          {
+            "case_id": "DR-PE-SPACE-R2-S5-EXACT-CONSUMER-MAPPING::PE-SPACE-R2-S5-EXACT-CONSUMER-MAPPING-POS",
+            "owner_task_id": "WP13-04",
+            "gap": "实际 Space S5 成员 grant-clause 交集及 61 字段/78 DTO 映射须按原范围采用并验证；两条必需修订仍开放。"
+          },
+          {
+            "case_id": "SYS-IAM-01::AC-IA04-06",
+            "owner_task_id": "WP14-08",
+            "gap": "跨域已采用 Owner 的身份切换、撤权和业务未知提交须实链对账，按当前权限及原业务键验证恢复与零重复效果。"
+          }
+        ]
+      }
     },
     {
       "id": "INT-ID-01",
@@ -143724,7 +144310,31 @@
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "GAPS_ASSIGNED",
+        "reviewed_at": "2026-11-18T02:28:08.1627353+00:00",
+        "report": "docs/development/evidence/WP02-06/DELIVERY.md",
+        "original_cases_reviewed": 35,
+        "required_revision_cases": 2,
+        "gaps": [
+          {
+            "case_id": "DR-COM-S6-PRECHECKPOINT-FINALAUTH::COM-S6-PRECHECKPOINT-FINALAUTH-POS",
+            "owner_task_id": "WP02-09",
+            "gap": "实际 CRM 入站业务 Owner 的原图、原回执、同一事务 Inbox/Outbox 与最终授权，继续核对重复原交易、同键异摘要、无门阻断及未知提交恢复。对应本目标两条必需修订。"
+          },
+          {
+            "case_id": "INT-ID-01::AC-ID02-05",
+            "owner_task_id": "WP02-24",
+            "gap": "原 CRM 商业结果的查询与受控重放，须用实际 Owner 的准确原键、当前字段决定和披露权核销。"
+          },
+          {
+            "case_id": "INT-ID-01::AC-ID02-04",
+            "owner_task_id": "WP14-08",
+            "gap": "全链实际 CRM 业务 Owner 的字段用途及撤权竞态尚需组合验收。覆盖导出、排序、重放和隐藏字段写拒绝后的零部分提交。"
+          }
+        ]
+      }
     },
     {
       "id": "INT-OPS-01",
@@ -183994,66 +184604,45 @@
         "file:CRM:src/CP6.CRM.Infrastructure/Identity/IdentityEventConsumer.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-06",
-      "entry_gate": "NOT_CHECKED",
+      "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W100-01/02",
-        "repository": "Main/CRM",
-        "owning_task_repository": "CRM",
-        "branch": "codex/w100-01",
-        "crm_branch": "codex/w100-02",
-        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-24T05:01:40.571402+00:00",
-        "baseline_sha": "cd165466a9806861e70be5c57fea579d08172c56",
-        "crm_baseline_sha": "e86ca195470f8e4fad29aab474cfbef696dde132",
-        "entry_evidence": "docs/development/dispatch/20261024-wave100/README.md",
+        "chat_label": "COORD / WP02-06",
+        "repository": "CRM",
+        "branch": "codex/wp02-06",
+        "worktree": "D:/CP6-worktrees/dev-2",
+        "claimed_at": "2026-11-18T02:05:09.397969+00:00",
+        "baseline_sha": "5f09533b9168ee614a6df1f75629b39635585f86",
+        "entry_evidence": "docs/development/evidence/WP02-06/DELIVERY.md",
         "phase": "CLOSED",
-        "dispatch_scope": "W100",
-        "bounded_window_gate": "CONFIRMED",
-        "full_task_gate_unchanged": true,
-        "worker_start_received": true,
-        "actual_start_ref": {
-          "commit": "eed867b54781b79c96ac3afacbe62cc854d353d9",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261024T050140Z-wave100-start/MESSAGE.md",
-          "at": "2026-10-24T05:01:40.571402+00:00"
-        },
-        "reserved_write_resources": [
-          "Main:C2-permission-contract",
-          "Main:inquiry-resource-scope-IAM",
-          "CRM:identity-consumer"
-        ],
-        "reserved_postgresql_ports": [
-          55446
-        ],
-        "handoff_branch": "codex/w100-handoff",
-        "actions_authorized": false,
-        "deployment_authorized": false,
-        "existing_database_migration_authorized": false,
-        "worker_delivery_received": true,
-        "candidate_review_completed": true,
-        "candidate_integrated": true,
-        "resources_released": true,
-        "full_task_completed": false,
-        "crm_candidate_integrated": true,
-        "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/cab16a031c93d52da674f20984a2d503d35fc2a8/docs/development/evidence/W100-02/DELIVERY.md",
-        "crm_source_sha": "43083d0e38970ae1172eb2e76cdd8947a4031c7f",
-        "crm_remote_main_sha": "cab16a031c93d52da674f20984a2d503d35fc2a8",
-        "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/127",
-        "handoff_delivery_ref": {
-          "commit": "0e69995658b688f608dec3346165475645195992",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261024T052234Z-wave100-delivery/MESSAGE.md",
-          "at": "2026-10-24T05:22:34.267702+00:00",
-          "base": "codex/t02c-entry-handoff-20260921",
-          "branch": "codex/w100-handoff"
-        },
-        "main_remote_sha": "20bb1b7bce926a218fce5bb9c59aba7ccd5f17f0",
-        "main_pull_request": "https://github.com/GTX537/CP6/pull/512"
+        "dispatch_scope": "准确批准发布与完整目录、旧会话封存和新会话下当前授权原结果；身份入口 precheckpoint 与共同撤权 fence。",
+        "delivery_report": "docs/development/evidence/WP02-06/DELIVERY.md",
+        "full_task_completed": true
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-06/DELIVERY.md",
+          "source_sha": "9a07b96409eb4a98df22064c784b2fa9fb7a4dff",
+          "result": "PASS",
+          "observed_at": "2026-11-18T02:28:08.1627353+00:00",
+          "environment": "Windows、.NET 8.0.424、PostgreSQL 18.6、真实 HTTP 与运行时、隔离模拟业务数据",
+          "command": "两仓本地构建及 VSTest。真实 Main 批准/取版及独立 CRM HTTP/PG；77 项通过，零跳过。入口和 TRX 见报告。",
+          "scope": "准确批准发布与完整目录、旧会话封存和新会话下当前授权原结果；身份入口 precheckpoint 与共同撤权 fence。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-06/DELIVERY.md",
+        "source_sha": "9a07b96409eb4a98df22064c784b2fa9fb7a4dff",
+        "remote_main_sha": "ac8a2706a018317eafce8247aff1e7fe5e416329",
+        "pr_url": "https://github.com/GTX537/CP6.CRM/pull/239",
+        "scope": "CRM 实现已正常合并，按官方 finish 核对远端。Main 正向发布使用已核对主线中的 WP02-05b 原实现。",
+        "main_source_sha": "effeac4f80c6576f82d92343b18e49ba335b9f8b",
+        "main_verified_sha": "56feafdc99d5757d678830928c69a5416106f920",
+        "main_approval_pr": "https://github.com/GTX537/CP6/pull/1247"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
@@ -184560,7 +185149,27 @@
           "status": "EVIDENCE_PENDING",
           "new_implementation_authorized": false
         }
-      ]
+      ],
+      "remaining_scope": [],
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP02-06/DELIVERY.md",
+        "started_at": "2026-11-18T02:05:09.397969+00:00",
+        "official_started_at": "2026-11-18T02:05:09.397969+00:00",
+        "verified_at": "2026-11-18T02:28:08.1627353+00:00",
+        "target_review_started_at": "2026-11-18T02:25:40.6049326+00:00",
+        "effective_seconds": 1231.207,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-05",
+          "WP02-05b",
+          "WP02-07"
+        ],
+        "new_product_execution": true
+      }
     },
     {
       "id": "WP02-07",
@@ -187252,7 +187861,7 @@
         "official_started_at": "2026-11-17T23:22:23.001731+00:00",
         "verified_at": "2026-11-18T01:32:06.281283+00:00",
         "target_review_started_at": "2026-11-18T01:25:37.5484118Z",
-        "effective_seconds": 7394.547,
+        "effective_seconds": 7656.633,
         "size": "M",
         "budget_seconds": 13912.711,
         "mandatory_split_seconds": 20869.067,
@@ -187260,7 +187869,9 @@
         "strict_prerequisites": [
           "WP02-13"
         ],
-        "new_product_execution": true
+        "new_product_execution": true,
+        "official_finish": "2026-11-18T01:36:28.367044+00:00",
+        "post_candidate_finalization_seconds": 262.086
       }
     },
     {
@@ -289976,7 +290587,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 23692.937,
+      "effective_seconds": 25333.788,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -289987,12 +290598,14 @@
         "WP02-16",
         "WP01-01",
         "WP02-05b",
-        "WP02-13b"
+        "WP02-13b",
+        "WP02-06"
       ],
       "closed_targets": [
         "OA-DEF-01",
         "PLT-TEST-01",
-        "SYS-AUD-01"
+        "SYS-AUD-01",
+        "SYS-TENANT-01"
       ],
       "new_splits": [
         {
@@ -290029,7 +290642,7 @@
         }
       ],
       "current_stage": "A",
-      "next_card": "WP02-06",
+      "next_card": "WP02-09",
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -290179,16 +290792,15 @@
       },
       "next_card_selection": {
         "rule": "严格前置全部完整DONE；当前阶段可开工者按全图最长下游链，等长按原序列",
-        "baseline_sha": "6c013650e0cb92cd86868073ef5d8c93104b8512",
-        "after_card": "WP02-13b",
-        "selected": "WP02-06",
+        "baseline_sha": "56feafdc99d5757d678830928c69a5416106f920",
+        "after_card": "WP02-06",
+        "selected": "WP02-09",
         "candidates": [
           {
-            "card": "WP02-06",
-            "global_edges": 43,
-            "phase_edges": 2,
+            "card": "WP02-09",
+            "global_edges": 42,
+            "phase_edges": 1,
             "phase_path": [
-              "WP02-06",
               "WP02-09",
               "WP03-02"
             ]
@@ -290277,11 +290889,11 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 2115.654,
+      "target_review_effective_seconds": 2263.212,
       "last_checkpoint_counts": {
-        "original_done": 47,
-        "fully_done": 45,
-        "targets_done": 3,
+        "original_done": 48,
+        "fully_done": 46,
+        "targets_done": 4,
         "new_splits": 4,
         "periodic_checkpoint_due": false
       }

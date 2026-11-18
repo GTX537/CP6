@@ -1,5 +1,7 @@
 # 当前待办与优先级
 
+2026-11-17，WP02-06 卡 DONE。CRM 实际采用批准的新身份来源，旧会话封存，新会话按当前权限读取原业务结果。本地 77 项通过，零跳过。SYS-TENANT-01 原 23 条复核通过。INT-ID-01 和 SYS-IAM-01 的待补验收已归入现有卡。原号 DONE / 完整 DONE 为 48 / 46，目标 4/125。下一卡 WP02-09。 [本卡报告](../development/evidence/WP02-06/DELIVERY.md)
+
 2026-11-17，WP02-13b 卡 DONE，SYS-AUD-01 原 21 AC 全部通过。本卡交付三类审计的原引用、安全读写边界与 PostgreSQL 原计划处置。原号 DONE / 完整 DONE = 47 / 45，登记卡 49/379、目标 3/125。下一卡 WP02-06，DONE 时重核 SYS-TENANT-01。 [本卡报告](../development/evidence/WP02-13b/DELIVERY.md)
 
 2026-11-17，WP02-05b 卡 DONE：Main 批准准确身份来源并冻结完整后继目录/原命令/原Outbox，旧CRM身份处置与真实PostgreSQL取版已验证；343项唯一相关验证通过、零跳过。原号DONE / 完整DONE = 47 / 44，48/379登记卡、2/125目标。PLT-CTX-01剩WP02-29/24；SYS-TENANT-01剩WP02-06并在其DONE PR重核关闭。规则4等长按原序列，下一卡WP02-13b。 [本卡报告](../development/evidence/WP02-05b/DELIVERY.md)
