@@ -85,7 +85,7 @@
 | [SYS-AUD-01](../../docs/design-handbook/modules/SYS-AUD-01.md) | 操作、安全与字段审计 | WP02 | CHANGE_REQUIRED | 已交付 | 0 |
 | [SYS-PRIV-01](../../docs/design-handbook/modules/SYS-PRIV-01.md) | 隐私导出、保留与擦除 | WP02 | CHANGE_REQUIRED | 待安排 | 0 |
 | [SYS-FILE-01](../../docs/design-handbook/modules/SYS-FILE-01.md) | 附件与文件管理 | WP02 | CHANGE_REQUIRED | 待安排 | 2 |
-| [SYS-NUM-01](../../docs/design-handbook/modules/SYS-NUM-01.md) | 编号与开发辅助生成 | WP02 | CHANGE_REQUIRED | 待安排 | 0 |
+| [SYS-NUM-01](../../docs/design-handbook/modules/SYS-NUM-01.md) | 编号与开发辅助生成 | WP02 | CHANGE_REQUIRED | 已交付 | 0 |
 | [SYS-CLIENT-01](../../docs/design-handbook/modules/SYS-CLIENT-01.md) | 客户端设备与升级 | WP02 | CHANGE_REQUIRED | 待安排 | 0 |
 | [SYS-JOB-01](../../docs/design-handbook/modules/SYS-JOB-01.md) | 应用后台作业 | WP02 | CHANGE_REQUIRED | 待安排 | 0 |
 | [SYS-TENANT-01](../../docs/design-handbook/modules/SYS-TENANT-01.md) | 租户管理 | WP02 | CHANGE_REQUIRED | 已交付 | 0 |
