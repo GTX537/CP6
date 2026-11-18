@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "baseline_id": "CP6-DEV-ROADMAP-20261011/R1",
-  "as_of": "2026-11-17",
+  "as_of": "2026-11-18",
   "scope": "125已接受设计目标的全量大任务计划与进度登记。247仅为修订运行场景；原模块验收需继续盘点。不是125目标实现已完成的证明。",
   "main_baseline_sha": "90ea752e9029d171e6a0307fcda06c66c3e04a69",
   "sources": [
@@ -168616,6 +168616,11 @@
       "at": "2026-11-18T08:53:49.0666706+00:00",
       "change": "WP02-16b 卡 DONE，WP02-16 及拆分余项完整 DONE。SYS-NUM-01 的 16 项原验收全部通过，适用必需修订 0 项。原号 DONE 50/375，完整 DONE 49/375，登记卡 54/380，目标 5/125。",
       "evidence": "docs/development/evidence/WP02-16b/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-18T09:32:17Z",
+      "change": "项目总负责批准 WP02-09b 先承接已有原请求、可核验账户归属和当前授权的 C03 业务伙伴结果入史。未知请求仅隔离，其余 A12、A13 和订单维持原归属；WP02-09b 恢复 PLANNED，阶段 A 仅此一张候选。",
+      "evidence": "docs/development/evidence/COORD-WP02-09B-A12/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -186907,12 +186912,10 @@
         "file:CRM:src/CP6.CRM.Infrastructure/Leads/CrmBusinessService.Intake.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "BLOCKED",
+      "state": "PLANNED",
       "entry_gate": "NOT_CHECKED",
       "assignment": null,
-      "blockers": [
-        "已接受的询盘业务入口为同步 HTTP，FX24 仅持久化投递。C03 结果接收属 WP03-06，直接依赖 WP02-09，另经 WP04-03、WP03-05 回到本卡。须由总负责明确首个已接受的生产者、CRM 业务 Owner、入站合同和无环执行次序。"
-      ],
+      "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "plan_path": "docs/development/task-plans/WP02.md",
@@ -186923,8 +186926,9 @@
       ],
       "split_parent": "WP02-09",
       "remaining_scope": [
-        "在明确的实际 CRM 业务消息入口采用本仓 PostgreSQL 调用方事务，先核可信租户、收件身份及当前授权，随后一次提交 Inbox、实际业务全图、原命令回执、审计及 Outbox。",
-        "验证并发重复、同键不同摘要隔离、后段故障整组回滚、未知提交回查原键、当前权披露、撤权两序、旧范围/错误租户拒绝和缺真实最终授权门时阻断。保留原键、原摘要与全部原 AC。"
+        "在真实 CRM 账户原请求接收入口仅处理已知原请求、可核实账户归属及当前授权的 C03 业务伙伴成功或失败结果。校验可信生产者、租户及收件身份，在最终授权门后用同一 PostgreSQL 调用方事务提交 Inbox、原请求结果历史、原命令回执、审计及 Outbox。",
+        "验证并发重复、同键不同摘要隔离、后段故障整组回滚、未知提交回查原键、当前权披露、撤权两序、旧范围/错误租户拒绝和缺真实最终授权门时阻断。保留原键、原摘要与全部原 AC。",
+        "保留字符串 BusinessPartnerKey，只在同一原请求结果流内比较 resultVersion。同版本同载荷去重，同版本异载荷隔离。未知原请求仅隔离，禁止据来信创建原请求或恢复账户。其余 A12、A13 当前映射及订单流程归原卡。"
       ],
       "card_budget_seconds": 12831.351
     },
@@ -291577,7 +291581,7 @@
         }
       ],
       "current_stage": "A",
-      "next_card": null,
+      "next_card": "WP02-09b",
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -291727,11 +291731,21 @@
         }
       },
       "next_card_selection": {
-        "rule": "严格前置和实际阻塞；阶段 A 暂无满足条件的下一卡，交唯一 COORD 裁决。",
-        "baseline_sha": "3ea9d2ba2ab4e1a644369432460a5251e2f1bcda",
+        "rule": "项目总负责批准限定 A12 分工后，按严格前置、实际阻断和全图最长下游链重算。",
+        "baseline_sha": "39d741bcd7ab1e6ef7919f00c29c1b6296a24a67",
         "after_card": "WP02-16b",
-        "selected": null,
-        "candidates": []
+        "selected": "WP02-09b",
+        "candidates": [
+          {
+            "card": "WP02-09b",
+            "global_edges": 42,
+            "phase_edges": 1,
+            "phase_path": [
+              "WP02-09b",
+              "WP03-02"
+            ]
+          }
+        ]
       },
       "phase0_user_confirmation": "2026-11-17 用户确认：先按证据核销或拆卡，列清缺口；完成阶段0核对后再按顺序实施剩余卡。",
       "budget_rule": "余卡上限=父卡上限−父卡已用有效时间（不足0按0计，超出计缓冲）；同一原号的分配守恒。第二次拆分先报总负责，不自动追加卡池。",
