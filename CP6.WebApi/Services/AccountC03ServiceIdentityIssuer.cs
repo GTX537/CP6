@@ -54,19 +54,9 @@ public sealed class AccountC03ServiceIdentityIssuer(CP6Context db, ITenantContex
             if (!await db.CrmIdentityBootstrapStates.AsNoTracking().AnyAsync(x => x.TenantId == client.Tenant &&
                 x.CompletedAtUtc != null && x.ContractBundleSha256 == runtime.ContractBundleSha256, ct))
                 throw new InquiryPermissionExceptionV1(503, "account_c03_identity_unavailable");
-            var aggregate = "service-principal:" + client.Subject.ToString("D");
-            var row = await db.CrmIdentitySnapshots.AsNoTracking().SingleOrDefaultAsync(x =>
-                x.TenantId == client.Tenant && x.AggregateId == aggregate, ct);
-            if (row is null || row.IsDeleted || row.EventType != IdentityEventContracts.AccountServicePrincipalChanged ||
-                row.PayloadSha256 != IdentityEventContracts.Hash(Encoding.UTF8.GetBytes(row.PayloadJson)))
-                throw new InquiryPermissionExceptionV1(403, "account_c03_identity_denied");
-            var source = JsonSerializer.Deserialize<ServicePrincipalIdentityData>(row.PayloadJson, IdentityEventContracts.Json);
-            if (source is null || !source.Enabled || source.SourceProfile != IdentityEventContracts.AccountServiceProfile ||
-                source.Version != row.Version || source.TenantId != client.Tenant || source.ClientId != client.Client ||
-                source.PrincipalId != client.Subject || source.DepartmentId != client.Department ||
-                source.AuthenticationEpoch != client.AuthenticationEpoch || source.RegistrationVersion != client.Version ||
-                source.RegistrationRevision != client.Revision || !source.Roles.SequenceEqual(client.Roles.Select(IdentityEventContracts.RoleSubject)))
-                throw new InquiryPermissionExceptionV1(403, "account_c03_identity_denied");
+            var published = await ReadPublishedSourceAsync(db, client, ct)
+                ?? throw new InquiryPermissionExceptionV1(403, "account_c03_identity_denied");
+            var (row, source) = published;
 
             // 签入当前角色、部门及租户的来源摘要，收件方须与持锁发布逐项对应。
             var expected = source.Roles.Select(role => "permission:" + role)
@@ -88,5 +78,25 @@ public sealed class AccountC03ServiceIdentityIssuer(CP6Context db, ITenantContex
             return jwt;
         }
         finally { tenant.CurrentTenantId = previous; }
+    }
+
+    // 签发与原件读取均在同一认证完成锁下核对实际发布。
+    internal static async Task<(CP6.Entity.DomainModels.Sys.CrmIdentitySnapshot, ServicePrincipalIdentityData)?>
+        ReadPublishedSourceAsync(CP6Context db, ServicePrincipalRegistryV1.Registration client, CancellationToken ct)
+    {
+        var aggregate = "service-principal:" + client.Subject.ToString("D");
+        var row = await db.CrmIdentitySnapshots.AsNoTracking().SingleOrDefaultAsync(x =>
+            x.TenantId == client.Tenant && x.AggregateId == aggregate, ct);
+        if (row is null || row.IsDeleted || row.EventType != IdentityEventContracts.AccountServicePrincipalChanged ||
+            row.PayloadSha256 != IdentityEventContracts.Hash(Encoding.UTF8.GetBytes(row.PayloadJson)))
+            return null;
+        var source = JsonSerializer.Deserialize<ServicePrincipalIdentityData>(row.PayloadJson, IdentityEventContracts.Json);
+        if (source is null || !source.Enabled || source.SourceProfile != IdentityEventContracts.AccountServiceProfile ||
+            source.Version != row.Version || source.TenantId != client.Tenant || source.ClientId != client.Client ||
+            source.PrincipalId != client.Subject || source.DepartmentId != client.Department ||
+            source.AuthenticationEpoch != client.AuthenticationEpoch || source.RegistrationVersion != client.Version ||
+            source.RegistrationRevision != client.Revision || !source.Roles.SequenceEqual(client.Roles.Select(IdentityEventContracts.RoleSubject)))
+            return null;
+        return (row, source);
     }
 }

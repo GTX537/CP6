@@ -87,17 +87,25 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             sp.GetRequiredService<TenantContext>(), account, runtime, oidc, crypto));
         builder.Services.AddScoped(sp => new InquiryServicePermissionIssuerV1(sp.GetRequiredService<CP6Context>(),
             sp.GetRequiredService<TenantContext>(), inquiry, inquiryKey, () => IntakeCatalog(), runtime));
+        var discovery = ResultDiscovery(oidc.Issuer, certificate.Thumbprint);
+        using var resultBackchannel = discovery.Client;
+        ConfigureResultProvider(builder, h, accountClient, account, runtime, oidc, crypto, resultBackchannel);
         builder.Services.AddControllers().AddApplicationPart(typeof(CrmOidcController).Assembly)
-            .ConfigureApplicationPartManager(m => m.FeatureProviders.Add(new ServiceContextControllers())).AddControllersAsServices();
+            .ConfigureApplicationPartManager(m => m.FeatureProviders.Add(new AccountResultControllers())).AddControllersAsServices();
         builder.Services.RemoveAll<CrmOidcController>();
         builder.Services.AddTransient(sp => new CrmOidcController(oidc, crypto, null!, null!, builder.Configuration, null!, null!,
+            serviceTokens: sp.GetRequiredService<CrmOidcServiceTokens>(),
             inquiryServicePermissions: sp.GetRequiredService<InquiryServicePermissionIssuerV1>()));
         await using var app = builder.Build();
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.MapControllers();
+        CP6.WebApi.Configuration.ErpIntegrationConfiguration.MapErpIntegrationEvents(app);
         await app.StartAsync();
         try
         {
             var origin = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.Single();
+            discovery.Port.SetResult(new Uri(origin).Port);
             using var http = new HttpClient(new HttpClientHandler { UseProxy = false, UseCookies = false, AllowAutoRedirect = false,
                 ServerCertificateCustomValidationCallback = (_, cert, _, _) => cert?.Thumbprint == certificate.Thumbprint }) { BaseAddress = new(origin) };
             const string route = "/connect/account-c03-service-identity";
@@ -151,7 +159,9 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             await Expect(HttpStatusCode.BadRequest, route, new { purpose, requestNonce = "bad" }, basic);
             await Expect(HttpStatusCode.BadRequest, route + "?tenant=x", body, basic);
             // 仅向同机指定联验子进程传递测试凭据。业务样本取自实际发布的数据库行。
-            await RunAccountC03ConsumerIfConfigured(h, oidc.Issuer, origin, certificate.Thumbprint, accountClient, secret, subject, epoch);
+            var samples = await CheckResultProviderAsync(app, http, h, basic, accountClient, subject, epoch);
+            await RunAccountC03ConsumerIfConfigured(h, oidc.Issuer, origin, certificate.Thumbprint,
+                accountClient, secret, subject, epoch, samples);
             accountSource.Version = "owned-account-2";
             accountSource.IdentityPublicationRevision = 2;
             accountSource.Registrations.Single().AuthenticationEpoch = Guid.NewGuid();
@@ -186,7 +196,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     }
 
     private static async Task RunAccountC03ConsumerIfConfigured(Harness h, string issuer, string origin,
-        string thumbprint, string clientId, string clientSecret, Guid subject, Guid epoch)
+        string thumbprint, string clientId, string clientSecret, Guid subject, Guid epoch, ResultSample[] samples)
     {
         var project = Environment.GetEnvironmentVariable("CP6_ACCOUNT_C03_CROSS_PROJECT");
         if (string.IsNullOrEmpty(project)) return;
@@ -195,7 +205,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var rows = await h.Db.CrmIdentitySnapshots.AsNoTracking().Where(x => x.TenantId == h.Tenant).OrderBy(x => x.AggregateId).ToArrayAsync();
         var file = Path.Combine(output, "account-c03-source-" + Guid.NewGuid().ToString("N") + ".json");
         await File.WriteAllTextAsync(file, JsonSerializer.Serialize(new { issuer, origin, thumbprint, tenantId = h.Tenant,
-            departmentId = h.Parent, clientId, subject, epoch, rows = rows.Select(x => new { x.AggregateId, x.EventType,
+            departmentId = h.Parent, clientId, subject, epoch, samples, rows = rows.Select(x => new { x.AggregateId, x.EventType,
                 x.Version, x.PayloadSha256, x.IsDeleted, data = JsonDocument.Parse(x.PayloadJson).RootElement }) }, IdentityEventContracts.Json));
         var start = new System.Diagnostics.ProcessStartInfo(Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet") {
             WorkingDirectory = Path.GetDirectoryName(Path.GetFullPath(project))!, UseShellExecute = false, CreateNoWindow = true };

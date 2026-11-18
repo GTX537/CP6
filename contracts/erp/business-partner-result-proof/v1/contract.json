@@ -1,0 +1,33 @@
+{
+  "contract": "C03-BP-RESULT-PROOF/1",
+  "owner": "Main.C03",
+  "method": "GET",
+  "path": "/internal/erp/v1/business-partner-result-proofs/{account}/{requestId}/{requestVersion}/{eventId}/{resultVersion}",
+  "headers": {
+    "Authorization": "Bearer <C01 cp6.services>",
+    "tenantid": "受信服务的租户 UUID",
+    "correlationid": "C03 关联键",
+    "X-C03-Original-Message": "独立取得的原命令消息键",
+    "X-C03-Result-Sha256": "指定原件的 64 位小写十六进制 SHA-256"
+  },
+  "requestProof": "C03-BP-REQUEST-PROOF/1",
+  "nativeContract": {
+    "id": "ACC-C03-V1",
+    "version": "1.0.0",
+    "source": "urn:cp6:erp",
+    "bundleSha256": "758c9b853fdacf3bd18c1822fb3d8dd603354618bef0132e940ccf92ce659a20"
+  },
+  "eventId": "ERP Outbox 的原生消息键，保留大小写。按原生 v1 合同验证 1 至 128 位字母、数字及 ._:-，首字符为字母或数字。",
+  "resultVersion": "正整数，仅在同一原请求流内比较",
+  "response": {
+    "proofContract": "C03-BP-RESULT-PROOF/1",
+    "original": "完整 C03-BP-REQUEST-PROOF/1 核验结果",
+    "eventId": "原结果消息键",
+    "resultVersion": "原生结果版本",
+    "eventType": "原生业务伙伴成功或失败 v1 类型",
+    "payloadSha256": "已存摘要，须与引用及原字节重算值相等",
+    "payload": "已存原始 CloudEvent 字节的标准 Base64"
+  },
+  "access": "仅当前发布的账户服务可按租户、账户、身份 epoch、原件来源 epoch、原请求及指定结果的独立有效登记读取。当前发布后签发的服务令牌、账户服务发布和对象资格须同时有效。",
+  "unavailable": "缺原件、缺对象读权或引用冲突均返回 404。无原件字节或摘要。"
+}

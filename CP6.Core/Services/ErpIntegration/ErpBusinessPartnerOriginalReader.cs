@@ -21,12 +21,18 @@ public sealed class ErpBusinessPartnerOriginalReader(IDbContextFactory<ErpIntegr
     public async Task<ErpBusinessPartnerOriginal?> ReadAsync(Guid tenant, string authenticatedClient,
         Guid account, Guid requestId, int requestVersion, string originalId, CancellationToken ct)
     {
+        await using var db = await factory.CreateDbContextAsync(ct);
+        return await ReadInContextAsync(db, tenant, authenticatedClient, account, requestId, requestVersion, originalId, ct);
+    }
+
+    public async Task<ErpBusinessPartnerOriginal?> ReadInContextAsync(ErpIntegrationContext db, Guid tenant,
+        string authenticatedClient, Guid account, Guid requestId, int requestVersion, string originalId, CancellationToken ct)
+    {
         if (!runtime.Options.Tenants.TryGetValue(tenant, out var region) ||
             !runtime.Options.ReaderClientIds.Contains(authenticatedClient, StringComparer.Ordinal) ||
             account == Guid.Empty || requestId == Guid.Empty || requestVersion < 1 ||
             string.IsNullOrWhiteSpace(originalId) || originalId.Length > 128) return null;
 
-        await using var db = await factory.CreateDbContextAsync(ct);
         if (!db.Database.IsNpgsql()) return null;
         // 单条查询绑定受信租户和原业务键，两份账在同一 PostgreSQL 快照中读取。
         var pair = await (from receipt in db.Inbox.AsNoTracking()

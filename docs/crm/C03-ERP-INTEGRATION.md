@@ -18,6 +18,12 @@ Main 在同一 PostgreSQL 快照中核对 `erp_integration.CommandInbox` 的原�
 
 `ErpIntegration:BusinessPartnerOriginalSources` 是按租户登记的来源期间，每项含 `TenantId`、`Epoch`、`FromUtc`、`UntilUtc` 和 `ReaderClientIds`。须由来源归属方依据可追溯的历史接收期间登记。匹配使用收件账的服务器接收时间，包含起点，排除终点。运行时拒绝重复 epoch、重叠期间及未登记读取方。默认清单为空。此凭据只证明独立原请求，账户当前写入和原回执披露分别由 CRM.Account 裁决。
 
+## 已知请求的单份伙伴结果原件
+
+A12 服务可用当前 C01 读取令牌请求一条原生成功或失败事件。调用方先从独立来源取得原命令键，按账户、请求 ID、请求版本、结果消息键及版本定位，并提供原件引用的 SHA-256。读取入口、请求头及响应字段见[单份结果查证合同](../../contracts/erp/business-partner-result-proof/v1/contract.json)。
+
+Main 在 PostgreSQL 事务中复核原请求、当前 C02 账户服务发布及读取令牌，并锁定仅适用于这一份原件的有效读权登记。来源期、身份期、事件键、因果键、关联键、原生合同和持久化摘要均须相符。响应的 `payload` 是 ERP Outbox 原字节的 Base64，`payloadSha256` 为小写十六进制。对象登记由授权归属方维护，初始为空。读取失败不披露原件或摘要。
+
 ## ERP 数据与操作
 
 业务权威继续使用 `T_WebBusinessPartner`、`T_Quotation`/`T_QuotationDetail`、`T_ProductMaster` 和 `T_Order`/`T_OrderDetail`。`erp_integration` 中的表只记录命令、结果、重试和审计，不保存另一套法定客户或订单。
