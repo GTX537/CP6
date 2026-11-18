@@ -1,12 +1,10 @@
 # CP6 开发总台账
 
-> 已批准的近期顺序：[公共核心基础优先](planning/20261017-foundation-priority.md)。先P0，再租户/身份/真实事务及跨仓采用，随后询盘完整验收；不要求整个WP02清零。
-
-> 最新盘点：[2026-10-17 全项目范围、进度与业务主线排期依据](planning/20261017-project-inventory.md)。用户选择先打通可验收业务主线；当前 P0 优先，正式日历待剩余范围估算。
+当前按[单卡串行计划](planning/20261117-card-execution.md)执行。台账登记当前阶段和下一卡，任务定义给出原始范围、验收和严格前置。[基础优先决策](planning/20261017-foundation-priority.md)和[项目盘点](planning/20261017-project-inventory.md)记录早期排期依据。
 
 本台账按用户确认的顺序管理开发：全量评估、拆分大任务、安排批次、临近实施再细拆。范围对应已有125个设计目标；这是开发规划和证据登记，不改变业务合同或历史接受记录。
 
-日常先看[开发进度](03-progress.md)，再看[细分任务进度](07-detailed-tasks.md)、[全部任务卡](10-work-package-tasks.md)、[多对话分配](09-parallel-development.md)、[PostgreSQL基线](08-postgresql-baseline.md)、[实现评估结论](05-implementation-assessment.md)、[首批实施切片](06-first-slices.md)、[14个大任务](01-work-packages.md)、[125目标归属](02-target-coverage.md)和[依赖与开发批次](04-batches.md)。
+日常查看[开发进度](03-progress.md)、[细分任务](07-detailed-tasks.md)和[任务卡](10-work-package-tasks.md)。设计与历史资料见[PostgreSQL 基线](08-postgresql-baseline.md)、[实现评估](05-implementation-assessment.md)、[首批切片](06-first-slices.md)、[工作包](01-work-packages.md)、[目标归属](02-target-coverage.md)、[依赖与批次](04-batches.md)和[历次派工记录](09-parallel-development.md)。
 
 ## 唯一登记入口与更新方式
 
@@ -19,7 +17,7 @@
 1. 从当时已确认的主线建立对应独立任务分支，定位目标及其所属工作包；不要把整个大任务放进一个长期不交付的分支。
 2. 修改JSON中的相应目标、工作包和场景记录，并更新`as_of`、`change_log`。保留历史失败和更正原因；既有日志/报告不覆盖。
 3. 执行以下本地命令生成视图并检查。普通状态/文档更新不编译业务系统；检查器变化才运行其定向回归。
-4. 按仓库要求在一次任务级审查、相关验证和正常PR交付后，登记实际远端包含性证据。确认交付之前使用`VERIFYING`，后续交付回执可以在专门的文档更新中登记。
+4. 单卡 DONE 或拆卡时，在同一 PR 更新台账、唯一报告和生成页。工具按 `card_execution` 及其报告链接同步四份项目记忆页的标记区，分别展示计数、交付、下一卡和变更。历史原文和标记区外的人工说明继续保留。远端采用由受保护 PR 及席位收尾核实。
 
 从仓库根目录运行（`python`指本机已有Python 3.10或更新版本）：
 
@@ -33,7 +31,7 @@ python -m unittest discover -s docs/development/tools -p "test_*.py"
 
 细分任务记录在 `implementation_tasks`：准确任务ID、仓库、依赖、关联目标、计划路径、状态及验证/交付证据；另外记录所属工作包、主体责任、领取人/工作树、准入确认和共享资源。检查器拒绝无效依赖、循环、前置未交付就开工，以及缺验证/远端回执的DONE；活动任务之间的相同对话/工作树/仓库分支及共享资源冲突也会被拒绝；目标必须有所属工作包的主体CODE任务，不能以公共基础或设计卡冒充主体覆盖。它不认证证据真实性或外部Git包含性，这些仍由任务级审查核对。设计任务可用文档验证完成，CODE任务必须有实际相关验证；所有任务的完成都不会自动改变目标或业务场景。
 
-WP任务可消费前置卡已经交付的准确子范围，无需等待无关余项整卡完成。在消费任务的`prerequisite_adoptions`记录`task_id`、与定义中`TASK_DELIVERY`完全对应的`requirement`、前置卡已有交付字段名数组`deliveries`及实际消费`scope`。同一前置的所有适用需求都须覆盖；完整DONE前置仍直接满足。工具检查准确引用、已采用记录、报告及所属仓库，不新增回执登记。报告内容是否真正覆盖消费范围、版本是否适用和远端实际采用，由总控在同次任务审查核对，不能随意选择同卡的另一份报告。采用不关闭前置卡、不免除本卡验证，也不提升目标或业务验收。首批实例见[W252交付](evidence/W252-01/DELIVERY.md)。
+现行单卡执行要求所有直接前置及其余卡完整 DONE。2026-11-17 之前的 `prerequisite_adoptions` 保留当时实际采用的子范围、报告和版本，历史示例见 [W252 交付](evidence/W252-01/DELIVERY.md)。
 
 ## 如何理解进度
 

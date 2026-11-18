@@ -1,6 +1,21 @@
 # AI 可读变更日志
 
-2026-11-17，WP02-09 拆卡。原号核销 CRM 配置、公开及人工 H01 的共同事务和原结果。实际业务消息入站的同事务写入和最终授权归 WP02-09b，现因入口与前置冲突受阻。本地 25 项通过，零跳过。原号 DONE / 完整 DONE 为 49 / 46，登记卡 51/380，目标 4/125。下一张可开工卡为 WP02-14b。 [本卡报告](../development/evidence/WP02-09/DELIVERY.md)
+<!-- cp6:roadmap -->
+## 单卡交付记录
+
+- [WP02-09 CRM首个Owner真实共同事务与授权门](../development/evidence/WP02-09/DELIVERY.md)（拆卡，余项 WP02-09b），核对时间 `2026-11-18T02:57:05.1227401+00:00`。
+- [WP02-06 CRM身份投影、撤权fence与会话恢复](../development/evidence/WP02-06/DELIVERY.md)（DONE），核对时间 `2026-11-18T02:28:08.1627353+00:00`。
+- [WP02-13b 审计完整身份与安全查询、导出及保留清理余项](../development/evidence/WP02-13b/DELIVERY.md)（DONE），核对时间 `2026-11-18T01:32:06.281283+00:00`。
+- [WP02-05b 身份来源批准迁移与完整后继发布余项](../development/evidence/WP02-05b/DELIVERY.md)（DONE），核对时间 `2026-11-17T16:22:25.185112+00:00`。
+- [WP01-01 替代验收采纳后的WP01差异与清单收口](../development/evidence/WP01-01/card-closure/DELIVERY.md)（DONE），核对时间 `2026-11-17T13:18:25.811429+00:00`。
+- [WP02-16 编号原命令分配和生成器安全预览](../development/evidence/WP02-16/card-closure/DELIVERY.md)（拆卡，余项 WP02-16b），核对时间 `2026-11-17T13:02:58.947852+00:00`。
+- [WP02-14 文件不可变版本、扫描和Owner授权绑定](../development/evidence/WP02-14/card-closure/DELIVERY.md)（拆卡，余项 WP02-14b），核对时间 `2026-11-17T12:49:01.511895+00:00`。
+- [WP02-05 Main身份权威快照及完整目录发布](../development/evidence/WP02-05/card-closure/DELIVERY.md)（拆卡，余项 WP02-05b），核对时间 `2026-11-17T12:42:14.927771+00:00`。
+- [WP02-13 审计写入、授权查询和保留清理](../development/evidence/WP02-13/card-closure/DELIVERY.md)（拆卡，余项 WP02-13b），核对时间 `2026-11-17T12:26:27.177779+00:00`。
+- [WP02-04 租户创建、暂停恢复与管理审计](../development/evidence/WP02-04/card-closure/DELIVERY.md)（DONE），核对时间 `2026-11-17T12:13:16.708976+00:00`。
+- [WP02-10 Main Owner共同事务、原结果与授权参与](../development/evidence/WP02-10/card-closure/DELIVERY.md)（DONE），核对时间 `2026-11-17T12:05:27.589202+00:00`。
+- [WP02-03 Main当前授权与撤权最终门](../development/evidence/WP02-03/card-closure/DELIVERY.md)（DONE），核对时间 `2026-11-17T11:56:25.010116+00:00`。
+<!-- /cp6:roadmap -->
 
 2026-11-17，WP02-06 卡 DONE。CRM 实际采用批准的新身份来源，旧会话封存，新会话按当前权限读取原业务结果。本地 77 项通过，零跳过。SYS-TENANT-01 原 23 条复核通过。INT-ID-01 和 SYS-IAM-01 的待补验收已归入现有卡。原号 DONE / 完整 DONE 为 48 / 46，目标 4/125。下一卡 WP02-09。 [本卡报告](../development/evidence/WP02-06/DELIVERY.md)
 

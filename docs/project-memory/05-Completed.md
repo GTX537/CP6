@@ -1,6 +1,17 @@
 # 已完成能力与近期里程碑
 
-2026-11-17，WP02-09 拆卡。原号核销 CRM 配置、公开及人工 H01 的共同事务和原结果。实际业务消息入站的同事务写入和最终授权归 WP02-09b，现因入口与前置冲突受阻。本地 25 项通过，零跳过。原号 DONE / 完整 DONE 为 49 / 46，登记卡 51/380，目标 4/125。下一张可开工卡为 WP02-14b。 [本卡报告](../development/evidence/WP02-09/DELIVERY.md)
+<!-- cp6:roadmap -->
+## 最近交付
+
+- [WP02-09 CRM首个Owner真实共同事务与授权门](../development/evidence/WP02-09/DELIVERY.md)（拆卡，余项 WP02-09b），核对时间 `2026-11-18T02:57:05.1227401+00:00`。
+
+### 已关闭目标
+
+- [OA-DEF-01 流程和表单定义](../development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md)
+- [SYS-AUD-01 操作、安全与字段审计](../development/evidence/WP02-13b/DELIVERY.md)
+- [SYS-TENANT-01 租户管理](../development/evidence/WP02-06/DELIVERY.md)
+- [PLT-TEST-01 故障注入与测试辅助](../development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md)（测试支撑）
+<!-- /cp6:roadmap -->
 
 2026-11-17，WP02-06 卡 DONE。CRM 实际采用批准的新身份来源，旧会话封存，新会话按当前权限读取原业务结果。本地 77 项通过，零跳过。SYS-TENANT-01 原 23 条复核通过。INT-ID-01 和 SYS-IAM-01 的待补验收已归入现有卡。原号 DONE / 完整 DONE 为 48 / 46，目标 4/125。下一卡 WP02-09。 [本卡报告](../development/evidence/WP02-06/DELIVERY.md)
 

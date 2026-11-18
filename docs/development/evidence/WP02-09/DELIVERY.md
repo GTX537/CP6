@@ -25,7 +25,7 @@ PLT-DEL-01 仍等待其完整覆盖卡 WP02-09b，保留 60 条原验收和两�
 
 S01-08 的准确采用来自 CRM #90、WP02-06 来自 CRM #239 和 CP6 #1249、WP02-07 来自 Platform #61。CRM 的 W117、W246 和 W494 源提交均为本轮 CRM 受测远端主线祖先。CP6 从 `9878a9d11621e8e4f1f8b986b60566ed01eb292e` 领取 `codex/wp02-09`，由 DEV-2 提交拆卡。CRM 验证使用换绑前已核实的固定路径及外部制品，CRM 源码未提交修改。正常合并、远端采用、CP6 分支处置和席位释放见本卡 PR 与 `D:/CP6-test-artifacts/WP02-09/main-finish.json`。 [CRM #90](https://github.com/GTX537/CP6.CRM/pull/90) · [CRM #239](https://github.com/GTX537/CP6.CRM/pull/239) · [CP6 #1249](https://github.com/GTX537/CP6/pull/1249) · [Platform #61](https://github.com/GTX537/CP6.Platform/pull/61)
 
-本次交付只调整任务定义、台账、派生页和项目状态。保留原业务合同、原依赖和原验收。常规 Actions 未运行、重跑或取消，生产部署和既有数据库迁移均为零。
+本次交付只调整任务定义、台账、派生页和项目状态。并入治理 PR #1250 后，细分进度和四份项目状态摘要由最新版台账工具生成，历史记录保留原文。保留原业务合同、原依赖和原验收。常规 Actions 未运行、重跑或取消，生产部署和既有数据库迁移均为零。 [治理 PR #1250](https://github.com/GTX537/CP6/pull/1250)
 
 ## 工时与接续
 
