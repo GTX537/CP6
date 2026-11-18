@@ -85,16 +85,30 @@ jobs:
             Stop-Process -Id $api.Id -ErrorAction SilentlyContinue
           }
 
-      - name: Build and test Web
+      - name: 安装 Web 依赖
         working-directory: cp6.web
-        env:
+        env: &web-release-env
           CP6_RELEASE_VERSION: 0.0.0-dev.${{ github.sha }}
           CP6_GIT_SHA: ${{ github.sha }}
-        run: |
-          npm ci
-          npm run type-check
-          npm test -- --maxWorkers=4
-          npm run build-only
+        run: npm ci
+
+      - name: 验证 Web 步骤的失败退出行为
+        run: node --test scripts/test-client-web-workflow.mjs
+
+      - name: 检查 Web 类型
+        working-directory: cp6.web
+        env: *web-release-env
+        run: npm run type-check
+
+      - name: 运行 Web 测试
+        working-directory: cp6.web
+        env: *web-release-env
+        run: npm test -- --maxWorkers=4
+
+      - name: 构建 Web
+        working-directory: cp6.web
+        env: *web-release-env
+        run: npm run build-only
 
       - name: R2 source release gate
         shell: pwsh
