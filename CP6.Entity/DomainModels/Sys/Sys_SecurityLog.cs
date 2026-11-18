@@ -9,6 +9,8 @@ namespace CP6.Entity.DomainModels.Sys;
 /// </summary>
 public class Sys_SecurityLog : BaseTenantEntity
 {
+    public DateTimeOffset? AuditAtUtc { get; set; }
+    public string? AuditEvidenceJson { get; set; }
     /// <summary>关联用户（匿名失败/用户不存在时为 null）</summary>
     public Guid? UserId { get; set; }
 

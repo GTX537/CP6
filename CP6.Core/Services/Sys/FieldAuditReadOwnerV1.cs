@@ -10,7 +10,8 @@ public sealed class FieldAuditReadOwnerV1(CP6Context db, OperationsOwnerV1 owner
 {
     public const string MappingVersion = "Main.FieldAudit.Machine.Status.v1";
     public sealed record Row(Guid Id, int Operation, DateTime ChangedAt,
-        IReadOnlyList<FieldAuditChangesV1.Change> Changes, string EvidenceStatus);
+        IReadOnlyList<FieldAuditChangesV1.Change> Changes, string EvidenceStatus,
+        DateTimeOffset? AuditAtUtc, string TimeSource, string NativeDigest, bool EvidenceGap, AuditEvidenceV1? Evidence);
     public sealed record Page(IReadOnlyList<Row> Rows, Guid? NextCursor, string ProjectionVersion);
     public bool Owns(CP6Context context) => ReferenceEquals(context, db) && owner.Owns(db);
 
@@ -25,7 +26,8 @@ public sealed class FieldAuditReadOwnerV1(CP6Context db, OperationsOwnerV1 owner
         var key = id.ToString("D"); var take = Math.Clamp(pageSize, 1, 100);
         return owner.ExecuteAsync(OperationsOwnerV1.Machine, "query", false, async (access, token) =>
         {
-            await RequireAuditAction(access.ActorId, token);
+            var current = await RequireAuditAction(access.ActorId, token);
+            var hidden = AuditBrowseV1.HiddenFields(current);
             // Existing Machine owner applies current self/department/custom/all scope to actual rows.
             // Deleted and missing objects have no historical-read policy in this mapping.
             if (!await access.Machines().AnyAsync(m => m.Id == id, token))
@@ -42,24 +44,28 @@ public sealed class FieldAuditReadOwnerV1(CP6Context db, OperationsOwnerV1 owner
                     || a.ChangedAt == anchor.ChangedAt && a.Id.CompareTo(anchor.Id) > 0);
             }
             var native = await page.OrderBy(a => a.ChangedAt).ThenBy(a => a.Id).Take(take + 1)
-                .Select(a => new { a.Id, a.Operation, a.ChangedAt, a.Changes }).ToListAsync(token);
+                .Select(a => new { a.Id, a.Operation, a.ChangedAt, a.Changes, a.AuditAtUtc, a.AuditEvidenceJson }).ToListAsync(token);
             var projected = native.Take(take).Select(a =>
             {
-                var safe = FieldAuditChangesV1.MachineStatus(a.Changes);
-                return new Row(a.Id, a.Operation, a.ChangedAt, safe.Changes, safe.EvidenceStatus);
+                var safe = FieldAuditChangesV1.MachineStatus(a.Changes, hidden);
+                var evidence = AuditEvidenceV1.Decode(a.AuditEvidenceJson);
+                return new Row(a.Id, a.Operation, a.ChangedAt, safe.Changes, safe.EvidenceStatus, a.AuditAtUtc,
+                    a.AuditAtUtc.HasValue ? evidence?.Source ?? "UTC" : "LEGACY_LOCAL", AuditBrowseV1.NativeDigest(a.Changes),
+                    evidence?.EntityVersion is null || evidence.PermissionVersion is null || evidence.ActorKind == "UNBOUND", evidence);
             }).ToArray();
             return new Page(projected, native.Count > take ? projected[^1].Id : null, MappingVersion);
         }, ct);
     }
 
-    private async Task RequireAuditAction(Guid subject, CancellationToken ct)
+    private async Task<UserPermissionContext> RequireAuditAction(Guid subject, CancellationToken ct)
     {
         var actor = await PostgreSqlPermissionReader.ReadAsync(db, subject, ct);
-        if (!actor.ActionKeys.Contains("sys-field-audit:query")
-            || !await (from action in db.Sys_MenuActions.AsNoTracking()
+        if (!actor.ActionKeys.Contains("sys-field-audit:query") || !actor.ActionKeys.Contains("sys-field-audit:read-content")
+            || await (from action in db.Sys_MenuActions.AsNoTracking()
                        join menu in db.Sys_Menus.AsNoTracking() on action.MenuId equals menu.MenuId
-                       where menu.Enable && menu.MenuKey == "sys-field-audit" && action.ActionCode == "query"
-                       select action.Id).AnyAsync(ct))
+                       where menu.Enable && menu.MenuKey == "sys-field-audit" && (action.ActionCode == "query" || action.ActionCode == "read-content")
+                       select action.ActionCode).Distinct().CountAsync(ct) != 2)
             throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
+        return actor;
     }
 }

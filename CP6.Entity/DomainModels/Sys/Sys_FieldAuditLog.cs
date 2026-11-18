@@ -10,6 +10,8 @@ namespace CP6.Entity.DomainModels.Sys;
 /// </summary>
 public class Sys_FieldAuditLog : BaseTenantEntity
 {
+    public DateTimeOffset? AuditAtUtc { get; set; }
+    public string? AuditEvidenceJson { get; set; }
     /// <summary>被审计实体的 CLR 类型名（如 "Sys_User"）。</summary>
     [MaxLength(100)]
     [Required]

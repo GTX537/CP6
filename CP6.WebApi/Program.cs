@@ -279,7 +279,7 @@ builder.Services.AddSingleton<KafkaProducerService>();
 builder.Services.AddSingleton<IOperLogTransport>(sp => sp.GetRequiredService<KafkaProducerService>());
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.KafkaOperLogConsumer>();
 
-// 操作日志保留期清理（默认 7 天，OperLog:RetentionDays 可配置）
+// 审计清理按租户和保留类的已批准策略执行。
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.OperLogCleanupService>();
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WmsScanRetentionCleanupService>();
 
@@ -1063,16 +1063,11 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.OperationLogOwnerV1>(sp =>
     return new CP6.Core.Services.Sys.OperationLogOwnerV1(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
         sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
         http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp),
-        http?.RequestAborted ?? CancellationToken.None);
+        http?.RequestAborted ?? CancellationToken.None,
+        Guid.TryParse(http?.User.FindFirst("impersonator_id")?.Value, out var actual) ? actual : null);
 });
-builder.Services.AddScoped<CP6.Core.Services.Sys.FieldAuditListOwnerV1>(sp =>
-{
-    var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
-    return new CP6.Core.Services.Sys.FieldAuditListOwnerV1(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
-        sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
-        http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp),
-        http?.RequestAborted ?? CancellationToken.None);
-});
+builder.Services.AddScoped<CP6.Core.Services.Sys.AuditBrowseV1>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.PlatformAuditReadV1>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.FieldAuditReadOwnerV1>();
 builder.Services.AddScoped<ICreditNoteService, CreditNoteService>();
 builder.Services.AddScoped<IBridgeHealthService, BridgeHealthService>();

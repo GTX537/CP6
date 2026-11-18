@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
 using CP6.Entity.DomainModels.Sys;
 
@@ -47,16 +48,20 @@ public class WfServiceJobCleanupWorker : BackgroundService
                         if (r.ServiceJobsDeleted + r.TriggerFiresDeleted > 0 || r.StaleReservationCount > 0)
                         {
                             var db = sp.GetRequiredService<CP6Context>();
+                            var recordedAt = DateTimeOffset.UtcNow;
                             db.Sys_OperLogs.Add(new Sys_OperLog
                             {
                                 TenantId = tenantId,
-                                UserName = "system",
                                 HttpMethod = "JOB",
                                 RequestUrl = "/jobs/wfs-cleanup",
                                 Controller = nameof(WfServiceJobCleanupWorker),
                                 Action = "WfsCleanup",
                                 RequestBody = $"job删{r.ServiceJobsDeleted} fire删{r.TriggerFiresDeleted} 老化占坑{r.StaleReservationCount}",
                                 StatusCode = 200,
+                                AuditAtUtc = recordedAt,
+                                AuditEvidenceJson = new AuditEvidenceV1("WORKER_UTC", "BEST_EFFORT_TELEMETRY", "SERVICE",
+                                    Service: nameof(WfServiceJobCleanupWorker), Outcome: "SERVICE_RECORDED", RecordedAtUtc: recordedAt,
+                                    DataPolicy: "WORKER_TELEMETRY_V1", Action: "WfsCleanup").Encode(),
                                 IsAlert = r.StaleReservationCount > 0,   // 老化占坑需运维关注
                             });
                             await db.SaveChangesAsync(ct);

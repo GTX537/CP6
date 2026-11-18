@@ -29,7 +29,13 @@ public class CurrentPermissionContext : ICurrentPermissionContext
         _aggregator = aggregator;
     }
 
-    public async Task<UserPermissionContext> GetAsync() => await ReadAsync(RequireCurrentUser(_db, _http));
+    public async Task<UserPermissionContext> GetAsync()
+    {
+        var current = await ReadAsync(RequireCurrentUser(_db, _http));
+        if (_http.HttpContext is { } http && _db.Database.IsNpgsql())
+            http.Items[AuditEvidenceV1.PermissionVersionItem] = AuditEvidenceV1.PermissionDecisionVersion(_db.CurrentTenantId, current);
+        return current;
+    }
 
     // Internal new-policy source entry. Legacy masks keep their existing aggregation semantics.
     internal Task<FieldPermissionSourceV1> GetFieldSourceAsync(string resource, CancellationToken ct = default)

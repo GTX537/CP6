@@ -209,6 +209,8 @@ public sealed partial class OperationsOwnerV1
                 await access.RequireDelegationParent(delegation,ct);
                 access.AtCommit(t=>access.RequireDelegationParent(delegation,t));
             }
+            if (write && http.HttpContext is { } request)
+                request.Items[AuditEvidenceV1.PermissionVersionItem] = authority.Source.SourcePermissionVersion;
             var result=await body(access,ct);
             await ValidateFinalAuthorityAsync(access,authority.Source.SubjectId,ct);
             ct.ThrowIfCancellationRequested();committing=true;await tx.CommitAsync(ct);return result;
@@ -260,6 +262,8 @@ public sealed partial class OperationsOwnerV1
         || ticket.Resource==Production && ticket.Action=="complete" && ticket.CompletionResultId!=null
             && (resource==Receipt && action=="post" || resource==Production && action=="backflush");
     private static bool IsBusiness(string name)=>BusinessTables.Contains(name) || name is "PlateMoldStock" or "RmaHeader" or "RmaDetail" or "ReplenishOrder" or "MobileTask" or "MobileTaskEvent" or "MobileTaskScanLog" or "TaskCommandReceipt" or "WorkCenter" or "ProcessCostRate" or "CrossDockOrder" or "SlottingPlan" or "VmiBilling" or "KitMaster" or "KitMasterComponent" or "KitOrder" or "SampleStock";
+    internal Task LockAuditMachineGraphAsync(CancellationToken ct) => LockGraph(false, ct, Machine);
+
     private async Task LockGraph(bool write,CancellationToken ct,string? resource=null)
     {
         // Legacy soft references and stock writers do not yet share one row-lock protocol.

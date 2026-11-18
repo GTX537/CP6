@@ -1,5 +1,8 @@
 using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Erp;
+using CP6.Core.Services.Sys;
+using CP6.WebApi.Controllers.Erp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +16,12 @@ namespace CP6.WebApi.Controllers.Sys;
 [ApiController]
 [Route("api/sys/security-log")]
 [Authorize]
+[OrderOwnerResult]
 public class SecurityLogController : ControllerBase
 {
     private readonly CP6Context _db;
-    public SecurityLogController(CP6Context db) => _db = db;
+    private readonly AuditBrowseV1? _browse;
+    public SecurityLogController(CP6Context db, AuditBrowseV1? browse = null) { _db = db; _browse = browse; }
 
     /// <summary>分页查询安全日志。资源键 sys-security-log（MenuKey 由 RoutePath 派生），操作点 query。</summary>
     [HttpGet]
@@ -27,8 +32,16 @@ public class SecurityLogController : ControllerBase
         [FromQuery] DateTime? from,
         [FromQuery] DateTime? to,
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 20)
+        [FromQuery] int pageSize = 20, [FromQuery] DateTimeOffset? fromUtc = null,
+        [FromQuery] DateTimeOffset? toUtc = null, [FromQuery] string? cursor = null, [FromQuery] string? timeSource = null)
     {
+        if (_db.Database.IsNpgsql())
+        {
+            if (!string.IsNullOrWhiteSpace(userName)) throw new OrderPriceCorrectionException("AUDIT_SEARCH_FIELD_RESTRICTED",403);
+            return Ok(await (_browse ?? throw new OrderPriceCorrectionException("AUDIT_AUTHORITY_UNAVAILABLE",503))
+                .ListAsync(AuditRetentionV1.Security, new(EventType: eventType, From: from, To: to, FromUtc: fromUtc, ToUtc: toUtc, TimeSource: timeSource),
+                    page, pageSize, cursor, HttpContext.RequestAborted));
+        }
         page = Math.Max(1, page);                 // 防 page<=0 → 负数 Skip 抛异常
         pageSize = Math.Clamp(pageSize, 1, 200);  // 防一次拉全表
 

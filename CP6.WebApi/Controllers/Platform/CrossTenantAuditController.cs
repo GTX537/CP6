@@ -1,5 +1,9 @@
 using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Erp;
+using CP6.Core.Services.Sys;
+using CP6.WebApi.Controllers.Erp;
+using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +23,12 @@ namespace CP6.WebApi.Controllers.Platform;
 [Route("api/platform/audit")]
 [Authorize]
 [RequirePlatformAdmin]
+[OrderOwnerResult]
 public class CrossTenantAuditController : ControllerBase
 {
     private readonly CP6Context _db;
-    public CrossTenantAuditController(CP6Context db) => _db = db;
+    private readonly PlatformAuditReadV1? _audit;
+    public CrossTenantAuditController(CP6Context db, PlatformAuditReadV1? audit = null) { _db = db; _audit = audit; }
 
     /// <summary>带外跨租户分页查询。支持按目标租户码 / 事件类型 / 时间段筛选。</summary>
     [HttpGet]
@@ -32,8 +38,14 @@ public class CrossTenantAuditController : ControllerBase
         [FromQuery] DateTime? from,
         [FromQuery] DateTime? to,
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 20)
+        [FromQuery] int pageSize = 20, [FromQuery] DateTimeOffset? fromUtc = null,
+        [FromQuery] DateTimeOffset? toUtc = null, [FromQuery] string? cursor = null)
     {
+        if (_db.Database.IsNpgsql())
+            return Ok(await (_audit ?? throw new OrderPriceCorrectionException("PLATFORM_AUDIT_AUTHORITY_UNAVAILABLE",503))
+                .ListAsync(User, TenantAdministrationHttpV1.Session(HttpContext, HttpContext.RequestServices), tenantCode,
+                    new(EventType: eventType, From: from, To: to, FromUtc: fromUtc, ToUtc: toUtc), page, pageSize, cursor,
+                    HttpContext.RequestAborted));
         page = Math.Max(1, page);                 // 防 page<=0 → 负数 Skip 抛异常
         pageSize = Math.Clamp(pageSize, 1, 200);  // 防一次拉全表
 

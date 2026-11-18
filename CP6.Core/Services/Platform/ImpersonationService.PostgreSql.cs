@@ -168,19 +168,25 @@ public partial class ImpersonationService
 
     private void StageSwitchAudit(SecurityEventType type, Guid actorId, string actorName, Guid actorTenant,
         Sys_User target, string targetTenantCode, string? reason, string sessionRef, DateTimeOffset expiresAtUtc)
-        => _db.Sys_SecurityLogs.Add(new Sys_SecurityLog
+    {
+        var now = DateTimeOffset.UtcNow;
+        _db.Sys_SecurityLogs.Add(new Sys_SecurityLog
         {
             TenantId = TenantContext.DefaultTenant, UserId = actorId, UserName = Truncate(actorName, 100),
-            RequestTenantCode = targetTenantCode, EventType = (int)type, Reason = Truncate(reason, 256), CreatedAt = DateTime.Now,
+            RequestTenantCode = targetTenantCode, EventType = (int)type, Reason = Truncate(reason, 256), CreatedAt = now.LocalDateTime,
+            AuditAtUtc = now, AuditEvidenceJson = new AuditEvidenceV1("IMPERSONATION_OWNER_UTC", "REQUIRED_AUDIT",
+                "IMPERSONATED", actorId, target.Id, OperationId: Guid.TryParse(sessionRef, out var operation) ? operation : null,
+                Outcome: "OWNER_RECORDED", RecordedAtUtc: now, DataPolicy: "PLATFORM_SECURITY_V1", Action: type.ToString()).Encode(),
             ContextJson = JsonSerializer.Serialize(new
             {
                 version = 1, actualActorId = actorId, actualTenantId = actorTenant,
                 effectiveActorId = target.Id, effectiveTenantId = target.TenantId, sessionRef, reason,
-                recordedAtUtc = DateTimeOffset.UtcNow, expiresAtUtc,
+                recordedAtUtc = now, expiresAtUtc,
                 scope = type == SecurityEventType.ImpersonationStarted
                     ? "effective-user-permissions;platform-powers-suspended" : "impersonation-ended;platform-actor-restored"
             })
         });
+    }
 
     private static string? Truncate(string? value, int length) => value?.Length > length ? value[..length] : value;
     private static ClaimsIdentity SwitchIdentity(ClaimsPrincipal principal)

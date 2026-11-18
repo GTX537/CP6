@@ -16,12 +16,17 @@
           @keyup.enter="search"
         />
         <el-input
-          v-model="filter.userId"
-          :placeholder="t('sec.audit.filterUser')"
+          v-model="filter.entityKey"
+          :placeholder="t('sec.audit.entityKey')"
           clearable
           style="width: 180px"
           @keyup.enter="search"
         />
+        <el-select v-model="filter.timeSource" aria-label="时间来源" style="width: 175px">
+          <el-option label="时间：全部（旧查询口径）" value="" />
+          <el-option label="已核定时间（UTC）" value="UTC" />
+          <el-option label="旧本地时间" value="LEGACY_LOCAL" />
+        </el-select>
         <el-date-picker
           v-model="dateRange"
           type="daterange"
@@ -32,6 +37,7 @@
         />
         <el-button type="primary" :icon="Search" @click="search">{{ t('table.search') }}</el-button>
       </div>
+      <AuditAccessPanel ref="access" audit-class="FIELD_HISTORY" menu="sys-field-audit" :policy-version="policyVersion" :filter="activeFilter" />
     </div>
 
     <el-alert v-if="listError" :title="t(listError)" type="warning" :closable="false" />
@@ -45,16 +51,18 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="userName" :label="t('sec.audit.operator')" width="140" />
-      <el-table-column prop="changedAt" :label="t('sec.audit.changedAt')" width="180" :formatter="formatDateTimeCell" />
-      <el-table-column prop="changeCount" :label="t('sec.audit.changeCount')" width="120" align="center">
-        <template #default="{ row }">{{ row.evidenceStatus === 'UNREADABLE' ? t('sec.audit.unreadable') : row.changeCount }}</template>
+      <el-table-column :label="t('sec.audit.changedAt')" min-width="240">
+        <template #default="{ row }">{{ auditTime(row, row.changedAt) }}</template>
       </el-table-column>
-      <el-table-column :label="t('sec.audit.operation')" width="140" fixed="right">
+      <el-table-column prop="changeCount" :label="t('sec.audit.changeCount')" width="120" align="center">
+        <template #default="{ row }">{{ row.evidenceStatus === 'UNREADABLE' ? t('sec.audit.unreadable') : row.evidenceStatus === 'DETAIL_UNAVAILABLE' ? '详情不可用' : row.changeCount }}</template>
+      </el-table-column>
+      <el-table-column :label="t('sec.audit.operation')" width="190" fixed="right">
         <template #default="{ row }">
-          <el-button type="primary" link size="small" @click="openTimeline(row)">
+          <el-button v-if="row.entityKey" v-permission="'sys-field-audit:read-content'" type="primary" link size="small" @click="openTimeline(row)">
             {{ t('sec.audit.viewTimeline') }}
           </el-button>
+          <el-button v-if="row.entityKey" v-permission="'sys-field-audit:read-content'" type="primary" link size="small" @click="access?.openDetail(row.id)">审计详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -88,12 +96,13 @@
           <el-timeline-item
             v-for="item in timeline"
             :key="item.id"
-            :timestamp="formatDateTime(item.changedAt)"
+            :timestamp="auditTime(item, item.changedAt)"
             placement="top"
             :type="opTimelineColor(item.operation)"
           >
             <div class="tl-row">
               <el-tag :type="opTagType(item.operation)" size="small">{{ opLabel(item.operation) }}</el-tag>
+              <span v-if="item.evidenceGap" class="tl-empty">记录不完整</span>
             </div>
             <div class="tl-changes">
               <span v-if="item.evidenceStatus === 'UNREADABLE'" class="tl-empty">{{ t('sec.audit.unreadable') }}</span>
@@ -128,7 +137,8 @@ import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Search } from '@element-plus/icons-vue'
 import { fieldAuditApi } from '@/api/sys/fieldAudit'
-import { formatDateTime, formatDateTimeCell } from '@/utils/format'
+import { auditDateFilter, auditTime, type AuditFilters } from '@/api/sys/auditAccess'
+import AuditAccessPanel from './AuditAccessPanel.vue'
 import { AUTH_EVENT, identityStamp } from '@/auth/identity'
 import {
   Operation,
@@ -144,11 +154,15 @@ const page = ref(1)
 const pageSize = ref(20)
 const loading = ref(false)
 const listError = ref('')
+const access = ref<InstanceType<typeof AuditAccessPanel>>()
+const policyVersion = ref<string>()
+const activeFilter = ref<AuditFilters>({})
 let listGeneration = 0, timelineGeneration = 0, alive = true
 
-const filter = reactive<{ entityName: string; userId: string }>({
+const filter = reactive<{ entityName: string; entityKey: string; timeSource: '' | 'UTC' | 'LEGACY_LOCAL' }>({
   entityName: '',
-  userId: ''
+  entityKey: '',
+  timeSource: ''
 })
 // el-date-picker 双值 → from/to
 const dateRange = ref<[string, string] | null>(null)
@@ -199,19 +213,21 @@ async function loadData() {
   const request = ++listGeneration, stamp = identityStamp()
   const current = () => alive && request === listGeneration && stamp === identityStamp()
   tableData.value = []; total.value = 0; listError.value = ''
+  policyVersion.value = undefined
+  const scope = { entityName: filter.entityName || undefined, entityKey: filter.entityKey || undefined,
+    ...auditDateFilter(filter.timeSource, dateRange.value) }
   loading.value = true
   try {
     const res = await fieldAuditApi.getList({
-      entityName: filter.entityName || undefined, // '' → undefined，不下发空 query 参数
-      userId: filter.userId || undefined,
-      from: dateRange.value?.[0],
-      to: dateRange.value?.[1],
+      ...scope,
       page: page.value,
       pageSize: pageSize.value
     })
     if (!current()) return
     tableData.value = res.rows
     total.value = res.total
+    activeFilter.value = scope
+    policyVersion.value = res.policyVersion
   } catch {
     if (current()) {
       listError.value = 'sec.audit.unavailable'
@@ -242,6 +258,7 @@ function clearTimeline() {
 
 async function openTimeline(row: FieldAuditListItem) {
   clearTimeline()
+  if (!row.entityKey) return
   timelineHeader.value = { entityName: row.entityName, entityKey: row.entityKey }
   drawerVisible.value = true
   await readTimeline()
@@ -281,6 +298,7 @@ let identity = identityStamp()
 function identityChanged() {
   if (identity === identityStamp()) return
   identity = identityStamp(); listGeneration++; tableData.value = []; total.value = 0
+  policyVersion.value = undefined
   loading.value = false; listError.value = ''; clearTimeline()
 }
 window.addEventListener(AUTH_EVENT, identityChanged)

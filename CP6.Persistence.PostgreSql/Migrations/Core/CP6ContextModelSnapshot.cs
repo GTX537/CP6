@@ -13707,6 +13707,11 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                     b.Property<bool>("ActiveFlg")
                         .HasColumnType("boolean");
 
+                    b.Property<uint>("AuditPgVersion")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.Property<string>("BaseCd")
                         .HasMaxLength(10)
                         .HasColumnType("bpchar")
@@ -20509,6 +20514,13 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset?>("AuditAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasAnnotation("CP6:TimeContract", "UtcOffsetZero");
+
+                    b.Property<string>("AuditEvidenceJson")
+                        .HasColumnType("jsonb");
+
                     b.Property<DateTime>("ChangedAt")
                         .HasColumnType("timestamp without time zone")
                         .HasAnnotation("CP6:TimeContract", "PreservedWallClock");
@@ -20870,6 +20882,13 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                         .HasMaxLength(100)
                         .HasColumnType("bpchar")
                         .UseCollation("cp6_ci_as_provider_v1");
+
+                    b.Property<DateTimeOffset?>("AuditAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasAnnotation("CP6:TimeContract", "UtcOffsetZero");
+
+                    b.Property<string>("AuditEvidenceJson")
+                        .HasColumnType("jsonb");
 
                     b.Property<string>("ClientIp")
                         .HasMaxLength(50)
@@ -21481,6 +21500,13 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("AuditAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasAnnotation("CP6:TimeContract", "UtcOffsetZero");
+
+                    b.Property<string>("AuditEvidenceJson")
+                        .HasColumnType("jsonb");
 
                     b.Property<string>("ClientIp")
                         .HasMaxLength(64)
@@ -22999,6 +23025,9 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                     b.Property<DateTime?>("ModifyDate")
                         .HasColumnType("timestamp without time zone")
                         .HasAnnotation("CP6:TimeContract", "PreservedWallClock");
+
+                    b.Property<Guid?>("NativeTaskId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("NodeCode")
                         .HasMaxLength(100)
@@ -27705,6 +27734,11 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsInitializationQuarantined")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
                     b.Property<bool>("IsPickable")
                         .HasColumnType("boolean");
 
@@ -27776,7 +27810,13 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                     b.HasIndex("TenantId", "LocationCd")
                         .IsUnique()
                         .HasDatabaseName("IX_T_Location_LocationCd")
+                        .HasFilter("NOT \"IsInitializationQuarantined\"")
                         .HasAnnotation("CP6:OriginalName", "IX_T_Location_LocationCd");
+
+                    b.HasIndex("TenantId", "WarehouseCd", "LocationCd")
+                        .IsUnique()
+                        .HasDatabaseName("IX_T_Location_TenantId_WarehouseCd_LocationCd")
+                        .HasAnnotation("CP6:OriginalName", "IX_T_Location_TenantId_WarehouseCd_LocationCd");
 
                     b.HasIndex("WarehouseCd", "ParentLocationCd")
                         .HasDatabaseName("IX_T_Location_WarehouseCd_ParentLocationCd")

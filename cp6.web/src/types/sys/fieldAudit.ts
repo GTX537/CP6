@@ -11,12 +11,12 @@ export enum Operation {
 export interface FieldAuditListItem {
   id: string
   entityName: string
-  entityKey: string
+  entityKey: string | null
   operation: Operation
   changeCount: number | null
-  evidenceStatus: 'READABLE' | 'UNREADABLE'
-  userId: string
-  userName: string
+  evidenceStatus: 'READABLE' | 'RESTRICTED' | 'UNREADABLE' | 'DETAIL_UNAVAILABLE'
+  auditAtUtc?: string
+  evidenceGap?: boolean
   changedAt: string
 }
 
@@ -27,6 +27,9 @@ export interface FieldAuditTimelineItem {
   changes: FieldChange[]
   evidenceStatus: 'READABLE' | 'RESTRICTED' | 'UNREADABLE'
   changedAt: string
+  auditAtUtc?: string
+  nativeDigest?: string
+  evidenceGap?: boolean
 }
 
 /** 解析后的单条字段变更（已归一化为小写 field/old/new）*/

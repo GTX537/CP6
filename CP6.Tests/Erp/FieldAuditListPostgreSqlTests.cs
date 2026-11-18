@@ -20,7 +20,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             new(){EntityName=AuditListMarker,EntityKey="KEY-2",UserId=h.User,UserName="SIM actor",Operation=1,ChangedAt=new DateTime(2026,11,9,10,0,0),Changes="[]"});
         await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();return h;
     }
-    private static async Task<string> AuditListRows(Harness h)=>JsonSerializer.Serialize(await h.Db.Sys_FieldAuditLogs.AsNoTracking().Where(x=>x.EntityName==AuditListMarker).OrderBy(x=>x.Id).ToArrayAsync());
+    private static async Task<string> AuditListRows(Harness h)=>JsonSerializer.Serialize(await h.Db.Sys_FieldAuditLogs.AsNoTracking().Where(x=>x.EntityName==AuditListMarker||x.EntityName=="Machine").OrderBy(x=>x.Id).ToArrayAsync());
 
     [TenantManagementPostgresTheory]
     [InlineData("disable")][InlineData("revoke")]
@@ -74,15 +74,33 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     [CurrentPermissionPostgresFact]
     public async Task AuditList_filters_summary_cap_and_tie_order_preserve_original_history()
     {
-        await using var h=await AuditListSeed();await using var other=await AuditListSeed();await using var host=await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!);var actor=await Login(host,h);var before=await AuditListRows(h);var otherBefore=await AuditListRows(other);
-        using var response=await host.Send(OperationsRequest(actor,HttpMethod.Get,AuditListPath+"?entityName="+AuditListMarker+"&entityKey=KEY-1&userId="+h.User+"&from=2026-11-10&to=2026-11-10&pageSize=1"));Assert.Equal(HttpStatusCode.OK,response.StatusCode);
+        await using var h=await AuditListSeed();await using var other=await AuditListSeed();
+        await GrantMachine(h);
+        await SeedMachine(h); await SeedMachine(h,"CAP");
+        var machines=await h.Db.Machines.ToDictionaryAsync(x=>x.MachineCd,x=>x.Id.ToString("D"));
+        var exact="?entityName=Machine&entityKey="+machines["MC1"]+"&from=2026-11-10&to=2026-11-10";
+        var capFilter="?entityName=Machine&entityKey="+machines["CAP"]+"&from=2026-11-10&to=2026-11-10";
+        var capPrefix=machines["CAP"][..24];
+        Guid AuditListCapId(int i)=>Guid.Parse(capPrefix+i.ToString("D12",System.Globalization.CultureInfo.InvariantCulture));
+        h.Db.Sys_FieldAuditLogs.AddRange(
+            new(){EntityName="Machine",EntityKey=machines["MC1"],UserId=h.User,Operation=2,ChangedAt=new DateTime(2026,11,10,10,0,0),Changes="""[{"Field":"Status","Old":"0","New":"2"},{"Field":"Remarks","Old":"RAW-AUDIT-VALUE","New":"RAW-AUDIT-VALUE-NEW"}]"""},
+            new(){EntityName="Machine",EntityKey=machines["MC1"],UserId=h.User,Operation=2,ChangedAt=new DateTime(2026,11,10,10,1,0),Changes="RAW-AUDIT-VALUE{"},
+            new(){EntityName="Machine",EntityKey=machines["MC1"],UserId=h.User,Operation=1,ChangedAt=new DateTime(2026,11,11),Changes="[]"});
+        await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
+        await using var host=await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!);var actor=await Login(host,h);var before=await AuditListRows(h);var otherBefore=await AuditListRows(other);
+        using(var denied=await host.Send(OperationsRequest(actor,HttpMethod.Get,AuditListPath+exact+"&userId="+h.User)))
+            Assert.Equal(HttpStatusCode.Forbidden,denied.StatusCode);
+        using var response=await host.Send(OperationsRequest(actor,HttpMethod.Get,AuditListPath+exact+"&pageSize=1"));Assert.True(response.IsSuccessStatusCode,await OperationsFailure(response));
         var body=await response.Content.ReadAsStringAsync();Assert.DoesNotContain("RAW-AUDIT-VALUE",body);using var doc=JsonDocument.Parse(body);Assert.Equal(2,doc.RootElement.GetProperty("total").GetInt32());var first=Assert.Single(doc.RootElement.GetProperty("rows").EnumerateArray());Assert.Equal("UNREADABLE",first.GetProperty("evidenceStatus").GetString());Assert.Equal(JsonValueKind.Null,first.GetProperty("changeCount").ValueKind);Assert.False(first.TryGetProperty("changes",out _));
-        using var second=await host.Send(OperationsRequest(actor,HttpMethod.Get,AuditListPath+"?entityName="+AuditListMarker+"&entityKey=KEY-1&page=2&pageSize=1"));Assert.Equal(HttpStatusCode.OK,second.StatusCode);using var next=JsonDocument.Parse(await second.Content.ReadAsStringAsync());var readable=Assert.Single(next.RootElement.GetProperty("rows").EnumerateArray());Assert.Equal("READABLE",readable.GetProperty("evidenceStatus").GetString());Assert.Equal(1,readable.GetProperty("changeCount").GetInt32());
+        using var second=await host.Send(OperationsRequest(actor,HttpMethod.Get,AuditListPath+exact+"&cursor="+doc.RootElement.GetProperty("nextCursor").GetString()+"&pageSize=1"));Assert.True(second.IsSuccessStatusCode,await OperationsFailure(second));using var next=JsonDocument.Parse(await second.Content.ReadAsStringAsync());var readable=Assert.Single(next.RootElement.GetProperty("rows").EnumerateArray());Assert.Equal("RESTRICTED",readable.GetProperty("evidenceStatus").GetString());Assert.Equal(1,readable.GetProperty("changeCount").GetInt32());
+        var unknown=await JsonResult(await host.Send(OperationsRequest(actor,HttpMethod.Get,AuditListPath+"?entityName="+AuditListMarker+"&pageSize=1")));
+        var unmapped=Assert.Single(unknown.GetProperty("rows").EnumerateArray());
+        Assert.Equal(JsonValueKind.Null,unmapped.GetProperty("entityKey").ValueKind);
+        Assert.Equal("DETAIL_UNAVAILABLE",unmapped.GetProperty("evidenceStatus").GetString());
         Assert.Equal(before,await AuditListRows(h));Assert.Equal(otherBefore,await AuditListRows(other));
-        for(var i=1;i<=203;i++)h.Db.Sys_FieldAuditLogs.Add(new(){Id=AuditListCapId(i),EntityName=AuditListMarker,EntityKey="CAP",UserId=h.User,ChangedAt=new DateTime(2026,11,10,12,0,0),Changes="[]"});await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();var all=await AuditListRows(h);
-        using var capped=await host.Send(OperationsRequest(actor,HttpMethod.Get,AuditListPath+"?entityName="+AuditListMarker+"&entityKey=CAP&page=0&pageSize=2147483647"));Assert.Equal(HttpStatusCode.OK,capped.StatusCode);using var cap=JsonDocument.Parse(await capped.Content.ReadAsStringAsync());var rows=cap.RootElement.GetProperty("rows");Assert.Equal(203,cap.RootElement.GetProperty("total").GetInt32());Assert.Equal(200,rows.GetArrayLength());Assert.Equal(AuditListCapId(203),rows[0].GetProperty("id").GetGuid());Assert.Equal(AuditListCapId(4),rows[199].GetProperty("id").GetGuid());
-        using var tail=await host.Send(OperationsRequest(actor,HttpMethod.Get,AuditListPath+"?entityName="+AuditListMarker+"&entityKey=CAP&page=2&pageSize=200"));Assert.Equal(HttpStatusCode.OK,tail.StatusCode);using var end=JsonDocument.Parse(await tail.Content.ReadAsStringAsync());Assert.Equal(3,end.RootElement.GetProperty("rows").GetArrayLength());Assert.Equal(all,await AuditListRows(h));Assert.Equal(otherBefore,await AuditListRows(other));
+        for(var i=1;i<=203;i++)h.Db.Sys_FieldAuditLogs.Add(new(){Id=AuditListCapId(i),EntityName="Machine",EntityKey=machines["CAP"],UserId=h.User,ChangedAt=new DateTime(2026,11,10,12,0,0),Changes="[]"});await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();var all=await AuditListRows(h);
+        using var capped=await host.Send(OperationsRequest(actor,HttpMethod.Get,AuditListPath+capFilter+"&page=0&pageSize=2147483647"));Assert.Equal(HttpStatusCode.OK,capped.StatusCode);using var cap=JsonDocument.Parse(await capped.Content.ReadAsStringAsync());var rows=cap.RootElement.GetProperty("rows");Assert.Equal(203,cap.RootElement.GetProperty("total").GetInt32());Assert.Equal(200,rows.GetArrayLength());Assert.Equal(AuditListCapId(203),rows[0].GetProperty("id").GetGuid());Assert.Equal(AuditListCapId(4),rows[199].GetProperty("id").GetGuid());
+        using var tail=await host.Send(OperationsRequest(actor,HttpMethod.Get,AuditListPath+capFilter+"&page=2&pageSize=200"));Assert.Equal(HttpStatusCode.OK,tail.StatusCode);using var end=JsonDocument.Parse(await tail.Content.ReadAsStringAsync());Assert.Equal(3,end.RootElement.GetProperty("rows").GetArrayLength());Assert.Equal(all,await AuditListRows(h));Assert.Equal(otherBefore,await AuditListRows(other));
         await DeviceEvidence("audit-list-normal.json",new{Status=(int)response.StatusCode,FilteredTotal=2,CapTotal=203,CapReturned=200,TailReturned=3,OtherBefore=otherBefore,OtherAfter=await AuditListRows(other),Before=all,After=await AuditListRows(h)});
     }
-    private static Guid AuditListCapId(int i)=>Guid.Parse("00000000-0000-0000-0000-"+i.ToString("D12"));
 }

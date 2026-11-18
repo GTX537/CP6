@@ -81,6 +81,9 @@ public class Sys_OperLog
     /// </summary>
     public DateTime CreateDate { get; set; } = DateTime.Now;
 
+    public DateTimeOffset? AuditAtUtc { get; set; }
+    public string? AuditEvidenceJson { get; set; }
+
     /// <summary>
     /// 告警标记（Phase 6）：true=需运维关注（如 IntegrationEvent DeadLetter）
     /// OperLog 查询 UI 可按此过滤

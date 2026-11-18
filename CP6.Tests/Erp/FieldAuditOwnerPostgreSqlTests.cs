@@ -18,9 +18,12 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             menu = new() { MenuId = 990433, MenuKey = "sys-field-audit", MenuName = "Field audit" };
             h.Db.Sys_Menus.Add(menu);
         }
-        if (!await h.Db.Sys_MenuActions.AnyAsync(a => a.MenuId == menu.MenuId && a.ActionCode == "query"))
-            h.Db.Sys_MenuActions.Add(new() { MenuId = menu.MenuId, ActionCode = "query", ActionName = "Query" });
-        h.Db.Sys_RoleActions.Add(new() { RoleId = 72, MenuId = menu.MenuId, ActionCode = "query" });
+        foreach (var capability in new[] { "query", "read-content", "export" })
+        {
+            if (!await h.Db.Sys_MenuActions.AnyAsync(a => a.MenuId == menu.MenuId && a.ActionCode == capability))
+                h.Db.Sys_MenuActions.Add(new() { MenuId = menu.MenuId, ActionCode = capability, ActionName = capability });
+            h.Db.Sys_RoleActions.Add(new() { RoleId = 72, MenuId = menu.MenuId, ActionCode = capability });
+        }
         await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear(); return menu.MenuId;
     }
 

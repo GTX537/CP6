@@ -104,14 +104,18 @@ public class PlatformAdminService : IPlatformAdminService
             target.IsPlatformAdmin = grant;
             // This privileged mutation requires durable audit. Keep the legacy best-effort
             // login audit service unchanged; persist this record with the flag and field audit.
+            var at = DateTimeOffset.UtcNow;
+            var type = grant ? SecurityEventType.PlatformAdminGranted : SecurityEventType.PlatformAdminRevoked;
             _db.Sys_SecurityLogs.Add(new Sys_SecurityLog
             {
                 TenantId = TenantContext.DefaultTenant,
-                EventType = (int)(grant ? SecurityEventType.PlatformAdminGranted : SecurityEventType.PlatformAdminRevoked),
+                EventType = (int)type,
                 UserId = actor.Id,
                 UserName = actor.UserName.Length > 100 ? actor.UserName[..100] : actor.UserName,
                 Reason = $"target={target.UserName}",
-                CreatedAt = DateTime.Now
+                CreatedAt = at.LocalDateTime,
+                AuditAtUtc = at,
+                AuditEvidenceJson = AuditEvidenceV1.RequiredPlatform(actor, type.ToString(), at).Encode()
             });
             await _db.SaveChangesAsync(ct);
         }, _http?.HttpContext?.RequestAborted ?? CancellationToken.None);

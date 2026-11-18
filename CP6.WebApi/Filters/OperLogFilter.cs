@@ -1,11 +1,13 @@
 using System.Diagnostics;
 using System.Security.Claims;
 using CP6.Core.EFDbContext;
-using CP6.Core.Services.Common;
+using CP6.Core.Services.Erp;
 using CP6.Core.Services.Space.Observability;
+using CP6.Core.Services.Sys;
 using CP6.Core.Utilities;
 using CP6.Entity.DomainModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -13,17 +15,8 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.WebApi.Filters;
 
 /// <summary>
-/// 操作日志 ActionFilter（操作ログ = Kafka 専任）
-///
-/// 設計：操作ログは高スループット・append-only・保持/再生が要る監査ストリーム →
-///       Kafka が機能適性で最適。生産者は IOperLogTransport（Kafka 実装）へ投げる。
-/// - Kafka 就绪 → 投递到 topic（PrimaryTransport な議論は不要、唯一の落库担当）。
-/// - Kafka 不可用 → 降级直接写 DB（保证日志不丢）。
-/// - OperLog:IncludeGet=true → 连 GET 查询也记录（"任何操作都记录"）。
-///
-/// （RabbitMQ は業務イベント通知/アラート専任へ転用。本フィルタは関与しない。）
-///
-/// 始终跳过：/api/auth（防密码泄露）、/api/operlog（防自我递归）。
+/// 采集白名单技术遥测。Kafka 不可用时用独立上下文尝试落库，失败不改变原业务结果。
+/// 认证和日志本身使用各自的审计入口；默认不记录 GET。
 /// </summary>
 public class OperLogFilter : IAsyncActionFilter
 {
@@ -45,86 +38,59 @@ public class OperLogFilter : IAsyncActionFilter
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
+        var received = DateTimeOffset.UtcNow;
         var stopwatch = Stopwatch.StartNew();
         var method = context.HttpContext.Request.Method;
-        var path = context.HttpContext.Request.Path.Value ?? "";
-        var isSpace =
-            context.HttpContext.Request.Path.StartsWithSegments("/api/space");
-
-        string? requestBody = null;
-        // This endpoint writes its own atomic, credential-free security audit. Never serialize its secret.
-        var isSsoConfiguration = context.HttpContext.Request.Path.StartsWithSegments("/api/sys/sso-config");
-        var isIdentityAdministration = context.HttpContext.Request.Path.StartsWithSegments("/api/iam")
-            || context.HttpContext.Request.Path.StartsWithSegments("/api/user");
-        if (!isSpace && !isSsoConfiguration && !isIdentityAdministration &&
-            (method is "POST" or "PUT" or "PATCH" or "DELETE"))
-        {
-            // シリアライズ不可な引数（CancellationToken / IFormFile / Stream 等）は除外する。
-            // 除外しないと CancellationToken.WaitHandle.Handle(IntPtr) で
-            // NotSupportedException が起き、本来の業務 API まで 500 になる。
-            var args = context.ActionArguments
-                .Where(kv => kv.Value is not CancellationToken
-                             && kv.Value is not IFormFile
-                             && kv.Value is not IFormFileCollection
-                             && kv.Value is not Stream)
-                .ToDictionary(kv => kv.Key, kv => kv.Value);
-            if (args.Count > 0)
-            {
-                // ログ採取は旁路処理。万一シリアライズに失敗しても業務を止めない。
-                try
-                {
-                    requestBody = System.Text.Json.JsonSerializer.Serialize(args);
-                    if (requestBody.Length > 2000)
-                        requestBody = requestBody[..2000] + "...(truncated)";
-                }
-                catch (Exception ex)
-                {
-                    requestBody = $"(serialize failed: {ex.GetType().Name})";
-                }
-            }
-        }
+        var path = context.HttpContext.Request.Path;
+        var isSpace = path.StartsWithSegments("/api/space");
 
         var resultContext = await next();
         stopwatch.Stop();
 
         // 始终跳过：登录（防密码泄露）与日志接口自身（防递归）
-        if (path.Contains("/api/operlog", StringComparison.OrdinalIgnoreCase)
-            || path.Contains("/api/auth", StringComparison.OrdinalIgnoreCase))
+        if (path.StartsWithSegments("/api/operlog") || path.StartsWithSegments("/api/auth"))
             return;
 
         // GET 默认不记录；OperLog:IncludeGet=true 时才记录（"任何操作都记录"）
         if (method == "GET" && !_includeGet)
             return;
 
-        var userName = context.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
-        var controllerName = context.RouteData.Values["controller"]?.ToString();
-        var actionName = context.RouteData.Values["action"]?.ToString();
-        var clientIp = context.HttpContext.Connection.RemoteIpAddress?.ToString();
-
+        var route = context.ActionDescriptor as ControllerActionDescriptor;
+        var controllerName = route?.ControllerName ?? context.RouteData.Values["controller"]?.ToString();
+        var actionName = route?.ActionName ?? context.RouteData.Values["action"]?.ToString();
+        var routeKey = route?.AttributeRouteInfo?.Template ?? $"{controllerName}/{actionName}";
         var statusCode = StatusCodeOf(resultContext);
+        var principal = context.HttpContext.User;
+        var effective = principal.Identity?.IsAuthenticated == true
+            ? ParseGuid(principal.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? principal.FindFirst("sub")?.Value) : null;
+        var actual = effective.HasValue ? ParseGuid(principal.FindFirst("impersonator_id")?.Value) : null;
+        var native = context.HttpContext.Items[AuditEvidenceV1.HttpItem] as AuditEvidenceV1;
+        var outcome = resultContext.Exception is OrderPriceCorrectionException e
+            && (e.Message.EndsWith("OUTCOME_UNKNOWN", StringComparison.Ordinal)
+                || e.Message.EndsWith("OPERATION_UNKNOWN", StringComparison.Ordinal)) ? "UNKNOWN"
+            : statusCode is 401 or 403 ? "HTTP_DENIED" : statusCode >= 400 ? "HTTP_ERROR" : native?.Outcome ?? "HTTP_OBSERVED";
 
         var log = new Sys_OperLog
         {
-            // 章10：在此盖当前请求租户——既覆盖 DB 降级写，也随 Kafka payload 带到消费者落库（消费者 scope 是默认租户）
             TenantId = _context.CurrentTenantId,
-            // S 类 #5 R7：替身操作时从 impersonator_id claim 填真实平台超管 Id。
-            // 在构造处一次性设置 → Kafka payload 序列化与 DB 降级两条路径自然透传同一字段（非每路径分别填）。
-            ImpersonatorId = Guid.TryParse(context.HttpContext.User.FindFirst("impersonator_id")?.Value, out var impId)
-                              ? impId
-                              : (Guid?)null,
-            UserName = userName,
-            HttpMethod = method,
-            RequestUrl = path,
+            ImpersonatorId = actual,
+            HttpMethod = method is "GET" or "POST" or "PUT" or "PATCH" or "DELETE" or "HEAD" or "OPTIONS" ? method : "OTHER",
+            RequestUrl = routeKey,
             Controller = controllerName,
             Action = actionName,
-            RequestBody = requestBody,
             StatusCode = statusCode,
             ElapsedMs = stopwatch.ElapsedMilliseconds,
-            ClientIp = clientIp,
-            CreateDate = DateTime.Now
+            CreateDate = received.LocalDateTime,
+            AuditAtUtc = received,
+            AuditEvidenceJson = new AuditEvidenceV1("REQUEST_RECEIVED_UTC", "BEST_EFFORT_TELEMETRY",
+                native?.ActorKind ?? (actual.HasValue ? "IMPERSONATED" : effective.HasValue ? "USER" : "UNBOUND"),
+                native?.ActualActor ?? actual ?? effective, native?.EffectiveActor ?? effective, native?.Service,
+                native?.PermissionVersion ?? context.HttpContext.Items[AuditEvidenceV1.PermissionVersionItem] as string, native?.OperationId, outcome,
+                Activity.Current?.TraceId.ToHexString() ?? Guid.NewGuid().ToString("N"), RecordedAtUtc: DateTimeOffset.UtcNow,
+                DataPolicy: "HTTP_TELEMETRY_V1", Action: actionName, OriginalOperationDigest: native?.OriginalOperationDigest).Encode()
         };
 
-        // 投递到 Kafka（操作ログ専任通道）
+        // 优先投递 Kafka。
         var published = false;
         if (_transport.IsConnected)
         {
@@ -135,21 +101,18 @@ public class OperLogFilter : IAsyncActionFilter
             }
             catch (Exception ex)
             {
-                if (isSpace)
-                    WriteSafeFailure("SPACE_OPERLOG_TRANSPORT_FAILED", ex);
-                else
-                    Console.WriteLine($"[OperLog] 通道 {_transport.Name} 投递失败: {ex.Message}");
+                WriteSafeFailure(isSpace ? "SPACE_OPERLOG_TRANSPORT_FAILED" : "OPERLOG_TRANSPORT_FAILED", ex);
             }
         }
 
-        // Kafka 不可用 → 降级直接写 DB（保证日志不丢失）
+        // Kafka 不可用时尝试旁路写入数据库。
         if (!published)
         {
             try
             {
                 if (_context.Database.IsNpgsql())
                 {
-                    // Saving the log must not flush business changes left tracked by a rejected action.
+                    // 旁路日志不能刷入业务动作遗留的跟踪变更。
                     await using var scope = context.HttpContext.RequestServices.CreateAsyncScope();
                     var services = scope.ServiceProvider;
                     services.GetRequiredService<ITenantContext>().CurrentTenantId = log.TenantId;
@@ -166,13 +129,13 @@ public class OperLogFilter : IAsyncActionFilter
             catch (Exception ex)
             {
                 // 降级写 DB 失败也只作旁路记录，绝不影响主业务接口
-                if (isSpace)
-                    WriteSafeFailure("SPACE_OPERLOG_DB_FALLBACK_FAILED", ex);
-                else
-                    Console.WriteLine($"[OperLog] 降级写入DB日志失败: {ex.Message}");
+                WriteSafeFailure(isSpace ? "SPACE_OPERLOG_DB_FALLBACK_FAILED" : "OPERLOG_DB_FALLBACK_FAILED", ex);
             }
         }
     }
+
+    private static Guid? ParseGuid(string? input)
+        => Guid.TryParse(input, out var id) && id != Guid.Empty ? id : null;
 
     private static void WriteSafeFailure(string reasonCode, Exception exception)
     {
@@ -183,6 +146,8 @@ public class OperLogFilter : IAsyncActionFilter
 
     private static int StatusCodeOf(ActionExecutedContext executed)
     {
+        if (executed.Exception is OrderPriceCorrectionException owner)
+            return owner.Status;
         if (executed.Exception is not null)
             return StatusCodes.Status500InternalServerError;
 

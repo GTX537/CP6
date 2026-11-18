@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Reflection;
+using System.Text.Json;
 using CP6.Core.Services.Common;
 using CP6.WebApi.BackgroundServices;
 using Microsoft.Extensions.DependencyInjection;
@@ -85,12 +86,45 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(HttpStatusCode.OK,changed.StatusCode);
         var audit=await h.Db.Sys_FieldAuditLogs.AsNoTracking().Where(a=>a.EntityName=="Machine" && a.Operation==2).SingleAsync();
         Assert.Equal(h.User,audit.UserId);Assert.Equal("price-owner",audit.UserName);
+        Assert.Equal(TimeSpan.Zero, audit.AuditAtUtc!.Value.Offset);
+        using var proof = JsonDocument.Parse(audit.AuditEvidenceJson!);
+        var evidence = proof.RootElement;
+        Assert.Equal(h.User, evidence.GetProperty("actualActor").GetGuid());
+        Assert.Equal(h.User, evidence.GetProperty("effectiveActor").GetGuid());
+        Assert.False(string.IsNullOrEmpty(evidence.GetProperty("permissionVersion").GetString()));
+        Assert.False(string.IsNullOrEmpty(evidence.GetProperty("entityVersion").GetString()));
+        Assert.Equal(await NativeVersion(), evidence.GetProperty("entityVersion").GetString());
+        var transaction = evidence.GetProperty("transactionRef").GetString();
+        Assert.Equal("committed", await h.Db.Database.SqlQuery<string>($"""
+            SELECT pg_xact_status(CAST({transaction} AS xid8)) AS "Value"
+            """).SingleAsync());
+        await h.Db.Machines.ExecuteUpdateAsync(set => set.SetProperty(m => m.Status, 1));
+        Assert.Single(await h.Db.Sys_FieldAuditLogs.Where(a => a.EntityName == "Machine" && a.Operation == 2).ToArrayAsync());
+        using var changedAgain = await host.Send(OperationsRequest(cookies,HttpMethod.Post,"api/mes/machines/MC1/status",new{status=2}));
+        Assert.Equal(HttpStatusCode.OK, changedAgain.StatusCode);
+        var latest = await h.Db.Sys_FieldAuditLogs.AsNoTracking().Where(a => a.EntityName == "Machine" && a.Operation == 2)
+            .OrderByDescending(a => a.AuditAtUtc).FirstAsync();
+        using var latestProof = JsonDocument.Parse(latest.AuditEvidenceJson!);
+        var latestVersion = latestProof.RootElement.GetProperty("entityVersion").GetString();
+        Assert.Equal(await NativeVersion(), latestVersion);
+        Assert.NotEqual(evidence.GetProperty("entityVersion").GetString(), latestVersion);
         await h.Db.Sys_RoleActions.Where(a=>a.MenuId==310 && a.ActionCode=="query").ExecuteDeleteAsync();
         using var denied=await host.Send(OperationsRequest(cookies,HttpMethod.Get,"api/mes/machines/downtimes"));Assert.Equal(HttpStatusCode.Forbidden,denied.StatusCode);
         await h.Db.Sys_RoleActions.Where(a=>a.MenuId==310 && a.ActionCode=="status").ExecuteDeleteAsync();
         using var request=OperationsRequest(cookies,HttpMethod.Post,"api/mes/machines/MC1/status");request.Content=JsonContent.Create(new{status=3});
         using var change=await host.Send(request);Assert.Equal(HttpStatusCode.Forbidden,change.StatusCode);
         Assert.Equal(2,await h.Db.Machines.Select(m=>m.Status).SingleAsync());
+
+        async Task<string> NativeVersion()
+        {
+            var row = await h.Db.Machines.Select(m => new { Xmin = EF.Property<uint>(m, "AuditPgVersion"), m.RowVersion }).SingleAsync();
+            Assert.NotNull(row.RowVersion);
+            return AuthenticationPolicyServiceV1.Hash(new[]
+            {
+                new { Name = "AuditPgVersion", Value = (object)row.Xmin },
+                new { Name = "RowVersion", Value = (object)row.RowVersion }
+            });
+        }
     }
 
     [CurrentPermissionPostgresFact]

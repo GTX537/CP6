@@ -2,6 +2,7 @@ using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Sys;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Sys;
@@ -23,8 +24,10 @@ public sealed record IamOperationV1(Guid OperationId, string Kind, string State,
     string? Version = null, string? ReferencesVersion = null, string? TreeVersion = null, int? RoleId = null);
 
 /// <summary>Main's existing authentication root serializes actual reference writers and current authorization.</summary>
-public sealed partial class IamAdministrationV1(CP6Context db, ICurrentPermissionContext permissions, IDataProtectionProvider protection)
+public sealed partial class IamAdministrationV1(CP6Context db, ICurrentPermissionContext permissions, IDataProtectionProvider protection,
+    IHttpContextAccessor? auditHttp = null)
 {
+    private string? auditPermissionVersion;
     private readonly IDataProtector fingerprint = protection.CreateProtector("CP6.Iam.Administration.Request.V1");
     public bool IsPostgreSql => db.Database.IsNpgsql();
     internal bool Owns(CP6Context context) => ReferenceEquals(db,context);
@@ -54,6 +57,7 @@ public sealed partial class IamAdministrationV1(CP6Context db, ICurrentPermissio
                 || tenant.ExpireDate <= DateTime.Now || current.UserId != actor
                 || permission is not null && !current.ActionKeys.Contains(permission)) throw Error(403,"IAM_FORBIDDEN");
             db.ChangeTracker.Clear();
+            auditPermissionVersion = AuditEvidenceV1.PermissionDecisionVersion(db.CurrentTenantId, current);
             var result = await body(current,ct); ct.ThrowIfCancellationRequested(); attempted = true;
             await tx.CommitAsync(ct); return result;
         }
@@ -65,6 +69,7 @@ public sealed partial class IamAdministrationV1(CP6Context db, ICurrentPermissio
             if (attempted) throw Error(503,"IAM_OPERATION_UNKNOWN");
             throw;
         }
+        finally { auditPermissionVersion = null; }
     }
 
     public async Task<string> ReferencesVersion(CancellationToken ct)
@@ -176,9 +181,21 @@ public sealed partial class IamAdministrationV1(CP6Context db, ICurrentPermissio
     }
 
     public void Audit(Guid actor, Guid operation, string kind, string reason, Guid? entity, int? roleId = null)
-        => db.Sys_SecurityLogs.Add(new Sys_SecurityLog { TenantId=db.CurrentTenantId,UserId=actor,
-            EventType=(int)SecurityEventType.IamAdministrationChanged, CreatedAt=DateTime.Now,Reason=reason,
+    {
+        var now = DateTimeOffset.UtcNow;
+        var auditActor = auditHttp?.HttpContext?.User.FindFirst("impersonator_id")?.Value;
+        var impersonated = Guid.TryParse(auditActor, out var actual);
+        db.Sys_SecurityLogs.Add(new Sys_SecurityLog { TenantId=db.CurrentTenantId,UserId=actor,
+            EventType=(int)SecurityEventType.IamAdministrationChanged, CreatedAt=now.LocalDateTime,Reason=reason,
+            AuditAtUtc=now, AuditEvidenceJson=new AuditEvidenceV1("IAM_OWNER_UTC", "REQUIRED_AUDIT",
+                impersonated ? "IMPERSONATED" : "USER", impersonated ? actual : actor, actor,
+                PermissionVersion:auditPermissionVersion,OperationId:operation,Outcome:"OWNER_RECORDED",RecordedAtUtc:now,Action:kind).Encode(),
             ContextJson=JsonSerializer.Serialize(new { operationId=operation,kind,entityId=entity,roleId }) });
+        if (auditHttp?.HttpContext is { } http)
+            http.Items[AuditEvidenceV1.HttpItem] = new AuditEvidenceV1("IAM_OWNER_UTC", "REQUIRED_AUDIT",
+                impersonated ? "IMPERSONATED" : "USER", impersonated ? actual : actor, actor,
+                PermissionVersion: auditPermissionVersion, OperationId: operation, Action: kind);
+    }
 
     public static string Permission(string kind) => kind switch
     {

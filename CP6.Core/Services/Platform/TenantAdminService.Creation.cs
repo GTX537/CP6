@@ -71,7 +71,7 @@ public partial class TenantAdminService
             try
             {
                 created = await CreateCoreAsync(command.Code, command.Name, command.ExpireDate, command.Remark,
-                    command.AdminUserName, actor, token, template.MenuIds);
+                    command.AdminUserName, actor, token, template.MenuIds, Convert.ToHexString(ManagementKey(command.OperationRef)));
             }
             catch (InvalidOperationException e) when (e.Message == "E-SEC-033")
             { throw new TenantManagementExceptionV1("E-SEC-033", 409, e); }
