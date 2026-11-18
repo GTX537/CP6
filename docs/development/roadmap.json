@@ -144901,11 +144901,6 @@
         "required_revision_cases": 2,
         "gaps": [
           {
-            "case_id": "DR-COM-S6-PRECHECKPOINT-FINALAUTH::COM-S6-PRECHECKPOINT-FINALAUTH-POS",
-            "owner_task_id": "WP02-09b",
-            "gap": "实际 CRM 入站业务 Owner 的原图、原回执、同一事务 Inbox/Outbox 与最终授权，继续核对重复原交易、同键异摘要、无门阻断及未知提交恢复。对应本目标两条必需修订。 原范围随 WP02-09 拆入 WP02-09b。"
-          },
-          {
             "case_id": "INT-ID-01::AC-ID02-05",
             "owner_task_id": "WP02-24",
             "gap": "原 CRM 商业结果的查询与受控重放，须用实际 Owner 的准确原键、当前字段决定和披露权核销。"
@@ -144914,6 +144909,18 @@
             "case_id": "INT-ID-01::AC-ID02-04",
             "owner_task_id": "WP14-08",
             "gap": "全链实际 CRM 业务 Owner 的字段用途及撤权竞态尚需组合验收。覆盖导出、排序、重放和隐藏字段写拒绝后的零部分提交。"
+          }
+        ],
+        "resolved_gaps": [
+          {
+            "case_id": "DR-COM-S6-PRECHECKPOINT-FINALAUTH::COM-S6-PRECHECKPOINT-FINALAUTH-POS",
+            "owner_task_id": "WP02-09b",
+            "gap": "实际 CRM 入站业务 Owner 的原图、原回执、同一事务 Inbox/Outbox 与最终授权，继续核对重复原交易、同键异摘要、无门阻断及未知提交恢复。对应本目标两条必需修订。 原范围随 WP02-09 拆入 WP02-09b。",
+            "resolved_at": "2026-11-18T17:31:19.984+00:00",
+            "report": "https://github.com/GTX537/CP6.CRM/blob/8d50b422326eae296359fbc383623dd8ad994208/docs/development/evidence/WP02-09b/DELIVERY.md",
+            "source_sha": "e7c5b01d3623b01ead743996231fcc0419eaa6ba",
+            "adopted_crm_main_sha": "8d50b422326eae296359fbc383623dd8ad994208",
+            "scope": "已有原请求的 A12 伙伴成功、失败结果，以及本路由的两例最终门。"
           }
         ]
       }
@@ -147378,7 +147385,57 @@
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "GAPS_ASSIGNED",
+        "reviewed_at": "2026-11-18T17:31:19.984+00:00",
+        "report": "https://github.com/GTX537/CP6.CRM/blob/8d50b422326eae296359fbc383623dd8ad994208/docs/development/evidence/WP02-09b/DELIVERY.md",
+        "review_record": "docs/development/planning/20261117-card-execution.md",
+        "original_cases_reviewed": 60,
+        "required_revision_cases": 2,
+        "adopted_subject_tasks": [
+          "WP02-07",
+          "WP02-08",
+          "WP02-09",
+          "WP02-09b",
+          "WP02-10"
+        ],
+        "a12_evidence": [
+          "DEL01-A1",
+          "DEL01-A3",
+          "DEL01-A4",
+          "DEL01-A7",
+          "DEL01-A8",
+          "DEL07-A2",
+          "DEL07-A3",
+          "DEL07-A4",
+          "DEL07-A5",
+          "DEL07-A6",
+          "DEL07-A9"
+        ],
+        "gaps": [
+          {
+            "case_id": "PLT-DEL-01::DEL05-A2",
+            "owner_task_id": "WP02-23",
+            "gap": "Main 原结果目录的三类受控动作、原生摘要域和旧 Bridge 精确映射仍需按该卡原范围采用。"
+          },
+          {
+            "case_id": "PLT-DEL-01::DEL05-A10",
+            "owner_task_id": "WP02-24",
+            "gap": "CRM 原结果查询与受控重放的动作、当前权及旧状态语义仍需实际消费。"
+          },
+          {
+            "case_id": "PLT-DEL-01::DEL07-A7",
+            "owner_task_id": "WP14-09",
+            "gap": "独占测试副本中的旧写者兼容、存量移交、迁移和回退证据仍待该卡原有演练。"
+          },
+          {
+            "case_id": "PLT-DEL-01::DEL04-A6",
+            "owner_task_id": "WP14-08",
+            "gap": "跨域撤权及多层重试后 UNKNOWN 的原操作和恢复链仍待专项联验。"
+          }
+        ]
+      }
     },
     {
       "id": "PLT-OBS-01",
@@ -168621,6 +168678,13 @@
       "at": "2026-11-18T09:32:17Z",
       "change": "项目总负责批准 WP02-09b 先承接已有原请求、可核验账户归属和当前授权的 C03 业务伙伴结果入史。未知请求仅隔离，其余 A12、A13 和订单维持原归属；WP02-09b 恢复 PLANNED，阶段 A 仅此一张候选。",
       "evidence": "docs/development/evidence/COORD-WP02-09B-A12/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-18T17:28:02.954+00:00",
+      "change": "WP02-09b 完成限定的 A12 伙伴结果入史与账户最终授权，CRM #240 已采用。原号 WP02-09 及其余卡现已全部完成。关联业务目标仍按各自全部验收核对，下一卡由唯一 COORD 确定。",
+      "evidence": "docs/development/planning/20261117-card-execution.md",
+      "report_url": "https://github.com/GTX537/CP6.CRM/blob/8d50b422326eae296359fbc383623dd8ad994208/docs/development/evidence/WP02-09b/DELIVERY.md",
+      "target_review": "INT-ID-01 归档已验证的 A12 缺口，原有其他两项继续保留。PLT-DEL-01 核对 60 项原 AC、两项修订和实际采用，既定剩余职责仍开放。"
     }
   ],
   "implementation_assessment": {
@@ -186912,12 +186976,66 @@
         "file:CRM:src/CP6.CRM.Infrastructure/Leads/CrmBusinessService.Intake.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "state": "DONE",
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "EXEC-WP02-14B",
+        "repository": "CRM",
+        "owning_task_repository": "CRM",
+        "branch": "codex/wp02-09b",
+        "worktree": "D:/CP6-worktrees/dev-2",
+        "claimed_at": "2026-11-18T10:31:19.851673+00:00",
+        "baseline_sha": "ac8a2706a018317eafce8247aff1e7fe5e416329",
+        "entry_evidence": "docs/development/planning/20261117-card-execution.md",
+        "delivery_report": "https://github.com/GTX537/CP6.CRM/blob/8d50b422326eae296359fbc383623dd8ad994208/docs/development/evidence/WP02-09b/DELIVERY.md",
+        "phase": "CLOSED",
+        "full_task_completed": true,
+        "worker_start_received": true,
+        "dispatch_scope": "A12 仅接纳由独立原请求和当前对象权核实的伙伴成功、失败原件。同事务保存 Inbox、原请求历史、原回执、审计和原生 Outbox。",
+        "actual_start_ref": {
+          "commit": "e86772d4d9f477ae31aa0695a40bf48c01e28b4a",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-09b/messages/20261118T103318Z-exec-wp02-14b/MESSAGE.md",
+          "at": "2026-11-18T10:33:18Z"
+        },
+        "dispatch_decision_ref": {
+          "commit": "ddd16f7623098b4f4ad30d490fbd9918d91f67a8",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-09b/replies/20261118T152828Z-coord-result-original-resume/MESSAGE.md"
+        },
+        "main_provider": {
+          "repository": "CP6",
+          "slot": "DEV-1",
+          "branch": "codex/wp02-09b",
+          "pr_url": "https://github.com/GTX537/CP6/pull/1259",
+          "source_sha": "cc671477835db8f4ecdc415aad70e31f52fcf7f1"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/8d50b422326eae296359fbc383623dd8ad994208/docs/development/evidence/WP02-09b/DELIVERY.md",
+          "source_sha": "e7c5b01d3623b01ead743996231fcc0419eaa6ba",
+          "result": "PASS",
+          "observed_at": "2026-11-18T17:18:55+00:00",
+          "environment": "LAPTOP-3QQ44FJS，.NET 8、双 Kestrel HTTPS、两套 PostgreSQL 18.6、Npgsql 8.0.8，模拟业务和本地对象资格。",
+          "command": "双仓 dotnet test，a12-joint-07.trx 及其 CRM 子进程。另以独立只读事务核实两份完整图及原字节。",
+          "scope": "A12 仅接纳由独立原请求和当前对象权核实的伙伴成功、失败原件。同事务保存 Inbox、原请求历史、原回执、审计和原生 Outbox。原 11 项及最终授权正反两例。",
+          "main_source_sha": "cc671477835db8f4ecdc415aad70e31f52fcf7f1",
+          "main_test_sha": "179947e0c7396b230898c76483c144d680146df3"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/planning/20261117-card-execution.md",
+        "report_url": "https://github.com/GTX537/CP6.CRM/blob/8d50b422326eae296359fbc383623dd8ad994208/docs/development/evidence/WP02-09b/DELIVERY.md",
+        "source_sha": "e7c5b01d3623b01ead743996231fcc0419eaa6ba",
+        "remote_main_sha": "8d50b422326eae296359fbc383623dd8ad994208",
+        "pr_url": "https://github.com/GTX537/CP6.CRM/pull/240",
+        "scope": "CRM #240 的远端主线树与受审候选一致。Main 提供方、采用引用及唯一台账随正常 PR #1259 合并，双仓冒烟及席位回读在原通信分支 DELIVERY。",
+        "reviewed_crm_head": "1da668a173dbf867523bbca6588b9ab669dfb41a",
+        "main_provider_commit": "cc671477835db8f4ecdc415aad70e31f52fcf7f1",
+        "main_pr_url": "https://github.com/GTX537/CP6/pull/1259",
+        "source_contract_sha256": "056fba56cbeb37c5a1e01df4deb1709f652f6a73726867e0ff947dc04f2f09e8"
+      },
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-09b",
       "entry_conditions": [
@@ -186930,7 +187048,30 @@
         "验证并发重复、同键不同摘要隔离、后段故障整组回滚、未知提交回查原键、当前权披露、撤权两序、旧范围/错误租户拒绝和缺真实最终授权门时阻断。保留原键、原摘要与全部原 AC。",
         "保留字符串 BusinessPartnerKey，只在同一原请求结果流内比较 resultVersion。同版本同载荷去重，同版本异载荷隔离。未知原请求仅隔离，禁止据来信创建原请求或恢复账户。其余 A12、A13 当前映射及订单流程归原卡。"
       ],
-      "card_budget_seconds": 12831.351
+      "card_budget_seconds": 12831.351,
+      "card_execution": {
+        "result": "DONE",
+        "report": "https://github.com/GTX537/CP6.CRM/blob/8d50b422326eae296359fbc383623dd8ad994208/docs/development/evidence/WP02-09b/DELIVERY.md",
+        "started_at": "2026-11-18T10:31:19.851673+00:00",
+        "official_started_at": "2026-11-18T10:31:19.851673+00:00",
+        "verified_at": "2026-11-18T17:31:19.984+00:00",
+        "technical_verified_at": "2026-11-18T17:18:55+00:00",
+        "effective_seconds": 14714.661,
+        "size": "M",
+        "budget_seconds": 12831.351,
+        "mandatory_split_seconds": 19247.0265,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-09"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 662.67,
+        "carried_seconds_approx": 8354,
+        "resume_at": "2026-11-18T15:42:02.293617+00:00",
+        "buffer_used_seconds": 1883.31,
+        "target_review_started_at": "2026-11-18T17:28:02.954+00:00",
+        "target_review_seconds": 197.031
+      }
     },
     {
       "id": "WP02-10",
@@ -190150,7 +190291,9 @@
           "WP02-16"
         ],
         "new_product_execution": true,
-        "preceding_integration_seconds": 214.296
+        "preceding_integration_seconds": 214.296,
+        "official_finish": "2026-11-18T09:04:51.736729+00:00",
+        "post_candidate_finalization_seconds": 662.67
       }
     },
     {
@@ -291513,7 +291656,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 38263.455,
+      "effective_seconds": 53837.817,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -291529,7 +291672,8 @@
         "WP02-09",
         "WP02-14b",
         "WP02-15",
-        "WP02-16b"
+        "WP02-16b",
+        "WP02-09b"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -291581,7 +291725,7 @@
         }
       ],
       "current_stage": "A",
-      "next_card": "WP02-09b",
+      "next_card": null,
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -291731,21 +291875,11 @@
         }
       },
       "next_card_selection": {
-        "rule": "项目总负责批准限定 A12 分工后，按严格前置、实际阻断和全图最长下游链重算。",
-        "baseline_sha": "39d741bcd7ab1e6ef7919f00c29c1b6296a24a67",
-        "after_card": "WP02-16b",
-        "selected": "WP02-09b",
-        "candidates": [
-          {
-            "card": "WP02-09b",
-            "global_edges": 42,
-            "phase_edges": 1,
-            "phase_path": [
-              "WP02-09b",
-              "WP03-02"
-            ]
-          }
-        ]
+        "rule": "本卡交唯一 COORD 验收，下一卡待正式选定。",
+        "baseline_sha": "47eebd48aae35a96919b3709ce4eaa43ab528036",
+        "after_card": "WP02-09b",
+        "selected": null,
+        "candidates": []
       },
       "phase0_user_confirmation": "2026-11-17 用户确认：先按证据核销或拆卡，列清缺口；完成阶段0核对后再按顺序实施剩余卡。",
       "budget_rule": "余卡上限=父卡上限−父卡已用有效时间（不足0按0计，超出计缓冲）；同一原号的分配守恒。第二次拆分先报总负责，不自动追加卡池。",
@@ -291810,14 +291944,15 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 3230.447,
+      "target_review_effective_seconds": 3427.478,
       "last_checkpoint_counts": {
         "original_done": 50,
-        "fully_done": 49,
+        "fully_done": 50,
         "targets_done": 5,
         "new_splits": 5,
         "periodic_checkpoint_due": false
-      }
+      },
+      "buffer_used_seconds": 1883.31
     }
   },
   "acceptance_basis": {

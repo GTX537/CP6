@@ -43,7 +43,46 @@ public sealed class ErpReadController(CP6Context db, CrmOidcOptions oidc, ICrmOi
         return value is null ? NotFound() : Ok(value);
     });
 
-    private async Task<IActionResult> ReadAsync(string key, Func<Guid, Task<IActionResult>> read)
+    [HttpGet("business-partner-request-proofs/{account:guid}/{requestId:guid}/{requestVersion:int}")]
+    public Task<IActionResult> BusinessPartnerOriginal(Guid account, Guid requestId, int requestVersion)
+        => ReadAuthorizedAsync(true, async (tenant, client, _) =>
+        {
+            var original = Header("X-C03-Original-Message");
+            if (original is not { Length: > 0 and <= 128 } || original.Any(char.IsControl) ||
+                account == Guid.Empty || requestId == Guid.Empty || requestVersion < 1)
+                return BadRequest(new { code = "C03_REQUEST_METADATA_INVALID" });
+            var proofs = HttpContext.RequestServices.GetRequiredService<ErpBusinessPartnerOriginalReader>();
+            var proof = await proofs.ReadAsync(tenant, client, account, requestId, requestVersion, original,
+                HttpContext.RequestAborted);
+            return proof is null ? NotFound() : Ok(proof);
+        });
+
+    [HttpGet("business-partner-result-proofs/{account:guid}/{requestId:guid}/{requestVersion:int}/{eventId}/{resultVersion:int}")]
+    public Task<IActionResult> BusinessPartnerResult(Guid account, Guid requestId, int requestVersion, string eventId, int resultVersion)
+        => ReadAuthorizedAsync(true, async (tenant, client, principal) =>
+        {
+            var original = Header("X-C03-Original-Message");
+            var digest = Header("X-C03-Result-Sha256");
+            if (original is not { Length: > 0 and <= 128 } || original.Any(char.IsControl) ||
+                eventId.Length is < 1 or > 128 || !char.IsAsciiLetterOrDigit(eventId[0]) ||
+                !eventId.All(c => char.IsAsciiLetterOrDigit(c) || c is '.' or '_' or ':' or '-') ||
+                account == Guid.Empty || requestId == Guid.Empty || requestVersion < 1 || resultVersion < 1 ||
+                digest is not { Length: 64 } || !digest.All(c => c is >= '0' and <= '9' or >= 'a' and <= 'f'))
+                return BadRequest(new { code = "C03_REQUEST_METADATA_INVALID" });
+            if (!long.TryParse(Single(principal, "iat"), System.Globalization.CultureInfo.InvariantCulture, out var issued) ||
+                !long.TryParse(Single(principal, "exp"), System.Globalization.CultureInfo.InvariantCulture, out var expires))
+                return Forbid(Scheme);
+            var resolver = HttpContext.RequestServices.GetService<ErpBusinessPartnerResultReader>();
+            if (resolver is null) return NotFound();
+            var proof = await resolver.ReadAsync(tenant, client, Single(principal, "jti")!, issued, expires,
+                account, requestId, requestVersion, original, eventId, resultVersion, digest, HttpContext.RequestAborted);
+            return proof is null ? NotFound() : Ok(proof);
+        });
+
+    private Task<IActionResult> ReadAsync(string key, Func<Guid, Task<IActionResult>> read)
+        => ReadAuthorizedAsync(key.Length is > 0 and <= 20 && !key.Any(char.IsControl), (tenant, _, _) => read(tenant));
+
+    private async Task<IActionResult> ReadAuthorizedAsync(bool validKey, Func<Guid, string, ClaimsPrincipal, Task<IActionResult>> read)
     {
         Response.Headers.CacheControl = "no-store";
         if (runtime is null) return NotFound();
@@ -63,7 +102,7 @@ public sealed class ErpReadController(CP6Context db, CrmOidcOptions oidc, ICrmOi
         var correlation = Header(CorrelationHeader);
         if (Header(TenantHeader) != tenant.ToString("D") || correlation is not { Length: > 0 and <= 128 } ||
             !correlation.All(c => char.IsAsciiLetterOrDigit(c) || c is '-' or '_' or '.' or ':') ||
-            Request.Query.Count != 0 || key.Length is < 1 or > 20 || key.Any(char.IsControl))
+            Request.Query.Count != 0 || !validKey)
             return BadRequest(new { code = "C03_REQUEST_METADATA_INVALID" });
         Response.Headers[CorrelationHeader] = correlation;
         try
@@ -74,7 +113,7 @@ public sealed class ErpReadController(CP6Context db, CrmOidcOptions oidc, ICrmOi
             if (!await db.CrmServiceTokenRecords.AsNoTracking().AnyAsync(x => x.Issuer == oidc.Issuer && x.Jti == tokenId &&
                     x.TenantId == tenant && x.ClientId == clientId && x.RevokedAtUtc == null && x.ExpiresAtUtc > now,
                     HttpContext.RequestAborted)) return Forbid(Scheme);
-            return await read(tenant);
+            return await read(tenant, clientId, principal);
         }
         catch (Exception ex) when (ex is DbException or DbUpdateException or TimeoutException)
         { return StatusCode(503, new { code = "C03_ERP_UNAVAILABLE" }); }

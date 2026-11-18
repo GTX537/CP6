@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP02-16b 完整编号域、受控切换恢复与规则管理余项](../development/evidence/WP02-16b/DELIVERY.md)（DONE），核对时间 `2026-11-18T08:53:49.0666706+00:00`。
+- [WP02-09b CRM 实际业务收件与同事务原结果余项](https://github.com/GTX537/CP6.CRM/blob/8d50b422326eae296359fbc383623dd8ad994208/docs/development/evidence/WP02-09b/DELIVERY.md)（DONE），核对时间 `2026-11-18T17:31:19.984+00:00`。
 
 ### 已关闭目标
 

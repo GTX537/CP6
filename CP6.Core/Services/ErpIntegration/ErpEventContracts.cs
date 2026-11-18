@@ -24,6 +24,9 @@ public static class ErpEventContracts
     public static string Hash(ReadOnlySpan<byte> bytes)
         => Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
 
+    internal static string BusinessPartnerInputSha256(ErpBusinessPartnerRequested request)
+        => Hash(JsonSerializer.SerializeToUtf8Bytes(request, Json));
+
     internal static string OrderInputSha256(ErpOrderRequested order)
         => Hash(JsonSerializer.SerializeToUtf8Bytes(new
         {

@@ -24,7 +24,10 @@ public sealed class InquiryServicePrincipalRegistrationV1
 /// <summary>Host-owned identity/role assignments, not request claims or a Sys_User alias.
 /// Like the existing service host, changes require stopping ingress, draining every instance
 /// and restarting with the new reviewed configuration. This snapshot has no live-reload claim.</summary>
-public sealed class InquiryServicePrincipalRegistryV1
+public sealed class InquiryServicePrincipalRegistryV1(InquiryServicePrincipalOptionsV1 options, CrmOidcOptions oidc)
+    : ServicePrincipalRegistryV1(options, oidc);
+
+public abstract class ServicePrincipalRegistryV1
 {
     private readonly Dictionary<string, Registration> registrations = new(StringComparer.Ordinal);
     public bool Enabled { get; }
@@ -51,7 +54,7 @@ public sealed class InquiryServicePrincipalRegistryV1
         public override string ToString() => nameof(Registration);
     }
 
-    public InquiryServicePrincipalRegistryV1(InquiryServicePrincipalOptionsV1 options, CrmOidcOptions oidc)
+    protected ServicePrincipalRegistryV1(InquiryServicePrincipalOptionsV1 options, CrmOidcOptions oidc)
     {
         Enabled = options.Enabled; IdentityPublicationEnabled = options.IdentityPublicationEnabled; Version = options.Version; Revision = options.IdentityPublicationRevision;
         if (!Enabled && !IdentityPublicationEnabled) return;
@@ -90,5 +93,5 @@ public sealed class InquiryServicePrincipalRegistryV1
     }
 
     private static bool WireId(Guid id) => id.ToString("D")[14] == '4' && "89ab".Contains(id.ToString("D")[19]);
-    public override string ToString() => nameof(InquiryServicePrincipalRegistryV1);
+    public override string ToString() => GetType().Name;
 }

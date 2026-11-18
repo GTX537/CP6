@@ -18,6 +18,7 @@ public static class CrmIdentityConfiguration
         var section = configuration.GetSection("CrmIdentity");
         var options = section.Get<CrmIdentityOptions>() ?? new();
         if (!options.Enabled) return options;
+        options.AccountServiceSources = configuration.GetValue<bool>("AccountC03ServicePrincipals:IdentityPublicationEnabled");
         // The .NET configuration binder does not populate dictionaries with Guid keys.
         // Parse the operator's map explicitly so JSON and environment overrides share
         // the same validation instead of silently dropping configured tenants.
@@ -59,9 +60,9 @@ public static class CrmIdentityConfiguration
                 throw new InvalidOperationException("C02_DAPR_ENDPOINT_MUST_BE_LOCAL_SIDECAR");
         var directory = Path.Combine(AppContext.BaseDirectory, "contracts/events/platform");
         var bundle = Cp6ContractBundle.Load(directory);
-        var validator = new IdentityEventValidator(bundle, oidc.Issuer);
+        var validator = new IdentityEventValidator(bundle, oidc.Issuer, options.AccountServiceSources);
         options.SourceBindings.Clear();
-        var bundleHash = IdentityEventContracts.Hash(File.ReadAllBytes(Path.Combine(directory, Cp6ContractBundle.IndexFileName)));
+        var bundleHash = CrmIdentityRuntime.ReadBundleDigest(directory, options.AccountServiceSources);
         foreach (var (tenant, region) in options.Tenants)
         {
             var organization = oidc.Organizations.Single(o => o.TenantId == tenant && o.CrmEnabled);

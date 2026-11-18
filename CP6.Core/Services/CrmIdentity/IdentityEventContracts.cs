@@ -21,13 +21,16 @@ public static class IdentityEventContracts
     public const string PermissionChangedV3 = "com.gtx537.platform.permission.changed.v3";
     public const string TokenRevokedV2 = "com.gtx537.platform.token.revoked.v2";
     public const string ServicePrincipalChanged = "com.gtx537.platform.service-principal.changed.v1";
+    public const string AccountServicePrincipalChanged = "com.gtx537.platform.service-principal.changed.v2";
+    public const string AccountServiceProfile = "cp6-account-c03-ingest-v1";
+    public static bool IsServicePrincipal(string? type) => type is ServicePrincipalChanged or AccountServicePrincipalChanged;
     public static readonly JsonSerializerOptions Json = CreateJsonOptions();
 
     public static bool IsUserChanged(string? type) => type is UserChanged or UserChangedV2;
     public static bool IsPermissionChanged(string? type) => type is PermissionChanged or PermissionChangedV2 or PermissionChangedV3;
     public static bool IsTokenRevoked(string? type) => type is TokenRevoked or TokenRevokedV2;
-    public static bool IsFullIntegerRoleVersion(string? type) => type is ServicePrincipalChanged or UserChangedV2 or PermissionChangedV2 or PermissionChangedV3 or TokenRevokedV2;
-    public static bool IsSupported(string? type) => type is TenantChanged or DepartmentChanged or ServicePrincipalChanged
+    public static bool IsFullIntegerRoleVersion(string? type) => IsServicePrincipal(type) || type is UserChangedV2 or PermissionChangedV2 or PermissionChangedV3 or TokenRevokedV2;
+    public static bool IsSupported(string? type) => type is TenantChanged or DepartmentChanged || IsServicePrincipal(type)
         || IsUserChanged(type) || IsPermissionChanged(type) || IsTokenRevoked(type);
     public static string RoleSubject(int roleId) => "role:" + roleId.ToString(CultureInfo.InvariantCulture);
     public static bool TryRoleSubject(string subject, out int roleId)

@@ -255,3 +255,22 @@ WP02-16b 卡 DONE，WP02-16 及拆分余项完整 DONE。SYS-NUM-01 的 16 项�
 2026-11-18 13:14 UTC，项目总负责批准在原 WP02-09b 内补入 Main.IAM 的 A12 账户收件短时在线身份证明及 Main.C02、CRM.C02 的匹配身份来源。CRM.Account 承担已有归属、写入与原回执当前读权。沿用原 START、双仓保留分支、原预算和报告，按原 11+2 项及真实 PostgreSQL 撤权竞争验收，本卡实际完成后结束协调。[裁决、合同版本与恢复点](../evidence/COORD-WP02-09B-A12-IDENTITY/DELIVERY.md)
 
 2026-11-18 15:19 UTC，项目总负责批准 Main.C03 对当前有读权的 A12 服务查证已知原请求下指定单份伙伴成功或失败结果的原字节及摘要。Main 先固定只读提供版本，CRM 再核验原件、账户最终写权和原回执当前读权。沿用原 START、两仓保留提交、累计工时和原 11+2 项验收。[单份结果查证裁决](../evidence/COORD-WP02-09B-RESULT-ORIGINAL/DELIVERY.md)
+
+## WP02-09b 已知原请求的伙伴结果入史
+
+CRM #240 已采用 `8d50b422326eae296359fbc383623dd8ad994208`。CRM 源码 `e7c5b01d3623b01ead743996231fcc0419eaa6ba` 与 Main.C03 的 `cc671477835db8f4ecdc415aad70e31f52fcf7f1` 联验，采用 `C03-BP-RESULT-PROOF/1`、ERP 原生包 1.0.0 和 C02 包 1.4.0。两个 PostgreSQL 18.6 实例实际经过 Main 签发、发布、原件读取及 CRM 完整原生宿主。独立只读连接读取到成功和失败的完整业务图，事务号分别为 832 和 848。冻结回执的字节和摘要、真实提交确认丢失后的原键恢复、撤权两序及完整 11+2 项均见 CRM 的唯一报告。Main 原 PR #1259 承载提供方和台账，合并后的远端采用、冒烟与席位处置归原 Handoff DELIVERY。[唯一交付报告](https://github.com/GTX537/CP6.CRM/blob/8d50b422326eae296359fbc383623dd8ad994208/docs/development/evidence/WP02-09b/DELIVERY.md) · [CRM PR #240](https://github.com/GTX537/CP6.CRM/pull/240) · [Main PR #1259](https://github.com/GTX537/CP6/pull/1259)
+
+原卡上限 12831.351 秒。按上次回报约 8354 秒加本次从 15:42:02 UTC 起的实际区间，截至 `2026-11-18T17:28:02.954+00:00` 合计约 14714.661 秒，约 1883.310 秒计项目缓冲。两席同时段只计一次。结转 WP02-16b 正式收尾 662.670 秒。计划累计约 14.900 小时，未到 24 小时检查点。本候选之后的实际收尾在正式 finish 记录中回读。原号 DONE 50/375，含全部余卡的完整 DONE 50/375，目标 DONE 5/125。下一卡等待唯一 COORD 正式选定。
+
+### 本次触发的目标核对
+
+PLT-DEL-01 的 60 项原 AC 分为原生生产 8 项、收件及检查点 10 项、映射 7 项、租约 8 项、受控重放 10 项、保留 8 项、应用事务 9 项，另有两条最终门修订。已将 Platform #61、#71，Main 代表 Owner，CRM 配置、询盘和本卡 A12 的采用与原断言逐组核对。A12 的 11 项适用原 AC 和两例最终门有本卡实证。其他路由的实现、采用及全域验收继续保留原证据口径。[原 AC](../assessments/20261011/catalogs/foundation.json) · [修订场景](../../design-handbook/remediation/08-acceptance-catalog.json) · [A12 实测报告](https://github.com/GTX537/CP6.CRM/blob/8d50b422326eae296359fbc383623dd8ad994208/docs/development/evidence/WP02-09b/DELIVERY.md)
+
+| 待验范围 | 原有责任卡 |
+|---|---|
+| Main 三类受控动作及旧 Bridge 的原生摘要映射，DEL05-A2 | WP02-23 |
+| CRM 原结果查询和受控重放动作的当前权限与展示，DEL05-A10 | WP02-24 |
+| 旧写者存量移交、兼容及回退演练，DEL07-A7 | WP14-09 |
+| 跨域重试预算、撤权及 UNKNOWN 后的原键恢复链，DEL04-A6 | WP14-08 |
+
+INT-ID-01 本次归档原挂 WP02-09b 的 A12 最终授权缺口。其原挂 WP02-24 的 CRM 原商业结果查询和受控重放、原挂 WP14-08 的跨域字段用途及撤权竞态继续开放。两个目标均保留 PLANNED。本段核对约 197.031 秒记入目标核对池，总计划累计约 14.955 小时。四张既有卡的范围、领取和派工由各自正式决定管理。

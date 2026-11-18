@@ -2,6 +2,28 @@
 
 C03 提供 CP6 侧的真实 ERP 查询、BP/Order 命令处理、事务消息与人工恢复能力。CRM 的配套改动提供相同事件契约和服务查询客户端；隔离 transport probe 验证真实 SQL、C01 服务令牌及 Kafka/Dapr 请求和结果。CRM Account、ErpLink、IntegrationProcess、Opportunity → Won 的产品流程仍由 CRM05/06/07 等任务实现，不能用本次 transport probe 代替其验收。
 
+## A12 账户收件服务身份
+
+CRM 通过 HTTPS 向 `/connect/account-c03-service-identity` 发送已登记客户端的 Basic 认证和 JSON 正文。正文包含固定用途 `service:account.c03.ingest` 与本次调用生成的 32 字节随机数 `requestNonce`（无填充 base64url）。Main 从当前已发布的独立账户服务登记取得租户、客户端、主体与认证 epoch。签发的 RS256 凭据最长 60 秒，受众为 `urn:cp6:crm:account-c03-ingest`。响应和凭据请勿缓存或记入日志。[凭据字段与摘要算法](../../contracts/iam/account-c03-service-identity/v1/contract.json)
+
+宿主从 `AccountC03ServicePrincipals` 读取专用登记。启用后须配置 `IdentityPublicationEnabled`、递增的发布修订、登记版本、独立客户端与主体、部门、角色和认证 epoch。变更登记内容或停用时更新登记版本与 epoch。账户来源使用独立的服务主体 v2 事件和合同包 1.4.0。原询盘 v1 继续按原来源处理。部署既有来源登记的环境按其原受控切换程序启用新摘要。[账户来源 schema](../../contracts/events/platform/service-principal-changed/v2/schema.json)
+
+凭据的 `source_sha256` 绑定服务主体，`facts_sha256` 绑定租户、部门及角色的当前发布。CRM 核对签名、本次调用与持锁的 C02 来源，账户归属方在实际事务中分别判断该账户的入史能力与原回执当前读权。
+
+## 既有业务伙伴请求凭据
+
+`GET /internal/erp/v1/business-partner-request-proofs/{account}/{requestId}/{requestVersion}` 提供 `C03-BP-REQUEST-PROOF/1`。调用方使用本节既有的 C01 已登记服务身份、单值 `tenantid` 与 `correlationid`，另以 `X-C03-Original-Message` 指定已知原命令的消息键。请求键来自结果到达前的独立来源。查询没有写入、重放或创建请求的效果。
+
+Main 在同一 PostgreSQL 快照中核对 `erp_integration.CommandInbox` 的原字节、原始消息键和原始 SHA-256，与 `Request` 的组织、业务伙伴命令类别、实际账户、请求 ID、请求版本以及规范化输入 SHA-256。验证原 C03 信封、生产者、地域和版本。返回的 `originalSha256` 与 `inputSha256` 各保留自身语义。响应给出结果权威 `urn:cp6:erp`、`ACC-C03-V1`、合同版本、来源 epoch 及请求定位。未找到原件、摘要或账户不相符、出现原消息冲突、缺少获准来源时均不出具凭据。
+
+`ErpIntegration:BusinessPartnerOriginalSources` 是按租户登记的来源期间，每项含 `TenantId`、`Epoch`、`FromUtc`、`UntilUtc` 和 `ReaderClientIds`。须由来源归属方依据可追溯的历史接收期间登记。匹配使用收件账的服务器接收时间，包含起点，排除终点。运行时拒绝重复 epoch、重叠期间及未登记读取方。默认清单为空。此凭据只证明独立原请求，账户当前写入和原回执披露分别由 CRM.Account 裁决。
+
+## 已知请求的单份伙伴结果原件
+
+A12 服务可用当前 C01 读取令牌请求一条原生成功或失败事件。调用方先从独立来源取得原命令键，按账户、请求 ID、请求版本、结果消息键及版本定位，并提供原件引用的 SHA-256。读取入口、请求头及响应字段见[单份结果查证合同](../../contracts/erp/business-partner-result-proof/v1/contract.json)。
+
+Main 在 PostgreSQL 事务中复核原请求、当前 C02 账户服务发布及读取令牌，并锁定仅适用于这一份原件的有效读权登记。来源期、身份期、事件键、因果键、关联键、原生合同和持久化摘要均须相符。响应的 `payload` 是 ERP Outbox 原字节的 Base64，`payloadSha256` 为小写十六进制。对象登记由授权归属方维护，初始为空。读取失败不披露原件或摘要。
+
 ## ERP 数据与操作
 
 业务权威继续使用 `T_WebBusinessPartner`、`T_Quotation`/`T_QuotationDetail`、`T_ProductMaster` 和 `T_Order`/`T_OrderDetail`。`erp_integration` 中的表只记录命令、结果、重试和审计，不保存另一套法定客户或订单。

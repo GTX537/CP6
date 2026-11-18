@@ -1,0 +1,53 @@
+{
+  "contract": "account-c03-service-identity/v1",
+  "method": "POST",
+  "path": "/connect/account-c03-service-identity",
+  "transport": "https",
+  "clientAuthentication": "client_secret_basic",
+  "request": {
+    "contentType": "application/json",
+    "required": [
+      "purpose",
+      "requestNonce"
+    ],
+    "additionalProperties": false,
+    "requestNonce": "base64url-unpadded(32 random bytes)"
+  },
+  "response": {
+    "identityToken": "compact JWS"
+  },
+  "algorithm": "RS256",
+  "issuer": "trusted Main.IAM issuer",
+  "audience": "urn:cp6:crm:account-c03-ingest",
+  "purpose": "service:account.c03.ingest",
+  "maximumLifetimeSeconds": 60,
+  "clockSkewSeconds": 0,
+  "keySetPath": "/.well-known/jwks.json",
+  "claims": [
+    "iss",
+    "aud",
+    "sub",
+    "iat",
+    "nbf",
+    "exp",
+    "client_id",
+    "tenant_id",
+    "authentication_epoch",
+    "purpose",
+    "nonce",
+    "source_profile",
+    "source_version",
+    "source_sha256",
+    "facts_sha256",
+    "bundle_sha256"
+  ],
+  "source": {
+    "eventType": "com.gtx537.platform.service-principal.changed.v2",
+    "schemaVersion": "2.0.0",
+    "profile": "cp6-account-c03-ingest-v1",
+    "bundleVersion": "1.4.0",
+    "bundleSha256": "d4d19f3a5ebd2e08d0a18776d5a1f51487123796326354c9d394ee34f2a53770",
+    "schemaSha256": "8147eb2be4161f73ba45d627470442579430d0f255cda2793db9266314fdfa0e"
+  },
+  "factsSha256": "SHA-256(UTF-8(LF-joined ordinal-sorted aggregateId/version/payloadSha256 for the tenant, department and every registered role permission))"
+}
