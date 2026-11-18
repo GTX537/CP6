@@ -32,7 +32,7 @@ const parent = computed(() => parents.value.find(p => key(p.reference) === choic
 const selected = ref<File | null>(null), inputEpoch = ref(0), uploadReason = ref(''), reason = ref(''), current = ref<FileSnapshot | null>(null), history = ref<FileSnapshot | null>(null), historyVersion = ref('1')
 const urls = new Set<string>(); let generation = 0, live = true
 const key = (r: EngineeringReference) => `${r.owner}:${r.id}:${r.version}:${r.digest}`
-const state = (value: string) => ({ AVAILABLE: '检查通过，可申请下载', PENDING_INSPECTION: '等待安全检查', HELD: '保留中，暂停下载', QUARANTINED: '隔离中，暂停下载' }[value] ?? '状态待确认')
+const state = (value: string) => ({ AVAILABLE: '检查通过，可申请下载', PENDING_INSPECTION: '等待安全检查', HELD: '保留中，暂停下载', QUARANTINED: '隔离中，暂停下载', UNLINKED: '已解绑，保留原件', DISPOSAL_PENDING: '等待确认物理处置', DELETED: '已确认原件处置' }[value] ?? '状态待确认')
 const inspection = (value: string) => ({ CLEAN: '已完成安全检查', PENDING: '检查尚未就绪', NOT_CLEAN: '检查或完整性未通过' }[value] ?? '待确认')
 function clearFiles() { rows.value = []; current.value = history.value = null; selected.value = null; inputEpoch.value++; uploadReason.value = reason.value = ''; page.value = 1; for (const url of urls) URL.revokeObjectURL(url); urls.clear() }
 function clearPrivate() { clearFiles(); parents.value = []; choice.value = search.value = ''; moreParents.value = false }

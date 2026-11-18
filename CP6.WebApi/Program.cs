@@ -1014,6 +1014,7 @@ builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringManufacturingOwnerV1
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringOutputRelationsOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringBaselineOwnerV1>();
 builder.Services.AddSingleton<CP6.Core.Services.Pub.IFileContentInspectorV1, CP6.Core.Services.Pub.DefenderFileContentInspectorV1>();
+builder.Services.Configure<CP6.Core.Services.Pub.FileDispositionOptionsV1>(builder.Configuration.GetSection("FileContent:Disposition"));
 builder.Services.AddScoped<CP6.Core.Services.Pub.FileContentOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Pub.FormFileContentV2>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ControlledDocumentOwnerV1>();

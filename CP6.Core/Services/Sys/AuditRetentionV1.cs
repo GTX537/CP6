@@ -23,6 +23,7 @@ public sealed class AuditRetentionV1(CP6Context db, TimeProvider? time = null)
     public const string Telemetry = "TECH_TELEMETRY";
     public const string Security = "SECURITY_EVENT";
     public const string Field = "FIELD_HISTORY";
+    internal const string TechnicalContent = "TECHNICAL_CONTENT_EVIDENCE";
     public const string ManagePermission = "operlog:retention-manage";
     public const string Worker = "CP6.WebApi.AuditRetentionWorker.v1";
     public const int BatchSize = 500;
@@ -64,7 +65,7 @@ public sealed class AuditRetentionV1(CP6Context db, TimeProvider? time = null)
     };
 
     private static bool KnownClass(string key) => key is Telemetry or Security or Field or "OWNER_RESULT_EVIDENCE"
-        or "REPLAY_AUDIT" or "TECHNICAL_CONTENT_EVIDENCE" or "PRIVACY_EXECUTION_EVIDENCE";
+        or "REPLAY_AUDIT" or TechnicalContent or "PRIVACY_EXECUTION_EVIDENCE";
 
     internal Task LockAsync(CancellationToken ct) => db.Database.ExecuteSqlRawAsync("""
         LOCK TABLE cp6_audit_v1.policies, cp6_audit_v1.safeguards, cp6_audit_v1.plans, cp6_audit_v1.receipts IN SHARE ROW EXCLUSIVE MODE
@@ -104,10 +105,10 @@ public sealed class AuditRetentionV1(CP6Context db, TimeProvider? time = null)
 
     internal async Task<Guid> SafeguardAsync(Guid tenant, Guid owner, string key, AuditSafeguardChangeV1 change, CancellationToken ct)
     {
-        var source = For(key);
+        var source = key == TechnicalContent ? null : For(key);
         var nativeId = change.NativeId;
         if (change.ReferenceId == Guid.Empty || change.Kind is not ("HOLD" or "UNKNOWN" or "PROCESSING" or "RESCHEDULING" or "DISPUTE" or "REQUIRED_REFERENCE")
-            || (source.IntegerId ? !int.TryParse(nativeId, out var number) || number <= 0 || number.ToString(System.Globalization.CultureInfo.InvariantCulture) != nativeId
+            || (source?.IntegerId == true ? !int.TryParse(nativeId, out var number) || number <= 0 || number.ToString(System.Globalization.CultureInfo.InvariantCulture) != nativeId
                 : !Guid.TryParseExact(nativeId, "D", out var guid) || guid.ToString("D") != nativeId || guid == Guid.Empty))
             throw Fail("AUDIT_RETENTION_SAFEGUARD_INVALID", 400);
         var current = await db.Database.SqlQuery<Guid?>($"""
@@ -117,13 +118,23 @@ public sealed class AuditRetentionV1(CP6Context db, TimeProvider? time = null)
             """).SingleOrDefaultAsync(ct);
         if (current != change.ExpectedVersion || !change.Active && current is null)
             throw Fail("AUDIT_RETENTION_SAFEGUARD_CHANGED", 409);
-        await LockSourceAsync(source, ct);
-        await using var entry = Command($"""
-            SELECT EXISTS(SELECT FROM public."{source.Table}" WHERE "TenantId"=@tenant AND "Id"=@id)
-            """);
-        entry.Parameters.AddWithValue("tenant", tenant);
-        entry.Parameters.AddWithValue("id", source.IntegerId ? (object)int.Parse(nativeId, System.Globalization.CultureInfo.InvariantCulture) : Guid.Parse(nativeId));
-        if (!((bool)(await entry.ExecuteScalarAsync(ct))!)) throw Fail("AUDIT_RETENTION_RECORD_NOT_FOUND", 404);
+        if (source is null)
+        {
+            if (!await db.Database.SqlQuery<bool>($"""
+                SELECT EXISTS(SELECT FROM cp6_file_content_v1.contents WHERE tenant_id={tenant} AND file_id={Guid.Parse(nativeId)}) AS "Value"
+                """).SingleAsync(ct))
+                throw Fail("AUDIT_RETENTION_RECORD_NOT_FOUND", 404);
+        }
+        else
+        {
+            await LockSourceAsync(source, ct);
+            await using var entry = Command($"""
+                SELECT EXISTS(SELECT FROM public."{source.Table}" WHERE "TenantId"=@tenant AND "Id"=@id)
+                """);
+            entry.Parameters.AddWithValue("tenant", tenant);
+            entry.Parameters.AddWithValue("id", source.IntegerId ? (object)int.Parse(nativeId, System.Globalization.CultureInfo.InvariantCulture) : Guid.Parse(nativeId));
+            if (!((bool)(await entry.ExecuteScalarAsync(ct))!)) throw Fail("AUDIT_RETENTION_RECORD_NOT_FOUND", 404);
+        }
         var version = Guid.NewGuid();
         await db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_audit_v1.safeguards(tenant_id,retention_class,native_id,reference_id,kind,active,version,owner_id)

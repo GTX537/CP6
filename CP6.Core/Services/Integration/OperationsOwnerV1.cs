@@ -229,7 +229,7 @@ public sealed partial class OperationsOwnerV1
             if(tx!=null)await tx.DisposeAsync();
         }
     }
-    private async Task ValidateFinalAuthorityAsync(OperationsAccessV1 access,Guid subject,CancellationToken ct,
+    internal async Task ValidateFinalAuthorityAsync(OperationsAccessV1 access,Guid subject,CancellationToken ct,
         CP6Context? organizationContext=null)
     {
         await access.ValidateFinalAsync(ct);

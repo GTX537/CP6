@@ -17,6 +17,27 @@ public sealed class FileContentController(FileContentOwnerV1 owner) : Controller
     public async Task<IActionResult> List([FromQuery] Guid parentId, [FromQuery] int page = 1, CancellationToken ct = default) => Result(await owner.ListAsync(parentId, page, ct));
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Read(Guid id, [FromQuery] string? stateVersion, CancellationToken ct) => Result(await owner.ReadAsync(id, stateVersion, ct));
+    [HttpPost("drafts")]
+    public async Task<IActionResult> SaveDraft(FileDraftCommandV1 input, CancellationToken ct) => Result(await owner.SaveDraftAsync(input, ct));
+    [HttpGet("drafts/{id:guid}")]
+    public async Task<IActionResult> ReadDraft(Guid id, CancellationToken ct) => Result(await owner.ReadDraftAsync(id, ct));
+    [HttpPost("drafts/bind")]
+    public async Task<IActionResult> BindDraft(FileDraftBindV1 input, CancellationToken ct) => Result(await owner.BindDraftAsync(input, ct));
+    [HttpGet("draft-operations/{id:guid}")]
+    public async Task<IActionResult> ReadDraftOperation(Guid id, CancellationToken ct) => Result(await owner.ReadDraftOperationAsync(id, ct));
+    [HttpGet("bindings")]
+    public async Task<IActionResult> Bindings([FromQuery] Guid targetId, [FromQuery] string targetVersion,
+        [FromQuery] string targetDigest, CancellationToken ct) =>
+        Result(await owner.ListBindingsAsync(new("Main.Plm.EngineeringRevision.v1", targetId, targetVersion, targetDigest), ct));
+    [HttpPost("dispositions")]
+    public async Task<IActionResult> RequestDisposition(FileDispositionCommandV1 input, CancellationToken ct) =>
+        Result(await owner.RequestDispositionAsync(input, ct));
+    [HttpGet("dispositions/{id:guid}")]
+    public async Task<IActionResult> ReadDisposition(Guid id, CancellationToken ct) =>
+        Result(await owner.ReadDispositionAsync(id, ct));
+    [HttpPost("dispositions/{id:guid}/complete")]
+    public async Task<IActionResult> CompleteDisposition(Guid id, CancellationToken ct) =>
+        Result(await owner.CompleteDispositionAsync(id, ct));
     [HttpPost("uploads"), RequestSizeLimit(20971520)]
     public async Task<IActionResult> Upload([FromHeader(Name = "X-File-Command")] string encoded, CancellationToken ct)
     {
