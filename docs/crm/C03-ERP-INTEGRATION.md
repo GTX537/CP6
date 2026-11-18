@@ -2,6 +2,14 @@
 
 C03 提供 CP6 侧的真实 ERP 查询、BP/Order 命令处理、事务消息与人工恢复能力。CRM 的配套改动提供相同事件契约和服务查询客户端；隔离 transport probe 验证真实 SQL、C01 服务令牌及 Kafka/Dapr 请求和结果。CRM Account、ErpLink、IntegrationProcess、Opportunity → Won 的产品流程仍由 CRM05/06/07 等任务实现，不能用本次 transport probe 代替其验收。
 
+## 既有业务伙伴请求凭据
+
+`GET /internal/erp/v1/business-partner-request-proofs/{account}/{requestId}/{requestVersion}` 提供 `C03-BP-REQUEST-PROOF/1`。调用方使用本节既有的 C01 已登记服务身份、单值 `tenantid` 与 `correlationid`，另以 `X-C03-Original-Message` 指定已知原命令的消息键。请求键来自结果到达前的独立来源。查询没有写入、重放或创建请求的效果。
+
+Main 在同一 PostgreSQL 快照中核对 `erp_integration.CommandInbox` 的原字节、原始消息键和原始 SHA-256，与 `Request` 的组织、业务伙伴命令类别、实际账户、请求 ID、请求版本以及规范化输入 SHA-256。验证原 C03 信封、生产者、地域和版本。返回的 `originalSha256` 与 `inputSha256` 各保留自身语义。响应给出结果权威 `urn:cp6:erp`、`ACC-C03-V1`、合同版本、来源 epoch 及请求定位。未找到原件、摘要或账户不相符、出现原消息冲突、缺少获准来源时均不出具凭据。
+
+`ErpIntegration:BusinessPartnerOriginalSources` 是按租户登记的来源期间，每项含 `TenantId`、`Epoch`、`FromUtc`、`UntilUtc` 和 `ReaderClientIds`。须由来源归属方依据可追溯的历史接收期间登记。匹配使用收件账的服务器接收时间，包含起点，排除终点。运行时拒绝重复 epoch、重叠期间及未登记读取方。默认清单为空。此凭据只证明独立原请求，账户当前写入和原回执披露分别由 CRM.Account 裁决。
+
 ## ERP 数据与操作
 
 业务权威继续使用 `T_WebBusinessPartner`、`T_Quotation`/`T_QuotationDetail`、`T_ProductMaster` 和 `T_Order`/`T_OrderDetail`。`erp_integration` 中的表只记录命令、结果、重试和审计，不保存另一套法定客户或订单。

@@ -41,7 +41,7 @@ namespace CP6.Tests.ErpIntegration;
 /// Real loopback HTTP, production controllers/registration and RS256/JWKS validation.
 /// Discovery/JWKS responses and EF InMemory records are controlled fixtures; these tests do not prove SQL or ERP UAT.
 /// </summary>
-public sealed class ErpHttpAuthorizationTests
+public sealed partial class ErpHttpAuthorizationTests
 {
     private const string Issuer = "https://identity.cp6.test";
     private const string NativeIssuer = "https://native.cp6.test";
@@ -362,10 +362,10 @@ public sealed class ErpHttpAuthorizationTests
         Assert.Empty(await queue.Set<ErpDeliveryReplayAudit>().ToArrayAsync());
     }
 
-    private sealed class Fixture : IAsyncDisposable
+    private sealed partial class Fixture : IAsyncDisposable
     {
         private readonly RSA rsa = RSA.Create(2048);
-        private readonly DbContextOptions<CP6Context> dbOptions = new DbContextOptionsBuilder<CP6Context>()
+        private DbContextOptions<CP6Context> dbOptions = new DbContextOptionsBuilder<CP6Context>()
             .UseInMemoryDatabase("c03-http-" + Guid.NewGuid().ToString("N")).Options;
         private HttpClient backchannel = null!;
         private HttpClient http = null!;
@@ -373,7 +373,7 @@ public sealed class ErpHttpAuthorizationTests
         public Guid FirstJti { get; } = Guid.NewGuid();
         private Guid SecondJti { get; } = Guid.NewGuid();
         public SymmetricSecurityKey NativeKey { get; } = new(RandomNumberGenerator.GetBytes(32));
-        public QueueFactory Queue { get; } = new();
+        public IDbContextFactory<ErpIntegrationContext> Queue { get; private init; } = new QueueFactory();
         public CrmOidcOptions Oidc { get; } = new()
         {
             Enabled = true, Issuer = ErpHttpAuthorizationTests.Issuer,
@@ -389,12 +389,24 @@ public sealed class ErpHttpAuthorizationTests
             catch { await fixture.DisposeAsync(); throw; }
         }
 
-        private async Task InitializeAsync(bool csrfEnabled)
+        private async Task InitializeAsync(bool csrfEnabled, string? proofConnection = null)
         {
             var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "Development", Args = [] });
             builder.Logging.ClearProviders();
             builder.WebHost.UseUrls("http://127.0.0.1:0");
-            builder.Configuration.AddInMemoryCollection(ConfigurationValues());
+            var configuration = ConfigurationValues();
+            if (proofConnection is not null)
+            {
+                configuration["Database:Provider"] = "PostgreSql";
+                configuration["ConnectionStrings:DefaultConnection"] = proofConnection;
+                const string period = "ErpIntegration:BusinessPartnerOriginalSources:0:";
+                configuration[period + "TenantId"] = First.ToString("D");
+                configuration[period + "Epoch"] = "test-source-1";
+                configuration[period + "FromUtc"] = "2020-01-01T00:00:00Z";
+                configuration[period + "UntilUtc"] = "2100-01-01T00:00:00Z";
+                configuration[period + "ReaderClientIds:0"] = "reader-a";
+            }
+            builder.Configuration.AddInMemoryCollection(configuration);
             builder.Services.AddSingleton(Oidc);
             builder.Services.Configure<SecurityOptions>(options => options.Csrf.Enabled = csrfEnabled);
             builder.Services.AddScoped<ITenantContext, TenantContext>();
@@ -449,7 +461,8 @@ public sealed class ErpHttpAuthorizationTests
             App.UseAuthorization();
             App.MapControllers();
             App.MapErpIntegrationEvents();
-            await SeedAsync();
+            if (proofConnection is null) await SeedAsync();
+            else await SeedProofCallers();
             await App.StartAsync();
             var address = App.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.Single();
             http = new HttpClient { BaseAddress = new Uri(address), Timeout = TimeSpan.FromSeconds(15) };

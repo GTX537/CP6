@@ -52,6 +52,7 @@ public static class ErpIntegrationConfiguration
         services.AddSingleton(validator);
         services.AddSingleton(provider => new ErpIntegrationRuntime(options, validator, provider.GetService<TimeProvider>()));
         services.AddSingleton<IDbContextFactory<ErpIntegrationContext>>(new ErpQueueContextFactory(database, connection));
+        services.AddScoped<ErpBusinessPartnerOriginalReader>();
         services.AddScoped<ErpInboxReplayService>();
         services.AddScoped<ErpDeliveryReplayService>();
         services.AddScoped(provider => new ErpRequestHandler(provider.GetRequiredService<IDbContextFactory<ErpIntegrationContext>>(),

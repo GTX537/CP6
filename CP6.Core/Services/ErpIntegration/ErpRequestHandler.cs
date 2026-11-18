@@ -286,7 +286,7 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
             var bp = type == ErpEventContracts.BusinessPartnerRequested ? data.Deserialize<ErpBusinessPartnerRequested>(ErpEventContracts.Json) : null;
             var order = type == ErpEventContracts.OrderRequested ? data.Deserialize<ErpOrderRequested>(ErpEventContracts.Json) : null;
             var hash = bp is not null
-                ? ErpEventContracts.Hash(JsonSerializer.SerializeToUtf8Bytes(bp, ErpEventContracts.Json))
+                ? ErpEventContracts.BusinessPartnerInputSha256(bp)
                 : ErpEventContracts.OrderInputSha256(order!);
             return new(data.GetProperty("tenantId").GetGuid(), data.GetProperty("requestId").GetGuid(),
                 data.GetProperty("accountId").GetGuid(), data.GetProperty("requestVersion").GetInt32(),
