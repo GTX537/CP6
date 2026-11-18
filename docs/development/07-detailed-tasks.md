@@ -2,13 +2,13 @@
 
 台账日期：2026-11-17。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 379 项，已交付 49 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 379 项，已交付 50 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)，分配步骤见[多对话协作](09-parallel-development.md)。所有状态/领取/证据只在JSON登记；未领取的候选不自动READY。
 
 原 375 卡及其全部出口保留；已登记 4 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。
 
-原号 DONE 47/375；完整 DONE 45/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。
+原号 DONE 48/375；完整 DONE 46/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。
 
 ## WP01 现有实现与设计对照
 
@@ -40,7 +40,7 @@
 | [WP02-04 租户创建、暂停恢复与管理审计](../../docs/development/task-plans/WP02.md#wp02-04) | Main | 已交付 | WP02-03 | CODE / M | COORD / WP02-04 |
 | [WP02-05 Main身份权威快照及完整目录发布](../../docs/development/task-plans/WP02.md#wp02-05) | Main | 已交付 | S01-09, WP02-03, WP02-04 | CODE / M | COORD / WP02-05 |
 | [WP02-05b 身份来源批准迁移与完整后继发布余项](../../docs/development/task-plans/WP02.md#wp02-05b) | Main | 已交付 | WP02-05 | CODE / M | COORD / WP02-05b |
-| [WP02-06 CRM身份投影、撤权fence与会话恢复](../../docs/development/task-plans/WP02.md#wp02-06) | CRM | 待安排 | WP02-05, WP02-07 | CODE / M | COORD / W100-01/02 |
+| [WP02-06 CRM身份投影、撤权fence与会话恢复](../../docs/development/task-plans/WP02.md#wp02-06) | CRM | 已交付 | WP02-05, WP02-07 | CODE / M | COORD / WP02-06 |
 | [WP02-07 Platform调用方同事务Inbox与原结果槽](../../docs/development/task-plans/WP02.md#wp02-07) | Platform | 已交付 | S01-09, WP02-01 | CODE / M | C / WP02-07（沿用原WP02-01对话） |
 | [WP02-08 Platform Outbox领取、发送与Unknown恢复](../../docs/development/task-plans/WP02.md#wp02-08) | Platform | 已交付 | WP02-07 | CODE / M | C / WP02-08（沿用原WP02-07对话） |
 | [WP02-09 CRM首个Owner真实共同事务与授权门](../../docs/development/task-plans/WP02.md#wp02-09) | CRM | 待安排 | S01-08, WP02-06, WP02-07 | CODE / M | COORD / W103-01/02 |
