@@ -1,8 +1,13 @@
 <template>
   <div>
-    <VolTable
+    <el-tabs v-model="tab">
+      <el-tab-pane :label="t('原分配器规则')" name="legacy" />
+      <el-tab-pane :label="t('受控编号域')" name="managed" />
+    </el-tabs>
+    <ManagedNumberRules v-if="tab === 'managed'" />
+    <VolTable v-else
       :columns="columns"
-      :api="seqApi"
+      :api="legacyApi"
       add-permission="pub-seq:add"
       edit-permission="pub-seq:edit"
       delete-permission="pub-seq:delete"
@@ -15,14 +20,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import VolTable from '@/components/VolTable.vue'
 import type { ColumnConfig } from '@/components/VolTable.vue'
 import { seqApi } from '@/api/pub/seq'
+import ManagedNumberRules from './ManagedNumberRules.vue'
 
 const { t } = useI18n()
+
+const tab = ref('legacy')
+const legacyApi = { ...seqApi, getList: (params: Parameters<typeof seqApi.getList>[0]) => seqApi.getList({ ...params, legacyOnly: true }) }
 
 const resetOptions = [
   { label: t('不重置'), value: 0 },
@@ -41,7 +50,8 @@ const columns = computed<ColumnConfig[]>(() => [
 ])
 
 async function preview(row: any) {
-  const sample = await seqApi.preview(row.bizKey)
-  ElMessage.success(t('下一个号码示例：{sample}', { sample }))
+  const preview = await seqApi.previewDetails(row.bizKey)
+  const note = preview.wouldReset ? t('已跨周期，原示例沿用旧计数。') : t('跨周期后示例可能变化。')
+  ElMessage.info(t('格式示例') + ' ' + preview.sample + ' · ' + t('未占号') + '。' + note + ' ' + preview.timeZone)
 }
 </script>

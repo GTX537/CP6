@@ -9,10 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Pub;
 
-/// <summary>Independent durable allocation. Every call owns a fresh context/transaction; it never
-/// enlists the later business save. No public Next HTTP endpoint or implicit legacy cutover.</summary>
+/// <summary>每次编号分配使用独立事务，业务保存另行确认。既有域通过原归属方批准后接续。</summary>
 public sealed partial class NumberAllocationOwnerV1(Func<CP6Context> contexts, NumberAllocationScopeV1 scope,
-    NumberAllocationAuthorityV1 authority)
+    NumberAllocationAuthorityV1 authority, INumberCutoverSourceV1? predecessor = null)
 {
     private static NumberAllocationExceptionV1 Error(string code, int status = 409) => new(code, status);
     private static void Text(string value)
@@ -42,6 +41,8 @@ public sealed partial class NumberAllocationOwnerV1(Func<CP6Context> contexts, N
             if (committing && write) throw new NumberAllocationExceptionV1("NUMBER_OUTCOME_UNKNOWN", 503, error);
             try { await tx.RollbackAsync(CancellationToken.None); }
             catch (Exception rollback) { throw new NumberAllocationExceptionV1("NUMBER_OUTCOME_UNKNOWN", 503, new AggregateException(error, rollback)); }
+            if (scope.CutoverBasis == ApprovedPubCutover && error is Npgsql.PostgresException { SqlState: Npgsql.PostgresErrorCodes.UndefinedTable })
+                throw new NumberAllocationExceptionV1("NUMBER_CUTOVER_INCOMPLETE", 503, error);
             throw;
         }
     }
@@ -107,8 +108,11 @@ public sealed partial class NumberAllocationOwnerV1(Func<CP6Context> contexts, N
             var actor = await authority.Require(db, "read", token); var rule = await Rule(store, token);
             var original = await store.Original(command.OperationRef, token);
             if (original != null) return (Original(original, actor, command.OperationRef, NumberAllocationStoreV1.Encode(command)), actor, "read");
+            var prior = await PriorResult(db, store, actor, command.OperationRef, command, token);
+            if (prior != null) return (prior, actor, "read");
             await authority.Require(db, "allocate", token);
             if (command.ExpectedRuleVersion != rule.Version) throw Error("NUMBER_RULE_VERSION_CHANGED", 412);
+            await RequireCutoverWriter(db, store, token);
             var period = Format(rule, command.BusinessInstant, rule.FirstValue).Period;
             var previous = await store.Counter(period, token);
             if (previous == int.MaxValue) throw Error("SEQUENCE_EXHAUSTED", 422);
@@ -129,13 +133,25 @@ public sealed partial class NumberAllocationOwnerV1(Func<CP6Context> contexts, N
         {
             var actor = await authority.Require(db, "read", token); _ = await Rule(store, token);
             var original = await store.Original(operation, token);
-            return (original == null ? null : Original(original, actor, operation, null), actor, "read");
+            var result = original == null ? await PriorResult(db, store, actor, operation, null, token)
+                : Original(original, actor, operation, null);
+            return (result, actor, "read");
         }, ct);
     }
     public Task<NumberAllocationPreviewV1> PreviewAsync(DateTimeOffset instant, CancellationToken ct = default)
+        => PreviewFormatAsync(instant, null, ct);
+
+    public Task<NumberAllocationPreviewV1> PreviewFormatAsync(DateTimeOffset instant, NumberRuleDraftV1? draft,
+        CancellationToken ct = default)
         => Execute(false, async (db, store, token) =>
         {
-            var actor = await authority.Require(db, "read", token); var rule = await Rule(store, token);
+            var actor = await authority.Require(db, "read", token);
+            var rule = await Rule(store, token);
+            if (draft != null)
+            {
+                if (rule.Version != draft.ExpectedRuleVersion) throw Error("NUMBER_RULE_VERSION_CHANGED", 412);
+                rule = FormatDraft(rule, draft.Prefix, draft.DateFormat, draft.MinimumWidth);
+            }
             var period = Format(rule, instant, rule.FirstValue).Period; var previous = await store.Counter(period, token);
             if (previous == int.MaxValue) throw Error("SEQUENCE_EXHAUSTED", 422);
             var sample = Format(rule, instant, previous == null ? rule.FirstValue : previous.Value + 1).Number;

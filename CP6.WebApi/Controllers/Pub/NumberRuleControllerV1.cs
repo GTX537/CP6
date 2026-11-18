@@ -31,6 +31,20 @@ public sealed class NumberRuleControllerV1(IServiceScopeFactory scopes, ITenantC
     [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
     public sealed record OriginalRequest([Required(AllowEmptyStrings = true)] string OperationRef);
 
+    [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+    public sealed record DraftRequest(
+        [Required(AllowEmptyStrings = true)] string ExpectedRuleVersion,
+        [Required(AllowEmptyStrings = true)] string Prefix, string? DateFormat, [Required] int? MinimumWidth);
+
+    [HttpGet("management")]
+    public Task<IActionResult> Management(Guid ruleId, CancellationToken ct)
+        => Execute(ruleId, async owner => await owner.ReadManagementAsync(ct), ct);
+
+    [HttpPost("preview")]
+    public Task<IActionResult> PreviewDraft(Guid ruleId, DraftRequest request, CancellationToken ct)
+        => Execute(ruleId, async owner => await owner.PreviewFormatAsync(DateTimeOffset.UtcNow,
+            new(request.ExpectedRuleVersion, request.Prefix, request.DateFormat, request.MinimumWidth!.Value), ct), ct);
+
     [HttpGet]
     public Task<IActionResult> Current(Guid ruleId, CancellationToken ct)
         => Execute(ruleId, async owner => (object?)await owner.ReadRuleAsync(ct: ct), ct);

@@ -27,6 +27,44 @@ public sealed partial class NumberAllocationOwnerV1
         return JsonSerializer.Deserialize<NumberRuleChangeReceiptV1>(original.Result)!;
     }
 
+    private static NumberAllocationRuleV1 FormatDraft(NumberAllocationRuleV1 current, string prefix,
+        string? dateFormat, int width)
+    {
+        if (prefix.Length > 20 || dateFormat?.Length > 20 || width < 0)
+            throw Error("RULE_INVALID", 422);
+        var draft = current with { Prefix = prefix, DateFormat = dateFormat, MinimumWidth = width };
+        _ = Format(draft, DateTimeOffset.UtcNow, draft.FirstValue);
+        return draft;
+    }
+
+    public Task<NumberRuleManagementV1> ReadManagementAsync(CancellationToken ct = default)
+        => Execute(false, async (db, store, token) =>
+        {
+            var actor = await authority.Require(db, "read", token);
+            var rule = await Rule(store, token);
+            var count = await db.Database.SqlQuery<long>($"""
+                SELECT count(*) AS "Value" FROM cp6_number_allocation_v1.receipts WHERE rule_id={scope.RuleId}
+                """).SingleAsync(token);
+            if (scope.CutoverBasis == ApprovedPubCutover)
+            {
+                await store.RequireCutoverInventory(token);
+                count += await db.Database.SqlQuery<long>($"""
+                    SELECT count(*) AS "Value" FROM cp6_number_allocation_v1.prior_slots
+                     WHERE rule_id={scope.RuleId} AND number_hash IS NOT NULL
+                    """).SingleAsync(token);
+            }
+            var at = await db.Database.SqlQuery<DateTimeOffset?>($"""
+                SELECT COALESCE(
+                    (SELECT changed_at FROM cp6_number_allocation_v1.rule_changes
+                      WHERE rule_id={scope.RuleId} AND version_hash={NumberAllocationStoreV1.Key(rule.Version)}),
+                    (SELECT registered_at FROM cp6_number_allocation_v1.scopes WHERE rule_id={scope.RuleId})
+                ) AS "Value"
+                """).SingleOrDefaultAsync(token);
+            var currentPeriod = Format(rule, DateTimeOffset.UtcNow, rule.FirstValue).Period;
+            var allocator = scope.CutoverBasis == ApprovedPubCutover ? LegacyPubAllocator : "Main.Pub.NumberAllocationOwnerV1";
+            return (new NumberRuleManagementV1(scope, rule, count, at, currentPeriod, allocator), actor, "read");
+        }, ct);
+
     public Task<NumberRuleChangeReceiptV1> ChangeRuleAsync(NumberRuleChangeCommandV1 command, CancellationToken ct = default)
     {
         Text(command.OperationRef); Text(command.ExpectedRuleVersion); Text(command.NewVersion);
@@ -40,11 +78,8 @@ public sealed partial class NumberAllocationOwnerV1
             if (current.Version != command.ExpectedRuleVersion) throw Error("NUMBER_RULE_VERSION_CHANGED", 412);
             if (command.NewVersion == current.Version || await store.HasVersion(command.NewVersion, token))
                 throw Error("NUMBER_RULE_VERSION_REUSED");
-            if (command.Prefix.Length > 20 || command.DateFormat?.Length > 20 || command.MinimumWidth < 0)
-                throw Error("RULE_INVALID", 422);
-            var next = current with { Version = command.NewVersion, Prefix = command.Prefix,
-                DateFormat = command.DateFormat, MinimumWidth = command.MinimumWidth };
-            _ = Format(next, DateTimeOffset.UtcNow, next.FirstValue);
+            var next = FormatDraft(current, command.Prefix, command.DateFormat, command.MinimumWidth)
+                with { Version = command.NewVersion };
             var at = await db.Database.SqlQueryRaw<DateTimeOffset>("SELECT clock_timestamp() AS \"Value\"").SingleAsync(token);
             var receipt = new NumberRuleChangeReceiptV1(Guid.NewGuid(), scope.TenantId, scope.RuleId,
                 scope.SourceOwner, command.OperationRef, current.Version, next, at);
