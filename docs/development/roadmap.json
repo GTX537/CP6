@@ -141116,8 +141116,18 @@
             "id": "SYS-PRIV-01::AC-PV01-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV01-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-15/DELIVERY.md",
+                "source_sha": "944d33b900e1657a7f68a44b27241f1501bf2eaa",
+                "result": "PASS",
+                "observed_at": "2026-11-18T05:51:56.5882920+00:00",
+                "scope": "稳定 UserId 与目标租户共同绑定。主体名相同及不同操作者租户的资料隔离。",
+                "environment": "Windows，.NET SDK 8.0.424，隔离 PostgreSQL 18.6，实际 Kestrel、pg_dump/pg_restore 和本地文件系统，模拟租户、业务、分类及保留资料。",
+                "command": "适用本地和复用证据 `PrivacySubject_operator_tenant_and_same_name`、`TenantPrivacyExport_actual_HTTP_two_sessions`。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/0"
@@ -141127,8 +141137,18 @@
             "id": "SYS-PRIV-01::AC-PV01-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV01-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-15/DELIVERY.md",
+                "source_sha": "944d33b900e1657a7f68a44b27241f1501bf2eaa",
+                "result": "PASS",
+                "observed_at": "2026-11-18T05:51:56.5882920+00:00",
+                "scope": "主体导出使用显式用户、安全事件和稳定角色投影。嵌套自由内容和认证密钥缺省排除，未分类来源保留缺项，原数据仍在。",
+                "environment": "Windows，.NET SDK 8.0.424，隔离 PostgreSQL 18.6，实际 Kestrel、pg_dump/pg_restore 和本地文件系统，模拟租户、业务、分类及保留资料。",
+                "command": "适用本地和复用证据 `PrivacySubject_manifest_uses_actual_stable_sources`、`PrivacyExport_selected_sources`。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/1"
@@ -141149,8 +141169,18 @@
             "id": "SYS-PRIV-01::AC-PV01-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV01-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-15/DELIVERY.md",
+                "source_sha": "944d33b900e1657a7f68a44b27241f1501bf2eaa",
+                "result": "PASS",
+                "observed_at": "2026-11-18T05:51:56.5882920+00:00",
+                "scope": "真实 HTTP 下载复核接收方、主体、当前权限和有效期。撤权、过期或缺少原载荷均不返回旧字节。",
+                "environment": "Windows，.NET SDK 8.0.424，隔离 PostgreSQL 18.6，实际 Kestrel、pg_dump/pg_restore 和本地文件系统，模拟租户、业务、分类及保留资料。",
+                "command": "适用本地和复用证据 `PrivacyExport_actual_HTTP_generates_once`、`PrivacyExport_expired_corrupt_missing_payload`。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/3"
@@ -141160,8 +141190,18 @@
             "id": "SYS-PRIV-01::AC-PV01-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV01-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-15/DELIVERY.md",
+                "source_sha": "944d33b900e1657a7f68a44b27241f1501bf2eaa",
+                "result": "PASS",
+                "observed_at": "2026-11-18T05:51:56.5882920+00:00",
+                "scope": "导出提交结果未知时按原键恢复原制品。最终会话失败时制品、回执和审计共同回滚。",
+                "environment": "Windows，.NET SDK 8.0.424，隔离 PostgreSQL 18.6，实际 Kestrel、pg_dump/pg_restore 和本地文件系统，模拟租户、业务、分类及保留资料。",
+                "command": "适用本地和复用证据 `PrivacyExport_lost_commit_is_recovered`、`PrivacyExport_actual_HTTP_generates_once`。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/4"
@@ -141237,8 +141277,18 @@
             "id": "SYS-PRIV-01::AC-PV03-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV03-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-15/DELIVERY.md",
+                "source_sha": "944d33b900e1657a7f68a44b27241f1501bf2eaa",
+                "result": "PASS",
+                "observed_at": "2026-11-18T05:51:56.5882920+00:00",
+                "scope": "导出、下载、授权管理、处置与审批各自分权。隐私事务采用同一平台主体门，复用实际模拟会话和独立审批的证据。",
+                "environment": "Windows，.NET SDK 8.0.424，隔离 PostgreSQL 18.6，实际 Kestrel、pg_dump/pg_restore 和本地文件系统，模拟租户、业务、分类及保留资料。",
+                "command": "适用本地和复用证据 `PrivacyDisposition_exact_plan_independent`、`PrivacyExport_selected_sources`、`WP02-13b`。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/11"
@@ -141248,8 +141298,18 @@
             "id": "SYS-PRIV-01::AC-PV03-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV03-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-15/DELIVERY.md",
+                "source_sha": "944d33b900e1657a7f68a44b27241f1501bf2eaa",
+                "result": "PASS",
+                "observed_at": "2026-11-18T05:51:56.5882920+00:00",
+                "scope": "目标仍具平台权限时阻止处置；旧直删入口拒绝。复用当前平台末名保护的并发、普通原生写入及真实 HTTP 证据。",
+                "environment": "Windows，.NET SDK 8.0.424，隔离 PostgreSQL 18.6，实际 Kestrel、pg_dump/pg_restore 和本地文件系统，模拟租户、业务、分类及保留资料。",
+                "command": "适用本地和复用证据 `PrivacyDisposition_cross_operator_tenant_hold`、`PrivacyDisposition_legacy_confirmation_cannot_bypass`、`WP02-13b`、`W315`。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/12"
@@ -141259,8 +141319,18 @@
             "id": "SYS-PRIV-01::AC-PV03-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV03-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-15/DELIVERY.md",
+                "source_sha": "944d33b900e1657a7f68a44b27241f1501bf2eaa",
+                "result": "PASS",
+                "observed_at": "2026-11-18T05:51:56.5882920+00:00",
+                "scope": "预览冻结目标、政策、范围、版本及确认依据。变更条件后沿原计划协议重新验证，确认值无法绕过审批。",
+                "environment": "Windows，.NET SDK 8.0.424，隔离 PostgreSQL 18.6，实际 Kestrel、pg_dump/pg_restore 和本地文件系统，模拟租户、业务、分类及保留资料。",
+                "command": "适用本地和复用证据 `PrivacyExecution_scope_confirmation_policy`、`PrivacyDisposition_exact_plan_independent`。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/13"
@@ -141270,8 +141340,18 @@
             "id": "SYS-PRIV-01::AC-PV03-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV03-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-15/DELIVERY.md",
+                "source_sha": "944d33b900e1657a7f68a44b27241f1501bf2eaa",
+                "result": "PASS",
+                "observed_at": "2026-11-18T05:51:56.5882920+00:00",
+                "scope": "实际原生 hold 与执行竞争有明确胜序。审批人或执行权失效阻止新效果，现有 FILE 计划对后来隐私 hold 和审计保护立即生效。",
+                "environment": "Windows，.NET SDK 8.0.424，隔离 PostgreSQL 18.6，实际 Kestrel、pg_dump/pg_restore 和本地文件系统，模拟租户、业务、分类及保留资料。",
+                "command": "适用本地和复用证据 `PrivacyExecution_native_hold_and_execution`、`PrivacyExecution_hold_and_approver`、`PrivacyFile_current_global_hold`。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/14"
@@ -141281,8 +141361,18 @@
             "id": "SYS-PRIV-01::AC-PV03-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV03-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-15/DELIVERY.md",
+                "source_sha": "944d33b900e1657a7f68a44b27241f1501bf2eaa",
+                "result": "PASS",
+                "observed_at": "2026-11-18T05:51:56.5882920+00:00",
+                "scope": "执行撤权后当前读者仍可查原回执。候选已提交而独立源未确认时，继续隔离并按原键恢复。",
+                "environment": "Windows，.NET SDK 8.0.424，隔离 PostgreSQL 18.6，实际 Kestrel、pg_dump/pg_restore 和本地文件系统，模拟租户、业务、分类及保留资料。",
+                "command": "适用本地和复用证据 `PrivacyExecution_actual_HTTP`、`PrivacyRestore_candidate_committed_source_unknown`、`ExportPayloadDisposition_restore_actual_candidate_COMMIT_reply_loss`。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/15"
@@ -141303,8 +141393,18 @@
             "id": "SYS-PRIV-01::AC-PV04-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV04-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-15/DELIVERY.md",
+                "source_sha": "944d33b900e1657a7f68a44b27241f1501bf2eaa",
+                "result": "PASS",
+                "observed_at": "2026-11-18T05:51:56.5882920+00:00",
+                "scope": "实际跨租户隐私 hold、审计必要证据、旧归档及 DOC/RMA 引用分别阻止处置。源 hold 还会关闭曾获准的恢复候选。",
+                "environment": "Windows，.NET SDK 8.0.424，隔离 PostgreSQL 18.6，实际 Kestrel、pg_dump/pg_restore 和本地文件系统，模拟租户、业务、分类及保留资料。",
+                "command": "适用本地和复用证据 `PrivacyFile_current_global_hold`、`FileDisposition_holds_actual_document`、`PrivacyRestore_admitted_request_holds`、`WP02-14b`。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/17"
@@ -141314,8 +141414,18 @@
             "id": "SYS-PRIV-01::AC-PV04-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV04-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-15/DELIVERY.md",
+                "source_sha": "944d33b900e1657a7f68a44b27241f1501bf2eaa",
+                "result": "PASS",
+                "observed_at": "2026-11-18T05:51:56.5882920+00:00",
+                "scope": "原身份、摘要和批准依据保留。已分类导出独立于原件；删除载荷留原回执与墓碑，`REAPPLIED` 和实际缺失分开。",
+                "environment": "Windows，.NET SDK 8.0.424，隔离 PostgreSQL 18.6，实际 Kestrel、pg_dump/pg_restore 和本地文件系统，模拟租户、业务、分类及保留资料。",
+                "command": "适用本地和复用证据 `PrivacyFile_current_global_hold`、`PrivacySubject_manifest_uses_actual_stable_sources`、`TenantPayloadDisposition_new_tomb_invalidates`、`W320`、`W321`。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/18"
@@ -141325,8 +141435,18 @@
             "id": "SYS-PRIV-01::AC-PV04-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV04-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-15/DELIVERY.md",
+                "source_sha": "944d33b900e1657a7f68a44b27241f1501bf2eaa",
+                "result": "PASS",
+                "observed_at": "2026-11-18T05:51:56.5882920+00:00",
+                "scope": "旧归档候选与源库两次提交。候选真实提交、回包丢失时保持隔离及原键责任，明确保留未覆盖的 FILE、备份和外部副本。",
+                "environment": "Windows，.NET SDK 8.0.424，隔离 PostgreSQL 18.6，实际 Kestrel、pg_dump/pg_restore 和本地文件系统，模拟租户、业务、分类及保留资料。",
+                "command": "适用本地和复用证据 `PrivacyRestore_candidate_committed_source_unknown`、`ExportPayloadDisposition_restore_actual_candidate_COMMIT_reply_loss`、`PrivacyRestore_actual_HTTP_independent_approval`、`W324`。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/19"
@@ -141347,8 +141467,18 @@
             "id": "SYS-PRIV-01::AC-PV04-06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV04-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-15/DELIVERY.md",
+                "source_sha": "944d33b900e1657a7f68a44b27241f1501bf2eaa",
+                "result": "PASS",
+                "observed_at": "2026-11-18T05:51:56.5882920+00:00",
+                "scope": "旧非 EF 证据限于原有身份适配。已接 Main 处置只确认冻结作用域及个人字段，当前 CRM 注册身份封存记录限于原合同。",
+                "environment": "Windows，.NET SDK 8.0.424，隔离 PostgreSQL 18.6，实际 Kestrel、pg_dump/pg_restore 和本地文件系统，模拟租户、业务、分类及保留资料。",
+                "command": "适用本地和复用证据 `PrivacyExecution_exact_identity_effect`、`PrivacyDisposition_legacy_confirmation_cannot_bypass`、`W670`。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/21"
@@ -141357,7 +141487,29 @@
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "GAPS_ASSIGNED",
+        "reviewed_at": "2026-11-18T05:51:56.5882920+00:00",
+        "report": "docs/development/evidence/WP02-15/DELIVERY.md",
+        "original_cases_reviewed": 22,
+        "required_revision_cases": 0,
+        "gaps": [
+          {
+            "case_id": "SYS-PRIV-01::AC-PV02-01",
+            "owner_task_id": "WP03-04",
+            "gap": "在最新 CRM 真实 Owner 的询盘、Lead 与相关活动中核对原保留锚点、历史和搜索、父子独立时限、原键恢复与实际调度报警。沿本卡已有证据复用范围逐项组合。 对应 AC-PV02-01、AC-PV02-02、AC-PV02-03、AC-PV02-04、AC-PV02-05、AC-PV02-06。"
+          },
+          {
+            "case_id": "SYS-PRIV-01::AC-PV01-03",
+            "owner_task_id": "WP14-08",
+            "gap": "按实际多仓和 Owner 核对逐来源 asOf、保留政策与引用全集，以及独立 FILE、WAL、外部归档和跨 Owner 的恢复墓碑及开放条件。 对应 AC-PV01-03、AC-PV04-01、AC-PV04-05。"
+          }
+        ],
+        "new_product_execution": true,
+        "classification": "BUSINESS",
+        "review_effective_seconds": 287.897
+      }
     },
     {
       "id": "SYS-FILE-01",
@@ -141831,11 +141983,6 @@
             "gap": "CRM ACT 在真实业务 Owner 使用 LOCAL_AUTHORITATIVE_GUARD，验证正反两条必需修订、完整集合、目标权限、分页和新请求持续当前授权。 对应 AC-FI02-02、AC-FI02-03、AC-FI03-01、AC-FI03-04、AC-FI04-01、AC-FI06-01、AC-FI06-02、AC-FI06-04。"
           },
           {
-            "case_id": "SYS-FILE-01::AC-FI05-02",
-            "owner_task_id": "WP02-15",
-            "gap": "核实已接隐私 Owner 的真实引用清单和文件保留责任，以及共享路径、擦除原收据及恢复墓碑组合。其他业务适配仍按各自原卡实施。 对应 AC-FI05-02、AC-FI05-04、AC-FI07-06。"
-          },
-          {
             "case_id": "SYS-FILE-01::AC-FI04-03",
             "owner_task_id": "WP05-34",
             "gap": "真实 ReleaseRevision 冻结准确技术文件 manifest、版本、用途及目标范围，后继版本和新用途沿原批准。 对应 AC-FI04-03、AC-FI07-01、AC-FI07-03、AC-FI07-05。"
@@ -141848,12 +141995,24 @@
           {
             "case_id": "SYS-FILE-01::AC-FI01-01",
             "owner_task_id": "WP14-08",
-            "gap": "跨 Owner 的真实部分失败、未知提交、迟到保护及从保留状态恢复，核对实际媒体和原件/派生结果。 对应 AC-FI01-01、AC-FI04-04、AC-FI05-01、AC-FI07-02。"
+            "gap": "跨 Owner 的真实部分失败、未知提交、迟到保护及从保留状态恢复，核对实际媒体和原件/派生结果。 对应 AC-FI01-01、AC-FI04-04、AC-FI05-01、AC-FI07-02。 WP02-15 已实证已接隐私 Owner 及 Main FILE 的 hold、归档共享路径和原回执，外部引用全集、独立工程文件及跨 Owner 恢复和保护保留为三条原 AC 的未证出口。对应 AC-FI05-02、AC-FI05-04、AC-FI07-06。"
           }
         ],
         "new_product_execution": true,
         "classification": "BUSINESS",
-        "review_effective_seconds": 124.794
+        "review_effective_seconds": 124.794,
+        "latest_follow_up": {
+          "reviewed_at": "2026-11-18T05:51:56.5882920+00:00",
+          "report": "docs/development/evidence/WP02-15/DELIVERY.md",
+          "implementation_task_id": "WP02-15",
+          "cases": [
+            "AC-FI05-02",
+            "AC-FI05-04",
+            "AC-FI07-06"
+          ],
+          "covered": "独立租户的旧归档共享原字节，PRIV hold、AUD 必要引用和 FILE 原计划；已登记 PRIV Owner 的归档墓碑复验。",
+          "remaining_owner_task_id": "WP14-08"
+        }
       }
     },
     {
@@ -168151,6 +168310,11 @@
       "at": "2026-11-18T04:11:42.9129918+00:00",
       "change": "WP02-14b 卡 DONE。完成 Main 原生文件草稿绑定、当前共同门和受控物理处置。SYS-FILE-01 已复核原 30 项及两条必需修订，五组真实采用与组合缺口保留。下一张可开工卡为 WP02-15。",
       "evidence": "docs/development/evidence/WP02-14b/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-18T05:51:56.5882920+00:00",
+      "change": "WP02-15 卡 DONE。已接 Main 隐私 Owner、原键和归档墓碑复核完成，新增 FILE、PRIV 和 AUD 共门联测。SYS-PRIV-01 原 22 条中 13 条通过，剩余 9 条归 WP03-04 和 WP14-08。SYS-FILE-01 已复核三条关联场景。",
+      "evidence": "docs/development/evidence/WP02-15/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -188528,7 +188692,7 @@
         "official_started_at": "2026-11-18T03:13:06.253766+00:00",
         "verified_at": "2026-11-18T04:11:42.9129918+00:00",
         "target_review_started_at": "2026-11-18T04:09:38.1192853+00:00",
-        "effective_seconds": 3668.119,
+        "effective_seconds": 3914.859,
         "size": "M",
         "budget_seconds": 14305.753,
         "mandatory_split_seconds": 21458.63,
@@ -188537,7 +188701,9 @@
           "WP02-14"
         ],
         "new_product_execution": true,
-        "preceding_integration_seconds": 543.526
+        "preceding_integration_seconds": 543.526,
+        "official_finish": "2026-11-18T04:15:49.653426+00:00",
+        "post_candidate_finalization_seconds": 246.74
       }
     },
     {
@@ -188562,60 +188728,53 @@
         "file:Main:CP6.WebApi/BackgroundServices/OperLogCleanupService.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-15",
-      "entry_gate": "NOT_CHECKED",
+      "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W125-BUG-537",
+        "chat_label": "EXEC-WP02-14B",
         "repository": "Main",
-        "owning_task_repository": "Main",
-        "branch": "codex/bug-537",
-        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-25T02:02:39.114673+00:00",
-        "baseline_sha": "0723de10a3aa99a89325436560b50c72a88270ca",
-        "entry_evidence": "docs/development/dispatch/20261025-wave125/README.md",
+        "branch": "codex/wp02-15",
+        "worktree": "D:/CP6-worktrees/dev-2",
+        "claimed_at": "2026-11-18T05:29:05.900365+00:00",
+        "baseline_sha": "4ecad67f4a5a092c3e415d2c9516b084adc9e89d",
+        "entry_evidence": "docs/development/evidence/WP02-15/DELIVERY.md",
         "phase": "CLOSED",
-        "dispatch_scope": "W125",
-        "bounded_window_gate": "CONFIRMED",
-        "full_task_gate_unchanged": true,
+        "dispatch_scope": "已接 Main 的主体及租户导出、权限及处置，真实旧库重施已登记的隐私墓碑，Main FILE 消费当前 PRIV 和 AUD 保留决定与共享归档引用。",
+        "delivery_report": "docs/development/evidence/WP02-15/DELIVERY.md",
+        "full_task_completed": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "de4f7dd91bad618e57854968bb1a4540b5b7dc62",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-15/messages/20261025T020239Z-wave125-start/MESSAGE.md",
-          "at": "2026-10-25T02:02:39.114673+00:00"
+          "commit": "4a3d18a6eef00567de592295f45915dad521c4a2",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-15/messages/20261118T053003Z-exec-wp02-14b/MESSAGE.md",
+          "at": "2026-11-18T05:30:03Z"
         },
-        "reserved_write_resources": [
-          "Main:privacy-orchestration",
-          "Main:subject-export-ui",
-          "Main:coordination-ledger"
-        ],
-        "reserved_postgresql_ports": [
-          55451
-        ],
-        "handoff_branch": "codex/w125-handoff",
-        "actions_authorized": false,
-        "deployment_authorized": false,
-        "existing_database_migration_authorized": false,
-        "worker_delivery_received": true,
-        "candidate_review_completed": true,
-        "candidate_integrated": true,
-        "resources_released": true,
-        "full_task_completed": false,
-        "worker_delivery_ref": "docs/development/evidence/W125-01/DELIVERY.md",
-        "lifecycle_snapshot": {
-          "main_task": "CP6:BUG-537",
-          "main_finish_required": false,
-          "main_seat_released": true,
-          "handoff_seat_released": true,
-          "main_branch_deleted": true,
-          "handoff_branch_deleted": true,
-          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave125-final-verification.json"
+        "dispatch_decision_ref": {
+          "commit": "afff74eb2e9ef7684237ae835a11b9d03c58a79d",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261118T052117Z-exec-wp02-14b-wp02-15/MESSAGE.md"
         }
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-15/DELIVERY.md",
+          "source_sha": "944d33b900e1657a7f68a44b27241f1501bf2eaa",
+          "result": "PASS",
+          "observed_at": "2026-11-18T05:47:08.6912561+00:00",
+          "scope": "已接 Main 的主体及租户导出、权限及处置，真实旧库重施已登记的隐私墓碑，Main FILE 消费当前 PRIV 和 AUD 保留决定与共享归档引用。",
+          "environment": "Windows，.NET SDK 8.0.424，隔离 PostgreSQL 18.6，实际 Kestrel、pg_dump/pg_restore 和本地文件系统，模拟租户、业务、分类及保留资料。",
+          "command": "本地 dotnet test 受影响的 PostgreSQL 场景，精确命令及 TRX 见交付报告。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-15/DELIVERY.md",
+        "source_sha": "944d33b900e1657a7f68a44b27241f1501bf2eaa",
+        "remote_main_sha": "4ecad67f4a5a092c3e415d2c9516b084adc9e89d",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1255",
+        "scope": "remote_main_sha 为测试冻结及准入基线。联测和台账按本 PR 正常合并，准确远端采用与席位证明见官方 finish。",
+        "adoption_record": "D:/CP6-test-artifacts/WP02-15/finish.json"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
@@ -188677,34 +188836,50 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W310-01",
-        "as_of": "2026-11-08",
-        "classification": "IMPLEMENTATION_REMAINS",
-        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-15",
-        "delivered": "主体/租户部分导出、当前分权下载；身份/主体载荷/安全分类字段/租户载荷真实处置与对应恢复候选均已采用。",
-        "remaining": "未分类安全内容/不可归属事件、授权/组织引用、OA/PLM/CRM/FILE及其他Owner、整租户全量、WAL/备份/外部副本与完整环境恢复仍余。",
-        "next_action": "先选有准确分类和权威Owner的直接来源；新租户载荷恢复已完成，不再列缺口，不宣称全部副本已清。",
+        "window": "WP02-15",
+        "as_of": "2026-11-18T05:51:56.5882920+00:00",
+        "classification": "DELIVERED",
+        "report": "docs/development/evidence/WP02-15/DELIVERY.md",
+        "delivered": "已接 Main 的主体及租户导出、权限及处置，真实旧库重施已登记的隐私墓碑，Main FILE 消费当前 PRIV 和 AUD 保留决定与共享归档引用。",
+        "remaining": "对应目标的完整跨仓、CRM 实际消费及外部归档验收归原卡。",
         "evidence_refs": [
-          "docs/development/evidence/W125-01/DELIVERY.md",
-          "docs/development/evidence/W135-01/DELIVERY.md",
-          "docs/development/evidence/W127-01/DELIVERY.md",
-          "docs/development/evidence/W128-01/DELIVERY.md",
-          "docs/development/evidence/W302-01/DELIVERY.md",
-          "docs/development/evidence/W303-01/DELIVERY.md",
-          "docs/development/evidence/W311-01/DELIVERY.md",
-          "docs/development/evidence/W312-01/DELIVERY.md",
-          "docs/development/evidence/W313-01/DELIVERY.md",
-          "docs/development/evidence/W314-01/DELIVERY.md",
-          "docs/development/evidence/W315-01/DELIVERY.md",
-          "docs/development/evidence/W320-01/DELIVERY.md",
-          "docs/development/evidence/W321-01/DELIVERY.md",
-          "docs/development/evidence/W322-01/DELIVERY.md",
-          "docs/development/evidence/W323-01/DELIVERY.md",
-          "docs/development/evidence/W324-01/DELIVERY.md",
-          "docs/development/evidence/W310-01/DELIVERY.md"
+          "docs/development/evidence/WP02-15/DELIVERY.md"
         ],
-        "formal_state_changed": false,
-        "new_product_validation": false
+        "formal_state_changed": true,
+        "new_product_validation": true,
+        "latest_window": "WP02-15",
+        "review_history": [
+          {
+            "window": "W310-01",
+            "as_of": "2026-11-08",
+            "classification": "IMPLEMENTATION_REMAINS",
+            "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-15",
+            "delivered": "主体/租户部分导出、当前分权下载；身份/主体载荷/安全分类字段/租户载荷真实处置与对应恢复候选均已采用。",
+            "remaining": "未分类安全内容/不可归属事件、授权/组织引用、OA/PLM/CRM/FILE及其他Owner、整租户全量、WAL/备份/外部副本与完整环境恢复仍余。",
+            "next_action": "先选有准确分类和权威Owner的直接来源；新租户载荷恢复已完成，不再列缺口，不宣称全部副本已清。",
+            "evidence_refs": [
+              "docs/development/evidence/W125-01/DELIVERY.md",
+              "docs/development/evidence/W135-01/DELIVERY.md",
+              "docs/development/evidence/W127-01/DELIVERY.md",
+              "docs/development/evidence/W128-01/DELIVERY.md",
+              "docs/development/evidence/W302-01/DELIVERY.md",
+              "docs/development/evidence/W303-01/DELIVERY.md",
+              "docs/development/evidence/W311-01/DELIVERY.md",
+              "docs/development/evidence/W312-01/DELIVERY.md",
+              "docs/development/evidence/W313-01/DELIVERY.md",
+              "docs/development/evidence/W314-01/DELIVERY.md",
+              "docs/development/evidence/W315-01/DELIVERY.md",
+              "docs/development/evidence/W320-01/DELIVERY.md",
+              "docs/development/evidence/W321-01/DELIVERY.md",
+              "docs/development/evidence/W322-01/DELIVERY.md",
+              "docs/development/evidence/W323-01/DELIVERY.md",
+              "docs/development/evidence/W324-01/DELIVERY.md",
+              "docs/development/evidence/W310-01/DELIVERY.md"
+            ],
+            "formal_state_changed": false,
+            "new_product_validation": false
+          }
+        ]
       },
       "wave302_field_disposition_owner": {
         "status": "CLOSED",
@@ -189048,6 +189223,77 @@
           "workspace_clean": true
         },
         "lifecycle_complete": true
+      },
+      "assignment_history": [
+        {
+          "chat_label": "COORD / W125-BUG-537",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/bug-537",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-25T02:02:39.114673+00:00",
+          "baseline_sha": "0723de10a3aa99a89325436560b50c72a88270ca",
+          "entry_evidence": "docs/development/dispatch/20261025-wave125/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "W125",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "de4f7dd91bad618e57854968bb1a4540b5b7dc62",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-15/messages/20261025T020239Z-wave125-start/MESSAGE.md",
+            "at": "2026-10-25T02:02:39.114673+00:00"
+          },
+          "reserved_write_resources": [
+            "Main:privacy-orchestration",
+            "Main:subject-export-ui",
+            "Main:coordination-ledger"
+          ],
+          "reserved_postgresql_ports": [
+            55451
+          ],
+          "handoff_branch": "codex/w125-handoff",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "existing_database_migration_authorized": false,
+          "worker_delivery_received": true,
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "resources_released": true,
+          "full_task_completed": false,
+          "worker_delivery_ref": "docs/development/evidence/W125-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_task": "CP6:BUG-537",
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave125-final-verification.json"
+          }
+        }
+      ],
+      "remaining_scope": [],
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP02-15/DELIVERY.md",
+        "started_at": "2026-11-18T05:29:05.900365+00:00",
+        "official_started_at": "2026-11-18T05:29:05.900365+00:00",
+        "technical_verified_at": "2026-11-18T05:47:08.6912561+00:00",
+        "verified_at": "2026-11-18T05:51:56.5882920+00:00",
+        "target_review_started_at": "2026-11-18T05:47:08.6912561+00:00",
+        "effective_seconds": 1082.791,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-04",
+          "WP02-13",
+          "WP02-14"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 246.74
       }
     },
     {
@@ -290906,7 +291152,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 30841.816,
+      "effective_seconds": 32459.244,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -290920,7 +291166,8 @@
         "WP02-13b",
         "WP02-06",
         "WP02-09",
-        "WP02-14b"
+        "WP02-14b",
+        "WP02-15"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -290971,7 +291218,7 @@
         }
       ],
       "current_stage": "A",
-      "next_card": "WP02-15",
+      "next_card": "WP02-16b",
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -291121,20 +291368,11 @@
         }
       },
       "next_card_selection": {
-        "rule": "当前阶段已满足严格前置且无实际阻塞的卡按全图最长下游链，等长按原序列",
-        "baseline_sha": "ac52760b9420b221488168d718ae24ae00a4ced2",
-        "after_card": "WP02-14b",
-        "selected": "WP02-15",
+        "rule": "严格前置和无实际阻塞的阶段候选按全图最长链，等长按原序列",
+        "baseline_sha": "4ecad67f4a5a092c3e415d2c9516b084adc9e89d",
+        "after_card": "WP02-15",
+        "selected": "WP02-16b",
         "candidates": [
-          {
-            "card": "WP02-15",
-            "global_edges": 40,
-            "phase_edges": 1,
-            "phase_path": [
-              "WP02-15",
-              "WP03-04"
-            ]
-          },
           {
             "card": "WP02-16b",
             "global_edges": 36,
@@ -291209,10 +291447,10 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 2388.006,
+      "target_review_effective_seconds": 2675.903,
       "last_checkpoint_counts": {
-        "original_done": 49,
-        "fully_done": 47,
+        "original_done": 50,
+        "fully_done": 48,
         "targets_done": 4,
         "new_splits": 5,
         "periodic_checkpoint_due": false

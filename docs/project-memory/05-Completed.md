@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP02-14b 通用文件正式化、Owner 共门与完整引用清理余项](../development/evidence/WP02-14b/DELIVERY.md)（DONE），核对时间 `2026-11-18T04:11:42.9129918+00:00`。
+- [WP02-15 隐私subject目录、导出与擦除编排](../development/evidence/WP02-15/DELIVERY.md)（DONE），核对时间 `2026-11-18T05:51:56.5882920+00:00`。
 
 ### 已关闭目标
 
