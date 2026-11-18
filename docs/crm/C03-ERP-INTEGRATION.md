@@ -2,6 +2,14 @@
 
 C03 提供 CP6 侧的真实 ERP 查询、BP/Order 命令处理、事务消息与人工恢复能力。CRM 的配套改动提供相同事件契约和服务查询客户端；隔离 transport probe 验证真实 SQL、C01 服务令牌及 Kafka/Dapr 请求和结果。CRM Account、ErpLink、IntegrationProcess、Opportunity → Won 的产品流程仍由 CRM05/06/07 等任务实现，不能用本次 transport probe 代替其验收。
 
+## A12 账户收件服务身份
+
+CRM 通过 HTTPS 向 `/connect/account-c03-service-identity` 发送已登记客户端的 Basic 认证和 JSON 正文。正文包含固定用途 `service:account.c03.ingest` 与本次调用生成的 32 字节随机数 `requestNonce`（无填充 base64url）。Main 从当前已发布的独立账户服务登记取得租户、客户端、主体与认证 epoch。签发的 RS256 凭据最长 60 秒，受众为 `urn:cp6:crm:account-c03-ingest`。响应和凭据请勿缓存或记入日志。[凭据字段与摘要算法](../../contracts/iam/account-c03-service-identity/v1/contract.json)
+
+宿主从 `AccountC03ServicePrincipals` 读取专用登记。启用后须配置 `IdentityPublicationEnabled`、递增的发布修订、登记版本、独立客户端与主体、部门、角色和认证 epoch。变更登记内容或停用时更新登记版本与 epoch。账户来源使用独立的服务主体 v2 事件和合同包 1.4.0。原询盘 v1 继续按原来源处理。部署既有来源登记的环境按其原受控切换程序启用新摘要。[账户来源 schema](../../contracts/events/platform/service-principal-changed/v2/schema.json)
+
+凭据的 `source_sha256` 绑定服务主体，`facts_sha256` 绑定租户、部门及角色的当前发布。CRM 核对签名、本次调用与持锁的 C02 来源，账户归属方在实际事务中分别判断该账户的入史能力与原回执当前读权。
+
 ## 既有业务伙伴请求凭据
 
 `GET /internal/erp/v1/business-partner-request-proofs/{account}/{requestId}/{requestVersion}` 提供 `C03-BP-REQUEST-PROOF/1`。调用方使用本节既有的 C01 已登记服务身份、单值 `tenantid` 与 `correlationid`，另以 `X-C03-Original-Message` 指定已知原命令的消息键。请求键来自结果到达前的独立来源。查询没有写入、重放或创建请求的效果。

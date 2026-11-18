@@ -92,15 +92,29 @@ builder.Services.AddSingleton(new CP6.WebApi.Services.InquiryPermissionSigningKe
 builder.Services.AddScoped<CP6.WebApi.Services.InquiryPermissionIssuerV1>();
 var inquiryServices = builder.Configuration.GetSection("InquiryServicePrincipals").Get<CP6.WebApi.Services.InquiryServicePrincipalOptionsV1>()
     ?? new CP6.WebApi.Services.InquiryServicePrincipalOptionsV1();
-builder.Services.AddSingleton(new CP6.WebApi.Services.InquiryServicePrincipalRegistryV1(inquiryServices, crmOidc));
+var inquiryRegistry = new CP6.WebApi.Services.InquiryServicePrincipalRegistryV1(inquiryServices, crmOidc);
+builder.Services.AddSingleton(inquiryRegistry);
+var accountServices = builder.Configuration.GetSection("AccountC03ServicePrincipals").Get<CP6.WebApi.Services.InquiryServicePrincipalOptionsV1>()
+    ?? new CP6.WebApi.Services.InquiryServicePrincipalOptionsV1();
+var accountRegistry = new CP6.WebApi.Services.AccountC03ServicePrincipalRegistryV1(accountServices, crmOidc, inquiryRegistry);
+builder.Services.AddSingleton(accountRegistry);
 builder.Services.AddScoped<CP6.WebApi.Services.InquiryServicePermissionIssuerV1>();
-if (inquiryServices.IdentityPublicationEnabled)
+if (inquiryServices.IdentityPublicationEnabled || accountServices.IdentityPublicationEnabled)
 {
     if (!CP6.WebApi.Configuration.CrmIdentityConfiguration.BindOptions(builder.Configuration).Enabled
         || database.Provider != CP6.Core.Persistence.DatabaseProvider.PostgreSql)
         throw new InvalidOperationException("C02_SERVICE_SOURCE_REQUIRES_POSTGRESQL_IDENTITY");
-    builder.Services.AddScoped<CP6.WebApi.Services.InquiryServiceIdentityPublisherV1>();
-    builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.InquiryServiceIdentityWorkerV1>();
+    if (inquiryServices.IdentityPublicationEnabled)
+    {
+        builder.Services.AddScoped<CP6.WebApi.Services.InquiryServiceIdentityPublisherV1>();
+        builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.InquiryServiceIdentityWorkerV1>();
+    }
+    if (accountServices.IdentityPublicationEnabled)
+    {
+        builder.Services.AddScoped<CP6.WebApi.Services.AccountC03ServiceIdentityPublisher>();
+        builder.Services.AddScoped<CP6.WebApi.Services.AccountC03ServiceIdentityIssuer>();
+        builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.AccountC03ServiceIdentityWorker>();
+    }
 }
 builder.Services.AddScoped<CP6.WebApi.Services.CrmOidcDirectory>();
 builder.Services.AddScoped<CP6.WebApi.Services.ICrmOidcServiceDirectory>(services =>

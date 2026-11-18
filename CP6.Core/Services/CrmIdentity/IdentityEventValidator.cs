@@ -9,6 +9,7 @@ public sealed class IdentityEventValidator : ICp6OutboxEnvelopeValidator, ICp6In
 {
     private readonly Cp6CloudEventValidator platform;
     private readonly string issuer;
+    private readonly bool accountServices;
     private readonly Cp6ContractBundle bundle;
     private static readonly HashSet<string> SensitiveNames = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -17,17 +18,18 @@ public sealed class IdentityEventValidator : ICp6OutboxEnvelopeValidator, ICp6In
         "clientsecret", "privatekey", "authorization", "secret", "idtoken", "signingkey"
     };
 
-    public IdentityEventValidator(Cp6ContractBundle bundle, string issuer)
+    public IdentityEventValidator(Cp6ContractBundle bundle, string issuer, bool accountServices = false)
     {
         if (!Uri.TryCreate(issuer, UriKind.Absolute, out var uri) || uri.Scheme != "https" ||
             !string.IsNullOrEmpty(uri.Query) || !string.IsNullOrEmpty(uri.Fragment))
             throw new ArgumentException("Identity issuer must be an absolute HTTPS URI.", nameof(issuer));
         platform = new(bundle);
         this.bundle = bundle;
+        this.accountServices = accountServices;
         this.issuer = issuer;
     }
 
-    internal IdentityEventValidator ForIssuer(string approvedIssuer) => approvedIssuer == issuer ? this : new(bundle, approvedIssuer);
+    internal IdentityEventValidator ForIssuer(string approvedIssuer) => approvedIssuer == issuer ? this : new(bundle, approvedIssuer, accountServices);
 
     public bool IsValid(ReadOnlyMemory<byte> payload)
         => IsValidEnvelope(payload, enforceTransportLimit: true);
@@ -71,7 +73,8 @@ public sealed class IdentityEventValidator : ICp6OutboxEnvelopeValidator, ICp6In
             var expected = root.GetProperty("type").GetString() switch
             {
                 IdentityEventContracts.TenantChanged => "tenant:" + tenant,
-                IdentityEventContracts.ServicePrincipalChanged => "service-principal:" + data.GetProperty("principalId").GetString(),
+                IdentityEventContracts.AccountServicePrincipalChanged when !accountServices => null,
+                IdentityEventContracts.ServicePrincipalChanged or IdentityEventContracts.AccountServicePrincipalChanged => "service-principal:" + data.GetProperty("principalId").GetString(),
                 IdentityEventContracts.UserChanged or IdentityEventContracts.UserChangedV2 => "user:" + data.GetProperty("userId").GetString(),
                 IdentityEventContracts.DepartmentChanged => "department:" + data.GetProperty("deptId").GetString(),
                 IdentityEventContracts.PermissionChanged or IdentityEventContracts.PermissionChangedV2 or IdentityEventContracts.PermissionChangedV3 => "permission:" + data.GetProperty("subjectId").GetString(),
@@ -80,7 +83,7 @@ public sealed class IdentityEventValidator : ICp6OutboxEnvelopeValidator, ICp6In
                 _ => null
             };
             if (expected is null || aggregate != expected) return false;
-            if (root.GetProperty("type").GetString() == IdentityEventContracts.ServicePrincipalChanged)
+            if (IdentityEventContracts.IsServicePrincipal(root.GetProperty("type").GetString()))
             {
                 var serviceRoles = data.GetProperty("roles").EnumerateArray().Select(x => x.GetString()).ToArray();
                 if (serviceRoles.Distinct(StringComparer.Ordinal).Count() != serviceRoles.Length

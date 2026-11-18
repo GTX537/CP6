@@ -114,12 +114,18 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
         RequireTransaction();
         if (!db.Database.IsNpgsql() || !runtime.Options.Tenants.ContainsKey(data.TenantId))
             throw new InvalidOperationException("C02_SERVICE_SOURCE_UNAVAILABLE");
+        var type = data.SourceProfile switch
+        {
+            "cp6-inquiry-service-v1" => IdentityEventContracts.ServicePrincipalChanged,
+            IdentityEventContracts.AccountServiceProfile => IdentityEventContracts.AccountServicePrincipalChanged,
+            _ => throw new InvalidOperationException("C02_SERVICE_SOURCE_UNAVAILABLE")
+        };
         var aggregate = "service-principal:" + data.PrincipalId.ToString("D");
         var previous = await LoadLockedAsync(data.TenantId, aggregate, ct);
         if (previous is not null)
         {
             var old = JsonSerializer.Deserialize<ServicePrincipalIdentityData>(previous.PayloadJson, IdentityEventContracts.Json)!;
-            if (previous.EventType != IdentityEventContracts.ServicePrincipalChanged || old.SourceProfile != data.SourceProfile)
+            if (previous.EventType != type || old.SourceProfile != data.SourceProfile)
                 throw new InvalidOperationException("C02_SERVICE_SOURCE_COLLISION");
             // Compare JSON for arrays; a changed registration requires an explicit new persisted epoch/version.
             var changed = JsonSerializer.Serialize(old with { Version = 0 }, IdentityEventContracts.Json)
@@ -129,7 +135,7 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
             if (changed && !deleted && (old.RegistrationVersion == data.RegistrationVersion || old.AuthenticationEpoch == data.AuthenticationEpoch))
                 throw new InvalidOperationException("C02_SERVICE_REGISTRATION_REQUIRES_NEW_EPOCH_AND_VERSION");
         }
-        await WriteDataAsync(data.TenantId, aggregate, IdentityEventContracts.ServicePrincipalChanged, data, deleted, previous, ct);
+        await WriteDataAsync(data.TenantId, aggregate, type, data, deleted, previous, ct);
     }
 
     public async Task RevokeTokenAsync(Guid tenant, string jti, string subject, DateTimeOffset expiry,
@@ -200,7 +206,7 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
         {
             var role = IdentityEventContracts.IsPermissionChanged(type);
             var userSource = IdentityEventContracts.IsUserChanged(type);
-            var versionedSource = role || userSource || type == IdentityEventContracts.ServicePrincipalChanged;
+            var versionedSource = role || userSource || IdentityEventContracts.IsServicePrincipal(type);
             var browserRevocation = IdentityEventContracts.IsTokenRevoked(type) &&
                 data["subjectId"]!.GetValue<string>().StartsWith("user:", StringComparison.Ordinal);
             if (role && previous is not null && fence.IsRegistered(tenant))
