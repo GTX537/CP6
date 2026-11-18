@@ -671,7 +671,8 @@
         "WP02-09"
       ],
       "external_prerequisites": [
-        "采用 Main ERP 已发布的 C03 业务伙伴成功和失败结果合同；CRM 账户原请求归属方须从独立的已有原请求核实受信租户、账户归属、请求身份及当前授权。用户已批准本卡先承接该 A12 子集。"
+        "采用 Main ERP 已发布的 C03 业务伙伴成功和失败结果合同；CRM 账户原请求归属方须从独立的已有原请求核实受信租户、账户归属、请求身份及当前授权。用户已批准本卡先承接该 A12 子集。",
+        "2026-11-18 总负责批准在本余卡内按 Main.C03 既有原请求只读凭据、CRM.Account 核实已有账户归属与写入及原回执当前读权、原 A12 入史的次序交付。结果来件不得用来补建或登记原请求。"
       ],
       "scope": [
         "在真实 CRM 账户原请求接收入口仅处理已知原请求、可核实账户归属及当前授权的 C03 业务伙伴成功或失败结果。校验可信生产者、租户及收件身份，在最终授权门后用同一 PostgreSQL 调用方事务提交 Inbox、原请求结果历史、原命令回执、审计及 Outbox。",
@@ -679,6 +680,8 @@
         "保留字符串 BusinessPartnerKey，只在同一原请求结果流内比较 resultVersion。同版本同载荷去重，同版本异载荷隔离。未知原请求仅隔离，禁止据来信创建原请求或恢复账户。其余 A12、A13 当前映射及订单流程归原卡。"
       ],
       "outputs": [
+        "Main.C03 对已存在的业务伙伴原请求提供只读凭据，按可信租户、账户、请求 ID 与版本核对原命令及摘要。",
+        "CRM.Account 对独立已知的原请求核实已有账户归属、A12 最终写入权和本卡原回执的独立当前读权，并使归属变化和撤权与最终写入互斥。",
         "CRM 账户原请求归属方的实际 C03 业务伙伴结果入史入口、同一 PostgreSQL 事务和按当前权读取原结果的路径，以及原正反验收的本地实证。"
       ],
       "code_paths": [
@@ -732,7 +735,8 @@
         "docs/development/evidence/W494-01/DELIVERY.md",
         "docs/crm/C03-ERP-INTEGRATION.md",
         "docs/design-handbook/modules/CRM-ACC-01.md",
-        "docs/development/evidence/COORD-WP02-09B-A12/DELIVERY.md"
+        "docs/development/evidence/COORD-WP02-09B-A12/DELIVERY.md",
+        "docs/development/evidence/COORD-WP02-09B-C03-PROOF/DELIVERY.md"
       ],
       "split_parent": "WP02-09"
     },
@@ -2267,7 +2271,7 @@
         "file:CRM:src/CP6.CRM.Infrastructure/Persistence/Generated/CrmRuntimeRows.g.cs",
         "file:CRM:src/CP6.CRM.Api/CrmEndpoints.cs"
       ],
-      "notes": "固定CRM源码c778a3052a4416b82facb07b1244fc98fb6ad8a1；采用有效R1组合。继承当前权限、TenantId和原命令未知恢复；只验证本卡实际行为，不据此关闭整目标。新目录为拟新增位置，执行计划需按届时主线定文件。 设计入口：docs/design-handbook/modules/CRM-ACC-01.md。 本任务负责所改入口的旧writer适配/共同门、schema约束与本地迁移验证；真实数据迁移、环境切换和PrimaryWriter启用由WP14独立任务授权执行。",
+      "notes": "固定CRM源码c778a3052a4416b82facb07b1244fc98fb6ad8a1；采用有效R1组合。继承当前权限、TenantId和原命令未知恢复；只验证本卡实际行为，不据此关闭整目标。新目录为拟新增位置，执行计划需按届时主线定文件。 设计入口：docs/design-handbook/modules/CRM-ACC-01.md。 本任务负责所改入口的旧writer适配/共同门、schema约束与本地迁移验证；真实数据迁移、环境切换和PrimaryWriter启用由WP14独立任务授权执行。 仅供 WP02-09b 的已有账户归属核验先由 CRM.Account 在该余卡内提供，本卡保有完整账户维护与原验收。",
       "prerequisite_bindings": [
         {
           "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
@@ -2288,7 +2292,8 @@
         "docs/design-handbook/remediation/assets/commercial/commercial-wire-1.0.0.openapi.json",
         "docs/design-handbook/remediation/assets/commercial/ord-dem-fields-1.0.0.json",
         "docs/design-handbook/remediation/assets/core-types/lead-acceptance-supersession.json",
-        "docs/development/assessments/20261011/catalogs/commercial-finance.json"
+        "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "docs/development/evidence/COORD-WP02-09B-C03-PROOF/DELIVERY.md"
       ]
     },
     {
@@ -2339,7 +2344,7 @@
         "file:CRM:src/CP6.CRM.Infrastructure/Persistence/Generated/CrmRuntimeRows.g.cs",
         "file:CRM:src/CP6.CRM.Api/CrmEndpoints.cs"
       ],
-      "notes": "固定CRM源码c778a3052a4416b82facb07b1244fc98fb6ad8a1；采用有效R1组合。继承当前权限、TenantId和原命令未知恢复；只验证本卡实际行为，不据此关闭整目标。新目录为拟新增位置，执行计划需按届时主线定文件。 设计入口：docs/design-handbook/modules/CRM-ACC-01.md。 本任务负责所改入口的旧writer适配/共同门、schema约束与本地迁移验证；真实数据迁移、环境切换和PrimaryWriter启用由WP14独立任务授权执行。",
+      "notes": "固定CRM源码c778a3052a4416b82facb07b1244fc98fb6ad8a1；采用有效R1组合。继承当前权限、TenantId和原命令未知恢复；只验证本卡实际行为，不据此关闭整目标。新目录为拟新增位置，执行计划需按届时主线定文件。 设计入口：docs/design-handbook/modules/CRM-ACC-01.md。 本任务负责所改入口的旧writer适配/共同门、schema约束与本地迁移验证；真实数据迁移、环境切换和PrimaryWriter启用由WP14独立任务授权执行。 仅 WP02-09b 原回执当前读权先在该余卡接线，本卡保有完整 A11 与其余 A12。",
       "prerequisite_bindings": [
         {
           "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
@@ -2371,7 +2376,8 @@
         "docs/design-handbook/remediation/assets/core-types/lead-acceptance-supersession.json",
         "docs/development/assessments/20261011/catalogs/commercial-finance.json",
         "docs/crm/C03-ERP-INTEGRATION.md",
-        "docs/development/evidence/COORD-WP02-09B-A12/DELIVERY.md"
+        "docs/development/evidence/COORD-WP02-09B-A12/DELIVERY.md",
+        "docs/development/evidence/COORD-WP02-09B-C03-PROOF/DELIVERY.md"
       ]
     },
     {
