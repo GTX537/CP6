@@ -9,6 +9,8 @@ using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.ErpIntegration;
 using CP6.Platform.EntityFramework;
+using CP6.Platform.Messaging;
+using CP6.WebApi.BackgroundServices;
 using CP6.WebApi.Configuration;
 using CP6.WebApi.Controllers.Internal;
 using CP6.WebApi.Controllers.Sys;
@@ -93,6 +95,34 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
 
     private sealed record ResultSample(Guid AccountId, Guid RequestId, int RequestVersion, string OriginalMessageId,
         string OriginalSha256, string EventId, int ResultVersion, string PayloadSha256, string Payload, string EventType);
+
+    // 此传输只保存本轮两个指定事件。模拟首次收到原字节后确认丢失，不对真实代理施加故障。
+    private sealed class ResultTransport(IReadOnlyDictionary<string,ResultSample> expected, string loseFirstAck) : ICp6DaprTransport
+    {
+        internal Dictionary<string,List<byte[]>> Arrivals { get; } = new(StringComparer.Ordinal);
+
+        public Task PublishAsync(string pubsubName, string topicName, ReadOnlyMemory<byte> body, string contentType,
+            IReadOnlyDictionary<string,string> metadata, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            using var json = JsonDocument.Parse(body);
+            var id = json.RootElement.GetProperty("id").GetString()!;
+            var sample = expected[id];
+            Assert.Equal("cp6-kafka-pubsub", pubsubName);
+            Assert.Equal(ErpEventContracts.ResultTopic, topicName);
+            Assert.Equal(Cp6CloudEventCodec.StructuredContentType, contentType);
+            Assert.Equal("true", metadata["rawPayload"]);
+            Assert.EndsWith(":" + sample.AccountId.ToString("D"), metadata["partitionKey"]);
+            Assert.Equal(sample.PayloadSha256, ErpEventContracts.Hash(body.Span));
+            if (!Arrivals.TryGetValue(id, out var received)) Arrivals.Add(id, received = []);
+            received.Add(body.ToArray());
+            if (id == loseFirstAck && received.Count == 1) throw new Cp6OutboxPublishException("OWNED_ACK_UNAVAILABLE", true);
+            return Task.CompletedTask;
+        }
+
+        public Task<HttpResponseMessage> InvokeAsync(HttpMethod method, string appId, string methodName,
+            HttpContent? content, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+    }
 
     private static async Task<ResultSample[]> CheckResultProviderAsync(WebApplication app, HttpClient http, Harness h,
         string basic, string client, Guid subject, Guid epoch)
@@ -209,12 +239,34 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             WHERE tenant_id={h.Tenant} AND subject_id={subject} AND event_id={missing.EventId}
             """);
         Assert.Equal(2, await queue.Set<Cp6OutboxMessage>().CountAsync());
+        var transport = new ResultTransport(samples.ToDictionary(s => s.EventId), first.EventId);
+        var runtime = app.Services.GetRequiredService<ErpIntegrationRuntime>();
+        var dispatcher = new Cp6OutboxDispatcher<ErpIntegrationContext>(app.Services.GetRequiredService<IDbContextFactory<ErpIntegrationContext>>(),
+            runtime.Validator, new ErpDaprPublisher(transport, runtime.Validator), new()
+            {
+                DispatchBatchSize = 8, MaxOutboxAttempts = 3, InitialOutboxRetryDelay = TimeSpan.FromMilliseconds(10),
+                MaximumOutboxRetryDelay = TimeSpan.FromSeconds(1)
+            });
+        var initial = await dispatcher.DispatchBatchAsync("owned-a12-first");
+        Assert.Equal(1, initial.Published);
+        Assert.Equal(1, initial.RetryScheduled);
+        await Task.Delay(80);
+        var retried = await dispatcher.DispatchBatchAsync("owned-a12-retry");
+        Assert.Equal(1, retried.Published);
+        Assert.Equal(0, retried.DeadLettered);
+        Assert.Equal(2, await queue.Set<Cp6OutboxMessage>().CountAsync(m => m.Status == Cp6OutboxStatus.Published));
+        foreach (var sample in samples)
+        {
+            var deliveries = transport.Arrivals[sample.EventId];
+            Assert.Equal(sample.EventId == first.EventId ? 2 : 1, deliveries.Count);
+            Assert.All(deliveries, bytes => Assert.Equal(Convert.FromBase64String(sample.Payload), bytes));
+        }
         var evidencePath = Environment.GetEnvironmentVariable("CP6_ACCOUNT_C03_RESULT_EVIDENCE");
         if (!string.IsNullOrEmpty(evidencePath))
         {
             await using var evidence = new FileStream(evidencePath, FileMode.CreateNew, FileAccess.Write);
             await JsonSerializer.SerializeAsync(evidence, new { tenantId = h.Tenant, sourceEpoch = "owned-result-source-1",
-                contract = ErpBusinessPartnerResultReader.Contract, samples }, ErpEventContracts.Json);
+                contract = ErpBusinessPartnerResultReader.Contract, transportAttempts = transport.Arrivals.ToDictionary(x => x.Key, x => x.Value.Count), samples }, ErpEventContracts.Json);
         }
         return samples.ToArray();
     }
