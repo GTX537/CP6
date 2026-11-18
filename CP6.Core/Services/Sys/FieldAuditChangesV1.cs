@@ -16,14 +16,14 @@ public static class FieldAuditChangesV1
     }
 
     // Owner-approved non-PII subset of the current Machine query response, not a generic field grant.
-    internal static Projection MachineStatus(string json)
+    internal static Projection MachineStatus(string json, IReadOnlySet<string>? hidden = null)
     {
         var source = Parse(json);
         if (source == null) return new([], "UNREADABLE");
         var allowed = new List<Change>();
         foreach (var change in source)
         {
-            if (change.Field is not ("Status" or "ActiveFlg")) continue;
+            if (change.Field is not ("Status" or "ActiveFlg") || hidden?.Contains(change.Field) == true) continue;
             bool Valid(string? value) => value == null || (change.Field == "Status"
                 ? value is "0" or "1" or "2" or "3" or "4"
                 : value is "True" or "False");

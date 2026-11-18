@@ -11,18 +11,28 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     private const string OperationLogPath="api/OperLog";
     private const string OperationLogMarker="SIM-LOG-907";
-    private async Task<Harness> OperationLogSeed()
+    private async Task<Harness> OperationLogSeed(bool approvedPolicy = true)
     {
         var h=await PalletSeed("create");var db=h.Db;
         var menu=await db.Sys_Menus.SingleOrDefaultAsync(m=>m.MenuKey=="operlog"||m.RoutePath=="/operlog");
         if(menu==null){menu=new(){MenuId=9076,MenuKey="operlog",MenuName="SIM operation logs"};db.Sys_Menus.Add(menu);await db.SaveChangesAsync();}
-        foreach(var action in new[]{"query","delete"})
+        foreach(var action in new[]{"query","delete","retention-manage","read-content","export"})
         {
             if(!await db.Sys_MenuActions.AnyAsync(a=>a.MenuId==menu.MenuId&&a.ActionCode==action))db.Sys_MenuActions.Add(new(){MenuId=menu.MenuId,ActionCode=action,ActionName=action});
             db.Sys_RoleActions.Add(new(){RoleId=72,MenuId=menu.MenuId,ActionCode=action});
         }
-        for(var i=0;i<3;i++)db.Sys_OperLogs.Add(new(){TenantId=h.Tenant,UserName="SIM operator",Controller=OperationLogMarker,Action=i<2?"match":"other",RequestUrl=i<2?"/SIM-LOG-907/"+i:"/unmatched",HttpMethod="GET",StatusCode=200,CreateDate=new DateTime(2026,11,10,10,i,0),ElapsedMs=10+i});
-        await db.SaveChangesAsync();db.ChangeTracker.Clear();return h;
+        var old = DateTime.SpecifyKind(DateTime.UtcNow.Date.AddDays(-30),DateTimeKind.Unspecified);
+        for(var i=0;i<3;i++)db.Sys_OperLogs.Add(new(){TenantId=h.Tenant,UserName="SIM operator",Controller=OperationLogMarker,Action=i<2?"match":"other",RequestUrl=i<2?"/SIM-LOG-907/"+i:"/unmatched",HttpMethod="GET",StatusCode=200,CreateDate=old,ElapsedMs=10+i});
+        await db.SaveChangesAsync();db.ChangeTracker.Clear();
+        if (approvedPolicy)
+        {
+            var version=Guid.NewGuid();var policy=Guid.NewGuid();var basis=Guid.NewGuid();
+            await db.Database.ExecuteSqlInterpolatedAsync($"""
+                INSERT INTO cp6_audit_v1.policies(tenant_id,retention_class,version,policy_ref,basis_ref,owner_id,enabled,worker_enabled,duration_days,legacy_zone,disposal_method)
+                VALUES({h.Tenant},'TECH_TELEMETRY',{version},{policy},{basis},{h.User},true,false,7,'UTC','DELETE')
+                """);
+        }
+        return h;
     }
     private static Task<int[]> OperationLogIds(Harness h)=>h.Db.Sys_OperLogs.Where(x=>x.Controller==OperationLogMarker).OrderBy(x=>x.Id).Select(x=>x.Id).ToArrayAsync();
     private static async Task<string> OperationLogRows(Harness h,int[] ids)=>JsonSerializer.Serialize(await h.Db.Sys_OperLogs.AsNoTracking().Where(x=>ids.Contains(x.Id)).OrderBy(x=>x.Id).ToArrayAsync());
@@ -97,6 +107,19 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             finally{if(!released)await locked.RollbackAsync();}
         }
         using var denied=await host.Send(OperationsRequest(actor,HttpMethod.Get,OperationLogPath));Assert.Equal(HttpStatusCode.Forbidden,denied.StatusCode);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task OperationLog_clear_without_a_retention_policy_preserves_the_original_rows()
+    {
+        await using var harness = await OperationLogSeed(approvedPolicy:false);
+        await using var host = await AuthenticationApiProcess.Start(harness.Db.Database.GetConnectionString()!);
+        var actor = await Login(host, harness);
+        var ids = await OperationLogIds(harness);
+        var original = await OperationLogRows(harness, ids);
+        using var response = await host.Send(OperationsRequest(actor, HttpMethod.Delete, OperationLogPath));
+        Assert.Equal(original, await OperationLogRows(harness, ids));
+        Assert.Equal(HttpStatusCode.PreconditionFailed, response.StatusCode);
     }
 
     [CurrentPermissionPostgresFact]

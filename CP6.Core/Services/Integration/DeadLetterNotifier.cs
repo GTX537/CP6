@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Data;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Space.Observability;
+using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -191,20 +192,26 @@ public class DeadLetterNotifier :
                 return true;
             }
 
+            var postgres = _db.Database.IsNpgsql();
+            var recordedAt = DateTimeOffset.UtcNow;
             _db.Sys_OperLogs.Add(new Sys_OperLog
             {
-                UserName = "system",
+                UserName = postgres ? null : "system",
                 HttpMethod = "BACKGROUND",
                 RequestUrl = requestUrl,
                 Controller = "IntegrationEvent",
-                Action = evt.HookName,
-                RequestBody = spaceOutbox
+                Action = postgres ? "DeadLetter" : evt.HookName,
+                RequestBody = postgres ? null : spaceOutbox
                     ? $"hook={Truncate(evt.HookName, 100)} source={Truncate(evt.SourceNo, 100)} attempts={evt.Attempts}; lastError={SafeSpaceLastError(evt.LastError)}"
                     : $"hook={evt.HookName} source={evt.SourceNo} attempts={evt.Attempts}; lastError={Truncate(evt.LastError, 4000)}",
                 StatusCode = 500,
                 ElapsedMs = 0,
                 ClientIp = null,
-                CreateDate = DateTime.Now,
+                CreateDate = recordedAt.LocalDateTime,
+                AuditAtUtc = postgres ? recordedAt : null,
+                AuditEvidenceJson = postgres ? new AuditEvidenceV1("WORKER_UTC", "BEST_EFFORT_TELEMETRY", "SERVICE",
+                    Service: nameof(DeadLetterNotifier), OperationId: evt.Id, Outcome: "SERVICE_RECORDED", RecordedAtUtc: recordedAt,
+                    DataPolicy: "WORKER_TELEMETRY_V1", Action: "DeadLetter").Encode() : null,
                 IsAlert = true,
             });
             await _db.SaveChangesAsync(ct);

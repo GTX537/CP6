@@ -80,7 +80,8 @@ public partial class TenantAdminService : ITenantAdminService
         => MutateAsync((actor, ct) => CreateCoreAsync(code, name, expire, remark, adminUserName, actor, ct), cancellationToken);
 
     private async Task<CreateTenantResult> CreateCoreAsync(string code, string name, DateTime? expire, string? remark,
-        string adminUserName, PlatformAdminAuthorization.Actor? actor, CancellationToken cancellationToken, IReadOnlyList<int>? approvedMenuIds = null)
+        string adminUserName, PlatformAdminAuthorization.Actor? actor, CancellationToken cancellationToken,
+        IReadOnlyList<int>? approvedMenuIds = null, string? originalOperationDigest = null)
     {
         // 1. 编码冲突校验（共享表，不需要 IgnoreQueryFilters）。
         if (await _db.Sys_Tenants.AnyAsync(t => t.TenantCode == code, cancellationToken))
@@ -141,7 +142,7 @@ public partial class TenantAdminService : ITenantAdminService
         _db.Sys_Roles.Add(adminRole);
         _db.Sys_RoleMenus.AddRange(adminMenus);
         _db.Sys_Users.Add(admin);
-        StageManagementAudit(SecurityEventType.TenantCreated, tenant, actor, $"admin={adminUserName}");
+        StageManagementAudit(SecurityEventType.TenantCreated, tenant, actor, $"admin={adminUserName}", originalOperationDigest);
         await SaveManagementChangesAsync(cancellationToken);
 
         // 7. 临时明文仅本次返回。
@@ -155,7 +156,8 @@ public partial class TenantAdminService : ITenantAdminService
             : MutateAsync((actor, ct) => UpdateCoreAsync(id, name, expire, remark, timeZoneId, actor, ct), cancellationToken);
 
     private async Task UpdateCoreAsync(Guid id, string name, DateTime? expire, string? remark, string? timeZoneId,
-        PlatformAdminAuthorization.Actor? actor, CancellationToken cancellationToken, TenantPendingSuspensionV1? pending = null)
+        PlatformAdminAuthorization.Actor? actor, CancellationToken cancellationToken, TenantPendingSuspensionV1? pending = null,
+        string? originalOperationDigest = null)
     {
         var t = await CurrentTargetAsync(id, cancellationToken);
         if (pending is null)
@@ -175,7 +177,7 @@ public partial class TenantAdminService : ITenantAdminService
         t.ExpireDate = expire;
         t.Remark = remark;
         t.TimeZoneId = normalizedTz;
-        StageManagementAudit(SecurityEventType.TenantUpdated, t, actor);
+        StageManagementAudit(SecurityEventType.TenantUpdated, t, actor, originalOperationDigest: originalOperationDigest);
         await SaveManagementChangesAsync(cancellationToken);
     }
 
@@ -201,7 +203,7 @@ public partial class TenantAdminService : ITenantAdminService
         => MutateAsync((actor, ct) => SetEnableAsync(id, true, SecurityEventType.TenantReactivated, actor, ct), cancellationToken);
 
     private async Task SetEnableAsync(Guid id, bool enable, SecurityEventType evt, PlatformAdminAuthorization.Actor? actor,
-        CancellationToken cancellationToken, TenantPendingSuspensionV1? pending = null)
+        CancellationToken cancellationToken, TenantPendingSuspensionV1? pending = null, string? originalOperationDigest = null)
     {
         var t = await CurrentTargetAsync(id, cancellationToken);
         if (pending is not null)
@@ -220,7 +222,7 @@ public partial class TenantAdminService : ITenantAdminService
             }
         }
         t.Enable = enable;
-        StageManagementAudit(evt, t, actor);
+        StageManagementAudit(evt, t, actor, originalOperationDigest: originalOperationDigest);
         await SaveManagementChangesAsync(cancellationToken);
     }
 
@@ -251,8 +253,14 @@ public partial class TenantAdminService : ITenantAdminService
         return target;
     }
 
-    private void StageManagementAudit(SecurityEventType type, Sys_Tenant target, PlatformAdminAuthorization.Actor? actor, string? detail = null)
-        => _db.Sys_SecurityLogs.Add(new Sys_SecurityLog
+    private void StageManagementAudit(SecurityEventType type, Sys_Tenant target, PlatformAdminAuthorization.Actor? actor,
+        string? detail = null, string? originalOperationDigest = null)
+    {
+        var at = DateTimeOffset.UtcNow;
+        var evidence = actor is null ? null : AuditEvidenceV1.RequiredPlatform(actor, type.ToString(), at, originalOperationDigest);
+        if (evidence is not null && _http?.HttpContext is { } http)
+            http.Items[AuditEvidenceV1.HttpItem] = evidence with { Outcome = null };
+        _db.Sys_SecurityLogs.Add(new Sys_SecurityLog
         {
             TenantId = TenantContext.DefaultTenant,
             UserId = actor?.Id ?? _current?.UserId,
@@ -260,8 +268,11 @@ public partial class TenantAdminService : ITenantAdminService
             RequestTenantCode = target.TenantCode,
             EventType = (int)type,
             Reason = $"tenant={target.Id:D}" + (detail is null ? "" : $";{detail}"),
-            CreatedAt = DateTime.Now
+            CreatedAt = at.LocalDateTime,
+            AuditAtUtc = actor is null ? null : at,
+            AuditEvidenceJson = evidence?.Encode()
         });
+    }
 
     private static string? AuditName(string? name) => name is { Length: > 100 } ? name[..100] : name;
 

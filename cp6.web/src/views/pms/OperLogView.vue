@@ -5,7 +5,7 @@
       <div class="search-area">
         <el-input
           v-model="keyword"
-          :placeholder="t('table.search')"
+          placeholder="搜索控制器、操作或路由模板"
           clearable
           style="width: 250px"
           @keyup.enter="search"
@@ -15,10 +15,11 @@
           </template>
         </el-input>
       </div>
+      <AuditAccessPanel ref="access" audit-class="TECH_TELEMETRY" menu="operlog" :policy-version="policyVersion" :filter="activeFilter" />
     </div>
 
+    <el-alert v-if="loadError" :title="loadError" type="warning" :closable="false" />
     <el-table :data="tableData" v-loading="loading" stripe border style="width: 100%">
-      <el-table-column prop="userName" :label="t('operlog.user')" width="100" />
       <el-table-column prop="httpMethod" :label="t('operlog.method')" width="80">
         <template #default="{ row }">
           <el-tag :type="methodColor(row.httpMethod)" size="small">{{ row.httpMethod }}</el-tag>
@@ -34,11 +35,15 @@
       <el-table-column prop="elapsedMs" :label="t('operlog.elapsed')" width="90">
         <template #default="{ row }">{{ row.elapsedMs }}ms</template>
       </el-table-column>
-      <el-table-column prop="clientIp" label="IP" width="120" />
-      <el-table-column prop="createDate" :label="t('operlog.time')" width="180" :formatter="formatDateTimeCell" />
+      <el-table-column label="记录状态" width="135">
+        <template #default="{ row }">{{ row.outcome === 'UNKNOWN' ? '业务结果待核对' : row.evidenceGap ? '记录不完整' : 'HTTP 观测' }}</template>
+      </el-table-column>
+      <el-table-column :label="t('operlog.time')" min-width="215">
+        <template #default="{ row }">{{ auditTime(row, row.createDate) }}</template>
+      </el-table-column>
       <el-table-column :label="t('table.operation')" width="80">
         <template #default="{ row }">
-          <el-button link type="primary" @click="showDetail(row)">{{ t('operlog.detail') }}</el-button>
+          <el-button v-permission="'operlog:read-content'" link type="primary" @click="access?.openDetail(row.id)">{{ t('operlog.detail') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -55,43 +60,34 @@
       />
     </div>
 
-    <!-- 详情弹窗 -->
-    <el-dialog v-model="detailVisible" :title="t('operlog.detail')" width="600px">
-      <el-descriptions :column="1" border>
-        <el-descriptions-item :label="t('operlog.user')">{{ detailRow?.userName }}</el-descriptions-item>
-        <el-descriptions-item :label="t('operlog.method')">{{ detailRow?.httpMethod }}</el-descriptions-item>
-        <el-descriptions-item :label="t('operlog.url')">{{ detailRow?.requestUrl }}</el-descriptions-item>
-        <el-descriptions-item :label="t('operlog.controller')">{{ detailRow?.controller }} / {{ detailRow?.action }}</el-descriptions-item>
-        <el-descriptions-item :label="t('operlog.status')">{{ detailRow?.statusCode }}</el-descriptions-item>
-        <el-descriptions-item :label="t('operlog.elapsed')">{{ detailRow?.elapsedMs }}ms</el-descriptions-item>
-        <el-descriptions-item label="IP">{{ detailRow?.clientIp }}</el-descriptions-item>
-        <el-descriptions-item :label="t('operlog.time')">{{ formatDateTime(detailRow?.createDate) }}</el-descriptions-item>
-        <el-descriptions-item :label="t('operlog.requestBody')">
-          <pre style="max-height: 200px; overflow: auto; white-space: pre-wrap; margin: 0">{{ detailRow?.requestBody || '-' }}</pre>
-        </el-descriptions-item>
-      </el-descriptions>
-    </el-dialog>
+    <AuditRetentionPanel v-permission="'operlog:retention-manage'" @completed="loadData" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Search } from '@element-plus/icons-vue'
 import { operLogApi } from '@/api/sys/operlog'
-import { formatDateTime, formatDateTimeCell } from '@/utils/format'
+import { auditTime, type AuditFilters, type AuditSummary } from '@/api/sys/auditAccess'
+import { AUTH_EVENT, identityStamp } from '@/auth/identity'
+import AuditAccessPanel from './AuditAccessPanel.vue'
+import AuditRetentionPanel from './AuditRetentionPanel.vue'
 
 const { t } = useI18n()
 
-const tableData = ref<any[]>([])
+const tableData = ref<(AuditSummary & { createDate: string; outcome?: string })[]>([])
 const total = ref(0)
 const page = ref(1)
 const pageSize = ref(20)
 const keyword = ref('')
 const loading = ref(false)
 
-const detailVisible = ref(false)
-const detailRow = ref<any>(null)
+const access = ref<InstanceType<typeof AuditAccessPanel>>()
+const policyVersion = ref<string>()
+const activeFilter = ref<AuditFilters>({})
+const loadError = ref('')
+let generation = 0
 
 function methodColor(method: string) {
   const map: Record<string, string> = { POST: 'success', PUT: 'warning', DELETE: 'danger' }
@@ -99,13 +95,23 @@ function methodColor(method: string) {
 }
 
 async function loadData() {
+  const id = ++generation, stamp = identityStamp()
+  const current = () => id === generation && stamp === identityStamp()
+  const filter = { keyword: keyword.value || undefined }
   loading.value = true
+  loadError.value = ''
+  policyVersion.value = undefined
   try {
-    const res = await operLogApi.getList({ page: page.value, pageSize: pageSize.value, keyword: keyword.value }) as any
+    const res = await operLogApi.getList({ ...filter, page: page.value, pageSize: pageSize.value })
+    if (!current()) return
     tableData.value = res.rows
     total.value = res.total
+    activeFilter.value = filter
+    policyVersion.value = res.policyVersion
+  } catch {
+    if (current()) { tableData.value = []; total.value = 0; loadError.value = '当前权限或服务状态不允许查询操作日志。' }
   } finally {
-    loading.value = false
+    if (current()) loading.value = false
   }
 }
 
@@ -114,12 +120,17 @@ function search() {
   loadData()
 }
 
-function showDetail(row: any) {
-  detailRow.value = row
-  detailVisible.value = true
+function clearList() {
+  ++generation
+  tableData.value = []
+  total.value = 0
+  policyVersion.value = undefined
+  loadError.value = ''
+  loading.value = false
 }
 
-onMounted(() => loadData())
+onMounted(() => { window.addEventListener(AUTH_EVENT, clearList); loadData() })
+onBeforeUnmount(() => { window.removeEventListener(AUTH_EVENT, clearList); clearList() })
 </script>
 
 <style scoped>

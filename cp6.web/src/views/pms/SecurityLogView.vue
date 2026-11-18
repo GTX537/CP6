@@ -22,13 +22,11 @@
             :value="n"
           />
         </el-select>
-        <el-input
-          v-model="filter.userName"
-          :placeholder="t('sec.log.userName')"
-          clearable
-          style="width: 180px"
-          @keyup.enter="search"
-        />
+        <el-select v-model="filter.timeSource" aria-label="时间来源" style="width: 175px">
+          <el-option label="时间：全部（旧查询口径）" value="" />
+          <el-option label="已核定时间（UTC）" value="UTC" />
+          <el-option label="旧本地时间" value="LEGACY_LOCAL" />
+        </el-select>
         <el-date-picker
           v-model="dateRange"
           type="daterange"
@@ -39,10 +37,11 @@
         />
         <el-button type="primary" :icon="Search" @click="search">{{ t('table.search') }}</el-button>
       </div>
+      <AuditAccessPanel ref="access" audit-class="SECURITY_EVENT" menu="sys-security-log" :policy-version="policyVersion" :filter="activeFilter" />
     </div>
 
+    <el-alert v-if="loadError" :title="loadError" type="warning" :closable="false" />
     <el-table :data="tableData" v-loading="loading" stripe border style="width: 100%">
-      <el-table-column prop="userName" :label="t('sec.log.userName')" width="120" />
       <el-table-column prop="eventType" :label="t('sec.log.eventType')" width="120">
         <template #default="{ row }">
           <el-tag :type="eventTagType(row.eventType)" size="small">
@@ -50,11 +49,15 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="reason" :label="t('sec.log.reason')" show-overflow-tooltip />
-      <el-table-column prop="clientIp" :label="t('sec.log.clientIp')" width="130" />
-      <el-table-column prop="requestTenantCode" :label="t('sec.log.tenantCode')" width="120" />
-      <el-table-column prop="userAgent" :label="t('sec.log.userAgent')" show-overflow-tooltip />
-      <el-table-column prop="createdAt" :label="t('sec.log.createdAt')" width="180" :formatter="formatDateTimeCell" />
+      <el-table-column :label="t('sec.log.createdAt')" min-width="240">
+        <template #default="{ row }">{{ auditTime(row, row.createdAt) }}</template>
+      </el-table-column>
+      <el-table-column label="记录状态" width="145">
+        <template #default="{ row }">{{ row.evidenceGap ? '记录不完整' : '已记录' }}</template>
+      </el-table-column>
+      <el-table-column label="操作" width="105">
+        <template #default="{ row }"><el-button v-permission="'sys-security-log:read-content'" link type="primary" @click="access?.openDetail(row.id)">审计详情</el-button></template>
+      </el-table-column>
     </el-table>
 
     <div class="pagination">
@@ -72,27 +75,34 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Search } from '@element-plus/icons-vue'
-import { securityLogApi } from '@/api/sys/securityLog'
-import { SecurityEventType, type SecurityLogRow } from '@/types/sys/security'
-import { formatDateTimeCell } from '@/utils/format'
+import { securityLogApi, type SecurityAuditRow } from '@/api/sys/securityLog'
+import { SecurityEventType } from '@/types/sys/security'
+import { auditDateFilter, auditTime, type AuditFilters } from '@/api/sys/auditAccess'
+import { AUTH_EVENT, identityStamp } from '@/auth/identity'
+import AuditAccessPanel from './AuditAccessPanel.vue'
 
 const { t } = useI18n()
 
 // 事件类型下拉选项 1~8（label 走 i18n sec.event.{n}）
 const eventTypes = [1, 2, 3, 4, 5, 6, 7, 8]
 
-const tableData = ref<SecurityLogRow[]>([])
+const tableData = ref<SecurityAuditRow[]>([])
 const total = ref(0)
 const page = ref(1)
 const pageSize = ref(20)
 const loading = ref(false)
 
-const filter = reactive<{ eventType: number | ''; userName: string }>({
+const access = ref<InstanceType<typeof AuditAccessPanel>>()
+const activeFilter = ref<AuditFilters>({})
+const policyVersion = ref<string>()
+const loadError = ref('')
+let generation = 0
+const filter = reactive<{ eventType: number | ''; timeSource: '' | 'UTC' | 'LEGACY_LOCAL' }>({
   eventType: '',
-  userName: ''
+  timeSource: ''
 })
 // el-date-picker 双值 → from/to
 const dateRange = ref<[string, string] | null>(null)
@@ -114,20 +124,27 @@ function eventTagType(et: SecurityEventType): '' | 'success' | 'warning' | 'dang
 }
 
 async function loadData() {
+  const id = ++generation, stamp = identityStamp()
+  const current = () => id === generation && stamp === identityStamp()
+  const scope = { eventType: filter.eventType || undefined, ...auditDateFilter(filter.timeSource, dateRange.value) }
   loading.value = true
+  loadError.value = ''
+  policyVersion.value = undefined
   try {
     const res = await securityLogApi.getList({
-      eventType: filter.eventType || undefined,   // '' → undefined，不下发空 query 参数
-      userName: filter.userName || undefined,
-      from: dateRange.value?.[0],
-      to: dateRange.value?.[1],
+      ...scope,
       page: page.value,
       pageSize: pageSize.value
     })
+    if (!current()) return
     tableData.value = res.rows
     total.value = res.total
+    activeFilter.value = scope
+    policyVersion.value = res.policyVersion
+  } catch {
+    if (current()) { tableData.value = []; total.value = 0; loadError.value = '当前权限或服务状态不允许查询安全日志。' }
   } finally {
-    loading.value = false
+    if (current()) loading.value = false
   }
 }
 
@@ -136,7 +153,12 @@ function search() {
   loadData()
 }
 
-onMounted(() => loadData())
+function clearList() {
+  ++generation; tableData.value = []; total.value = 0; policyVersion.value = undefined
+  loading.value = false; loadError.value = ''
+}
+onMounted(() => { window.addEventListener(AUTH_EVENT, clearList); loadData() })
+onBeforeUnmount(() => { window.removeEventListener(AUTH_EVENT, clearList); clearList() })
 </script>
 
 <style scoped>

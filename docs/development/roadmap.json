@@ -140603,7 +140603,7 @@
           "scope": "SYS-AUD-01: fixed Main/CRM/Platform/candidate evidence; known implementation delta, not exhaustive runtime conformance. Actual per-file source SHA is in the report."
         }
       ],
-      "delivery_state": "PLANNED",
+      "delivery_state": "DONE",
       "blockers": [],
       "runtime_case_ids": [],
       "original_acceptance_inventory": {
@@ -140617,8 +140617,18 @@
             "id": "SYS-AUD-01::AC-AU01-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU01-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：Request_observation_publishes_only_routed_metadata, Sso_configuration_never_serializes_client_secret, Space_mutation_never_serializes_action_arguments",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "请求仅保存路由元数据；SSO、Space 实际参数及安全诊断中的敏感样本不进入新技术日志。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/0"
@@ -140628,8 +140638,18 @@
             "id": "SYS-AUD-01::AC-AU01-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU01-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：Unknown_owner_commit_is_distinct_from_an_http_error, AuditV1_worker_lost_commit_acknowledgement",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "技术侧保留 UNKNOWN 和原引用，HTTP 状态单独记录；提交应答丢失后凭 PostgreSQL 原键取得原结果。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/1"
@@ -140639,8 +140659,18 @@
             "id": "SYS-AUD-01::AC-AU01-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU01-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：OperationLog_normal_keyword_page_and_clear_preserve_the_other_tenant, AuditV1_export_freezes_native_ids, AuditList_filters_summary_cap_and_tie_order",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "受限搜索、计数、稳定原键分页不泄露其他租户或未授权字段。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/2"
@@ -140650,8 +140680,18 @@
             "id": "SYS-AUD-01::AC-AU01-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU01-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：OperationLog_clear_without_a_retention_policy, OperationLog_late_delete_fault, Space_db_fallback_failure_console_output",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "旧 Clear 经过当前授权和保留门；原日志延迟故障保存原行，技术日志旁路失败不改主业务结果。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/3"
@@ -140661,8 +140701,18 @@
             "id": "SYS-AUD-01::AC-AU02-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU02-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：Tenant_management_v1_configuration_lifecycle_concurrency_and_original_results, Http_round_trip_preserves_identity_cookie_audit_and_effective_role_boundaries, AuditV1_worker_lost_commit_acknowledgement",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "可信平台动作原命令摘要等于数据库原命令表值；真实模拟区分两身份，后台回执保留服务身份。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/4"
@@ -140672,8 +140722,18 @@
             "id": "SYS-AUD-01::AC-AU02-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU02-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：Unknown_owner_commit_is_distinct_from_an_http_error, Create_rolls_back_when_required_management_audit_is_rejected, Caller_transaction_keeps_prior_work_after_late_field_audit_failure, Http_required_audit_rejection_never_outputs_a_switch_cookie",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "技术遥测和强制原事务证据分级；强制安全和字段审计失败回滚，调用方原先工作可独立提交。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/5"
@@ -140683,8 +140743,18 @@
             "id": "SYS-AUD-01::AC-AU02-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU02-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：AuditV1_actual_platform_summary_filters_only_trusted_targets, AuditV1_tenant_security_content_and_export_apply_current_field_policy",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "平台跨租户名单筛选仅依可信目标并重核平台权限；租户安全视图和导出均不返回请求 IP/UA/原上下文。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/6"
@@ -140694,8 +140764,18 @@
             "id": "SYS-AUD-01::AC-AU02-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU02-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：AuditV1_forward_migration_preserves_all_three_legacy_sources, AuditList_filters_summary_cap_and_tie_order, AuditV1_export_freezes_native_ids",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "新记录用明确 UTC，旧日期右开口径保留；未知时间不伪造，向前迁移前后比较三类旧原行。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/7"
@@ -140705,8 +140785,18 @@
             "id": "SYS-AUD-01::AC-AU03-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU03-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：Field_audit_actual_HTTP_log_query_cannot_bypass_missing_business_query, Field_audit_actual_HTTP_only_projects_current_Machine_status, AuditList_current_identity_and_action_decide_before_summary_read",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "同一对象范围限制摘要、时间线和通用详情；无原业务查询权或无内容权不能看字段历史。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/8"
@@ -140716,8 +140806,18 @@
             "id": "SYS-AUD-01::AC-AU03-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU03-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：Password_excluded_by_AuditIgnore, Secret_field_excluded_by_denylist, Field_audit_malformed_and_unmapped_history_is_explicit, Broken_or_ambiguous_history_is_unreadable_never_zero",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "AuditIgnore 与敏感字段规则覆盖原采集；坏 JSON、合法零变化与无 Owner 映射分开。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/9"
@@ -140727,8 +140827,18 @@
             "id": "SYS-AUD-01::AC-AU03-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU03-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：Field_audit_actual_HTTP_only_projects_current_Machine_status, AuditList_filters_summary_cap_and_tie_order, AuditV1_export_freezes_native_ids",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "原生 JSON 摘要、投影版本和返回字段分离；实际 HTTP 查询后原历史逐字相同。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/10"
@@ -140738,8 +140848,18 @@
             "id": "SYS-AUD-01::AC-AU03-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU03-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：Machine_owner_actual_HTTP_rechecks_grants_and_never_caches_protected_rows, Tenant_management_v1_configuration_lifecycle_concurrency_and_original_results",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "真实 HTTP 修改产生 PostgreSQL 原生版本及已提交事务号；非 EF 写入没有冒充字段审计。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/11"
@@ -140749,8 +140869,18 @@
             "id": "SYS-AUD-01::AC-AU04-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU04-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：AuditV1_export_freezes_native_ids, Field_audit_actual_HTTP_rechecks_both_current_actions, OperationLog_existing_entries_decide_current_user_and_action",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "查询、内容、导出、保留管理分开；受限或缺少明确导出目的/版本不得注册或下载。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/12"
@@ -140760,8 +140890,18 @@
             "id": "SYS-AUD-01::AC-AU04-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU04-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：AuditV1_export_freezes_native_ids, Field_audit_actual_HTTP_rechecks_both_current_actions, OperationLog_query_first_completes_before_the_current_permission_revocation, Tenant_management_v1_configuration_lifecycle_concurrency_and_original_results",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "撤权后重新读取详情、搜索和下载即受阻；原命令的读取只按原键及当前观察范围，无新业务写入。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/13"
@@ -140771,8 +140911,18 @@
             "id": "SYS-AUD-01::AC-AU04-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU04-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：AuditV1_export_freezes_native_ids, AuditV1_policy_change_blocks_old_plan, OperationLog_clear_without_a_retention_policy",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "未知投影版本、无持有政策和不受通用清理管理的源均拒绝，无跨类默认政策。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/14"
@@ -140782,8 +140932,18 @@
             "id": "SYS-AUD-01::AC-AU04-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU04-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：AuditV1_actual_platform_summary_filters_only_trusted_targets, Actual_Program_accepts_simulation_round_trip, Field_audit_current_object_scope_foreign_deleted_and_missing_are_indistinguishable",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "平台会话和模拟边界实时检查，另一租户和对象行为不可区分；当前字段策略限制随最新权限生效。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/15"
@@ -140793,8 +140953,18 @@
             "id": "SYS-AUD-01::AC-AU05-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU05-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：OperationLog_clear_without_a_retention_policy, AuditV1_legacy_and_explicit_cleanup_exclude_indeterminate, AuditV1_policy_change_blocks_old_plan",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "7 天只作为模拟的 TECH_TELEMETRY 授权示例，无其他源默认；同计划内只处置授权记录。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/16"
@@ -140804,8 +140974,18 @@
             "id": "SYS-AUD-01::AC-AU05-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU05-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：AuditV1_legacy_and_explicit_cleanup_exclude_indeterminate, PrivacyDisposition_cross_operator_tenant_hold, PGT017_bank_voucher_preserves_per_line_commits_and_failed_number",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "保留限制、未决、待重排、争议、原回执引用、警报和外租户原行不被通用清理。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/17"
@@ -140815,8 +140995,18 @@
             "id": "SYS-AUD-01::AC-AU05-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU05-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：AuditV1_legacy_and_explicit_cleanup_exclude_indeterminate, AuditV1_policy_change_blocks_old_plan, PrivacyDisposition_approval_and_global_hold_use_same_actual_authority_gate",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "两连接实证清理在现有授权门排队，当前 hold 或政策变化使旧计划终止，不修改原证据。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/18"
@@ -140826,8 +141016,18 @@
             "id": "SYS-AUD-01::AC-AU05-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU05-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：AuditV1_legacy_and_explicit_cleanup_exclude_indeterminate, AuditV1_policy_change_blocks_old_plan, AuditV1_worker_lost_commit_acknowledgement",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "最小收据包含处置范围、执行身份、政策和原计划；安全匿名化只删已准字段。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/19"
@@ -140837,8 +141037,18 @@
             "id": "SYS-AUD-01::AC-AU05-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-AU05-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+                "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+                "result": "PASS",
+                "observed_at": "2026-11-18T01:32:06.281283+00:00",
+                "command": "本地 VSTest／实际 PostgreSQL HTTP 与原写入；试例：AuditV1_worker_lost_commit_acknowledgement, AuditV1_legacy_and_explicit_cleanup_exclude_indeterminate, OperationLog_late_delete_fault",
+                "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+                "scope": "后台真实提交后应用注入 ACK 丢失，重启和旧 Clear 均取回原收据，新增到期行不会借原键重删。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/3/cases/20"
@@ -140846,8 +141056,36 @@
           }
         ]
       },
-      "implementation_evidence": [],
-      "delivery_evidence": null
+      "implementation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+          "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+          "result": "PASS",
+          "observed_at": "2026-11-18T01:32:06.281283+00:00",
+          "command": "本地 .NET 构建、VSTest 实际 PostgreSQL/HTTP/并发/迁移，vue-tsc 和 Vitest；命令及分组见报告。",
+          "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+          "scope": "三类实际审计采集与原引用、安全范围/独立能力及稳定分页、PostgreSQL 保留门与原计划回执；原 SYS-AUD-01 的 21 条 AC 定向核对。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+        "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+        "remote_main_sha": "6c013650e0cb92cd86868073ef5d8c93104b8512",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1248",
+        "scope": "remote_main_sha 为准入时实际核对的 Main；新源码在本 PR 正常合并后生效，准确 merge SHA 和远端祖先证明写入官方 finish.json。",
+        "adoption_record": "D:/CP6-test-artifacts/WP02-13b/finish.json"
+      },
+      "completion_audit": {
+        "result": "DONE",
+        "reviewed_at": "2026-11-18T01:32:06.281283+00:00",
+        "report": "docs/development/evidence/WP02-13b/DELIVERY.md",
+        "original_cases_reviewed": 21,
+        "required_revision_cases": 0,
+        "gaps": [],
+        "new_product_execution": true,
+        "classification": "BUSINESS",
+        "review_effective_seconds": 388.733
+      }
     },
     {
       "id": "SYS-PRIV-01",
@@ -183721,7 +183959,7 @@
         "started_at": "2026-11-17T14:03:03.512026+00:00",
         "official_started_at": "2026-11-17T14:04:03.108691+00:00",
         "verified_at": "2026-11-17T16:22:25.185112+00:00",
-        "effective_seconds": 8361.673,
+        "effective_seconds": 8511.888,
         "size": "M",
         "budget_seconds": 14276.798,
         "mandatory_split_seconds": 21415.197,
@@ -183730,7 +183968,9 @@
           "WP02-05"
         ],
         "new_product_execution": true,
-        "opening_preparation_seconds": 59.597
+        "opening_preparation_seconds": 59.597,
+        "official_finish": "2026-11-17T16:24:55.399630+00:00",
+        "post_candidate_finalization_seconds": 150.215
       }
     },
     {
@@ -186906,7 +187146,7 @@
           "lifecycle_complete": true
         }
       ],
-      "remaining_scope": "完整原出口剩余见 WP02-13b；原号 DONE 仅指已验证部分。",
+      "remaining_scope": "",
       "card_execution": {
         "result": "SPLIT",
         "report": "docs/development/evidence/WP02-13/card-closure/DELIVERY.md",
@@ -186932,7 +187172,14 @@
         "已采用 Main 代表 Owner 的必需审计与业务/原结果/Outbox 同事务。",
         "已登记 Machine 字段历史的当前安全详情投影、原件不改、未知映射拒绝。",
         "PostgreSQL 请求旁路日志用独立上下文保存，拒绝业务不被日志保存再次提交。"
-      ]
+      ],
+      "full_completion": {
+        "verified_at": "2026-11-18T01:32:06.281283+00:00",
+        "report": "docs/development/evidence/WP02-13b/DELIVERY.md",
+        "remainders_done": [
+          "WP02-13b"
+        ]
+      }
     },
     {
       "id": "WP02-13b",
@@ -186954,26 +187201,67 @@
         "file:Main:CP6.WebApi/BackgroundServices/OperLogCleanupService.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-13b",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "COORD / WP02-13b",
+        "repository": "Main",
+        "branch": "codex/wp02-13b",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-17T23:22:23.001731+00:00",
+        "baseline_sha": "6c013650e0cb92cd86868073ef5d8c93104b8512",
+        "entry_evidence": "docs/development/evidence/WP02-13b/DELIVERY.md",
+        "phase": "CLOSED",
+        "dispatch_scope": "三类实际审计采集与原引用、安全范围/独立能力及稳定分页、PostgreSQL 保留门与原计划回执；原 SYS-AUD-01 的 21 条 AC 定向核对。",
+        "delivery_report": "docs/development/evidence/WP02-13b/DELIVERY.md",
+        "full_task_completed": true
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+          "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+          "result": "PASS",
+          "observed_at": "2026-11-18T01:32:06.281283+00:00",
+          "command": "本地 .NET 构建、VSTest 实际 PostgreSQL/HTTP/并发/迁移，vue-tsc 和 Vitest；命令及分组见报告。",
+          "environment": "Windows 本机 SDK 8.0.424／PostgreSQL 18.6（独占数据库）；实际 Main HTTP/JWT 与模拟业务数据；前端 Node 22.22.0",
+          "scope": "三类实际审计采集与原引用、安全范围/独立能力及稳定分页、PostgreSQL 保留门与原计划回执；原 SYS-AUD-01 的 21 条 AC 定向核对。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-13b/DELIVERY.md",
+        "source_sha": "1979923c4e9d4de6ffe10fe2c590a29df06f42e3",
+        "remote_main_sha": "6c013650e0cb92cd86868073ef5d8c93104b8512",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1248",
+        "scope": "remote_main_sha 为准入时实际核对的 Main；新源码在本 PR 正常合并后生效，准确 merge SHA 和远端祖先证明写入官方 finish.json。",
+        "adoption_record": "D:/CP6-test-artifacts/WP02-13b/finish.json"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "split_parent": "WP02-13",
-      "remaining_scope": [
-        "三类审计安全采集/脱敏、actual/effective/service 与原 operation/权限版本、明确 UTC 来源及旧时间兼容。",
-        "总数/列表/详情/搜索/导出/当前下载按同范围和独立能力授权，稳定分页和原证据/安全投影分离。",
-        "按各保留类 policy/hold/UNKNOWN/争议/必要引用决定清理，旧 Clear 和后台共门重核、最小收据及原 plan 恢复。"
-      ],
-      "active_issue": "https://github.com/GTX537/CP6/issues/1240",
-      "card_budget_seconds": 13912.711
+      "remaining_scope": [],
+      "card_budget_seconds": 13912.711,
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP02-13b/DELIVERY.md",
+        "started_at": "2026-11-17T23:22:23.001731+00:00",
+        "official_started_at": "2026-11-17T23:22:23.001731+00:00",
+        "verified_at": "2026-11-18T01:32:06.281283+00:00",
+        "target_review_started_at": "2026-11-18T01:25:37.5484118Z",
+        "effective_seconds": 7394.547,
+        "size": "M",
+        "budget_seconds": 13912.711,
+        "mandatory_split_seconds": 20869.067,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-13"
+        ],
+        "new_product_execution": true
+      }
     },
     {
       "id": "WP02-14",
@@ -289688,7 +289976,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 15759.442,
+      "effective_seconds": 23692.937,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -289698,11 +289986,13 @@
         "WP02-14",
         "WP02-16",
         "WP01-01",
-        "WP02-05b"
+        "WP02-05b",
+        "WP02-13b"
       ],
       "closed_targets": [
         "OA-DEF-01",
-        "PLT-TEST-01"
+        "PLT-TEST-01",
+        "SYS-AUD-01"
       ],
       "new_splits": [
         {
@@ -289739,7 +290029,7 @@
         }
       ],
       "current_stage": "A",
-      "next_card": "WP02-13b",
+      "next_card": "WP02-06",
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -289889,20 +290179,10 @@
       },
       "next_card_selection": {
         "rule": "严格前置全部完整DONE；当前阶段可开工者按全图最长下游链，等长按原序列",
-        "baseline_sha": "674a7ed23acbb25061ecec0c401595e69a645c62",
-        "after_card": "WP02-05b",
-        "selected": "WP02-13b",
+        "baseline_sha": "6c013650e0cb92cd86868073ef5d8c93104b8512",
+        "after_card": "WP02-13b",
+        "selected": "WP02-06",
         "candidates": [
-          {
-            "card": "WP02-13b",
-            "global_edges": 43,
-            "phase_edges": 2,
-            "phase_path": [
-              "WP02-13b",
-              "WP02-15",
-              "WP03-04"
-            ]
-          },
           {
             "card": "WP02-06",
             "global_edges": 43,
@@ -289997,11 +290277,11 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 1726.921,
+      "target_review_effective_seconds": 2115.654,
       "last_checkpoint_counts": {
         "original_done": 47,
-        "fully_done": 44,
-        "targets_done": 2,
+        "fully_done": 45,
+        "targets_done": 3,
         "new_splits": 4,
         "periodic_checkpoint_due": false
       }

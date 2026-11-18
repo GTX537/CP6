@@ -1,2 +1,9 @@
 namespace CP6.Core.Services.Sys;
-public interface ICurrentUserAccessor { Guid? UserId { get; } string? UserName { get; } }
+public interface ICurrentUserAccessor
+{
+    Guid? UserId { get; }
+    string? UserName { get; }
+    Guid? ImpersonatorId => null;
+    string? AuditPermissionVersion => null;
+    AuditEvidenceV1? NativeAuditEvidence => null;
+}

@@ -153,16 +153,18 @@ public partial class TenantAdminService
     private async Task<TenantManagementReceiptV1> CommitManagementCommand(Guid id, TenantManagementCommandV1 command, byte[] input,
         PlatformAdminAuthorization.Actor actor, TenantPendingSuspensionV1? pending, bool legacy, CancellationToken ct)
     {
+        var operationHash = ManagementOperationHash(command.OperationRef, legacy);
+        var originalOperationDigest = Convert.ToHexString(operationHash);
         if (command.Configuration is { } config)
-            await UpdateCoreAsync(id, config.Name, config.ExpireDate, config.Remark, config.TimeZoneId, actor, ct, pending);
+            await UpdateCoreAsync(id, config.Name, config.ExpireDate, config.Remark, config.TimeZoneId, actor, ct, pending, originalOperationDigest);
         else await SetEnableAsync(id, command.Kind == "reactivate",
-            command.Kind == "reactivate" ? SecurityEventType.TenantReactivated : SecurityEventType.TenantSuspended, actor, ct, pending);
+            command.Kind == "reactivate" ? SecurityEventType.TenantReactivated : SecurityEventType.TenantSuspended, actor, ct, pending, originalOperationDigest);
         var snapshot = (await ManagementSnapshot(id, ct))!;
         var at = await _db.Database.SqlQueryRaw<DateTimeOffset>("SELECT clock_timestamp() AS \"Value\"").SingleAsync(ct);
         var result = new TenantManagementReceiptV1(command.OperationRef, command.Kind, snapshot, at);
         await _db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_tenant_management_v1.commands(tenant_id,operation_hash,operation_bytes,input_bytes,actor_id,actor_tenant,result_bytes)
-            VALUES({id},{ManagementOperationHash(command.OperationRef, legacy)},{ManagementBytes(command.OperationRef)},{input},{actor.Id},{actor.TenantId},{ManagementBytes(result)})
+            VALUES({id},{operationHash},{ManagementBytes(command.OperationRef)},{input},{actor.Id},{actor.TenantId},{ManagementBytes(result)})
             """, ct);
         return result;
     }

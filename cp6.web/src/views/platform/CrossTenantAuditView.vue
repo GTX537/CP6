@@ -38,17 +38,20 @@
       </div>
     </div>
 
+    <el-alert v-if="loadError" :title="loadError" type="warning" :closable="false" />
     <el-table :data="tableData" v-loading="loading" stripe border style="width: 100%">
-      <el-table-column prop="userName" :label="t('platform.tenant.adminUser')" width="140" />
       <el-table-column prop="requestTenantCode" :label="t('platform.audit.tenantCode')" width="130" />
       <el-table-column prop="eventType" :label="t('platform.audit.eventType')" width="160">
         <template #default="{ row }">
           <el-tag size="small" type="info">{{ t('sec.event.' + row.eventType) }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="reason" label="" show-overflow-tooltip />
-      <el-table-column prop="clientIp" label="IP" width="130" />
-      <el-table-column prop="createdAt" :label="t('platform.audit.from')" width="180" :formatter="formatDateTimeCell" />
+      <el-table-column label="记录状态" width="145">
+        <template #default="{ row }">{{ row.evidenceGap ? '记录不完整' : '已记录' }}</template>
+      </el-table-column>
+      <el-table-column label="事件时间" min-width="240">
+        <template #default="{ row }">{{ auditTime(row, row.createdAt) }}</template>
+      </el-table-column>
     </el-table>
 
     <div class="pagination">
@@ -66,12 +69,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Search } from '@element-plus/icons-vue'
 import { platformAuditApi } from '@/api/platform/audit'
 import type { AuditRow } from '@/types/platform/platform'
-import { formatDateTimeCell } from '@/utils/format'
+import { auditTime } from '@/api/sys/auditAccess'
+import { AUTH_EVENT, identityStamp } from '@/auth/identity'
 
 const { t } = useI18n()
 
@@ -83,6 +87,8 @@ const total = ref(0)
 const page = ref(1)
 const pageSize = ref(20)
 const loading = ref(false)
+const loadError = ref('')
+let generation = 0
 
 const filter = reactive<{ tenantCode: string; eventType: number | '' }>({
   tenantCode: '',
@@ -91,6 +97,9 @@ const filter = reactive<{ tenantCode: string; eventType: number | '' }>({
 const dateRange = ref<[string, string] | null>(null)
 
 async function loadData() {
+  const id = ++generation, stamp = identityStamp()
+  const current = () => id === generation && stamp === identityStamp()
+  loadError.value = ''
   loading.value = true
   try {
     const res = await platformAuditApi.list({
@@ -101,10 +110,13 @@ async function loadData() {
       page: page.value,
       pageSize: pageSize.value
     })
+    if (!current()) return
     tableData.value = res.rows
     total.value = res.total
+  } catch {
+    if (current()) { clear(); loadError.value = '当前平台权限或会话不允许读取跨租户审计。' }
   } finally {
-    loading.value = false
+    if (current()) loading.value = false
   }
 }
 
@@ -113,7 +125,13 @@ function search() {
   loadData()
 }
 
-onMounted(() => loadData())
+function clear() { ++generation; tableData.value = []; total.value = 0; loadError.value = ''; loading.value = false }
+let identity = identityStamp()
+function identityChanged() { const next = identityStamp(); if (next !== identity) { identity = next; clear() } }
+onMounted(() => { window.addEventListener(AUTH_EVENT, identityChanged); window.addEventListener('storage', identityChanged); loadData() })
+onBeforeUnmount(() => {
+  window.removeEventListener(AUTH_EVENT, identityChanged); window.removeEventListener('storage', identityChanged); clear()
+})
 </script>
 
 <style scoped>

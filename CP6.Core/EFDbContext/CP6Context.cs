@@ -648,6 +648,13 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        var auditTypes = new[] { typeof(Sys_OperLog), typeof(Sys_SecurityLog), typeof(Sys_FieldAuditLog) };
+        if (!Database.IsNpgsql()) foreach (var auditType in auditTypes)
+        {
+            var audit = modelBuilder.Entity(auditType);
+            audit.Ignore(nameof(Sys_OperLog.AuditAtUtc));
+            audit.Ignore(nameof(Sys_OperLog.AuditEvidenceJson));
+        }
         // Preserve complete convention names until the PG adapter applies byte-safe, collision-checked names.
         if (Database.IsNpgsql()) modelBuilder.Model.SetMaxIdentifierLength(int.MaxValue);
         modelBuilder.AddCp6TransactionalMessaging("crm_identity");
@@ -2697,6 +2704,14 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         if (Database.IsNpgsql())
         {
             CorePostgreSqlModelConfiguration.Apply(modelBuilder);
+            foreach (var auditType in auditTypes)
+            {
+                var audit = modelBuilder.Entity(auditType);
+                audit.Property<DateTimeOffset?>(nameof(Sys_OperLog.AuditAtUtc)).HasColumnType("timestamp with time zone");
+                audit.Property<string>(nameof(Sys_OperLog.AuditEvidenceJson)).HasColumnType("jsonb").UseCollation(null);
+            }
+            modelBuilder.Entity<Machine>().Property<uint>("AuditPgVersion").HasColumnName("xmin")
+                .HasColumnType("xid").ValueGeneratedOnAddOrUpdate();
             modelBuilder.Entity<Sys_Tenant>().Property(x => x.AuthenticationPolicyRevision)
                 .HasDefaultValueSql("gen_random_uuid()").ValueGeneratedOnAddOrUpdate();
             modelBuilder.Entity<Sys_User>().Property(x => x.CredentialRevision)
@@ -2789,11 +2804,20 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
 
     /// <summary>阶段二：业务行已落库后写审计行。Added 键此刻已落定（仍 tracked，重取真值）；
     /// Modified/Deleted 用存前键（Deleted 已 Detached）。审计行非 IAuditable，不会被再次捕获。</summary>
-    private void WriteAuditRows(List<PendingAudit> pending)
+    private void WriteAuditRows(List<PendingAudit> pending, string? transactionRef)
     {
+        var actor = _user?.UserId;
+        var actual = _user?.ImpersonatorId;
+        // HTTP 入口只提供上下文；原命令引用必须来自本次写入使用的同一实际/有效身份。
+        var native = _user?.NativeAuditEvidence is { } bound && actor.HasValue
+            && bound.EffectiveActor == actor && bound.ActualActor == (actual ?? actor) ? bound : null;
         foreach (var pa in pending)
         {
             var key = pa.Operation == 1 ? ExtractKey(pa.Entry) : pa.KeyBeforeSave;   // Added 取存后真值；其余存前键
+            var now = DateTimeOffset.UtcNow;
+            var version = pa.Entry.Metadata.GetProperties().Where(p => p.IsConcurrencyToken || p.Name == "AuditPgVersion")
+                .Select(p => new { p.Name, Value = pa.Entry.Property(p.Name).CurrentValue }).Where(x => x.Value is not null)
+                .OrderBy(x => x.Name, StringComparer.Ordinal).ToArray();
             Sys_FieldAuditLogs.Add(new Sys_FieldAuditLog
             {
                 EntityName = pa.EntityName,
@@ -2802,7 +2826,15 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
                 Changes = System.Text.Json.JsonSerializer.Serialize(pa.Changes),
                 UserId = _user?.UserId,
                 UserName = _user?.UserName,
-                ChangedAt = DateTime.Now,
+                ChangedAt = now.LocalDateTime,
+                AuditAtUtc = now,
+                AuditEvidenceJson = transactionRef is null ? null : new AuditEvidenceV1("EF_CAPTURE_UTC", "REQUIRED_AUDIT",
+                    actual.HasValue ? "IMPERSONATED" : actor.HasValue ? "USER" : "UNBOUND",
+                    actual ?? actor, actor, PermissionVersion: native?.PermissionVersion ?? _user?.AuditPermissionVersion,
+                    OperationId: native?.OperationId, OriginalOperationDigest: native?.OriginalOperationDigest,
+                    Outcome: "OWNER_RECORDED",
+                    EntityVersion: version.Length == 0 ? null : AuthenticationPolicyServiceV1.Hash(version),
+                    RecordedAtUtc: now, TransactionRef: transactionRef, Action: pa.Operation switch { 1 => "CREATE", 2 => "UPDATE", _ => "DELETE" }).Encode(),
                 TenantId = pa.TenantId        // 阶段二不经 StampTenant → 显式镜像业务实体租户
             });
         }
@@ -2864,7 +2896,7 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
 
         var useTx = Database.IsRelational() && Database.CurrentTransaction == null;   // InMemory 不开；已有环境事务则参与
         var tx = useTx ? Database.BeginTransaction() : null;
-        var callerTx = !useTx && identity?.HasChanges == true ? Database.CurrentTransaction : null;
+        var callerTx = !useTx && (identity?.HasChanges == true || Database.IsNpgsql() && pending.Count != 0) ? Database.CurrentTransaction : null;
         var savepoint = callerTx is null ? null : "c02_" + Guid.NewGuid().ToString("N")[..24];
         if (callerTx is not null && !callerTx.SupportsSavepoints) throw new InvalidOperationException("C02_REQUIRES_SQL_SAVEPOINTS");
         var saved = false;
@@ -2877,16 +2909,23 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             var result = base.SaveChanges(acceptAllChangesOnSuccess: true);   // Pipeline must not submit the business writes twice.
             if (identity?.HasChanges == true)
                 new IdentitySnapshotWriter(this, _identity!).WriteCapturedAsync(identity).GetAwaiter().GetResult();
-            WriteAuditRows(pending);
+            var auditTransaction = Database.IsNpgsql() && pending.Count != 0
+                ? Database.SqlQueryRaw<string>("SELECT pg_current_xact_id()::text AS \"Value\"").Single() : null;
+            WriteAuditRows(pending, auditTransaction);
             base.SaveChanges(acceptAllChangesOnSuccess: true);          // 审计行（调 BASE 非 this → 不重入；审计行非 IAuditable）
             tx?.Commit();
+            if (saved && Database.IsNpgsql()) callerTx!.ReleaseSavepoint(savepoint!);
             RestoreSaveState(retainedState);
             return result;                                              // 返业务影响行数（审计行不计入）
         }
         catch
         {
             if (tx is not null) tx.Rollback();
-            else if (saved) callerTx!.RollbackToSavepoint(savepoint!);
+            else if (saved)
+            {
+                callerTx!.RollbackToSavepoint(savepoint!);
+                if (Database.IsNpgsql()) callerTx.ReleaseSavepoint(savepoint!);
+            }
             throw;
         }
         finally { tx?.Dispose(); }
@@ -2904,7 +2943,7 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
 
         var useTx = Database.IsRelational() && Database.CurrentTransaction == null;
         var tx = useTx ? await Database.BeginTransactionAsync(cancellationToken) : null;
-        var callerTx = !useTx && identity?.HasChanges == true ? Database.CurrentTransaction : null;
+        var callerTx = !useTx && (identity?.HasChanges == true || Database.IsNpgsql() && pending.Count != 0) ? Database.CurrentTransaction : null;
         var savepoint = callerTx is null ? null : "c02_" + Guid.NewGuid().ToString("N")[..24];
         if (callerTx is not null && !callerTx.SupportsSavepoints) throw new InvalidOperationException("C02_REQUIRES_SQL_SAVEPOINTS");
         var saved = false;
@@ -2917,16 +2956,23 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess: true, cancellationToken);
             if (identity?.HasChanges == true)
                 await new IdentitySnapshotWriter(this, _identity!).WriteCapturedAsync(identity, cancellationToken);
-            WriteAuditRows(pending);
+            var auditTransaction = Database.IsNpgsql() && pending.Count != 0
+                ? await Database.SqlQueryRaw<string>("SELECT pg_current_xact_id()::text AS \"Value\"").SingleAsync(cancellationToken) : null;
+            WriteAuditRows(pending, auditTransaction);
             await base.SaveChangesAsync(acceptAllChangesOnSuccess: true, cancellationToken);
             if (tx != null) await tx.CommitAsync(cancellationToken);
+            if (saved && Database.IsNpgsql()) await callerTx!.ReleaseSavepointAsync(savepoint!, cancellationToken);
             RestoreSaveState(retainedState);
             return result;
         }
         catch
         {
             if (tx is not null) await tx.RollbackAsync(CancellationToken.None);
-            else if (saved) await callerTx!.RollbackToSavepointAsync(savepoint!, CancellationToken.None);
+            else if (saved)
+            {
+                await callerTx!.RollbackToSavepointAsync(savepoint!, CancellationToken.None);
+                if (Database.IsNpgsql()) await callerTx.ReleaseSavepointAsync(savepoint!, CancellationToken.None);
+            }
             throw;
         }
         finally { if (tx != null) await tx.DisposeAsync(); }

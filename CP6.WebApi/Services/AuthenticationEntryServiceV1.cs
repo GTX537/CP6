@@ -270,9 +270,18 @@ public sealed partial class AuthenticationEntryServiceV1(CP6Context db, ITenantC
     }
 
     private void Audit(Sys_User user, SecurityEventType type, AuthenticationProofV1 proof, string? ip, string? ua)
-        => db.Sys_SecurityLogs.Add(new Sys_SecurityLog { TenantId = user.TenantId, UserId = user.Id, UserName = user.UserName,
-            EventType = (int)type, CreatedAt = DateTime.Now, ClientIp = ip, UserAgent = ua?.Length > 256 ? ua[..256] : ua,
+    {
+        var now = DateTimeOffset.UtcNow;
+        var platform = user.TenantId == CP6.Core.Services.Common.TenantContext.DefaultTenant;
+        db.Sys_SecurityLogs.Add(new Sys_SecurityLog { TenantId = user.TenantId, UserId = user.Id, UserName = user.UserName,
+            EventType = (int)type, CreatedAt = now.LocalDateTime,
+            ClientIp = platform && System.Net.IPAddress.TryParse(ip, out _) ? ip : null,
+            AuditAtUtc = now, AuditEvidenceJson = new AuditEvidenceV1("AUTHENTICATION_OWNER_UTC", "REQUIRED_AUDIT",
+                "USER", user.Id, user.Id, PermissionVersion: proof.PolicyVersion, OperationId: proof.CompletionRef,
+                Outcome: "OWNER_RECORDED", RecordedAtUtc: now,
+                DataPolicy: platform ? "PLATFORM_SECURITY_V1" : "TENANT_SECURITY_V1", Action: type.ToString()).Encode(),
             ContextJson = JsonSerializer.Serialize(new { proof.CompletionRef, proof.PrimaryMethod, proof.PrimaryVerifiedAtUtc, proof.PolicyVersion }) });
+    }
 
     private static void RequireClient(AuthenticationProofV1 proof, string challenge, ClientContextDto? client)
     {

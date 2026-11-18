@@ -70,8 +70,19 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.True(enabled.Snapshot.Enable); Assert.Equal(4, enabled.Snapshot.Revision);
         Assert.Equal(first, await ManagementOriginal(h, id, command.OperationRef)); Assert.Equal(first, await ManagementWrite(h, id, command));
         var audit = await h.Db.Sys_SecurityLogs.IgnoreQueryFilters().Where(x => x.RequestTenantCode == row.TenantCode).ToArrayAsync();
-        Assert.Equal(3, audit.Length); Assert.All(audit, x => Assert.Equal(h.User, x.UserId));
-        Assert.Equal(3, await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_tenant_management_v1.commands WHERE tenant_id={id}").SingleAsync());
+        Assert.Equal(3, audit.Length);
+        var native = await h.Db.Database.SqlQuery<string>($"SELECT upper(encode(operation_hash,'hex')) AS \"Value\" FROM cp6_tenant_management_v1.commands WHERE tenant_id={id}").ToArrayAsync();
+        var recorded = audit.Select(x =>
+        {
+            var evidence = AuditEvidenceV1.Decode(x.AuditEvidenceJson)!;
+            Assert.Equal(h.User, evidence.ActualActor);
+            Assert.Equal(h.User, evidence.EffectiveActor);
+            Assert.Equal("REQUIRED_AUDIT", evidence.Reliability);
+            Assert.False(string.IsNullOrWhiteSpace(evidence.PermissionVersion));
+            Assert.NotNull(x.AuditAtUtc);
+            return evidence.OriginalOperationDigest;
+        });
+        Assert.Equal(native.Order(), recorded.Order());
     }
 
     [CurrentPermissionPostgresFact]
@@ -229,14 +240,20 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         settings.Database=name;var database=new DatabaseOptions(DatabaseProvider.PostgreSql);var policy=DatabaseMigrationProfile.For(database,DatabaseContextKind.Core);
         var options=DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6Context>(),database,settings.ConnectionString,policy.MigrationsAssembly,policy.HistoryTable,policy.HistorySchema);
         await using var db=new CP6Context(options.Options,new TenantContext());await db.GetService<IMigrator>().MigrateAsync("20261102090000_CodeGenMetadataAdoptionV1");
-        db.Sys_Tenants.Add(new(){TenantCode="existing",TenantName="Existing ",Remark="保留 ",ExpireDate=new DateTime(2030,1,2,3,4,5).AddTicks(1234560)});
-        await db.SaveChangesAsync();db.ChangeTracker.Clear();
+        // 原迁移前写入使用旧数据库列；当前 EF 写入会连同新字段审计列一起提交。
+        await db.Database.ExecuteSqlRawAsync("""
+            INSERT INTO public."Sys_Tenants" ("Id","TenantCode","TenantName","Remark","ExpireDate","Enable","TwoFactorMode","CreateDate")
+                VALUES(gen_random_uuid(),'existing','Existing ','保留 ',TIMESTAMP '2030-01-02 03:04:05.123456',true,0,LOCALTIMESTAMP);
+            """);
         Task<string[]> Rows()=>db.Database.SqlQueryRaw<string>("SELECT row_to_json(t)::text AS \"Value\" FROM public.\"Sys_Tenants\" t ORDER BY \"Id\"").ToArrayAsync();
         var before=await Rows();
         await using(var writer=new CP6Context(options.Options,new TenantContext()))
         await using(var transaction=await writer.Database.BeginTransactionAsync())
         {
-            writer.Sys_Tenants.Add(new(){TenantCode="concurrent",TenantName="Created before migration lock"});await writer.SaveChangesAsync();
+            await writer.Database.ExecuteSqlRawAsync("""
+                INSERT INTO public."Sys_Tenants" ("Id","TenantCode","TenantName","Enable","TwoFactorMode","CreateDate")
+                    VALUES(gen_random_uuid(),'concurrent','Created before migration lock',true,0,LOCALTIMESTAMP);
+                """);
             var migration=db.Database.MigrateAsync();
             try
             {
@@ -275,7 +292,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
 
     [CurrentPermissionPostgresFact]
-    public async Task Tenant_management_v1_http_logout_during_audit_wait_rolls_back_before_commit()
+    public async Task Tenant_management_v1_http_logout_waits_for_earlier_audit_commit_then_revokes_old_access()
     {
         await using var h=await TenantManagementSeed();var id=await ManagementTarget(h);var row=(await ManagementRead(h,id))!;
         await using var host=await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!);var cookies=await Login(host,h);
@@ -294,12 +311,18 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             }
             await Wait("%INSERT INTO %Sys_SecurityLogs%",operation);
             logout=host.Send(OperationsRequest(cookies,HttpMethod.Post,"api/auth/logout",new {}));
-            // Logout blacklists first, then waits for the DB authentication gate held by the write.
+            // 注册的 Web 会话先进入 PostgreSQL 授权门再撤销；已持门的写入与强制审计先提交。
             await Wait("%cp6_authentication_v1.acquire()%",logout);
         }
         finally {await tx.RollbackAsync();}
-        using var result=await operation;Assert.True(result.StatusCode==HttpStatusCode.Unauthorized,await OperationsFailure(result));
+        using var result=await operation;
+        var committed=await NumberHttpData<TenantManagementReceiptV1>(result);
+        Assert.Equal(2,committed.Snapshot.Revision);
         using var loggedOut=await logout!;Assert.True(loggedOut.StatusCode==HttpStatusCode.OK,await OperationsFailure(loggedOut));
-        Assert.Equal(row,await ManagementRead(h,id));Assert.Null(await ManagementOriginal(h,id,"配置/原命令"));
+        using var stale=await host.Send(OperationsRequest(cookies,HttpMethod.Post,ManagementPath(id,"/commands"),ManagementUpdate(committed.Snapshot,"旧会话的新命令")));
+        Assert.Equal(HttpStatusCode.Unauthorized,stale.StatusCode);
+        Assert.Equal(committed.Snapshot,await ManagementRead(h,id));
+        Assert.Equal(committed,await ManagementOriginal(h,id,"配置/原命令"));
+        Assert.Null(await ManagementOriginal(h,id,"旧会话的新命令"));
     }
 }

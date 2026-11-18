@@ -23,8 +23,8 @@ public class FieldAuditController : ControllerBase
 {
     private readonly CP6Context _db;
     private readonly FieldAuditReadOwnerV1? _owner;
-    private readonly FieldAuditListOwnerV1? _listOwner;
-    public FieldAuditController(CP6Context db, FieldAuditReadOwnerV1? owner = null, FieldAuditListOwnerV1? listOwner = null) { _db = db; _owner = owner; _listOwner = listOwner; }
+    private readonly AuditBrowseV1? _browse;
+    public FieldAuditController(CP6Context db, FieldAuditReadOwnerV1? owner = null, AuditBrowseV1? browse = null) { _db = db; _owner = owner; _browse = browse; }
 
     /// <summary>分页查询字段审计日志。资源键 sys-field-audit（MenuKey 由 RoutePath 派生），操作点 query。</summary>
     [HttpGet]
@@ -36,11 +36,13 @@ public class FieldAuditController : ControllerBase
         [FromQuery] DateTime? from,
         [FromQuery] DateTime? to,
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 20)
+        [FromQuery] int pageSize = 20, [FromQuery] DateTimeOffset? fromUtc = null,
+        [FromQuery] DateTimeOffset? toUtc = null, [FromQuery] string? cursor = null, [FromQuery] string? timeSource = null)
     {
         if (_db.Database.IsNpgsql())
-            return Ok(await (_listOwner ?? throw new OrderPriceCorrectionException("FIELD_AUDIT_LIST_AUTHORITY_UNAVAILABLE", 503))
-                .ListAsync(entityName, entityKey, userId, from, to, page, pageSize, HttpContext.RequestAborted));
+            return Ok(await (_browse ?? throw new OrderPriceCorrectionException("FIELD_AUDIT_LIST_AUTHORITY_UNAVAILABLE", 503))
+                .ListAsync(AuditRetentionV1.Field, new(EntityName: entityName, EntityKey: entityKey, UserId: userId,
+                    From: from, To: to, FromUtc: fromUtc, ToUtc: toUtc, TimeSource: timeSource), page, pageSize, cursor, HttpContext.RequestAborted));
         page = Math.Max(1, page);                 // 防 page<=0 → 负数 Skip 抛异常
         pageSize = Math.Clamp(pageSize, 1, 200);  // 防一次拉全表
 
@@ -89,6 +91,7 @@ public class FieldAuditController : ControllerBase
     /// <summary>当前Owner安全时间线；游标仅定位原行，不携带权限。</summary>
     [HttpGet("record")]
     [RequirePermission("sys-field-audit", "query")]
+    [RequirePermission("sys-field-audit", "read-content")]
     public async Task<IActionResult> GetRecord([FromQuery] string entityName, [FromQuery] string entityKey,
         [FromQuery] Guid? afterId = null, [FromQuery] int pageSize = 100, CancellationToken ct = default)
     {

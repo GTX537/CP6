@@ -196,16 +196,20 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests(TenantManagementPo
         await template.Database.ExecuteSqlRawAsync("CREATE DATABASE "+databaseName);
         var connection=new NpgsqlConnectionStringBuilder(template.Database.GetConnectionString()){Database=databaseName};
         var database=new DatabaseOptions(DatabaseProvider.PostgreSql);var profile=DatabaseMigrationProfile.For(database,DatabaseContextKind.Core);
-        await using var db=new CP6Context(DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6Context>(),database,connection.ConnectionString,
-            profile.MigrationsAssembly,profile.HistoryTable,profile.HistorySchema).Options,tenant);
+        var options=DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6Context>(),database,connection.ConnectionString,
+            profile.MigrationsAssembly,profile.HistoryTable,profile.HistorySchema).Options;
+        await using var db=new CP6Context(options,tenant);
         var migrator=db.GetService<IMigrator>();await migrator.MigrateAsync("20261020042000_IamAdministrationV1");
-        db.Sys_Tenants.Add(new(){Id=tenant.CurrentTenantId,TenantCode="legacy-catalog",TenantName="legacy"});
-        db.Sys_Roles.Add(new(){RoleId=91,RoleName="retained"});
-        db.Sys_Menus.Add(new(){MenuId=991,MenuKey="retained",MenuName="retained"});
-        db.Sys_MenuActions.Add(new(){MenuId=991,ActionCode="read",ActionName="Read"});
-        db.Sys_RoleMenus.Add(new(){RoleId=91,MenuId=991});
-        db.Sys_RoleActions.Add(new(){RoleId=91,MenuId=991,ActionCode="read"});
-        await db.SaveChangesAsync();db.ChangeTracker.Clear();
+        await using(var old=new BeforeAuditEvidenceContext(options,tenant))
+        {
+            old.Sys_Tenants.Add(new(){Id=tenant.CurrentTenantId,TenantCode="legacy-catalog",TenantName="legacy"});
+            old.Sys_Roles.Add(new(){RoleId=91,RoleName="retained"});
+            old.Sys_Menus.Add(new(){MenuId=991,MenuKey="retained",MenuName="retained"});
+            old.Sys_MenuActions.Add(new(){MenuId=991,ActionCode="read",ActionName="Read"});
+            old.Sys_RoleMenus.Add(new(){RoleId=91,MenuId=991});
+            old.Sys_RoleActions.Add(new(){RoleId=91,MenuId=991,ActionCode="read"});
+            await old.SaveChangesAsync();
+        }
         var roleRevision=await db.Database.SqlQueryRaw<Guid>("SELECT revision AS \"Value\" FROM cp6_authentication_v1.identity_admission_revisions WHERE object_key='role:91'").SingleAsync();
         await migrator.MigrateAsync();
         var catalogRevision=await db.Database.SqlQueryRaw<Guid>("SELECT revision AS \"Value\" FROM cp6_authentication_v1.identity_admission_revisions WHERE object_key='permission-catalog'").SingleAsync();

@@ -65,12 +65,9 @@ export interface ImpersonationEndResult {
 // ── 跨租户审计（块④ R10）──
 export interface AuditRow {
   id: string
-  userId: string | null
-  userName: string
   requestTenantCode: string | null
   eventType: number
-  reason: string | null
-  clientIp: string | null
-  userAgent: string | null
   createdAt: string
+  auditAtUtc?: string
+  evidenceGap?: boolean
 }

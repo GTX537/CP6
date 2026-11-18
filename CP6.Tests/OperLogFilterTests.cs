@@ -1,4 +1,6 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Erp;
+using CP6.Core.Services.Sys;
 using CP6.Core.Utilities;
 using CP6.Entity.DomainModels;
 using CP6.WebApi.Filters;
@@ -24,6 +26,44 @@ namespace CP6.Tests;
 /// </summary>
 public class OperLogFilterTests
 {
+    [Fact]
+    public async Task Unknown_owner_commit_is_distinct_from_an_http_error_and_preserves_the_original_reference()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        var transport = CreateCapturingTransport(out var published);
+        var filter = new OperLogFilter(db, transport.Object, BuildConfig());
+        var (executing, _) = CreateMockContext();
+        var operation = Guid.NewGuid();
+        executing.HttpContext.Items[AuditEvidenceV1.HttpItem] = new AuditEvidenceV1("OWNER_UTC", "REQUIRED_AUDIT", "USER", OperationId: operation);
+        await filter.OnActionExecutionAsync(executing, Execution(executing, result: null,
+            exception: new OrderPriceCorrectionException("OPERATIONS_OUTCOME_UNKNOWN", 503)));
+        var log = Assert.IsType<Sys_OperLog>(published());
+        Assert.Equal(503, log.StatusCode);
+        var proof = AuditEvidenceV1.Decode(log.AuditEvidenceJson);
+        Assert.Equal("UNKNOWN", proof?.Outcome);
+        Assert.Equal(operation, proof?.OperationId);
+        Assert.Equal("BEST_EFFORT_TELEMETRY", proof?.Reliability);
+        Assert.Equal(TimeSpan.Zero, log.AuditAtUtc!.Value.Offset);
+    }
+
+    [Fact]
+    public async Task Request_observation_publishes_only_routed_metadata_without_argument_or_path_values()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        var transport = CreateCapturingTransport(out var published);
+        var filter = new OperLogFilter(db, transport.Object, BuildConfig());
+        var (context, next) = CreateMockContext("POST", "/api/documents/sim-private-route", "Documents", "Update");
+        context.ActionArguments["payload"] = new { privateNote = "sim-private-body" };
+
+        await filter.OnActionExecutionAsync(context, next);
+
+        var log = Assert.IsType<Sys_OperLog>(published());
+        Assert.Equal("Documents", log.Controller);
+        Assert.Equal("Update", log.Action);
+        Assert.Null(log.RequestBody);
+        Assert.DoesNotContain("sim-private-route", log.RequestUrl ?? "");
+    }
+
     [Fact]
     public async Task Sso_configuration_never_serializes_client_secret_into_operational_transport()
     {
@@ -92,7 +132,8 @@ public class OperLogFilterTests
         // 模拟登录用户（基础 Name claim + 调用方追加的额外 claim，如 impersonator_id）
         var claims = new List<System.Security.Claims.Claim>
         {
-            new(System.Security.Claims.ClaimTypes.Name, "testUser")
+            new(System.Security.Claims.ClaimTypes.Name, "testUser"),
+            new(System.Security.Claims.ClaimTypes.NameIdentifier, "11fa5ce3-8843-4a6b-b290-82df01e26d9a")
         };
         claims.AddRange(extraClaims.Select(c => new System.Security.Claims.Claim(c.type, c.value)));
         httpContext.User = new System.Security.Claims.ClaimsPrincipal(
@@ -140,8 +181,9 @@ public class OperLogFilterTests
         Assert.Equal(1, context.Sys_OperLogs.Count());
         var log = context.Sys_OperLogs.First();
         Assert.Equal("POST", log.HttpMethod);
-        Assert.Equal("/api/dict/addType", log.RequestUrl);
-        Assert.Equal("testUser", log.UserName);
+        Assert.Equal("Dict/AddType", log.RequestUrl);
+        Assert.Null(log.UserName);
+        Assert.NotNull(log.AuditAtUtc);
         Assert.Equal("Dict", log.Controller);
 
         // Verify：通道没有被投递
@@ -402,7 +444,7 @@ public class OperLogFilterTests
     }
 
     [Fact]
-    public async Task Non_space_kafka_failure_keeps_existing_message_output()
+    public async Task Non_space_kafka_failure_does_not_write_raw_exception_details()
     {
         const string legacyMessage = "legacy-operlog-error-detail";
         var context = TestHelper.CreateInMemoryContext();
@@ -418,7 +460,8 @@ public class OperLogFilterTests
         var output = await CaptureConsoleAsync(
             () => filter.OnActionExecutionAsync(executing, next));
 
-        Assert.Contains(legacyMessage, output);
+        Assert.DoesNotContain(legacyMessage, output);
+        Assert.Contains("OPERLOG_TRANSPORT_FAILED", output);
     }
 
     [Theory]

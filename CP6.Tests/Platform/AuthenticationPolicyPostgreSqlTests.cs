@@ -275,8 +275,19 @@ public sealed class AuthenticationPolicyPostgreSqlTests(TenantManagementPostgres
     }
 }
 
-// Seed an actual older schema with its own model; never retrofit new columns before testing the migration.
-internal sealed class BeforeAuthenticationPolicyContext(DbContextOptions<CP6Context> options, ITenantContext tenant) : CP6Context(options, tenant)
+// 旧库夹具按当时的列写入，迁移后用现行模型读取验证。
+internal class BeforeAuditEvidenceContext(DbContextOptions<CP6Context> options, ITenantContext tenant) : CP6Context(options, tenant)
+{
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Sys_FieldAuditLog>().Ignore(x => x.AuditAtUtc).Ignore(x => x.AuditEvidenceJson);
+        modelBuilder.Entity<Sys_OperLog>().Ignore(x => x.AuditAtUtc).Ignore(x => x.AuditEvidenceJson);
+        modelBuilder.Entity<Sys_SecurityLog>().Ignore(x => x.AuditAtUtc).Ignore(x => x.AuditEvidenceJson);
+    }
+}
+
+internal sealed class BeforeAuthenticationPolicyContext(DbContextOptions<CP6Context> options, ITenantContext tenant) : BeforeAuditEvidenceContext(options, tenant)
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
