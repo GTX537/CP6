@@ -1,80 +1,40 @@
 using CP6.Core.EFDbContext;
-using Microsoft.EntityFrameworkCore;
+using CP6.Core.Services.Sys;
 
 namespace CP6.WebApi.BackgroundServices;
 
-/// <summary>
-/// Deletes raw scan audit rows after their tenant/warehouse retention window.
-/// Task business events are intentionally not affected and remain long-lived.
-/// </summary>
-public sealed class WmsScanRetentionCleanupService : BackgroundService
+/// <summary>WMS 原始扫描留存 Owner。扫描日志与业务事件使用各自的留存范围。</summary>
+public sealed class WmsScanRetentionCleanupService(
+    IServiceScopeFactory scopeFactory,
+    IConfiguration configuration,
+    JobRetentionSourceV1 approval,
+    ILogger<WmsScanRetentionCleanupService> logger,
+    TimeProvider? clock = null) : BackgroundService
 {
-    private readonly IServiceScopeFactory _scopeFactory;
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<WmsScanRetentionCleanupService> _logger;
-
-    public WmsScanRetentionCleanupService(
-        IServiceScopeFactory scopeFactory,
-        IConfiguration configuration,
-        ILogger<WmsScanRetentionCleanupService> logger)
-    {
-        _scopeFactory = scopeFactory;
-        _configuration = configuration;
-        _logger = logger;
-    }
+    private readonly TimeProvider time = clock ?? TimeProvider.System;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var intervalHours = Math.Clamp(
-            _configuration.GetValue<int?>("Wms:ScanCleanupIntervalHours") ?? 24,
-            1,
-            168);
-        try
-        {
-            await Task.Delay(TimeSpan.FromSeconds(60), stoppingToken);
-        }
-        catch (OperationCanceledException)
-        {
-            return;
-        }
+        if (approval.EnvironmentId == Guid.Empty || approval.SourceId == Guid.Empty) return;
+        var interval = TimeSpan.FromHours(Math.Clamp(configuration.GetValue<int?>("Wms:ScanCleanupIntervalHours") ?? 24, 1, 168));
+        await Task.Delay(TimeSpan.FromSeconds(60), time, stoppingToken);
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            await CleanupAsync(stoppingToken);
-            try
-            {
-                await Task.Delay(TimeSpan.FromHours(intervalHours), stoppingToken);
-            }
-            catch (OperationCanceledException)
-            {
-                break;
-            }
+            try { await RunOnceAsync(stoppingToken); }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { break; }
+            catch (Exception error) { logger.LogError(error, "WMS 扫描留存本轮执行失败。"); }
+            await Task.Delay(interval, time, stoppingToken);
         }
     }
 
-    private async Task CleanupAsync(CancellationToken ct)
-    {
-        try
+    internal Task RunOnceAsync(CancellationToken ct) =>
+        TenantScopeRunner.ForEachTenantAsync(scopeFactory, async (services, tenant, token) =>
         {
-            using var scope = _scopeFactory.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<CP6Context>();
-            var now = DateTime.UtcNow;
-            var deleted = await db.MobileTaskScanLogs
-                .IgnoreQueryFilters()
-                .Where(x => x.RetainUntil <= now)
-                .ExecuteDeleteAsync(ct);
-            if (deleted > 0)
-                _logger.LogInformation(
-                    "Deleted {Count} expired WMS raw scan audit records.",
-                    deleted);
-        }
-        catch (OperationCanceledException)
-        {
-            // Normal host shutdown.
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "WMS raw scan retention cleanup failed.");
-        }
-    }
+            var journal = new JobRetentionV1(services.GetRequiredService<CP6Context>(), approval, time);
+            var result = await journal.RunForWorkerAsync(JobRetentionClassV1.WmsRawScan, time.GetUtcNow(), 0, false, token);
+            if (result.PlanId is not null)
+                logger.LogInformation("WMS 扫描留存租户 {Tenant}，计划 {Plan}，结果 {State}，已核实处置 {Count}。",
+                    tenant, result.PlanId, result.State, result.Disposed);
+        }, logger, ct);
 }

@@ -295,6 +295,7 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.KafkaOperLogCons
 
 // 审计清理按租户和保留类的已批准策略执行。
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.OperLogCleanupService>();
+builder.Services.AddSingleton(builder.Configuration.GetSection("JobRetention").Get<CP6.Core.Services.Sys.JobRetentionSourceV1>() ?? new());
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WmsScanRetentionCleanupService>();
 
 // 3.4 RabbitMQ = 业务事件通知/告警 专任（低频・确实配信・可路由可重试）
@@ -803,6 +804,7 @@ builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalTaskDecisionOwnerV2>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.NativeTaskBatchOwnerV2>();
 builder.Services.AddSingleton(builder.Configuration.GetSection("NativeTimeout").Get<CP6.Core.Services.Oa.NativeTimeoutOptionsV2>()??new());
 builder.Services.AddScoped<CP6.Core.Services.Oa.NativeTimeoutOwnerV2>();
+builder.Services.AddSingleton<CP6.Core.Services.Oa.NativeTimeoutHostRegistrationV2>();
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.NativeTimeoutWorkerV2>();
 builder.Services.AddSingleton(new CP6.WebApi.Services.ApprovalFactReceiverRegistryV2(
     builder.Configuration.GetSection("ApprovalFactReceiver").Get<CP6.WebApi.Services.ApprovalFactReceiverOptionsV2>() ?? new(), crmOidc, builder.Environment.IsDevelopment()));

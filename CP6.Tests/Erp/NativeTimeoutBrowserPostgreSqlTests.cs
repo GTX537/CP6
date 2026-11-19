@@ -51,7 +51,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             while(!await h.Db.Database.SqlQuery<bool>($"SELECT EXISTS(SELECT FROM cp6_native_timeout_v2.results r JOIN cp6_native_timeout_v2.claims c ON c.execution_id=r.execution_id WHERE c.task_id={f.Task}) AS \"Value\"").SingleAsync())
             {Assert.True(DateTimeOffset.UtcNow<until,"Real hosted timeout worker produced no effect");await Task.Delay(100);}
             using var result=await BrowserScenario(h,h.User,"oa-timeout-browser.mjs","timeout-browser",
-                new(){["ScopeAuthorization__EnvironmentId"]=ScopeEnvironment.ToString("D")},new(){["CP6_TASK_INSTANCE"]=f.Instance.ToString("D")});
+                new(){["ScopeAuthorization__EnvironmentId"]=ScopeEnvironment.ToString("D"), ["NativeTimeout__Enabled"]="true",
+                    ["NativeTimeout__ServiceId"]=service.ToString("D"), ["NativeTimeout__HostKey"]="isolated-postgres-test-host"},
+                new(){["CP6_TASK_INSTANCE"]=f.Instance.ToString("D")});
         }
         finally{await workerHost.StopAsync();}
         Assert.Equal(1,await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_native_timeout_v2.results r JOIN cp6_native_timeout_v2.claims c ON c.execution_id=r.execution_id WHERE c.task_id={f.Task}").SingleAsync());

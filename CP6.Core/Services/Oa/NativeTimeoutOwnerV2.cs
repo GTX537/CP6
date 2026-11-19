@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Core.Services.Oa;
 
-public sealed class NativeTimeoutOwnerV2(CP6Context db, ScopeAuthorizationFenceV1 fence, NativeTimeoutOptionsV2 options,
+public sealed partial class NativeTimeoutOwnerV2(CP6Context db, ScopeAuthorizationFenceV1 fence, NativeTimeoutOptionsV2 options,
     PersonalFormOwnerV2 forms, ApprovalTaskDecisionOwnerV2 approvals)
 {
     private static ScopeAuthorizationExceptionV1 Error(string code,int status=409)=>new(code,status);
@@ -26,7 +26,7 @@ public sealed class NativeTimeoutOwnerV2(CP6Context db, ScopeAuthorizationFenceV
     private void Entry()
     {if(!db.Database.IsNpgsql()||db.Database.CurrentTransaction!=null||db.ChangeTracker.HasChanges()||System.Transactions.Transaction.Current!=null)throw Error("TIMEOUT_TRANSACTION_REQUIRED",503);}
     private async Task Ready(CancellationToken ct)
-    {if(!await db.Database.SqlQueryRaw<bool>("SELECT cp6_native_timeout_v2.ready() AS \"Value\"").SingleAsync(ct))throw Error("TIMEOUT_WRITER_UNAVAILABLE",503);}
+    {if(!await db.Database.SqlQueryRaw<bool>("SELECT (cp6_native_timeout_v2.ready() AND cp6_native_timeout_v2.run_evidence_ready()) AS \"Value\"").SingleAsync(ct))throw Error("TIMEOUT_WRITER_UNAVAILABLE",503);}
     private sealed record Candidate(Guid Task,long Revision,long Occurrence);
     private IQueryable<NativeTimeoutClaimV2> Claims()=>db.Database.SqlQuery<NativeTimeoutClaimV2>($"""
         SELECT c.execution_id AS "ExecutionId",c.task_id AS "TaskId",c.revision AS "Revision",c.occurrence AS "Occurrence",
@@ -34,12 +34,30 @@ public sealed class NativeTimeoutOwnerV2(CP6Context db, ScopeAuthorizationFenceV
         FROM cp6_native_timeout_v2.claims c JOIN cp6_native_timeout_v2.deadlines d ON d.task_id=c.task_id AND d.revision=c.revision
         WHERE d.tenant_id={db.CurrentTenantId} AND d.environment_id={fence.EnvironmentId}
         """);
-    public async Task<NativeTimeoutClaimV2[]> ClaimAsync(CancellationToken ct=default)
+    public Task<NativeTimeoutClaimV2[]> ClaimAsync(CancellationToken ct=default) => ClaimAsync(false, ct);
+
+    internal async Task<NativeTimeoutClaimV2[]> ClaimAsync(bool hostObserved, CancellationToken ct)
     {
-        Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var committing=false;
+        Entry();
+        if (!fence.Owns(db)) throw Error("TIMEOUT_COMMON_AUTHORITY_UNAVAILABLE", 503);
+        await using var tx=await db.Database.BeginTransactionAsync(ct);
+        var committing=false;
         try
         {
-            var lease=await fence.AcquireAsync(ct);await Ready(ct);var service=await Service(ct);var now=await Clock(ct);
+            var lease=await fence.AcquireAsync(ct);
+            await Ready(ct);
+            var service=await Service(ct);
+            var now=await Clock(ct);
+            var schedule=await EnsureScheduleAsync(now,ct);
+            await ReconcileResultsAsync(ct);
+            var slot=await DueSlotAsync(schedule,now,ct);
+            if(!slot.Due)
+            {
+                await fence.ValidateAsync(lease,ct);
+                committing=true;
+                await tx.CommitAsync(ct);
+                return [];
+            }
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 INSERT INTO cp6_native_timeout_v2.observations(tenant_id,environment_id,service_id,last_scan)
                 VALUES({db.CurrentTenantId},{fence.EnvironmentId},{options.ServiceId},{now})
@@ -52,27 +70,56 @@ public sealed class NativeTimeoutOwnerV2(CP6Context db, ScopeAuthorizationFenceV
                 LEFT JOIN cp6_native_timeout_v2.claims c ON c.task_id=p.task_id AND c.revision=p.revision AND c.occurrence=p.occurrence
                 WHERE d.tenant_id={db.CurrentTenantId} AND d.environment_id={fence.EnvironmentId} AND p.state IN('READY','CLAIMED') AND p.next_due<={now}
                   AND (c.execution_id IS NULL OR c.lease_until<={now}) AND (t."Status" IN(1,2,3) OR t."Status"=0 AND i."Status"=0)
+                  AND NOT EXISTS(SELECT FROM cp6_native_timeout_v2.attempts a
+                    JOIN cp6_native_timeout_v2.attempt_observations o ON o.attempt_id=a.id
+                    WHERE a.execution_id=c.execution_id AND o.state IN('ISOLATED','UNKNOWN'))
                 ORDER BY p.next_due,p.task_id LIMIT 100
                 """).ToArrayAsync(ct);
+            var confirmedZero = candidates.Length == 0 && !await db.Database.SqlQuery<bool>($"""
+                SELECT EXISTS(SELECT FROM cp6_native_timeout_v2.pending p
+                  JOIN cp6_native_timeout_v2.deadlines d ON d.task_id=p.task_id AND d.revision=p.revision
+                  WHERE d.tenant_id={db.CurrentTenantId} AND d.environment_id={fence.EnvironmentId}
+                    AND p.state IN('READY','CLAIMED') AND p.next_due<={now}) AS "Value"
+                """).SingleAsync(ct);
+            var runId=Guid.NewGuid();
+            await db.Database.ExecuteSqlInterpolatedAsync($"""
+                INSERT INTO cp6_native_timeout_v2.runs(id,tenant_id,environment_id,service_id,schedule_version,slot_at,evaluated_at,claim_count,host_observed,confirmed_zero)
+                VALUES({runId},{db.CurrentTenantId},{fence.EnvironmentId},{options.ServiceId},{schedule.Version},{slot.Slot},{now},{candidates.Length},{hostObserved},{confirmedZero})
+                """,ct);
             var result=new List<NativeTimeoutClaimV2>();
             foreach(var c in candidates)
             {
                 var existing=await Claims().SingleOrDefaultAsync(x=>x.TaskId==c.Task&&x.Revision==c.Revision&&x.Occurrence==c.Occurrence,ct);
                 var claim=new NativeTimeoutClaimV2(existing?.ExecutionId??Guid.NewGuid(),c.Task,c.Revision,c.Occurrence,(existing?.Epoch??0)+1,
                     Guid.NewGuid(),options.ServiceId,service.Revision,now.AddSeconds(60));
-                await db.Database.ExecuteSqlInterpolatedAsync($"""
-                    INSERT INTO cp6_native_timeout_v2.claims(execution_id,task_id,revision,occurrence,epoch,claim_id,service_id,registration_revision,lease_until)
-                    VALUES({claim.ExecutionId},{claim.TaskId},{claim.Revision},{claim.Occurrence},{claim.Epoch},{claim.ClaimId},{claim.ServiceId},{claim.RegistrationRevision},{claim.LeaseUntil})
-                    ON CONFLICT(task_id,revision,occurrence) DO UPDATE SET epoch=EXCLUDED.epoch,claim_id=EXCLUDED.claim_id,service_id=EXCLUDED.service_id,
-                      registration_revision=EXCLUDED.registration_revision,lease_until=EXCLUDED.lease_until
-                    """,ct);
-                await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_native_timeout_v2.pending SET state='CLAIMED' WHERE task_id={c.Task}",ct);
+                await SaveClaimAsync(claim,runId,ct);
                 result.Add(claim);
             }
-            await fence.ValidateAsync(lease,ct);committing=true;await tx.CommitAsync(ct);return result.ToArray();
+            await fence.ValidateAsync(lease,ct);
+            committing=true;
+            await tx.CommitAsync(ct);
+            return result.ToArray();
         }
         catch(Exception e){await Rollback(tx,committing,e);throw;}
     }
+
+    private async Task SaveClaimAsync(NativeTimeoutClaimV2 claim, Guid runId, CancellationToken ct)
+    {
+        await db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO cp6_native_timeout_v2.claims(execution_id,task_id,revision,occurrence,epoch,claim_id,service_id,registration_revision,lease_until)
+            VALUES({claim.ExecutionId},{claim.TaskId},{claim.Revision},{claim.Occurrence},{claim.Epoch},{claim.ClaimId},{claim.ServiceId},{claim.RegistrationRevision},{claim.LeaseUntil})
+            ON CONFLICT(task_id,revision,occurrence) DO UPDATE SET epoch=EXCLUDED.epoch,claim_id=EXCLUDED.claim_id,service_id=EXCLUDED.service_id,
+              registration_revision=EXCLUDED.registration_revision,lease_until=EXCLUDED.lease_until
+            """,ct);
+        await db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO cp6_native_timeout_v2.attempts(id,run_id,execution_id,epoch,registration_revision,input_digest)
+            VALUES({claim.ClaimId},{runId},{claim.ExecutionId},{claim.Epoch},{claim.RegistrationRevision},{InputDigest(claim)})
+            """,ct);
+        await db.Database.ExecuteSqlInterpolatedAsync($"""
+            UPDATE cp6_native_timeout_v2.pending SET state='CLAIMED' WHERE task_id={claim.TaskId}
+            """,ct);
+    }
+
     private async Task CheckClaim(NativeTimeoutClaimV2 claim,Registration registration,DateTimeOffset now,CancellationToken ct)
     {
         var current=await Claims().SingleOrDefaultAsync(x=>x.ExecutionId==claim.ExecutionId,ct);
@@ -83,7 +130,7 @@ public sealed class NativeTimeoutOwnerV2(CP6Context db, ScopeAuthorizationFenceV
     public async Task<NativeTimeoutClaimV2> RenewAsync(NativeTimeoutClaimV2 claim,CancellationToken ct=default)
     {
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var lease=await fence.AcquireAsync(ct);
-        await Ready(ct);var service=await Service(ct);var now=await Clock(ct);await CheckClaim(claim,service,now,ct);
+        await Ready(ct);var service=await Service(ct);await EnsureDispatchEnabledAsync(ct);var now=await Clock(ct);await CheckClaim(claim,service,now,ct);
         var renewed=claim with{LeaseUntil=now.AddSeconds(60)};
         await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_native_timeout_v2.claims SET lease_until={renewed.LeaseUntil} WHERE execution_id={claim.ExecutionId} AND epoch={claim.Epoch} AND claim_id={claim.ClaimId}",ct);
         await fence.ValidateAsync(lease,ct);await tx.CommitAsync(ct);return renewed;
@@ -91,17 +138,46 @@ public sealed class NativeTimeoutOwnerV2(CP6Context db, ScopeAuthorizationFenceV
     private sealed record Deadline(string ContextKind,string Policy);
     public async Task<NativeTimeoutResultV2> ExecuteAsync(NativeTimeoutClaimV2 claim,CancellationToken ct=default)
     {
+        NativeTimeoutResultV2 result;
+        try
+        {
+            result=await ExecuteOriginalAsync(claim,ct);
+        }
+        catch(ScopeAuthorizationExceptionV1 error) when(error.Message=="TIMEOUT_OUTCOME_UNKNOWN")
+        {
+            await RecordWhileDatabaseAvailable(() => ObserveFailureAsync(claim,NativeTimeoutFailureKindV2.Unknown,false,CancellationToken.None));
+            throw;
+        }
+        await RecordWhileDatabaseAvailable(() => ObserveResultAsync(claim,result,ct));
+        return result;
+    }
+
+    private static async Task RecordWhileDatabaseAvailable(Func<Task> observe)
+    {
+        try { await observe(); }
+        catch (Npgsql.NpgsqlException)
+        {
+            // 结果已由原 Owner 持久化。存储恢复后从原回执补记观察。
+        }
+    }
+
+    private async Task<NativeTimeoutResultV2> ExecuteOriginalAsync(NativeTimeoutClaimV2 claim,CancellationToken ct)
+    {
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var committing=false;
         try
         {
-            var lease=await fence.AcquireAsync(ct);await Ready(ct);var service=await Service(ct);
-            var old=await db.Database.SqlQuery<string>($"""
-                SELECT r.body AS "Value" FROM cp6_native_timeout_v2.results r JOIN cp6_native_timeout_v2.claims c ON c.execution_id=r.execution_id
-                JOIN cp6_native_timeout_v2.deadlines d ON d.task_id=c.task_id AND d.revision=c.revision
-                WHERE r.execution_id={claim.ExecutionId} AND d.tenant_id={db.CurrentTenantId} AND d.environment_id={fence.EnvironmentId} AND c.service_id={options.ServiceId}
-                """).SingleOrDefaultAsync(ct);
-            if(old!=null)return Parse<NativeTimeoutResultV2>(old);
-            var now=await Clock(ct);await CheckClaim(claim,service,now,ct);
+            await fence.Root(ct);
+            await HistoryServiceAsync(ct);
+            var saved=await OriginalClaimAsync(claim,ct)??throw Error("TIMEOUT_LEASE_LOST");
+            if(await OriginalResultAsync(claim.ExecutionId,ct) is {} original)return original;
+            await RequireEffectContextAsync(saved,ct);
+            var lease=await fence.AcquireAsync(ct);
+            await Ready(ct);
+            var service=await Service(ct);
+            await EnsureDispatchEnabledAsync(ct);
+            var now=await Clock(ct);
+            await CheckClaim(claim,service,now,ct);
+            await RequireOriginalPendingAsync(saved,ct);
             var row=await db.Database.SqlQuery<Deadline>($"""
                 SELECT context_kind AS "ContextKind",policy_json AS "Policy" FROM cp6_native_timeout_v2.deadlines
                 WHERE task_id={claim.TaskId} AND revision={claim.Revision} AND tenant_id={db.CurrentTenantId} AND environment_id={fence.EnvironmentId}
