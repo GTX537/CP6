@@ -17,10 +17,12 @@ namespace CP6.Tests.Erp;
 
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
-    private static OperationsOwnerV1 PartnerAuthority(Harness h, CP6Context? db = null)
+    private static OperationsOwnerV1 PartnerAuthority(Harness h, CP6Context? db = null, bool financeFields = false)
     {
         var c = new AuthorizationCatalogStoreV1(); c.RegisterScope("erp-business-partner", "Native partner identity", [1, 2, 3, 4, 5], 1);
-        c.RegisterFields("erp-business-partner", [new FieldRegistry.Field("BpName", "Name")]); c.Seal();
+        c.RegisterFields("erp-business-partner", financeFields
+            ? CP6.Core.Services.Fin.BusinessPartnerFinanceReferenceReader.Fields : [new FieldRegistry.Field("BpName", "Name")]);
+        c.Seal();
         return new(db ?? h.Db, new OperationsHttp { HttpContext = h.Http }, _ => Task.FromResult(h.User), c.Capture);
     }
     private static BusinessPartnerIdentityOwnerV1 Partners(Harness h) => new(h.Db, PartnerAuthority(h));
@@ -252,19 +254,36 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var name = "w163_partner_" + Guid.NewGuid().ToString("N"); await db.Database.ExecuteSqlRawAsync($"CREATE DATABASE {name}");
         db.Database.SetConnectionString(new NpgsqlConnectionStringBuilder(db.Database.GetConnectionString()) { Database = name }.ConnectionString);
         await db.GetService<IMigrator>().MigrateAsync("20261027220000_ToolRegistrationV1");
-        db.Sys_Tenants.Add(new() { Id = tenant.CurrentTenantId, TenantCode = "W163", TenantName = "W163", Enable = true });
-        db.Sys_Menus.Add(new() { MenuId = 212, MenuKey = "erp-business-partner", MenuName = "Partner" });
-        var row = new BusinessPartner { BpCd = "BEFORE", BpName = "Before e\u0301", BpAbbrev = "B", BaseCd = "B", Status = 9, IsFrozen = true };
-        db.BusinessPartners.Add(row); await db.SaveChangesAsync(); db.ChangeTracker.Clear();
+        var id = Guid.NewGuid();
+        const string displayName = "Before e\u0301";
+        // 在历史结构中装入测试资料。当前 EF 的审计字段在此迁移点尚未存在。
+        await db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO public."Sys_Tenants" ("Id","TenantCode","TenantName","Enable","TwoFactorMode","CreateDate")
+            VALUES ({tenant.CurrentTenantId},'W163','W163',true,0,LOCALTIMESTAMP);
+            INSERT INTO public."Sys_Menus" ("MenuId","MenuKey","MenuName","OrderNo","Enable","CreateDate")
+            VALUES (212,'erp-business-partner','Partner',212,true,LOCALTIMESTAMP);
+            INSERT INTO public."T_WebBusinessPartner" (
+                "Id","TenantId","BpCd","BpName","BpAbbrev","BaseCd","Status","IsFrozen","CreateDate","IsDeleted","RowVersion",
+                "CustomerFlg","AccountsReceivableFlg","BillingFlg","ReceiptFlg","DeliveryFlg","SupplierFlg",
+                "AccountsPayableFlg","PaymentScheduleFlg","PaymentFlg",
+                "CreditMgmtFlg","MakerFlg","PaidSupplyFlg","RebuyObligationFlg",
+                "SubcontractTargetFlg","SupplyPriceChangeAllowFlg","DeliveryConfirmFlg",
+                "PurchaseTaxPriorityFlg","PaidSupplyTaxPriorityFlg","PaidEachTimeFlg","PaymentTaxCalcFlg",
+                "BatchPaymentScheduleFlg","GifuInterfaceFlg","McTransferFlg")
+            VALUES ({id},{tenant.CurrentTenantId},'BEFORE',{displayName},'B','B',9,true,LOCALTIMESTAMP,false,int8send(0::bigint),
+                false,false,false,false,false,false,false,false,false,
+                false,false,false,false,false,false,false,
+                false,false,false,false,false,false,false)
+            """);
         await db.Database.MigrateAsync(); Assert.Empty(await db.Database.GetPendingMigrationsAsync());
         var json = await db.Database.SqlQuery<string>($"""
-            SELECT source_json AS "Value" FROM cp6_business_partner_identity_v1.versions WHERE tenant_id={tenant.CurrentTenantId} AND partner_id={row.Id} AND revision=1
+            SELECT source_json AS "Value" FROM cp6_business_partner_identity_v1.versions WHERE tenant_id={tenant.CurrentTenantId} AND partner_id={id} AND revision=1
             """).SingleAsync();
         using var original = JsonDocument.Parse(json); Assert.Equal(9, original.RootElement.GetProperty("status").GetInt32()); Assert.True(original.RootElement.GetProperty("isFrozen").GetBoolean());
-        Assert.Equal("Before e\u0301", original.RootElement.GetProperty("bpName").GetString());
+        Assert.Equal(displayName, original.RootElement.GetProperty("bpName").GetString());
         Assert.Equal(1, await db.Database.SqlQueryRaw<int>("SELECT count(*)::int AS \"Value\" FROM cp6_business_partner_identity_v1.versions").SingleAsync());
         var actions = await db.Sys_MenuActions.Where(x => x.MenuId == 212).Select(x => x.ActionCode).ToArrayAsync();
-        Assert.Equal(new[] { "export", "profile-query", "query" }, actions.Order(StringComparer.Ordinal));
+        Assert.Equal(new[] { "export", "finance-reference-read", "profile-query", "query" }, actions.Order(StringComparer.Ordinal));
         Assert.Empty(await db.Sys_RoleActions.Where(x => x.MenuId == 212).ToArrayAsync());
     }
 }

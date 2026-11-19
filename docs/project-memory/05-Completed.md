@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP11-01 财务资料版本工作流与科目时间线](../development/evidence/WP11-01/DELIVERY.md)（DONE），核对时间 `2026-11-19T10:37:19.489079-05:00`。
+- [WP11-65 BP财务引用只读当前源与共同门](../development/evidence/WP11-65/DELIVERY.md)（DONE），核对时间 `2026-11-19T17:24:31.753885+00:00`。
 
 ### 已关闭目标
 

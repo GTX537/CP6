@@ -16,6 +16,9 @@ internal sealed partial class OperationsAccessV1
             throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
     }
     internal bool BusinessPartnerNameReadable => authority.Fields.Fields.TryGetValue("BpName", out var field) && field.CanRead;
+    internal bool CanReadBusinessPartnerFinance(string field)
+        => authority.Resource == OperationsOwnerV1.BusinessPartner
+            && authority.Fields.Fields.TryGetValue(field, out var policy) && policy.CanRead;
     internal bool BusinessPartnerNameWritable => authority.Fields.Fields["BpName"].CanWrite;
     internal bool BusinessPartnerNameExportable => authority.Fields.Fields["BpName"].CanExport;
 
