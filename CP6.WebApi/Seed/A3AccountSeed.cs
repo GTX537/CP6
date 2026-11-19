@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels.Fin;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,9 +25,13 @@ public static class A3AccountSeed
     public static async Task EnsureAsync(CP6Context db)
     {
         if (!await db.GlAccounts.AnyAsync()) return;   // 空库未导模板 → 跳过
+        var protectedSchemes = db.Database.IsNpgsql()
+            ? (await GlLegacyWriteGateV1.VersionedSchemes(db, db.CurrentTenantId).ToArrayAsync()).ToHashSet(StringComparer.OrdinalIgnoreCase)
+            : new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var s in Items)
         {
             var acc = await db.GlAccounts.FirstOrDefaultAsync(a => a.Code == s.Code);
+            if (protectedSchemes.Contains((acc?.StandardScheme ?? FinCoaTemplate.CnGaap).Trim())) continue;
             if (acc == null)
                 db.GlAccounts.Add(new GlAccount
                 {

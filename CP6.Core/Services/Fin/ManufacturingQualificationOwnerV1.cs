@@ -24,7 +24,8 @@ public sealed class ManufacturingQualificationOwnerV1(CP6Context db, OperationsO
         if (command.CommandId == Guid.Empty || command.SubjectId == Guid.Empty
             || command.Purpose is not ("rate-review" or "rate-release" or "center-review" or "center-release"
                 or "basis-review" or "basis-release" or "policy-review" or "policy-release" or "rate-basis-review" or "rate-basis-release"
-                or "accounting-policy-review" or "accounting-policy-release" or "source-contract-source-review" or "source-contract-gl-review" or "source-contract-release")
+                or "accounting-policy-review" or "accounting-policy-release" or "source-contract-source-review" or "source-contract-gl-review" or "source-contract-release"
+                or "gl-account-review" or "gl-account-release")
             || string.IsNullOrWhiteSpace(command.Reason) || command.Reason.Length > 1000
             || string.IsNullOrWhiteSpace(command.EvidenceReference) || command.EvidenceReference.Length > 256
             || command.Grant != command.ExpiresAt.HasValue)

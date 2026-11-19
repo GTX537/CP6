@@ -88,6 +88,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/wf/flow-designer': () => import('@/views/wf/designer/FlowDesigner.vue'), // OA 章09 流程设计器
   // ───── 财务 (Fin) 总账内核 ─────
   '/fin/account': () => import('@/views/fin/GlAccountView.vue'),          // 章01 会计科目
+  '/fin/master/accounts': () => import('@/views/fin/GlAccountView.vue'),   // 账套科目版本维护
   '/fin/journal': () => import('@/views/fin/JournalEntryView.vue'),       // 章01 记账凭证
   '/fin/trial-balance': () => import('@/views/fin/TrialBalanceView.vue'), // 章02 试算平衡表
   '/fin/period': () => import('@/views/fin/PeriodCloseView.vue'),         // 章02 期间/月结
@@ -442,7 +443,8 @@ function platformChildren(): RouteRecordRaw[] {
 // Internal child pages are not menu entries; their parent pages navigate to them.
 const internalSubRoutePaths = [
   '/oa/form-initiate',
-  '/space/location-publish'
+  '/space/location-publish',
+  '/fin/master/accounts'
 ]
 function internalSubChildren(): RouteRecordRaw[] {
   return internalSubRoutePaths.map(p => ({

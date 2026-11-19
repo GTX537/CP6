@@ -474,6 +474,7 @@ builder.Services.AddScoped<CP6.Core.Services.Fin.IArSettlementService, CP6.Core.
 builder.Services.AddScoped<CP6.Core.Services.Fin.IArReconcileService, CP6.Core.Services.Fin.ArReconcileService>(); // 章04 §3 子账↔GL 勾稽
 builder.Services.AddScoped(sp => new CP6.Core.Services.Fin.ManufacturingFinanceScopeV1(sp.GetRequiredService<CP6Context>(),
     builder.Configuration["FinanceCosting:EnvironmentId"]));
+builder.Services.AddScoped<CP6.Core.Services.Fin.GlAccountWorkflowOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Fin.ManufacturingRateOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Fin.ManufacturingQualificationOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Fin.ManufacturingCostCenterOwnerV1>();
@@ -631,6 +632,8 @@ CP6.Core.Services.Sys.FieldRegistry.Register(CP6.Core.Services.Oa.PersonalFormOw
 CP6.Core.Services.Sys.DataScopeRegistry.Register("product", "製品", new[] { 1, 2, 3, 4, 5 }, 5);
 // Native identity source exposes no price or customer fields. Existing scope semantics are retained.
 CP6.Core.Services.Sys.FieldRegistry.Register("lang", CP6.WebApi.Services.LanguageEntryRulesV1.Fields);
+CP6.Core.Services.Sys.FieldRegistry.Register(CP6.Core.Services.Fin.GlAccountWorkflowOwnerV1.Resource,
+    CP6.Core.Services.Fin.GlAccountWorkflowOwnerV1.Fields.ToArray());
 CP6.Core.Services.Sys.FieldRegistry.Register("product");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("erp-business-partner", "客户原身份来源", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("erp-business-partner", new CP6.Core.Services.Sys.FieldRegistry.Field("BpName", "客户名称"));

@@ -18,7 +18,8 @@ public class GlAccountController : ControllerBase
 
     private string? CurrentUser => User?.Identity?.Name;
     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
-    private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+    private IActionResult Err(InvalidOperationException e) => e.Message == GlLegacyWriteGateV1.Required
+        ? Conflict(new { code = 409, message = e.Message }) : BadRequest(new { code = 400, message = e.Message });
 
     /// <summary>科目列表（可按模板方案过滤；includeInactive=true 含停用）。</summary>
     [HttpGet]

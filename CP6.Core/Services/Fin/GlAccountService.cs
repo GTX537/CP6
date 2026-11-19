@@ -24,15 +24,17 @@ public class GlAccountService : IGlAccountService
     public Task<GlAccount?> GetByCodeAsync(string code) =>
         _db.GlAccounts.FirstOrDefaultAsync(x => x.Code == code);
 
-    public Task<GlAccount?> GetByRoleAsync(string role, string? scheme = null)
+    public async Task<GlAccount?> GetByRoleAsync(string role, string? scheme = null)
     {
         var q = _db.GlAccounts.Where(x => x.Role == role && x.IsActive);
         if (!string.IsNullOrEmpty(scheme)) q = q.Where(x => x.StandardScheme == scheme);
-        return q.FirstOrDefaultAsync();
+        var matches = await q.Take(2).ToArrayAsync();
+        return matches.Length < 2 ? matches.SingleOrDefault() : throw new InvalidOperationException("GL_ROLE_UNPROVEN");
     }
 
     public async Task<Guid> CreateAsync(GlAccount a, string? user)
     {
+        await GlLegacyWriteGateV1.RequireUnversioned(_db, _db.CurrentTenantId, a.StandardScheme);
         if (string.IsNullOrWhiteSpace(a.Code))
             throw new InvalidOperationException("E-FIN-004");        // 科目编码必填
         if (await _db.GlAccounts.AnyAsync(x => x.Code == a.Code))
@@ -55,6 +57,7 @@ public class GlAccountService : IGlAccountService
     {
         var e = await _db.GlAccounts.FindAsync(id)
                 ?? throw new InvalidOperationException("E-FIN-003");  // 科目不存在
+        await GlLegacyWriteGateV1.RequireUnversioned(_db, e.TenantId, e.StandardScheme);
         if (_db.Database.IsNpgsql() && e.ParentId != a.ParentId)
             await RequireParentAsync(a.ParentId);
         // Code / StandardScheme 只读（建后被凭证引用，不可改）
@@ -85,6 +88,7 @@ public class GlAccountService : IGlAccountService
     {
         var e = await _db.GlAccounts.FindAsync(id)
                 ?? throw new InvalidOperationException("E-FIN-003");  // 科目不存在
+        await GlLegacyWriteGateV1.RequireUnversioned(_db, e.TenantId, e.StandardScheme);
         e.IsActive = false;
         e.Modifier = user;
         e.ModifyDate = DateTime.Now;
@@ -93,6 +97,7 @@ public class GlAccountService : IGlAccountService
 
     public async Task<int> ImportTemplateAsync(string scheme, string? user)
     {
+        await GlLegacyWriteGateV1.RequireUnversioned(_db, _db.CurrentTenantId, scheme);
         if (await _db.GlAccounts.AnyAsync(x => x.StandardScheme == scheme))
             throw new InvalidOperationException("E-FIN-002");        // 该模板包已导入
 
