@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP02-09b CRM 实际业务收件与同事务原结果余项](https://github.com/GTX537/CP6.CRM/blob/8d50b422326eae296359fbc383623dd8ad994208/docs/development/evidence/WP02-09b/DELIVERY.md)（DONE），核对时间 `2026-11-18T17:31:19.984+00:00`。
+- [WP03-02 浏览器绑定公开提交与H01自动受理](../development/evidence/WP03-02/DELIVERY.md)（DONE），核对时间 `2026-11-18T20:31:39.187281-05:00`。
 
 ### 已关闭目标
 

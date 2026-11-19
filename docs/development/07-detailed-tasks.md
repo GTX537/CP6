@@ -2,13 +2,13 @@
 
 台账日期：2026-11-18。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 380 项，已交付 55 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 380 项，已交付 56 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)。按[单卡串行计划](planning/20261117-card-execution.md)核对完整前置并选择下一卡。
 
 原 375 卡及其全部出口保留；已登记 5 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。
 
-原号 DONE 50/375；完整 DONE 50/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。
+原号 DONE 51/375；完整 DONE 51/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。
 
 ## WP01 现有实现与设计对照
 
@@ -74,7 +74,7 @@
 | 任务 | 仓库 | 状态 | 直接前置 | 类型/规模 | 对话 |
 |---|---|---|---|---|---|
 | [WP03-01 公开表单Bundle与配置生效](../../docs/development/task-plans/WP03.md#wp03-01) | CRM | 已交付 | S01-08, S02-00, WP02-09 | CODE / M | COORD |
-| [WP03-02 浏览器绑定公开提交与H01自动受理](../../docs/development/task-plans/WP03.md#wp03-02) | CRM | 待安排 | WP02-09, WP02-16, WP03-01 | CODE / L | COORD / W494-01 |
+| [WP03-02 浏览器绑定公开提交与H01自动受理](../../docs/development/task-plans/WP03.md#wp03-02) | CRM | 已交付 | WP02-09, WP02-16, WP03-01 | CODE / L | EXEC-WP02-14B |
 | [WP03-03 询盘审核队列、放行拒绝与到期](../../docs/development/task-plans/WP03.md#wp03-03) | CRM | 已交付 | WP02-09, WP03-02 | CODE / M | COORD / W123-01/02 |
 | [WP03-04 询盘同意、保留匿名化与隐私导出](../../docs/development/task-plans/WP03.md#wp03-04) | CRM | 待安排 | WP02-09, WP02-14, WP02-15, WP03-03 | CODE / M | COORD / W497-01 |
 | [WP03-05 账户创建、维护和独立生命周期](../../docs/development/task-plans/WP03.md#wp03-05) | CRM | 待安排 | S01-08, S02-00, WP02-09 | CODE / M | 未领取 |
