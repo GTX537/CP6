@@ -149,9 +149,16 @@ public sealed class Cp6ApiClient
         string platform,
         string currentVersion,
         CancellationToken ct = default)
+        => BootstrapAsync(platform, currentVersion, "stable", ct);
+
+    public Task<ClientBootstrap> BootstrapAsync(
+        string platform,
+        string currentVersion,
+        string channel,
+        CancellationToken ct = default)
         => SendAsync<ClientBootstrap>(
             HttpMethod.Get,
-            $"api/client/bootstrap?platform={Uri.EscapeDataString(platform)}&currentVersion={Uri.EscapeDataString(currentVersion)}",
+            $"api/client/bootstrap?platform={Uri.EscapeDataString(platform)}&currentVersion={Uri.EscapeDataString(currentVersion)}&channel={Uri.EscapeDataString(channel)}",
             null,
             ct);
 
@@ -181,6 +188,23 @@ public sealed class Cp6ApiClient
 
     public Task<MobileTask> GetTaskAsync(string taskNo, CancellationToken ct = default)
         => SendAsync<MobileTask>(HttpMethod.Get, TaskPath(taskNo), null, ct);
+
+    public Task<MobileTask> GetOriginalTaskAsync(string taskNo, CancellationToken ct = default)
+    {
+        if (_scope is null || string.IsNullOrWhiteSpace(taskNo) || taskNo is "." or "..")
+            throw new InvalidOperationException("E-CLIENT-ORIGINAL-LOOKUP-SCOPE");
+        return SendAsync<MobileTask>(HttpMethod.Get, TaskPath(taskNo), null, ct, originalTask: taskNo);
+    }
+
+    private static readonly HttpRequestOptionsKey<string> OriginalTaskKey = new("CP6.OriginalTaskLookup");
+
+    public static bool IsOriginalTaskLookup(HttpRequestMessage request) =>
+        request.Method == HttpMethod.Get && request.Content is null &&
+        request.Options.TryGetValue(ClientRequestScope.Key, out var scope) &&
+        scope.TenantId != Guid.Empty && scope.ActorId != Guid.Empty &&
+        request.Options.TryGetValue(OriginalTaskKey, out var taskNo) && !string.IsNullOrWhiteSpace(taskNo) &&
+        taskNo is not "." and not ".." &&
+        request.RequestUri == new Uri(scope.Source, TaskPath(taskNo));
 
     public Task<MobileTask> CreateMoveTaskAsync(CreateMoveTaskRequest request, CancellationToken ct = default)
         => SendAsync<MobileTask>(HttpMethod.Post, "api/v2/wms/tasks", request, ct);
@@ -238,9 +262,11 @@ public sealed class Cp6ApiClient
         HttpMethod method,
         string path,
         object? body,
-        CancellationToken ct)
+        CancellationToken ct,
+        string? originalTask = null)
     {
         using var request = CreateRequest(method, path);
+        if (originalTask is not null) request.Options.Set(OriginalTaskKey, originalTask);
         if (body != null) request.Content = JsonContent.Create(body, options: Json);
         using var response = await _http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, ct);
         if (!response.IsSuccessStatusCode)

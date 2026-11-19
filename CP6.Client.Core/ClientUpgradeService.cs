@@ -12,11 +12,15 @@ public sealed record ClientUpgradeDecision
     public string MinimumVersion { get; init; } = string.Empty;
     public Uri? DownloadUri { get; init; }
     public string? Sha256 { get; init; }
+    public string? PublisherSha256 { get; init; }
+    public string? PackageSha256 { get; init; }
+    internal Uri? PolicySource { get; init; }
     public string? ErrorCode { get; init; }
     public bool CanDownload =>
         UpgradeRequired &&
         DownloadUri is not null &&
         !string.IsNullOrWhiteSpace(Sha256) &&
+        !string.IsNullOrWhiteSpace(PublisherSha256) &&
         ErrorCode is null;
 
     public static ClientUpgradeDecision Unavailable(string currentVersion) => new()
@@ -62,7 +66,8 @@ public sealed class ClientBusinessAccessHandler(ClientAccessGate gate) : Delegat
         HttpRequestMessage request,
         CancellationToken cancellationToken)
     {
-        gate.EnsureBusinessAllowed();
+        if (gate.Current?.UpgradeRequired != true || !Cp6ApiClient.IsOriginalTaskLookup(request))
+            gate.EnsureBusinessAllowed();
         return base.SendAsync(request, cancellationToken);
     }
 }
@@ -71,20 +76,20 @@ public sealed class ClientUpgradeService
 {
     private readonly ClientBootstrapService _bootstrap;
     private readonly ClientOptions _options;
-    private readonly ISystemBrowser _browser;
+    private readonly ClientUpgradePackage _package;
     private readonly ClientAccessGate _gate;
     private readonly ILogger<ClientUpgradeService> _logger;
 
     public ClientUpgradeService(
         ClientBootstrapService bootstrap,
         ClientOptions options,
-        ISystemBrowser browser,
+        ClientUpgradePackage package,
         ClientAccessGate gate,
         ILogger<ClientUpgradeService> logger)
     {
         _bootstrap = bootstrap;
         _options = options;
-        _browser = browser;
+        _package = package;
         _gate = gate;
         _logger = logger;
     }
@@ -92,13 +97,20 @@ public sealed class ClientUpgradeService
     public async Task<ClientUpgradeDecision> CheckAccessAsync(CancellationToken ct = default)
     {
         ClientUpgradeDecision decision;
+        var source = _options.ApiBaseAddress;
         try
         {
             decision = Evaluate(await _bootstrap.CheckAsync(ct), _options);
+            if (!_options.ApiBaseAddress.Equals(source))
+                decision = ClientUpgradeDecision.Unavailable(_options.Context.AppVersion);
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested)
         {
             throw;
+        }
+        catch (ApiException ex) when (ex.Code is "E-CLIENT-VERSION-POLICY" or "E-CLIENT-CHANNEL-MISMATCH" or "E-CLIENT-VERSION-INVALID")
+        {
+            decision = ClientUpgradeDecision.Unavailable(_options.Context.AppVersion) with { ErrorCode = ex.Code };
         }
         catch (Exception ex)
         {
@@ -116,19 +128,16 @@ public sealed class ClientUpgradeService
         ClientUpgradeDecision decision,
         CancellationToken ct = default)
     {
-        if (!decision.CanDownload ||
-            decision.DownloadUri is null ||
-            !TryValidateDownload(
-                decision.DownloadUri.AbsoluteUri,
-                decision.Sha256,
-                _options.Platform,
-                out var validatedUri) ||
-            validatedUri is null)
+        if (!IsCurrentDownload(decision))
             throw new InvalidOperationException(
                 decision.ErrorCode ?? "E-CLIENT-UPGRADE-METADATA");
 
-        return _browser.OpenAsync(validatedUri, ct);
+        return _package.OpenAsync(decision, () => IsCurrentDownload(decision), ct);
     }
+
+    private bool IsCurrentDownload(ClientUpgradeDecision decision) =>
+        decision.CanDownload && _gate.Current == decision &&
+        _options.ApiBaseAddress.Equals(decision.PolicySource);
 
     public static ClientUpgradeDecision Evaluate(
         ClientBootstrap bootstrap,
@@ -155,6 +164,9 @@ public sealed class ClientUpgradeService
                 "E-CLIENT-BOOTSTRAP-CONTRACT");
         }
 
+        if (!string.Equals(bootstrap.Channel, options.ReleaseChannel, StringComparison.Ordinal))
+            return Blocked(currentVersion, bootstrap, "E-CLIENT-CHANNEL-MISMATCH");
+
         var upgradeRequired =
             bootstrap.UpgradeRequired ||
             current.CompareTo(minimum) < 0;
@@ -169,11 +181,20 @@ public sealed class ClientUpgradeService
             };
         }
 
+        if (latest.CompareTo(current) <= 0)
+            return Blocked(currentVersion, bootstrap, "E-CLIENT-VERSION-POLICY", upgradeRequired: true);
+
+        if (IsInsecureSource(options.ApiBaseAddress))
+            return Blocked(currentVersion, bootstrap, "E-CLIENT-UPGRADE-ORIGIN", upgradeRequired: true);
+
         if (!TryValidateDownload(
                 bootstrap.DownloadUrl,
                 bootstrap.Sha256,
                 options.Platform,
-                out var downloadUri))
+                out var downloadUri) ||
+            !IsDigest(bootstrap.PublisherSha256) ||
+            Path.GetExtension(downloadUri!.AbsolutePath).Equals(".appinstaller", StringComparison.OrdinalIgnoreCase) &&
+                !IsDigest(bootstrap.PackageSha256))
         {
             return Blocked(
                 currentVersion,
@@ -190,7 +211,10 @@ public sealed class ClientUpgradeService
             LatestVersion = bootstrap.LatestVersion,
             MinimumVersion = bootstrap.MinimumVersion,
             DownloadUri = downloadUri,
-            Sha256 = bootstrap.Sha256!.ToUpperInvariant()
+            Sha256 = bootstrap.Sha256,
+            PublisherSha256 = bootstrap.PublisherSha256,
+            PackageSha256 = bootstrap.PackageSha256,
+            PolicySource = options.ApiBaseAddress
         };
     }
 
@@ -208,7 +232,7 @@ public sealed class ClientUpgradeService
         ErrorCode = errorCode
     };
 
-    private static bool TryValidateDownload(
+    internal static bool TryValidateDownload(
         string? downloadUrl,
         string? sha256,
         string platform,
@@ -220,9 +244,7 @@ public sealed class ClientUpgradeService
             string.IsNullOrWhiteSpace(parsed.Host) ||
             !string.IsNullOrWhiteSpace(parsed.UserInfo) ||
             !string.IsNullOrWhiteSpace(parsed.Fragment) ||
-            sha256 is null ||
-            sha256.Length != 64 ||
-            sha256.Any(value => !Uri.IsHexDigit(value)))
+            !IsDigest(sha256))
         {
             return false;
         }
@@ -240,4 +262,8 @@ public sealed class ClientUpgradeService
         return true;
     }
 
+    private static bool IsDigest(string? value) => value is { Length: 64 } && value.All(Uri.IsHexDigit);
+
+    private static bool IsInsecureSource(Uri source) =>
+        !source.IsAbsoluteUri || source.Scheme != Uri.UriSchemeHttps || source.UserInfo.Length != 0;
 }

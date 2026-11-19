@@ -77,6 +77,15 @@ public sealed class WmsTaskService
     public Task<MobileTask> GetAsync(string taskNo, CancellationToken ct = default)
         => _api.GetTaskAsync(taskNo, ct);
 
+    public async Task<MobileTask?> GetOriginalCompletionAsync(string taskNo, Guid operationId, CancellationToken ct = default)
+    {
+        if (operationId == Guid.Empty) throw new InvalidOperationException("E-CLIENT-ORIGINAL-OPERATION");
+        var scope = CaptureScope();
+        var original = await new Cp6ApiClient(_transport, scope).GetOriginalTaskAsync(taskNo, ct);
+        if (!IsCurrent(scope)) throw new ClientInteractionChangedException();
+        return original.TaskNo == taskNo && IsOriginalCompletion(original, operationId) ? original : null;
+    }
+
     public Task<MobileTask> CreateAsync(CreateMoveTaskRequest request, CancellationToken ct = default)
     {
         if (request.OperationId == Guid.Empty) request.OperationId = Guid.NewGuid();

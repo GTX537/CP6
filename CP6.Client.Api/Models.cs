@@ -286,12 +286,15 @@ public sealed class ClientBootstrap
     public string ApiVersion { get; set; } = "1";
     public DateTimeOffset ServerUtc { get; set; }
     public string Platform { get; set; } = string.Empty;
+    public string Channel { get; set; } = "stable";
     public string CurrentVersion { get; set; } = string.Empty;
     public string LatestVersion { get; set; } = string.Empty;
     public string MinimumVersion { get; set; } = string.Empty;
     public bool UpgradeRequired { get; set; }
     public string? DownloadUrl { get; set; }
     public string? Sha256 { get; set; }
+    public string? PublisherSha256 { get; set; }
+    public string? PackageSha256 { get; set; }
     public string LanguageManifestVersion { get; set; } = string.Empty;
 }
 

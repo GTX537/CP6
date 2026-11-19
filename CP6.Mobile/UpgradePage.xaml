@@ -4,7 +4,8 @@
              xmlns:local="clr-namespace:CP6.Mobile"
              x:DataType="local:UpgradeViewModel"
              Shell.NavBarIsVisible="False">
-  <VerticalStackLayout Padding="28" Spacing="16" VerticalOptions="Center">
+  <ScrollView>
+  <VerticalStackLayout Padding="28" Spacing="16">
     <Label Text="{Binding Heading}" FontSize="30" FontAttributes="Bold" />
     <Grid ColumnDefinitions="Auto,*"
           RowDefinitions="Auto,Auto,Auto,Auto"
@@ -25,10 +26,15 @@
             Command="{Binding DownloadCommand}"
             IsEnabled="{Binding CanDownloadUpdate}" />
     <Button Text="{Binding Text.RetryStartup}" Command="{Binding RetryCommand}" />
+    <Button Text="{Binding Text.Logout}" Command="{Binding LogoutCommand}" />
+    <Entry Text="{Binding OriginalTaskNo}" Placeholder="{Binding Text.OriginalTaskNo}" MaxLength="100" />
+    <Entry Text="{Binding OriginalOperationId}" Placeholder="{Binding Text.OriginalOperationId}" MaxLength="36" />
+    <Button Text="{Binding Text.OriginalCompletion}" Command="{Binding ReadOriginalCompletionCommand}" />
     <Button Text="{Binding Text.DeviceRecovery}"
             Command="{Binding OpenDeviceActivationCommand}" />
     <Label Text="{Binding Text.BusinessDisabled}" />
     <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
     <Label Text="{Binding Message}" TextColor="#B42318" />
   </VerticalStackLayout>
+  </ScrollView>
 </ContentPage>

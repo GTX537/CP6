@@ -6,10 +6,11 @@
              x:DataType="local:TaskListViewModel"
              Title="{Binding Text.MobileTasksTitle}">
   <Grid RowDefinitions="Auto,*,Auto" Padding="16">
-    <Grid ColumnDefinitions="*,Auto,Auto">
-      <Label Text="{Binding Text.MobileTasksTitle}" FontSize="24" FontAttributes="Bold" VerticalOptions="Center" />
-      <Button Grid.Column="1" Text="{Binding Text.Refresh}" Command="{Binding LoadCommand}" />
-      <Button Grid.Column="2" Text="{Binding Text.Logout}" Command="{Binding LogoutCommand}" />
+    <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto,Auto">
+      <Label Grid.ColumnSpan="3" Text="{Binding Text.MobileTasksTitle}" FontSize="24" FontAttributes="Bold" />
+      <Button Grid.Row="1" Text="{Binding Text.CheckUpdates}" Command="{Binding CheckUpdatesCommand}" HorizontalOptions="Start" />
+      <Button Grid.Row="1" Grid.Column="1" Text="{Binding Text.Refresh}" Command="{Binding LoadCommand}" />
+      <Button Grid.Row="1" Grid.Column="2" Text="{Binding Text.Logout}" Command="{Binding LogoutCommand}" />
     </Grid>
     <RefreshView Grid.Row="1" Command="{Binding LoadCommand}" IsRefreshing="{Binding IsBusy}">
       <CollectionView ItemsSource="{Binding Tasks}" SelectionMode="Single"

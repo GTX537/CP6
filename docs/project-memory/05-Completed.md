@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP02-21b 后台作业观测、保留分片与原恢复余项](../development/evidence/WP02-21b/DELIVERY.md)（DONE），核对时间 `2026-11-19T02:16:01.525327-05:00`。
+- [WP02-20 客户端升级渠道、签名与失败恢复](../development/evidence/WP02-20/DELIVERY.md)（DONE），核对时间 `2026-11-19T04:35:55.491006-05:00`。
 
 ### 已关闭目标
 
@@ -11,6 +11,7 @@
 - [OA-DEF-01 流程和表单定义](../development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md)
 - [SYS-AUD-01 操作、安全与字段审计](../development/evidence/WP02-13b/DELIVERY.md)
 - [SYS-NUM-01 编号与开发辅助生成](../development/evidence/WP02-16b/DELIVERY.md)
+- [SYS-CLIENT-01 客户端设备与升级](../development/evidence/WP02-20/DELIVERY.md)
 - [SYS-JOB-01 应用后台作业](../development/evidence/WP02-21b/DELIVERY.md)
 - [SYS-TENANT-01 租户管理](../development/evidence/WP02-06/DELIVERY.md)
 - [PLT-TEST-01 故障注入与测试辅助](../development/evidence/TARGET-REVIEW-20261117/PLT-TEST-01.md)（测试支撑）

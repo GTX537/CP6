@@ -9,12 +9,12 @@ public sealed class ClientBootstrapService
 
     public ClientBootstrapService(IHttpClientFactory clients, ClientOptions options)
     {
-        _api = new Cp6ApiClient(clients.CreateClient(ClientServiceCollectionExtensions.RawClient));
+        _api = new Cp6ApiClient(clients.CreateClient(ClientServiceCollectionExtensions.BootstrapClient));
         _options = options;
     }
 
     public Task<ClientBootstrap> CheckAsync(CancellationToken ct = default)
-        => _api.BootstrapAsync(_options.Platform, _options.Context.AppVersion, ct);
+        => _api.BootstrapAsync(_options.Platform, _options.Context.AppVersion, _options.ReleaseChannel, ct);
 
     public static int CompareVersions(string left, string right)
     {

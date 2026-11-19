@@ -35,10 +35,13 @@ public class NativeClientOptions
 }
 public class ClientReleaseOptions
 {
+    public string Channel { get; set; } = "stable";
     public string LatestVersion { get; set; } = "1.0.0";
     public string MinimumVersion { get; set; } = "1.0.0";
     public string? DownloadUrl { get; set; }
     public string? Sha256 { get; set; }
+    public string? PublisherSha256 { get; set; }
+    public string? PackageSha256 { get; set; }
 }
 // CSRF 双提交开关（T6）：默认开启（生产正确）；开发/QA 在 T9 前端注入 X-CSRF-Token 头前，
 // 由 appsettings.Development.json 置 false，避免全站写请求被 403 阻断（计划 T6/T9 co-dependency）。

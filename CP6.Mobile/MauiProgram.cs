@@ -16,6 +16,7 @@ public static class MauiProgram
         {
             ApiBaseAddress = new Uri(apiUrl.EndsWith('/') ? apiUrl : $"{apiUrl}/"),
             Platform = "android",
+            UpgradeStagingDirectory = Path.Combine(FileSystem.CacheDirectory, "verified-updates"),
             Context = new ClientContext
             {
                 ClientKind = "Android",
@@ -36,6 +37,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<IClientDeviceHeartbeatContext,
             MobileDeviceHeartbeatContext>();
         builder.Services.AddSingleton<ISystemBrowser, MauiSystemBrowser>();
+        builder.Services.AddSingleton<IClientPackageInstaller, AndroidClientPackageInstaller>();
         builder.Services.AddSingleton<IOfflineMoveProgressStore>(_ =>
             new FileOfflineMoveProgressStore(Path.Combine(FileSystem.AppDataDirectory, "move-progress-v2")));
         builder.Services.AddCp6ClientCore(options);

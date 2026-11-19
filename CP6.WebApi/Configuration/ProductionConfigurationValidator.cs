@@ -281,13 +281,13 @@ internal static partial class ProductionConfigurationValidator
         var latestText = configuration[$"{prefix}:LatestVersion"];
         var minimumText = configuration[$"{prefix}:MinimumVersion"];
 
-        var latestValid = Version.TryParse(latestText, out var latest);
-        var minimumValid = Version.TryParse(minimumText, out var minimum);
+        var latestValid = CP6.Client.Core.ClientSemanticVersion.TryParse(latestText, out var latest);
+        var minimumValid = CP6.Client.Core.ClientSemanticVersion.TryParse(minimumText, out var minimum);
         if (!latestValid)
             errors.Add($"{prefix}:LatestVersion must be a valid version.");
         if (!minimumValid)
             errors.Add($"{prefix}:MinimumVersion must be a valid version.");
-        if (latestValid && minimumValid && minimum! > latest!)
+        if (latestValid && minimumValid && minimum.CompareTo(latest) > 0)
             errors.Add($"{prefix}:MinimumVersion must not exceed LatestVersion.");
 
         var downloadUrl = configuration[$"{prefix}:DownloadUrl"];

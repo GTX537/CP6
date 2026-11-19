@@ -41,6 +41,8 @@ public partial class ShellViewModel : ObservableObject
     [ObservableProperty] private string minimumVersion = string.Empty;
     [ObservableProperty] private string releaseSha256 = string.Empty;
     [ObservableProperty] private bool canDownloadUpdate;
+    [ObservableProperty] private string originalTaskNo = string.Empty;
+    [ObservableProperty] private string originalOperationId = string.Empty;
     [ObservableProperty] private MobileTask? selectedTask;
     [ObservableProperty] private ClientDevice? selectedDevice;
     [ObservableProperty] private BarcodeAlias? selectedBarcode;
@@ -167,6 +169,7 @@ public partial class ShellViewModel : ObservableObject
 
             if (!_upgradeDecision.BusinessAllowed)
             {
+                await _realtime.StopAsync();
                 StatusMessage = _upgradeDecision.ErrorCode ??
                                 string.Format(
                                     CultureInfo.CurrentCulture,
@@ -192,6 +195,26 @@ public partial class ShellViewModel : ObservableObject
                 await _upgrades.OpenDownloadAsync(_upgradeDecision);
                 StatusMessage = _language["client.updateOpened"];
             });
+
+    [RelayCommand]
+    private Task ReadOriginalCompletionAsync() => RunAsync(async () =>
+    {
+        if (!Guid.TryParse(OriginalOperationId, out var operationId))
+            throw new InvalidOperationException("E-CLIENT-ORIGINAL-OPERATION");
+        var original = await _tasks.GetOriginalCompletionAsync(OriginalTaskNo.Trim(), operationId);
+        StatusMessage = original is null ? _language["client.originalCompletionUnknown"] : _language["client.completed"];
+    });
+
+    [RelayCommand]
+    private Task LogoutDuringUpgradeAsync() => RunAsync(async () =>
+    {
+        await _sessions.LogoutAsync();
+        await _realtime.StopAsync();
+        Tasks.Clear();
+        OriginalTaskNo = string.Empty;
+        OriginalOperationId = string.Empty;
+        StatusMessage = string.Empty;
+    });
 
     [RelayCommand]
     private async Task LoginAsync()
