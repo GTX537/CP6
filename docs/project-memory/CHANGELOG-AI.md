@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP03-02 浏览器绑定公开提交与H01自动受理](../development/evidence/WP03-02/DELIVERY.md)（DONE），核对时间 `2026-11-18T20:31:39.187281-05:00`。
 - [WP02-09b CRM 实际业务收件与同事务原结果余项](https://github.com/GTX537/CP6.CRM/blob/8d50b422326eae296359fbc383623dd8ad994208/docs/development/evidence/WP02-09b/DELIVERY.md)（DONE），核对时间 `2026-11-18T17:31:19.984+00:00`。
 - [WP02-16b 完整编号域、受控切换恢复与规则管理余项](../development/evidence/WP02-16b/DELIVERY.md)（DONE），核对时间 `2026-11-18T08:53:49.0666706+00:00`。
 - [WP02-15 隐私subject目录、导出与擦除编排](../development/evidence/WP02-15/DELIVERY.md)（DONE），核对时间 `2026-11-18T05:51:56.5882920+00:00`。
