@@ -6,6 +6,7 @@ using CP6.WebApi.Localization;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Controllers.Sys;
@@ -19,6 +20,9 @@ public class LangController : ControllerBase
     private readonly LangPublishService _publish;
     private readonly IConfiguration _config;
 
+    private bool Native => _context.Database.IsNpgsql();
+    private bool PlatformScope => User.HasClaim("is_platform_admin", "true");
+
     public LangController(CP6Context context, CacheService cache, LangPublishService publish, IConfiguration config)
     {
         _context = context;
@@ -27,7 +31,7 @@ public class LangController : ControllerBase
         _config = config;
     }
 
-    /// <summary>i18n 优化 P5：是否只下发已审校词条（serve reviewed-only 质量门）。默认 false=全部下发，零行为变化。</summary>
+    /// <summary>早期兼容宿主的审校设置。PostgreSQL 公共读取统一下发已审校词条。</summary>
     private bool ReviewedOnly => _config.GetValue<bool>("I18n:ServeReviewedOnly");
 
     /// <summary>
@@ -42,6 +46,11 @@ public class LangController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> GetByLang(string langCode)
     {
+        if (Native)
+        {
+            Response.Headers.CacheControl = "no-cache";
+            return Ok(LangColumn.ToDict(await ReviewedGlobals(), langCode));
+        }
         var cacheKey = CacheService.LangKeyPrefix + langCode;
 
         // GetOrSetAsync = Cache-Aside 模式的完整实现
@@ -84,16 +93,18 @@ public class LangController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> GetByLangNamespace(string lang, string ns)
     {
+        if (Native)
+        {
+            Response.Headers.CacheControl = "no-cache";
+            return Ok(LangColumn.ToDict(InNamespace(await ReviewedGlobals(), ns), lang));
+        }
         var cacheKey = $"{CacheService.LangKeyPrefix}ns:{ns}:{lang}";
         var dict = await _cache.GetOrSetAsync(cacheKey, async () =>
         {
             var q = _context.Sys_Langs.AsNoTracking().Where(l => l.TenantId == null);
             if (ReviewedOnly) q = q.Where(l => l.Status == "reviewed");   // i18n 优化 P5：可选审校门控
             var items = await q.ToListAsync();
-            IEnumerable<Sys_Lang> filtered = ns == "_core"
-                ? items.Where(i => !LangColumn.LazyNamespaces.Contains(LangColumn.Namespace(i.LangKey)))
-                : items.Where(i => string.Equals(LangColumn.Namespace(i.LangKey), ns, StringComparison.OrdinalIgnoreCase));
-            return LangColumn.ToDict(filtered, lang);
+            return LangColumn.ToDict(InNamespace(items, ns), lang);
         }, TimeSpan.FromHours(1));
         return Ok(dict);
     }
@@ -104,6 +115,9 @@ public class LangController : ControllerBase
     public async Task<IActionResult> GetManifest()
     {
         Response.Headers.CacheControl = "no-cache";   // 版本指针必须实时
+        if (Native && await HttpContext.RequestServices.GetRequiredService<LanguagePublicationV1>()
+            .CurrentManifest(HttpContext.RequestAborted) is { } current)
+            return Ok(current);
         var m = await _publish.GetManifestAsync();
         return Ok(m ?? new LangManifest { Version = "" });
     }
@@ -113,6 +127,25 @@ public class LangController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> GetPublished(string version, string lang)
     {
+        if (Native && !IsLegacyVersion(version))
+        {
+            var publication = HttpContext.RequestServices.GetRequiredService<LanguagePublicationV1>();
+            var ct = HttpContext.RequestAborted;
+            if (!LangColumn.Codes.Contains(lang, StringComparer.Ordinal)
+                || await publication.ReadManifest(version, ct) is not { } released)
+                return NotFound();
+            try
+            {
+                var bytes = await publication.Pack(released, lang, ct);
+                Response.Headers.CacheControl = "public, max-age=31536000, immutable";
+                return File(bytes, "application/json; charset=utf-8");
+            }
+            catch (LanguageProblemV1 error)
+            {
+                Response.Headers.CacheControl = "no-store";
+                return StatusCode(error.Message == "LANG_PACK_MISSING" ? 404 : error.Status, new { code = error.Message });
+            }
+        }
         var json = await _publish.ReadPublishedAsync(version, lang);
         if (json == null) return NotFound();
         Response.Headers.CacheControl = "public, max-age=31536000, immutable";   // 版本化 URL → 永久缓存
@@ -125,6 +158,7 @@ public class LangController : ControllerBase
     [RequirePermission("lang", "publish")]
     public async Task<IActionResult> Publish()
     {
+        if (Native) return VersionedCommandRequired();
         var version = await _publish.PublishAsync(User?.Identity?.Name, DateTime.Now);
         return Ok(new { code = 0, message = "OK", data = new { version } });
     }
@@ -135,6 +169,7 @@ public class LangController : ControllerBase
     [RequirePermission("lang", "publish")]
     public async Task<IActionResult> Rollback([FromBody] RollbackRequest req)
     {
+        if (Native) return VersionedCommandRequired();
         var ok = await _publish.RollbackAsync(req.Version, User?.Identity?.Name, DateTime.Now);
         return ok ? Ok(new { code = 0, message = "OK", data = new { version = req.Version } })
                   : BadRequest(new { code = 400, message = "version not found" });
@@ -147,8 +182,13 @@ public class LangController : ControllerBase
     [HttpPost("review")]
     [Authorize]
     [RequirePermission("lang", "review")]
-    public async Task<IActionResult> Review([FromBody] int[]? ids)
+    public async Task<IActionResult> Review([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] int[]? ids)
     {
+        if (Native)
+        {
+            var entries = HttpContext.RequestServices.GetRequiredService<LanguageEntriesV1>();
+            return await LanguageOwnerControllerV1.Execute(this, () => entries.ReviewLegacy(HttpContext, PlatformScope, ids));
+        }
         var rows = (ids != null && ids.Length > 0)
             ? await _context.Sys_Langs.Where(l => ids.Contains(l.Id)).ToListAsync()
             : await _context.Sys_Langs.Where(l => l.Status != "reviewed").ToListAsync();
@@ -172,6 +212,11 @@ public class LangController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetList(int page = 1, int pageSize = 20, string? keyword = null)
     {
+        if (Native)
+        {
+            var entries = HttpContext.RequestServices.GetRequiredService<LanguageEntriesV1>();
+            return await LanguageOwnerControllerV1.Execute(this, () => entries.List(HttpContext, PlatformScope, keyword, page, pageSize));
+        }
         var query = _context.Sys_Langs.AsQueryable();
         if (!string.IsNullOrEmpty(keyword))
             query = query.Where(l => l.LangKey.Contains(keyword)
@@ -193,6 +238,7 @@ public class LangController : ControllerBase
     [RequirePermission("lang", "update")]
     public async Task<IActionResult> Add([FromBody] Sys_Lang entity)
     {
+        if (Native) return VersionedCommandRequired();
         // i18n 优化 P1 样例：抛错误码而非日文/中文字面量，由 BizExceptionMiddleware 按请求 culture 本地化。
         // P3：唯一性按 (TenantId, LangKey)，允许同一 key 的全局值 + 各租户覆盖值并存。
         if (await _context.Sys_Langs.AnyAsync(l => l.TenantId == entity.TenantId && l.LangKey == entity.LangKey))
@@ -216,6 +262,7 @@ public class LangController : ControllerBase
     [RequirePermission("lang", "update")]
     public async Task<IActionResult> Update([FromBody] Sys_Lang entity)
     {
+        if (Native) return VersionedCommandRequired();
         var existing = await _context.Sys_Langs.FindAsync(entity.Id);
         if (existing == null) return NotFound();
 
@@ -243,6 +290,7 @@ public class LangController : ControllerBase
     [RequirePermission("lang", "delete")]
     public async Task<IActionResult> Delete([FromBody] int[] ids)
     {
+        if (Native) return VersionedCommandRequired();
         var entities = await _context.Sys_Langs.Where(l => ids.Contains(l.Id)).ToListAsync();
         _context.Sys_Langs.RemoveRange(entities);
         var count = await _context.SaveChangesAsync();
@@ -250,6 +298,22 @@ public class LangController : ControllerBase
         await InvalidateLangCache();
 
         return Ok(new { count });
+    }
+
+    private Task<List<Sys_Lang>> ReviewedGlobals() => _context.Sys_Langs.AsNoTracking()
+        .Where(row => row.TenantId == null && row.Status == "reviewed").ToListAsync(HttpContext.RequestAborted);
+
+    private static IEnumerable<Sys_Lang> InNamespace(IEnumerable<Sys_Lang> items, string ns) => ns == "_core"
+        ? items.Where(row => !LangColumn.LazyNamespaces.Contains(LangColumn.Namespace(row.LangKey)))
+        : items.Where(row => string.Equals(LangColumn.Namespace(row.LangKey), ns, StringComparison.OrdinalIgnoreCase));
+
+    private static bool IsLegacyVersion(string version) =>
+        version.Length == 15 && version[0] == 'v' && version.Skip(1).All(char.IsAsciiDigit);
+
+    private IActionResult VersionedCommandRequired()
+    {
+        Response.Headers.CacheControl = "private, no-store";
+        return StatusCode(428, new { code = "LANG_VERSIONED_COMMAND_REQUIRED" });
     }
 
     /// <summary>

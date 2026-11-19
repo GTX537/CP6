@@ -91,7 +91,7 @@ public class DbStringLocalizer : IStringLocalizer
         return SourceLang;
     }
 
-    /// <summary>当前租户 ID（JWT 'tenant' claim）；无/不可解析 → null（仅用全局值）。</summary>
+    /// <summary>兼容旧本地化器调用的数字租户编号。PostgreSQL 不以该编号下发覆盖。</summary>
     private int? CurrentTenantId()
     {
         var raw = _http.HttpContext?.User?.FindFirst("tenant")?.Value;
@@ -108,10 +108,16 @@ public class DbStringLocalizer : IStringLocalizer
 
     private Dictionary<string, string> LoadDict(string cacheKey, string langCode, int? tenantId)
     {
+        using var scope = _scopeFactory.CreateScope();
+        var ctx = scope.ServiceProvider.GetRequiredService<CP6Context>();
+        if (ctx.Database.IsNpgsql())
+        {
+            if (tenantId is not null) return new Dictionary<string, string>();
+            var globals = ctx.Sys_Langs.AsNoTracking().Where(row => row.TenantId == null && row.Status == "reviewed");
+            return LangColumn.ToDict(globals.ToArray(), langCode);
+        }
         return _cache.GetOrSetAsync(cacheKey, async () =>
         {
-            using var scope = _scopeFactory.CreateScope();
-            var ctx = scope.ServiceProvider.GetRequiredService<CP6Context>();
             var items = await ctx.Sys_Langs.AsNoTracking()
                 .Where(l => l.TenantId == tenantId)
                 .ToListAsync();

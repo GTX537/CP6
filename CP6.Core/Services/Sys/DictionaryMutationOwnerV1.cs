@@ -11,7 +11,10 @@ public sealed class DictionaryMutationOwnerV1(CP6Context db, IamAdministrationV1
 {
     public bool Owns(CP6Context context) => ReferenceEquals(context, db);
 
-    public async Task<T> ExecuteAsync<T>(string action, Func<CancellationToken, Task<T>> body,
+    public Task<T> ExecuteAsync<T>(string action, Func<CancellationToken, Task<T>> body,
+        CancellationToken ct = default) => ExecuteAsync(action, (_, token) => body(token), ct);
+
+    internal async Task<T> ExecuteAsync<T>(string action, Func<UserPermissionContext, CancellationToken, Task<T>> body,
         CancellationToken ct = default)
     {
         if (administration?.Owns(db) != true || session == null)
@@ -25,7 +28,7 @@ public sealed class DictionaryMutationOwnerV1(CP6Context db, IamAdministrationV1
                     await db.Database.ExecuteSqlRawAsync("""
                         LOCK TABLE public."Sys_DictTypes", public."Sys_DictDatas" IN SHARE ROW EXCLUSIVE MODE
                         """, token);
-                    var result = await body(token);
+                    var result = await body(actor, token);
                     if (await session.CurrentActor(token) != actor.UserId)
                         throw new OrderPriceCorrectionException("REAUTH_REQUIRED", 401);
                     return result;

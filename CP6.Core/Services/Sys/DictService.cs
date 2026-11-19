@@ -17,8 +17,11 @@ public class DictService : IDictService
         _cache = cache;
     }
 
-    public async Task<List<Sys_DictData>> GetItemsAsync(string typeCode) =>
-        (await _cache.GetOrCreateAsync(Key(typeCode), async e =>
+    public async Task<List<Sys_DictData>> GetItemsAsync(string typeCode)
+    {
+        if (_db.Database.IsNpgsql())
+            return await new DictionaryCatalogV1(_db).Active(typeCode).OrderBy(item => item.OrderNo).ThenBy(item => item.Id).ToListAsync();
+        return (await _cache.GetOrCreateAsync(Key(typeCode), async e =>
         {
             e.SlidingExpiration = TimeSpan.FromMinutes(30);
             return await _db.Sys_DictDatas
@@ -26,11 +29,15 @@ public class DictService : IDictService
                 .OrderBy(d => d.OrderNo)
                 .ToListAsync();
         }))!;
+    }
 
     public async Task<string?> TranslateAsync(string typeCode, string? value)
     {
         if (value == null) return null;
-        var items = await GetItemsAsync(typeCode);
+        var items = _db.Database.IsNpgsql()
+            ? await _db.Sys_DictDatas.AsNoTracking().Where(item => item.TypeCode == typeCode)
+                .OrderBy(item => item.OrderNo).ThenBy(item => item.Id).ToListAsync()
+            : await GetItemsAsync(typeCode);
         return items.FirstOrDefault(d => d.Value == value)?.Label ?? value;   // 未命中回原值
     }
 

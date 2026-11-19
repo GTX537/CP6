@@ -285,6 +285,9 @@ builder.Services.AddSingleton<Microsoft.Extensions.Localization.IStringLocalizer
 
 // 3.2.2 i18n 优化 P4：发布模式（版本化静态包导出 + manifest）。
 builder.Services.AddSingleton<CP6.WebApi.Services.LangPublishService>();
+builder.Services.AddScoped<CP6.WebApi.Services.LanguageEntriesV1>();
+builder.Services.AddScoped<CP6.WebApi.Services.DictionaryCommandsV1>();
+builder.Services.AddScoped<CP6.WebApi.Services.LanguagePublicationV1>();
 
 // 3.3 操作日志 = Kafka 专任（高吞吐・append-only・可保留可回放的审计流）
 //  - 生产者 KafkaProducerService 实现 IOperLogTransport；OperLogFilter 注入单一通道。
@@ -627,6 +630,7 @@ CP6.Core.Services.Sys.FieldRegistry.Register(CP6.Core.Services.Oa.PersonalFormOw
     CP6.Core.Services.Oa.PersonalFormOwnerV2.Fields.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 CP6.Core.Services.Sys.DataScopeRegistry.Register("product", "製品", new[] { 1, 2, 3, 4, 5 }, 5);
 // Native identity source exposes no price or customer fields. Existing scope semantics are retained.
+CP6.Core.Services.Sys.FieldRegistry.Register("lang", CP6.WebApi.Services.LanguageEntryRulesV1.Fields);
 CP6.Core.Services.Sys.FieldRegistry.Register("product");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("erp-business-partner", "客户原身份来源", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("erp-business-partner", new CP6.Core.Services.Sys.FieldRegistry.Field("BpName", "客户名称"));

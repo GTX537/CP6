@@ -40,6 +40,10 @@ public sealed partial class IamAdministrationV1(CP6Context db, ICurrentPermissio
         Func<UserPermissionContext,CancellationToken,Task<T>> body, CancellationToken ct)
         => ExecuteAuthorityAsync(permission ?? throw Error(403,"IAM_FORBIDDEN"), currentActor, body, ct);
 
+    internal Task<T> ExecuteIdentityAsync<T>(Func<CancellationToken, Task<Guid>> currentActor,
+        Func<UserPermissionContext, CancellationToken, Task<T>> body, CancellationToken ct)
+        => ExecuteAuthorityAsync(null, currentActor, body, ct);
+
     private async Task<T> ExecuteAuthorityAsync<T>(string? permission, Func<CancellationToken,Task<Guid>> currentActor,
         Func<UserPermissionContext,CancellationToken,Task<T>> body, CancellationToken ct)
     {

@@ -14,13 +14,15 @@ public sealed class ClientBootstrapController : ControllerBase
 {
     private readonly SecurityOptions _security;
     private readonly LangPublishService _languages;
+    private readonly LanguagePublicationV1? _languagePublication;
 
     public ClientBootstrapController(
         IOptions<SecurityOptions> security,
-        LangPublishService languages)
+        LangPublishService languages, LanguagePublicationV1? languagePublication = null)
     {
         _security = security.Value;
         _languages = languages;
+        _languagePublication = languagePublication;
     }
 
     [HttpGet("bootstrap")]
@@ -43,7 +45,11 @@ public sealed class ClientBootstrapController : ControllerBase
         if (!ClientSemanticVersion.TryParse(currentVersion, out var current))
             return BadRequest(new { code = "E-CLIENT-VERSION-INVALID", message = "当前客户端版本无效。" });
 
-        var manifest = await _languages.GetManifestAsync();
+        Response.Headers.CacheControl = "no-cache";
+        var activeLanguage = _languagePublication?.IsPostgreSql == true
+            ? await _languagePublication.CurrentManifest(HttpContext.RequestAborted)
+            : null;
+        var languageVersion = activeLanguage?.Version ?? (await _languages.GetManifestAsync())?.Version;
         return new ClientBootstrapDto
         {
             ApiVersion = "1",
@@ -59,7 +65,7 @@ public sealed class ClientBootstrapController : ControllerBase
             Sha256 = release.Sha256,
             PublisherSha256 = release.PublisherSha256,
             PackageSha256 = release.PackageSha256,
-            LanguageManifestVersion = manifest?.Version ?? string.Empty
+            LanguageManifestVersion = languageVersion ?? string.Empty
         };
     }
 
