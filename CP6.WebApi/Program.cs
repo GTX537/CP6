@@ -1066,6 +1066,9 @@ builder.Services.AddScoped(sp => new CP6.Core.Services.Integration.OperationsOwn
         .CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext, ct),
     CP6.Core.Services.Sys.AuthorizationCatalogV1.Capture, new CP6.WebApi.Services.MesCompletionSessionAuthorityV1(sp)));
 builder.Services.AddScoped<IUnshippedOrderService, UnshippedOrderService>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.WorkspaceMetricsV1>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.WorkspacePreferencesV1>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.WorkspaceNavigationV1>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.DictionaryMutationOwnerV1>(sp =>
 {
     var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;

@@ -19,7 +19,7 @@ public sealed class StockOperationsService
     internal StockOperationsService(CP6Context db, OperationsOwnerV1? owner, TenantStockReadStore? storage)
         => (this.db, this.owner, this.storage) = (db, owner, storage);
 
-    private Task<T> ReadAsync<T>(Func<OperationsAccessV1, CancellationToken, Task<T?>> read, CancellationToken ct) where T : class
+    internal Task<T> ReadAsync<T>(Func<OperationsAccessV1, CancellationToken, Task<T?>> read, CancellationToken ct) where T : class
         => Owner.ExecuteAsync(OperationsOwnerV1.Stock, "query", false, async (access, token) =>
         {
             var result = storage is null ? await read(access, token) : await storage.ReadAsync(db, access.ActorId,

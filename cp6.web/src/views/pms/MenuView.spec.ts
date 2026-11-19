@@ -6,7 +6,7 @@ import MenuView from './MenuView.vue'
 import { usePlatformStore } from '@/stores/platform'
 
 const api = vi.hoisted(() => ({ getAll: vi.fn(), add: vi.fn(), update: vi.fn(), updateTree: vi.fn(), del: vi.fn(), profile: vi.fn(), confirm: vi.fn(), success: vi.fn(),
-  treeCurrent: vi.fn(), treePreview: vi.fn(), treeExecute: vi.fn(), treeOriginal: vi.fn() }))
+  treeCurrent: vi.fn(), treePreview: vi.fn(), treeExecute: vi.fn(), treeOriginal: vi.fn(), definitionPreview: vi.fn(), definitionExecute: vi.fn() }))
 vi.mock('@/api/sys/menu', () => ({ menuApi: api }))
 vi.mock('@/api/sys/auth', () => ({ authApi: { profile: api.profile } }))
 vi.mock('@/api/sys/rolePerm', () => ({ rolePermApi: { myActions: vi.fn() } }))
@@ -22,9 +22,9 @@ function deferred() {
   return { promise, resolve, reject }
 }
 let wrapper: ReturnType<typeof mount> | undefined
-async function render() {
+async function render(versionedOnly = false) {
   const pinia = createPinia()
-  wrapper = mount(MenuView, { global: { plugins: [pinia], directives: { permission: {}, loading: {} }, stubs: {
+  wrapper = mount(MenuView, { props: { versionedOnly }, global: { plugins: [pinia], directives: { permission: {}, loading: {} }, stubs: {
     MenuDisplayPanel: true,
     ElButton: { props: ['loading', 'disabled'], template: '<button :disabled="loading || disabled"><slot /></button>' },
     ElForm: { template: '<form><slot /></form>', methods: { validate: () => Promise.resolve(true), clearValidate: () => {} } },
@@ -47,7 +47,10 @@ beforeEach(() => {
   api.confirm.mockResolvedValue('confirm'); api.update.mockResolvedValue(menu('已保存'))
   api.add.mockResolvedValue(menu()); api.updateTree.mockResolvedValue(undefined); api.del.mockResolvedValue(undefined)
   api.treeCurrent.mockResolvedValue({ revision: '9007199254740993', menus: [menu()] })
-  api.treePreview.mockResolvedValue({ revision: '9007199254740993', changedMenuIds: [1], affectedTenantsCount: 2, affectedRolesCount: 3, menuReferences: '4', actionReferences: '5' })
+  const impact = { revision: '9007199254740993', changedMenuIds: [1], affectedTenantsCount: 2, affectedRolesCount: 3, menuReferences: '4', actionReferences: '5' }
+  api.treePreview.mockResolvedValue(impact)
+  api.definitionPreview.mockResolvedValue(impact)
+  api.definitionExecute.mockImplementation(async command => ({ operationRef: command.operationRef, appliedRevision: '9007199254740994' }))
   api.treeExecute.mockImplementation(async command => ({ operationRef: command.operationRef, appliedRevision: '9007199254740994' }))
 })
 afterEach(() => { wrapper?.unmount(); wrapper = undefined })
@@ -255,5 +258,56 @@ describe('versioned shared tree commands', () => {
     expect(api.getAll).not.toHaveBeenCalled(); expect(vm.canDrag).toBe(false)
     usePlatformStore(pinia).isPlatformAdmin = false; vm.handleNodeDrop(); await vm.saveStructure()
     expect(api.treePreview).not.toHaveBeenCalled(); expect(api.treeExecute).not.toHaveBeenCalled()
+  })
+})
+
+describe('工作台现行菜单定义入口', () => {
+  it('并发冲突保留旧节点的路由草稿，重基保留另一管理员的名称修改', async () => {
+    localStorage.setItem('cp6_isPlatformAdmin', '1')
+    const { vm, view } = await render(true)
+    vm.editorForm.routePath = '/dashboard'
+    await nextTick()
+    api.definitionExecute.mockRejectedValueOnce({ response: { status: 412, data: { code: 'MENU_TREE_VERSION_CHANGED' } } })
+    await vm.saveDetails()
+    expect(view.text()).toContain('当前草稿保留')
+    expect(vm.editorForm.routePath).toBe('/dashboard')
+    expect(api.update).not.toHaveBeenCalled()
+    api.treeCurrent.mockResolvedValue({ revision: '9007199254740994', menus: [menu('另一管理员的新名称')] })
+    await vm.inspectCurrentTree()
+    expect(view.text()).toContain('/dashboard')
+    await vm.rebaseDetails()
+    expect(vm.editorForm.menuName).toBe('另一管理员的新名称')
+    expect(vm.editorForm.routePath).toBe('/dashboard')
+    await vm.saveDetails()
+    expect(api.definitionExecute.mock.calls.at(-1)?.[0]).toMatchObject({
+      expectedRevision: '9007199254740994', kind: 'update', menuId: 1,
+      value: { menuName: '另一管理员的新名称', routePath: '/dashboard' },
+    })
+    expect(api.update).not.toHaveBeenCalled()
+  })
+
+  it('提交失败后用原操作号回查，不重复提交定义', async () => {
+    localStorage.setItem('cp6_isPlatformAdmin', '1')
+    const { vm, view } = await render(true)
+    await edit(vm, '确认丢失的菜单编辑')
+    api.definitionExecute.mockRejectedValueOnce(new Error('响应丢失'))
+    await vm.saveDetails()
+    const original = api.definitionExecute.mock.calls[0]?.[0]
+    expect(original.kind).toBe('update')
+    expect(view.text()).toContain('尚待确认')
+    api.treeOriginal.mockResolvedValue({ operationRef: original.operationRef, appliedRevision: '9007199254740994' })
+    await vm.recoverTree(false)
+    expect(api.treeOriginal).toHaveBeenCalledWith(original.operationRef)
+    expect(api.definitionExecute).toHaveBeenCalledTimes(1)
+    expect(api.update).not.toHaveBeenCalled()
+    expect(view.text()).toContain('原操作已确认')
+  })
+
+  it('普通租户不从当前菜单页回退到无版本共享写入', async () => {
+    const { vm } = await render(true)
+    await edit(vm)
+    await vm.saveDetails()
+    expect(api.update).not.toHaveBeenCalled()
+    expect(api.definitionExecute).not.toHaveBeenCalled()
   })
 })

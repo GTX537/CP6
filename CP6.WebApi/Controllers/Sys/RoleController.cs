@@ -1,5 +1,7 @@
+using System.Text.Json;
 using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
+using CP6.WebApi.Services;
 using CP6.Entity.DomainModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -120,9 +122,14 @@ public class RoleController : LocalizedControllerBase
     /// </summary>
     [HttpPost("{roleId}/menus")]
     [RequirePermission("role", "edit")]
-    public async Task<IActionResult> SaveRoleMenus(int roleId, [FromBody] int[] menuIds)
+    public async Task<IActionResult> SaveRoleMenus(int roleId, [FromBody] JsonElement input)
     {
+        if (WorkspaceRolePolicyHttpV1.IsVersioned(Request)) return await WorkspaceRolePolicyHttpV1.Save(this, roleId, input);
         if (_context.Database.IsNpgsql()) return BadRequest(new { code = "IAM_VERSIONED_POLICY_COMMAND_REQUIRED", endpoint = "/api/iam/role-policies" });
+        int[]? menuIds;
+        try { menuIds = WorkspaceRolePolicyHttpV1.Read<int[]>(HttpContext, input); }
+        catch (JsonException) { return BadRequest(new { code = "IAM_ACTION_MATRIX_INVALID" }); }
+        if (menuIds is null) return BadRequest(new { code = "IAM_ACTION_MATRIX_INVALID" });
         // 1. 删除旧的映射（P0-T3 补口：全局过滤限定当前租户——A 改角色菜单不再串改 B 的同号角色）
         var oldMappings = _context.Sys_RoleMenus.Where(rm => rm.RoleId == roleId);
         _context.Sys_RoleMenus.RemoveRange(oldMappings);

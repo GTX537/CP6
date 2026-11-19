@@ -1,6 +1,8 @@
+using System.Text.Json;
 using CP6.Core.Auth;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DTOs.Sys;
+using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,7 +42,12 @@ public class RolePermController : ControllerBase
 
     /// <summary>当前用户的全部操作键（前端 v-permission 数据源）</summary>
     [HttpGet("my-actions")]
-    public async Task<IActionResult> MyActions() => Ok2(await _svc.MyActionsAsync());
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public async Task<IActionResult> MyActions()
+    {
+        try { return Ok2(await _svc.MyActionsAsync()); }
+        catch (CurrentPermissionUnavailableException) { return StatusCode(503, new { code = "WORKSPACE_AUTHORITY_UNAVAILABLE" }); }
+    }
 
     /// <summary>取某角色的功能权限（菜单 + 操作点）</summary>
     [HttpGet("{roleId:int}")]
@@ -50,9 +57,17 @@ public class RolePermController : ControllerBase
     /// <summary>保存某角色的功能权限</summary>
     [HttpPut("{roleId:int}")]
     [RequirePermission("pub-role-perm", "edit")]
-    public async Task<IActionResult> SaveRolePerm(int roleId, [FromBody] RolePermDto dto)
+    public async Task<IActionResult> SaveRolePerm(int roleId, [FromBody] JsonElement input)
     {
-        try { await _svc.SaveRolePermAsync(roleId, dto, CurrentUser); return Ok2(); }
+        if (WorkspaceRolePolicyHttpV1.IsVersioned(Request)) return await WorkspaceRolePolicyHttpV1.Save(this, roleId, input);
+        try
+        {
+            var dto = WorkspaceRolePolicyHttpV1.Read<RolePermDto>(HttpContext, input);
+            if (dto is null) return BadRequest(new { code = "IAM_ACTION_MATRIX_INVALID" });
+            await _svc.SaveRolePermAsync(roleId, dto, CurrentUser);
+            return Ok2();
+        }
+        catch (JsonException) { return BadRequest(new { code = "IAM_ACTION_MATRIX_INVALID" }); }
         catch (InvalidOperationException e) { return Err(e); }
     }
 

@@ -60,6 +60,7 @@ internal sealed partial class OperationsAccessV1(CP6Context db,OperationsOwnerV1
     }
     internal string Actor=>authority.Actor.UserName!;
     internal Guid ActorId=>authority.Actor.UserId;
+    internal string ReadScopeVersion => authority.Source.SourcePermissionVersion + "/" + authority.OrganizationVersion;
     internal bool PriceReadable=>authority.Fields.Fields.TryGetValue("UnitPrice",out var field) && field.CanRead;
     internal void RequirePriceWrite()
     {if(!authority.Fields.Fields.TryGetValue("UnitPrice",out var field) || !field.CanWrite)throw new OrderPriceCorrectionException("FIELD_WRITE_FORBIDDEN",403);}

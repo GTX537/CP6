@@ -28,6 +28,14 @@ export interface MenuTreeSnapshot { revision: string; menus: MenuItem[] }
 export interface MenuDisplayCommand {
   operationRef: string; expectedRevision: string; menuId: number; menuName: string; icon: string | null; enable: boolean; reason: string
 }
+export interface MenuDefinitionCommand {
+  operationRef: string
+  expectedRevision: string
+  menuId: number
+  kind: 'create' | 'update' | 'delete'
+  value: Omit<MenuItem, 'menuId' | 'createDate'> | null
+  reason: string
+}
 export interface MenuTreeImpact {
   revision: string; changedMenuIds: number[]; affectedTenantsCount: number; affectedRolesCount: number
   menuReferences: string; actionReferences: string
@@ -35,6 +43,8 @@ export interface MenuTreeImpact {
 export interface MenuTreeReceipt { operationRef: string; appliedRevision: string; impact: MenuTreeImpact; committedAt: string }
 
 export const menuApi = {
+  definitionPreview(command: MenuDefinitionCommand): Promise<MenuTreeImpact> { return http.post('/menu/tree-v1/definition/preview', command) },
+  definitionExecute(command: MenuDefinitionCommand): Promise<MenuTreeReceipt> { return http.post('/menu/tree-v1/definition/commands', command) },
   displayPreview(command: MenuDisplayCommand): Promise<MenuTreeImpact> { return http.post('/menu/tree-v1/display/preview', command) },
   displayExecute(command: MenuDisplayCommand): Promise<MenuTreeReceipt> { return http.post('/menu/tree-v1/display/commands', command) },
   treeCurrent(): Promise<MenuTreeSnapshot> { return http.get('/menu/tree-v1') },

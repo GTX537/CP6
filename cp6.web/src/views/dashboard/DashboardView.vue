@@ -18,7 +18,8 @@
     </div>
 
     <!-- KPI 卡片 -->
-    <section class="kpis reveal-item" style="--delay: 70ms">
+    <WorkspaceMetricsPanel v-if="scoped" ref="workspaceMetrics" />
+    <section v-else class="kpis reveal-item" style="--delay: 70ms">
       <div
         v-for="card in statCards"
         :key="card.key"
@@ -42,7 +43,7 @@
       <!-- 左列 -->
       <div class="col">
         <!-- 出货状态 -->
-        <div class="card reveal-item" style="--delay: 140ms">
+        <div v-if="!scoped" class="card reveal-item" style="--delay: 140ms">
           <div class="card-head"><h2><el-icon class="i"><Van /></el-icon>{{ t('dashboard.shipStatus') }}</h2></div>
           <p v-if="summaryState.status !== 'ready'" class="load-state" role="status">{{ stateLabel(summaryState.status) }}</p>
           <div v-else class="ship">
@@ -70,7 +71,7 @@
         </div>
 
         <!-- 最近受注 -->
-        <div class="card reveal-item" style="--delay: 200ms">
+        <div v-if="!scoped" class="card reveal-item" style="--delay: 200ms">
           <div class="card-head"><h2><el-icon class="i"><List /></el-icon>{{ t('dashboard.recentOrders') }}</h2></div>
 
           <p v-if="summaryState.status !== 'ready'" class="load-state" role="status">{{ stateLabel(summaryState.status) }}</p>
@@ -101,6 +102,10 @@
         <div class="card reveal-item" style="--delay: 260ms">
           <div class="card-head"><h2><el-icon class="i"><Grid /></el-icon>{{ t('dashboard.quickEntry') }}</h2></div>
           <div class="quick">
+            <RouterLink v-if="scoped && canGo('/oa/form-search')" class="q" to="/oa/form-search">
+              <el-icon class="i" :size="21"><List /></el-icon>
+              <span>审批与业务应用</span>
+            </RouterLink>
             <div v-for="link in quickLinks" :key="link.path" class="q" @click="go(link.path)">
               <el-icon class="i" :size="21"><component :is="link.icon" /></el-icon>
               <span>{{ t('dashboard.' + link.key) }}</span>
@@ -124,7 +129,7 @@
         </transition>
 
         <!-- 制造进度 -->
-        <div class="card reveal-item" style="--delay: 200ms">
+        <div v-if="!scoped" class="card reveal-item" style="--delay: 200ms">
           <div class="card-head"><h2><el-icon class="i"><SetUp /></el-icon>{{ t('dashboard.workOrderStatus') }}</h2></div>
           <p v-if="summaryState.status !== 'ready'" class="load-state" role="status">{{ stateLabel(summaryState.status) }}</p>
           <DonutChart v-else :segments="donutSegments" :center-label="t('dashboard.workOrderStatus')">
@@ -312,7 +317,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { Refresh, DocumentAdd, Van, List, Grid, Warning, SetUp, Bell } from '@element-plus/icons-vue'
@@ -331,6 +336,9 @@ import type { StockDwellRow } from '@/types/wms/stockDwell'
 import { usePlatformStore } from '@/stores/platform'
 import { createDashboardLoader, parseDashboard, parseUnshipped, parseStockDwell, type LoadStatus } from './dashboardLoadState'
 
+const props = defineProps<{ scoped?: boolean }>()
+const WorkspaceMetricsPanel = defineAsyncComponent(() => import('./WorkspaceMetricsPanel.vue'))
+const workspaceMetrics = ref<{ refresh: () => void }>()
 const { t, locale } = useI18n()
 const router = useRouter()
 const { isMobile } = useBreakpoint()
@@ -593,6 +601,7 @@ watch(identitySnapshot, checkIdentity, { flush: 'sync' })
 
 function loadData() {
   checkIdentity()
+  if (props.scoped) return workspaceMetrics.value?.refresh()
   // SignalR refreshes summary only: widget reads must not create an OperLog refresh loop.
   return summaryLoader.load(() => dashboardApi.getSummary(), checkIdentity)
 }
@@ -616,7 +625,7 @@ onMounted(() => {
   window.addEventListener('storage', checkIdentity)
   window.addEventListener('focus', checkIdentity)
   window.addEventListener('cp6-menu-updated', checkIdentity)
-  void loadData()
+  if (!props.scoped) void loadData()
   void loadUnshipped()
   void loadStockDwell()
   // Start independently even if the first summary request fails or never settles.
