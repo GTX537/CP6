@@ -1565,7 +1565,69 @@
         "docs/development/assessments/20261011/implementation-assessment.json",
         "docs/design-handbook/modules/SYS-JOB-01.md",
         "docs/development/assessments/20261011/catalogs/foundation.json"
+      ],
+      "split_children": [
+        "WP02-21b"
+      ],
+      "split_delivered_scope": [
+        "原生截止、租约与人工／worker 单一终态，暂停与未知回查及只读监控有现行实证。25 项中 10 项完整通过。",
+        "其余 15 项沿已接受范围保留，完整前置须等待 WP02-21b。"
       ]
+    },
+    {
+      "id": "WP02-21b",
+      "package_id": "WP02",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "SYS-JOB-01"
+      ],
+      "title": "后台作业观测、保留分片与原恢复余项",
+      "relative_size": "M",
+      "dependencies": [
+        "WP02-21"
+      ],
+      "external_prerequisites": [],
+      "scope": [
+        "AC-JB01-04、AC-JB03-01、AC-JB04-01、AC-JB04-02、AC-JB04-05。完成准确候选、运行和效果诊断，摘要与迟到回执可回溯，监控只读。",
+        "AC-JB02-02、AC-JB02-03、AC-JB02-04、AC-JB02-05。各原清理 Owner 落实保留／引用／hold 和批准来源门，保留原计划、分片回执和续跑游标。",
+        "AC-JB03-03、AC-JB03-04。核对持久 schedule 版本、错过运行规则与关闭后在途结果。",
+        "AC-JB05-01、AC-JB05-02、AC-JB05-04、AC-JB05-05。通过原 Owner 验证失败分类、typed 恢复、跨库关闭新效果及无终态用途授权。"
+      ],
+      "outputs": [
+        "原作业 Owner 的诊断、保留和安全恢复真实采用，覆盖原 25 项中本卡承担范围。",
+        "实际 API／页面的只读诊断和各原 Owner 的结果记录。"
+      ],
+      "code_paths": [
+        "CP6.Core/Services/Wf/WfCleanupService.cs",
+        "CP6.Core/Services/Wf/WfTimeoutService.cs",
+        "CP6.Core/Services/Oa/NativeTimeoutOwnerV2.cs",
+        "CP6.Core/Services/Oa/NativeInboxOwnerV2.Timeout.cs",
+        "CP6.WebApi/BackgroundServices/WmsScanRetentionCleanupService.cs"
+      ],
+      "new_paths": [],
+      "acceptance_positive": [
+        "分列宿主各层、运行观察与业务回执，原工作日日历/时区及错过运行规则按版本冻结。按原计划和游标恢复已证明可继续的分片，迟到结果追加核实。",
+        "调用原业务 Owner 的精确 typed 恢复，保留原业务键、不同标识和当前授权。"
+      ],
+      "acceptance_negative": [
+        "过期计划、引用或 hold、未批准源、已撤权、旧代次和跨库权威不足时关闭新效果。",
+        "日志、计数及 NOT_FOUND 不构成成功或未做证明。已提交分片、原终态和无终态用途占用不因停机伪改变。"
+      ],
+      "exclusive_resources": [
+        "Main:job-runtime",
+        "file:Main:CP6.Core/Services/Wf/WfTimeoutService.cs"
+      ],
+      "notes": "从 WP02-21 继承原定义和本报告余项。各业务 Owner 保有原作业与业务效果，沿原合同采用接入和恢复。",
+      "prerequisite_bindings": [],
+      "source_refs": [
+        "docs/development/08-postgresql-baseline.md",
+        "docs/development/assessments/20261011/implementation-assessment.json",
+        "docs/design-handbook/modules/SYS-JOB-01.md",
+        "docs/development/assessments/20261011/catalogs/foundation.json",
+        "docs/development/evidence/WP02-21/DELIVERY.md"
+      ],
+      "split_parent": "WP02-21"
     },
     {
       "id": "WP02-22",

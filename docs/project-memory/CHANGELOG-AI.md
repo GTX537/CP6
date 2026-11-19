@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP02-21 后台作业版本、领取终态与恢复](../development/evidence/WP02-21/DELIVERY.md)（拆卡，余项 WP02-21b），核对时间 `2026-11-18T23:18:51.911322-05:00`。
 - [WP02-19 客户端激活、nonce与身份完成门](../development/evidence/WP02-19/DELIVERY.md)（拆卡，余项 WP02-19b），核对时间 `2026-11-18T22:34:27.922225-05:00`。
 - [WP03-04 询盘同意、保留匿名化与隐私导出](../development/evidence/WP03-04/DELIVERY.md)（DONE），核对时间 `2026-11-18T21:40:01.981651-05:00`。
 - [WP03-02 浏览器绑定公开提交与H01自动受理](../development/evidence/WP03-02/DELIVERY.md)（DONE），核对时间 `2026-11-18T20:31:39.187281-05:00`。
