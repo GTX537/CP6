@@ -1,38 +1,65 @@
 import http from '../http'
 
-// 字典类型 API
-export const dictTypeApi = {
-  getList(params: { page: number; pageSize: number; keyword?: string }) {
-    return http.get('/dict/types', { params })
-  },
-  add(data: any) {
-    return http.post('/dict/types', data)
-  },
-  update(data: any) {
-    return http.put('/dict/types', data)
-  },
-  del(ids: number[]) {
-    return http.delete('/dict/types', { data: ids })
-  }
+interface DictionaryType {
+  id: number
+  typeCode: string
+  typeName: string
+  orderNo: number
+  enable: boolean
 }
 
-// 字典数据 API
-export const dictDataApi = {
-  getList(params: { typeCode: string; page: number; pageSize: number; keyword?: string }) {
-    return http.get('/dict/data', { params })
-  },
-  add(data: any) {
-    return http.post('/dict/data', data)
-  },
-  update(data: any) {
-    return http.put('/dict/data', data)
-  },
-  del(ids: number[]) {
-    return http.delete('/dict/data', { data: ids })
-  }
+interface DictionaryItem {
+  id: number
+  value: string
+  label: string
+  orderNo: number
+  enable: boolean
+  selectable: boolean
 }
 
-// 获取字典选项（给下拉框用）
+interface DictionaryOptions {
+  dictionaryVersion: string
+  type: DictionaryType | null
+  unavailableReason: string | null
+  allItems: DictionaryItem[]
+}
+
+export interface DictionaryChange {
+  operationRef: string
+  kind: 'create-type' | 'update-type' | 'delete-type' | 'create-data' | 'update-data' | 'delete-data'
+  typeCode: string
+  expectedVersion: string
+  id?: number
+  value?: string
+  label?: string
+  enable?: boolean
+  orderNo?: number
+  reason: string
+}
+
+export interface DictionaryReceipt {
+  operationRef: string
+  dictionaryVersion: string
+  typeCode: string
+}
+
+const owner = '/dict/owner-v1'
+
+export const dictionaryApi = {
+  types(params: { page: number; pageSize: number; keyword?: string }) {
+    return http.get<unknown, { rows: DictionaryType[]; total: number }>('/dict/types', { params })
+  },
+  options(typeCode: string) {
+    return http.get<unknown, DictionaryOptions>(`${owner}/options/${encodeURIComponent(typeCode)}`)
+  },
+  save(change: DictionaryChange) {
+    return http.post<unknown, DictionaryReceipt>(`${owner}/commands`, change)
+  },
+  recover(operation: string) {
+    return http.get<unknown, DictionaryReceipt>(`${owner}/operations/${operation}`)
+  },
+}
+
 export function getDictOptions(typeCode: string) {
-  return http.get(`/dict/options/${typeCode}`)
+  return http.get(`/dict/options/${encodeURIComponent(typeCode)}`)
 }

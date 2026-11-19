@@ -1,5 +1,11 @@
 import { createI18n } from 'vue-i18n'
+import { ref } from 'vue'
 import axios from 'axios'
+import { AUTH_EVENT, identityStamp } from '@/auth/identity'
+import {
+  currentManifest, publicationLanguages, readLanguageMessages, recoverVerifiedPublication,
+  samePublication, saveVerifiedPublication, verifyPublication, type LanguageMessages, type VerifiedPublication,
+} from './exactPublication'
 
 // 语言选项列表（i18n 优化 P5：仅 dev 构建追加伪本地化 QA 语言）
 export const langOptions = [
@@ -20,8 +26,8 @@ export const fallbackChain: Record<string, string[]> = {
   ja: [],
 }
 
-// i18n 优化 P4：交付模式。'live'(默认)=实时读 API；'publish'=读版本化静态包(不可变长缓存)。
-const MODE = (import.meta.env.VITE_I18N_MODE as string) || 'live'
+// 明确配置可继续使用实时分包，常规浏览器从可校验的发布清单开始。
+const MODE = (import.meta.env.VITE_I18N_MODE as string) || 'publish'
 
 // i18n 优化 P4：按路由懒加载的大模块命名空间（须与后端 LangColumn.LazyNamespaces 一致）。
 // 其余 key（含无点日文 key、nav/menu/table/login/dict 等）归 _core，启动即载。
@@ -74,7 +80,14 @@ const i18n = createI18n({
 const loadedPacks = new Set<string>() // `${lang}:${ns}` / `${lang}:_core` / `${lang}:_full`
 const neededNamespaces = new Set<string>() // 本会话访问过的大模块 ns（换语言时按此重载）
 const loadingPacks = new Map<string, Promise<void>>()
-let manifestVersion: string | null = null
+let verified: VerifiedPublication | undefined
+let liveFallback = true
+export const languagePublicationUnavailable = ref(false)
+let languageSelection = 0
+let overlaySelection = 0
+let overlayApplied: string[] = []
+let observingIdentity = false
+const publicMessages = new Map<string, LanguageMessages>()
 
 const languageHttp = axios.create({
   baseURL: '/api',
@@ -96,29 +109,18 @@ async function getLanguageResource<T>(url: string): Promise<T> {
   return response.data
 }
 
-async function fetchManifestVersion(): Promise<string> {
-  if (manifestVersion !== null) return manifestVersion
-  let v = ''
-  try {
-    const m: any = await getLanguageResource('/lang/manifest')
-    v = m?.version || ''
-  } catch {
-    v = ''
-  }
-  manifestVersion = v
-  return v
-}
-
 const I18N_STORAGE_PREFIX = 'cp6_i18n_pack_'
 
 /** 合并一批扁平词条到某语言（不覆盖语言切换状态）。 */
 function merge(lang: string, flat: Record<string, string>) {
+  if (verified) return
+  const safe = readLanguageMessages(flat)
   const existing = (i18n.global.getLocaleMessage(lang) as any) || {}
-  i18n.global.setLocaleMessage(lang, { ...existing, ...flat })
+  i18n.global.setLocaleMessage(lang, { ...existing, ...safe })
   try {
     const raw = localStorage.getItem(`${I18N_STORAGE_PREFIX}${lang}`)
     const cached = raw ? JSON.parse(raw) : {}
-    localStorage.setItem(`${I18N_STORAGE_PREFIX}${lang}`, JSON.stringify({ ...cached, ...flat }))
+    localStorage.setItem(`${I18N_STORAGE_PREFIX}${lang}`, JSON.stringify({ ...cached, ...safe }))
   } catch {
     // 忽略 localStorage 异常
   }
@@ -130,6 +132,7 @@ function merge(lang: string, flat: Record<string, string>) {
  * 否则服务端新增词条会被浏览器里无版本号的旧缓存永久遮蔽。
  */
 export function hydrateCachedLanguagePacks(targetLang?: string) {
+  if (MODE === 'publish') return
   const lang = targetLang || localStorage.getItem('lang') || 'ja'
   const langs = [lang, ...(fallbackChain[lang] || [])]
   for (const l of langs) {
@@ -139,7 +142,7 @@ export function hydrateCachedLanguagePacks(targetLang?: string) {
         const flat = JSON.parse(raw)
         if (flat && typeof flat === 'object') {
           const existing = (i18n.global.getLocaleMessage(l) as any) || {}
-          i18n.global.setLocaleMessage(l, { ...existing, ...flat })
+          i18n.global.setLocaleMessage(l, { ...existing, ...readLanguageMessages(flat) })
         }
       }
     } catch {
@@ -166,23 +169,83 @@ function loadFull(lang: string): Promise<void> {
   })
 }
 
-/** publish 模式：读版本化静态包（不可变长缓存）；无已发布版本则回退实时全量。 */
-async function loadPublished(lang: string) {
-  if (loadedPacks.has(`${lang}:_full`)) return
-  const version = await fetchManifestVersion()
-  if (!version) {
-    await loadFull(lang)
-    return
+function applyPublication(publication: VerifiedPublication) {
+  verified = publication
+  liveFallback = false
+  overlaySelection++
+  overlayApplied = []
+  for (const code of publicationLanguages) {
+    publicMessages.set(code, publication.messages[code])
+    i18n.global.setLocaleMessage(code, { ...publication.messages[code] })
+  }
+}
+
+async function loadPublication(isCurrent: () => boolean) {
+  if (!verified) {
+    const cached = await recoverVerifiedPublication()
+    if (cached && isCurrent() && !verified) applyPublication(cached)
   }
   try {
-    const flat: any = await getLanguageResource(`/lang/published/${version}/${lang}`)
-    merge(lang, flat)
-    loadedPacks.add(`${lang}:_full`)
-    loadedPacks.add(`${lang}:_core`)
-  } catch (e) {
-    console.error(`[i18n] loadPublished failed: ${lang}@${version}, fallback to full`, e)
-    await loadFull(lang)
+    const manifest = currentManifest(await getLanguageResource('/lang/manifest'))
+    if (!isCurrent()) return
+    if (!manifest) {
+      if (!verified) liveFallback = true
+      languagePublicationUnavailable.value = !!verified
+      return
+    }
+    liveFallback = false
+    if (verified?.manifest.version === manifest.version) {
+      if (!samePublication(verified.manifest, manifest)) throw new Error('已核验版本的语言包摘要发生变化。')
+      languagePublicationUnavailable.value = false
+      return
+    }
+    const candidate = await verifyPublication(manifest, async language => {
+      const response = await languageHttp.get<ArrayBuffer>(`/lang/published/${encodeURIComponent(manifest.version)}/${language}`, { responseType: 'arraybuffer' })
+      return response.data
+    })
+    if (!isCurrent()) return
+    applyPublication(candidate)
+    saveVerifiedPublication(candidate)
+    languagePublicationUnavailable.value = false
+  } catch {
+    if (isCurrent()) {
+      liveFallback = false
+      languagePublicationUnavailable.value = true
+    }
+    // 当前完整版本保持可用，后续刷新可重新核验目标清单。
   }
+}
+
+function restorePublicMessages() {
+  for (const language of overlayApplied) {
+    const baseline = publicMessages.get(language)
+    if (baseline) i18n.global.setLocaleMessage(language, { ...baseline })
+  }
+  overlayApplied = []
+}
+
+async function refreshOverlay() {
+  const attempt = ++overlaySelection
+  const stamp = identityStamp()
+  restorePublicMessages()
+  const version = verified?.manifest.version
+  const language = i18n.global.locale.value
+  if (!version || localStorage.getItem('cp6_authed') !== '1' || language === 'pseudo') return
+  const requested = [language, ...(fallbackChain[language] || [])]
+  try {
+    const incoming = await Promise.all(requested.map(async code => {
+      const target = `/lang/overlay-v1/${encodeURIComponent(code)}?version=${encodeURIComponent(version)}`
+      const reply = await getLanguageResource<{ language: string; version: string; translations: unknown }>(target)
+      if (reply.language !== code || reply.version !== version) throw new Error('租户语言包不匹配。')
+      return [code, readLanguageMessages(reply.translations)] as const
+    }))
+    if (attempt !== overlaySelection || stamp !== identityStamp() || verified?.manifest.version !== version ||
+        i18n.global.locale.value !== language) return
+    for (const [code, overlay] of incoming) {
+      i18n.global.setLocaleMessage(code, { ...publicMessages.get(code), ...overlay })
+      overlayApplied.push(code)
+    }
+  } catch { /* 当前租户覆盖不可读时使用已核验的公共语言包。 */ }
 }
 
 /** live 模式：加载某语言的 _core 包（小，启动即载）。 */
@@ -258,8 +321,7 @@ async function loadPseudo() {
 /** 加载某语言的基础包（按模式）。 */
 async function loadBase(lang: string) {
   if (lang === 'pseudo') await loadPseudo()
-  else if (MODE === 'publish') await loadPublished(lang)
-  else await loadCore(lang)
+  else if (MODE === 'live' || liveFallback && !verified) await loadCore(lang)
 }
 
 /** 路由守卫调用：确保目标路径所需命名空间已就绪（含当前语言 + 回退链语言）。 */
@@ -267,7 +329,7 @@ export async function ensureNamespacesForPath(path: string) {
   const lang = (i18n.global.locale as any).value as string
   if (lang === 'pseudo') return // 伪本地化整包已含全部
   const nsList = namespacesForPath(path)
-  if (MODE === 'publish' || nsList.length === 0) {
+  if ((MODE === 'publish' && !liveFallback) || nsList.length === 0) {
     // publish 模式整包已含全部；无映射的路由 _core 已覆盖。无需额外加载。
     return
   }
@@ -289,27 +351,35 @@ export function prefetchNamespacesForPath(path: string): void {
 
 // 切换语言：载新语言基础包 + 已访问过的大模块 ns + 回退链基础包。
 export async function changeLang(langCode: string) {
-  // i18n 优化 P5：伪本地化是整包(en 底)，无需 ns/回退链加载。
-  if (langCode === 'pseudo') {
-    await loadPseudo()
-    i18n.global.locale.value = 'pseudo'
-    localStorage.setItem('lang', 'pseudo')
-    return
-  }
+  const request = ++languageSelection
+  const sameRequest = () => request === languageSelection
+  overlaySelection++
+  restorePublicMessages()
+  if (MODE === 'publish' && langCode !== 'pseudo') await loadPublication(sameRequest)
+  if (!sameRequest()) return
   const langs = [langCode, ...(fallbackChain[langCode] || [])]
-  await Promise.all(langs.map((l) => loadBase(l)))
-  await Promise.all(
-    [...neededNamespaces].flatMap((ns) => langs.map((l) => loadNamespace(l, ns))),
-  )
+  await Promise.all(langs.map(loadBase))
+  if ((MODE === 'live' || liveFallback) && langCode !== 'pseudo')
+    await Promise.all([...neededNamespaces].flatMap(ns => langs.map(language => loadNamespace(language, ns))))
+  if (!sameRequest()) return
   i18n.global.locale.value = langCode
   localStorage.setItem('lang', langCode)
+  void refreshOverlay()
 }
 
-// 初始化：载当前语言 + 回退链的基础包（live=_core 小包、publish=版本化全量）。
+export async function refreshLanguagePublication() {
+  await changeLang(i18n.global.locale.value)
+}
+
 export async function initI18n() {
-  const lang = localStorage.getItem('lang') || 'ja'
-  const langs = [lang, ...(fallbackChain[lang] || [])]
-  await Promise.all(langs.map((l) => loadBase(l)))
+  if (!observingIdentity) {
+    observingIdentity = true
+    window.addEventListener(AUTH_EVENT, refreshOverlay)
+    window.addEventListener('storage', event => {
+      if (event.key === null || event.key === 'cp6_auth_epoch' || event.key === 'cp6_authed' || event.key === 'cp6_shared_impersonation_v1') void refreshOverlay()
+    })
+  }
+  await changeLang(localStorage.getItem('lang') || 'ja')
 }
 
 // 兼容旧调用：按需加载某语言基础包。

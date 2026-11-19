@@ -13,7 +13,7 @@ public sealed record FormOptionSourceV1(string Owner,string Scope,int TypeId)
     public const string OwnerName="Main.Sys.DictionaryOptions.v1";
 }
 public sealed record FormOptionItemV1(string Value,string Label);
-public sealed record FormOptionPageV1(FormOptionItemV1[] Items,int Page,bool HasMore,string Scope="SHARED");
+public sealed record FormOptionPageV1(FormOptionItemV1[] Items,int Page,bool HasMore,string Scope="SHARED",string? DictionaryVersion=null);
 public sealed record FormOptionTypeV1(int Id,string Name);
 
 /// <summary>Only the existing shared reference dictionary. Tenant business sources require their own Owner contract.</summary>
@@ -65,7 +65,10 @@ internal sealed class SharedDictionaryOptionsV1(CP6Context db)
     internal async Task<FormOptionPageV1> Options(FormOptionSourceV1 source,string search,int page,CancellationToken ct)
     {
         var all=(await Source(source,ct)).Where(v=>search==""||v.Label.Contains(search,StringComparison.OrdinalIgnoreCase)||v.Value.Contains(search,StringComparison.Ordinal)).Skip((page-1)*100).Take(101).ToArray();
-        return new(all.Take(100).ToArray(),page,all.Length>100);
+        var typeCode=await db.Sys_DictTypes.Where(type=>type.Id==source.TypeId).Select(type=>type.TypeCode).SingleAsync(ct);
+        var version=await new DictionaryCatalogV1(db).Revision(typeCode,ct)
+            ?? throw new ScopeAuthorizationExceptionV1("FORM_OPTION_SOURCE_COVERAGE_UNAVAILABLE",503);
+        return new(all.Take(100).ToArray(),page,all.Length>100,DictionaryVersion:version);
     }
     internal Task CheckDefaults(FormSchema schema,string text,CancellationToken ct)
     {

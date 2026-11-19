@@ -32,6 +32,7 @@ public class BizExceptionMiddleware
             var payload = JsonSerializer.Serialize(new
             {
                 code = ex.HttpStatus,
+                errorCode = ex.Code,
                 message = localized.Value,   // 已是当前 culture 译文；未命中则回退码本身
                 data = (object?)null
             });

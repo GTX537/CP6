@@ -5,6 +5,8 @@ using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Utilities;
 using CP6.Entity.DomainModels;
+using CP6.WebApi.Services;
+using System.Data.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +36,25 @@ public class DictController : LocalizedControllerBase
         if (_owner?.Owns(_context) != true)
             throw new OrderPriceCorrectionException("DICT_AUTHORITY_UNAVAILABLE", 503);
         return _owner.ExecuteAsync(action, body, HttpContext.RequestAborted);
+    }
+
+    [HttpGet("owner-v1/options/{typeCode}")]
+    public async Task<IActionResult> ReadDictionary(string typeCode, [FromServices] DictionaryCommandsV1 commands,
+        [FromQuery] string? historicalValue = null)
+        => Ok(await commands.Options(typeCode, historicalValue, HttpContext.RequestAborted));
+
+    [HttpPost("owner-v1/commands")]
+    public async Task<IActionResult> ApplyDictionary(DictionaryCommandV1 input, [FromServices] DictionaryCommandsV1 commands)
+        => Ok(await commands.Apply(input, HttpContext.RequestAborted));
+
+    [HttpGet("owner-v1/operations/{operation:guid}")]
+    public async Task<IActionResult> RecoverDictionary(Guid operation, [FromServices] DictionaryCommandsV1 commands)
+    {
+        try { return Ok(await commands.Recover(HttpContext, operation)); }
+        catch (IamAdministrationExceptionV1 error)
+        { throw new OrderPriceCorrectionException(error.Message, error.Status, error); }
+        catch (DbException error)
+        { throw new OrderPriceCorrectionException("DICT_AUTHORITY_UNAVAILABLE", 503, error); }
     }
 
     // ========== 字典类型 ==========
@@ -80,6 +101,8 @@ public class DictController : LocalizedControllerBase
             if (existing == null) return NotFound();
             if (_context.Database.IsNpgsql() && await _context.Sys_DictTypes.AnyAsync(t => t.Id != entity.Id && t.TypeCode == entity.TypeCode, token))
                 return BadRequest(new { message = Localizer["类型编码已存在"] });
+            if (_context.Database.IsNpgsql() && existing.TypeCode != entity.TypeCode)
+                throw new OrderPriceCorrectionException("DICT_STABLE_TYPE_CODE", 409);
             existing.TypeCode = entity.TypeCode;
             existing.TypeName = entity.TypeName;
             existing.Enable = entity.Enable;
@@ -98,6 +121,8 @@ public class DictController : LocalizedControllerBase
         {
             var types = await _context.Sys_DictTypes.Where(t => ids.Contains(t.Id)).ToListAsync(token);
             typeCodes = types.Select(t => t.TypeCode).ToList();
+            if (_context.Database.IsNpgsql())
+                await new DictionaryCatalogV1(_context).RequireUnreferenced(types.Select(type => type.Id).ToArray(), token);
             var datas = _context.Sys_DictDatas.Where(d => typeCodes.Contains(d.TypeCode));
             _context.Sys_DictDatas.RemoveRange(datas);
             _context.Sys_DictTypes.RemoveRange(types);
@@ -134,6 +159,15 @@ public class DictController : LocalizedControllerBase
     {
         var result = await Mutate("add", async token =>
         {
+            if (_context.Database.IsNpgsql())
+            {
+                var count = await _context.Sys_DictTypes.CountAsync(type => type.TypeCode == entity.TypeCode, token);
+                if (count != 1) throw new OrderPriceCorrectionException("DICT_TYPE_UNAVAILABLE", 409);
+                var values = await _context.Sys_DictDatas.Where(item => item.TypeCode == entity.TypeCode)
+                    .Select(item => item.Value).ToListAsync(token);
+                if (values.Contains(entity.Value, StringComparer.Ordinal))
+                    throw new OrderPriceCorrectionException("DICT_VALUE_EXISTS", 409);
+            }
             entity.CreateDate = DateTime.Now;
             _context.Sys_DictDatas.Add(entity);
             await _context.SaveChangesAsync(token);
@@ -152,6 +186,8 @@ public class DictController : LocalizedControllerBase
         {
             var existing = await _context.Sys_DictDatas.FindAsync(new object?[] { entity.Id }, token);
             if (existing == null) return NotFound();
+            if (_context.Database.IsNpgsql() && existing.Value != entity.Value)
+                throw new OrderPriceCorrectionException("DICT_STABLE_VALUE", 409);
             existing.Value = entity.Value;
             existing.Label = entity.Label;
             existing.OrderNo = entity.OrderNo;
@@ -174,6 +210,12 @@ public class DictController : LocalizedControllerBase
         {
             var entities = await _context.Sys_DictDatas.Where(d => ids.Contains(d.Id)).ToListAsync(token);
             typeCodes = entities.Select(d => d.TypeCode).Distinct().ToList();
+            if (_context.Database.IsNpgsql())
+            {
+                var typeIds = await _context.Sys_DictTypes.Where(type => typeCodes.Contains(type.TypeCode))
+                    .Select(type => type.Id).ToArrayAsync(token);
+                await new DictionaryCatalogV1(_context).RequireUnreferenced(typeIds, token);
+            }
             _context.Sys_DictDatas.RemoveRange(entities);
             var count = await _context.SaveChangesAsync(token);
             return Ok(new { count });
@@ -196,6 +238,11 @@ public class DictController : LocalizedControllerBase
     [HttpGet("options/{typeCode}")]
     public async Task<IActionResult> GetOptions(string typeCode)
     {
+        if (_context.Database.IsNpgsql())
+            return Ok(await new DictionaryCatalogV1(_context).Active(typeCode)
+                .OrderBy(item => item.OrderNo).ThenBy(item => item.Id)
+                .Select(item => new DictOptionDto(item.Value, item.Label)).ToListAsync(HttpContext.RequestAborted));
+
         var cacheKey = CacheService.DictKeyPrefix + typeCode;
 
         var options = await _cache.GetOrSetAsync(cacheKey, async () =>

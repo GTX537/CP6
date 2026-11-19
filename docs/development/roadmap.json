@@ -140665,7 +140665,7 @@
           "scope": "SYS-LANG-01: fixed Main/CRM/Platform/candidate evidence; known implementation delta, not exhaustive runtime conformance. Actual per-file source SHA is in the report."
         }
       ],
-      "delivery_state": "PLANNED",
+      "delivery_state": "DONE",
       "blockers": [],
       "runtime_case_ids": [],
       "original_acceptance_inventory": {
@@ -140679,8 +140679,20 @@
             "id": "SYS-LANG-01::AC-LG01-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG01-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Dictionary_owner_versions / FormOptions_optional_external_value",
+                "scope": "两个宿主用同一字典版本改标签，唯一成功写保留 Value 为 A。表单 Owner 原样保存带小数形式的字符串 1.0。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/0"
@@ -140690,8 +140702,20 @@
             "id": "SYS-LANG-01::AC-LG01-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG01-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Dictionary_owner_versions / FormOptions_draft_retains_revoked_original",
+                "scope": "保留的表单引用阻止类型及其值的删除，HTTP 409。停用仍可按原值回读标签，新表单提交给出 FORM_OPTION_VALUE_UNAVAILABLE。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/1"
@@ -140701,8 +140725,20 @@
             "id": "SYS-LANG-01::AC-LG01-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG01-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Dictionary_options_are_invalidated / Dictionary_owner_versions / FormOptions_current_source_rejects",
+                "scope": "事务内和提交后分别读取旧标签、新标签。跨宿主读取新字典版本，同一原键返回凭据。未知历史值为空，业务 Owner 重新检查可选集。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/2"
@@ -140712,8 +140748,20 @@
             "id": "SYS-LANG-01::AC-LG01-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG01-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Dictionary_owner_versions / Dictionary_native_late_cascade",
+                "scope": "重复 Value 和改型编码均为 409，同一基线并发仅一笔 200，另一笔 412。模拟删除事务晚阶段失败时，类型与数据整组保持。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/3"
@@ -140723,8 +140771,20 @@
             "id": "SYS-LANG-01::AC-LG02-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG02-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Language_owner_scoped_fields / Language_owner_legacy_review",
+                "scope": "同键可分别存在于公共及两个组织，公共重复 409，普通主体写公共 403。公开包无任何组织词条，两个持权组织只收到各自覆盖。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/4"
@@ -140734,8 +140794,20 @@
             "id": "SYS-LANG-01::AC-LG02-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG02-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Language_owner_legacy_review / publication.spec.ts",
+                "scope": "无点日文旧键由全量及 _core 读取，wms、sales、erp、mes 和新增命名空间均按原键返回。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/5"
@@ -140745,8 +140817,20 @@
             "id": "SYS-LANG-01::AC-LG02-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG02-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Language_owner_scoped_fields / Language_owner_legacy_review",
+                "scope": "占位符不符合时报 LANG_PLACEHOLDER_MISMATCH 和 422，发布指针保持。用日语及简体中文触发的 CSRF 错误均保留 E-SEC-010。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/6"
@@ -140756,8 +140840,20 @@
             "id": "SYS-LANG-01::AC-LG02-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG02-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Language_owner_scoped_fields / Language_owner_legacy_review",
+                "scope": "已审组织词条编辑返回 draft，旧审校版本 412。请求体重挂 TenantId 为 400，另一组织已审内容保持。禁止字段导致整组导入回滚。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/7"
@@ -140767,8 +140863,20 @@
             "id": "SYS-LANG-01::AC-LG03-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG03-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Language_owner_five_packs",
+                "scope": "模拟存储不可写发布返回 503，缺最后一个韩语包和同长度异摘要均返回 409，公共指针和原可读版保留。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/8"
@@ -140778,8 +140886,20 @@
             "id": "SYS-LANG-01::AC-LG03-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG03-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Language_owner_five_packs / Language_browser_exact",
+                "scope": "每次新发布分配独立版本，同一原操作在第二宿主逐字段回读与提交重放完全相同，同键异命令 409；回退后原字节一致。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/9"
@@ -140789,8 +140909,20 @@
             "id": "SYS-LANG-01::AC-LG03-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG03-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Language_owner_five_packs / Language_browser_exact / publication.spec.ts",
+                "scope": "五语清单准确为 zh-CN、zh-TW、en、ja、ko，Chrome 取齐后才采用。缺词条按当前语言、约定回退语言、ja、原键解析。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/10"
@@ -140800,8 +140932,20 @@
             "id": "SYS-LANG-01::AC-LG03-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG03-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Language_owner_five_packs / Language_owner_legacy_review / Language_owner_scoped_fields",
+                "scope": "逐个验证实际字节长度和 SHA-256；包中包含已审公共词条。未审词条、旧数字租户和现行组织覆盖均排除。隐藏字段导出 403。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/11"
@@ -140811,8 +140955,20 @@
             "id": "SYS-LANG-01::AC-LG04-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG04-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Language_owner_legacy_review / Language_owner_scoped_fields",
+                "scope": "旧接口实际空数组审公共域内全部合格词条，缺请求体审各组织自身的合格词条。现行显式集合为空返回 400。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/12"
@@ -140822,8 +140978,20 @@
             "id": "SYS-LANG-01::AC-LG04-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG04-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Language_owner_scoped_fields / Language_owner_legacy_review / Language_owner_five_packs",
+                "scope": "过期审校或已审源变化返回 412。全包只含已审词条，合法修改后该组织译文回到草稿。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/13"
@@ -140833,8 +141001,20 @@
             "id": "SYS-LANG-01::AC-LG04-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG04-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Language_owner_five_packs / Language_browser_exact",
+                "scope": "逐包完整验证后回退到原精确版本，五个文件字节、草稿状态与词条审计数量保持。Native bootstrap 同步报告当前精确版。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/14"
@@ -140844,8 +141024,20 @@
             "id": "SYS-LANG-01::AC-LG04-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG04-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Language_owner_five_packs / Language_browser_exact",
+                "scope": "发布与回退同时提交只出现一个 200 和一个 412。Chrome 丢弃真实 200 后刷新，回读同一原回执，浏览器共发一次原写请求。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/15"
@@ -140855,8 +141047,20 @@
             "id": "SYS-LANG-01::AC-LG05-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG05-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Language_owner_five_packs / publication.spec.ts",
+                "scope": "真实指针返回 no-cache，五包返回 immutable，按清单核验实际长度与摘要。客户端拒绝同版身份变化和不匹配字节。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/16"
@@ -140866,8 +141070,20 @@
             "id": "SYS-LANG-01::AC-LG05-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG05-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Language_owner_legacy_review / Language_browser_exact / publication.spec.ts",
+                "scope": "旧 _core 与模块包并能读取新命名空间。Chrome 缺新版最后一包时保留完整原版，恢复后整组采用新版。离线缓存重启复核五包。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/17"
@@ -140877,8 +141093,20 @@
             "id": "SYS-LANG-01::AC-LG05-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG05-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "publication.spec.ts / Language_browser_exact",
+                "scope": "旧语言请求晚到后保留较新的语言。Chrome 在真实退出并登录另一组织后释放旧响应，另一组织的内容保持；覆盖私有且无公共缓存。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/18"
@@ -140888,8 +141116,20 @@
             "id": "SYS-LANG-01::AC-LG05-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LG05-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+                "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+                "observed_at": "2026-11-19T09:05:27.853834-05:00",
+                "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+                "command": "Language_browser_exact / publication.spec.ts / Dictionary_owner_versions / FormOptions_optional_external_value",
+                "scope": "浏览器语言切换和重载时保持业务 Ref，字典标签变更保留业务值。缺译保留原稳定键和 E-SEC-010，数值展示继续走原格式化入口。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/2/cases/19"
@@ -140897,8 +141137,42 @@
           }
         ]
       },
-      "implementation_evidence": [],
-      "delivery_evidence": null
+      "implementation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+          "source_repository": "GTX537/CP6",
+          "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+          "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+          "observed_at": "2026-11-19T09:05:27.853834-05:00",
+          "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+          "command": "Main PostgreSQL 37 + 字典/OA 37 + 当前授权 9；Chrome 和 Vitest 119。",
+          "scope": "字典原操作、全局和组织词条、五语全包发布、回退和精确消费。20 项原 AC，0 项必需修订。",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+        "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+        "remote_main_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1273",
+        "scope": "remote_main_sha 为已核实的开工基线。产品和核销同一 PR 采用，合并后冒烟和官方席位处置见 DELIVERY。",
+        "adoption_record": "D:/CP6-test-artifacts/WP02-17/current-20261119/finish.json"
+      },
+      "completion_audit": {
+        "result": "DONE",
+        "reviewed_at": "2026-11-19T09:05:27.853909-05:00",
+        "report": "docs/development/evidence/WP02-17/DELIVERY.md",
+        "original_cases_reviewed": 20,
+        "original_cases_passed": 20,
+        "required_revision_cases": 0,
+        "coverage_cards": [
+          "WP02-17"
+        ],
+        "gaps": [],
+        "classification": "BUSINESS",
+        "new_product_execution": true,
+        "review_effective_seconds": 63.177
+      }
     },
     {
       "id": "SYS-AUD-01",
@@ -169867,6 +170141,11 @@
       "at": "2026-11-19T06:17:40.765523-05:00",
       "evidence": "docs/development/evidence/WP02-18/DELIVERY.md",
       "change": "WP02-18 二十项原验收通过，SYS-WORKSPACE-01 原 20/20、必需修订 0；按 #333 单次结转 WP02-20 正式收尾 249.883 秒。"
+    },
+    {
+      "at": "2026-11-19T09:05:27.853909-05:00",
+      "evidence": "docs/development/evidence/WP02-17/DELIVERY.md",
+      "change": "WP02-17 通过 SYS-LANG-01 全部 20 项原验收，必需修订 0。按 #335 单次结转 WP02-18 正式收尾 359.614 秒。"
     }
   ],
   "implementation_assessment": {
@@ -191506,18 +191785,80 @@
         "Main:language-publication"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-17",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "EXEC-WP02-14B",
+        "repository": "Main",
+        "branch": "codex/wp02-17",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-19T08:24:47.161728-05:00",
+        "baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+        "entry_evidence": "docs/development/evidence/WP02-17/DELIVERY.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "delivery_report": "docs/development/evidence/WP02-17/DELIVERY.md",
+        "dispatch_scope": "字典稳定业务码和真实 Owner、公共及组织词条授权、五语整包发布和回退、客户端精确缓存。",
+        "actual_start_ref": {
+          "commit": "7ebc95ab4171e53c4fb9a144d2e0c38c5a0b30e0",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-17/messages/20261119T132520Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-19T13:25:20Z"
+        },
+        "dispatch_decision_ref": {
+          "commit": "6115ca1b798c337a171c3ff3fbf234161908044f",
+          "original_commit": "7c0a4cdf7ddbd0cc2e97355dfac59ee827c4c7b7",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261119T125205Z-exec-wp02-14b-wp02-17/MESSAGE.md"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+          "source_repository": "GTX537/CP6",
+          "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+          "tested_main_baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+          "observed_at": "2026-11-19T09:05:27.853834-05:00",
+          "environment": "Windows、.NET 8、PostgreSQL 18.6、Vue/Vite、Chrome。用户、租户、业务数据、存储和故障用隔离夹具。",
+          "command": "Main PostgreSQL 37 + 字典/OA 37 + 当前授权 9；Chrome 和 Vitest 119。",
+          "scope": "字典原操作、全局和组织词条、五语全包发布、回退和精确消费。20 项原 AC，0 项必需修订。",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-17/DELIVERY.md",
+        "source_sha": "9a5ccc11540aea70b364ddbfed39f31bfeb54f28",
+        "remote_main_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1273",
+        "scope": "remote_main_sha 为已核实的开工基线。产品和核销同一 PR 采用，合并后冒烟和官方席位处置见 DELIVERY。",
+        "adoption_record": "D:/CP6-test-artifacts/WP02-17/current-20261119/finish.json"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP02-17/DELIVERY.md",
+        "started_at": "2026-11-19T08:24:47.161728-05:00",
+        "official_started_at": "2026-11-19T08:24:47.161728-05:00",
+        "verified_at": "2026-11-19T09:05:27.853909-05:00",
+        "technical_verified_at": "2026-11-19T09:04:24.676501-05:00",
+        "effective_seconds": 2377.515,
+        "size": "M",
+        "budget_seconds": 14400.0,
+        "mandatory_split_seconds": 21600.0,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-10",
+          "WP02-14",
+          "WP02-14b"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 359.614
+      }
     },
     {
       "id": "WP02-18",
@@ -191919,7 +192260,7 @@
         "official_started_at": "2026-11-19T05:24:54.416078-05:00",
         "verified_at": "2026-11-19T06:17:40.765523-05:00",
         "technical_verified_at": "2026-11-19T06:16:02.872851-05:00",
-        "effective_seconds": 3068.457,
+        "effective_seconds": 3428.071,
         "size": "M",
         "budget_seconds": 14400.0,
         "mandatory_split_seconds": 21600.0,
@@ -191928,7 +192269,15 @@
           "WP02-03"
         ],
         "new_product_execution": true,
-        "preceding_integration_seconds": 249.883
+        "preceding_integration_seconds": 249.883,
+        "candidate_effective_seconds": 3068.457,
+        "post_candidate_finalization_seconds": 359.614,
+        "official_finish": "2026-11-19T11:23:40.379396+00:00",
+        "accounting_evidence": {
+          "adopted_commit": "d969208848fa0f2ffd005d82551fedb27d588b8c",
+          "original_commit": "dda7535d70b7a785270268632a7debbadd8e662b",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-18/replies/20261119T124917Z-coord-acceptance-ack/MESSAGE.md"
+        }
       }
     },
     {
@@ -293472,7 +293821,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 77183.89,
+      "effective_seconds": 79984.196,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -293497,7 +293846,8 @@
         "WP02-19b",
         "WP02-21b",
         "WP02-20",
-        "WP02-18"
+        "WP02-18",
+        "WP02-17"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -293508,7 +293858,8 @@
         "CRM-INQ-01",
         "SYS-JOB-01",
         "SYS-CLIENT-01",
-        "SYS-WORKSPACE-01"
+        "SYS-WORKSPACE-01",
+        "SYS-LANG-01"
       ],
       "new_splits": [
         {
@@ -293569,7 +293920,7 @@
         }
       ],
       "current_stage": "B",
-      "next_card": "WP02-17",
+      "next_card": null,
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -293721,16 +294072,11 @@
         }
       },
       "next_card_selection": {
-        "rule": "阶段 B 依完整前置、全图下游最长链和阶段顺序。WP02-29 按 #330 暂缓。实际领取以 COORD 派工为准。",
-        "baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
-        "after_card": "WP02-18",
-        "selected": "WP02-17",
-        "candidates": [
-          {
-            "id": "WP02-17",
-            "longest_downstream_edges": 2
-          }
-        ],
+        "rule": "阶段 B 本轮可领取项已核销，WP02-29 按 #330 保持暂缓。后续阶段和派工由 COORD 根据新台账安排。",
+        "baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
+        "after_card": "WP02-17",
+        "selected": null,
+        "candidates": [],
         "deferral_ref": {
           "commit": "f3bee20f0853bd9117213b965c4cc5a382c83123",
           "path": "handoffs/CP6-DEV-20261012/tasks/WP02-29/replies/20261119T084313Z-coord-deferral-decision/MESSAGE.md"
@@ -293799,11 +294145,11 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 3834.958,
+      "target_review_effective_seconds": 3898.135,
       "last_checkpoint_counts": {
-        "original_done": 56,
-        "fully_done": 56,
-        "targets_done": 9,
+        "original_done": 57,
+        "fully_done": 57,
+        "targets_done": 10,
         "new_splits": 7,
         "periodic_checkpoint_due": false
       },
