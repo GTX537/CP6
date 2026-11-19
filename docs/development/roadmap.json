@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "baseline_id": "CP6-DEV-ROADMAP-20261011/R1",
-  "as_of": "2026-11-18",
+  "as_of": "2026-11-19",
   "scope": "125已接受设计目标的全量大任务计划与进度登记。247仅为修订运行场景；原模块验收需继续盘点。不是125目标实现已完成的证明。",
   "main_baseline_sha": "90ea752e9029d171e6a0307fcda06c66c3e04a69",
   "sources": [
@@ -142715,17 +142715,23 @@
             "id": "SYS-CLIENT-01::AC-CL01-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-CL01-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-19b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "abb9df8885bdda22b001b849b936ee052425d48e",
+                "tested_main_baseline_sha": "e1759095d020c6685b6ca5e2a0da4fd5de99005d",
+                "observed_at": "2026-11-19T01:00:23.711390-05:00",
+                "environment": "Windows、.NET SDK 8.0.424 / 10.0.302、PostgreSQL 18.6、实际 Main 与 Native 客户端程序集。受控模拟 Owner、IdP 和具体使用范围见报告。",
+                "command": "当前本地精确过滤 Original_device_reads_committed_activation_after_response_loss_without_writes、Restart_reads_activation_by_original_operation_without_repeating_registration",
+                "scope": "实际两个 Main 宿主与 PostgreSQL 原票据消费绑定。客户端确认未知以同一键只读回查，错误证明或禁用不披露。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/7/cases/2"
-            },
-            "followup": {
-              "task_id": "WP02-19b",
-              "status": "PARTIAL",
-              "scope": "原绑定和无新增已证实，仍缺调用方按原键与当前证明查询原票据消费结果。",
-              "report": "docs/development/evidence/WP02-19/DELIVERY.md"
             }
           },
           {
@@ -142801,34 +142807,46 @@
             "id": "SYS-CLIENT-01::AC-CL02-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-CL02-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-19b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "abb9df8885bdda22b001b849b936ee052425d48e",
+                "tested_main_baseline_sha": "e1759095d020c6685b6ca5e2a0da4fd5de99005d",
+                "observed_at": "2026-11-19T01:00:23.711390-05:00",
+                "environment": "Windows、.NET SDK 8.0.424 / 10.0.302、PostgreSQL 18.6、实际 Main 与 Native 客户端程序集。受控模拟 Owner、IdP 和具体使用范围见报告。",
+                "command": "当前本地精确过滤 Reenabled_device_uses_fresh_session_and_current_owner_reads_the_original_move、Authorized_original_owner_reuses_offline_scan_and_reads_the_one_committed_result",
+                "scope": "实际重新启用后旧 access/refresh 拒绝，新完整认证后可读原结果。原队列恢复以当前原主体及 Owner 决定为准。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/7/cases/6"
-            },
-            "followup": {
-              "task_id": "WP02-19b",
-              "status": "PARTIAL",
-              "scope": "重启用仍拒旧会话，离线队列隔离及受控恢复待验。",
-              "report": "docs/development/evidence/WP02-19/DELIVERY.md"
             }
           },
           {
             "id": "SYS-CLIENT-01::AC-CL02-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-CL02-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-19b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "abb9df8885bdda22b001b849b936ee052425d48e",
+                "tested_main_baseline_sha": "e1759095d020c6685b6ca5e2a0da4fd5de99005d",
+                "observed_at": "2026-11-19T01:00:23.711390-05:00",
+                "environment": "Windows、.NET SDK 8.0.424 / 10.0.302、PostgreSQL 18.6、实际 Main 与 Native 客户端程序集。受控模拟 Owner、IdP 和具体使用范围见报告。",
+                "command": "当前本地精确过滤 Reenabled_device_uses_fresh_session_and_current_owner_reads_the_original_move、Authorized_original_owner_reuses_offline_scan_and_reads_the_one_committed_result",
+                "scope": "实际换仓和模式变化保存原 Owner、仓及键。真实 Owner 的写门关闭。批准模拟场景按同一原操作和原载荷恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/7/cases/7"
-            },
-            "followup": {
-              "task_id": "WP02-19b",
-              "status": "PARTIAL",
-              "scope": "换仓／模式的设备结果和原命令分别有证据，尚需组合证明同一业务 Owner 和 operation 不变。",
-              "report": "docs/development/evidence/WP02-19/DELIVERY.md"
             }
           },
           {
@@ -142904,17 +142922,23 @@
             "id": "SYS-CLIENT-01::AC-CL03-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-CL03-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-19b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "abb9df8885bdda22b001b849b936ee052425d48e",
+                "tested_main_baseline_sha": "e1759095d020c6685b6ca5e2a0da4fd5de99005d",
+                "observed_at": "2026-11-19T01:00:23.711390-05:00",
+                "environment": "Windows、.NET SDK 8.0.424 / 10.0.302、PostgreSQL 18.6、实际 Main 与 Native 客户端程序集。受控模拟 Owner、IdP 和具体使用范围见报告。",
+                "command": "当前本地精确过滤 Device_heartbeat_nonce_is_shared_by_two_actual_hosts、LateHeartbeatRejectionDoesNotLogOutTheNewOperator、New_operator_cannot_load_or_remove_previous_draft_and_original_operator_reads_same_result",
+                "scope": "实际设备跨宿主核当前认证与时钟。真实客户端隔离旧已在途的响应、草稿及同键恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/7/cases/11"
-            },
-            "followup": {
-              "task_id": "WP02-19b",
-              "status": "PARTIAL",
-              "scope": "时钟拒绝和心跳循环已测，仍缺切人及离线后旧响应安全处置的客户端采用。",
-              "report": "docs/development/evidence/WP02-19/DELIVERY.md"
             }
           },
           {
@@ -142944,17 +142968,23 @@
             "id": "SYS-CLIENT-01::AC-CL04-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-CL04-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-19b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "abb9df8885bdda22b001b849b936ee052425d48e",
+                "tested_main_baseline_sha": "e1759095d020c6685b6ca5e2a0da4fd5de99005d",
+                "observed_at": "2026-11-19T01:00:23.711390-05:00",
+                "environment": "Windows、.NET SDK 8.0.424 / 10.0.302、PostgreSQL 18.6、实际 Main 与 Native 客户端程序集。受控模拟 Owner、IdP 和具体使用范围见报告。",
+                "command": "当前本地精确过滤 Required_device_proof_uses_current_tenant_registration_and_version、Native_optional_login_is_preserved_and_required_device_binding_is_explicit",
+                "scope": "旧可选关联登录和具名 RequiredGate 的当前设备租户、持钥、版本、禁用与阻断均过实际 Main。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/7/cases/13"
-            },
-            "followup": {
-              "task_id": "WP02-19b",
-              "status": "PARTIAL",
-              "scope": "启用必需策略的外租户拒绝与后续版本限制已测，仍缺 RequiredGate 能力和可选模式归属的准确契约与复验。",
-              "report": "docs/development/evidence/WP02-19/DELIVERY.md"
             }
           },
           {
@@ -142984,34 +143014,46 @@
             "id": "SYS-CLIENT-01::AC-CL04-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-CL04-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-19b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "abb9df8885bdda22b001b849b936ee052425d48e",
+                "tested_main_baseline_sha": "e1759095d020c6685b6ca5e2a0da4fd5de99005d",
+                "observed_at": "2026-11-19T01:00:23.711390-05:00",
+                "environment": "Windows、.NET SDK 8.0.424 / 10.0.302、PostgreSQL 18.6、实际 Main 与 Native 客户端程序集。受控模拟 Owner、IdP 和具体使用范围见报告。",
+                "command": "当前本地精确过滤 RefreshReplyArrivingAfterUserSwitchCannotReplaceTheNewSession、New_operator_cannot_load_or_remove_previous_draft_and_original_operator_reads_same_result、Reenabled_device_uses_fresh_session_and_current_owner_reads_the_original_move",
+                "scope": "FullAuth 与当前 IAM 完成门、快切和刷新沿原时限。实际客户端迟到刷新与草稿的分区回归通过。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/7/cases/15"
-            },
-            "followup": {
-              "task_id": "WP02-19b",
-              "status": "PARTIAL",
-              "scope": "服务端 FullAuth 与因子隔离已测，端到端旧草稿隔离待验。",
-              "report": "docs/development/evidence/WP02-19/DELIVERY.md"
             }
           },
           {
             "id": "SYS-CLIENT-01::AC-CL04-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-CL04-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-19b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "abb9df8885bdda22b001b849b936ee052425d48e",
+                "tested_main_baseline_sha": "e1759095d020c6685b6ca5e2a0da4fd5de99005d",
+                "observed_at": "2026-11-19T01:00:23.711390-05:00",
+                "environment": "Windows、.NET SDK 8.0.424 / 10.0.302、PostgreSQL 18.6、实际 Main 与 Native 客户端程序集。受控模拟 Owner、IdP 和具体使用范围见报告。",
+                "command": "当前本地精确过滤 Native_SSO_real_signature_and_original_proof、Native_SSO_without_pending_adapter_is_closed_before_any_session、Unknown_exchange_checks_and_closes_original_grant_without_exchanging_again",
+                "scope": "旧 Native 无挑战或会话而关闭原交互。现行端继续原本地因子，确认未知只读/关闭原 grant，业务原键不迁移。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/7/cases/16"
-            },
-            "followup": {
-              "task_id": "WP02-19b",
-              "status": "PARTIAL",
-              "scope": "服务端初绑、grant 与因子恢复已测，旧 Native pending 出口及会话恢复与原业务键的联合验收仍缺。",
-              "report": "docs/development/evidence/WP02-19/DELIVERY.md"
             }
           },
           {
@@ -143075,37 +143117,12 @@
       "delivery_evidence": null,
       "completion_audit": {
         "result": "PARTIAL_COVERAGE",
-        "reviewed_at": "2026-11-18T22:34:27.922225-05:00",
-        "report": "docs/development/evidence/WP02-19/DELIVERY.md",
-        "original_cases_reviewed": 17,
-        "original_cases_passed": 10,
+        "reviewed_at": "2026-11-19T01:00:23.711390-05:00",
+        "report": "docs/development/evidence/WP02-19b/DELIVERY.md",
+        "original_cases_reviewed": 22,
+        "original_cases_passed": 17,
         "required_revision_cases": 0,
         "gaps": [
-          {
-            "owner_task_id": "WP02-19b",
-            "case_ids": [
-              "AC-CL01-03"
-            ],
-            "gap": "原绑定和无新增已证实，仍缺调用方按原键与当前证明查询原票据消费结果。"
-          },
-          {
-            "owner_task_id": "WP02-19b",
-            "case_ids": [
-              "AC-CL02-03",
-              "AC-CL02-04",
-              "AC-CL03-04",
-              "AC-CL04-04"
-            ],
-            "gap": "当前客户端的旧队列／草稿、切人／心跳迟到及切仓模式下原业务 Owner／操作键的联合复验。"
-          },
-          {
-            "owner_task_id": "WP02-19b",
-            "case_ids": [
-              "AC-CL04-02",
-              "AC-CL04-05"
-            ],
-            "gap": "准确设备 Required 与旧可选模式的身份边界、旧客户端 pending 能力、原会话恢复与原业务键。"
-          },
           {
             "owner_task_id": "WP02-20",
             "case_ids": [
@@ -143115,7 +143132,7 @@
               "AC-CL05-04",
               "AC-CL05-05"
             ],
-            "gap": "原相关升级渠道、包签名、安装与回滚五项。"
+            "gap": "升级渠道、包签名、安装及失败回滚留待原 WP02-20。"
           }
         ],
         "classification": "BUSINESS",
@@ -169299,6 +169316,11 @@
       "at": "2026-11-18T23:18:51.911322-05:00",
       "evidence": "docs/development/evidence/WP02-21/DELIVERY.md",
       "change": "WP02-21 拆卡交付。25 项原验收中 10 项通过，其余 15 项归 WP02-21b。按 Handoff #322 解除 WP02-19b 合同阻塞，保持空指派与七项原状态；结转 378.458 秒并校准预算、重算候选。"
+    },
+    {
+      "at": "2026-11-19T01:00:23.711390-05:00",
+      "evidence": "docs/development/evidence/WP02-19b/DELIVERY.md",
+      "change": "WP02-19b 七项完成，SYS-CLIENT-01 累积 17/22，五项继续由 WP02-20 承接。按 #324 一次结转 545.852 秒并更新 WP02-21b 预算。"
     }
   ],
   "implementation_assessment": {
@@ -191429,14 +191451,62 @@
         "file:Main:CP6.WebApi/Controllers/ClientAuthController.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-19b",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "EXEC-WP02-14B",
+        "repository": "Main",
+        "branch": "codex/wp02-19b",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-19T00:03:15.150064-05:00",
+        "baseline_sha": "e1759095d020c6685b6ca5e2a0da4fd5de99005d",
+        "entry_evidence": "docs/development/evidence/WP02-19b/DELIVERY.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "delivery_report": "docs/development/evidence/WP02-19b/DELIVERY.md",
+        "dispatch_scope": "七项设备、Native 和客户端原作业恢复。按本对话用户确认组合真实读／拒绝与模拟 Owner 的同键恢复。",
+        "actual_start_ref": {
+          "commit": "300e44a3372065e0d4fae4bd79c9c2d89c363c65",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-19b/messages/20261119T050345Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-19T05:03:45Z"
+        },
+        "dispatch_decision_ref": {
+          "commit": "70f416a67467c2e3852e61e3d792be2fea15e6e0",
+          "original_commit": "000c396d6d0385710ca6288edf95fce6390be211",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261119T045420Z-exec-wp02-14b-wp02-19b/MESSAGE.md"
+        },
+        "question_ref": {
+          "commit": "e9c372cd52bceaa90d13083e8b65e1e7a08a4690",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-19b/messages/20261119T053608Z-exec-wp02-14b-question/MESSAGE.md",
+          "at": "2026-11-19T05:36:08Z",
+          "disposition": "COMBINED_EVIDENCE_ACCEPTED"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-19b/DELIVERY.md",
+          "source_repository": "GTX537/CP6",
+          "source_sha": "abb9df8885bdda22b001b849b936ee052425d48e",
+          "tested_main_baseline_sha": "e1759095d020c6685b6ca5e2a0da4fd5de99005d",
+          "observed_at": "2026-11-19T01:00:23.711390-05:00",
+          "environment": "Windows、.NET SDK 8.0.424 / 10.0.302、PostgreSQL 18.6、实际 Main 与 Native 客户端程序集。受控模拟 Owner、IdP 和具体使用范围见报告。",
+          "command": "定向 CP6.Tests / CP6.Client.Tests、Windows／Android 开发构建、Vue 类型及 Swagger 门禁，准确场景见报告。",
+          "scope": "133 项不同 Main PostgreSQL／HTTP、105 项客户端，原七项通过当前接受口径。",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-19b/DELIVERY.md",
+        "source_sha": "abb9df8885bdda22b001b849b936ee052425d48e",
+        "remote_main_sha": "e1759095d020c6685b6ca5e2a0da4fd5de99005d",
+        "scope": "remote_main_sha 为准入时的实际 Main。准确采用及冒烟在正常 PR 合并后以官方 finish 和原通信分支 DELIVERY 回读。",
+        "adoption_record": "D:/CP6-test-artifacts/WP02-19b/finish.json",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1269"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
@@ -191457,6 +191527,23 @@
           }
         ],
         "scope": "确认原设备持钥回查、旧可选与 RequiredGate、pending 兼容和原业务上下文。沿 COORD 单独派工，七项原验收维持 NOT_RUN。"
+      },
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP02-19b/DELIVERY.md",
+        "started_at": "2026-11-19T00:03:15.150064-05:00",
+        "official_started_at": "2026-11-19T00:03:15.150064-05:00",
+        "verified_at": "2026-11-19T01:00:23.711390-05:00",
+        "effective_seconds": 3428.561,
+        "size": "M",
+        "budget_seconds": 12888.19,
+        "mandatory_split_seconds": 19332.285,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-19"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 545.852
       }
     },
     {
@@ -191587,7 +191674,7 @@
         "started_at": "2026-11-18T23:01:11.723707-05:00",
         "official_started_at": "2026-11-18T23:01:11.723707-05:00",
         "verified_at": "2026-11-18T23:18:51.911322-05:00",
-        "effective_seconds": 1060.188,
+        "effective_seconds": 1606.04,
         "size": "M",
         "budget_seconds": 14400,
         "mandatory_split_seconds": 21600,
@@ -191599,7 +191686,15 @@
           "WP02-10"
         ],
         "new_product_execution": true,
-        "preceding_integration_seconds": 378.458
+        "preceding_integration_seconds": 378.458,
+        "candidate_effective_seconds": 1060.188,
+        "post_candidate_finalization_seconds": 545.852,
+        "official_finish": "2026-11-18T23:27:57.763606-05:00",
+        "accounting_evidence": {
+          "adopted_commit": "c542da67515daf3df6932351cfe240f72f4e729a",
+          "original_commit": "7bc0ecbb34409e7b89baecfda992e886fe9d3850",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-21/replies/20261119T045141Z-coord-split-ack/MESSAGE.md"
+        }
       }
     },
     {
@@ -191633,7 +191728,8 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "split_parent": "WP02-21",
-      "card_budget_seconds": 13339.812
+      "card_budget_seconds": 12793.96,
+      "card_mandatory_split_seconds": 19190.94
     },
     {
       "id": "WP02-22",
@@ -292624,7 +292720,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 63522.11,
+      "effective_seconds": 67496.523,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -292645,7 +292741,8 @@
         "WP03-02",
         "WP03-04",
         "WP02-19",
-        "WP02-21"
+        "WP02-21",
+        "WP02-19b"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -292714,7 +292811,7 @@
         }
       ],
       "current_stage": "B",
-      "next_card": "WP02-19b",
+      "next_card": "WP02-21b",
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -292866,21 +292963,21 @@
         }
       },
       "next_card_selection": {
-        "rule": "阶段 B 按完整前置及全图最长下游链重算，同长按阶段顺序。WP02-19b 已按 #322 解阻，实际领取依 COORD 后续派工。",
-        "baseline_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
-        "after_card": "WP02-21",
-        "selected": "WP02-19b",
+        "rule": "阶段 B 按完整前置和全图下游最长链排序，同长用阶段顺序。实际领取依 COORD 派工。",
+        "baseline_sha": "e1759095d020c6685b6ca5e2a0da4fd5de99005d",
+        "after_card": "WP02-19b",
+        "selected": "WP02-21b",
         "candidates": [
-          {
-            "id": "WP02-19b",
-            "longest_downstream_edges": 20
-          },
           {
             "id": "WP02-21b",
             "longest_downstream_edges": 8
           },
           {
             "id": "WP02-29",
+            "longest_downstream_edges": 2
+          },
+          {
+            "id": "WP02-20",
             "longest_downstream_edges": 2
           },
           {
@@ -292891,8 +292988,7 @@
             "id": "WP02-17",
             "longest_downstream_edges": 2
           }
-        ],
-        "unblock_evidence": "https://github.com/GTX537/CP6.AI-Handoff/blob/427833ae8b761336fb5fb9f3dce2ba502b0aec71/handoffs/CP6-DEV-20261012/tasks/WP02-19/replies/20261119T035004Z-coord-decision-wp02-19b/MESSAGE.md"
+        ]
       },
       "phase0_user_confirmation": "2026-11-17 用户确认：先按证据核销或拆卡，列清缺口；完成阶段0核对后再按顺序实施剩余卡。",
       "budget_rule": "余卡上限=父卡上限−父卡已用有效时间（不足0按0计，超出计缓冲）；同一原号的分配守恒。第二次拆分先报总负责，不自动追加卡池。",
@@ -292960,7 +293056,7 @@
       "target_review_effective_seconds": 3561.513,
       "last_checkpoint_counts": {
         "original_done": 54,
-        "fully_done": 52,
+        "fully_done": 53,
         "targets_done": 6,
         "new_splits": 7,
         "periodic_checkpoint_due": false

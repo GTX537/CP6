@@ -304,3 +304,11 @@ WP02-21 拆卡交付。原 25 项中 10 项通过，已验证冻结、人工和 
 按 Handoff #322 登记 WP02-19b PLANNED，保持空指派与原七项 NOT_RUN。原号候选 1133.352 秒，加正式收尾 378.458 秒，原号最终 1511.810 秒，余卡预算 12888.190 秒，150% 升级线 19332.285 秒。本次累计工时只追加 378.458 秒。 [决定](https://github.com/GTX537/CP6.AI-Handoff/blob/427833ae8b761336fb5fb9f3dce2ba502b0aec71/handoffs/CP6-DEV-20261012/tasks/WP02-19/replies/20261119T035004Z-coord-decision-wp02-19b/MESSAGE.md) · [签收](https://github.com/GTX537/CP6.AI-Handoff/blob/427833ae8b761336fb5fb9f3dce2ba502b0aec71/handoffs/CP6-DEV-20261012/tasks/WP02-19/replies/20261119T035004Z-coord-split-ack/MESSAGE.md)
 
 WP02-21 本卡候选为 1060.188 秒，余卡预算 13339.812 秒。累计计划 17.645 小时，未达到 24 小时检查点，缓冲无增量。下一候选为 WP02-19b，下游最长 20 条边，后续依 COORD 单独派工。WP02-20 继续等完整余卡。
+
+## WP02-19b 客户端余项核销
+
+WP02-19b 七项原验收通过，父卡完整。SYS-CLIENT-01 17/22，五项升级归 WP02-20，目标保持 PLANNED。真实 Main 的当前读取、拒绝和已提交原结果与明确标注的模拟 Owner 正向恢复分别取证。登记卡 **60/382**，原号 DONE／完整 DONE **54／53**，目标 **6/125**。 [本卡报告](../evidence/WP02-19b/DELIVERY.md)
+
+按 #324 单次结转 WP02-21 官方收尾 545.852 秒，父卡最终 1606.040 秒。WP02-21b 余额 12793.960 秒，150% 升级线 19190.940 秒。 [签收](https://github.com/GTX537/CP6.AI-Handoff/blob/c542da67515daf3df6932351cfe240f72f4e729a/handoffs/CP6-DEV-20261012/tasks/WP02-21/replies/20261119T045141Z-coord-split-ack/MESSAGE.md)
+
+本卡候选 3428.561 秒，累计计划 18.749 小时，缓冲无增量。下一候选 WP02-21b，下游最长 8 条边，实际领取依 COORD 派工。
