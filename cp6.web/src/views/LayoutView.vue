@@ -170,7 +170,12 @@
       <!-- 多租户合规 #5（T9）impersonation 全局横幅（带倒计时，R8）。imp 期间常驻顶部。 -->
       <ImpersonationBanner />
       <el-main class="layout-main" :class="{ 'is-workspace': isWorkspaceRoute }">
-        <RouterView v-slot="{ Component }">
+        <p v-if="navigationUnavailable" role="status">
+          当前授权未就绪。
+          <button class="btn" type="button" @click="readNavigation">重新检查授权</button>
+        </p>
+        <p v-else-if="noNavigation" role="status">当前没有可用菜单。</p>
+        <RouterView v-if="!navigationUnavailable" :key="navigationIdentity" v-slot="{ Component }">
           <Transition :name="enterFromLogin ? 'route-enter' : 'fade'" mode="out-in">
             <component :is="Component" v-if="Component" />
           </Transition>
@@ -186,8 +191,11 @@ import { useRoute, useRouter, RouterView } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { Menu, User, SwitchButton, OfficeBuilding } from '@element-plus/icons-vue'
 import { langOptions, changeLang } from '@/i18n'
-import { resetRoutes } from '@/router'
+import { addDynamicRoutes, resetRoutes } from '@/router'
 import { authApi } from '@/api/sys/auth'
+import { workspaceMetricsApi } from '@/api/sys/workspaceMetrics'
+import { AUTH_EVENT, identityStamp } from '@/auth/identity'
+import { usePermissionStore } from '@/stores/permission'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 import MenuTreeItem from '@/components/MenuTreeItem.vue'
 import ImpersonationBanner from '@/components/ImpersonationBanner.vue'
@@ -200,6 +208,66 @@ const route = useRoute()
 const router = useRouter()
 const { isMobile } = useBreakpoint()
 const platformStore = usePlatformStore()
+
+const permissions = usePermissionStore()
+const navigationUnavailable = ref(false)
+const noNavigation = ref(false)
+const navigationIdentity = ref(identityStamp())
+let navigationVersion = ''
+let navigationRequest: AbortController | undefined
+
+async function readNavigation() {
+  if (localStorage.getItem('cp6_authed') !== '1') return
+  navigationRequest?.abort()
+  const request = new AbortController()
+  navigationRequest = request
+  const stamp = identityStamp()
+  try {
+    const current = await workspaceMetricsApi.navigation(request.signal)
+    if (navigationRequest !== request || stamp !== identityStamp() || request.signal.aborted) return
+    const menus = JSON.stringify(current.menus)
+    const version = current.menuVersion + '/' + current.policyVersion
+    const changed = navigationVersion !== version
+    const routesChanged = localStorage.getItem('menus') !== menus
+    if (changed || navigationUnavailable.value) permissions.applyCurrent(current.actionKeys)
+    navigationVersion = version
+    navigationUnavailable.value = false
+    noNavigation.value = current.menus.length === 0
+    if (routesChanged) {
+      localStorage.setItem('menus', menus)
+      loadMenuTreeFromStorage()
+      const active = router.currentRoute.value.fullPath
+      addDynamicRoutes(current.menus)
+      const target = router.resolve(active)
+      if (target.matched.length) await router.replace(active)
+      else if (current.menus.some(menu => menu.routePath)) await router.replace('/')
+    } else {
+      loadMenuTreeFromStorage()
+    }
+    if (changed) window.dispatchEvent(new Event('cp6-workspace-authority-changed'))
+  } catch {
+    if (navigationRequest !== request || stamp !== identityStamp() || request.signal.aborted) return
+    navigationUnavailable.value = true
+    noNavigation.value = false
+    menuTree.value = []
+    permissions.reset()
+  } finally {
+    if (navigationRequest === request) navigationRequest = undefined
+  }
+}
+
+function checkNavigationIdentity() {
+  const stamp = identityStamp()
+  if (navigationIdentity.value === stamp) return
+  navigationRequest?.abort()
+  navigationIdentity.value = stamp
+  navigationVersion = ''
+  navigationUnavailable.value = true
+  noNavigation.value = false
+  menuTree.value = []
+  permissions.reset()
+  void readNavigation()
+}
 
 // 多租户合规 #5（T9）带外平台区入口：仅平台超管 + 非 impersonation 期显示（imp 期间挂起平台权 E-SEC-034）。
 const showPlatformEntry = computed(() => platformStore.isPlatformAdmin && !platformStore.impersonating)
@@ -334,7 +402,11 @@ onMounted(() => {
   }
 
   loadMenuTreeFromStorage()
-  window.addEventListener('cp6-menu-updated', loadMenuTreeFromStorage)
+  window.addEventListener('cp6-menu-updated', readNavigation)
+  window.addEventListener('focus', readNavigation)
+  window.addEventListener(AUTH_EVENT, checkNavigationIdentity)
+  window.addEventListener('storage', checkNavigationIdentity)
+  void readNavigation()
 
   if (sessionStorage.getItem('cp6-login-transition') === 'pending') {
     enterFromLogin.value = true
@@ -347,7 +419,11 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   stopSidebarResize()
-  window.removeEventListener('cp6-menu-updated', loadMenuTreeFromStorage)
+  navigationRequest?.abort()
+  window.removeEventListener('cp6-menu-updated', readNavigation)
+  window.removeEventListener('focus', readNavigation)
+  window.removeEventListener(AUTH_EVENT, checkNavigationIdentity)
+  window.removeEventListener('storage', checkNavigationIdentity)
 })
 
 async function handleLogout() {

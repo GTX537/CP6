@@ -230,7 +230,8 @@ describe('current permissions after real authentication publication', () => {
   it('finishes initial bootstrap safely when another identity replaces a pending startup read', async () => {
     signedIn(); let finishOld!: (keys: string[]) => void
     authFixture.actions.mockReturnValueOnce(new Promise<string[]>(resolve => { finishOld = resolve })).mockResolvedValue(['erp-product:query'])
-    const starting = boot('/product-list'); await flushPromises()
+    const starting = boot('/product-list')
+    await vi.waitFor(() => expect(authFixture.actions).toHaveBeenCalledTimes(1))
     localStorage.setItem('cp6_auth_epoch', 'replacement-epoch'); localStorage.setItem('userName', 'replacement-user')
     localStorage.setItem('cp6_browser_auth_v1', JSON.stringify({ version: 1, epoch: 'replacement-epoch', phase: 'active' }))
     finishOld(['old:edit']); const active = await starting; await flushPromises()

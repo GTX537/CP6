@@ -37,6 +37,12 @@ export const usePermissionStore = defineStore('permission', () => {
     return actionKeys.value.has(key)
   }
 
+  function applyCurrent(keys: string[]) {
+    reset()
+    actionKeys.value = new Set(keys)
+    loaded.value = true
+  }
+
   function reset() {
     generation++
     inFlight = undefined
@@ -44,5 +50,5 @@ export const usePermissionStore = defineStore('permission', () => {
     loaded.value = false
   }
 
-  return { actionKeys, loaded, loadMyActions, has, reset }
+  return { actionKeys, loaded, loadMyActions, has, reset, applyCurrent }
 })

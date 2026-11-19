@@ -166,14 +166,21 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         settings.Database = name; var database = new DatabaseOptions(DatabaseProvider.PostgreSql); var policy = DatabaseMigrationProfile.For(database, DatabaseContextKind.Core);
         var options = DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6Context>(), database, settings.ConnectionString, policy.MigrationsAssembly, policy.HistoryTable, policy.HistorySchema);
         await using var db = new CP6Context(options.Options, new TenantContext()); await db.GetService<IMigrator>().MigrateAsync("20261102110000_TenantCreationV1");
-        db.Sys_Menus.Add(new() { MenuId = 101, MenuName = "Existing ", MenuKey = "existing", OrderNo = 9 }); await db.SaveChangesAsync(); db.ChangeTracker.Clear();
+        // 历史夹具直接使用该迁移版本的写入合同，避免最新 EF 审计模型向旧表写尚未创建的列。
+        await db.Database.ExecuteSqlRawAsync("""
+            INSERT INTO public."Sys_Menus"("MenuId","MenuName","MenuKey","OrderNo","Enable","CreateDate")
+            VALUES (101,'Existing ','existing',9,true,LOCALTIMESTAMP)
+            """);
         Task<string[]> Rows() => db.Database.SqlQueryRaw<string>("SELECT row_to_json(t)::text AS \"Value\" FROM public.\"Sys_Menus\" t ORDER BY \"MenuId\"").ToArrayAsync();
         var before = await Rows();
         await using (var writer = new CP6Context(options.Options, new TenantContext()))
         await using (var transaction = await writer.Database.BeginTransactionAsync())
         {
-            writer.Sys_Menus.Add(new() { MenuId = 102, MenuName = "Concurrent", ParentId = 101 }); await writer.SaveChangesAsync();
-            var migration = db.Database.MigrateAsync();
+            await writer.Database.ExecuteSqlRawAsync("""
+                INSERT INTO public."Sys_Menus"("MenuId","MenuName","ParentId","OrderNo","Enable","CreateDate")
+                VALUES (102,'Concurrent',101,0,true,LOCALTIMESTAMP)
+                """);
+            var migration = db.GetService<IMigrator>().MigrateAsync("20261102120000_MenuTreeAdministrationV1");
             try
             {
                 await using var observer = new NpgsqlConnection(settings.ConnectionString); await observer.OpenAsync();
@@ -186,9 +193,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         }
         var after = await Rows(); Assert.Equal(before.Length + 1, after.Length); Assert.All(before, row => Assert.Contains(row, after));
         Assert.Equal(1, await db.Database.SqlQueryRaw<long>("SELECT revision AS \"Value\" FROM cp6_menu_tree_v1.root").SingleAsync());
-        await db.Database.MigrateAsync(); Assert.Equal(after, await Rows());
+        await db.Database.MigrateAsync();
+        // 后续迁移可登记其他菜单，历史树的已保存行仍应原样保留。
+        var latest = await Rows();
+        Assert.All(after, row => Assert.Contains(row, latest));
+        var latestRevision = await db.Database.SqlQueryRaw<long>("SELECT revision AS \"Value\" FROM cp6_menu_tree_v1.root").SingleAsync();
+        await db.Database.MigrateAsync(); Assert.Equal(latest, await Rows());
         await db.Database.ExecuteSqlRawAsync("TRUNCATE public.\"Sys_Menus\" CASCADE");
-        Assert.Equal(2, await db.Database.SqlQueryRaw<long>("SELECT revision AS \"Value\" FROM cp6_menu_tree_v1.root").SingleAsync());
+        Assert.Equal(latestRevision + 1, await db.Database.SqlQueryRaw<long>("SELECT revision AS \"Value\" FROM cp6_menu_tree_v1.root").SingleAsync());
         Assert.Empty(await db.Database.GetPendingMigrationsAsync());
     }
 

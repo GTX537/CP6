@@ -22,6 +22,19 @@ public sealed record MenuTreeImpactV1(
 public sealed record MenuTreeReceiptV1(string OperationRef,
     [property: JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)] long AppliedRevision,
     MenuTreeImpactV1 Impact, DateTimeOffset CommittedAt);
+
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record MenuDefinitionFieldsV1(
+    [property: JsonRequired] string MenuName, [property: JsonRequired] string? RoutePath,
+    [property: JsonRequired] string? MenuKey, [property: JsonRequired] string? Icon,
+    [property: JsonRequired] int? ParentId, [property: JsonRequired] int OrderNo, [property: JsonRequired] bool Enable);
+
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record MenuDefinitionCommandV1([property: JsonRequired] string OperationRef,
+    [property: JsonRequired, JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)] long ExpectedRevision,
+    [property: JsonRequired] string Kind, [property: JsonRequired] int MenuId,
+    MenuDefinitionFieldsV1? Value, [property: JsonRequired] string Reason);
+
 public sealed class MenuTreeExceptionV1(string code, int status = 409, Exception? inner = null) : InvalidOperationException(code, inner)
 {
     public int Status { get; } = status;

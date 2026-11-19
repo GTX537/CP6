@@ -5,7 +5,7 @@ import { newEpoch } from '@/auth/identity'
 import { nativeQueryApi as api, type QueryItem, type QueryPage } from '@/api/oa/nativeQuery'
 import { taskDelegationApi } from '@/api/oa/taskDelegation'
 import Query from './NativeFormQuery.vue'
-vi.mock('vue-router', () => ({ useRoute: () => ({ query: {} }) }))
+vi.mock('vue-router', async importOriginal => ({ ...await importOriginal<typeof import('vue-router')>(), useRoute: () => ({ query: {} }) }))
 vi.mock('@/api/oa/nativeQuery', () => ({ nativeQueryApi: { context: vi.fn(), search: vi.fn(), form: vi.fn(), instance: vi.fn() } }))
 vi.mock('@/api/oa/taskDelegation', () => ({ taskDelegationApi: { received: vi.fn() } }))
 vi.mock('@/api/sys/user', () => ({ userApi: { getList: vi.fn() } }))

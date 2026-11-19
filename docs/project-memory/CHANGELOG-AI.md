@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP02-18 工作台菜单CAS与授权KPI查询](../development/evidence/WP02-18/DELIVERY.md)（DONE），核对时间 `2026-11-19T06:17:40.765523-05:00`。
 - [WP02-20 客户端升级渠道、签名与失败恢复](../development/evidence/WP02-20/DELIVERY.md)（DONE），核对时间 `2026-11-19T04:35:55.491006-05:00`。
 - [WP02-21b 后台作业观测、保留分片与原恢复余项](../development/evidence/WP02-21b/DELIVERY.md)（DONE），核对时间 `2026-11-19T02:16:01.525327-05:00`。
 - [WP02-19b 客户端激活原结果与认证设备边界余项](../development/evidence/WP02-19b/DELIVERY.md)（DONE），核对时间 `2026-11-19T01:00:23.711390-05:00`。

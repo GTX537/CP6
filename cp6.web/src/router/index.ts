@@ -1,4 +1,5 @@
 import { schedulingRoutes } from './schedulingRoutes'
+import registeredMenuPaths from './menu-routes.json'
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { prefetchNamespacesForPath } from '@/i18n'
 import { usePlatformStore } from '@/stores/platform'
@@ -229,6 +230,13 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/space/planning': () => import('@/views/space/planning/SpacePlanningScenarioView.vue'),
 }
 
+const menuPaths = new Set<string>(registeredMenuPaths)
+const workspaceDetailsRoute: RouteRecordRaw = {
+  path: 'workspace/metrics/:metricKey',
+  name: 'workspace-metric-details',
+  component: () => import('@/views/dashboard/WorkspaceMetricDetailView.vue'),
+}
+
 // 静态路由：登录页 / Layout壳子 / 独立窗口
 const staticRoutes: RouteRecordRaw[] = [
   // ── OA Phase B 旧路由重定向（菜单条目可能仍为 /wf/*；redirect 确保无论何时均自动跳转至信箱）──
@@ -402,7 +410,7 @@ const staticRoutes: RouteRecordRaw[] = [
     path: '/',
     name: 'layout',
     component: () => import('@/views/LayoutView.vue'),
-    children: [] // 动态填充
+    children: [workspaceDetailsRoute]
   }
 ]
 
@@ -453,7 +461,7 @@ export function addDynamicRoutes(menus: any[]) {
   const seenRoutePaths = new Set<string>()
   const routeMenus = menus.filter(m => {
     const routePath = m.routePath as string | undefined
-    if (!routePath || !viewModules[routePath] || seenRoutePaths.has(routePath)) return false
+    if (!routePath || !menuPaths.has(routePath) || !Object.hasOwn(viewModules, routePath) || seenRoutePaths.has(routePath)) return false
     seenRoutePaths.add(routePath)
     return true
   })
@@ -473,8 +481,11 @@ export function addDynamicRoutes(menus: any[]) {
       ...routeMenus.map(menu => ({
         path: menu.routePath.replace(/^\//, ''),
         name: menu.routePath.replace(/^\//, ''),
-        component: viewModules[menu.routePath]
+        component: viewModules[menu.routePath],
+        props: menu.routePath === '/dashboard' ? { scoped: true }
+          : menu.routePath === '/menu' ? { versionedOnly: true } : undefined
       })) as RouteRecordRaw[],
+      workspaceDetailsRoute,
       // S类 #5 带外平台区：始终挂载（菜单不含，靠守卫 + 后端把关）
       ...platformChildren(),
       // Internal child pages stay mounted even though they are absent from Sys_Menu.
@@ -524,7 +535,7 @@ export function resetRoutes() {
     path: '/',
     name: 'layout',
     component: () => import('@/views/LayoutView.vue'),
-    children: []
+    children: [workspaceDetailsRoute]
   })
 }
 

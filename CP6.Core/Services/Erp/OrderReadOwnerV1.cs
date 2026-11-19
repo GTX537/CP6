@@ -40,7 +40,8 @@ public sealed partial class OrderReadOwnerV1
                 "/credit-check/" + path, true, ["UnitPrice"])))
         .ToArray();
 
-    internal sealed record Access(IQueryable<OrderDetail> Rows, IQueryable<Order> Headers, bool Price, bool Amount);
+    internal sealed record Access(IQueryable<OrderDetail> Rows, IQueryable<Order> Headers, bool Price, bool Amount,
+        Guid SubjectId, string ReadScopeVersion);
     private sealed record Authority(UserPermissionContext Actor, FieldPermissionSourceV1 Source,
         FieldPermissionDecisionV1 Decision, int Scope, string OrganizationVersion);
 
@@ -94,7 +95,8 @@ public sealed partial class OrderReadOwnerV1
                 OrderDepartmentScopeV1.Query(db, authority.Actor, authority.Scope, includeDeleted: includeDeleted, readLocks: true).AsNoTracking(),
                 OrderDepartmentScopeV1.Headers(db, authority.Actor, authority.Scope, includeDeleted).AsNoTracking(),
                 authority.Decision.Fields["UnitPrice"].Uses[use].Allowed,
-                authority.Decision.Fields["Amount"].Uses[use].Allowed), ct);
+                authority.Decision.Fields["Amount"].Uses[use].Allowed, authority.Source.SubjectId,
+                authority.Source.SourcePermissionVersion + "/" + authority.OrganizationVersion), ct);
             var final = await AuthorityAsync(menu, use, ct);
             if (final.Source.SourcePermissionVersion != authority.Source.SourcePermissionVersion
                 || final.Source.RegistryVersion != authority.Source.RegistryVersion

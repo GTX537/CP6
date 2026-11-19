@@ -324,7 +324,8 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
         var identity = CP6.WebApi.Configuration.CrmIdentityConfiguration.BindOptions(config);
         if (!identity.Enabled) return;
         var oidc = config.GetSection("CrmOidc").Get<CP6.WebApi.Services.CrmOidcOptions>()!;
-        var bundle = CP6.Core.Services.CrmIdentity.IdentityEventContracts.Hash(File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory,"contracts/events/platform",CP6.Platform.Messaging.Cp6ContractBundle.IndexFileName)));
+        var bundle = CP6.Core.Services.CrmIdentity.CrmIdentityRuntime.ReadBundleDigest(
+            Path.Combine(AppContext.BaseDirectory, "contracts/events/platform"), identity.AccountServiceSources);
         await using var db = new Npgsql.NpgsqlConnection(connection); await db.OpenAsync();
         foreach (var (tenant, region) in identity.Tenants)
         {

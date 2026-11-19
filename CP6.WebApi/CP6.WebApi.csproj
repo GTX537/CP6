@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <Compile Include="..\CP6.Client.Core\ClientSemanticVersion.cs" Link="Configuration\ClientSemanticVersion.cs" />
+    <EmbeddedResource Include="..\cp6.web\src\router\menu-routes.json" LogicalName="CP6.Workspace.MenuRoutes" />
     <ProjectReference Include="..\CP6.Core\CP6.Core.csproj" />
     <ProjectReference Include="..\CP6.Space.Application\CP6.Space.Application.csproj" />
     <ProjectReference Include="..\CP6.Space.Contracts\CP6.Space.Contracts.csproj" />
