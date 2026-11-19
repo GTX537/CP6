@@ -142655,7 +142655,7 @@
           "scope": "SYS-CLIENT-01: fixed Main/CRM/Platform/candidate evidence; known implementation delta, not exhaustive runtime conformance. Actual per-file source SHA is in the report."
         }
       ],
-      "delivery_state": "PLANNED",
+      "delivery_state": "DONE",
       "blockers": [],
       "runtime_case_ids": [],
       "original_acceptance_inventory": {
@@ -143060,8 +143060,20 @@
             "id": "SYS-CLIENT-01::AC-CL05-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-CL05-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-20/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "cecb01120a2637a46b55cfb8129b311de4c3e7db",
+                "tested_main_baseline_sha": "04fc103b17ce8ea9bc55011c0f3b44962b979cd7",
+                "observed_at": "2026-11-19T04:35:55.491006-05:00",
+                "environment": "Windows、.NET SDK 8/10、PostgreSQL 18.6、Android 15/API35 x86_64 AVD、独立测试 TLS 与发布者证书。模拟运行范围见报告。",
+                "command": "CP6.Tests ClientBootstrapVersionTests / CP6.Client.Tests ClientUpgradeServiceTests；真实引导 JSON",
+                "scope": "共享 SemVer、最低与最新政策，非法政策 503、错渠道 400；回归覆盖版本序和稳定渠道。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/7/cases/17"
@@ -143071,8 +143083,20 @@
             "id": "SYS-CLIENT-01::AC-CL05-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-CL05-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-20/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "cecb01120a2637a46b55cfb8129b311de4c3e7db",
+                "tested_main_baseline_sha": "04fc103b17ce8ea9bc55011c0f3b44962b979cd7",
+                "observed_at": "2026-11-19T04:35:55.491006-05:00",
+                "environment": "Windows、.NET SDK 8/10、PostgreSQL 18.6、Android 15/API35 x86_64 AVD、独立测试 TLS 与发布者证书。模拟运行范围见报告。",
+                "command": "device_final_platform.py、device_final_install_resume.py、test-windows-msix.ps1 及客户端回归",
+                "scope": "Android 从指定 HTTPS 发行入口分阶段验证实际 APK，五类拒绝保旧态。Windows 实际 MSIX 验证包身份并拒绝不受信任的本地签名。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/7/cases/18"
@@ -143082,8 +143106,20 @@
             "id": "SYS-CLIENT-01::AC-CL05-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-CL05-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-20/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "cecb01120a2637a46b55cfb8129b311de4c3e7db",
+                "tested_main_baseline_sha": "04fc103b17ce8ea9bc55011c0f3b44962b979cd7",
+                "observed_at": "2026-11-19T04:35:55.491006-05:00",
+                "environment": "Windows、.NET SDK 8/10、PostgreSQL 18.6、Android 15/API35 x86_64 AVD、独立测试 TLS 与发布者证书。模拟运行范围见报告。",
+                "command": "device_live_session.py、Mandatory_client_upgrade_preserves_the_original_owner_read_and_allows_native_logout",
+                "scope": "强制升级业务写入受门控，实际 Android 现有会话查原结果后退出；Main 真 PostgreSQL 撤销并拒绝重读。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/7/cases/19"
@@ -143093,8 +143129,20 @@
             "id": "SYS-CLIENT-01::AC-CL05-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-CL05-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-20/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "cecb01120a2637a46b55cfb8129b311de4c3e7db",
+                "tested_main_baseline_sha": "04fc103b17ce8ea9bc55011c0f3b44962b979cd7",
+                "observed_at": "2026-11-19T04:35:55.491006-05:00",
+                "environment": "Windows、.NET SDK 8/10、PostgreSQL 18.6、Android 15/API35 x86_64 AVD、独立测试 TLS 与发布者证书。模拟运行范围见报告。",
+                "command": "device-release-proof.json、Upgrade_and_approved_rollback_reopen_the_same_original_without_reapplying_it、真实 Main 写集记录",
+                "scope": "批准测试回退保原设备和草稿/操作键；模拟 Owner 一次完成，真 Main 一条原回执且无新增扫描或库存事务。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/7/cases/20"
@@ -143104,8 +143152,20 @@
             "id": "SYS-CLIENT-01::AC-CL05-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-CL05-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-20/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "cecb01120a2637a46b55cfb8129b311de4c3e7db",
+                "tested_main_baseline_sha": "04fc103b17ce8ea9bc55011c0f3b44962b979cd7",
+                "observed_at": "2026-11-19T04:35:55.491006-05:00",
+                "environment": "Windows、.NET SDK 8/10、PostgreSQL 18.6、Android 15/API35 x86_64 AVD、独立测试 TLS 与发布者证书。模拟运行范围见报告。",
+                "command": "Android 15 AVD 实际安装与启动，device-release-proof.json、device-final-events.jsonl",
+                "scope": "Android 系统安装确认、包管理器与新进程独立证明两版实际运行、设备身份及 APK SHA-256。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/7/cases/21"
@@ -143113,30 +143173,43 @@
           }
         ]
       },
-      "implementation_evidence": [],
-      "delivery_evidence": null,
+      "implementation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-20/DELIVERY.md",
+          "source_repository": "GTX537/CP6",
+          "source_sha": "cecb01120a2637a46b55cfb8129b311de4c3e7db",
+          "tested_main_baseline_sha": "04fc103b17ce8ea9bc55011c0f3b44962b979cd7",
+          "observed_at": "2026-11-19T04:35:55.491006-05:00",
+          "environment": "Windows、.NET SDK 8/10、PostgreSQL 18.6、Android 15/API35 x86_64 AVD、独立测试 TLS 与发布者证书。模拟运行范围见报告。",
+          "command": "CP6.Client.Tests 114 项、Main PostgreSQL 与 HTTP 68 项、WP02-19/19b 受影响入口 131 项、实际测试签名 APK 装包和回退",
+          "scope": "五项升级原验收；22 个原号、零必需修订和三个覆盖卡全量核对。实际 Main 与 AVD，外部模拟见报告。",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-20/DELIVERY.md",
+        "source_sha": "cecb01120a2637a46b55cfb8129b311de4c3e7db",
+        "remote_main_sha": "04fc103b17ce8ea9bc55011c0f3b44962b979cd7",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1271",
+        "scope": "remote_main_sha 为已核对的准入基线；本卡采用提交与全量远端包含证明见同一 PR、官方收尾及通信分支 DELIVERY。",
+        "adoption_record": "D:/CP6-test-artifacts/WP02-20/finish.json"
+      },
       "completion_audit": {
-        "result": "PARTIAL_COVERAGE",
-        "reviewed_at": "2026-11-19T01:00:23.711390-05:00",
-        "report": "docs/development/evidence/WP02-19b/DELIVERY.md",
+        "result": "DONE",
+        "reviewed_at": "2026-11-19T04:35:55.491006-05:00",
+        "report": "docs/development/evidence/WP02-20/DELIVERY.md",
         "original_cases_reviewed": 22,
-        "original_cases_passed": 17,
+        "original_cases_passed": 22,
         "required_revision_cases": 0,
-        "gaps": [
-          {
-            "owner_task_id": "WP02-20",
-            "case_ids": [
-              "AC-CL05-01",
-              "AC-CL05-02",
-              "AC-CL05-03",
-              "AC-CL05-04",
-              "AC-CL05-05"
-            ],
-            "gap": "升级渠道、包签名、安装及失败回滚留待原 WP02-20。"
-          }
+        "coverage_cards": [
+          "WP02-19",
+          "WP02-19b",
+          "WP02-20"
         ],
+        "gaps": [],
         "classification": "BUSINESS",
-        "new_product_execution": true
+        "new_product_execution": true,
+        "review_effective_seconds": 114.204
       }
     },
     {
@@ -169510,6 +169583,11 @@
       "at": "2026-11-19T02:16:01.525327-05:00",
       "evidence": "docs/development/evidence/WP02-21b/DELIVERY.md",
       "change": "WP02-21b 十五项原验收通过，WP02-21 原号和余卡完整，SYS-JOB-01 25/25、必需修订 0，关闭目标。按 #326 单次结转 WP02-19b 正式收尾 462.633 秒。"
+    },
+    {
+      "at": "2026-11-19T04:35:55.491006-05:00",
+      "evidence": "docs/development/evidence/WP02-20/DELIVERY.md",
+      "change": "WP02-20 五项升级原验收通过，SYS-CLIENT-01 原 22/22、必需修订 0，关闭目标；按 #331 单次结转 WP02-21b 收尾 377.416 秒。"
     }
   ],
   "implementation_assessment": {
@@ -191763,18 +191841,80 @@
         "file:Main:CP6.WebApi/Controllers/ClientAuthController.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-20",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "EXEC-WP02-14B",
+        "repository": "Main",
+        "branch": "codex/wp02-20",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-19T03:52:34.764495-05:00",
+        "baseline_sha": "04fc103b17ce8ea9bc55011c0f3b44962b979cd7",
+        "entry_evidence": "docs/development/evidence/WP02-20/DELIVERY.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "delivery_report": "docs/development/evidence/WP02-20/DELIVERY.md",
+        "dispatch_scope": "本地测试签名、虚拟设备、当前升级政策和失败回退、原业务键连续。核销五项及目标关闭门。",
+        "actual_start_ref": {
+          "commit": "008c7b862d5930b87402c44960878f621fa46f8f",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-20/messages/20261119T085302Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-19T08:53:02Z"
+        },
+        "dispatch_decision_ref": {
+          "commit": "caf4d4496fc40b6fdce5f76d37d202e89ea27989",
+          "original_commit": "9162cd5b02f29b51e5ac84f57a35c27974999d60",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261119T084616Z-exec-wp02-14b-wp02-20/MESSAGE.md"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-20/DELIVERY.md",
+          "source_repository": "GTX537/CP6",
+          "source_sha": "cecb01120a2637a46b55cfb8129b311de4c3e7db",
+          "tested_main_baseline_sha": "04fc103b17ce8ea9bc55011c0f3b44962b979cd7",
+          "observed_at": "2026-11-19T04:35:55.491006-05:00",
+          "environment": "Windows、.NET SDK 8/10、PostgreSQL 18.6、Android 15/API35 x86_64 AVD、独立测试 TLS 与发布者证书。模拟运行范围见报告。",
+          "command": "CP6.Client.Tests 114 项、Main PostgreSQL 与 HTTP 68 项、WP02-19/19b 受影响入口 131 项、实际测试签名 APK 装包和回退",
+          "scope": "五项升级原验收；22 个原号、零必需修订和三个覆盖卡全量核对。实际 Main 与 AVD，外部模拟见报告。",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-20/DELIVERY.md",
+        "source_sha": "cecb01120a2637a46b55cfb8129b311de4c3e7db",
+        "remote_main_sha": "04fc103b17ce8ea9bc55011c0f3b44962b979cd7",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1271",
+        "scope": "remote_main_sha 为已核对的准入基线；本卡采用提交与全量远端包含证明见同一 PR、官方收尾及通信分支 DELIVERY。",
+        "adoption_record": "D:/CP6-test-artifacts/WP02-20/finish.json"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP02-20/DELIVERY.md",
+        "started_at": "2026-11-19T03:52:34.764495-05:00",
+        "official_started_at": "2026-11-19T03:52:34.764495-05:00",
+        "verified_at": "2026-11-19T04:35:55.491006-05:00",
+        "technical_verified_at": "2026-11-19T04:34:01.287312-05:00",
+        "effective_seconds": 2486.523,
+        "size": "M",
+        "budget_seconds": 14400.0,
+        "mandatory_split_seconds": 21600.0,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-19",
+          "WP02-19b",
+          "WP02-28"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 377.416
+      }
     },
     {
       "id": "WP02-21",
@@ -191975,7 +192115,7 @@
         "started_at": "2026-11-19T01:28:51.167784-05:00",
         "official_started_at": "2026-11-19T01:28:51.167784-05:00",
         "verified_at": "2026-11-19T02:16:01.525327-05:00",
-        "effective_seconds": 2769.01,
+        "effective_seconds": 3146.426,
         "size": "M",
         "budget_seconds": 12793.96,
         "mandatory_split_seconds": 19190.94,
@@ -191984,7 +192124,15 @@
           "WP02-21"
         ],
         "new_product_execution": true,
-        "preceding_integration_seconds": 462.633
+        "preceding_integration_seconds": 462.633,
+        "candidate_effective_seconds": 2769.01,
+        "post_candidate_finalization_seconds": 377.416,
+        "official_finish": "2026-11-19T07:22:18.941672+00:00",
+        "accounting_evidence": {
+          "adopted_commit": "4406558ee02ae635acec7651165f76144ba31271",
+          "original_commit": "9ac6583996acbcad0e9c7d0c8a1d6df340ec3aee",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-21b/replies/20261119T074320Z-coord-acceptance-ack/MESSAGE.md"
+        }
       }
     },
     {
@@ -292976,7 +293124,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 70789.514,
+      "effective_seconds": 73767.657,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -292999,7 +293147,8 @@
         "WP02-19",
         "WP02-21",
         "WP02-19b",
-        "WP02-21b"
+        "WP02-21b",
+        "WP02-20"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -293008,7 +293157,8 @@
         "SYS-TENANT-01",
         "SYS-NUM-01",
         "CRM-INQ-01",
-        "SYS-JOB-01"
+        "SYS-JOB-01",
+        "SYS-CLIENT-01"
       ],
       "new_splits": [
         {
@@ -293069,7 +293219,7 @@
         }
       ],
       "current_stage": "B",
-      "next_card": "WP02-29",
+      "next_card": "WP02-18",
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -293221,19 +293371,11 @@
         }
       },
       "next_card_selection": {
-        "rule": "阶段 B 按完整前置和全图下游最长链排序，同长采用阶段顺序。实际领取依 COORD 派工。",
-        "baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
-        "after_card": "WP02-21b",
-        "selected": "WP02-29",
+        "rule": "阶段 B 按完整前置、全图下游最长链和阶段顺序。WP02-29 依 #330 暂缓，实际领取依 COORD 派工。",
+        "baseline_sha": "04fc103b17ce8ea9bc55011c0f3b44962b979cd7",
+        "after_card": "WP02-20",
+        "selected": "WP02-18",
         "candidates": [
-          {
-            "id": "WP02-29",
-            "longest_downstream_edges": 2
-          },
-          {
-            "id": "WP02-20",
-            "longest_downstream_edges": 2
-          },
           {
             "id": "WP02-18",
             "longest_downstream_edges": 2
@@ -293242,7 +293384,11 @@
             "id": "WP02-17",
             "longest_downstream_edges": 2
           }
-        ]
+        ],
+        "deferral_ref": {
+          "commit": "f3bee20f0853bd9117213b965c4cc5a382c83123",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-29/replies/20261119T084313Z-coord-deferral-decision/MESSAGE.md"
+        }
       },
       "phase0_user_confirmation": "2026-11-17 用户确认：先按证据核销或拆卡，列清缺口；完成阶段0核对后再按顺序实施剩余卡。",
       "budget_rule": "余卡上限=父卡上限−父卡已用有效时间（不足0按0计，超出计缓冲）；同一原号的分配守恒。第二次拆分先报总负责，不自动追加卡池。",
@@ -293307,11 +293453,11 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 3622.861,
+      "target_review_effective_seconds": 3737.065,
       "last_checkpoint_counts": {
-        "original_done": 54,
-        "fully_done": 54,
-        "targets_done": 7,
+        "original_done": 55,
+        "fully_done": 55,
+        "targets_done": 8,
         "new_splits": 7,
         "periodic_checkpoint_due": false
       },
