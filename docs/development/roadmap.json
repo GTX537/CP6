@@ -143151,8 +143151,20 @@
             "id": "SYS-JOB-01::AC-JB01-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB01-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "adopted_main_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "observed_at": "2026-11-18T23:18:51.911322-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、实际 Main Kestrel、独立 Host／worker、Chrome 与隔离模拟业务。",
+                "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 native-timeout、job-supplement，精确范围见报告。",
+                "scope": "实际原生超时使用建单时的发布版本、节点参数、时区与 UTC 截止。后续发布、租户换时区均不改原结果。SFS 系统决定保有具名服务身份，APP 必须实际人工证据。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/0"
@@ -143162,8 +143174,20 @@
             "id": "SYS-JOB-01::AC-JB01-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB01-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "adopted_main_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "observed_at": "2026-11-18T23:18:51.911322-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、实际 Main Kestrel、独立 Host／worker、Chrome 与隔离模拟业务。",
+                "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 native-timeout，精确范围见报告。",
+                "scope": "两连接的 worker 只取得一个原槽，人工与 worker 同时进入决定点仅一个合法终态；声明提醒不产生人工票。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/1"
@@ -143173,8 +143197,20 @@
             "id": "SYS-JOB-01::AC-JB01-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB01-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "adopted_main_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "observed_at": "2026-11-18T23:18:51.911322-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、实际 Main Kestrel、独立 Host／worker、Chrome 与隔离模拟业务。",
+                "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 native-timeout、legacy-job、job-supplement，精确范围见报告。",
+                "scope": "暂停、当前服务撤权及升级目标撤权均经最终门。按已批准来源复验两种旧超时与人工暂停提交顺序。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/2"
@@ -143189,14 +143225,32 @@
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/3"
+            },
+            "followup": {
+              "task_id": "WP02-21b",
+              "status": "PARTIAL",
+              "scope": "原生详情可读待处理、最近扫描和最近原结果，旧入口返回已处理数量。缺完整 candidate／已终态／阻断／未知的核对视图。",
+              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
             "id": "SYS-JOB-01::AC-JB01-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB01-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "adopted_main_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "observed_at": "2026-11-18T23:18:51.911322-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、实际 Main Kestrel、独立 Host／worker、Chrome 与隔离模拟业务。",
+                "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 native-timeout、job-supplement，精确范围见报告。",
+                "scope": "原生按 execution、截止版本与 occurrence 回读原回执。挂起恢复保留原槽，丢确认后独立作用域回读同一结果，截止变更不盲执行。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/4"
@@ -143206,8 +143260,20 @@
             "id": "SYS-JOB-01::AC-JB02-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB02-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "adopted_main_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "observed_at": "2026-11-18T23:18:51.911322-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、实际 Main Kestrel、独立 Host／worker、Chrome 与隔离模拟业务。",
+                "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 job-supplement、audit-job，CRM 原范围沿 WP03-04，精确范围见报告。",
+                "scope": "核对 WFS 终态的 CompletedAtUtc、触发流水 FiredUtc、默认 180 天及零关闭；实际 WMS raw 使用 RetainUntil，审计按本域现行策略。CRM 原日历月沿已采用的 WP03-04。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/5"
@@ -143222,6 +143288,12 @@
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/6"
+            },
+            "followup": {
+              "task_id": "WP02-21b",
+              "status": "PARTIAL",
+              "scope": "真库核验旧 WFS 占坑／在途、审计 UNKNOWN 和引用排除。WFS／WMS 对引用全集和所有适用 hold 的共同门仍待完整采用。",
+              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
@@ -143233,6 +143305,12 @@
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/7"
+            },
+            "followup": {
+              "task_id": "WP02-21b",
+              "status": "PARTIAL",
+              "scope": "实际审计保留计划对新 hold、引用和政策换版有效。WFS／WMS 的当前 Owner hold 与过期预览联合门待补。",
+              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
@@ -143244,6 +143322,12 @@
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/8"
+            },
+            "followup": {
+              "task_id": "WP02-21b",
+              "status": "PARTIAL",
+              "scope": "旧 WFS 首片 500 行实际提交，第二片失败留下 1 行。审计 Worker 真库确认丢失可读回原回执，旧 WFS 清理缺持久原计划、分片回执和原游标。",
+              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
@@ -143255,6 +143339,12 @@
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/9"
+            },
+            "followup": {
+              "task_id": "WP02-21b",
+              "status": "PARTIAL",
+              "scope": "现行 WMS Worker 在隔离库实际只删过期 raw scan，留存业务事件和未到期行。未批准来源库及 demo 配置的实际阻断待核对。",
+              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
@@ -143266,14 +143356,32 @@
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/10"
+            },
+            "followup": {
+              "task_id": "WP02-21b",
+              "status": "PARTIAL",
+              "scope": "源码、实际宿主注册、配置、真实扫描、Owner 结果分别取证。现有实际页面仅覆盖 OA 原生运行及最后结果，仍缺完整五层诊断输出。",
+              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
             "id": "SYS-JOB-01::AC-JB03-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB03-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "adopted_main_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "observed_at": "2026-11-18T23:18:51.911322-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、实际 Main Kestrel、独立 Host／worker、Chrome 与隔离模拟业务。",
+                "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 native-timeout、legacy-job，精确范围见报告。",
+                "scope": "宿主配置、租户、实际登记来源、当前 Owner writer gate 或必要原回执不可用时无新效果。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/11"
@@ -143288,6 +143396,12 @@
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/12"
+            },
+            "followup": {
+              "task_id": "WP02-21b",
+              "status": "PARTIAL",
+              "scope": "现行固定周期和历史重启入口分别追踪。缺受保护的持久 schedule 版本、修改审核及各 Owner 的错过运行策略联验。",
+              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
@@ -143299,14 +143413,32 @@
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/13"
+            },
+            "followup": {
+              "task_id": "WP02-21b",
+              "status": "PARTIAL",
+              "scope": "关闭配置、暂停租户和当前取消的部分边界已核对。统一为各 Owner 保留在途已提交、未决或阻断的持久状态仍待采用。",
+              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
             "id": "SYS-JOB-01::AC-JB03-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB03-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "adopted_main_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "observed_at": "2026-11-18T23:18:51.911322-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、实际 Main Kestrel、独立 Host／worker、Chrome 与隔离模拟业务。",
+                "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 native-timeout、job-supplement，精确范围见报告。",
+                "scope": "原生同一 task／revision／occurrence 的稳定 execution 及实际双 worker 唯一领取。旧 WFS 同一 token／节点原作业沿持久唯一槽，重扫不造第二个 Owner。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/14"
@@ -143321,6 +143453,12 @@
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/15"
+            },
+            "followup": {
+              "task_id": "WP02-21b",
+              "status": "PARTIAL",
+              "scope": "原生区分 execution、claim／epoch、业务 command 与通知。现行入口缺完整可追溯 run／attempt／message／operation 的诊断关联。",
+              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
@@ -143332,14 +143470,32 @@
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/16"
+            },
+            "followup": {
+              "task_id": "WP02-21b",
+              "status": "PARTIAL",
+              "scope": "浏览器按真实 Owner 回执展示完成，旧分片后续失败未报整体成功。缺所有适用 Owner 的部分、确认零变更和 UNKNOWN 分类汇总。",
+              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
             "id": "SYS-JOB-01::AC-JB04-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB04-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "adopted_main_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "observed_at": "2026-11-18T23:18:51.911322-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、实际 Main Kestrel、独立 Host／worker、Chrome 与隔离模拟业务。",
+                "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 native-timeout、job-supplement、audit-job，精确范围见报告。",
+                "scope": "真实 PostgreSQL 在提交完成后模拟确认丢失和取消。独立新连接用原 execution 回读原结果和同一通知，旧 attempt 无重复效果。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/17"
@@ -143349,8 +143505,20 @@
             "id": "SYS-JOB-01::AC-JB04-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB04-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "adopted_main_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "observed_at": "2026-11-18T23:18:51.911322-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、实际 Main Kestrel、独立 Host／worker、Chrome 与隔离模拟业务。",
+                "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 browser-readonly，精确范围见报告。",
+                "scope": "真实 Generic Host、Main HTTP 和 Chrome 验证当前范围、只读面板和刷新原结果。普通扫描日志独立，当前授权的详情仅见允许的诊断字段。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/18"
@@ -143365,6 +143533,12 @@
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/19"
+            },
+            "followup": {
+              "task_id": "WP02-21b",
+              "status": "PARTIAL",
+              "scope": "读回原结果保持原业务事实且页面刷新一致。缺通用的原未决运行加上迟到回执的持久追加观察与时间线。",
+              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
@@ -143376,6 +143550,12 @@
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/20"
+            },
+            "followup": {
+              "task_id": "WP02-21b",
+              "status": "PARTIAL",
+              "scope": "原生已经区分失效、拒绝和提交 UNKNOWN，也验证缺 writer gate 无效果。旧作业完整失败分类、有限重试与隔离策略待核查。",
+              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
@@ -143387,14 +143567,32 @@
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/21"
+            },
+            "followup": {
+              "task_id": "WP02-21b",
+              "status": "PARTIAL",
+              "scope": "现行原生和审计恢复使用原 operation 读取，缺全范围已声明 typed 恢复动作、不变载荷和适配证据。",
+              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
             "id": "SYS-JOB-01::AC-JB05-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB05-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "adopted_main_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+                "observed_at": "2026-11-18T23:18:51.911322-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、实际 Main Kestrel、独立 Host／worker、Chrome 与隔离模拟业务。",
+                "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 native-timeout、job-supplement，精确范围见报告。",
+                "scope": "过期或旧代次领取均拒绝，最后校验处到期使任务、回执和通知一起回滚。真实提交后取消保原结果，再查询没有第二份效果。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/22"
@@ -143409,6 +143607,12 @@
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/23"
+            },
+            "followup": {
+              "task_id": "WP02-21b",
+              "status": "PARTIAL",
+              "scope": "本次覆盖同一 Main PostgreSQL 的共同门与当前历史查看。跨库共同权威不可证明时关闭新效果及继续历史读取仍需实际联验。",
+              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
@@ -143420,12 +143624,69 @@
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/24"
+            },
+            "followup": {
+              "task_id": "WP02-21b",
+              "status": "NOT_RUN",
+              "scope": "本轮作业夹具未涉及独立用途 grant。真实无可信终态时保留授权占用、并独立撤销读取的作业链由余卡覆盖。",
+              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           }
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "PARTIAL_COVERAGE",
+        "reviewed_at": "2026-11-18T23:18:51.911322-05:00",
+        "report": "docs/development/evidence/WP02-21/DELIVERY.md",
+        "original_cases_reviewed": 25,
+        "original_cases_passed": 10,
+        "required_revision_cases": 0,
+        "gaps": [
+          {
+            "owner_task_id": "WP02-21b",
+            "case_ids": [
+              "AC-JB01-04",
+              "AC-JB03-01",
+              "AC-JB04-01",
+              "AC-JB04-02",
+              "AC-JB04-05"
+            ],
+            "gap": "完成准确候选、运行和效果诊断，摘要与迟到回执可回溯，监控只读。"
+          },
+          {
+            "owner_task_id": "WP02-21b",
+            "case_ids": [
+              "AC-JB02-02",
+              "AC-JB02-03",
+              "AC-JB02-04",
+              "AC-JB02-05"
+            ],
+            "gap": "各原清理 Owner 落实保留／引用／hold 和批准来源门，保留原计划、分片回执和续跑游标。"
+          },
+          {
+            "owner_task_id": "WP02-21b",
+            "case_ids": [
+              "AC-JB03-03",
+              "AC-JB03-04"
+            ],
+            "gap": "核对持久 schedule 版本、错过运行规则与关闭后在途结果。"
+          },
+          {
+            "owner_task_id": "WP02-21b",
+            "case_ids": [
+              "AC-JB05-01",
+              "AC-JB05-02",
+              "AC-JB05-04",
+              "AC-JB05-05"
+            ],
+            "gap": "通过原 Owner 验证失败分类、typed 恢复、跨库关闭新效果及无终态用途授权。"
+          }
+        ],
+        "new_product_execution": true,
+        "classification": "BUSINESS"
+      }
     },
     {
       "id": "SYS-TENANT-01",
@@ -169033,6 +169294,11 @@
       "at": "2026-11-18T22:34:27.922225-05:00",
       "evidence": "docs/development/evidence/WP02-19/DELIVERY.md",
       "change": "WP02-19 以拆卡交付。17 项原验收中 10 项通过，七项部分证据留 WP02-19b。SYS-CLIENT-01 保持 PLANNED，升级五项归 WP02-20。结转 WP03-04 候选后实际收尾 421.682 秒。"
+    },
+    {
+      "at": "2026-11-18T23:18:51.911322-05:00",
+      "evidence": "docs/development/evidence/WP02-21/DELIVERY.md",
+      "change": "WP02-21 拆卡交付。25 项原验收中 10 项通过，其余 15 项归 WP02-21b。按 Handoff #322 解除 WP02-19b 合同阻塞，保持空指派与七项原状态；结转 378.458 秒并校准预算、重算候选。"
     }
   ],
   "implementation_assessment": {
@@ -191121,7 +191387,7 @@
         "started_at": "2026-11-18T22:15:34.570710-05:00",
         "official_started_at": "2026-11-18T22:15:34.570710-05:00",
         "verified_at": "2026-11-18T22:34:27.922225-05:00",
-        "effective_seconds": 1133.352,
+        "effective_seconds": 1511.81,
         "size": "M",
         "budget_seconds": 14400,
         "mandatory_split_seconds": 21600,
@@ -191133,7 +191399,15 @@
           "WP02-04"
         ],
         "new_product_execution": true,
-        "preceding_integration_seconds": 421.682
+        "preceding_integration_seconds": 421.682,
+        "candidate_effective_seconds": 1133.352,
+        "post_candidate_finalization_seconds": 378.458,
+        "official_finish": "2026-11-18T22:40:46.379783-05:00",
+        "accounting_evidence": {
+          "adopted_commit": "427833ae8b761336fb5fb9f3dce2ba502b0aec71",
+          "original_commit": "0674d9eb279d929b6ef50a217fde2f30ca4365c6",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-19/replies/20261119T035004Z-coord-split-ack/MESSAGE.md"
+        }
       }
     },
     {
@@ -191155,17 +191429,12 @@
         "file:Main:CP6.WebApi/Controllers/ClientAuthController.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "BLOCKED",
+      "state": "PLANNED",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-19b",
       "entry_gate": "NOT_CHECKED",
       "assignment": null,
-      "blockers": [
-        {
-          "reason": "等待原激活回查的信任边界、可选与 Required 及旧端 pending 的采用裁决。",
-          "evidence": "https://github.com/GTX537/CP6.AI-Handoff/blob/ff248bd3db0e5026c389428297fc2fa034a10791/handoffs/CP6-DEV-20261012/tasks/WP02-19/messages/20261119T032845Z-exec-wp02-14b-question/MESSAGE.md"
-        }
-      ],
+      "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "entry_conditions": [
@@ -191173,7 +191442,22 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "split_parent": "WP02-19",
-      "card_budget_seconds": 13266.648
+      "card_budget_seconds": 12888.19,
+      "card_mandatory_split_seconds": 19332.285,
+      "blocker_resolution": {
+        "state": "RESOLVED",
+        "commit": "427833ae8b761336fb5fb9f3dce2ba502b0aec71",
+        "original_commit": "0674d9eb279d929b6ef50a217fde2f30ca4365c6",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-19/replies/20261119T035004Z-coord-decision-wp02-19b/MESSAGE.md",
+        "decided_at": "2026-11-19T03:50:04Z",
+        "prior_blockers": [
+          {
+            "reason": "等待原激活回查的信任边界、可选与 Required 及旧端 pending 的采用裁决。",
+            "evidence": "https://github.com/GTX537/CP6.AI-Handoff/blob/ff248bd3db0e5026c389428297fc2fa034a10791/handoffs/CP6-DEV-20261012/tasks/WP02-19/messages/20261119T032845Z-exec-wp02-14b-question/MESSAGE.md"
+          }
+        ],
+        "scope": "确认原设备持钥回查、旧可选与 RequiredGate、pending 兼容和原业务上下文。沿 COORD 单独派工，七项原验收维持 NOT_RUN。"
+      }
     },
     {
       "id": "WP02-20",
@@ -191227,14 +191511,56 @@
         "file:Main:CP6.Core/Services/Wf/WfTimeoutService.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-21",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "EXEC-WP02-14B",
+        "repository": "Main",
+        "branch": "codex/wp02-21",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-18T23:01:11.723707-05:00",
+        "baseline_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+        "entry_evidence": "docs/development/evidence/WP02-21/DELIVERY.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": false,
+        "delivery_report": "docs/development/evidence/WP02-21/DELIVERY.md",
+        "dispatch_scope": "当前 Main 实际超时、持久租约、原槽恢复、域清理和只读诊断。25 项原验收逐项核对，未完整验收由 WP02-21b 继承。",
+        "actual_start_ref": {
+          "commit": "148952e426c0f41e48702b58a1e2671548a95f0d",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-21/messages/20261119T040146Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-19T04:01:46Z"
+        },
+        "dispatch_decision_ref": {
+          "commit": "2de6f6561055d5488e2501650027813f14f9ef34",
+          "original_commit": "4fbee6f2c16a6989d157e1ab1303da02705f53e3",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261119T035431Z-exec-wp02-14b-wp02-21/MESSAGE.md"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-21/DELIVERY.md",
+          "source_repository": "GTX537/CP6",
+          "source_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+          "adopted_main_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+          "observed_at": "2026-11-18T23:18:51.911322-05:00",
+          "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、实际 Main Kestrel、独立 Host／worker、Chrome 与隔离模拟业务。",
+          "command": "当前 CP6.Tests 定向运行的实际 PostgreSQL、Host／HTTP 和 Chrome。分组过滤及回执见报告。",
+          "scope": "原 25 项核对，10 项完整通过，真库及浏览器 37 项不同测试通过。",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-21/DELIVERY.md",
+        "source_sha": "b04676667446c42c943eb2e76e88f554deb0743c",
+        "remote_main_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+        "pr_url": "https://github.com/GTX537/CP6/pull/719",
+        "scope": "原生超时、旧扫描、保留及只读监控已有远端采用。本卡在同一主线实际复验并记录剩余范围。",
+        "legacy_source_sha": "427c38c46119d5957598270a15fcea889c98ca13"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
@@ -191254,7 +191580,60 @@
         "validation": "17项唯一相关PostgreSQL后端行为及1条真实Host→PostgreSQL→HTTP→Vue→Chrome路径通过；7项既有Inbox组件行为与最新vue-tsc通过。覆盖固定UTC小时政策、旧版本与时区变化、实际服务授权、两Worker领取竞争、租约过期、人工与系统两连接竞争、挂起恢复原槽、系统决定零人工票、APP人工政策阻断、升级目标撤权、原结果未知恢复、错误边兄弟分支隔离及缺原结果整事务回滚。执行前任务/实例版本与epoch补充有定向回归。浏览器复用其已运行的扫描/提醒/次数推进/刷新原结果证据，最后新增版本文本只做类型检查与后台真实版本断言，不称截图覆盖了新增文本。",
         "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态不变。WP12-11、WP02-21整卡不关闭；版本化工作日日历/管理重算、全业务Owner系统决定采用、完整legacy调用面仍有余项。W284字段图定位/纯规则预览、W285普通FORM文件准入/最终下载、W286原竞争及旧caller处置顺序继续。",
         "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave283-final-verification.json"
+      },
+      "card_execution": {
+        "result": "SPLIT",
+        "report": "docs/development/evidence/WP02-21/DELIVERY.md",
+        "started_at": "2026-11-18T23:01:11.723707-05:00",
+        "official_started_at": "2026-11-18T23:01:11.723707-05:00",
+        "verified_at": "2026-11-18T23:18:51.911322-05:00",
+        "effective_seconds": 1060.188,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [
+          "WP02-21b"
+        ],
+        "strict_prerequisites": [
+          "WP02-08",
+          "WP02-10"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 378.458
       }
+    },
+    {
+      "id": "WP02-21b",
+      "package_id": "WP02",
+      "title": "后台作业观测、保留分片与原恢复余项",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "SYS-JOB-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP02-21"
+      ],
+      "exclusive_resources": [
+        "Main:job-runtime",
+        "file:Main:CP6.Core/Services/Wf/WfTimeoutService.cs"
+      ],
+      "coverage_role": "IMPLEMENTATION",
+      "state": "PLANNED",
+      "plan_path": "docs/development/task-plans/WP02.md",
+      "card_anchor": "wp02-21b",
+      "entry_gate": "NOT_CHECKED",
+      "assignment": null,
+      "blockers": [],
+      "validation_evidence": [],
+      "delivery_evidence": null,
+      "entry_conditions": [
+        "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
+        "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
+      ],
+      "split_parent": "WP02-21",
+      "card_budget_seconds": 13339.812
     },
     {
       "id": "WP02-22",
@@ -219929,7 +220308,8 @@
     {
       "target_id": "SYS-JOB-01",
       "implementation_task_ids": [
-        "WP02-21"
+        "WP02-21",
+        "WP02-21b"
       ]
     },
     {
@@ -292244,7 +292624,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 62083.464,
+      "effective_seconds": 63522.11,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -292264,7 +292644,8 @@
         "WP02-09b",
         "WP03-02",
         "WP03-04",
-        "WP02-19"
+        "WP02-19",
+        "WP02-21"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -292322,10 +292703,18 @@
           ],
           "report": "docs/development/evidence/WP02-19/DELIVERY.md",
           "reason": "现有激活只有原绑定和消费关系，现行客户端原结果、设备能力及离线采用仍有七项未完整验收。"
+        },
+        {
+          "parent": "WP02-21",
+          "children": [
+            "WP02-21b"
+          ],
+          "report": "docs/development/evidence/WP02-21/DELIVERY.md",
+          "reason": "实际原生 Owner 的冻结、竞争和恢复已验证，完整观察及作业保留、调度和跨库出口仍有证据缺口。"
         }
       ],
       "current_stage": "B",
-      "next_card": "WP02-21",
+      "next_card": "WP02-19b",
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -292350,6 +292739,7 @@
           "WP02-19",
           "WP02-19b",
           "WP02-21",
+          "WP02-21b",
           "WP02-29",
           "WP02-20",
           "WP02-18",
@@ -292476,13 +292866,17 @@
         }
       },
       "next_card_selection": {
-        "rule": "阶段 B 余卡 WP02-19b 待裁决，WP02-20 仍受完整前置约束。其余合格卡沿原图的最长链，COORD 正式派工。",
-        "baseline_sha": "d989ec140359e9f78b6274c4b0072d6ca704d402",
-        "after_card": "WP02-19",
-        "selected": "WP02-21",
+        "rule": "阶段 B 按完整前置及全图最长下游链重算，同长按阶段顺序。WP02-19b 已按 #322 解阻，实际领取依 COORD 后续派工。",
+        "baseline_sha": "05517ee4968a8bfd1c39d4dda0a92269b5af8783",
+        "after_card": "WP02-21",
+        "selected": "WP02-19b",
         "candidates": [
           {
-            "id": "WP02-21",
+            "id": "WP02-19b",
+            "longest_downstream_edges": 20
+          },
+          {
+            "id": "WP02-21b",
             "longest_downstream_edges": 8
           },
           {
@@ -292497,7 +292891,8 @@
             "id": "WP02-17",
             "longest_downstream_edges": 2
           }
-        ]
+        ],
+        "unblock_evidence": "https://github.com/GTX537/CP6.AI-Handoff/blob/427833ae8b761336fb5fb9f3dce2ba502b0aec71/handoffs/CP6-DEV-20261012/tasks/WP02-19/replies/20261119T035004Z-coord-decision-wp02-19b/MESSAGE.md"
       },
       "phase0_user_confirmation": "2026-11-17 用户确认：先按证据核销或拆卡，列清缺口；完成阶段0核对后再按顺序实施剩余卡。",
       "budget_rule": "余卡上限=父卡上限−父卡已用有效时间（不足0按0计，超出计缓冲）；同一原号的分配守恒。第二次拆分先报总负责，不自动追加卡池。",
@@ -292564,10 +292959,10 @@
       },
       "target_review_effective_seconds": 3561.513,
       "last_checkpoint_counts": {
-        "original_done": 53,
+        "original_done": 54,
         "fully_done": 52,
         "targets_done": 6,
-        "new_splits": 6,
+        "new_splits": 7,
         "periodic_checkpoint_due": false
       },
       "buffer_used_seconds": 4703.009,

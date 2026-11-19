@@ -296,3 +296,11 @@ WP03-04 卡 DONE，CRM-INQ-01 目标 DONE。当前实际询盘同意、匿名化
 WP02-19 按单卡计划拆分。真实 Main 与 PostgreSQL 验收覆盖同票单次、双实例 nonce、绑定 CAS、当前会话门和迟到刷新。17 项原 AC 中 10 项通过，原操作回查和客户端边界的七项保留给 WP02-19b。SYS-CLIENT-01 保持 PLANNED。WP02-20 原升级范围及完整前置保持。登记卡 **58/381**，原号 DONE / 完整 DONE **53 / 52**，目标 **6/125**。 [本卡报告](../evidence/WP02-19/DELIVERY.md) · [余卡](../task-plans/WP02.md#wp02-19b)
 
 候选有效时间 1133.352 秒，余卡上限 13266.648 秒，150% 拆分线 19899.9720 秒。结转 WP03-04 正式收尾 421.682 秒。计划累计 17.245 小时，未达到 24 小时检查点。本卡未占缓冲，按原预算守恒。余卡待裁决期间，阶段 B 的可开工候选最长为 WP02-21，实际开工按 COORD 派工。
+
+## WP02-21 原号验收与阶段 B 解阻
+
+WP02-21 拆卡交付。原 25 项中 10 项通过，已验证冻结、人工和 worker 单一终态、暂停和提交未知后的原结果。其余 15 项归 WP02-21b，SYS-JOB-01 保持 PLANNED。登记卡 **59/382**，原号 DONE / 完整 DONE **54 / 52**，目标 **6/125**。 [本卡报告](../evidence/WP02-21/DELIVERY.md) · [余卡](../task-plans/WP02.md#wp02-21b)
+
+按 Handoff #322 登记 WP02-19b PLANNED，保持空指派与原七项 NOT_RUN。原号候选 1133.352 秒，加正式收尾 378.458 秒，原号最终 1511.810 秒，余卡预算 12888.190 秒，150% 升级线 19332.285 秒。本次累计工时只追加 378.458 秒。 [决定](https://github.com/GTX537/CP6.AI-Handoff/blob/427833ae8b761336fb5fb9f3dce2ba502b0aec71/handoffs/CP6-DEV-20261012/tasks/WP02-19/replies/20261119T035004Z-coord-decision-wp02-19b/MESSAGE.md) · [签收](https://github.com/GTX537/CP6.AI-Handoff/blob/427833ae8b761336fb5fb9f3dce2ba502b0aec71/handoffs/CP6-DEV-20261012/tasks/WP02-19/replies/20261119T035004Z-coord-split-ack/MESSAGE.md)
+
+WP02-21 本卡候选为 1060.188 秒，余卡预算 13339.812 秒。累计计划 17.645 小时，未达到 24 小时检查点，缓冲无增量。下一候选为 WP02-19b，下游最长 20 条边，后续依 COORD 单独派工。WP02-20 继续等完整余卡。
