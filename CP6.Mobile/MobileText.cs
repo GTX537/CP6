@@ -63,8 +63,13 @@ public sealed class MobileText(ILanguageService language)
     public string BusinessDisabled => language["client.businessDisabled"];
     public string StartupBlocked => language["client.startupBlocked"];
     public string RetryStartup => language["client.retryStartup"];
+    public string CheckUpdates => language["client.checkUpdates"];
     public string CurrentVersion => language["client.currentVersion"];
     public string LatestVersion => language["client.latestVersion"];
     public string MinimumVersion => language["client.minimumVersion"];
     public string ReleaseHash => language["client.releaseHash"];
+    public string OriginalCompletion => language["client.originalCompletion"];
+    public string OriginalTaskNo => language["client.originalTaskNo"];
+    public string OriginalOperationId => language["client.originalOperationId"];
+    public string OriginalCompletionUnknown => language["client.originalCompletionUnknown"];
 }

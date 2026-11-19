@@ -7,6 +7,8 @@ public static class ClientServiceCollectionExtensions
 {
     public const string RawClient = "CP6.Raw";
     public const string AuthenticatedClient = "CP6.Authenticated";
+    public const string BootstrapClient = "CP6.Bootstrap";
+    public const string UpgradeDownloadClient = "CP6.UpgradeDownload";
 
     public static IServiceCollection AddCp6ClientCore(
         this IServiceCollection services,
@@ -18,6 +20,8 @@ public static class ClientServiceCollectionExtensions
         services.AddSingleton<ILanguageService, LanguageService>();
         services.AddSingleton<ClientBootstrapService>();
         services.AddSingleton<ClientAccessGate>();
+        services.TryAddSingleton<IClientPackageInstaller, UnsupportedClientPackageInstaller>();
+        services.AddSingleton<ClientUpgradePackage>();
         services.AddSingleton<ClientUpgradeService>();
         services.AddSingleton<WmsTaskService>();
         services.AddSingleton<WmsRealtimeService>();
@@ -40,6 +44,15 @@ public static class ClientServiceCollectionExtensions
         services.AddTransient<ClientBusinessAccessHandler>();
         services.AddTransient<DynamicApiEndpointHandler>();
 
+        services.AddHttpClient(UpgradeDownloadClient)
+            .ConfigurePrimaryHttpMessageHandler(CreateUpgradeHandler);
+        services.AddHttpClient(BootstrapClient, client =>
+        {
+            client.BaseAddress = options.ApiBaseAddress;
+            client.Timeout = TimeSpan.FromSeconds(30);
+        }).ConfigurePrimaryHttpMessageHandler(CreateUpgradeHandler)
+            .AddHttpMessageHandler<DynamicApiEndpointHandler>();
+
         services.AddHttpClient(RawClient, client =>
         {
             client.BaseAddress = options.ApiBaseAddress;
@@ -56,6 +69,12 @@ public static class ClientServiceCollectionExtensions
             sp.GetRequiredService<IHttpClientFactory>().CreateClient(AuthenticatedClient)));
         return services;
     }
+
+    private static HttpClientHandler CreateUpgradeHandler() => new()
+    {
+        AllowAutoRedirect = false,
+        UseCookies = false
+    };
 }
 
 internal sealed class UnsupportedLabelPrinter : ILabelPrinter

@@ -36,11 +36,21 @@
                   IsEnabled="{Binding CanDownloadUpdate}" />
           <Button Content="{Binding Text[client.retryStartup]}"
                   Command="{Binding CheckClientAccessCommand}" />
+          <Button Content="{Binding Text[layout.logout]}" Command="{Binding LogoutDuringUpgradeCommand}" />
         </StackPanel>
         <TextBlock Text="{Binding Text[client.businessDisabled]}" Margin="0,8"
                    HorizontalAlignment="Center" />
         <TextBlock Text="{Binding StatusMessage}" Foreground="#B42318" Margin="0,8"
                    HorizontalAlignment="Center" TextWrapping="Wrap" />
+        <Expander Header="{Binding Text[client.originalCompletion]}">
+          <StackPanel>
+            <TextBlock Text="{Binding Text[client.originalTaskNo]}" />
+            <TextBox Text="{Binding OriginalTaskNo, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" />
+            <TextBlock Text="{Binding Text[client.originalOperationId]}" />
+            <TextBox Text="{Binding OriginalOperationId, UpdateSourceTrigger=PropertyChanged}" MaxLength="36" />
+            <Button Content="{Binding Text[client.originalCompletion]}" Command="{Binding ReadOriginalCompletionCommand}" />
+          </StackPanel>
+        </Expander>
         <Expander Header="{Binding Text[client.deviceRecovery]}" Margin="0,12,0,0">
           <StackPanel>
             <TextBox Text="{Binding ActivationPayload, UpdateSourceTrigger=PropertyChanged}"
@@ -112,6 +122,7 @@
           </ComboBox>
           <Button Content="{Binding Text[client.language]}" Command="{Binding ChangeLanguageCommand}" />
           <Button Content="{Binding Text[wms.common.refresh]}" Command="{Binding LoadTasksCommand}" />
+          <Button Content="{Binding Text[client.checkUpdates]}" Command="{Binding CheckClientAccessCommand}" />
           <Button Content="{Binding Text[client.printGatewayStart]}" Command="{Binding StartPrintGatewayCommand}" />
           <Button Content="{Binding Text[client.printGatewayStop]}" Command="{Binding StopPrintGatewayCommand}" />
           <TextBlock Text="{Binding PrintGatewayStatus}" VerticalAlignment="Center" Margin="8" />

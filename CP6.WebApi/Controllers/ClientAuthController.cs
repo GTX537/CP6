@@ -424,7 +424,7 @@ public sealed partial class ClientAuthController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Logout(NativeLogoutRequest request)
     {
-        ValidateClient(request.Client);
+        ValidateClientContext(request.Client);
         var reason = ClientReason(request.Client, "logout");
         if (_db.Database.IsNpgsql() && string.IsNullOrWhiteSpace(request.RefreshToken))
         {
@@ -608,11 +608,18 @@ public sealed partial class ClientAuthController : ControllerBase
 
     private void ValidateClient(ClientContextDto client)
     {
-        try { ClientContextValidator.Validate(client); }
-        catch (InvalidOperationException ex) { throw new BizException(ex.Message); }
+        ValidateClientContext(client);
         if (client.RequiredGate != DeviceProofV1.RegisteredDeviceGate) return;
         var release = client.ClientKind == "Android" ? _security.NativeClient.Android : _security.NativeClient.Windows;
-        if (ClientBootstrapController.Compare(client.AppVersion, release.MinimumVersion) < 0)
+        if (!ClientBootstrapController.TryGetMinimum(release, out var minimum))
+            throw new BizException("E-CLIENT-VERSION-POLICY", StatusCodes.Status503ServiceUnavailable);
+        if (!CP6.Client.Core.ClientSemanticVersion.TryParse(client.AppVersion, out var current) || current.CompareTo(minimum) < 0)
             throw new BizException("AUTHENTICATION_DENIED", StatusCodes.Status403Forbidden);
+    }
+
+    private static void ValidateClientContext(ClientContextDto client)
+    {
+        try { ClientContextValidator.Validate(client); }
+        catch (InvalidOperationException ex) { throw new BizException(ex.Message); }
     }
 }

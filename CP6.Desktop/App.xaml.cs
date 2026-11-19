@@ -37,6 +37,7 @@ public partial class App : Application
                 services.AddSingleton<IRefreshTokenStore, DpapiRefreshTokenStore>();
                 services.AddSingleton<IPkceVerifierStore, DpapiPkceVerifierStore>();
                 services.AddSingleton<ISystemBrowser, WindowsSystemBrowser>();
+                services.AddSingleton<IClientPackageInstaller, WindowsClientPackageInstaller>();
                 services.AddSingleton<IDeviceRequestSigner, WindowsDeviceRequestSigner>();
                 services.AddSingleton<IClientDeviceHeartbeatContext,
                     DesktopDeviceHeartbeatContext>();

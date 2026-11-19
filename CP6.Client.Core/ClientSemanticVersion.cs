@@ -1,9 +1,9 @@
 namespace CP6.Client.Core;
 
 internal sealed record ClientSemanticVersion(
-    int Major,
-    int Minor,
-    int Patch,
+    string Major,
+    string Minor,
+    string Patch,
     string[] PreRelease)
 {
     public static bool TryParse(
@@ -25,10 +25,7 @@ internal sealed record ClientSemanticVersion(
 
         var releaseParts = withoutBuild[0].Split('-', 2);
         var core = releaseParts[0].Split('.');
-        if (core.Length != 3 ||
-            !TryParseNumber(core[0], out var major) ||
-            !TryParseNumber(core[1], out var minor) ||
-            !TryParseNumber(core[2], out var patch))
+        if (core.Length != 3 || !core.All(IsVersionNumber))
         {
             return false;
         }
@@ -45,20 +42,20 @@ internal sealed record ClientSemanticVersion(
         }
 
         version = new ClientSemanticVersion(
-            major,
-            minor,
-            patch,
+            core[0],
+            core[1],
+            core[2],
             preRelease);
         return true;
     }
 
     public int CompareTo(ClientSemanticVersion other)
     {
-        var comparison = Major.CompareTo(other.Major);
+        var comparison = CompareNumbers(Major, other.Major);
         if (comparison == 0)
-            comparison = Minor.CompareTo(other.Minor);
+            comparison = CompareNumbers(Minor, other.Minor);
         if (comparison == 0)
-            comparison = Patch.CompareTo(other.Patch);
+            comparison = CompareNumbers(Patch, other.Patch);
         if (comparison != 0)
             return comparison;
         if (PreRelease.Length == 0)
@@ -72,22 +69,18 @@ internal sealed record ClientSemanticVersion(
                  other.PreRelease.Length);
              index++)
         {
-            var leftNumeric = int.TryParse(
-                PreRelease[index],
-                out var left);
-            var rightNumeric = int.TryParse(
-                other.PreRelease[index],
-                out var right);
+            var left = PreRelease[index];
+            var right = other.PreRelease[index];
+            var leftNumeric = left.All(char.IsAsciiDigit);
+            var rightNumeric = right.All(char.IsAsciiDigit);
             if (leftNumeric && rightNumeric)
-                comparison = left.CompareTo(right);
+                comparison = CompareNumbers(left, right);
             else if (leftNumeric)
                 comparison = -1;
             else if (rightNumeric)
                 comparison = 1;
             else
-                comparison = string.CompareOrdinal(
-                    PreRelease[index],
-                    other.PreRelease[index]);
+                comparison = string.CompareOrdinal(left, right);
             if (comparison != 0)
                 return comparison;
         }
@@ -96,16 +89,12 @@ internal sealed record ClientSemanticVersion(
             other.PreRelease.Length);
     }
 
-    private static bool TryParseNumber(
-        string value,
-        out int result)
-    {
-        result = 0;
-        return value.Length > 0 &&
-               (value.Length == 1 || value[0] != '0') &&
-               int.TryParse(value, out result) &&
-               result >= 0;
-    }
+    private static bool IsVersionNumber(string value) => value.Length > 0 &&
+        (value.Length == 1 || value[0] != '0') && value.All(char.IsAsciiDigit);
+
+    private static int CompareNumbers(string left, string right) => left.Length == right.Length
+        ? string.CompareOrdinal(left, right)
+        : left.Length.CompareTo(right.Length);
 
     private static bool ValidIdentifiers(
         string value,

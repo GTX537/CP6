@@ -26,6 +26,7 @@ public sealed class DeviceAndMoveRecoveryTests
             Context = new ClientContext { ClientKind = "Windows", DeviceId = "registered", AppVersion = "1.0.0" },
         });
         services.AddHttpClient(ClientServiceCollectionExtensions.RawClient).ConfigurePrimaryHttpMessageHandler(() => transport);
+        services.AddHttpClient(ClientServiceCollectionExtensions.BootstrapClient).ConfigurePrimaryHttpMessageHandler(() => transport);
         await using (var first = services.BuildServiceProvider())
             await Assert.ThrowsAsync<InvalidOperationException>(() => first.GetRequiredService<NativeDeviceActivationService>()
                 .ActivateAsync(origin, "demo", "synthetic-no-storage", operation));
@@ -156,6 +157,83 @@ public sealed class DeviceAndMoveRecoveryTests
         Assert.Equal(new[] { "original-offline-scan", $"qty-{operation:N}" }, owner.ScanKeys);
         Assert.Equal(1, owner.Completions);
         Assert.Equal(2, owner.Reads);
+    }
+
+    [Fact]
+    public async Task Upgrade_and_approved_rollback_reopen_the_same_original_without_reapplying_it()
+    {
+        using var directory = new TestDirectory();
+        var source = new Uri("https://cp6.test/");
+        var actor = Guid.NewGuid();
+        var tenant = Guid.NewGuid();
+        var operation = Guid.NewGuid();
+        var task = new MobileTask
+        {
+            TaskNo = "MOVE-UPGRADE", WarehouseCd = "W1", AssignedTo = "operator", Status = 1,
+            ExecutionVersion = 7, ToLocationCd = "TO", Qty = 1m
+        };
+        var owner = new ResumableMoveHandler(task, operation);
+        var first = await Boot("1.0.0", "1.0.0");
+        await using (first.Provider)
+        {
+            await new FileOfflineMoveProgressStore(directory.Path).WriteAsync(first.Tasks.CaptureScope(), new()
+            {
+                Task = task, CompletionOperationId = operation, CompletionAttempted = true, ConfirmedQuantity = 1m
+            });
+            var completed = await first.Tasks.CompleteAsync(task, operation, 1m);
+            Assert.Equal(operation, completed.CompletionOperationId);
+        }
+
+        foreach (var (version, floor, canWrite) in new[]
+                 { ("1.0.0", "2.0.0", false), ("2.1.0", "2.0.0", true), ("1.0.0", "1.0.0", true) })
+        {
+            var current = await Boot(version, floor);
+            await using (current.Provider)
+            {
+                Assert.Equal(canWrite, current.Provider.GetRequiredService<ClientAccessGate>().Current!.BusinessAllowed);
+                var draft = await new FileOfflineMoveProgressStore(directory.Path).ReadAsync(current.Tasks.CaptureScope(), task.TaskNo);
+                Assert.Equal(operation, draft!.CompletionOperationId);
+                Assert.True(draft.CompletionAttempted);
+                var result = await current.Tasks.GetOriginalCompletionAsync(task.TaskNo, draft.CompletionOperationId);
+                Assert.Equal(operation, result!.CompletionOperationId);
+                Assert.False(current.Tasks.CanResumeMove(draft.Task, result));
+                if (!canWrite)
+                    await Assert.ThrowsAsync<ClientBusinessAccessBlockedException>(() => current.Tasks.CompleteAsync(task, operation, 1m));
+            }
+        }
+        Assert.Equal(1, owner.Completions);
+        Assert.Equal($"qty-{operation:N}", Assert.Single(owner.ScanKeys));
+        Assert.Equal(4, owner.Reads);
+
+        async Task<(ServiceProvider Provider, WmsTaskService Tasks)> Boot(string version, string floor)
+        {
+            var options = new ClientOptions
+            {
+                ApiBaseAddress = source, Platform = "android",
+                Context = new() { ClientKind = "Android", DeviceId = "same-virtual-device", AppVersion = version }
+            };
+            var services = new ServiceCollection();
+            services.AddLogging();
+            services.AddSingleton<IRefreshTokenStore, InMemoryRefresh>();
+            services.AddCp6ClientCore(options);
+            services.AddHttpClient(ClientServiceCollectionExtensions.AuthenticatedClient)
+                .ConfigurePrimaryHttpMessageHandler(() => owner);
+            var provider = services.BuildServiceProvider();
+            provider.GetRequiredService<ClientAccessGate>().Update(ClientUpgradeService.Evaluate(new()
+            {
+                Platform = "android", CurrentVersion = version, MinimumVersion = floor, LatestVersion = "2.1.0",
+                DownloadUrl = "https://package.fixture.invalid/cp6.apk", Sha256 = new string('a', 64),
+                PublisherSha256 = new string('b', 64)
+            }, options));
+            var raw = Convert.ToBase64String(JsonSerializer.SerializeToUtf8Bytes(new { sub = actor, tenant_id = tenant }))
+                .TrimEnd('=').Replace('+', '-').Replace('/', '_');
+            await provider.GetRequiredService<IClientSessionService>().AdoptAsync(new()
+            {
+                AccessToken = "header." + raw + ".test", RefreshToken = "fixture",
+                Profile = new ClientProfile { UserName = "operator" }
+            });
+            return (provider, provider.GetRequiredService<WmsTaskService>());
+        }
     }
 
     private sealed class ResumableMoveHandler(MobileTask task, Guid operation) : HttpMessageHandler

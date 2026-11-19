@@ -252,6 +252,7 @@ public partial class DeviceActivationViewModel : MobileViewModel
 public partial class TaskListViewModel : MobileViewModel
 {
     private readonly IClientSessionService _sessions;
+    private readonly ClientUpgradeService _upgrades;
     private readonly WmsTaskService _tasks;
     private readonly WmsRealtimeService _realtime;
     private readonly MobileClientState _state;
@@ -259,6 +260,7 @@ public partial class TaskListViewModel : MobileViewModel
 
     public TaskListViewModel(
         IClientSessionService sessions,
+        ClientUpgradeService upgrades,
         WmsTaskService tasks,
         WmsRealtimeService realtime,
         MobileClientState state,
@@ -267,6 +269,7 @@ public partial class TaskListViewModel : MobileViewModel
         : base(language)
     {
         _sessions = sessions;
+        _upgrades = upgrades;
         _tasks = tasks;
         _realtime = realtime;
         _state = state;
@@ -284,6 +287,17 @@ public partial class TaskListViewModel : MobileViewModel
 
     private void RealtimeOnTaskChanged(object? sender, MobileTask task)
         => MainThread.BeginInvokeOnMainThread(async () => await LoadAsync());
+
+    [RelayCommand]
+    private Task CheckUpdatesAsync() => RunAsync(async () =>
+    {
+        var decision = await _upgrades.CheckAccessAsync();
+        _state.UpgradeDecision = decision;
+        if (decision.BusinessAllowed) return;
+
+        await _realtime.StopAsync();
+        await Shell.Current.GoToAsync("upgrade");
+    });
 
     [RelayCommand]
     private Task LoadAsync() => RunAsync(async () =>
@@ -810,6 +824,8 @@ public partial class UpgradeViewModel : MobileViewModel
 {
     private readonly MobileClientState _state;
     private readonly ClientUpgradeService _upgrades;
+    private readonly IClientSessionService _sessions;
+    private readonly WmsTaskService _tasks;
     [ObservableProperty] private string heading = string.Empty;
     [ObservableProperty] private string currentVersion = string.Empty;
     [ObservableProperty] private string latestVersion = string.Empty;
@@ -817,15 +833,21 @@ public partial class UpgradeViewModel : MobileViewModel
     [ObservableProperty] private string downloadUrl = string.Empty;
     [ObservableProperty] private string releaseSha256 = string.Empty;
     [ObservableProperty] private bool canDownloadUpdate;
+    [ObservableProperty] private string originalTaskNo = string.Empty;
+    [ObservableProperty] private string originalOperationId = string.Empty;
 
     public UpgradeViewModel(
         MobileClientState state,
         ClientUpgradeService upgrades,
+        IClientSessionService sessions,
+        WmsTaskService tasks,
         ILanguageService language)
         : base(language)
     {
         _state = state;
         _upgrades = upgrades;
+        _sessions = sessions;
+        _tasks = tasks;
         Apply(state.UpgradeDecision ??
               ClientUpgradeDecision.Unavailable(string.Empty));
     }
@@ -852,6 +874,24 @@ public partial class UpgradeViewModel : MobileViewModel
     [RelayCommand]
     private Task OpenDeviceActivationAsync()
         => Shell.Current.GoToAsync("device-activation");
+
+    [RelayCommand]
+    private Task ReadOriginalCompletionAsync() => RunAsync(async () =>
+    {
+        if (!Guid.TryParse(OriginalOperationId, out var operationId))
+            throw new InvalidOperationException("E-CLIENT-ORIGINAL-OPERATION");
+        var original = await _tasks.GetOriginalCompletionAsync(OriginalTaskNo.Trim(), operationId);
+        Message = original is null ? Text.OriginalCompletionUnknown : Text.Completed;
+    });
+
+    [RelayCommand]
+    private Task LogoutAsync() => RunAsync(async () =>
+    {
+        await _sessions.LogoutAsync();
+        OriginalTaskNo = string.Empty;
+        OriginalOperationId = string.Empty;
+        Message = string.Empty;
+    });
 
     private void Apply(ClientUpgradeDecision decision)
     {
