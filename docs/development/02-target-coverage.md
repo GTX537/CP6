@@ -87,7 +87,7 @@
 | [SYS-FILE-01](../../docs/design-handbook/modules/SYS-FILE-01.md) | 附件与文件管理 | WP02 | CHANGE_REQUIRED | 待安排 | 2 |
 | [SYS-NUM-01](../../docs/design-handbook/modules/SYS-NUM-01.md) | 编号与开发辅助生成 | WP02 | CHANGE_REQUIRED | 已交付 | 0 |
 | [SYS-CLIENT-01](../../docs/design-handbook/modules/SYS-CLIENT-01.md) | 客户端设备与升级 | WP02 | CHANGE_REQUIRED | 待安排 | 0 |
-| [SYS-JOB-01](../../docs/design-handbook/modules/SYS-JOB-01.md) | 应用后台作业 | WP02 | CHANGE_REQUIRED | 待安排 | 0 |
+| [SYS-JOB-01](../../docs/design-handbook/modules/SYS-JOB-01.md) | 应用后台作业 | WP02 | CHANGE_REQUIRED | 已交付 | 0 |
 | [SYS-TENANT-01](../../docs/design-handbook/modules/SYS-TENANT-01.md) | 租户管理 | WP02 | CHANGE_REQUIRED | 已交付 | 0 |
 | [SYS-IAM-01](../../docs/design-handbook/modules/SYS-IAM-01.md) | 用户、组织与授权 | WP02 | CHANGE_REQUIRED | 待安排 | 2 |
 | [INT-ID-01](../../docs/design-handbook/modules/INT-ID-01.md) | Main与CRM身份投影合同 | WP02 | CHANGE_REQUIRED | 待安排 | 2 |

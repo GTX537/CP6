@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Core.Services.Oa;
 public sealed partial class ApprovalTaskDecisionOwnerV2
 {
+    internal bool OwnsTimeoutContext(CP6.Core.EFDbContext.CP6Context context) => ReferenceEquals(db, context);
+
     internal async Task<NativeTimeoutResultV2> ApplyTimeoutV2(NativeTimeoutResultV2 result,NativeDeadlinePolicyV2 policy,CancellationToken ct)
     {
         var source=await ReadSource(result.TaskId,ct);var original=System.Text.Json.JsonSerializer.Deserialize<ApprovalSubmitCommandV2>(source.Payload,ApprovalBindingOwnerV2.Json)!;

@@ -5,6 +5,16 @@ export interface NativeInboxItem { instanceId: string; rootInstanceId: string; c
 export interface NativeInboxPage { items: NativeInboxItem[]; totalItems: number; totalGroups: number; page: number; pageSize: number; rowMode: 'expanded' | 'merged'; actualUserId: string; effectiveUserId: string }
 export interface NativeReadFact { kind: 'TASK' | 'CC'; targetId: string; principalId: string; actualUserId: string; firstReadAtUtc: string; firstCommandId: string }
 export interface NativeTask { taskId: string; instanceId: string; nodeId: string; tokenId: string | null; stageIndex: number; stageRound: number; principalId: string; createdPrincipalId?: string; status: number; taskRowVersion: string; read: NativeReadFact | null; canRequestDecisionContext: boolean }
+export interface NativeTimeoutRun {
+  runId: string; scheduleVersion: string; slotAt: string | null; evaluatedAt: string
+  calendarVersion: string; timeZoneId: string; timeZoneVersion: string; missedRun: string; isRecovery: boolean; state: string
+  candidateCount: number; appliedCount: number; alreadyTerminalCount: number; blockedCount: number; unknownCount: number
+  failedCount: number; inFlightCount: number
+  units: {
+    attemptId: string; operationId: string; taskId: string; epoch: number; commandId: string | null; messageIds: string[]; state: string
+    observations: { sequence: number; state: string; reason: string | null; observedAt: string }[]
+  }[]
+}
 export interface NativeDetail {
   instanceId: string; rootInstanceId: string; contextKind: 'SFS' | 'APP'; actualUserId: string; effectiveUserId: string
   graph: { instanceId: string; parentInstanceId: string | null; flowVersionId: string; formVersionId: string | null; flowKey: string; status: number; instanceRowVersion: string }[]
@@ -15,6 +25,8 @@ export interface NativeDetail {
   business: { owner: string; businessType: string; subjectKind: string; subjectId: string; businessRevision: string; submissionId: string; detailRoute: string | null; applicationState: string } | null
   timeout?: {
     runtimeState: string; lastScan: string | null; lastEffect: string | null; overdueCount: number; oldestDue: string | null; missingEvidenceTaskIds: string[]
+    stages?: { layer: string; confirmed: boolean | null; observedAt: string | null }[]
+    runs?: NativeTimeoutRun[]
     deadlines: { taskId: string; revision: number; createdAt: string; dueAt: string | null; state: string; occurrence: number; nextDue: string | null; claimEpoch: number | null; leaseUntil: string | null
       policy: { flowVersionId: string; nodeId: string; hours: number | null; action: string | null; timeZoneId: string; offsetMinutes: number; basis: string; calendarRevision: string; escalationReset: string }
       lastResult: { executionId: string; state: string; reason: string | null; serviceId: string; occurredAt: string; commandId: string | null; originalTaskVersion: string | null; originalInstanceVersion: string | null } | null

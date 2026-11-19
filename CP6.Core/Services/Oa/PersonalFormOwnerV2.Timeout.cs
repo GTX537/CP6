@@ -7,6 +7,8 @@ namespace CP6.Core.Services.Oa;
 
 public sealed partial class PersonalFormOwnerV2
 {
+    internal bool OwnsTimeoutContext(CP6.Core.EFDbContext.CP6Context context) => ReferenceEquals(db, context);
+
     // NativeTimeoutOwner owns service authorization, lease and commit. This participant
     // never borrows an interactive user or writes a human vote.
     internal async Task<NativeTimeoutResultV2> ApplyTimeoutV2(NativeTimeoutResultV2 result,NativeDeadlinePolicyV2 policy,CancellationToken ct)

@@ -10,24 +10,35 @@ namespace CP6.WebApi.BackgroundServices;
 /// <see cref="TenantScopeRunner"/> 逐租户调 <see cref="IWfCleanupService.CleanupOnceAsync"/>：
 /// 硬删超保留期（默认 180 天）的终态 <c>Wf_ServiceJob</c>/<c>Wf_TriggerFire</c>，在途/占坑永不清，
 /// 老化占坑仅告警计数。每租户有动作即写一行 OperLog（删除计数 + 老化计数），老化 > 0 置 <c>IsAlert</c>。
-/// v1 单实例；多实例并跑靠 SaveChanges 幂等（RemoveRange 同一行竞争败方 0 行，无副作用）。
+/// 启动先查询原计划，按已提交分片续跑。计划、分片和处置共享 PostgreSQL 权威。
 /// </summary>
 public class WfServiceJobCleanupWorker : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<WfServiceJobCleanupWorker> _logger;
+    private readonly JobRetentionSourceV1 _approval;
 
-    public WfServiceJobCleanupWorker(IServiceScopeFactory scopeFactory, ILogger<WfServiceJobCleanupWorker> logger)
+    public WfServiceJobCleanupWorker(IServiceScopeFactory scopeFactory, ILogger<WfServiceJobCleanupWorker> logger,
+        JobRetentionSourceV1 approval)
     {
         _scopeFactory = scopeFactory;
         _logger = logger;
+        _approval = approval;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        if (_approval.EnvironmentId == Guid.Empty || _approval.SourceId == Guid.Empty) return;
         _logger.LogInformation("WFS 终态清理 Worker 启动（每日 03:00 UTC）");
         try
         {
+            try
+            {
+                await TenantScopeRunner.ForEachTenantAsync(_scopeFactory, (sp, _, ct) =>
+                    sp.GetRequiredService<IWfCleanupService>().ResumePendingAsync(DateTime.UtcNow, ct), _logger, stoppingToken);
+            }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { throw; }
+            catch (Exception error) { _logger.LogError(error, "WFS 保留计划续跑准备失败。"); }
             while (!stoppingToken.IsCancellationRequested)
             {
                 var now = DateTime.UtcNow;
@@ -57,7 +68,8 @@ public class WfServiceJobCleanupWorker : BackgroundService
                                 Controller = nameof(WfServiceJobCleanupWorker),
                                 Action = "WfsCleanup",
                                 RequestBody = $"job删{r.ServiceJobsDeleted} fire删{r.TriggerFiresDeleted} 老化占坑{r.StaleReservationCount}",
-                                StatusCode = 200,
+                                StatusCode = r.ServiceJobsPlan?.State.StartsWith("COMPLETED", StringComparison.Ordinal) == true &&
+                                    r.TriggerFiresPlan?.State.StartsWith("COMPLETED", StringComparison.Ordinal) == true ? 200 : 202,
                                 AuditAtUtc = recordedAt,
                                 AuditEvidenceJson = new AuditEvidenceV1("WORKER_UTC", "BEST_EFFORT_TELEMETRY", "SERVICE",
                                     Service: nameof(WfServiceJobCleanupWorker), Outcome: "SERVICE_RECORDED", RecordedAtUtc: recordedAt,

@@ -10,7 +10,8 @@ namespace CP6.Core.Services.Oa;
 /// <summary>Current read authority, independent of historical participation and decision eligibility.
 /// Native reads never mutate task versions or use legacy detail/list fallbacks.</summary>
 public sealed partial class NativeInboxOwnerV2(CP6Context db,ScopeAuthorizationFenceV1 fence,
-    PersonalFormOwnerV2 forms,ApprovalBusinessEvidenceV2 businesses)
+    PersonalFormOwnerV2 forms,ApprovalBusinessEvidenceV2 businesses,
+    NativeTimeoutOptionsV2? timeoutOptions=null,NativeTimeoutHostRegistrationV2? timeoutHost=null)
 {
     private static readonly JsonSerializerOptions Json=PersonalFormOwnerV2.Json;
     private static ScopeAuthorizationExceptionV1 Error(string code,int status=503)=>new(code,status);
