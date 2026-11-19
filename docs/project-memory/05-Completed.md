@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP03-04 询盘同意、保留匿名化与隐私导出](../development/evidence/WP03-04/DELIVERY.md)（DONE），核对时间 `2026-11-18T21:40:01.981651-05:00`。
+- [WP02-19 客户端激活、nonce与身份完成门](../development/evidence/WP02-19/DELIVERY.md)（拆卡，余项 WP02-19b），核对时间 `2026-11-18T22:34:27.922225-05:00`。
 
 ### 已关闭目标
 
