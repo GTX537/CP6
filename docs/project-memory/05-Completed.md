@@ -3,13 +3,14 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP02-18 工作台菜单CAS与授权KPI查询](../development/evidence/WP02-18/DELIVERY.md)（DONE），核对时间 `2026-11-19T06:17:40.765523-05:00`。
+- [WP02-17 多语言维护、发布CAS与客户端精确缓存](../development/evidence/WP02-17/DELIVERY.md)（DONE），核对时间 `2026-11-19T09:05:27.853909-05:00`。
 
 ### 已关闭目标
 
 - [CRM-INQ-01 公开询盘与受理](../development/evidence/WP03-04/DELIVERY.md)
 - [OA-DEF-01 流程和表单定义](../development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md)
 - [SYS-WORKSPACE-01 菜单与业务工作台](../development/evidence/WP02-18/DELIVERY.md)
+- [SYS-LANG-01 字典与多语言](../development/evidence/WP02-17/DELIVERY.md)
 - [SYS-AUD-01 操作、安全与字段审计](../development/evidence/WP02-13b/DELIVERY.md)
 - [SYS-NUM-01 编号与开发辅助生成](../development/evidence/WP02-16b/DELIVERY.md)
 - [SYS-CLIENT-01 客户端设备与升级](../development/evidence/WP02-20/DELIVERY.md)
