@@ -312,3 +312,11 @@ WP02-19b 七项原验收通过，父卡完整。SYS-CLIENT-01 17/22，五项升�
 按 #324 单次结转 WP02-21 官方收尾 545.852 秒，父卡最终 1606.040 秒。WP02-21b 余额 12793.960 秒，150% 升级线 19190.940 秒。 [签收](https://github.com/GTX537/CP6.AI-Handoff/blob/c542da67515daf3df6932351cfe240f72f4e729a/handoffs/CP6-DEV-20261012/tasks/WP02-21/replies/20261119T045141Z-coord-split-ack/MESSAGE.md)
 
 本卡候选 3428.561 秒，累计计划 18.749 小时，缓冲无增量。下一候选 WP02-21b，下游最长 8 条边，实际领取依 COORD 派工。
+
+## WP02-21b 后台作业余项核销
+
+本卡十五项原验收通过，SYS-JOB-01 合计 25/25，必需修订 0。WP02-21 父卡与余卡完整。登记卡 **61/382**，原号 DONE／完整 DONE **54／54**，目标 **7/125**。 [本卡报告](../evidence/WP02-21b/DELIVERY.md)
+
+按 #326 单次将 WP02-19b 收尾 462.633 秒入账，最终 3891.194 秒。 [总控签收](https://github.com/GTX537/CP6.AI-Handoff/blob/4e1e92d358a79ab0da75de98e740b5cebb0a358d/handoffs/CP6-DEV-20261012/tasks/WP02-19b/replies/20261119T061831Z-coord-acceptance-ack/MESSAGE.md)
+
+本卡候选 2769.010 秒，目标复核单独计 61.348 秒，累计 19.664 小时。下一候选 WP02-29，下游最长 2 条边，实际领取依 COORD 派工。

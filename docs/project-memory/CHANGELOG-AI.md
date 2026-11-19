@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP02-21b 后台作业观测、保留分片与原恢复余项](../development/evidence/WP02-21b/DELIVERY.md)（DONE），核对时间 `2026-11-19T02:16:01.525327-05:00`。
 - [WP02-19b 客户端激活原结果与认证设备边界余项](../development/evidence/WP02-19b/DELIVERY.md)（DONE），核对时间 `2026-11-19T01:00:23.711390-05:00`。
 - [WP02-21 后台作业版本、领取终态与恢复](../development/evidence/WP02-21/DELIVERY.md)（拆卡，余项 WP02-21b），核对时间 `2026-11-18T23:18:51.911322-05:00`。
 - [WP02-19 客户端激活、nonce与身份完成门](../development/evidence/WP02-19/DELIVERY.md)（拆卡，余项 WP02-19b），核对时间 `2026-11-18T22:34:27.922225-05:00`。

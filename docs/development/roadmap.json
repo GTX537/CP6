@@ -143154,7 +143154,7 @@
           "scope": "SYS-JOB-01: fixed Main/CRM/Platform/candidate evidence; known implementation delta, not exhaustive runtime conformance. Actual per-file source SHA is in the report."
         }
       ],
-      "delivery_state": "PLANNED",
+      "delivery_state": "DONE",
       "blockers": [],
       "runtime_case_ids": [],
       "original_acceptance_inventory": {
@@ -143180,6 +143180,17 @@
                 "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 native-timeout、job-supplement，精确范围见报告。",
                 "scope": "实际原生超时使用建单时的发布版本、节点参数、时区与 UTC 截止。后续发布、租户换时区均不改原结果。SFS 系统决定保有具名服务身份，APP 必须实际人工证据。",
                 "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 NativeTimeout_frozen_utc_duration、NativeTimeoutPolicy_、PGT017_legacy_timeout_",
+                "scope": "复验原生 UTC 截止和升级策略，继续引用旧超时四种决定顺序。",
+                "result": "PASS"
               }
             ],
             "definition_ref": {
@@ -143202,6 +143213,17 @@
                 "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、实际 Main Kestrel、独立 Host／worker、Chrome 与隔离模拟业务。",
                 "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 native-timeout，精确范围见报告。",
                 "scope": "两连接的 worker 只取得一个原槽，人工与 worker 同时进入决定点仅一个合法终态；声明提醒不产生人工票。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 NativeTimeoutRace_、NativeTimeout_human_completion_after_claim",
+                "scope": "现行真库双连接和人工抢先复验。",
                 "result": "PASS"
               }
             ],
@@ -143226,6 +143248,17 @@
                 "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 native-timeout、legacy-job、job-supplement，精确范围见报告。",
                 "scope": "暂停、当前服务撤权及升级目标撤权均经最终门。按已批准来源复验两种旧超时与人工暂停提交顺序。",
                 "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 NativeTimeout_human_winner、PGT017_journal_service_timer_and_pause",
+                "scope": "原生登记及目标撤销、已采用的旧服务作业和超时暂停竞态按正式夹具回归。",
+                "result": "PASS"
               }
             ],
             "definition_ref": {
@@ -143237,17 +143270,23 @@
             "id": "SYS-JOB-01::AC-JB01-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB01-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 JobRemainder_native_unknown_is_partial、JobRemainder_native_separates_already_terminal、NativeBrowser_actual_timeout_host_worker",
+                "scope": "一次实际运行候选 2、已提交 1、未知 1，回查后同一运行已提交 2。独立运行候选 2、已终态 1、阻断 1、已提交 0。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/3"
-            },
-            "followup": {
-              "task_id": "WP02-21b",
-              "status": "PARTIAL",
-              "scope": "原生详情可读待处理、最近扫描和最近原结果，旧入口返回已处理数量。缺完整 candidate／已终态／阻断／未知的核对视图。",
-              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
@@ -143265,6 +143304,17 @@
                 "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、实际 Main Kestrel、独立 Host／worker、Chrome 与隔离模拟业务。",
                 "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 native-timeout、job-supplement，精确范围见报告。",
                 "scope": "原生按 execution、截止版本与 occurrence 回读原回执。挂起恢复保留原槽，丢确认后独立作用域回读同一结果，截止变更不盲执行。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 NativeTimeout_lost_commit、JobRemainder_native_unknown_is_partial",
+                "scope": "按固定 task／revision／occurrence 读回原终态，恢复最多一条通知。",
                 "result": "PASS"
               }
             ],
@@ -143289,6 +143339,17 @@
                 "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 job-supplement、audit-job，CRM 原范围沿 WP03-04，精确范围见报告。",
                 "scope": "核对 WFS 终态的 CompletedAtUtc、触发流水 FiredUtc、默认 180 天及零关闭；实际 WMS raw 使用 RetainUntil，审计按本域现行策略。CRM 原日历月沿已采用的 WP03-04。",
                 "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 WfsRetentionContract_、JobRemainder_wms_host_keeps、AuditV1_legacy_and_explicit_cleanup",
+                "scope": "重新验证 WFS 的 180 天／零停用、WMS 的 RetainUntil 和审计原政策。CRM 日历月保留采用父卡所用的 WP03-04 证据。",
+                "result": "PASS"
               }
             ],
             "definition_ref": {
@@ -143300,85 +143361,115 @@
             "id": "SYS-JOB-01::AC-JB02-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB02-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 JobRemainder_wfs_preserves_reservations、JobRemainder_wms_host_keeps",
+                "scope": "WFS 清理合格 job 3、触发回执 2，保留在途、占坑、UNKNOWN、引用、hold 和其他租户数据。WMS 保留在途、未知归属和受引用扫描。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/6"
-            },
-            "followup": {
-              "task_id": "WP02-21b",
-              "status": "PARTIAL",
-              "scope": "真库核验旧 WFS 占坑／在途、审计 UNKNOWN 和引用排除。WFS／WMS 对引用全集和所有适用 hold 的共同门仍待完整采用。",
-              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
             "id": "SYS-JOB-01::AC-JB02-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB02-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 JobRemainder_retention_rechecks_current_hold、JobRemainder_retention_missing_hold_writer",
+                "scope": "真库在计划提交后加入 PRIV hold，原行保留并记 held。策略改版和预览过期各新增 0 处置。缺 hold 权威触发器关闭写入，原回执仍可读。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/7"
-            },
-            "followup": {
-              "task_id": "WP02-21b",
-              "status": "PARTIAL",
-              "scope": "实际审计保留计划对新 hold、引用和政策换版有效。WFS／WMS 的当前 Owner hold 与过期预览联合门待补。",
-              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
             "id": "SYS-JOB-01::AC-JB02-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB02-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 JobRemainder_retention_first_shard_commits、JobRemainder_wfs_host_reopens_only",
+                "scope": "实际第一片提交 500 条，第二片 SQLSTATE 23514 失败且行仍在。按原计划从游标 500 继续，第 501 条提交确认丢失后独立连接查回原两片，同键重查写入 0。 实际 WFS 宿主重启沿持久原计划处理，其他租户无新预览。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/8"
-            },
-            "followup": {
-              "task_id": "WP02-21b",
-              "status": "PARTIAL",
-              "scope": "旧 WFS 首片 500 行实际提交，第二片失败留下 1 行。审计 Worker 真库确认丢失可读回原回执，旧 WFS 清理缺持久原计划、分片回执和原游标。",
-              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
             "id": "SYS-JOB-01::AC-JB02-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB02-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 JobRemainder_wms_host_keeps",
+                "scope": "不匹配的 PostgreSQL 库标识使 5 条扫描原样保留且无计划。实际 WMS Host 在批准源只删 1 条到期 raw，仍留 4 条扫描和同一条业务事件。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/9"
-            },
-            "followup": {
-              "task_id": "WP02-21b",
-              "status": "PARTIAL",
-              "scope": "现行 WMS Worker 在隔离库实际只删过期 raw scan，留存业务事件和未到期行。未批准来源库及 demo 配置的实际阻断待核对。",
-              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
             "id": "SYS-JOB-01::AC-JB03-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB03-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 NativeBrowser_actual_timeout_host_worker、JobRemainder_native_disable_preserves_applied",
+                "scope": "真实 Generic Host、Main HTTP 及 Chrome 在同一详情分别渲染 5 层。关停另测当前配置未启用，历史运行和回执保留。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/10"
-            },
-            "followup": {
-              "task_id": "WP02-21b",
-              "status": "PARTIAL",
-              "scope": "源码、实际宿主注册、配置、真实扫描、Owner 结果分别取证。现有实际页面仅覆盖 OA 原生运行及最后结果，仍缺完整五层诊断输出。",
-              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
@@ -143397,6 +143488,17 @@
                 "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 native-timeout、legacy-job，精确范围见报告。",
                 "scope": "宿主配置、租户、实际登记来源、当前 Owner writer gate 或必要原回执不可用时无新效果。",
                 "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 NativeTimeout_human_winner、JobRemainder_retention_missing_hold_writer、JobRemainder_native_recovers_exact_input",
+                "scope": "重验原登记和作用域，经门缺失后仍可独立查读原结果。",
+                "result": "PASS"
               }
             ],
             "definition_ref": {
@@ -143408,34 +143510,46 @@
             "id": "SYS-JOB-01::AC-JB03-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB03-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 JobRemainder_native_schedule_versions",
+                "scope": "模拟时钟错过 10 小时，有限补跑只登记最近 3 个周期。改日历后旧版本沿原值。纽约到东京配置的日历和时区摘要均变化，SKIP 不补历史，相同操作异载荷与错误期望版本拒绝。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/12"
-            },
-            "followup": {
-              "task_id": "WP02-21b",
-              "status": "PARTIAL",
-              "scope": "现行固定周期和历史重启入口分别追踪。缺受保护的持久 schedule 版本、修改审核及各 Owner 的错过运行策略联验。",
-              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
             "id": "SYS-JOB-01::AC-JB03-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB03-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 JobRemainder_native_disable_preserves_applied、JobRemainder_disable_keeps_unconfirmed",
+                "scope": "停发后新增领取和运行均为 0。已提交回执同键可读，仍未执行的尝试归阻断，无可信回执的原尝试继续 UNKNOWN。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/13"
-            },
-            "followup": {
-              "task_id": "WP02-21b",
-              "status": "PARTIAL",
-              "scope": "关闭配置、暂停租户和当前取消的部分边界已核对。统一为各 Owner 保留在途已提交、未决或阻断的持久状态仍待采用。",
-              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
@@ -143454,6 +143568,17 @@
                 "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 native-timeout、job-supplement，精确范围见报告。",
                 "scope": "原生同一 task／revision／occurrence 的稳定 execution 及实际双 worker 唯一领取。旧 WFS 同一 token／节点原作业沿持久唯一槽，重扫不造第二个 Owner。",
                 "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 NativeTimeoutRace_、PGT017_journal_service_timer_and_pause",
+                "scope": "真库保持原 task／revision／occurrence 槽及旧服务作业固定身份。",
+                "result": "PASS"
               }
             ],
             "definition_ref": {
@@ -143465,34 +143590,46 @@
             "id": "SYS-JOB-01::AC-JB04-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB04-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 JobRemainder_native_run_distinguishes、JobRemainder_native_recovers_exact_input、NativeBrowser_actual_timeout_host_worker",
+                "scope": "同一实际提醒的 runId、attemptId、messageId 和 operationId 对应可核且各自独立，重新领取保持 operationId 并变更尝试与代次。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/15"
-            },
-            "followup": {
-              "task_id": "WP02-21b",
-              "status": "PARTIAL",
-              "scope": "原生区分 execution、claim／epoch、业务 command 与通知。现行入口缺完整可追溯 run／attempt／message／operation 的诊断关联。",
-              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
             "id": "SYS-JOB-01::AC-JB04-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB04-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 JobRemainder_native_unknown_is_partial、JobRemainder_native_source_error、JobRemainder_native_retries_only_transient",
+                "scope": "真库有部分和确认零变更；候选源异常无完成记录，无新领取但原尝试隔离的扫描也不报告确认零变更。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/16"
-            },
-            "followup": {
-              "task_id": "WP02-21b",
-              "status": "PARTIAL",
-              "scope": "浏览器按真实 Owner 回执展示完成，旧分片后续失败未报整体成功。缺所有适用 Owner 的部分、确认零变更和 UNKNOWN 分类汇总。",
-              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
@@ -143510,6 +143647,17 @@
                 "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、实际 Main Kestrel、独立 Host／worker、Chrome 与隔离模拟业务。",
                 "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 native-timeout、job-supplement、audit-job，精确范围见报告。",
                 "scope": "真实 PostgreSQL 在提交完成后模拟确认丢失和取消。独立新连接用原 execution 回读原结果和同一通知，旧 attempt 无重复效果。",
+                "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 JobRemainder_native_unknown_is_partial、JobRemainder_native_recovers_exact_input",
+                "scope": "独立新上下文按原操作拿回提交后回执，查无不判未做。",
                 "result": "PASS"
               }
             ],
@@ -143534,6 +143682,17 @@
                 "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 browser-readonly，精确范围见报告。",
                 "scope": "真实 Generic Host、Main HTTP 和 Chrome 验证当前范围、只读面板和刷新原结果。普通扫描日志独立，当前授权的详情仅见允许的诊断字段。",
                 "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 NativeInbox_HTTP_cookie_CSRF、NativeInbox_current_permission_filters、NativeBrowser_actual_timeout_host_worker",
+                "scope": "真实 Main HTTP 验证当前身份，Chrome 刷新两次使用 GET，详情读后业务写集保持。",
+                "result": "PASS"
               }
             ],
             "definition_ref": {
@@ -143545,51 +143704,69 @@
             "id": "SYS-JOB-01::AC-JB04-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB04-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 JobRemainder_native_unknown_is_partial",
+                "scope": "提交确认丢失先有 UNKNOWN，原回执回查后追加 OWNER_VERIFIED。旧观察 ID、时间和内容一致，原业务写集始终为 2 份回执、2 条通知。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/19"
-            },
-            "followup": {
-              "task_id": "WP02-21b",
-              "status": "PARTIAL",
-              "scope": "读回原结果保持原业务事实且页面刷新一致。缺通用的原未决运行加上迟到回执的持久追加观察与时间线。",
-              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
             "id": "SYS-JOB-01::AC-JB05-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB05-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 JobRemainder_native_retries_only_transient、JobRemainder_native_separates_already_terminal、JobRemainder_disable_keeps_unconfirmed",
+                "scope": "原事务模拟 SQLSTATE 40001 共尝试 3 次，23514 只尝试 1 次，各原操作写入 0；隔离在下一扫描仍有效。当前撤权转阻断，未知保原回执回查。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/20"
-            },
-            "followup": {
-              "task_id": "WP02-21b",
-              "status": "PARTIAL",
-              "scope": "原生已经区分失效、拒绝和提交 UNKNOWN，也验证缺 writer gate 无效果。旧作业完整失败分类、有限重试与隔离策略待核查。",
-              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
             "id": "SYS-JOB-01::AC-JB05-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB05-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 JobRemainder_native_recovers_exact_input、JobRemainder_native_unknown_is_partial",
+                "scope": "经共同门证明可继续后，过期尝试按同一 operationId 重新领取且代次加 1。改 occurrence／摘要拒绝；查无返回 UNKNOWN 和 Isolate；终态重复回原结果。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/21"
-            },
-            "followup": {
-              "task_id": "WP02-21b",
-              "status": "PARTIAL",
-              "scope": "现行原生和审计恢复使用原 operation 读取，缺全范围已声明 typed 恢复动作、不变载荷和适配证据。",
-              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
@@ -143608,6 +143785,17 @@
                 "command": "本地 dotnet test 或 Chrome 隔离运行。原结果 native-timeout、job-supplement，精确范围见报告。",
                 "scope": "过期或旧代次领取均拒绝，最后校验处到期使任务、回执和通知一起回滚。真实提交后取消保原结果，再查询没有第二份效果。",
                 "result": "PASS"
+              },
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 NativeTimeout_expired_claim、NativeTimeoutRace_",
+                "scope": "现行 PostgreSQL 复验最终门校验和取消丢确认，旧代次不新增效果。",
+                "result": "PASS"
               }
             ],
             "definition_ref": {
@@ -143619,90 +143807,86 @@
             "id": "SYS-JOB-01::AC-JB05-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB05-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 JobRemainder_native_recovers_exact_input",
+                "scope": "实际两个隔离 PostgreSQL 数据库。缺共同事务上下文时原 Owner 拒绝新效果，两库写集相同；具备现行历史读取资格可回同一原结果，撤销时 403。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/23"
-            },
-            "followup": {
-              "task_id": "WP02-21b",
-              "status": "PARTIAL",
-              "scope": "本次覆盖同一 Main PostgreSQL 的共同门与当前历史查看。跨库共同权威不可证明时关闭新效果及继续历史读取仍需实际联验。",
-              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           },
           {
             "id": "SYS-JOB-01::AC-JB05-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-JB05-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+                "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+                "observed_at": "2026-11-19T02:16:01.525327-05:00",
+                "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+                "command": "本地 PostgreSQL 定向过滤 JobRemainder_pending_purpose_survives",
+                "scope": "超过模拟用途检查时间仍保留 1 个占用且处置 0。撤销读取后返回 404，原用途仍在。可信原 Owner 终态提交后新计划处置 1，旧计划原占用观察仍在。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/8/cases/24"
-            },
-            "followup": {
-              "task_id": "WP02-21b",
-              "status": "NOT_RUN",
-              "scope": "本轮作业夹具未涉及独立用途 grant。真实无可信终态时保留授权占用、并独立撤销读取的作业链由余卡覆盖。",
-              "report": "docs/development/evidence/WP02-21/DELIVERY.md"
             }
           }
         ]
       },
-      "implementation_evidence": [],
-      "delivery_evidence": null,
+      "implementation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+          "source_repository": "GTX537/CP6",
+          "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+          "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+          "observed_at": "2026-11-19T02:16:01.525327-05:00",
+          "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+          "command": "见交付报告的 PostgreSQL、真实 Host／HTTP、浏览器及编译记录",
+          "scope": "本卡 15 项和 SYS-JOB-01 全部 25 项。逐项来源、原 Owner 和远端提交见报告。",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+        "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+        "remote_main_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1270",
+        "scope": "remote_main_sha 是已核对准入基线。产品采用以本 PR 的 merge 提交和原通信分支 DELIVERY 为准。父卡采用 e1759095d020c6685b6ca5e2a0da4fd5de99005d。",
+        "adoption_record": "D:/CP6-test-artifacts/WP02-21b/finish.json"
+      },
       "completion_audit": {
-        "result": "PARTIAL_COVERAGE",
-        "reviewed_at": "2026-11-18T23:18:51.911322-05:00",
-        "report": "docs/development/evidence/WP02-21/DELIVERY.md",
+        "result": "DONE",
+        "reviewed_at": "2026-11-19T02:16:01.525327-05:00",
+        "report": "docs/development/evidence/WP02-21b/DELIVERY.md",
         "original_cases_reviewed": 25,
-        "original_cases_passed": 10,
+        "original_cases_passed": 25,
         "required_revision_cases": 0,
-        "gaps": [
-          {
-            "owner_task_id": "WP02-21b",
-            "case_ids": [
-              "AC-JB01-04",
-              "AC-JB03-01",
-              "AC-JB04-01",
-              "AC-JB04-02",
-              "AC-JB04-05"
-            ],
-            "gap": "完成准确候选、运行和效果诊断，摘要与迟到回执可回溯，监控只读。"
-          },
-          {
-            "owner_task_id": "WP02-21b",
-            "case_ids": [
-              "AC-JB02-02",
-              "AC-JB02-03",
-              "AC-JB02-04",
-              "AC-JB02-05"
-            ],
-            "gap": "各原清理 Owner 落实保留／引用／hold 和批准来源门，保留原计划、分片回执和续跑游标。"
-          },
-          {
-            "owner_task_id": "WP02-21b",
-            "case_ids": [
-              "AC-JB03-03",
-              "AC-JB03-04"
-            ],
-            "gap": "核对持久 schedule 版本、错过运行规则与关闭后在途结果。"
-          },
-          {
-            "owner_task_id": "WP02-21b",
-            "case_ids": [
-              "AC-JB05-01",
-              "AC-JB05-02",
-              "AC-JB05-04",
-              "AC-JB05-05"
-            ],
-            "gap": "通过原 Owner 验证失败分类、typed 恢复、跨库关闭新效果及无终态用途授权。"
-          }
+        "coverage_cards": [
+          "WP02-21",
+          "WP02-21b"
         ],
+        "gaps": [],
+        "classification": "BUSINESS",
         "new_product_execution": true,
-        "classification": "BUSINESS"
+        "review_effective_seconds": 61.348
       }
     },
     {
@@ -169321,6 +169505,11 @@
       "at": "2026-11-19T01:00:23.711390-05:00",
       "evidence": "docs/development/evidence/WP02-19b/DELIVERY.md",
       "change": "WP02-19b 七项完成，SYS-CLIENT-01 累积 17/22，五项继续由 WP02-20 承接。按 #324 一次结转 545.852 秒并更新 WP02-21b 预算。"
+    },
+    {
+      "at": "2026-11-19T02:16:01.525327-05:00",
+      "evidence": "docs/development/evidence/WP02-21b/DELIVERY.md",
+      "change": "WP02-21b 十五项原验收通过，WP02-21 原号和余卡完整，SYS-JOB-01 25/25、必需修订 0，关闭目标。按 #326 单次结转 WP02-19b 正式收尾 462.633 秒。"
     }
   ],
   "implementation_assessment": {
@@ -191534,7 +191723,7 @@
         "started_at": "2026-11-19T00:03:15.150064-05:00",
         "official_started_at": "2026-11-19T00:03:15.150064-05:00",
         "verified_at": "2026-11-19T01:00:23.711390-05:00",
-        "effective_seconds": 3428.561,
+        "effective_seconds": 3891.194,
         "size": "M",
         "budget_seconds": 12888.19,
         "mandatory_split_seconds": 19332.285,
@@ -191543,7 +191732,15 @@
           "WP02-19"
         ],
         "new_product_execution": true,
-        "preceding_integration_seconds": 545.852
+        "preceding_integration_seconds": 545.852,
+        "candidate_effective_seconds": 3428.561,
+        "post_candidate_finalization_seconds": 462.633,
+        "official_finish": "2026-11-19T01:08:06.344316-05:00",
+        "accounting_evidence": {
+          "adopted_commit": "4e1e92d358a79ab0da75de98e740b5cebb0a358d",
+          "original_commit": "2a134ca290ee0753d89230a6c379a1e9e7dde234",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-19b/replies/20261119T061831Z-coord-acceptance-ack/MESSAGE.md"
+        }
       }
     },
     {
@@ -191715,21 +191912,80 @@
         "file:Main:CP6.Core/Services/Wf/WfTimeoutService.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-21b",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "EXEC-WP02-14B",
+        "repository": "Main",
+        "branch": "codex/wp02-21b",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-19T01:28:51.167784-05:00",
+        "baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+        "entry_evidence": "docs/development/evidence/WP02-21b/DELIVERY.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "delivery_report": "docs/development/evidence/WP02-21b/DELIVERY.md",
+        "dispatch_scope": "十五项原后台作业的只读观测、保留分片、调度和原 Owner 恢复。真实 PostgreSQL，按派工使用明确标记的模拟条件。",
+        "actual_start_ref": {
+          "commit": "423dfbbadcf18e4fb6a1b16d5f8b4a792ecc407c",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-21b/messages/20261119T063019Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-19T06:30:19Z"
+        },
+        "dispatch_decision_ref": {
+          "commit": "82ce2318818ce649b254a68e0a4a2acedc2393f8",
+          "original_commit": "3c9f06a9d0813ac4783b15ec7e05dc2ac59f1d2c",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261119T062211Z-exec-wp02-14b-wp02-21b/MESSAGE.md"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+          "source_repository": "GTX537/CP6",
+          "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+          "tested_main_baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+          "observed_at": "2026-11-19T02:16:01.525327-05:00",
+          "environment": "Windows、.NET SDK 8.0.424、PostgreSQL 18.6、真实 Main HTTP 和 Generic Host、Chrome、Node 22.22.0。模拟对象和故障见报告。",
+          "command": "见交付报告的 PostgreSQL、真实 Host／HTTP、浏览器及编译记录",
+          "scope": "本卡 15 项和 SYS-JOB-01 全部 25 项。逐项来源、原 Owner 和远端提交见报告。",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-21b/DELIVERY.md",
+        "source_sha": "00d9710927d0914320ec978be961515c6e55982b",
+        "remote_main_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1270",
+        "scope": "remote_main_sha 是已核对准入基线。产品采用以本 PR 的 merge 提交和原通信分支 DELIVERY 为准。父卡采用 e1759095d020c6685b6ca5e2a0da4fd5de99005d。",
+        "adoption_record": "D:/CP6-test-artifacts/WP02-21b/finish.json"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "split_parent": "WP02-21",
       "card_budget_seconds": 12793.96,
-      "card_mandatory_split_seconds": 19190.94
+      "card_mandatory_split_seconds": 19190.94,
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP02-21b/DELIVERY.md",
+        "started_at": "2026-11-19T01:28:51.167784-05:00",
+        "official_started_at": "2026-11-19T01:28:51.167784-05:00",
+        "verified_at": "2026-11-19T02:16:01.525327-05:00",
+        "effective_seconds": 2769.01,
+        "size": "M",
+        "budget_seconds": 12793.96,
+        "mandatory_split_seconds": 19190.94,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-21"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 462.633
+      }
     },
     {
       "id": "WP02-22",
@@ -292720,7 +292976,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 67496.523,
+      "effective_seconds": 70789.514,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -292742,7 +292998,8 @@
         "WP03-04",
         "WP02-19",
         "WP02-21",
-        "WP02-19b"
+        "WP02-19b",
+        "WP02-21b"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -292750,7 +293007,8 @@
         "SYS-AUD-01",
         "SYS-TENANT-01",
         "SYS-NUM-01",
-        "CRM-INQ-01"
+        "CRM-INQ-01",
+        "SYS-JOB-01"
       ],
       "new_splits": [
         {
@@ -292811,7 +293069,7 @@
         }
       ],
       "current_stage": "B",
-      "next_card": "WP02-21b",
+      "next_card": "WP02-29",
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -292963,15 +293221,11 @@
         }
       },
       "next_card_selection": {
-        "rule": "阶段 B 按完整前置和全图下游最长链排序，同长用阶段顺序。实际领取依 COORD 派工。",
-        "baseline_sha": "e1759095d020c6685b6ca5e2a0da4fd5de99005d",
-        "after_card": "WP02-19b",
-        "selected": "WP02-21b",
+        "rule": "阶段 B 按完整前置和全图下游最长链排序，同长采用阶段顺序。实际领取依 COORD 派工。",
+        "baseline_sha": "89e61880597c111d908a8b10f30b074a107b419b",
+        "after_card": "WP02-21b",
+        "selected": "WP02-29",
         "candidates": [
-          {
-            "id": "WP02-21b",
-            "longest_downstream_edges": 8
-          },
           {
             "id": "WP02-29",
             "longest_downstream_edges": 2
@@ -293053,11 +293307,11 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 3561.513,
+      "target_review_effective_seconds": 3622.861,
       "last_checkpoint_counts": {
         "original_done": 54,
-        "fully_done": 53,
-        "targets_done": 6,
+        "fully_done": 54,
+        "targets_done": 7,
         "new_splits": 7,
         "periodic_checkpoint_due": false
       },
