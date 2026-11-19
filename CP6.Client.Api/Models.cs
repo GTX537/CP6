@@ -4,10 +4,20 @@ namespace CP6.Client.Api;
 
 public sealed class ClientContext
 {
+    public bool SupportsSsoPending { get; set; }
+    public string? RequiredGate { get; set; }
+    public ClientDeviceBindingProof? DeviceBinding { get; set; }
     public string ClientKind { get; set; } = string.Empty;
     public string DeviceId { get; set; } = string.Empty;
     public string AppVersion { get; set; } = string.Empty;
     public string? PlatformVersion { get; set; }
+}
+
+public sealed class ClientDeviceBindingProof
+{
+    public Guid ActivationOperationId { get; set; }
+    public DateTimeOffset Timestamp { get; set; }
+    public string Signature { get; set; } = string.Empty;
 }
 
 public sealed class NativeLoginRequest
@@ -23,6 +33,16 @@ public class NativeChallengeRequest
     public string ChallengeToken { get; set; } = string.Empty;
     public ClientContext Client { get; set; } = new();
 }
+
+public sealed class NativeCompletionRecoveryRequest
+{
+    public string Kind { get; set; } = string.Empty;
+    public string Credential { get; set; } = string.Empty;
+    public string? CodeVerifier { get; set; }
+    public ClientContext Client { get; set; } = new();
+}
+
+public sealed record NativeCompletionRecovery(string State);
 
 public sealed class NativeTwoFactorRequest : NativeChallengeRequest
 {
@@ -58,6 +78,7 @@ public sealed class QuickSwitchRequest
 
 public sealed class ActivateClientDeviceRequest
 {
+    public Guid? ActivationOperationId { get; set; }
     public string TenantCode { get; set; } = string.Empty;
     public string ActivationToken { get; set; } = string.Empty;
     public string DeviceId { get; set; } = string.Empty;
@@ -76,6 +97,17 @@ public sealed class ActivatedClientDevice
     public string? AreaCd { get; set; }
     public DateTimeOffset ActivatedAt { get; set; }
 }
+
+public sealed class RecoverDeviceActivationRequest
+{
+    public Guid ActivationOperationId { get; set; }
+    public string TenantCode { get; set; } = string.Empty;
+    public string DeviceId { get; set; } = string.Empty;
+    public DateTimeOffset Timestamp { get; set; }
+    public string Signature { get; set; } = string.Empty;
+}
+
+public sealed record DeviceActivationRecovery(string State, ActivatedClientDevice? Registration);
 
 public sealed class ClientDeviceHeartbeatRequest
 {
@@ -222,6 +254,7 @@ public sealed class TokenSession
 
 public sealed class NativeAuthResult
 {
+    public bool RegisteredDeviceVerified { get; set; }
     public string State { get; set; } = string.Empty;
     public string? ChallengeToken { get; set; }
     public TokenSession? Session { get; set; }
@@ -249,6 +282,7 @@ public sealed class NativeSsoExchangeRequest
 
 public sealed class ClientBootstrap
 {
+    public IReadOnlyList<string> RequiredGates { get; set; } = [];
     public string ApiVersion { get; set; } = "1";
     public DateTimeOffset ServerUtc { get; set; }
     public string Platform { get; set; } = string.Empty;

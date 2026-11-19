@@ -27,6 +27,7 @@ export interface ClientDevice {
   rowVersion: string
 }
 export interface DeviceActivationTicket {
+  activationOperationId?: string
   activationToken: string
   expiresAt: string
   platform: string

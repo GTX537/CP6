@@ -20,6 +20,7 @@ public static class MauiProgram
             {
                 ClientKind = "Android",
                 DeviceId = DeviceIdentity.GetOrCreate(),
+                SupportsSsoPending = true,
                 AppVersion = AppInfo.Current.VersionString,
                 PlatformVersion = DeviceInfo.Current.VersionString,
             },
@@ -35,7 +36,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<IClientDeviceHeartbeatContext,
             MobileDeviceHeartbeatContext>();
         builder.Services.AddSingleton<ISystemBrowser, MauiSystemBrowser>();
-        builder.Services.AddSingleton<IOfflineMoveProgressStore, FileOfflineMoveProgressStore>();
+        builder.Services.AddSingleton<IOfflineMoveProgressStore>(_ =>
+            new FileOfflineMoveProgressStore(Path.Combine(FileSystem.AppDataDirectory, "move-progress-v2")));
         builder.Services.AddCp6ClientCore(options);
         builder.Services.AddSingleton<MobileClientState>();
         builder.Services.AddSingleton<DeviceActivationService>();

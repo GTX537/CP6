@@ -7,6 +7,8 @@ public sealed class ClientOptions
     public required Uri ApiBaseAddress { get; set; }
     public required ClientContext Context { get; init; }
     public string Platform { get; init; } = string.Empty;
+    public string ActivationStateDirectory { get; init; } =
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CP6", "activation-state");
     public string LanguageDirectory { get; init; } =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CP6", "lang");
     public string LabelJournalDirectory { get; init; } =

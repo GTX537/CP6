@@ -64,10 +64,13 @@ public sealed partial class ClientAuthController
             committed = await action();
             HttpContext.RequestAborted.ThrowIfCancellationRequested();
             if (Response.HasStarted) throw new InvalidOperationException("AUTH_RESPONSE_ALREADY_STARTED");
+            if (committed.Purpose == AuthenticationEntryServiceV1.NativeAdapterRequired)
+                return Conflict(new { code = committed.Purpose, message = "认证适配未就绪，请更新客户端后重新认证。" });
             if (committed.Session != null) AuthenticationEntryFailureAttribute.TrackOutput(HttpContext, committed.Session.RefreshToken);
             return new NativeAuthResult { State = committed.Session != null ? "authenticated"
                 : committed.Purpose == "2fa_enroll" ? "enrollmentRequired" : "twoFactorRequired",
-                ChallengeToken = committed.Challenge, Session = committed.Session };
+                ChallengeToken = committed.Challenge, Session = committed.Session,
+                RegisteredDeviceVerified = committed.RegisteredDeviceVerified };
         }
         catch (RefreshCompletionUnknownException) { return StatusCode(503, new { code = "AUTHENTICATION_COMPLETION_OUTCOME_UNKNOWN" }); }
         catch (Exception error)

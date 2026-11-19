@@ -3,10 +3,20 @@ namespace CP6.Entity.DTOs.Client;
 /// <summary>原生客户端在每次登录/刷新时提交的非敏感设备画像。</summary>
 public sealed class ClientContextDto
 {
+    public bool SupportsSsoPending { get; set; }
+    public string? RequiredGate { get; set; }
+    public ClientDeviceBindingProof? DeviceBinding { get; set; }
     public string ClientKind { get; set; } = string.Empty;
     public string DeviceId { get; set; } = string.Empty;
     public string AppVersion { get; set; } = string.Empty;
     public string? PlatformVersion { get; set; }
+}
+
+public sealed class ClientDeviceBindingProof
+{
+    public Guid ActivationOperationId { get; set; }
+    public DateTimeOffset Timestamp { get; set; }
+    public string Signature { get; set; } = string.Empty;
 }
 
 public sealed class NativeLoginRequest
@@ -81,6 +91,7 @@ public sealed class TokenSessionDto
 /// <summary>State: authenticated / twoFactorRequired / enrollmentRequired。</summary>
 public sealed class NativeAuthResult
 {
+    public bool RegisteredDeviceVerified { get; set; }
     public string State { get; set; } = string.Empty;
     public string? ChallengeToken { get; set; }
     public TokenSessionDto? Session { get; set; }
@@ -108,6 +119,7 @@ public sealed class NativeSsoExchangeRequest
 
 public sealed class ClientBootstrapDto
 {
+    public IReadOnlyList<string> RequiredGates { get; set; } = [];
     public string ApiVersion { get; set; } = "1";
     public DateTimeOffset ServerUtc { get; set; }
     public string Platform { get; set; } = string.Empty;

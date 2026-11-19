@@ -1,6 +1,5 @@
 using CP6.Client.Core;
 using System.Security.Cryptography;
-using System.Text.Json;
 
 namespace CP6.Mobile;
 
@@ -56,33 +55,6 @@ internal static class DeviceIdentity
         value = $"android-{Guid.NewGuid():N}";
         Preferences.Default.Set(Key, value);
         return value;
-    }
-}
-
-public sealed class FileOfflineMoveProgressStore : IOfflineMoveProgressStore
-{
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
-    private static string PathName => Path.Combine(FileSystem.AppDataDirectory, "active-move-progress.json");
-
-    public async Task<OfflineMoveProgress?> ReadAsync(CancellationToken ct = default)
-    {
-        if (!File.Exists(PathName)) return null;
-        await using var stream = File.OpenRead(PathName);
-        return await JsonSerializer.DeserializeAsync<OfflineMoveProgress>(stream, Json, ct);
-    }
-
-    public async Task WriteAsync(OfflineMoveProgress progress, CancellationToken ct = default)
-    {
-        var temp = $"{PathName}.tmp";
-        await using (var stream = File.Create(temp))
-            await JsonSerializer.SerializeAsync(stream, progress, Json, ct);
-        File.Move(temp, PathName, true);
-    }
-
-    public Task ClearAsync(CancellationToken ct = default)
-    {
-        if (File.Exists(PathName)) File.Delete(PathName);
-        return Task.CompletedTask;
     }
 }
 

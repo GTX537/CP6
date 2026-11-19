@@ -199,26 +199,43 @@ public partial class ShellViewModel : ObservableObject
         if (!EnsureClientAccess()) return;
         await RunAsync(async () =>
         {
+            ResetFactor();
             var result = await _sessions.LoginAsync(UserName, Password, NullIfEmpty(TenantCode));
             Password = string.Empty;
-            if (result.Session != null)
-            {
-                await EnterTasksAsync();
-                return;
-            }
-            _challenge = result.ChallengeToken;
-            _enroll = result.State == "enrollmentRequired";
-            CanUseEmailOtp = !_enroll;
-            IsTwoFactorVisible = true;
-            if (_enroll && _challenge != null)
-            {
-                var setup = await _sessions.SetupTwoFactorAsync(_challenge);
-                TwoFactorSetupSecret = setup.Secret;
-            }
-            StatusMessage = _enroll
-                ? _language["client.enrollmentRequired"]
-                : _language["client.enterVerificationCode"];
+            await HandleAuthResultAsync(result);
         });
+    }
+
+    private async Task HandleAuthResultAsync(NativeAuthResult result)
+    {
+        if (result.Session != null)
+        {
+            if (result.RegisteredDeviceVerified) DesktopSettings.WriteDeviceActivation(true);
+            ResetFactor();
+            await EnterTasksAsync();
+            return;
+        }
+        _challenge = result.ChallengeToken ?? throw new InvalidOperationException("当前认证适配未就绪。");
+        _enroll = result.State == "enrollmentRequired";
+        CanUseEmailOtp = !_enroll;
+        IsTwoFactorVisible = true;
+        if (_enroll)
+        {
+            var setup = await _sessions.SetupTwoFactorAsync(_challenge);
+            TwoFactorSetupSecret = setup.Secret;
+        }
+        StatusMessage = _enroll ? _language["client.enrollmentRequired"] : _language["client.enterVerificationCode"];
+    }
+
+    private void ResetFactor()
+    {
+        _challenge = null;
+        _enroll = false;
+        TwoFactorCode = string.Empty;
+        TwoFactorMethod = "totp";
+        TwoFactorSetupSecret = string.Empty;
+        IsTwoFactorVisible = false;
+        CanUseEmailOtp = false;
     }
 
     [RelayCommand]
@@ -230,7 +247,7 @@ public partial class ShellViewModel : ObservableObject
         {
             var result = await _sessions.VerifyTwoFactorAsync(
                 _challenge, TwoFactorCode, TwoFactorMethod, _enroll);
-            if (result.Session != null) await EnterTasksAsync();
+            await HandleAuthResultAsync(result);
         });
     }
 
@@ -249,15 +266,18 @@ public partial class ShellViewModel : ObservableObject
     private Task StartSsoAsync()
         => !EnsureClientAccess()
             ? Task.CompletedTask
-            : RunAsync(() => _sso.StartAsync(TenantCode));
+            : RunAsync(() =>
+            {
+                ResetFactor();
+                return _sso.StartAsync(TenantCode);
+            });
 
     public Task CompleteSsoAsync(Uri callback)
         => !EnsureClientAccess()
             ? Task.CompletedTask
             : RunAsync(async () =>
         {
-            var result = await _sso.CompleteAsync(callback);
-            if (result.Session != null) await EnterTasksAsync();
+            await HandleAuthResultAsync(await _sso.CompleteAsync(callback));
         });
 
     [RelayCommand]

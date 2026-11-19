@@ -27,6 +27,14 @@ public sealed class ClientDevicesController : ControllerBase
         }
     }
 
+    [HttpPost("activate/status")]
+    [AllowAnonymous]
+    [OrderOwnerResult]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    [RequestSizeLimit(4096)]
+    public Task<DeviceActivationRecoveryDto> ActivationStatus(RecoverDeviceActivationRequest request, CancellationToken ct)
+        => _service.RecoverActivationAsync(request, ct);
+
     [HttpPost("heartbeat")]
     [Authorize]
     [OrderOwnerResult]

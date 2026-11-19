@@ -23,6 +23,7 @@ public static class ClientServiceCollectionExtensions
         services.AddSingleton<WmsRealtimeService>();
         services.AddSingleton<NativeSsoService>();
         services.TryAddSingleton<IDeviceRequestSigner, UnsupportedDeviceRequestSigner>();
+        services.AddSingleton<NativeDeviceActivationService>();
         services.AddSingleton<ClientDeviceHeartbeatService>();
         services.AddSingleton<IClientDeviceHeartbeatSender>(sp =>
             sp.GetRequiredService<ClientDeviceHeartbeatService>());

@@ -7,6 +7,7 @@ describe('device activation payload', () => {
       server: ' https://wms.example.test/api/ ',
       tenant: ' CP6 ',
       token: 'one-time+token',
+      operation: '00000000-0000-0000-0000-000000000001',
       platform: 'Android',
       scanPrefix: ']C1',
       scanSuffix: '~',
@@ -21,6 +22,7 @@ describe('device activation payload', () => {
     expect(uri.searchParams.get('scanPrefix')).toBe(']C1')
     expect(uri.searchParams.get('scanSuffix')).toBe('~')
     expect(uri.searchParams.get('scanTerminator')).toBe('Tab')
+    expect(uri.searchParams.get('operation')).toBe('00000000-0000-0000-0000-000000000001')
     expect(uri.searchParams.get('scanDuplicateMs')).toBe('900')
   })
 

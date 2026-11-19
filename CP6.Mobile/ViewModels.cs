@@ -100,24 +100,43 @@ public partial class LoginViewModel : MobileViewModel,
     private Task LoginAsync() => RunAsync(async () =>
     {
         EnsureClientAccess();
+        ResetFactor();
         var result = await _sessions.LoginAsync(UserName, Password, EmptyToNull(TenantCode));
         Password = string.Empty;
+        await HandleAuthResultAsync(result);
+    });
+
+    private async Task HandleAuthResultAsync(NativeAuthResult result)
+    {
         if (result.Session != null)
         {
+            if (result.RegisteredDeviceVerified) _state.SetDeviceActivated(true);
+            ResetFactor();
             await Shell.Current.GoToAsync("tasks");
             return;
         }
-        _challenge = result.ChallengeToken;
+        _challenge = result.ChallengeToken ?? throw new InvalidOperationException("当前认证适配未就绪。");
         _enroll = result.State == "enrollmentRequired";
         CanUseEmailOtp = !_enroll;
         ShowTwoFactor = true;
-        if (_enroll && _challenge != null)
+        if (_enroll)
         {
             var setup = await _sessions.SetupTwoFactorAsync(_challenge);
             TwoFactorSetupSecret = setup.Secret;
         }
         Message = _enroll ? Text.EnrollmentRequired : Text.EnterVerificationCode;
-    });
+    }
+
+    private void ResetFactor()
+    {
+        _challenge = null;
+        _enroll = false;
+        TwoFactorSetupSecret = string.Empty;
+        TwoFactorCode = string.Empty;
+        TwoFactorMethod = "totp";
+        ShowTwoFactor = false;
+        CanUseEmailOtp = false;
+    }
 
     [RelayCommand]
     private Task VerifyTwoFactorAsync() => RunAsync(async () =>
@@ -126,7 +145,7 @@ public partial class LoginViewModel : MobileViewModel,
         if (_challenge == null) return;
         var result = await _sessions.VerifyTwoFactorAsync(
             _challenge, TwoFactorCode, TwoFactorMethod, _enroll);
-        if (result.Session != null) await Shell.Current.GoToAsync("tasks");
+        await HandleAuthResultAsync(result);
     });
 
     [RelayCommand]
@@ -144,6 +163,7 @@ public partial class LoginViewModel : MobileViewModel,
         => RunAsync(() =>
         {
             EnsureClientAccess();
+            ResetFactor();
             return _sso.StartAsync(TenantCode);
         });
 
@@ -151,6 +171,7 @@ public partial class LoginViewModel : MobileViewModel,
     private Task QuickSwitchAsync() => RunAsync(async () =>
     {
         EnsureClientAccess();
+        ResetFactor();
         var result = await _sessions.QuickSwitchAsync(TenantCode, BadgeNo, QuickPin);
         QuickPin = string.Empty;
         if (result.Session != null) await Shell.Current.GoToAsync("tasks");
@@ -177,8 +198,7 @@ public partial class LoginViewModel : MobileViewModel,
     private Task CompleteSsoAsync(Uri callback) => RunAsync(async () =>
     {
         EnsureClientAccess();
-        var result = await _sso.CompleteAsync(callback);
-        if (result.Session != null) await Shell.Current.GoToAsync("tasks");
+        await HandleAuthResultAsync(await _sso.CompleteAsync(callback));
     });
 
     private static string? EmptyToNull(string value)
@@ -371,10 +391,15 @@ public partial class MoveScanViewModel : MobileViewModel
     private readonly ScannerInputProcessor _scanner;
     private readonly MoveScanWorkflow _workflow = new();
     private TaskScanProfile? _scanProfile;
-    private Guid _operationId = Guid.NewGuid();
+    private Guid _operationId;
+    private ClientRequestScope? _scope;
+    private bool _completionAttempted;
+    private bool _ownerChecked;
+    private string? _submittedReason;
     private string? _pendingClientScanNo;
     private string? _pendingScanStep;
     private string? _pendingScanValue;
+    private readonly List<OfflineMoveScan> _offlineScans = [];
 
     [ObservableProperty] private MobileTask? task;
     [ObservableProperty] private string scanValue = string.Empty;
@@ -399,6 +424,9 @@ public partial class MoveScanViewModel : MobileViewModel
         _offline = offline;
         _heartbeat = heartbeat;
         _scanner = scanner;
+        WeakReferenceMessenger.Default.Register<MoveScanViewModel, MobileSessionChanged>(
+            this,
+            static (recipient, _) => MainThread.BeginInvokeOnMainThread(recipient.ClearStaleProgress));
         WeakReferenceMessenger.Default.Register<MoveScanViewModel, ScanBroadcastMessage>(
             this,
             static (recipient, message) =>
@@ -411,35 +439,67 @@ public partial class MoveScanViewModel : MobileViewModel
     public ScannerHidTerminator HidTerminator => _scanner.HidTerminator;
 
     [RelayCommand]
-    private Task LoadAsync() => RunAsync(async () =>
+    private Task LoadAsync() => RunAsync(LoadCoreAsync);
+
+    private async Task LoadCoreAsync()
     {
         var selected = _state.SelectedTask;
+        ClearProgress();
+        if (selected == null) return;
+        var scope = _tasks.CaptureScope();
+        _scope = scope;
+        var owner = _tasks.InScope(scope);
+        var cached = await _offline.ReadAsync(scope, selected.TaskNo);
         try
         {
-            Task = selected == null ? null : await _tasks.GetAsync(selected.TaskNo);
-            if (Task != null)
+            var current = await owner.GetAsync(selected.TaskNo);
+            RequireScope(scope);
+            if (cached != null && WmsTaskService.IsOriginalCompletion(current, cached.CompletionOperationId))
             {
-                _scanProfile = await _tasks.GetScanProfileAsync(Task);
-                _workflow.Reset(_scanProfile.Steps.Contains("Lot", StringComparer.OrdinalIgnoreCase));
-                await PersistAsync();
+                await _offline.ClearAsync(scope, selected.TaskNo, cached.CompletionOperationId);
+                RequireScope(scope);
+                ShowCompleted(current);
+                return;
             }
+            if (cached != null && !_tasks.CanResumeMove(cached.Task, current))
+                throw new InvalidOperationException("原作业的归属或执行代次已变化。已保留原草稿，请核对作业。");
+
+            if (current.Status != 1) throw new InvalidOperationException("当前作业未处于可扫描状态。");
+            var profile = await owner.GetScanProfileAsync(current);
+            RequireScope(scope);
+            _ownerChecked = true;
+            ShowProgress(current, profile, cached);
+            await PersistAsync(scope);
         }
-        catch (HttpRequestException) when (selected != null)
+        catch (HttpRequestException error) when (error.StatusCode == null && cached != null)
         {
-            var cached = await _offline.ReadAsync();
-            if (cached?.Task.TaskNo != selected.TaskNo) throw;
-            Task = cached.Task;
-            _scanProfile = cached.ScanProfile;
-            _operationId = cached.CompletionOperationId;
-            _workflow.Reset(_scanProfile.Steps.Contains("Lot", StringComparer.OrdinalIgnoreCase));
-            RestoreStep(cached);
+            RequireScope(scope);
+            ShowProgress(cached.Task, cached.ScanProfile, cached);
             IsOfflineProgress = true;
             Message = "WM-OFFLINE-SCAN-CACHED";
         }
-        _state.SelectedTask = Task;
+    }
+
+    private void ShowProgress(MobileTask current, TaskScanProfile profile, OfflineMoveProgress? saved)
+    {
+        Task = current;
+        _scanProfile = profile;
+        _workflow.Reset(profile.Steps.Contains("Lot", StringComparer.OrdinalIgnoreCase));
+        _operationId = saved?.CompletionOperationId ?? Guid.NewGuid();
+        if (saved != null)
+        {
+            _completionAttempted = saved.CompletionAttempted;
+            _submittedReason = saved.CompletionAttempted ? saved.PartialReason : null;
+            _pendingClientScanNo = saved.PendingClientScanNo;
+            _pendingScanStep = saved.PendingScanStep;
+            _pendingScanValue = saved.PendingScanValue;
+            _offlineScans.AddRange(saved.OfflineScans);
+            RestoreStep(saved);
+        }
+        _state.SelectedTask = current;
         _heartbeat.RequestImmediate();
         UpdateStep();
-    });
+    }
 
     [RelayCommand]
     private Task SubmitScanAsync() =>
@@ -447,14 +507,25 @@ public partial class MoveScanViewModel : MobileViewModel
 
     private Task SubmitAcceptedScanAsync() => RunAsync(async () =>
     {
-        if (Task == null) return;
+        if (Task is not { Status: 1 }) return;
+        var scope = RequireScope();
+        if (_completionAttempted) throw new InvalidOperationException("请先核对原完成操作。");
+        if (_pendingClientScanNo != null &&
+            (_pendingScanStep != _workflow.Step.ToString() || _pendingScanValue != ScanValue))
+            throw new InvalidOperationException("上一笔扫描结果仍待核对，请使用原扫描内容。");
         if (Connectivity.Current.NetworkAccess == NetworkAccess.None)
         {
+            if (_pendingClientScanNo != null) throw new InvalidOperationException("请联网核对上一笔扫描。");
+            var deferred = new OfflineMoveScan(Guid.NewGuid().ToString("N"), _workflow.Step.ToString(), ScanValue);
+            _workflow.AcceptBarcode(Task, deferred.Value);
+            _offlineScans.Add(deferred);
+            IsOfflineProgress = true;
             Message = "WM-OFFLINE-SCAN-CACHED";
-            _workflow.AcceptBarcode(Task, ScanValue);
         }
         else
         {
+            await ConfirmOfflineScansAsync(scope);
+            RequireScope(scope);
             var step = _workflow.Step.ToString();
             if (!string.Equals(_pendingScanStep, step, StringComparison.Ordinal)
                 || !string.Equals(
@@ -466,12 +537,14 @@ public partial class MoveScanViewModel : MobileViewModel
                 _pendingScanStep = step;
                 _pendingScanValue = ScanValue;
             }
-            var result = await _tasks.ScanAsync(
-                Task,
-                step,
-                ScanValue,
-                _pendingClientScanNo);
+            var current = Task;
+            await PersistAsync(scope);
+            var result = await _tasks.InScope(scope).ScanAsync(
+                current, step, ScanValue, _pendingClientScanNo);
+            RequireScope(scope);
             ClearPendingScan();
+            await PersistAsync(scope);
+            RequireScope(scope);
             if (result.Matched == false)
             {
                 Message = $"{result.ErrorCode}: {result.RecoveryAction}";
@@ -481,7 +554,8 @@ public partial class MoveScanViewModel : MobileViewModel
             IsOfflineProgress = false;
         }
         ScanValue = string.Empty;
-        await PersistAsync();
+        await PersistAsync(scope);
+        RequireScope(scope);
         UpdateStep();
     });
 
@@ -526,76 +600,127 @@ public partial class MoveScanViewModel : MobileViewModel
     }
 
     [RelayCommand]
-    private void ConfirmQuantity()
+    private Task ConfirmQuantityAsync() => RunAsync(async () =>
     {
-        Message = string.Empty;
-        try
-        {
-            if (Task == null
-                || !decimal.TryParse(Quantity, NumberStyles.Number, CultureInfo.CurrentCulture, out var value))
-                throw new InvalidOperationException("WM-MSG-031");
-            _workflow.ConfirmQuantity(Task, value);
-            _ = PersistAsync();
-            UpdateStep();
-        }
-        catch (Exception ex) { Message = ex.Message; }
-    }
+        var scope = RequireScope();
+        if (_completionAttempted) throw new InvalidOperationException("请先核对原完成操作。");
+        if (Task == null
+            || !decimal.TryParse(Quantity, NumberStyles.Number, CultureInfo.CurrentCulture, out var value))
+            throw new InvalidOperationException("WM-MSG-031");
+        _workflow.ConfirmQuantity(Task, value);
+        await PersistAsync(scope);
+        RequireScope(scope);
+        UpdateStep();
+    });
 
     [RelayCommand]
     private Task CompleteAsync() => RunAsync(async () =>
     {
-        if (Task == null) return;
+        if (Task is not { Status: 1 }) return;
+        var scope = RequireScope();
         if (Connectivity.Current.NetworkAccess == NetworkAccess.None)
             throw new InvalidOperationException("WM-OFFLINE-COMMIT-NOT-ALLOWED");
-        if (_workflow.ConfirmedQuantity < Task.Qty && string.IsNullOrWhiteSpace(PartialReason))
+        var owner = _tasks.InScope(scope);
+        var recorded = Task;
+        var originalOperation = _operationId;
+        if (!_ownerChecked || _completionAttempted)
+        {
+            var current = await owner.GetAsync(recorded.TaskNo);
+            RequireScope(scope);
+            if (WmsTaskService.IsOriginalCompletion(current, originalOperation))
+            {
+                await _offline.ClearAsync(scope, recorded.TaskNo, originalOperation);
+                RequireScope(scope);
+                ShowCompleted(current);
+                return;
+            }
+            if (!_tasks.CanResumeMove(recorded, current))
+                throw new InvalidOperationException("当前作业无法按原归属恢复。已保留原操作。");
+            Task = current;
+            _ownerChecked = true;
+        }
+
+        if (_pendingClientScanNo != null) throw new InvalidOperationException("请先核对原扫描结果。");
+        await ConfirmOfflineScansAsync(scope);
+        RequireScope(scope);
+        var reason = _completionAttempted ? _submittedReason : PartialReason;
+        if (_workflow.ConfirmedQuantity < Task.Qty && string.IsNullOrWhiteSpace(reason))
             throw new InvalidOperationException("WM-V2-PARTIAL-REASON-REQUIRED");
-        Task = await _tasks.CompleteAsync(
-            Task,
-            _operationId,
-            _workflow.ConfirmedQuantity,
-            PartialReason);
-        _workflow.MarkCompleted();
-        await _offline.ClearAsync();
-        _state.SelectedTask = Task;
+        _completionAttempted = true;
+        _submittedReason = reason;
+        await PersistAsync(scope);
+        RequireScope(scope);
+        var result = await owner.CompleteAsync(Task, originalOperation, _workflow.ConfirmedQuantity, reason);
+        RequireScope(scope);
+        if (!WmsTaskService.IsOriginalCompletion(result, originalOperation))
+            throw new InvalidOperationException("原完成操作的结果仍待核对。");
+        await _offline.ClearAsync(scope, recorded.TaskNo, originalOperation);
+        RequireScope(scope);
+        ShowCompleted(result);
+    });
+
+    private void ShowCompleted(MobileTask current)
+    {
+        Task = current;
+        StepTitle = Text.Completed;
+        _state.SelectedTask = current;
         _heartbeat.RequestImmediate();
         Message = Text.MoveCompleted;
         CanComplete = false;
-    });
+        IsOfflineProgress = false;
+    }
 
     [RelayCommand]
-    private Task ReloadTaskAsync() => RunAsync(async () =>
-    {
-        if (Task == null) return;
-        Task = await _tasks.GetAsync(Task.TaskNo);
-        if (Task.ExecutionVersion != (_scanProfile?.ExecutionVersion ?? Task.ExecutionVersion))
-        {
-            _workflow.Reset(_scanProfile?.Steps.Contains("Lot", StringComparer.OrdinalIgnoreCase) == true);
-            await _offline.ClearAsync();
-            ClearPendingScan();
-            Message = "WM-V2-EXECUTION-CHANGED-RESCAN";
-        }
-        _state.SelectedTask = Task;
-        _heartbeat.RequestImmediate();
-        if (Task.CompletionOperationId == _operationId)
-        {
-            Message = Text.MoveCompleted;
-            CanComplete = false;
-        }
-    });
+    private Task ReloadTaskAsync() => RunAsync(LoadCoreAsync);
 
     [RelayCommand]
-    private void ResetScan()
+    private Task ResetScanAsync() => RunAsync(async () =>
     {
-        _workflow.Reset(_scanProfile?.Steps.Contains(
-            "Lot", StringComparer.OrdinalIgnoreCase) == true);
-        _operationId = Guid.NewGuid();
+        var scope = RequireScope();
+        if (Task is not { Status: 1 }) return;
+        if (_completionAttempted || _pendingClientScanNo != null)
+            throw new InvalidOperationException("请先核对原操作的结果。");
+        _offlineScans.Clear();
+        _workflow.Reset(_scanProfile?.Steps.Contains("Lot", StringComparer.OrdinalIgnoreCase) == true);
         ScanValue = string.Empty;
         Quantity = string.Empty;
         PartialReason = string.Empty;
-        Message = string.Empty;
-        ClearPendingScan();
-        _ = _offline.ClearAsync();
+        await PersistAsync(scope);
+        RequireScope(scope);
         UpdateStep();
+    });
+
+    private void ClearStaleProgress()
+    {
+        if (_scope is { } scope && !_tasks.IsCurrent(scope)) ClearProgress();
+    }
+
+    private void ClearProgress()
+    {
+        _scope = null;
+        Task = null;
+        _scanProfile = null;
+        _operationId = Guid.Empty;
+        _completionAttempted = false;
+        _ownerChecked = false;
+        _submittedReason = null;
+        _offlineScans.Clear();
+        ClearPendingScan();
+        ScanValue = string.Empty;
+        Quantity = string.Empty;
+        PartialReason = string.Empty;
+        StepTitle = string.Empty;
+        CanComplete = false;
+        IsOfflineProgress = false;
+        IsCameraOpen = false;
+    }
+
+    private ClientRequestScope RequireScope() => RequireScope(_scope ?? throw new ClientInteractionChangedException());
+
+    private ClientRequestScope RequireScope(ClientRequestScope scope)
+    {
+        if (_scope != scope || !_tasks.IsCurrent(scope)) throw new ClientInteractionChangedException();
+        return scope;
     }
 
     private void UpdateStep()
@@ -613,20 +738,52 @@ public partial class MoveScanViewModel : MobileViewModel
         CanComplete = _workflow.Step == MoveScanStep.ReadyToComplete;
     }
 
-    private Task PersistAsync()
+    private Task PersistAsync(ClientRequestScope scope)
     {
+        RequireScope(scope);
         if (Task == null || Task.Status != 1 || _scanProfile == null)
             return System.Threading.Tasks.Task.CompletedTask;
-        return _offline.WriteAsync(new OfflineMoveProgress
+        return _offline.WriteAsync(scope, new OfflineMoveProgress
         {
             Task = Task,
             ScanProfile = _scanProfile,
             Step = _workflow.Step,
             ConfirmedQuantity = _workflow.ConfirmedQuantity,
-            PartialReason = PartialReason,
+            PartialReason = _completionAttempted ? _submittedReason : PartialReason,
             CompletionOperationId = _operationId,
+            CompletionAttempted = _completionAttempted,
+            PendingClientScanNo = _pendingClientScanNo,
+            PendingScanStep = _pendingScanStep,
+            PendingScanValue = _pendingScanValue,
+            OfflineScans = [.. _offlineScans],
             SavedAt = DateTimeOffset.UtcNow,
         });
+    }
+
+    private async Task ConfirmOfflineScansAsync(ClientRequestScope scope)
+    {
+        if (_offlineScans.Count == 0) return;
+        var recorded = Task ?? throw new ClientInteractionChangedException();
+        var owner = _tasks.InScope(scope);
+        var current = await owner.GetAsync(recorded.TaskNo);
+        RequireScope(scope);
+        if (!_tasks.CanResumeMove(recorded, current))
+            throw new InvalidOperationException("当前作业无法按原归属恢复。已保留待确认的扫描。");
+
+        while (_offlineScans.Count > 0)
+        {
+            var scan = _offlineScans[0];
+            var result = await owner.ScanAsync(current, scan.Step, scan.Value, scan.ClientScanNo);
+            RequireScope(scope);
+            if (result.Matched != true)
+                throw new InvalidOperationException(result.ErrorCode ?? "WM-V2-SCAN-MISMATCH");
+            _offlineScans.RemoveAt(0);
+            await PersistAsync(scope);
+            RequireScope(scope);
+        }
+        Task = current;
+        _ownerChecked = true;
+        IsOfflineProgress = false;
     }
 
     private void RestoreStep(OfflineMoveProgress cached)

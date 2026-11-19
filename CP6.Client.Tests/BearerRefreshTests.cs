@@ -52,6 +52,56 @@ public sealed class BearerRefreshTests
         Assert.Equal(1, primary.RefreshCalls);
     }
 
+    [Fact]
+    public async Task RefreshReplyArrivingAfterUserSwitchCannotReplaceTheNewSession()
+    {
+        var delayed = new DelayedRefreshHandler();
+        var services = new ServiceCollection();
+        services.AddLogging();
+        var store = new MemoryTokenStore();
+        services.AddSingleton<IRefreshTokenStore>(store);
+        services.AddCp6ClientCore(new ClientOptions
+        {
+            ApiBaseAddress = new Uri("https://cp6.test/"),
+            Platform = "windows",
+            Context = new ClientContext
+            {
+                ClientKind = "Windows", DeviceId = "same-device", AppVersion = "1.0.0",
+            },
+        });
+        services.AddHttpClient(ClientServiceCollectionExtensions.RawClient)
+            .ConfigurePrimaryHttpMessageHandler(() => delayed);
+        await using var provider = services.BuildServiceProvider();
+        var sessions = provider.GetRequiredService<IClientSessionService>();
+        await sessions.AdoptAsync(Session("first"));
+        var refresh = sessions.RefreshMergedAsync("first");
+        await delayed.Started.Task.WaitAsync(TimeSpan.FromSeconds(2));
+        await sessions.AdoptAsync(Session("second"));
+        delayed.Reply.SetResult(new HttpResponseMessage(HttpStatusCode.OK)
+            { Content = JsonContent.Create(Session("first-rotated")) });
+        await refresh;
+
+        Assert.Equal("second", sessions.Current?.Profile.UserName);
+        Assert.Equal("refresh-second", await store.ReadAsync());
+    }
+
+    private static TokenSession Session(string actor) => new()
+    {
+        AccessToken = actor, RefreshToken = "refresh-" + actor, Profile = new ClientProfile { UserName = actor },
+    };
+
+    private sealed class DelayedRefreshHandler : HttpMessageHandler
+    {
+        public TaskCompletionSource Started { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public TaskCompletionSource<HttpResponseMessage> Reply { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            Started.SetResult();
+            return Reply.Task.WaitAsync(cancellationToken);
+        }
+    }
+
     private sealed class MemoryTokenStore : IRefreshTokenStore
     {
         private string? _value;

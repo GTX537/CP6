@@ -158,17 +158,7 @@ public sealed class NativeSsoGrantStore : INativeSsoGrantStore
             throw new InvalidOperationException("E-SEC-024");
 
         ClientContextValidator.Validate(client);
-        if (!string.Equals(client.ClientKind, envelope.Grant.Client.ClientKind, StringComparison.OrdinalIgnoreCase)
-            || !string.Equals(client.DeviceId, envelope.Grant.Client.DeviceId, StringComparison.Ordinal))
-            throw new InvalidOperationException("E-SEC-024");
-        if (!string.Equals(
-                client.AppVersion,
-                envelope.Grant.Client.AppVersion,
-                StringComparison.Ordinal) ||
-            !string.Equals(
-                client.PlatformVersion,
-                envelope.Grant.Client.PlatformVersion,
-                StringComparison.Ordinal))
+        if (AuthenticationEntryServiceV1.Binding(client) != AuthenticationEntryServiceV1.Binding(envelope.Grant.Client))
             throw new InvalidOperationException("E-SEC-024");
 
         if (!await _cache.RemoveIfValueMatchesAsync(key, json, ct))

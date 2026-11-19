@@ -6,4 +6,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\CP6.Entity\DTOs\Client\DeviceProofV1.cs" Link="DeviceProofV1.cs" />
+  </ItemGroup>
 </Project>

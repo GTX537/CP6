@@ -60,8 +60,9 @@ public sealed partial class ClientDeviceService : IClientDeviceService
         var raw = Base64Url(RandomNumberGenerator.GetBytes(32));
         var expires = DateTime.UtcNow.AddMinutes(
             Math.Clamp(request.ValidMinutes, 2, 120));
-        _db.DeviceActivations.Add(new DeviceActivation
+        var activation = new DeviceActivation
         {
+            Id = Guid.NewGuid(),
             TokenHash = Hash(raw),
             Platform = platform,
             DeviceMode = mode,
@@ -69,10 +70,12 @@ public sealed partial class ClientDeviceService : IClientDeviceService
             AreaCd = NullIfWhiteSpace(request.AreaCd),
             ExpiresAt = expires,
             Creator = userName
-        });
+        };
+        _db.DeviceActivations.Add(activation);
         await _db.SaveChangesAsync(ct);
         return new DeviceActivationTicket
         {
+            ActivationOperationId = activation.Id,
             ActivationToken = raw,
             ExpiresAt = expires,
             Platform = platform,
@@ -96,8 +99,10 @@ public sealed partial class ClientDeviceService : IClientDeviceService
     {
         var hash = Hash(request.ActivationToken);
         var activation = await _db.DeviceActivations.IgnoreQueryFilters()
-            .FirstOrDefaultAsync(x => x.TokenHash == hash, ct)
+            .FirstOrDefaultAsync(x => !x.IsDeleted && x.TokenHash == hash, ct)
             ?? throw new InvalidOperationException("WM-DEVICE-ACTIVATION-INVALID");
+        if (request.ActivationOperationId is { } operation && operation != activation.Id)
+            throw new InvalidOperationException("WM-DEVICE-ACTIVATION-INVALID");
         if (activation.ConsumedAt.HasValue || activation.ExpiresAt <= DateTime.UtcNow)
             throw new InvalidOperationException("WM-DEVICE-ACTIVATION-EXPIRED");
         var tenant = await _db.Sys_Tenants.IgnoreQueryFilters()
@@ -116,7 +121,9 @@ public sealed partial class ClientDeviceService : IClientDeviceService
                            && x.DeviceId == request.DeviceId, ct))
             throw new InvalidOperationException("WM-DEVICE-ALREADY-ACTIVATED");
 
-        var now = DateTime.UtcNow;
+        // PostgreSQL 保存微秒。首次响应与原结果回查使用同一时间精度。
+        var ticks = DateTime.UtcNow.Ticks;
+        var now = new DateTime(ticks - ticks % 10, DateTimeKind.Utc);
         activation.ConsumedAt = now;
         activation.ConsumedByDeviceId = request.DeviceId.Trim();
         var device = new ClientDevice
@@ -273,6 +280,9 @@ public sealed partial class ClientDeviceService : IClientDeviceService
         Guid tenantId,
         CancellationToken ct = default)
     {
+        var proof = client.DeviceBinding;
+        if (client.RequiredGate != null && (client.RequiredGate != DeviceProofV1.RegisteredDeviceGate || proof == null))
+            throw new InvalidOperationException("AUTHENTICATION_DENIED");
         var enabled = await _db.WmsFeatureFlags.IgnoreQueryFilters()
             .AnyAsync(x => x.TenantId == tenantId
                            && !x.IsDeleted
@@ -282,14 +292,34 @@ public sealed partial class ClientDeviceService : IClientDeviceService
                                       && x.DeviceId == client.DeviceId, ct);
         if (device == null)
         {
+            if (proof != null) throw new InvalidOperationException("AUTHENTICATION_DENIED");
             if (enabled) throw new InvalidOperationException("WM-DEVICE-NOT-ACTIVATED");
             return;
         }
+        if (proof != null && (device.IsDeleted || device.Status != ClientDeviceStatus.Active || device.Platform != client.ClientKind))
+            throw new InvalidOperationException("AUTHENTICATION_DENIED");
         if (device.IsDeleted) throw new InvalidOperationException("WM-DEVICE-NOT-ACTIVATED");
         EnsureActive(device);
         if (!string.Equals(device.Platform, NormalizePlatform(client.ClientKind),
                 StringComparison.Ordinal))
             throw new InvalidOperationException("WM-DEVICE-PLATFORM-MISMATCH");
+        if (proof != null) await RequireDeviceBindingAsync(device, client, proof, ct);
+    }
+
+    private async Task RequireDeviceBindingAsync(ClientDevice device, ClientContextDto client, ClientDeviceBindingProof proof,
+        CancellationToken ct)
+    {
+        if (proof.ActivationOperationId == Guid.Empty || device.DeviceId != client.DeviceId ||
+            !DeviceProofV1.IsFresh(proof.Timestamp) ||
+            !await _db.DeviceActivations.IgnoreQueryFilters().AsNoTracking().AnyAsync(ticket =>
+                ticket.Id == proof.ActivationOperationId && ticket.TenantId == device.TenantId
+                && !ticket.IsDeleted && ticket.ConsumedByDeviceId == device.DeviceId
+                && ticket.ConsumedAt == device.ActivatedAt && ticket.Platform == device.Platform, ct) ||
+            !DeviceProofV1.IsFresh(proof.Timestamp) ||
+            !VerifyDeviceSignature(device.PublicKey,
+                DeviceProofV1.DeviceBinding(proof.ActivationOperationId, device.DeviceId, device.Platform, client.AppVersion, proof.Timestamp),
+                proof.Signature))
+            throw new InvalidOperationException("AUTHENTICATION_DENIED");
     }
 
     public async Task MarkFullAuthenticationAsync(
