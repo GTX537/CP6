@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP02-19 客户端激活、nonce与身份完成门](../development/evidence/WP02-19/DELIVERY.md)（拆卡，余项 WP02-19b），核对时间 `2026-11-18T22:34:27.922225-05:00`。
 - [WP03-04 询盘同意、保留匿名化与隐私导出](../development/evidence/WP03-04/DELIVERY.md)（DONE），核对时间 `2026-11-18T21:40:01.981651-05:00`。
 - [WP03-02 浏览器绑定公开提交与H01自动受理](../development/evidence/WP03-02/DELIVERY.md)（DONE），核对时间 `2026-11-18T20:31:39.187281-05:00`。
 - [WP02-09b CRM 实际业务收件与同事务原结果余项](https://github.com/GTX537/CP6.CRM/blob/8d50b422326eae296359fbc383623dd8ad994208/docs/development/evidence/WP02-09b/DELIVERY.md)（DONE），核对时间 `2026-11-18T17:31:19.984+00:00`。

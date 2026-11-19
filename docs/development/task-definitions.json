@@ -1408,7 +1408,69 @@
         "docs/development/assessments/20261011/implementation-assessment.json",
         "docs/design-handbook/modules/SYS-CLIENT-01.md",
         "docs/development/assessments/20261011/catalogs/foundation.json"
+      ],
+      "split_children": [
+        "WP02-19b"
+      ],
+      "split_delivered_scope": [
+        "保留已验证的原票据原子消费、并发绑定、当前管理 CAS、nonce、同事务禁用、现行认证完成和迟到刷新拒绝；原验收完整 10 项。",
+        "七项部分证据及现行产品边界见本卡报告；须等待 WP02-19b，升级仍归 WP02-20。"
       ]
+    },
+    {
+      "id": "WP02-19b",
+      "package_id": "WP02",
+      "title": "客户端激活原结果与认证设备边界余项",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "SYS-CLIENT-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP02-19"
+      ],
+      "external_prerequisites": [],
+      "scope": [
+        "按原合同补齐 AC-CL01-03：确认原激活操作标识和当前查询资格，提交未知回读原票据消费与设备结果。",
+        "按原合同补齐 AC-CL02-03、AC-CL02-04、AC-CL03-04、AC-CL04-04：换仓／模式、启用恢复、迟到心跳与切人以后，在途业务 Owner、离线队列及原草稿身份隔离。",
+        "按原合同补齐 AC-CL04-02、AC-CL04-05：冻结旧可选和新 Required 的设备租户边界、能力声明、旧端 pending 与原会话恢复后的原业务键。"
+      ],
+      "outputs": [
+        "七项原验收的限定采用、实际 Main 和客户端入口与原结果回归。",
+        "精确证据、完整严格前置和安全恢复行为；升级 AC-CL05 仍归 WP02-20。"
+      ],
+      "code_paths": [
+        "CP6.Core/Services/Wms/ClientDeviceService.cs",
+        "CP6.WebApi/Controllers/ClientAuthController.cs",
+        "CP6.WebApi/Controllers/ClientDevicesController.cs",
+        "CP6.Client.Core/ClientDeviceHeartbeatLoop.cs",
+        "CP6.Client.Core/OfflineMoveProgress.cs"
+      ],
+      "new_paths": [],
+      "acceptance_positive": [
+        "按原操作和当前资格回查恰好一份原绑定，切仓、切模式与重新完整认证保留业务 Owner 和原键。",
+        "按批准的兼容方式处理 Required、pending、原认证会话及旧端；同一客户端离线及切人恢复保持各自原范围。"
+      ],
+      "acceptance_negative": [
+        "错误原操作／租户／证明、过期重复或迟到结果无新绑定和新会话；原 raw 票据无返回。",
+        "切人、离线重连及认证未知不恢复他人队列、因子和草稿，旧端能力不足按原拒绝状态处理。"
+      ],
+      "exclusive_resources": [
+        "Main:client-auth",
+        "file:Main:CP6.Core/Services/Wms/ClientDeviceService.cs",
+        "file:Main:CP6.WebApi/Controllers/ClientAuthController.cs"
+      ],
+      "notes": "原 WP02-19 七项部分验收的余卡。原定义与 AC 保留，首先核实 COORD 对原结果信任关系、Required 与旧 pending 的裁决。其余采用沿原 Owner。",
+      "prerequisite_bindings": [],
+      "source_refs": [
+        "docs/development/08-postgresql-baseline.md",
+        "docs/development/assessments/20261011/implementation-assessment.json",
+        "docs/design-handbook/modules/SYS-CLIENT-01.md",
+        "docs/development/assessments/20261011/catalogs/foundation.json",
+        "docs/development/evidence/WP02-19/DELIVERY.md"
+      ],
+      "split_parent": "WP02-19"
     },
     {
       "id": "WP02-20",
