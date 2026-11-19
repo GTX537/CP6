@@ -192,6 +192,7 @@ public sealed partial class ClientAuthController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> TwoFactorSetup(NativeChallengeRequest request)
     {
+        ValidateClient(request.Client);
         if (_db.Database.IsNpgsql()) return Ok(await Entries.SetupAsync(request.ChallengeToken, request.Client, HttpContext.RequestAborted));
         var (user, _, _) = await ReadChallengeAsync(request, expectedPurpose: "2fa_enroll");
         string uri;
@@ -205,6 +206,7 @@ public sealed partial class ClientAuthController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<NativeAuthResult>> TwoFactorEnroll(NativeTwoFactorRequest request)
     {
+        ValidateClient(request.Client);
         if (_db.Database.IsNpgsql()) return await PgNativeResultAsync(() => Entries.CompleteFactorAsync(request.ChallengeToken, request.Client, true, "totp", request.Code, ClientIp, ClientUa, null, HttpContext.RequestAborted, deferOutput: true));
         var (user, challenge, _) = await ReadChallengeAsync(request, "2fa_enroll");
         if (!await _twoFactor.ConfirmEnrollmentAsync(user, request.Code))
@@ -227,6 +229,7 @@ public sealed partial class ClientAuthController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<NativeAuthResult>> TwoFactorVerify(NativeTwoFactorRequest request)
     {
+        ValidateClient(request.Client);
         if (_db.Database.IsNpgsql()) return await PgNativeResultAsync(() => Entries.CompleteFactorAsync(request.ChallengeToken, request.Client, false, request.Method, request.Code, ClientIp, ClientUa, null, HttpContext.RequestAborted, deferOutput: true));
         var (user, challenge, _) = await ReadChallengeAsync(request, "2fa_verify");
         try { _loginSecurity.EnsureNotLocked(user); }
@@ -259,6 +262,7 @@ public sealed partial class ClientAuthController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> TwoFactorEmailOtp(NativeChallengeRequest request)
     {
+        ValidateClient(request.Client);
         if (_db.Database.IsNpgsql()) { await Entries.SendEmailAsync(request.ChallengeToken, request.Client, HttpContext.RequestAborted); return Ok(new { code = 0 }); }
         var (user, challenge, purpose) = await ReadChallengeAsync(request);
         if (purpose == "2fa_enroll") throw new BizException("E-SEC-014");
@@ -338,6 +342,7 @@ public sealed partial class ClientAuthController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<NativeAuthResult>> SsoExchange(NativeSsoExchangeRequest request)
     {
+        ValidateClient(request.Client);
         try
         {
             var grant = await _nativeGrants.ConsumeGrantAsync(
@@ -350,7 +355,8 @@ public sealed partial class ClientAuthController : ControllerBase
                 if (grant.Proof == null || grant.Proof.UserId != grant.UserId || grant.Proof.TenantId != grant.TenantId)
                     throw new InvalidOperationException("AUTH_PRIMARY_PROOF_REQUIRED");
                 return await PgNativeResultAsync(() => Entries.BeginAsync(grant.Proof, AuthenticationRecoveryBindingV1.NativeGrant(request.GrantCode, request.CodeVerifier),
-                    request.Client, ClientIp, ClientUa, null, HttpContext.RequestAborted, deferOutput: true));
+                    request.Client, ClientIp, ClientUa, null, HttpContext.RequestAborted, deferOutput: true,
+                    supportsPending: grant.Client.SupportsSsoPending));
             }
             _tenant.CurrentTenantId = grant.TenantId;
             var user = await _db.Sys_Users.IgnoreQueryFilters()
@@ -600,9 +606,13 @@ public sealed partial class ClientAuthController : ControllerBase
     private static string ClientReason(ClientContextDto client, string? detail)
         => $"client={client.ClientKind};device={client.DeviceId};version={client.AppVersion};detail={detail}";
 
-    private static void ValidateClient(ClientContextDto client)
+    private void ValidateClient(ClientContextDto client)
     {
         try { ClientContextValidator.Validate(client); }
         catch (InvalidOperationException ex) { throw new BizException(ex.Message); }
+        if (client.RequiredGate != DeviceProofV1.RegisteredDeviceGate) return;
+        var release = client.ClientKind == "Android" ? _security.NativeClient.Android : _security.NativeClient.Windows;
+        if (ClientBootstrapController.Compare(client.AppVersion, release.MinimumVersion) < 0)
+            throw new BizException("AUTHENTICATION_DENIED", StatusCodes.Status403Forbidden);
     }
 }

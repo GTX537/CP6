@@ -38,6 +38,12 @@ public sealed class Cp6ApiClient
     public Task<NativeAuthResult> ExchangeSsoAsync(NativeSsoExchangeRequest request, CancellationToken ct = default)
         => SendAsync<NativeAuthResult>(HttpMethod.Post, "api/client-auth/sso/exchange", request, ct);
 
+    public Task<NativeCompletionRecovery> GetCompletionStatusAsync(NativeCompletionRecoveryRequest request, CancellationToken ct = default)
+        => SendAsync<NativeCompletionRecovery>(HttpMethod.Post, "api/client-auth/completion/status", request, ct);
+
+    public Task<NativeCompletionRecovery> CloseCompletionAsync(NativeCompletionRecoveryRequest request, CancellationToken ct = default)
+        => SendAsync<NativeCompletionRecovery>(HttpMethod.Post, "api/client-auth/completion/close", request, ct);
+
     public Task<TokenSession> RefreshAsync(NativeRefreshRequest request, CancellationToken ct = default)
         => SendAsync<TokenSession>(HttpMethod.Post, "api/client-auth/refresh", request, ct);
 
@@ -53,6 +59,9 @@ public sealed class Cp6ApiClient
         ActivateClientDeviceRequest request,
         CancellationToken ct = default)
         => SendAsync<ActivatedClientDevice>(HttpMethod.Post, "api/client/devices/activate", request, ct);
+
+    public Task<DeviceActivationRecovery> GetActivationStatusAsync(RecoverDeviceActivationRequest request, CancellationToken ct = default)
+        => SendAsync<DeviceActivationRecovery>(HttpMethod.Post, "api/client/devices/activate/status", request, ct);
 
     public Task<ClientDevice> HeartbeatAsync(
         ClientDeviceHeartbeatRequest request,

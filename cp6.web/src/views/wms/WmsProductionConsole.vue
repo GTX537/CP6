@@ -552,6 +552,7 @@ async function createActivation() {
     server: activationForm.server,
     tenant: activationForm.tenant,
     token: ticket.activationToken,
+    operation: ticket.activationOperationId,
     platform: activationForm.platform,
     scanPrefix: activationForm.scanPrefix,
     scanSuffix: activationForm.scanSuffix,

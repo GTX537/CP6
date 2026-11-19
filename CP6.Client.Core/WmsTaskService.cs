@@ -5,6 +5,7 @@ namespace CP6.Client.Core;
 public sealed class WmsTaskService
 {
     private readonly Cp6ApiClient _api;
+    private readonly HttpClient _transport;
     private readonly ClientOptions _options;
     private readonly IClientSessionService _sessions;
 
@@ -12,11 +13,45 @@ public sealed class WmsTaskService
         IHttpClientFactory clients,
         ClientOptions options,
         IClientSessionService sessions)
+        : this(clients.CreateClient(ClientServiceCollectionExtensions.AuthenticatedClient), options, sessions, null) { }
+
+    private WmsTaskService(HttpClient transport, ClientOptions options, IClientSessionService sessions, ClientRequestScope? scope)
     {
-        _api = new Cp6ApiClient(clients.CreateClient(ClientServiceCollectionExtensions.AuthenticatedClient));
+        _transport = transport;
+        _api = new Cp6ApiClient(transport, scope);
         _options = options;
         _sessions = sessions;
     }
+
+    public ClientRequestScope CaptureScope()
+    {
+        var interaction = _sessions.InteractionVersion;
+        var actor = ClientLabelGatewayContext.ReadIdentity(_sessions.AccessToken, _options.ApiBaseAddress, _options.Context.DeviceId);
+        return new(actor.Source, actor.TenantId, actor.ActorId, actor.DeviceId, interaction);
+    }
+
+    public bool IsCurrent(ClientRequestScope scope)
+    {
+        try { return CaptureScope() == scope; }
+        catch (LabelGatewayRecoveryException) { return false; }
+    }
+
+    public WmsTaskService InScope(ClientRequestScope scope)
+    {
+        if (!IsCurrent(scope)) throw new ClientInteractionChangedException();
+        return new(_transport, _options, _sessions, scope);
+    }
+
+    public static bool IsOriginalCompletion(MobileTask task, Guid operationId)
+        => task.CompletionOperationId == operationId && task.Status is 2 or 3;
+
+    public bool CanResumeMove(MobileTask recorded, MobileTask current)
+        => current.Status == 1 && current.ExecutionVersion == recorded.ExecutionVersion
+            && current.TaskNo == recorded.TaskNo && current.WarehouseCd == recorded.WarehouseCd
+            && current.FromLocationCd == recorded.FromLocationCd && current.ToLocationCd == recorded.ToLocationCd
+            && current.ProductCd == recorded.ProductCd && current.LotNo == recorded.LotNo && current.Qty == recorded.Qty
+            && current.AssignedTo == recorded.AssignedTo
+            && string.Equals(current.AssignedTo, _sessions.Current?.Profile.UserName, StringComparison.OrdinalIgnoreCase);
 
     public Task<PagedResult<MobileTask>> GetAllAsync(
         string? assignedTo = null,
@@ -154,8 +189,7 @@ public sealed class WmsTaskService
         {
             var current = await ProbeTaskAsync(
                 task.TaskNo, "complete", operationId, ex, ct);
-            if (current.CompletionOperationId == operationId
-                && current.Status is 2 or 3)
+            if (IsOriginalCompletion(current, operationId))
                 return current;
             throw Unknown(
                 task.TaskNo, "complete", operationId,

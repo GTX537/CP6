@@ -183,20 +183,17 @@ public static class DesktopSettings
 
 public sealed class DesktopDeviceActivationService
 {
-    private readonly Cp6ApiClient _api;
+    private readonly NativeDeviceActivationService _activation;
     private readonly ClientOptions _options;
-    private readonly IDeviceRequestSigner _signer;
     private readonly ClientDeviceHeartbeatLoop _heartbeat;
 
     public DesktopDeviceActivationService(
-        IHttpClientFactory clients,
+        NativeDeviceActivationService activation,
         ClientOptions options,
-        IDeviceRequestSigner signer,
         ClientDeviceHeartbeatLoop heartbeat)
     {
-        _api = new Cp6ApiClient(clients.CreateClient(ClientServiceCollectionExtensions.RawClient));
+        _activation = activation;
         _options = options;
-        _signer = signer;
         _heartbeat = heartbeat;
     }
 
@@ -209,16 +206,7 @@ public sealed class DesktopDeviceActivationService
         _options.ApiBaseAddress = ticket.Server;
         try
         {
-            var result = await _api.ActivateDeviceAsync(new ActivateClientDeviceRequest
-            {
-                TenantCode = ticket.Tenant,
-                ActivationToken = ticket.Token,
-                DeviceId = _options.Context.DeviceId,
-                PublicKey = await _signer.GetOrCreatePublicKeyAsync(ct),
-                Platform = "Windows",
-                AppVersion = _options.Context.AppVersion,
-                PlatformVersion = _options.Context.PlatformVersion,
-            }, ct);
+            var result = await _activation.ActivateAsync(ticket.Server, ticket.Tenant, ticket.Token, ticket.Operation, ct);
             DesktopSettings.WriteApiUrl(ticket.Server.AbsoluteUri);
             DesktopSettings.WriteDeviceActivation(true);
             _heartbeat.RequestImmediate();
@@ -231,7 +219,7 @@ public sealed class DesktopDeviceActivationService
         }
     }
 
-    private static (Uri Server, string Tenant, string Token) Parse(string payload)
+    private static (Uri Server, string Tenant, string Token, Guid? Operation) Parse(string payload)
     {
         if (!Uri.TryCreate(payload.Trim(), UriKind.Absolute, out var uri)
             || !string.Equals(uri.Scheme, "cp6-activate", StringComparison.OrdinalIgnoreCase))
@@ -244,13 +232,24 @@ public sealed class DesktopDeviceActivationService
                 StringComparer.OrdinalIgnoreCase);
         if (!values.TryGetValue("server", out var server)
             || !Uri.TryCreate(server, UriKind.Absolute, out var serverUri)
+            || serverUri.Scheme is not ("https" or "http")
             || !values.TryGetValue("tenant", out var tenant)
-            || !values.TryGetValue("token", out var token))
+            || string.IsNullOrWhiteSpace(tenant)
+            || !values.TryGetValue("token", out var token)
+            || string.IsNullOrWhiteSpace(token))
             throw new InvalidOperationException("WM-DEVICE-ACTIVATION-QR-INVALID");
         return (
             new Uri(serverUri.AbsoluteUri.EndsWith('/') ? serverUri.AbsoluteUri : $"{serverUri}/"),
             tenant.Trim(),
-            token.Trim());
+            token.Trim(),
+            ParseOperation(values));
+    }
+
+    private static Guid? ParseOperation(IReadOnlyDictionary<string, string> values)
+    {
+        if (!values.TryGetValue("operation", out var provided)) return null;
+        if (Guid.TryParse(provided, out var id) && id != Guid.Empty) return id;
+        throw new InvalidOperationException("WM-DEVICE-ACTIVATION-QR-INVALID");
     }
 }
 

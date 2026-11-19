@@ -124,6 +124,25 @@ public sealed class NativeSsoServiceTests
             transport.ExchangeRequest!.CodeVerifier);
     }
 
+    [Fact]
+    public async Task Unknown_exchange_checks_and_closes_original_grant_without_exchanging_again()
+    {
+        var verifierStore = new MemoryPkceVerifierStore();
+        var sessions = new RecordingSessionService();
+        var transport = new SsoHandler { LoseReply = true };
+        var service = Create("windows", transport, new RecordingBrowser(), verifierStore, sessions);
+        await service.StartAsync("DEMO");
+        var callback = new Uri($"cp6-desktop://auth/callback?grantCode={GrantCode()}");
+
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(() => service.CompleteAsync(callback));
+        Assert.Contains("原认证交互已关闭", error.Message);
+        Assert.Equal(1, transport.ExchangeCalls);
+        Assert.Equal(1, transport.RecoveryReads);
+        Assert.Equal(1, transport.RecoveryCloses);
+        Assert.Null(sessions.Adopted);
+        Assert.Null(await verifierStore.TakeAsync());
+    }
+
     private static NativeSsoService Create(
         string platform,
         HttpMessageHandler handler,
@@ -171,12 +190,27 @@ public sealed class NativeSsoServiceTests
         public NativeSsoStartRequest? StartRequest { get; private set; }
         public NativeSsoExchangeRequest? ExchangeRequest { get; private set; }
         public int ExchangeCalls { get; private set; }
+        public bool LoseReply { get; init; }
+        public int RecoveryReads { get; private set; }
+        public int RecoveryCloses { get; private set; }
 
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
-            if (request.RequestUri!.AbsolutePath.EndsWith(
+            if (request.RequestUri!.AbsolutePath.Contains("/completion/", StringComparison.Ordinal))
+            {
+                var original = await request.Content!.ReadFromJsonAsync<NativeCompletionRecoveryRequest>(cancellationToken);
+                Assert.Equal("native-grant", original!.Kind);
+                Assert.Equal(ExchangeRequest!.GrantCode, original.Credential);
+                Assert.Equal(ExchangeRequest.CodeVerifier, original.CodeVerifier);
+                var read = request.RequestUri.AbsolutePath.EndsWith("/status", StringComparison.Ordinal);
+                if (read) RecoveryReads++;
+                else RecoveryCloses++;
+                return Json(new NativeCompletionRecovery(read ? "COMPLETED" : "CLOSED"));
+            }
+
+            if (request.RequestUri.AbsolutePath.EndsWith(
                     "/sso/start",
                     StringComparison.Ordinal))
             {
@@ -201,6 +235,7 @@ public sealed class NativeSsoServiceTests
                         await request.Content!.ReadAsStringAsync(
                             cancellationToken),
                         JsonOptions);
+                if (LoseReply) throw new HttpRequestException("模拟确认丢失。");
                 return Json(new NativeAuthResult
                 {
                     State = "authenticated",

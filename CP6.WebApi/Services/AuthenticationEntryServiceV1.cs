@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.WebApi.Services;
 
 public sealed record AuthenticationEntryResultV1(AuthenticationProofV1 Proof, string? Challenge,
-    string? Purpose, TokenSessionDto? Session);
+    string? Purpose, TokenSessionDto? Session, bool RegisteredDeviceVerified = false);
 
 /// <summary>All PostgreSQL interactive issuers retain the original primary proof through one completion transaction.</summary>
 public sealed partial class AuthenticationEntryServiceV1(CP6Context db, ITenantContext tenant,
@@ -19,12 +19,24 @@ public sealed partial class AuthenticationEntryServiceV1(CP6Context db, ITenantC
     IAuthSessionService sessions, IRefreshTokenService refresh, ITwoFactorService factors,
     ILoginSecurityService login, IClientDeviceService devices, ICrmOidcGrantStore? crmGrants = null, IDataProtectionProvider? protection = null)
 {
-    public static string Binding(ClientContextDto client) => AuthenticationInteractionStoreV1.Hash(
-        JsonSerializer.Serialize(new[] { client.ClientKind, client.DeviceId, client.AppVersion, client.PlatformVersion }));
+    internal const string NativeAdapterRequired = "AUTH_NATIVE_ADAPTER_REQUIRED";
+
+    public static string Binding(ClientContextDto client)
+    {
+        var values = new List<string?> { client.ClientKind, client.DeviceId, client.AppVersion, client.PlatformVersion };
+        if (client.SupportsSsoPending) values.Add("sso-pending-v1");
+        if (HasExplicitDeviceBinding(client))
+            values.AddRange(["device-binding-v1", client.RequiredGate, client.DeviceBinding?.ActivationOperationId.ToString("D")]);
+        return AuthenticationInteractionStoreV1.Hash(JsonSerializer.Serialize(values));
+    }
+    private static bool HasExplicitDeviceBinding(ClientContextDto client)
+        => client.RequiredGate != null || client.DeviceBinding != null;
+
     public static string WebBinding(string challenge) => AuthenticationInteractionStoreV1.Hash(challenge);
 
     public async Task<AuthenticationEntryResultV1> BeginAsync(AuthenticationProofV1 proof, string challenge,
-        ClientContextDto? client, string? ip, string? ua, Action<AuthenticationEntryResultV1>? stage, CancellationToken ct, bool deferOutput = false)
+        ClientContextDto? client, string? ip, string? ua, Action<AuthenticationEntryResultV1>? stage, CancellationToken ct,
+        bool deferOutput = false, bool supportsPending = true)
     {
         tenant.CurrentTenantId = proof.TenantId;
         RequireClient(proof, challenge, client);
@@ -36,6 +48,8 @@ public sealed partial class AuthenticationEntryServiceV1(CP6Context db, ITenantC
         {
             if (lockout is not null) await lockout.RequireNoPendingLoginLockoutAsync(proof.TenantId, proof.UserId, token);
             var decision = authority.Decide();
+            if (client != null && HasExplicitDeviceBinding(client))
+                await devices.EnsureLoginAllowedAsync(client, authority.User.TenantId, token);
             var purpose = decision switch
             {
                 AuthenticationDecisionV1.EnrollmentRequired => "2fa_enroll",
@@ -46,8 +60,17 @@ public sealed partial class AuthenticationEntryServiceV1(CP6Context db, ITenantC
             AuthenticationEntryResultV1 result;
             if (purpose != "primary")
             {
-                Audit(authority.User, SecurityEventType.TwoFactorChallenged, proof, ip, ua);
-                result = new(proof, challenge, purpose, null);
+                if (!supportsPending)
+                {
+                    // 已消费的原 grant 只保留关闭状态，旧 Native 无法领取挑战或会话。
+                    await AuthenticationCompletionRecoveryV1.ApplyCloseWithinRootAsync(db, proof.CompletionRef, null, token);
+                    result = new(proof, null, NativeAdapterRequired, null);
+                }
+                else
+                {
+                    Audit(authority.User, SecurityEventType.TwoFactorChallenged, proof, ip, ua);
+                    result = new(proof, challenge, purpose, null);
+                }
             }
             else
             {
@@ -72,6 +95,8 @@ public sealed partial class AuthenticationEntryServiceV1(CP6Context db, ITenantC
         pending ??= await store.ReadAsync(challenge, binding, purpose, ct);
         RequireClient(pending.Proof, challenge, client);
         tenant.CurrentTenantId = pending.Proof.TenantId;
+        if (client != null && HasExplicitDeviceBinding(client))
+            await devices.EnsureLoginAllowedAsync(client, pending.Proof.TenantId, ct);
         return pending;
     }
 
@@ -220,7 +245,9 @@ public sealed partial class AuthenticationEntryServiceV1(CP6Context db, ITenantC
         Audit(authority.User, authority.Proof.PrimaryMethod == AuthenticationPrimaryMethod.Sso
             ? SecurityEventType.SsoLoginSuccess : SecurityEventType.LoginSuccess, authority.Proof, ip, ua);
         return new(authority.Proof, null, null, new TokenSessionDto { AccessToken = access, AccessExpiresAt = sessions.AccessExpiresAt,
-            RefreshToken = raw, RefreshExpiresAt = expires, Profile = profile });
+            RefreshToken = raw, RefreshExpiresAt = expires, Profile = profile },
+            RegisteredDeviceVerified: client?.RequiredGate == DeviceProofV1.RegisteredDeviceGate
+                && authority.Proof.PrimaryMethod != AuthenticationPrimaryMethod.QuickSwitchPin);
     }
 
     public async Task RejectOutputAsync(AuthenticationEntryResultV1 result)

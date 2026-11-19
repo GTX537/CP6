@@ -13,6 +13,7 @@ public sealed class CreateDeviceActivationRequest
 
 public sealed class DeviceActivationTicket
 {
+    public Guid ActivationOperationId { get; init; }
     public string ActivationToken { get; init; } = string.Empty;
     public DateTimeOffset ExpiresAt { get; init; }
     public string Platform { get; init; } = string.Empty;
@@ -23,6 +24,7 @@ public sealed class DeviceActivationTicket
 
 public sealed class ActivateClientDeviceRequest
 {
+    public Guid? ActivationOperationId { get; set; }
     public string TenantCode { get; set; } = string.Empty;
     public string ActivationToken { get; set; } = string.Empty;
     public string DeviceId { get; set; } = string.Empty;
@@ -41,6 +43,17 @@ public sealed class ActivatedClientDeviceDto
     public string? AreaCd { get; init; }
     public DateTimeOffset ActivatedAt { get; init; }
 }
+
+public sealed class RecoverDeviceActivationRequest
+{
+    public Guid ActivationOperationId { get; set; }
+    public string TenantCode { get; set; } = string.Empty;
+    public string DeviceId { get; set; } = string.Empty;
+    public DateTimeOffset Timestamp { get; set; }
+    public string Signature { get; set; } = string.Empty;
+}
+
+public sealed record DeviceActivationRecoveryDto(string State, ActivatedClientDeviceDto? Registration);
 
 public sealed class ClientDeviceHeartbeatRequest
 {

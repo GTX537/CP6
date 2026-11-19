@@ -20,32 +20,51 @@ public sealed class BearerTokenHandler : DelegatingHandler
         HttpRequestMessage request,
         CancellationToken cancellationToken)
     {
+        var interaction = _sessions.InteractionVersion;
         var token = _sessions.AccessToken;
         RequirePinnedScope(request, token);
         if (!string.IsNullOrWhiteSpace(token))
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var safeToReplay = request.Method is { } method
-                           && (method == HttpMethod.Get || method == HttpMethod.Head || method == HttpMethod.Options);
-        var retry = safeToReplay ? await CloneAsync(request, cancellationToken) : null;
+            && (method == HttpMethod.Get || method == HttpMethod.Head || method == HttpMethod.Options);
+        using var retry = safeToReplay ? await CloneAsync(request, cancellationToken) : null;
         var response = await base.SendAsync(request, cancellationToken);
+        if (interaction != _sessions.InteractionVersion)
+        {
+            response.Dispose();
+            throw new ClientInteractionChangedException();
+        }
         if (response.StatusCode != HttpStatusCode.Unauthorized
             || request.RequestUri?.AbsolutePath.Contains("/client-auth/", StringComparison.OrdinalIgnoreCase) == true)
             return response;
 
-        await _sessions.RefreshMergedAsync(token, cancellationToken);
-        if (retry == null) return response;
-
-        response.Dispose();
-        var refreshed = _sessions.AccessToken;
-        RequirePinnedScope(retry, refreshed);
-        retry.Headers.Authorization = new AuthenticationHeaderValue("Bearer", refreshed);
-        return await base.SendAsync(retry, cancellationToken);
+        try
+        {
+            await _sessions.RefreshMergedAsync(token, cancellationToken);
+            if (interaction != _sessions.InteractionVersion) throw new ClientInteractionChangedException();
+            if (retry == null) return response;
+            response.Dispose();
+            var refreshed = _sessions.AccessToken;
+            RequirePinnedScope(retry, refreshed);
+            retry.Headers.Authorization = new AuthenticationHeaderValue("Bearer", refreshed);
+            var replay = await base.SendAsync(retry, cancellationToken);
+            if (interaction == _sessions.InteractionVersion) return replay;
+            replay.Dispose();
+            throw new ClientInteractionChangedException();
+        }
+        catch
+        {
+            response.Dispose();
+            throw;
+        }
     }
 
     private void RequirePinnedScope(HttpRequestMessage request, string? token)
     {
         if (!request.Options.TryGetValue(ClientRequestScope.Key, out var pinned)) return;
+        if (pinned.InteractionVersion is { } version && version != _sessions.InteractionVersion)
+            throw new ClientInteractionChangedException();
         if (_options == null || !_options.ApiBaseAddress.Equals(pinned.Source) || _options.Context.DeviceId != pinned.DeviceId)
             throw new LabelGatewayRecoveryException("RecoveryScopeChanged");
         var actor = ClientLabelGatewayContext.ReadIdentity(token, pinned.Source, pinned.DeviceId);

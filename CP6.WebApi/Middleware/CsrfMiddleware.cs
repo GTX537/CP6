@@ -84,6 +84,9 @@ public class CsrfMiddleware
            || path.Equals("/connect/inquiry-service-context-v2", StringComparison.OrdinalIgnoreCase)
            // Dapr deliveries require the explicit sidecar token and never authenticate with cookies.
            || path.Equals("/internal/erp/v1/events", StringComparison.OrdinalIgnoreCase)
+           // 原生激活使用请求体票据，回查使用原设备持钥证明。两者均不读取浏览器 Cookie。
+           || path.Equals("/api/client/devices/activate", StringComparison.OrdinalIgnoreCase)
+           || path.Equals("/api/client/devices/activate/status", StringComparison.OrdinalIgnoreCase)
            || IsNativeAnonymousAuthPath(path)
            || PathMatches(path, "/hubs")
            || IsFlowTriggerFirePath(path);

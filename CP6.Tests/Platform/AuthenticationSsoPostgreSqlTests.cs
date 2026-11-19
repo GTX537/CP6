@@ -79,7 +79,8 @@ public sealed partial class AuthenticationSsoPostgreSqlTests(TenantManagementPos
     public async Task Native_SSO_real_signature_and_original_proof_obey_local_factor_and_remediation(int mode, bool enabledFactor, bool remediation)
     {
         await using var h = await Harness.Create(server, mode, enabledFactor, remediation);
-        var client = new ClientContextDto { ClientKind = "Windows", DeviceId = "sso-device", AppVersion = "1.0", PlatformVersion = "test" };
+        var client = new ClientContextDto
+            { ClientKind = "Windows", DeviceId = "sso-device", AppVersion = "1.0", PlatformVersion = "test", SupportsSsoPending = true };
         var verifier = new string('v', 43);
         var started = (await h.Controller.SsoStart(new NativeSsoStartRequest { TenantCode = h.Organization.TenantCode,
             RedirectUri = "cp6://sso/callback", Client = client,
@@ -130,6 +131,37 @@ public sealed partial class AuthenticationSsoPostgreSqlTests(TenantManagementPos
             new RefreshTokenClientContext(client.ClientKind, client.DeviceId, client.AppVersion)));
         await Assert.ThrowsAsync<CP6.WebApi.Localization.BizException>(() => h.Controller.SsoExchange(request));
         Assert.Equal(1, h.ExchangeCount);
+    }
+
+    [TenantManagementPostgresTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Native_SSO_without_pending_adapter_is_closed_before_any_session(bool enrolled)
+    {
+        await using var h = await Harness.Create(server, 2, enrolled, false);
+        var client = new ClientContextDto { ClientKind = "Windows", DeviceId = "legacy-sso-device", AppVersion = "1.0" };
+        var verifier = new string('v', 43);
+        var started = (await h.Controller.SsoStart(new NativeSsoStartRequest
+        {
+            TenantCode = h.Organization.TenantCode, RedirectUri = "cp6://sso/callback", Client = client,
+            CodeChallenge = Base64UrlEncoder.Encode(SHA256.HashData(Encoding.ASCII.GetBytes(verifier)))
+        })).Value!;
+        var query = HttpUtility.ParseQueryString(new Uri(started.AuthorizeUrl).Query);
+        h.Nonce = query["nonce"]!;
+        var callback = Assert.IsType<RedirectResult>(await h.Controller.SsoCallback("code", query["state"]!));
+        var grant = HttpUtility.ParseQueryString(new Uri(callback.Url!).Query)["grantCode"]!;
+        var request = new NativeSsoExchangeRequest { GrantCode = grant, CodeVerifier = verifier, Client = client };
+
+        var result = await h.Controller.SsoExchange(request);
+        var rejected = Assert.IsType<ConflictObjectResult>(result.Result);
+        using var response = System.Text.Json.JsonDocument.Parse(System.Text.Json.JsonSerializer.Serialize(rejected.Value));
+        Assert.Equal("AUTH_NATIVE_ADAPTER_REQUIRED", response.RootElement.GetProperty("code").GetString());
+        Assert.False(response.RootElement.TryGetProperty("session", out _));
+        Assert.False(response.RootElement.TryGetProperty("challengeToken", out _));
+        Assert.False(await h.Db.Sys_RefreshTokens.AnyAsync(x => x.UserId == h.User.Id));
+        var recovery = new NativeCompletionRecoveryRequest
+            { Kind = "native-grant", Credential = grant, CodeVerifier = verifier, Client = client };
+        Assert.Equal("CLOSED", (await h.Controller.CompletionStatus(recovery)).Value!.State);
     }
 
     [TenantManagementPostgresTheory]

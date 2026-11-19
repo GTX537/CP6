@@ -13,6 +13,7 @@ public interface IClientDeviceService
     Task<ActivatedClientDeviceDto> ActivateAsync(
         ActivateClientDeviceRequest request,
         CancellationToken ct = default);
+    Task<DeviceActivationRecoveryDto> RecoverActivationAsync(RecoverDeviceActivationRequest request, CancellationToken ct = default);
     Task<ClientDeviceDto> HeartbeatAsync(
         ClientDeviceHeartbeatRequest request,
         string? userName,

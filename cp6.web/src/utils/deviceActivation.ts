@@ -5,6 +5,7 @@ export interface DeviceActivationPayloadInput {
   server: string
   tenant: string
   token: string
+  operation?: string
   platform: DeviceActivationPlatform
   scanPrefix?: string
   scanSuffix?: string
@@ -18,6 +19,8 @@ export function buildDeviceActivationPayload(input: DeviceActivationPayloadInput
     tenant: input.tenant.trim(),
     token: input.token,
   })
+
+  if (input.operation) query.set('operation', input.operation)
 
   if (input.platform === 'Android') {
     if (input.scanPrefix) query.set('scanPrefix', input.scanPrefix)

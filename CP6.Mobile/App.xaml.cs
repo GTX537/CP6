@@ -7,16 +7,19 @@ public partial class App : Application
     private readonly AppShell _shell;
     private readonly ClientDeviceHeartbeatLoop _heartbeat;
     private readonly WmsRealtimeService _realtime;
+    private readonly IClientSessionService _sessions;
 
     public App(
         AppShell shell,
         ClientDeviceHeartbeatLoop heartbeat,
-        WmsRealtimeService realtime)
+        WmsRealtimeService realtime,
+        IClientSessionService sessions)
     {
         InitializeComponent();
         _shell = shell;
         _heartbeat = heartbeat;
         _realtime = realtime;
+        _sessions = sessions;
         _heartbeat.StateChanged += HeartbeatOnStateChanged;
     }
 
@@ -43,10 +46,12 @@ public partial class App : Application
         if (e.Status != ClientDeviceHeartbeatStatus.Rejected)
             return;
 
+        var interaction = _sessions.InteractionVersion;
         MainThread.BeginInvokeOnMainThread(async () =>
         {
+            if (_sessions.Current != null || _sessions.InteractionVersion != interaction) return;
             await _realtime.StopAsync();
-            if (Shell.Current is not null)
+            if (_sessions.Current == null && _sessions.InteractionVersion == interaction && Shell.Current is not null)
                 await Shell.Current.GoToAsync("//login");
         });
     }

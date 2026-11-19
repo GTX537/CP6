@@ -10,6 +10,10 @@ public interface IClientDeviceHeartbeatSender
         int? batteryPercent = null,
         string? networkType = null,
         CancellationToken ct = default);
+
+    Task<ClientDevice> SendForSessionAsync(TokenSession session, string? currentTaskNo, int? batteryPercent,
+        string? networkType, CancellationToken ct = default)
+        => SendAsync(currentTaskNo, batteryPercent, networkType, ct);
 }
 
 public sealed record ClientDeviceHeartbeatSnapshot(
@@ -206,7 +210,8 @@ public sealed class ClientDeviceHeartbeatLoop : IAsyncDisposable
 
     private async Task<SendOutcome> TrySendAsync(CancellationToken ct)
     {
-        if (_sessions.Current is null)
+        var session = _sessions.Current;
+        if (session is null)
         {
             Publish(ClientDeviceHeartbeatStatus.WaitingForSession);
             return SendOutcome.Skipped;
@@ -230,6 +235,7 @@ public sealed class ClientDeviceHeartbeatLoop : IAsyncDisposable
             return SendOutcome.TransientFailure;
         }
 
+        if (!ReferenceEquals(session, _sessions.Current)) return SendOutcome.Skipped;
         if (!snapshot.IsActivated)
         {
             Publish(ClientDeviceHeartbeatStatus.WaitingForActivation);
@@ -238,11 +244,12 @@ public sealed class ClientDeviceHeartbeatLoop : IAsyncDisposable
 
         try
         {
-            await _sender.SendAsync(
-                snapshot.CurrentTaskNo,
+            await _sender.SendForSessionAsync(
+                session, snapshot.CurrentTaskNo,
                 snapshot.BatteryPercent,
                 snapshot.NetworkType,
                 ct);
+            if (!ReferenceEquals(session, _sessions.Current)) return SendOutcome.Skipped;
             _lastSucceededAt = DateTimeOffset.UtcNow;
             Publish(ClientDeviceHeartbeatStatus.Online);
             return SendOutcome.Sent;
@@ -251,16 +258,21 @@ public sealed class ClientDeviceHeartbeatLoop : IAsyncDisposable
         {
             throw;
         }
+        catch (Exception) when (!ReferenceEquals(session, _sessions.Current))
+        {
+            return SendOutcome.Skipped;
+        }
         catch (ApiException ex) when (
             ex.Code is not null && RejectionCodes.Contains(ex.Code))
         {
             _logger.LogWarning(
                 "Client device heartbeat was rejected: {ErrorCode}",
                 ex.Code);
-            _context.MarkActivationRequired();
             try
             {
-                await _sessions.LogoutAsync(ct);
+                if (!await _sessions.InvalidateIfCurrentAsync(session, ct)) return SendOutcome.Skipped;
+                if (_sessions.Current != null) return SendOutcome.Skipped;
+                _context.MarkActivationRequired();
             }
             catch (Exception logoutError)
             {

@@ -10,7 +10,7 @@ public sealed class DynamicApiEndpointHandler(ClientOptions options) : Delegatin
     {
         if (request.Options.TryGetValue(ClientRequestScope.Key, out var pinned))
         {
-            if (!pinned.Source.Equals(options.ApiBaseAddress) || request.RequestUri == null
+            if (!pinned.Source.Equals(options.ApiBaseAddress) || pinned.DeviceId != options.Context.DeviceId || request.RequestUri == null
                 || !pinned.Source.IsBaseOf(request.RequestUri))
                 throw new LabelGatewayRecoveryException("RecoveryScopeChanged");
             return base.SendAsync(request, cancellationToken);

@@ -96,6 +96,37 @@ public sealed class ClientDeviceHeartbeatLoopTests
     }
 
     [Fact]
+    public async Task LateHeartbeatRejectionDoesNotLogOutTheNewOperator()
+    {
+        var sessions = FakeSession.Authenticated();
+        var context = new FakeHeartbeatContext { Snapshot = new ClientDeviceHeartbeatSnapshot(true) };
+        var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var late = new TaskCompletionSource<ClientDevice>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var observed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var sender = new FakeHeartbeatSender
+        {
+            Handler = () => { started.TrySetResult(); return late.Task; },
+        };
+        await using var loop = CreateLoop(sender, context, sessions, TimeSpan.FromMinutes(1));
+        loop.StateChanged += (_, state) =>
+        {
+            if (state.Status is ClientDeviceHeartbeatStatus.Online or ClientDeviceHeartbeatStatus.Rejected)
+                observed.TrySetResult();
+        };
+        await loop.StartAsync();
+        await started.Task.WaitAsync(TimeSpan.FromSeconds(2));
+        sessions.SetAuthenticated();
+        var replacement = sessions.Current;
+        sender.Handler = () => Task.FromResult(new ClientDevice());
+        late.SetException(new ApiException(HttpStatusCode.Conflict, "WM-DEVICE-DISABLED", "Rejected original request"));
+        await observed.Task.WaitAsync(TimeSpan.FromSeconds(2));
+        await loop.StopAsync();
+        Assert.Same(replacement, sessions.Current);
+        Assert.False(sessions.LogoutCalled);
+        Assert.False(context.ActivationWasCleared);
+    }
+
+    [Fact]
     public async Task RepeatedWakeRequestsNeverOverlapHeartbeatWrites()
     {
         var sessions = FakeSession.Authenticated();

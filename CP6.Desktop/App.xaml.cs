@@ -25,6 +25,7 @@ public partial class App : Application
             {
                 ClientKind = "Windows",
                 DeviceId = DeviceIdentity.GetOrCreate(),
+                SupportsSsoPending = true,
                 AppVersion = typeof(App).Assembly.GetName().Version?.ToString(3) ?? "1.0.0",
                 PlatformVersion = RuntimeInformation.OSDescription,
             },

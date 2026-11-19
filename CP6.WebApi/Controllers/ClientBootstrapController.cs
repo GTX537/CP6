@@ -39,6 +39,7 @@ public sealed class ClientBootstrapController : ControllerBase
         return new ClientBootstrapDto
         {
             ApiVersion = "1",
+            RequiredGates = [DeviceProofV1.RegisteredDeviceGate],
             ServerUtc = DateTimeOffset.UtcNow,
             Platform = platform.ToLowerInvariant(),
             CurrentVersion = currentVersion,

@@ -6,23 +6,19 @@ namespace CP6.Mobile;
 
 public sealed class DeviceActivationService
 {
-    private readonly Cp6ApiClient _api;
+    private readonly NativeDeviceActivationService _activation;
     private readonly ClientOptions _options;
-    private readonly IDeviceRequestSigner _signer;
     private readonly MobileClientState _state;
     private readonly ClientDeviceHeartbeatLoop _heartbeat;
 
     public DeviceActivationService(
-        IHttpClientFactory clients,
+        NativeDeviceActivationService activation,
         ClientOptions options,
-        IDeviceRequestSigner signer,
         MobileClientState state,
         ClientDeviceHeartbeatLoop heartbeat)
     {
-        _api = new Cp6ApiClient(
-            clients.CreateClient(ClientServiceCollectionExtensions.RawClient));
+        _activation = activation;
         _options = options;
-        _signer = signer;
         _state = state;
         _heartbeat = heartbeat;
     }
@@ -36,16 +32,7 @@ public sealed class DeviceActivationService
         _options.ApiBaseAddress = ticket.Server;
         try
         {
-            var result = await _api.ActivateDeviceAsync(new ActivateClientDeviceRequest
-            {
-                TenantCode = ticket.Tenant,
-                ActivationToken = ticket.Token,
-                DeviceId = _options.Context.DeviceId,
-                PublicKey = await _signer.GetOrCreatePublicKeyAsync(ct),
-                Platform = "Android",
-                AppVersion = _options.Context.AppVersion,
-                PlatformVersion = _options.Context.PlatformVersion,
-            }, ct);
+            var result = await _activation.ActivateAsync(ticket.Server, ticket.Tenant, ticket.Token, ticket.Operation, ct);
             Preferences.Default.Set("cp6.api-url", ticket.Server.AbsoluteUri);
             Preferences.Default.Set("cp6.tenant-code", result.TenantCode);
             MobileScannerSettings.Save(ticket.Scanner);
@@ -109,6 +96,7 @@ public sealed class DeviceActivationService
             new Uri(serverUri.AbsoluteUri.EndsWith('/') ? serverUri.AbsoluteUri : $"{serverUri}/"),
             tenant.Trim(),
             token.Trim(),
+            ParseOperation(values),
             new ScannerInputOptions
             {
                 Prefix = prefix,
@@ -122,5 +110,13 @@ public sealed class DeviceActivationService
         Uri Server,
         string Tenant,
         string Token,
+        Guid? Operation,
         ScannerInputOptions Scanner);
+
+    private static Guid? ParseOperation(IReadOnlyDictionary<string, string> values)
+    {
+        if (!values.TryGetValue("operation", out var provided)) return null;
+        if (Guid.TryParse(provided, out var id) && id != Guid.Empty) return id;
+        throw new InvalidOperationException("WM-DEVICE-ACTIVATION-QR-INVALID");
+    }
 }

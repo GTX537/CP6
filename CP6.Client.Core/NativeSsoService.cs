@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text.Json;
 using CP6.Client.Api;
 
 namespace CP6.Client.Core;
@@ -37,45 +38,71 @@ public sealed class NativeSsoMappingRecoveryException(string operationRef)
 
 public sealed class NativeSsoService
 {
-    private readonly Cp6ApiClient _api;
+    private readonly HttpClient _transport;
     private readonly ClientOptions _options;
     private readonly ISystemBrowser _browser;
     private readonly IClientSessionService _sessions;
     private readonly IPkceVerifierStore _verifiers;
+    private readonly NativeDeviceActivationService? _activation;
+    private readonly Guid _instance = Guid.NewGuid();
+    private readonly SemaphoreSlim _flow = new(1, 1);
 
     public NativeSsoService(
         IHttpClientFactory clients,
         ClientOptions options,
         ISystemBrowser browser,
         IClientSessionService sessions,
-        IPkceVerifierStore verifiers)
+        IPkceVerifierStore verifiers,
+        NativeDeviceActivationService? activation = null)
     {
-        _api = new Cp6ApiClient(clients.CreateClient(ClientServiceCollectionExtensions.RawClient));
+        _transport = clients.CreateClient(ClientServiceCollectionExtensions.RawClient);
         _options = options;
         _browser = browser;
         _sessions = sessions;
         _verifiers = verifiers;
+        _activation = activation;
     }
 
-    public async Task StartAsync(
-        string tenantCode,
-        CancellationToken ct = default)
+    public Task StartAsync(string tenantCode, CancellationToken ct = default)
+        => InFlowAsync(async () =>
+        {
+            await StartCoreAsync(tenantCode, ct);
+            return true;
+        }, ct);
+
+    private async Task StartCoreAsync(string tenantCode, CancellationToken ct)
     {
         var redirectUri = ExpectedRedirectUri().AbsoluteUri;
+        var previous = await TakePendingAsync(ct);
+        if (previous is { Grant: not null }) await RecoverAsync(previous, ct);
+        var attempt = await _sessions.BeginInteractionAsync(ct);
         var verifier = Base64Url(RandomNumberGenerator.GetBytes(32));
-        await _verifiers.WriteAsync(verifier, ct);
+        var pending = new PendingSso(verifier, _instance, attempt, _options.ApiBaseAddress, _options.Context.DeviceId,
+            CurrentActor(), null);
+        await SavePendingAsync(pending, ct);
         var challenge = Base64Url(SHA256.HashData(System.Text.Encoding.ASCII.GetBytes(verifier)));
-        var response = await _api.StartSsoAsync(new NativeSsoStartRequest
+        var response = await Api(pending).StartSsoAsync(new NativeSsoStartRequest
         {
             TenantCode = tenantCode,
             RedirectUri = redirectUri,
             CodeChallenge = challenge,
-            Client = _options.Context,
+            Client = await AuthenticationContextAsync(ct),
         }, ct);
+        if (!_sessions.IsCurrent(attempt)) throw new ClientInteractionChangedException();
         await _browser.OpenAsync(new Uri(response.AuthorizeUrl), ct);
     }
 
-    public async Task<NativeAuthResult> CompleteAsync(Uri callback, CancellationToken ct = default)
+    public Task<NativeAuthResult> CompleteAsync(Uri callback, CancellationToken ct = default)
+        => InFlowAsync(() => CompleteCoreAsync(callback, ct), ct);
+
+    private async Task<T> InFlowAsync<T>(Func<Task<T>> action, CancellationToken ct)
+    {
+        await _flow.WaitAsync(ct);
+        try { return await action(); }
+        finally { _flow.Release(); }
+    }
+
+    private async Task<NativeAuthResult> CompleteCoreAsync(Uri callback, CancellationToken ct)
     {
         if (!IsExpectedCallback(callback) ||
             !TryParseQuery(callback.Query, out var query))
@@ -95,18 +122,118 @@ public sealed class NativeSsoService
             throw new InvalidOperationException("E-CLIENT-SSO-CALLBACK");
         }
 
-        var verifier = await _verifiers.TakeAsync(ct)
-                       ?? throw new InvalidOperationException(
-                           "E-CLIENT-SSO-NOT-STARTED");
-        var result = await _api.ExchangeSsoAsync(new NativeSsoExchangeRequest
+        var pending = await TakePendingAsync(ct) ?? throw new InvalidOperationException("E-CLIENT-SSO-NOT-STARTED");
+        if (pending.Server != _options.ApiBaseAddress || pending.Device != _options.Context.DeviceId)
+            throw new ClientInteractionChangedException();
+        if (pending.Grant != null)
         {
-            GrantCode = grantCode,
-            CodeVerifier = verifier,
-            Client = _options.Context,
-        }, ct);
-        if (result.Session != null) await _sessions.AdoptAsync(result.Session, ct);
+            if (pending.Grant != grantCode)
+            {
+                await SavePendingAsync(pending, ct);
+                throw new ClientInteractionChangedException();
+            }
+            await RecoverAsync(pending, ct);
+            throw new InvalidOperationException("原认证交互已关闭，请重新认证。");
+        }
+
+        var attempt = pending.Attempt;
+        if (pending.Instance != _instance)
+        {
+            // Windows 可由外部浏览器唤起新进程。只延续同来源、设备及启动前相同主体的未完成交互。
+            if (_sessions.InteractionVersion != 0 || pending.Actor != CurrentActor())
+                throw new ClientInteractionChangedException();
+            attempt = await _sessions.BeginInteractionAsync(ct);
+        }
+        if (!_sessions.IsCurrent(attempt)) throw new ClientInteractionChangedException();
+        var context = await AuthenticationContextAsync(ct);
+        var attempted = pending with { Grant = grantCode };
+        // 先保存原交互，进程退出或确认丢失以后只能读回，不能重新换发。
+        await SavePendingAsync(attempted, ct);
+        NativeAuthResult result;
+        try
+        {
+            result = await Api(pending).ExchangeSsoAsync(new NativeSsoExchangeRequest
+            {
+                GrantCode = grantCode,
+                CodeVerifier = pending.Verifier,
+                Client = context,
+            }, ct);
+        }
+        catch (Exception failure) when (IsUnknown(failure, ct))
+        {
+            await RecoverAsync(attempted, ct);
+            throw new InvalidOperationException("原认证交互已关闭，请重新认证。");
+        }
+        catch (ApiException)
+        {
+            await _verifiers.TakeAsync(CancellationToken.None);
+            throw;
+        }
+        await _sessions.AcceptInteractionAsync(attempt, result, ct);
+        await _verifiers.TakeAsync(CancellationToken.None);
         return result;
     }
+
+    private async Task RecoverAsync(PendingSso pending, CancellationToken ct)
+    {
+        await SavePendingAsync(pending, ct);
+        if (pending.Server != _options.ApiBaseAddress || pending.Device != _options.Context.DeviceId)
+            throw new ClientInteractionChangedException();
+        var request = new NativeCompletionRecoveryRequest
+        {
+            Kind = "native-grant",
+            Credential = pending.Grant!,
+            CodeVerifier = pending.Verifier,
+            Client = await AuthenticationContextAsync(ct),
+        };
+        try
+        {
+            var original = await Api(pending).GetCompletionStatusAsync(request, ct);
+            var closed = original.State == "CLOSED" ? original : await Api(pending).CloseCompletionAsync(request, ct);
+            if (closed.State == "CLOSED")
+            {
+                await _verifiers.TakeAsync(CancellationToken.None);
+                return;
+            }
+        }
+        catch (HttpRequestException)
+        {
+            // 查询尚不能证明原交互已收敛。保留同一原 grant，仅允许再次查询。
+        }
+        throw new InvalidOperationException("原认证结果仍待确认，请联网后重新查询。");
+    }
+
+    private async Task<PendingSso?> TakePendingAsync(CancellationToken ct)
+    {
+        var saved = await _verifiers.TakeAsync(ct);
+        if (string.IsNullOrEmpty(saved)) return null;
+        if (saved.StartsWith('{')) return JsonSerializer.Deserialize<PendingSso>(saved);
+        // 兼容旧版加密区的单一 verifier。仅在当前无会话的启动上下文接续。
+        return new(saved, Guid.Empty, default, _options.ApiBaseAddress, _options.Context.DeviceId, null, null);
+    }
+
+    private Task SavePendingAsync(PendingSso pending, CancellationToken ct)
+        => _verifiers.WriteAsync(JsonSerializer.Serialize(pending), ct);
+
+    private Cp6ApiClient Api(PendingSso pending)
+        => new(_transport, new ClientRequestScope(pending.Server, Guid.Empty, Guid.Empty, pending.Device));
+
+    private Task<ClientContext> AuthenticationContextAsync(CancellationToken ct)
+        => _activation?.AuthenticationContextAsync(ct) ?? Task.FromResult(_options.Context);
+
+    private string? CurrentActor()
+    {
+        if (_sessions.Current == null) return null;
+        var scope = ClientLabelGatewayContext.ReadIdentity(_sessions.AccessToken, _options.ApiBaseAddress, _options.Context.DeviceId);
+        return scope.TenantId.ToString("D") + "/" + scope.ActorId.ToString("D");
+    }
+
+    private static bool IsUnknown(Exception error, CancellationToken ct)
+        => error is ApiException api ? (int?)api.StatusCode >= 500
+            : error is HttpRequestException or JsonException || error is OperationCanceledException && !ct.IsCancellationRequested;
+
+    private sealed record PendingSso(string Verifier, Guid Instance, NativeAuthAttempt Attempt, Uri Server, string Device,
+        string? Actor, string? Grant);
 
     private Uri ExpectedRedirectUri()
     {
