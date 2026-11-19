@@ -108,6 +108,29 @@ class CardExecutionTests(unittest.TestCase):
         self.assertIn('T-A: target DONE with unfinished split remainders',
                       roadmap.validate_target_gaps(coverage, f.targets, tasks, definitions))
 
+    def test_rank_uses_stage_order_for_ties_and_checks_split_prerequisites(self):
+        definitions = {
+            tid: {"id": tid, "dependencies": dependencies}
+            for tid, dependencies in {
+                "WP03-05": [], "WP11-65": ["WP02-13"], "WP02-22": [],
+                "WP02-13": [], "WP02-13b": ["WP02-13"],
+                "downstream": ["WP03-05", "WP11-65"],
+            }.items()
+        }
+        definitions["WP02-13"]["split_children"] = ["WP02-13b"]
+        definitions["WP02-13b"]["split_parent"] = "WP02-13"
+        tasks = {tid: {"state": "PLANNED"} for tid in definitions}
+        tasks["WP02-13"]["state"] = "DONE"
+        stage = ["WP11-65", "WP02-22", "WP03-05"]
+        self.assertEqual([row["task"] for row in roadmap.rank_stage_candidates(tasks, definitions, stage)],
+                         ["WP03-05", "WP02-22"])
+        tasks["WP02-13b"]["state"] = "DONE"
+        self.assertEqual(roadmap.rank_stage_candidates(tasks, definitions, stage), [
+            {"task": "WP11-65", "longest_downstream_edges": 1},
+            {"task": "WP03-05", "longest_downstream_edges": 1},
+            {"task": "WP02-22", "longest_downstream_edges": 0},
+        ])
+
     def test_nested_remainder_must_finish_before_original_is_fully_done(self):
         f = self.fixture
         parent, child, _ = self.split_fixture()

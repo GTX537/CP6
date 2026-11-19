@@ -5,6 +5,7 @@ import argparse
 import collections
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
+from functools import cache
 import json
 from pathlib import Path
 import re
@@ -415,6 +416,28 @@ def split_remainders(task, definitions):
     return required
 
 
+def rank_stage_candidates(tasks, definitions, stage_order):
+    """先按完整依赖图的最长下游边数，再按用户指定的阶段顺序排序。"""
+    prerequisites = {tid: split_remainders(definition, definitions) for tid, definition in definitions.items()}
+    downstream = collections.defaultdict(list)
+    for tid, dependencies in prerequisites.items():
+        for dependency in dependencies:
+            downstream[dependency].append(tid)
+
+    @cache
+    def longest(tid):
+        return max((1 + longest(child) for child in downstream[tid]), default=0)
+
+    candidates = [
+        {"task": tid, "longest_downstream_edges": longest(tid)}
+        for tid in stage_order
+        if tasks[tid]["state"] in {"PLANNED", "READY"}
+        and all(tasks[parent]["state"] == "DONE" for parent in prerequisites[tid])
+    ]
+    # Python 稳定排序保留阶段数组中的同长顺序。
+    return sorted(candidates, key=lambda candidate: -candidate["longest_downstream_edges"])
+
+
 def validate_splits(definitions):
     errors = []
     for tid, definition in definitions.items():
@@ -759,11 +782,37 @@ def render(data, definitions=None):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[3])
-    parser.add_argument("--write", action="store_true", help="regenerate derived Markdown views after validation")
+    operation = parser.add_mutually_exclusive_group()
+    operation.add_argument("--write", action="store_true", help="regenerate derived Markdown views after validation")
+    operation.add_argument("--rank-stage", metavar="阶段", help="按任务依赖和用户阶段顺序输出可开工候选")
+    parser.add_argument("--at-ref", metavar="提交", help="按完整 Git 提交复算历史候选，和 --rank-stage 同用")
     parser.add_argument("--report", type=Path, help="write the structural check result, not business execution evidence")
     parser.add_argument("--basis-report", type=Path, help="write independent acceptance basis predicates; never advances ledger states")
     args = parser.parse_args()
     root = args.root.resolve()
+    if args.at_ref and (not args.rank_stage or not re.fullmatch(r"[0-9a-f]{40}", args.at_ref)):
+        parser.error("--at-ref 需要 --rank-stage 和完整 40 位提交")
+    if args.rank_stage:
+        def read_input(path):
+            if args.at_ref:
+                source = subprocess.check_output(
+                    ["git", "-c", "core.longpaths=true", "show", f"{args.at_ref}:{path}"], cwd=root)
+                return json.loads(source.decode("utf-8-sig"))
+            return read_json(root / path)
+
+        data = read_input("docs/development/roadmap.json")
+        policy = data["dispatch_policy"]
+        phases = policy["card_execution_policy"]["phases"]
+        if args.rank_stage not in phases:
+            parser.error(f"阶段未登记：{args.rank_stage}")
+        definitions = read_input(policy["definition_path"])["tasks"]
+        ranked = rank_stage_candidates(
+            {task["id"]: task for task in data["implementation_tasks"]},
+            {definition["id"]: definition for definition in definitions},
+            phases[args.rank_stage])
+        print(json.dumps(ranked, ensure_ascii=False))
+        return 0
+
     data = read_json(root / "docs/development/roadmap.json")
     # One independent observation supplies both the audit report and the gate.
     # This private Python argument is never populated from ledger/package fields.
