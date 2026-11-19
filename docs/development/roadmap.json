@@ -140141,7 +140141,7 @@
           "scope": "SYS-WORKSPACE-01: fixed Main/CRM/Platform/candidate evidence; known implementation delta, not exhaustive runtime conformance. Actual per-file source SHA is in the report."
         }
       ],
-      "delivery_state": "PLANNED",
+      "delivery_state": "DONE",
       "blockers": [],
       "runtime_case_ids": [],
       "original_acceptance_inventory": {
@@ -140155,8 +140155,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS01-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS01-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "Menu_tree_v1_rejects_invalid_structure_and_native_ABA_changes_revision",
+                "scope": "自引用、环、缺父项及重复 ID 均拒绝，比较事务前后树与版本无变化。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/0"
@@ -140166,8 +140178,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS01-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS01-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "Menu_tree_v1_partial_move_global_impact_original_and_concurrent_CAS / Workspace_menu_delete / Workspace_preferences",
+                "scope": "共享预览列出多个租户与角色，复核当前平台操作权。共享停用使同一外租户新读不再含该节点，菜单版本推进。个性配置隔离同名两租户。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/1"
@@ -140177,8 +140201,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS01-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS01-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "MenuView.spec.ts / WorkspaceMetrics.spec.ts / Workspace_browser_actual",
+                "scope": "菜单和个性配置均以版本前置拒绝并发输家。菜单差异复核保留原草稿；Chrome 捕获实际配置提交后丢失确认，按原键只读获得完全相同回执。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/2"
@@ -140188,8 +140224,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS01-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS01-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "Workspace_menu_delete_checks_all_tenant_references_before_removing_nodes",
+                "scope": "未处理的跨租户授予及子项阻止现行删除。启用节点须先停用。停用后既有角色映射保留，当前导航版本推进。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/3"
@@ -140199,8 +140247,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS02-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS02-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "Workspace_browser_actual / Workspace_dashboard_eight_metrics / Workspace_menu_definition_http",
+                "scope": "同一浏览器可见工作台，缺少原动作仍无指标授权。W1 结果排除 W2 记录。单价隐藏策略下只有允许的统计字段参与计算。旧节点编辑用版本化命令，拒绝未登记路由和有引用的权限键改名。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/4"
@@ -140210,8 +140270,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS02-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS02-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "Workspace_navigation_legacy_role_routes_share_cas_and_never_cross_tenants / Actual_policy_HTTP_closes_legacy_bypasses",
+                "scope": "同一 IAM Owner 从两原 URI 接收版本化命令。角色版本推进后，另一个旧前置 412。当前授权撤除且角色同号的第二租户不变，未版本化旧写维持拒绝。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/5"
@@ -140221,8 +140293,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS02-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS02-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "Workspace_navigation_legacy_role_routes_share_cas_and_never_cross_tenants",
+                "scope": "已认证无授予得到 200 与空菜单、空动作；同一会话在隔离库导航依赖暂不可用时得到 503。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/6"
@@ -140232,8 +140316,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS02-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS02-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "Workspace_dashboard_eight_metrics / Workspace_browser_actual / WorkspaceMetrics.spec.ts",
+                "scope": "撤除查询动作后当前卡片 HIDDEN，同一详情接口 403。Chrome 使用同名第二租户的实际新会话重开链接仍被拒绝；页面测试验证旧详情在重新授权失败后移除。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/7"
@@ -140243,8 +140339,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS03-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS03-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "Workspace_dashboard_eight_metrics / CurrentPermissionConsumption",
+                "scope": "八项用实际 Owner 重读租户、主体、对象范围和字段策略。相同角色号的另租户读取独立，已读取的旧结果不会使撤权后可读。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/8"
@@ -140254,8 +140362,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS03-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS03-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "Workspace_dashboard_eight_metrics / WorkspaceMetrics.spec.ts",
+                "scope": "已授权真实零、缺权限、订单部门绑定缺失、旧到期查询分属四状态，缺失订单依赖时产品值仍为 3。页面可独立重读失败卡。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/9"
@@ -140265,8 +140385,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS03-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS03-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "WorkspaceMetrics.spec.ts / Workspace_browser_actual",
+                "scope": "页面测试暂停模拟租户 A 的响应，切到 B 后 A 的请求取消；A 晚到 700 时显示仍为 B 的 2。Chrome 使用真实身份重新登录并校验原深链。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/10"
@@ -140276,8 +140408,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS03-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS03-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "DashboardTenantIsolationTests / Workspace_browser_actual",
+                "scope": "旧摘要 4 项历史合同与租户隔离测试通过；现行工作台走独立 scoped-v1 请求，每卡无资格或缺源各自处理。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/11"
@@ -140287,8 +140431,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS04-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS04-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "Workspace_dashboard_eight_metrics / DashboardTenantIsolationTests",
+                "scope": "八项逐表、字段、状态和业务日窗口对照原设计，授权夹具依次得到 1、1、2、2、3、1、2、3。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/12"
@@ -140298,8 +140454,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS04-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS04-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "Workspace_dashboard_eight_metrics / DashboardTenantIsolationTests",
+                "scope": "定义输出原 Owner、来源、选择条件、时钟与版本 1。原旧摘要仍能对照历史查询口径。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/13"
@@ -140309,8 +140477,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS04-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS04-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "Workspace_dashboard_eight_metrics",
+                "scope": "八项实际钻取与原请求版本、时间窗和授权总量一致。订单来源异常返回 UNAVAILABLE 与空值，产品继续读取。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/14"
@@ -140320,8 +140500,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS04-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS04-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "Workspace_dashboard_eight_metrics / CurrentPermissionConsumption",
+                "scope": "租户、仓库范围和软删除在聚合前处理；受限单价和客户字段不进入返回体或导航条件。行按允许引用输出，拒绝的卡不给数。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/15"
@@ -140331,8 +140523,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS05-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS05-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "Workspace_dashboard_eight_metrics / Workspace_browser_actual",
+                "scope": "明细保留独立的业务 Owner、原 ID 与实际版本。浏览器地址仅有登记指标、版本、统计时间。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/16"
@@ -140342,8 +140546,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS05-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS05-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "Workspace_dashboard_eight_metrics / Workspace_browser_actual / WorkspaceMetrics.spec.ts",
+                "scope": "直接重开目标页会向原 Owner 发新读请求；撤权和另租户均拒绝，目标无原对象内容。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/17"
@@ -140353,8 +140569,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS05-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS05-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "Workspace_navigation_legacy_role_routes / Workspace_browser_actual",
+                "scope": "已登记 CRM 打开固定工作区，模拟目的站收到零 Main Cookie、Authorization 或 Referer。不认可未登记目标和自带跳转地址。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/18"
@@ -140364,8 +140592,20 @@
             "id": "SYS-WORKSPACE-01::AC-WS05-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-WS05-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+                "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+                "observed_at": "2026-11-19T06:17:40.765416-05:00",
+                "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+                "command": "NativeQuery_APPROVED_is_UNPROVEN_until_real_continuous_Owner_receipts_are_ingested / NativeFormQuery.spec.ts",
+                "scope": "工作台链接到 OA 已登记查询。模拟生产者提交真实回执前，流程已批准仍为 UNPROVEN；连续原应用回执后业务结论和原引用才更新。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/1/cases/19"
@@ -140373,8 +140613,42 @@
           }
         ]
       },
-      "implementation_evidence": [],
-      "delivery_evidence": null
+      "implementation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+          "source_repository": "GTX537/CP6",
+          "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+          "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+          "observed_at": "2026-11-19T06:17:40.765416-05:00",
+          "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+          "command": "PostgreSQL 22 + 9 + 4；Chrome 真实 Main；Vitest 79",
+          "scope": "20 项原验收，必需修订 0，现行菜单、角色权限与八项工作台指标。",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+        "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+        "remote_main_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1272",
+        "scope": "remote_main_sha 为已核对的准入基线。产品候选和核销采用同一 PR，远端合并、冒烟和官方席位处置见本卡 DELIVERY。",
+        "adoption_record": "D:/CP6-test-artifacts/WP02-18/current-20261119/finish.json"
+      },
+      "completion_audit": {
+        "result": "DONE",
+        "reviewed_at": "2026-11-19T06:17:40.765523-05:00",
+        "report": "docs/development/evidence/WP02-18/DELIVERY.md",
+        "original_cases_reviewed": 20,
+        "original_cases_passed": 20,
+        "required_revision_cases": 0,
+        "coverage_cards": [
+          "WP02-18"
+        ],
+        "gaps": [],
+        "classification": "BUSINESS",
+        "new_product_execution": true,
+        "review_effective_seconds": 97.893
+      }
     },
     {
       "id": "SYS-LANG-01",
@@ -169588,6 +169862,11 @@
       "at": "2026-11-19T04:35:55.491006-05:00",
       "evidence": "docs/development/evidence/WP02-20/DELIVERY.md",
       "change": "WP02-20 五项升级原验收通过，SYS-CLIENT-01 原 22/22、必需修订 0，关闭目标；按 #331 单次结转 WP02-21b 收尾 377.416 秒。"
+    },
+    {
+      "at": "2026-11-19T06:17:40.765523-05:00",
+      "evidence": "docs/development/evidence/WP02-18/DELIVERY.md",
+      "change": "WP02-18 二十项原验收通过，SYS-WORKSPACE-01 原 20/20、必需修订 0；按 #333 单次结转 WP02-20 正式收尾 249.883 秒。"
     }
   ],
   "implementation_assessment": {
@@ -191259,150 +191538,193 @@
         "file:Main:CP6.Core/Services/Sys/PermissionAggregator.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-18",
-      "entry_gate": "NOT_CHECKED",
+      "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "D / WP02-18 第十三轮 菜单保存后的列表与当前浏览器导航刷新恢复",
+        "chat_label": "EXEC-WP02-14B",
         "repository": "Main",
-        "owning_task_repository": "Main",
-        "branch": "codex/bug243-locked-validation-20261018",
-        "worktree": "D:/CP6-worktrees/wave17-d-menu-validation-20261018",
-        "claimed_at": "2026-10-17T04:04:41.637885+00:00",
-        "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
-        "coordination_baseline_sha": "3f80c1110dc6c59c4da829c5a05f429fc6aa5794",
-        "entry_evidence": "docs/development/dispatch/20261018-wave17/D-BUG-243-VALIDATION.md",
-        "phase": "BOUNDED_CANDIDATE_INTEGRATED_ISSUES_CLOSED",
-        "dispatch_scope": "MENU_REFRESH_RECOVERY",
-        "bounded_window_gate": "CLOSED",
-        "full_task_gate_unchanged": true,
+        "branch": "codex/wp02-18",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-19T05:24:54.416078-05:00",
+        "baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+        "entry_evidence": "docs/development/evidence/WP02-18/DELIVERY.md",
+        "phase": "CLOSED",
         "worker_start_received": true,
-        "allowed_write_paths": [
-          "docs/development/evidence/WP02-18/menu-refresh-recovery/DELIVERY.md"
-        ],
-        "reserved_write_resources": [],
-        "reserved_postgresql_ports": [],
-        "handoff_branch": "codex/dev-handoff-wp02-18",
-        "actions_authorized": false,
-        "formal_publication_authorized": false,
-        "existing_database_migration_authorized": false,
-        "deployment_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-18/menu-refresh-recovery/DELIVERY.md",
-        "execution_owner": {
-          "kind": "user_started_new_chat",
-          "label": "D",
-          "exclusive": true,
-          "actual_chat_id_pending_start": false,
-          "start_identity": "user-started new wave13 D chat; fixed START reference above",
-          "chat_id_unavailable": true
-        },
-        "issue": "https://github.com/GTX537/CP6/issues/243",
-        "worker_start_ref": {
-          "commit": "6835a38231ef67699d21df52730b7f4dab7ce0ee",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-18/messages/20261017T041447Z-wave13-start/MESSAGE.md"
-        },
-        "coordinator_received_at": "2026-10-17T04:26:13.652224+00:00",
-        "execution_baseline_sha": "4704592f52172c941e1cb95bdeb3c73f0dd179e8",
-        "scheduling_directive": {
-          "issued_at": "2026-10-18T13:26:58.542479+00:00",
-          "reason": "P0/P1 queue closed; resume bounded wave17 candidate corrections and menu evidence/review. No automatic full-task or business completion.",
-          "evidence": "docs/development/dispatch/20261018-wave17/D-BUG-243-VALIDATION.md",
-          "executor_pause_ack_received": false,
-          "safe_point_required": true,
-          "preserve_worktree_and_reservations": false,
-          "read_only_preparation_allowed": true,
-          "resume_requires_coordinator_window": false,
-          "candidate_report_received_before_notification": true,
-          "original_worktree_preserved_readonly": true
-        },
-        "worker_delivery_received": true,
-        "handoff_delivery": {
-          "commit": "afbd86defef54c3929ca4aada12c9ec25a91e35c",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-18/messages/20261017T042502Z-wave13-delivery/MESSAGE.md"
-        },
-        "reported_candidate_sha": "3bc3d3c86cc143e9f8c51100cdf875ff1a8e449d",
-        "candidate_review_completed": true,
-        "candidate_integrated": true,
-        "delivery_received_at": "2026-10-17T04:28:50.954497+00:00",
-        "historical_wave13_assignment": {
-          "branch": "codex/bug-243-menu-refresh-20261017",
-          "worktree": "D:/CP6-worktrees/wave13-d-menu-refresh-20261017",
-          "candidate_sha": "59dd7a9c7a0f5511d857743146e18a28fead31bd",
-          "baseline_sha": "4704592f52172c941e1cb95bdeb3c73f0dd179e8"
-        },
-        "correction_started_observed": true,
-        "correction_delivery_received": true,
-        "correction_window": "BUG-243-LOCKED-VALIDATION",
-        "candidate_review_assignment": {
-          "wave": "20261018-wave17",
-          "window": "REVIEW-BUG-243",
-          "reviewer_chat": "A",
-          "mode": "READ_ONLY_PREPARATION_THEN_COMBINED_REVIEW",
-          "started": true,
-          "completed": true,
-          "implementation_owner_unchanged": true,
-          "start_ref": {
-            "commit": "798f27a43d7b6140314e45f06e668ada01a41f22",
-            "path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-243/messages/20261018T134023Z-start/MESSAGE.md",
-            "kind": "START",
-            "at": "2026-10-18T13:40:23Z"
-          },
-          "preparation_ref": {
-            "commit": "3e0b584d950032240d3a7d3d2df2e2f95d77d895",
-            "path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-243/REVIEW.md",
-            "message_commit": "11ac8cc1017075d33cda74130adb7cc7a8cc7731"
-          },
-          "fixed_candidate_sha": "3bc3d3c86cc143e9f8c51100cdf875ff1a8e449d",
-          "review_input_ready": true,
-          "final_review_sha": "134c28304944f1949ca7f0e5226041b01c80649d",
-          "final_handoff_sha": "be1e4dc9b54b092ecc78b89feed7bee4270b2ca6"
-        },
-        "correction_start_ref": {
-          "commit": "47ce9a0ff893f184931c0c5bb730dc4d76ee7ac6",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-18/messages/20261018T134027Z-wave17-progress/MESSAGE.md",
-          "kind": "PROGRESS",
-          "at": "2026-10-18T13:40:27Z"
-        },
-        "correction_coordinator_received_at": "2026-10-18T13:46:31.423466+00:00",
-        "correction_delivery_ref": {
-          "commit": "2af18458b60b22fcee58ce59e790e7d6bbada79c",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-18/messages/20261018T134456Z-wave17-delivery/MESSAGE.md",
-          "candidate_sha": "3bc3d3c86cc143e9f8c51100cdf875ff1a8e449d",
-          "at": "2026-10-18T13:44:56Z"
-        },
-        "bounded_window_closed": true,
-        "product_main_sha": "8146d5e4063a1ae702e7639dc00f2df0ba29a37d",
-        "product_pr": "https://github.com/GTX537/CP6/pull/272",
-        "review_result": {
-          "candidate_sha": "3bc3d3c86cc143e9f8c51100cdf875ff1a8e449d",
-          "ready_to_merge": true,
-          "review_ref": {
-            "review_commit": "134c28304944f1949ca7f0e5226041b01c80649d",
-            "review_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-243/REVIEW.md",
-            "delivery_commit": "be1e4dc9b54b092ecc78b89feed7bee4270b2ca6",
-            "delivery_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-243/messages/20261018T141806Z-delivery/MESSAGE.md"
-          },
-          "blocking_issue_urls": [],
-          "resolved_issue_urls": [
-            "https://github.com/GTX537/CP6/issues/243"
+        "full_task_completed": true,
+        "delivery_report": "docs/development/evidence/WP02-18/DELIVERY.md",
+        "dispatch_scope": "共享菜单与个性配置 CAS、实际角色授权、八项按权限指标和登记目的地，逐项核销 20 个原 AC。",
+        "historical_bounded_assignment": {
+          "chat_label": "D / WP02-18 第十三轮 菜单保存后的列表与当前浏览器导航刷新恢复",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/bug243-locked-validation-20261018",
+          "worktree": "D:/CP6-worktrees/wave17-d-menu-validation-20261018",
+          "claimed_at": "2026-10-17T04:04:41.637885+00:00",
+          "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+          "coordination_baseline_sha": "3f80c1110dc6c59c4da829c5a05f429fc6aa5794",
+          "entry_evidence": "docs/development/dispatch/20261018-wave17/D-BUG-243-VALIDATION.md",
+          "phase": "BOUNDED_CANDIDATE_INTEGRATED_ISSUES_CLOSED",
+          "dispatch_scope": "MENU_REFRESH_RECOVERY",
+          "bounded_window_gate": "CLOSED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "allowed_write_paths": [
+            "docs/development/evidence/WP02-18/menu-refresh-recovery/DELIVERY.md"
           ],
-          "coordinator_verification": "Original task review/targeted recheck and actual evidence reused. Both remote candidate ancestry and exact scoped blobs verified. No new product run; original publish/host/page scope remains explicit."
+          "reserved_write_resources": [],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/dev-handoff-wp02-18",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false,
+          "deployment_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-18/menu-refresh-recovery/DELIVERY.md",
+          "execution_owner": {
+            "kind": "user_started_new_chat",
+            "label": "D",
+            "exclusive": true,
+            "actual_chat_id_pending_start": false,
+            "start_identity": "user-started new wave13 D chat; fixed START reference above",
+            "chat_id_unavailable": true
+          },
+          "issue": "https://github.com/GTX537/CP6/issues/243",
+          "worker_start_ref": {
+            "commit": "6835a38231ef67699d21df52730b7f4dab7ce0ee",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-18/messages/20261017T041447Z-wave13-start/MESSAGE.md"
+          },
+          "coordinator_received_at": "2026-10-17T04:26:13.652224+00:00",
+          "execution_baseline_sha": "4704592f52172c941e1cb95bdeb3c73f0dd179e8",
+          "scheduling_directive": {
+            "issued_at": "2026-10-18T13:26:58.542479+00:00",
+            "reason": "P0/P1 queue closed; resume bounded wave17 candidate corrections and menu evidence/review. No automatic full-task or business completion.",
+            "evidence": "docs/development/dispatch/20261018-wave17/D-BUG-243-VALIDATION.md",
+            "executor_pause_ack_received": false,
+            "safe_point_required": true,
+            "preserve_worktree_and_reservations": false,
+            "read_only_preparation_allowed": true,
+            "resume_requires_coordinator_window": false,
+            "candidate_report_received_before_notification": true,
+            "original_worktree_preserved_readonly": true
+          },
+          "worker_delivery_received": true,
+          "handoff_delivery": {
+            "commit": "afbd86defef54c3929ca4aada12c9ec25a91e35c",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-18/messages/20261017T042502Z-wave13-delivery/MESSAGE.md"
+          },
+          "reported_candidate_sha": "3bc3d3c86cc143e9f8c51100cdf875ff1a8e449d",
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "delivery_received_at": "2026-10-17T04:28:50.954497+00:00",
+          "historical_wave13_assignment": {
+            "branch": "codex/bug-243-menu-refresh-20261017",
+            "worktree": "D:/CP6-worktrees/wave13-d-menu-refresh-20261017",
+            "candidate_sha": "59dd7a9c7a0f5511d857743146e18a28fead31bd",
+            "baseline_sha": "4704592f52172c941e1cb95bdeb3c73f0dd179e8"
+          },
+          "correction_started_observed": true,
+          "correction_delivery_received": true,
+          "correction_window": "BUG-243-LOCKED-VALIDATION",
+          "candidate_review_assignment": {
+            "wave": "20261018-wave17",
+            "window": "REVIEW-BUG-243",
+            "reviewer_chat": "A",
+            "mode": "READ_ONLY_PREPARATION_THEN_COMBINED_REVIEW",
+            "started": true,
+            "completed": true,
+            "implementation_owner_unchanged": true,
+            "start_ref": {
+              "commit": "798f27a43d7b6140314e45f06e668ada01a41f22",
+              "path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-243/messages/20261018T134023Z-start/MESSAGE.md",
+              "kind": "START",
+              "at": "2026-10-18T13:40:23Z"
+            },
+            "preparation_ref": {
+              "commit": "3e0b584d950032240d3a7d3d2df2e2f95d77d895",
+              "path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-243/REVIEW.md",
+              "message_commit": "11ac8cc1017075d33cda74130adb7cc7a8cc7731"
+            },
+            "fixed_candidate_sha": "3bc3d3c86cc143e9f8c51100cdf875ff1a8e449d",
+            "review_input_ready": true,
+            "final_review_sha": "134c28304944f1949ca7f0e5226041b01c80649d",
+            "final_handoff_sha": "be1e4dc9b54b092ecc78b89feed7bee4270b2ca6"
+          },
+          "correction_start_ref": {
+            "commit": "47ce9a0ff893f184931c0c5bb730dc4d76ee7ac6",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-18/messages/20261018T134027Z-wave17-progress/MESSAGE.md",
+            "kind": "PROGRESS",
+            "at": "2026-10-18T13:40:27Z"
+          },
+          "correction_coordinator_received_at": "2026-10-18T13:46:31.423466+00:00",
+          "correction_delivery_ref": {
+            "commit": "2af18458b60b22fcee58ce59e790e7d6bbada79c",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-18/messages/20261018T134456Z-wave17-delivery/MESSAGE.md",
+            "candidate_sha": "3bc3d3c86cc143e9f8c51100cdf875ff1a8e449d",
+            "at": "2026-10-18T13:44:56Z"
+          },
+          "bounded_window_closed": true,
+          "product_main_sha": "8146d5e4063a1ae702e7639dc00f2df0ba29a37d",
+          "product_pr": "https://github.com/GTX537/CP6/pull/272",
+          "review_result": {
+            "candidate_sha": "3bc3d3c86cc143e9f8c51100cdf875ff1a8e449d",
+            "ready_to_merge": true,
+            "review_ref": {
+              "review_commit": "134c28304944f1949ca7f0e5226041b01c80649d",
+              "review_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-243/REVIEW.md",
+              "delivery_commit": "be1e4dc9b54b092ecc78b89feed7bee4270b2ca6",
+              "delivery_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-243/messages/20261018T141806Z-delivery/MESSAGE.md"
+            },
+            "blocking_issue_urls": [],
+            "resolved_issue_urls": [
+              "https://github.com/GTX537/CP6/issues/243"
+            ],
+            "coordinator_verification": "Original task review/targeted recheck and actual evidence reused. Both remote candidate ancestry and exact scoped blobs verified. No new product run; original publish/host/page scope remains explicit."
+          },
+          "resource_reservations_released": true,
+          "issue_states": {
+            "243": "CLOSED"
+          },
+          "issue_close_evidence": {
+            "243": "https://github.com/GTX537/CP6/issues/243#issuecomment-6251367902"
+          },
+          "released_write_resources": [
+            "Main:menu-client-refresh-recovery"
+          ]
         },
-        "resource_reservations_released": true,
-        "issue_states": {
-          "243": "CLOSED"
+        "actual_start_ref": {
+          "commit": "743690248d282b077d8cb4a4185cc6b1573a2cca",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-18/messages/20261119T102519Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-19T10:25:19Z"
         },
-        "issue_close_evidence": {
-          "243": "https://github.com/GTX537/CP6/issues/243#issuecomment-6251367902"
-        },
-        "released_write_resources": [
-          "Main:menu-client-refresh-recovery"
-        ]
+        "dispatch_decision_ref": {
+          "commit": "1297e86b889e1d6ea42df74d1acedc9032936d27",
+          "original_commit": "ce3600e52ca298ddc8abe2e87b05edf87d02299a",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261119T100314Z-exec-wp02-14b-wp02-18/MESSAGE.md"
+        }
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+          "source_repository": "GTX537/CP6",
+          "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+          "tested_main_baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+          "observed_at": "2026-11-19T06:17:40.765416-05:00",
+          "environment": "Windows、.NET、PostgreSQL 18.6、Chrome、Vue/Vite。模拟租户、用户、业务数据与 CRM 目的站，详见交付报告。",
+          "command": "PostgreSQL 22 + 9 + 4；Chrome 真实 Main；Vitest 79",
+          "scope": "20 项原验收，必需修订 0，现行菜单、角色权限与八项工作台指标。",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-18/DELIVERY.md",
+        "source_sha": "44e645255379227a8547d66c79953613e97fdfa5",
+        "remote_main_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1272",
+        "scope": "remote_main_sha 为已核对的准入基线。产品候选和核销采用同一 PR，远端合并、冒烟和官方席位处置见本卡 DELIVERY。",
+        "adoption_record": "D:/CP6-test-artifacts/WP02-18/current-20261119/finish.json"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
@@ -191589,6 +191911,24 @@
             "workspace_clean": true
           }
         ]
+      },
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP02-18/DELIVERY.md",
+        "started_at": "2026-11-19T05:24:54.416078-05:00",
+        "official_started_at": "2026-11-19T05:24:54.416078-05:00",
+        "verified_at": "2026-11-19T06:17:40.765523-05:00",
+        "technical_verified_at": "2026-11-19T06:16:02.872851-05:00",
+        "effective_seconds": 3068.457,
+        "size": "M",
+        "budget_seconds": 14400.0,
+        "mandatory_split_seconds": 21600.0,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-03"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 249.883
       }
     },
     {
@@ -191902,7 +192242,7 @@
         "official_started_at": "2026-11-19T03:52:34.764495-05:00",
         "verified_at": "2026-11-19T04:35:55.491006-05:00",
         "technical_verified_at": "2026-11-19T04:34:01.287312-05:00",
-        "effective_seconds": 2486.523,
+        "effective_seconds": 2736.406,
         "size": "M",
         "budget_seconds": 14400.0,
         "mandatory_split_seconds": 21600.0,
@@ -191913,7 +192253,15 @@
           "WP02-28"
         ],
         "new_product_execution": true,
-        "preceding_integration_seconds": 377.416
+        "preceding_integration_seconds": 377.416,
+        "candidate_effective_seconds": 2486.523,
+        "post_candidate_finalization_seconds": 249.883,
+        "official_finish": "2026-11-19T09:40:05.373954+00:00",
+        "accounting_evidence": {
+          "adopted_commit": "1880c8e268718317a45cc99864959ae6ec3a2cda",
+          "original_commit": "bab14ac1b10e22d6ad936bc9c88d2162c797a590",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-20/replies/20261119T100028Z-coord-acceptance-ack/MESSAGE.md"
+        }
       }
     },
     {
@@ -293124,7 +293472,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 73767.657,
+      "effective_seconds": 77183.89,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -293148,7 +293496,8 @@
         "WP02-21",
         "WP02-19b",
         "WP02-21b",
-        "WP02-20"
+        "WP02-20",
+        "WP02-18"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -293158,7 +293507,8 @@
         "SYS-NUM-01",
         "CRM-INQ-01",
         "SYS-JOB-01",
-        "SYS-CLIENT-01"
+        "SYS-CLIENT-01",
+        "SYS-WORKSPACE-01"
       ],
       "new_splits": [
         {
@@ -293219,7 +293569,7 @@
         }
       ],
       "current_stage": "B",
-      "next_card": "WP02-18",
+      "next_card": "WP02-17",
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -293371,15 +293721,11 @@
         }
       },
       "next_card_selection": {
-        "rule": "阶段 B 按完整前置、全图下游最长链和阶段顺序。WP02-29 依 #330 暂缓，实际领取依 COORD 派工。",
-        "baseline_sha": "04fc103b17ce8ea9bc55011c0f3b44962b979cd7",
-        "after_card": "WP02-20",
-        "selected": "WP02-18",
+        "rule": "阶段 B 依完整前置、全图下游最长链和阶段顺序。WP02-29 按 #330 暂缓。实际领取以 COORD 派工为准。",
+        "baseline_sha": "06e5a38c4c5be6cfedd00462a9b59f8e341dae79",
+        "after_card": "WP02-18",
+        "selected": "WP02-17",
         "candidates": [
-          {
-            "id": "WP02-18",
-            "longest_downstream_edges": 2
-          },
           {
             "id": "WP02-17",
             "longest_downstream_edges": 2
@@ -293453,11 +293799,11 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 3737.065,
+      "target_review_effective_seconds": 3834.958,
       "last_checkpoint_counts": {
-        "original_done": 55,
-        "fully_done": 55,
-        "targets_done": 8,
+        "original_done": 56,
+        "fully_done": 56,
+        "targets_done": 9,
         "new_splits": 7,
         "periodic_checkpoint_due": false
       },

@@ -3,12 +3,13 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP02-20 客户端升级渠道、签名与失败恢复](../development/evidence/WP02-20/DELIVERY.md)（DONE），核对时间 `2026-11-19T04:35:55.491006-05:00`。
+- [WP02-18 工作台菜单CAS与授权KPI查询](../development/evidence/WP02-18/DELIVERY.md)（DONE），核对时间 `2026-11-19T06:17:40.765523-05:00`。
 
 ### 已关闭目标
 
 - [CRM-INQ-01 公开询盘与受理](../development/evidence/WP03-04/DELIVERY.md)
 - [OA-DEF-01 流程和表单定义](../development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md)
+- [SYS-WORKSPACE-01 菜单与业务工作台](../development/evidence/WP02-18/DELIVERY.md)
 - [SYS-AUD-01 操作、安全与字段审计](../development/evidence/WP02-13b/DELIVERY.md)
 - [SYS-NUM-01 编号与开发辅助生成](../development/evidence/WP02-16b/DELIVERY.md)
 - [SYS-CLIENT-01 客户端设备与升级](../development/evidence/WP02-20/DELIVERY.md)

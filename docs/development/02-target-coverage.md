@@ -80,7 +80,7 @@
 | [OA-FORM-01](../../docs/design-handbook/modules/OA-FORM-01.md) | 表单发起与查询 | WP12 | CHANGE_REQUIRED | 待安排 | 0 |
 | [OA-TASK-01](../../docs/design-handbook/modules/OA-TASK-01.md) | 待办、代理与时限 | WP12 | CHANGE_REQUIRED | 待安排 | 0 |
 | [OA-APP-01](../../docs/design-handbook/modules/OA-APP-01.md) | 业务审批绑定与回调 | WP12 | CHANGE_REQUIRED | 待安排 | 4 |
-| [SYS-WORKSPACE-01](../../docs/design-handbook/modules/SYS-WORKSPACE-01.md) | 菜单与业务工作台 | WP02 | CHANGE_REQUIRED | 待安排 | 0 |
+| [SYS-WORKSPACE-01](../../docs/design-handbook/modules/SYS-WORKSPACE-01.md) | 菜单与业务工作台 | WP02 | CHANGE_REQUIRED | 已交付 | 0 |
 | [SYS-LANG-01](../../docs/design-handbook/modules/SYS-LANG-01.md) | 字典与多语言 | WP02 | CHANGE_REQUIRED | 待安排 | 0 |
 | [SYS-AUD-01](../../docs/design-handbook/modules/SYS-AUD-01.md) | 操作、安全与字段审计 | WP02 | CHANGE_REQUIRED | 已交付 | 0 |
 | [SYS-PRIV-01](../../docs/design-handbook/modules/SYS-PRIV-01.md) | 隐私导出、保留与擦除 | WP02 | CHANGE_REQUIRED | 待安排 | 0 |
