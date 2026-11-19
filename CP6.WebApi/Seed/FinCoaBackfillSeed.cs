@@ -44,6 +44,8 @@ public static class FinCoaBackfillSeed
 
             foreach (var tid in tenantIds)
             {
+                if (db.Database.IsNpgsql() && GlLegacyWriteGateV1.VersionedSchemes(db, tid).Any(value => value == scheme))
+                    continue;
                 // 该租户该 scheme 的既有科目（Code → Id），跨租户过滤器绕过。
                 var existing = db.GlAccounts.IgnoreQueryFilters()
                     .Where(a => a.TenantId == tid && a.StandardScheme == scheme)

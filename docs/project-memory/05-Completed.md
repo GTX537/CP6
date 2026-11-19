@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP02-17 多语言维护、发布CAS与客户端精确缓存](../development/evidence/WP02-17/DELIVERY.md)（DONE），核对时间 `2026-11-19T09:05:27.853909-05:00`。
+- [WP11-01 财务资料版本工作流与科目时间线](../development/evidence/WP11-01/DELIVERY.md)（DONE），核对时间 `2026-11-19T10:37:19.489079-05:00`。
 
 ### 已关闭目标
 
