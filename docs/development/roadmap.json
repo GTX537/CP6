@@ -123724,8 +123724,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-GL-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-GL-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "Chrome gl-browser/result.json；gl-candidate.trx",
+                "scope": "从科目菜单首次打开，真实 Options 返回现选法人、账套和 CN-GAAP；新增表单自己读取父项。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/0"
@@ -123735,8 +123747,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-GL-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-GL-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-legacy-template.json；gl-candidate.trx",
+                "scope": "十五个 HTTP 属性中一个为旧行 Id，其余十四个旧字段均有原值和映射。新根暂停，待核币种保持空值。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/1"
@@ -123746,8 +123770,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-GL-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-GL-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-intervals.json；gl-candidate.trx",
+                "scope": "同一账套规范化后相同编码的第二次创建为 CODE_CONFLICT，原科目保持。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/2"
@@ -123757,8 +123793,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-GL-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-GL-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-scopes.json；gl-candidate.trx",
+                "scope": "两个可信法人及账套各自成功使用同一编码，跨主体上下文、缺上下文及跨账套对象均为 404。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/3"
@@ -123768,8 +123816,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-GL-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-GL-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-intervals.json；gl-candidate.trx",
+                "scope": "自指草稿和两条已发布上级关系构成的环均为 PARENT_CYCLE。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/4"
@@ -123779,8 +123839,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-GL-06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-GL-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-intervals.json；gl-candidate.trx",
+                "scope": "上级在有效期中途由 GROUP 改为 POSTABLE，预览拒 CHILD_INTERVAL_CONFLICT。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/5"
@@ -123790,8 +123862,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-GL-07",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-GL-07",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-boundaries.json；gl-candidate.trx",
+                "scope": "真实发布父链 32 层并读取推导层级；第 33 层发布预览返回 DEPENDENCY_LIMIT。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/6"
@@ -123801,8 +123885,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-GL-08",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-GL-08",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-intervals.json；gl-candidate.trx",
+                "scope": "相邻半开期间允许角色继任，重叠期间拒 ROLE_INTERVAL_CONFLICT，暂停仍占用该角色期间。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/7"
@@ -123812,8 +123908,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-GL-09",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-GL-09",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-intervals.json；gl-candidate.trx",
+                "scope": "角色查零项返回 NOT_CONFIGURED；故障投影多项返回 UNPROVEN，均不选第一科目。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/8"
@@ -123856,8 +123964,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-GL-13",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-GL-13",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-intervals.json；gl-candidate.trx",
+                "scope": "单一 USD 不接受 CNY，本位币 CNY 不接受 JPY；符合明确 USD 的读取仅为时点观察。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/12"
@@ -123867,8 +123987,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-GL-14",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-GL-14",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-lifecycle.json；gl-candidate.trx",
+                "scope": "独立专业人员对准同一 Version 及有效区间批准资产类贷方备抵科目，正式发布保持贷方。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/13"
@@ -123878,8 +124010,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-GL-15",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-GL-15",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-legacy-template.json；gl-candidate.trx",
+                "scope": "缺上级、重复编码、超过深度及字段只读均整批拒绝，根数和 Scope 修订保持。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/14"
@@ -123889,8 +124033,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-GL-16",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-GL-16",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-legacy-template.json；gl-candidate.trx",
+                "scope": "预览后同账套新增草稿，旧预览应用返回 STALE，合法导入只创建暂停草稿。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/15"
@@ -124450,8 +124606,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-revisions.json；gl-candidate.trx",
+                "scope": "修改草稿形成新 Version 与 ProposalRevision，旧 Version 的 body 摘要保持。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/66"
@@ -124461,8 +124629,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-revisions.json；gl-candidate.trx",
+                "scope": "已送审原内容不可修改，撤回后通过新 Proposal 继续。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/67"
@@ -124472,8 +124652,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-lifecycle.json；gl-candidate.trx",
+                "scope": "已发布根打开后继取得不同 ProposalId，旧提案与版本仍可精确读取。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/68"
@@ -124483,8 +124675,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-revisions.json；gl-candidate.trx",
+                "scope": "双宿主从同一头提交后继，仅一笔成功，另一笔 STALE。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/69"
@@ -124494,8 +124698,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-lifecycle.json；gl-candidate.trx",
+                "scope": "制作人具备复核 IAM 和专业资格，仍收到 MAKER_CANNOT_REVIEW。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/70"
@@ -124505,8 +124721,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-revisions.json；gl-candidate.trx",
+                "scope": "撤回后带旧头的审批返回 STALE，历史主体保持。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/71"
@@ -124516,8 +124744,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-07",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-07",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "Chrome gl-browser/result.json；gl-candidate.trx",
+                "scope": "独立复核批准后页面仍显示暂停，当前业务日无有效版本。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/72"
@@ -124527,8 +124767,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-08",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-08",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-atomic-receipt.json；gl-candidate.trx",
+                "scope": "首次合法发布同时落发布、时间线、当前控制、原回执、审计及 Outbox；注入最后一步失败时整组回滚。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/73"
@@ -124538,8 +124790,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-09",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-09",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-revisions.json；gl-candidate.trx",
+                "scope": "区间长度为零及开始日期早于账套业务日均拒 INVALID_EFFECTIVE_INTERVAL。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/74"
@@ -124549,8 +124813,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-10",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-10",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-lifecycle.json；gl-candidate.trx",
+                "scope": "有限期后继生成左旧、中新、右旧三段；段边界和原 Version 引用经逐项断言。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/75"
@@ -124560,8 +124836,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-11",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-11",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-intervals.json；gl-candidate.trx",
+                "scope": "未来起日之前返回 NO_EFFECTIVE_VERSION，当前观察不回最高版本。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/76"
@@ -124571,8 +124859,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-12",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-12",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-revisions.json；gl-candidate.trx",
+                "scope": "原预览在专业依据、Scope 修订或账套业务日变化后均返回 STALE。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/77"
@@ -124582,8 +124882,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-13",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-13",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-lifecycle.json；gl-candidate.trx",
+                "scope": "两宿主、同复核人、两个操作键消费同一预览，状态组合 200/409，失败为 PREVIEW_ALREADY_USED。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/78"
@@ -124659,8 +124971,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-20",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-20",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-revisions.json；gl-candidate.trx",
+                "scope": "暂停状态拿首次 APPROVE Decision 恢复，返回 RESTORE_DECISION_REQUIRED。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/85"
@@ -124670,8 +124994,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-21",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-21",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-lifecycle.json；gl-candidate.trx",
+                "scope": "对准确当前时间线单独批准恢复，启用时推进控制与 Scope，历史发布保持。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/86"
@@ -124681,8 +125017,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-22",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-22",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-lifecycle.json；gl-candidate.trx",
+                "scope": "退休不可逆，持原恢复批准仍为 ROOT_RETIRED。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/87"
@@ -124692,8 +125040,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-23",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-23",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-revisions.json；gl-candidate.trx",
+                "scope": "将模拟专业源设为离线后，紧急暂停成功，原 Release 不变，依赖职业源的恢复审批仍拒绝。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/88"
@@ -124703,8 +125063,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-24",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-24",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "Chrome gl-browser/result.json；gl-candidate.trx",
+                "scope": "Chrome 截获真实成功提交的回包并断线，刷新用原键回读逐字段相等；发布写只发一次。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/89"
@@ -124714,8 +125086,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-25",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-25",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-atomic-receipt.json；gl-candidate.trx",
+                "scope": "撤销 release 保留历史读权，原操作回执逐字段相等并无第二次发布。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/90"
@@ -124725,8 +125109,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-26",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-26",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-atomic-receipt.json；gl-candidate.trx",
+                "scope": "撤销历史动作和单独遮罩字段均返回 RECEIPT_WITHHELD，数据库保留原回执。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/91"
@@ -124736,8 +125132,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-EV-27",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-EV-27",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-atomic-receipt.json；gl-candidate.trx",
+                "scope": "查询 NOT_OBSERVED 明确不证明永久零效果；故障解除后按原键原内容重试成功。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/92"
@@ -124956,8 +125364,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-LEG-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LEG-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-legacy-template.json；gl-candidate.trx",
+                "scope": "已登记版本账套的旧 import/create/update/deactivate 均为 409，SQL 写被约束拒绝，两种 seed 保留旧原件和已发布版本。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/112"
@@ -125055,8 +125475,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-R1-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-R1-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "Chrome gl-browser/result.json；gl-candidate.trx",
+                "scope": "另一个真实浏览器会话按列表读取 RootId，再读真实提案状态，审批准确原提案。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/121"
@@ -125154,8 +125586,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-R1-11",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-R1-11",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-legacy-template.json；gl-candidate.trx",
+                "scope": "旧原件映射后通过独立复核并首次发布，activate=false 保持暂停；恢复走独立决定。 改变启用位推进 ProposalRevision，拿 false 决定预览 true 返回 ACTIVATION_SUBJECT_MISMATCH。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/130"
@@ -125165,8 +125609,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-R1-12",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-R1-12",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-lifecycle.json；gl-candidate.trx",
+                "scope": "有发布时间线的暂停根申报首次启用，返回 INITIAL_ENABLE_NOT_FIRST_RELEASE。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/131"
@@ -125374,8 +125830,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-R2-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-R2-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-lifecycle.json；gl-candidate.trx",
+                "scope": "首发前时间线引用、正文和修订均为空；有发布时正文与引用来自同一次准确读取。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/150"
@@ -125385,8 +125853,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-R2-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-R2-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-lifecycle.json；gl-candidate.trx",
+                "scope": "暂停时发布后继仍暂停；暂停回执按原键返回旧 r1 引用，当前为 r2。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/151"
@@ -125396,8 +125876,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-R2-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-R2-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "Chrome gl-browser/result.json；gl-candidate.trx",
+                "scope": "独立复核者由列表及工作流读取取当前时间线，单独批准恢复并由真实页面提交。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/152"
@@ -125407,8 +125899,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/AC-R2-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-R2-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "wp11-01-gl-lifecycle.json；gl-candidate.trx",
+                "scope": "携旧时间线引用批准恢复，或持旧时间线决定恢复，均明确返回 TIMELINE_SUBJECT_STALE。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/153"
@@ -125550,8 +126054,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL01",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "browser；gl-candidate.trx",
+                "scope": "网页真实双会话分别新建、重开、送审、精确读取和复核，按选中历史修订回读。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/166"
@@ -125561,8 +126077,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL02",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "browser；gl-candidate.trx",
+                "scope": "网页真实双会话分别新建、重开、送审、精确读取和复核，按选中历史修订回读。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/167"
@@ -125572,8 +126100,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL3W1",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL3W1",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "browser；gl-candidate.trx",
+                "scope": "网页真实双会话分别新建、重开、送审、精确读取和复核，按选中历史修订回读。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/168"
@@ -125583,8 +126123,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL03",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "browser；gl-candidate.trx",
+                "scope": "网页真实双会话分别新建、重开、送审、精确读取和复核，按选中历史修订回读。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/169"
@@ -125594,8 +126146,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL3W2L",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL3W2L",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "browser；gl-candidate.trx",
+                "scope": "网页真实双会话分别新建、重开、送审、精确读取和复核，按选中历史修订回读。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/170"
@@ -125605,8 +126169,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL3W2",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL3W2",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "browser；gl-candidate.trx",
+                "scope": "网页真实双会话分别新建、重开、送审、精确读取和复核，按选中历史修订回读。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/171"
@@ -125616,8 +126192,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL04",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "browser；gl-candidate.trx",
+                "scope": "网页真实双会话分别新建、重开、送审、精确读取和复核，按选中历史修订回读。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/172"
@@ -125627,8 +126215,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL3W3",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL3W3",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "browser；gl-candidate.trx",
+                "scope": "网页真实双会话分别新建、重开、送审、精确读取和复核，按选中历史修订回读。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/173"
@@ -125638,8 +126238,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL05",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/174"
@@ -125649,8 +126261,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL06",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/175"
@@ -126430,8 +127054,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/EV05WL",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "EV05WL",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "browser；gl-candidate.trx",
+                "scope": "网页真实双会话分别新建、重开、送审、精确读取和复核，按选中历史修订回读。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/246"
@@ -126441,8 +127077,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/EV05W",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "EV05W",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "browser；gl-candidate.trx",
+                "scope": "网页真实双会话分别新建、重开、送审、精确读取和复核，按选中历史修订回读。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/247"
@@ -126452,8 +127100,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/EV05",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "EV05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/248"
@@ -126463,8 +127123,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/EV06",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "EV06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/249"
@@ -126507,8 +127179,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/NG01",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "NG01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "intervals；gl-candidate.trx",
+                "scope": "真实建立组与角色占用，再从当前头完成候选；同码、环和期间重叠拒绝。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/253"
@@ -126584,8 +127268,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/NG05",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "NG05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/260"
@@ -126595,8 +127291,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/NG06",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "NG06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/261"
@@ -126639,8 +127347,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/RC04",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "RC04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "atomic-receipt；gl-candidate.trx",
+                "scope": "同键查回原确认、撤销字段与历史读取后拒绝、未观察后只重送原请求。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/265"
@@ -127101,8 +127821,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/IS01",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "IS01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "scopes；gl-candidate.trx",
+                "scope": "拒跨主体当前账套上下文；合法账套的同编码彼此独立。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/307"
@@ -127123,8 +127855,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GD01",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GD01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "intervals；gl-candidate.trx",
+                "scope": "真实建立组与角色占用，再从当前头完成候选；同码、环和期间重叠拒绝。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/309"
@@ -127134,8 +127878,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GD02",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GD02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "intervals；gl-candidate.trx",
+                "scope": "真实建立组与角色占用，再从当前头完成候选；同码、环和期间重叠拒绝。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/310"
@@ -127145,8 +127901,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GD3W1",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GD3W1",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "intervals；gl-candidate.trx",
+                "scope": "真实建立组与角色占用，再从当前头完成候选；同码、环和期间重叠拒绝。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/311"
@@ -127156,8 +127924,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GD03",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GD03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "intervals；gl-candidate.trx",
+                "scope": "真实建立组与角色占用，再从当前头完成候选；同码、环和期间重叠拒绝。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/312"
@@ -127167,8 +127947,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GD3W2L",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GD3W2L",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "intervals；gl-candidate.trx",
+                "scope": "真实建立组与角色占用，再从当前头完成候选；同码、环和期间重叠拒绝。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/313"
@@ -127178,8 +127970,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GD3W2",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GD3W2",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "intervals；gl-candidate.trx",
+                "scope": "真实建立组与角色占用，再从当前头完成候选；同码、环和期间重叠拒绝。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/314"
@@ -127189,8 +127993,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GD04",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GD04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "intervals；gl-candidate.trx",
+                "scope": "真实建立组与角色占用，再从当前头完成候选；同码、环和期间重叠拒绝。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/315"
@@ -127200,8 +128016,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GD3W3",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GD3W3",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "intervals；gl-candidate.trx",
+                "scope": "真实建立组与角色占用，再从当前头完成候选；同码、环和期间重叠拒绝。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/316"
@@ -127211,8 +128039,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GD05",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GD05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "intervals；gl-candidate.trx",
+                "scope": "真实建立组与角色占用，再从当前头完成候选；同码、环和期间重叠拒绝。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/317"
@@ -127321,8 +128161,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/NG07",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "NG07",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "intervals；gl-candidate.trx",
+                "scope": "真实建立组与角色占用，再从当前头完成候选；同码、环和期间重叠拒绝。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/327"
@@ -127387,8 +128239,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/WR01",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "WR01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "browser；gl-candidate.trx",
+                "scope": "网页真实双会话分别新建、重开、送审、精确读取和复核，按选中历史修订回读。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/333"
@@ -127398,8 +128262,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/WR02",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "WR02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "browser；gl-candidate.trx",
+                "scope": "网页真实双会话分别新建、重开、送审、精确读取和复核，按选中历史修订回读。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/334"
@@ -127409,8 +128285,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/WR03",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "WR03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "atomic-receipt；gl-candidate.trx",
+                "scope": "同键查回原确认、撤销字段与历史读取后拒绝、未观察后只重送原请求。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/335"
@@ -127420,8 +128308,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/KA01",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "KA01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle / legacy-template；gl-candidate.trx",
+                "scope": "首次不启用、复核固定 activate 和初次启用禁用阈值。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/336"
@@ -127431,8 +128331,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/KA02",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "KA02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle / legacy-template；gl-candidate.trx",
+                "scope": "首次不启用、复核固定 activate 和初次启用禁用阈值。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/337"
@@ -127442,8 +128354,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/KA02W",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "KA02W",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle / legacy-template；gl-candidate.trx",
+                "scope": "首次不启用、复核固定 activate 和初次启用禁用阈值。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/338"
@@ -127453,8 +128377,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/KA02R",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "KA02R",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle / legacy-template；gl-candidate.trx",
+                "scope": "首次不启用、复核固定 activate 和初次启用禁用阈值。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/339"
@@ -127464,8 +128400,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/KA3W1",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "KA3W1",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle / legacy-template；gl-candidate.trx",
+                "scope": "首次不启用、复核固定 activate 和初次启用禁用阈值。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/340"
@@ -127475,8 +128423,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/KA03",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "KA03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle / legacy-template；gl-candidate.trx",
+                "scope": "首次不启用、复核固定 activate 和初次启用禁用阈值。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/341"
@@ -127486,8 +128446,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/KA3W2L",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "KA3W2L",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle / legacy-template；gl-candidate.trx",
+                "scope": "首次不启用、复核固定 activate 和初次启用禁用阈值。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/342"
@@ -127497,8 +128469,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/KA3W2",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "KA3W2",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle / legacy-template；gl-candidate.trx",
+                "scope": "首次不启用、复核固定 activate 和初次启用禁用阈值。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/343"
@@ -127508,8 +128492,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/KA04",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "KA04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle / legacy-template；gl-candidate.trx",
+                "scope": "首次不启用、复核固定 activate 和初次启用禁用阈值。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/344"
@@ -127519,8 +128515,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/KA3W3",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "KA3W3",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle / legacy-template；gl-candidate.trx",
+                "scope": "首次不启用、复核固定 activate 和初次启用禁用阈值。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/345"
@@ -127530,8 +128538,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/KA05",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "KA05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle / legacy-template；gl-candidate.trx",
+                "scope": "首次不启用、复核固定 activate 和初次启用禁用阈值。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/346"
@@ -127541,8 +128561,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/KA06",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "KA06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle / legacy-template；gl-candidate.trx",
+                "scope": "首次不启用、复核固定 activate 和初次启用禁用阈值。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/347"
@@ -127552,8 +128584,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/KA07",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "KA07",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle / legacy-template；gl-candidate.trx",
+                "scope": "首次不启用、复核固定 activate 和初次启用禁用阈值。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/348"
@@ -127563,8 +128607,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/KA08",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "KA08",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle / legacy-template；gl-candidate.trx",
+                "scope": "首次不启用、复核固定 activate 和初次启用禁用阈值。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/349"
@@ -127706,8 +128762,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/PR04",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "PR04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "atomic-receipt；gl-candidate.trx",
+                "scope": "同键查回原确认、撤销字段与历史读取后拒绝、未观察后只重送原请求。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/362"
@@ -127739,8 +128807,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/RS01",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "RS01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/365"
@@ -127750,8 +128830,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/RS02W",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "RS02W",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/366"
@@ -127761,8 +128853,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/RS02",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "RS02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/367"
@@ -127772,8 +128876,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL30W1",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL30W1",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/368"
@@ -127783,8 +128899,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL30",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL30",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/369"
@@ -127794,8 +128922,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL30W2L",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL30W2L",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/370"
@@ -127805,8 +128945,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL30W2",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL30W2",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/371"
@@ -127816,8 +128968,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL31",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL31",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/372"
@@ -127827,8 +128991,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL30W3",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL30W3",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/373"
@@ -127838,8 +129014,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL32",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL32",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/374"
@@ -127849,8 +129037,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/GL33",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "GL33",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/375"
@@ -127860,8 +129060,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/RS03",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "RS03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/376"
@@ -127871,8 +129083,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/RS04L",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "RS04L",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/377"
@@ -127882,8 +129106,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/RS04",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "RS04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/378"
@@ -127893,8 +129129,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/RS04S",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "RS04S",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/379"
@@ -127904,8 +129152,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/RS05",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "RS05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/380"
@@ -127915,8 +129175,20 @@
             "id": "FIN-MASTER-01/fe3093133f8fa6ca/RS06",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "RS06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+                "source_repository": "GTX537/CP6",
+                "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+                "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+                "observed_at": "2026-11-19T10:37:19.488283-05:00",
+                "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+                "command": "lifecycle；gl-candidate.trx",
+                "scope": "当前工作流、发布预览及单次使用、后继仍暂停、原暂停时间线和按当前时间线批准恢复。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/15/cases/381"
@@ -128067,8 +129339,58 @@
           }
         ]
       },
-      "implementation_evidence": [],
-      "delivery_evidence": null
+      "implementation_evidence": [
+        {
+          "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+          "source_repository": "GTX537/CP6",
+          "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+          "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+          "observed_at": "2026-11-19T10:37:19.488283-05:00",
+          "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+          "command": "科目隔离 PostgreSQL + Chrome 9 项，财务旧入口／授权回归 61 项，均零跳过。",
+          "scope": "总账版本、整个区间父图和角色、事务发布、恢复、历史与受保护旧入口，独立真实 Main 浏览器。已核销 42 项完整原 AC 和 64 个独立补充场景。",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "GAPS_ASSIGNED",
+        "reviewed_at": "2026-11-19T10:37:19.489079-05:00",
+        "report": "docs/development/evidence/WP11-01/DELIVERY.md",
+        "original_cases_reviewed": 156,
+        "original_cases_passed": 42,
+        "supplemental_cases_reviewed": 239,
+        "supplemental_cases_passed": 64,
+        "required_revision_cases": 0,
+        "coverage_cards": [
+          "WP11-01",
+          "WP11-02",
+          "WP11-03",
+          "WP11-04",
+          "WP11-65"
+        ],
+        "gaps": [
+          {
+            "owner_task_id": "WP11-02",
+            "gap": "税码与成本中心、对应旧字段与共享工作流断言。"
+          },
+          {
+            "owner_task_id": "WP11-03",
+            "gap": "银行及其字段披露、命令原回执和独立银行旧资料语义。"
+          },
+          {
+            "owner_task_id": "WP11-04",
+            "gap": "财务消费者同事务 FM15、真实账务结果、原 UseReceipt、红冲及生产采用门。"
+          },
+          {
+            "owner_task_id": "WP11-65",
+            "gap": "BP 财务桥、真实伙伴资格及高位无损版本原引用。"
+          }
+        ],
+        "classification": "BUSINESS",
+        "new_product_execution": true,
+        "review_effective_seconds": 56.862
+      }
     },
     {
       "id": "FIN-GL-01",
@@ -170146,6 +171468,11 @@
       "at": "2026-11-19T09:05:27.853909-05:00",
       "evidence": "docs/development/evidence/WP02-17/DELIVERY.md",
       "change": "WP02-17 通过 SYS-LANG-01 全部 20 项原验收，必需修订 0。按 #335 单次结转 WP02-18 正式收尾 359.614 秒。"
+    },
+    {
+      "at": "2026-11-19T10:37:19.489079-05:00",
+      "evidence": "docs/development/evidence/WP11-01/DELIVERY.md",
+      "change": "WP11-01 总账科目版本工作流 DONE。FIN-MASTER-01 保持开放。本轮 42 项原 AC 和 64 个补充场景有完整实证，单次结转 WP02-17 收尾 370.283 秒。"
     }
   ],
   "implementation_assessment": {
@@ -191846,7 +193173,7 @@
         "official_started_at": "2026-11-19T08:24:47.161728-05:00",
         "verified_at": "2026-11-19T09:05:27.853909-05:00",
         "technical_verified_at": "2026-11-19T09:04:24.676501-05:00",
-        "effective_seconds": 2377.515,
+        "effective_seconds": 2747.798,
         "size": "M",
         "budget_seconds": 14400.0,
         "mandatory_split_seconds": 21600.0,
@@ -191857,7 +193184,15 @@
           "WP02-14b"
         ],
         "new_product_execution": true,
-        "preceding_integration_seconds": 359.614
+        "preceding_integration_seconds": 359.614,
+        "candidate_effective_seconds": 2377.515,
+        "post_candidate_finalization_seconds": 370.283,
+        "official_finish": "2026-11-19T14:11:38.137271+00:00",
+        "accounting_evidence": {
+          "adopted_commit": "599d6544a3d95d3beeb06ee4b9281c730c898ad3",
+          "original_commit": "28aa9889f1edd60573138b6b1b40e8b57df6c067",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-17/replies/20261119T142855Z-coord-acceptance-ack/MESSAGE.md"
+        }
       }
     },
     {
@@ -211769,21 +213104,84 @@
         "file:Main:CP6.WebApi/Controllers/Fin/GlAccountController.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP11.md",
       "card_anchor": "wp11-01",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "EXEC-WP02-14B",
+        "repository": "Main",
+        "branch": "codex/wp11-01",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-19T09:38:49.064889-05:00",
+        "baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+        "entry_evidence": "docs/development/evidence/WP11-01/DELIVERY.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "delivery_report": "docs/development/evidence/WP11-01/DELIVERY.md",
+        "dispatch_scope": "五维账套、总账科目版本和时间线、独立复核、发布预览、暂停恢复退休、旧模板保留和导入。",
+        "actual_start_ref": {
+          "commit": "63725c89619c89401e9d65caeb4c956e3bf5d4fc",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP11-01/messages/20261119T143910Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-19T14:39:10Z"
+        },
+        "dispatch_decision_ref": {
+          "commit": "b53f0f09cad0961710f27bc5b319597d932267b4",
+          "original_commit": "8978fe77a9599f20db8bdc54e2747a8d316fa4cf",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261119T143225Z-exec-wp02-14b-wp11-01/MESSAGE.md"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+          "source_repository": "GTX537/CP6",
+          "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+          "tested_main_baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+          "observed_at": "2026-11-19T10:37:19.488283-05:00",
+          "environment": "Windows，.NET 8 Main Kestrel，隔离 PostgreSQL 18，Vue/Vite，真实桌面 Chrome 浏览器。模拟用户/设备配置、账套、数据、专业依据和故障。",
+          "command": "科目隔离 PostgreSQL + Chrome 9 项，财务旧入口／授权回归 61 项，均零跳过。",
+          "scope": "总账版本、整个区间父图和角色、事务发布、恢复、历史与受保护旧入口，独立真实 Main 浏览器。已核销 42 项完整原 AC 和 64 个独立补充场景。",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP11-01/DELIVERY.md",
+        "source_sha": "c1f6e2ef8feb01be789312fc6221407ccef95e7a",
+        "remote_main_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1275",
+        "scope": "远端字段记录开工基线。受审实现和核销由同一受保护 PR 采用，合并后冒烟和席位处置见 DELIVERY。",
+        "adoption_record": "D:/CP6-test-artifacts/WP11-01/current-20261119/finish.json"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：Main当前授权/完整Scope、PostgreSQL原生UoW共同锁序与最终fence、原键/UNKNOWN恢复、可靠Outbox",
         "WP02：真实组织/字典权限",
         "专业Owner：科目方案、有效区间与恢复批准规则",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP11-01/DELIVERY.md",
+        "started_at": "2026-11-19T09:38:49.064889-05:00",
+        "official_started_at": "2026-11-19T09:38:49.064889-05:00",
+        "verified_at": "2026-11-19T10:37:19.489079-05:00",
+        "technical_verified_at": "2026-11-19T10:36:22.627086-05:00",
+        "effective_seconds": 3453.562,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "S02-00",
+          "WP02-10",
+          "WP02-13",
+          "WP02-13b"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 370.283
+      }
     },
     {
       "id": "WP11-02",
@@ -293821,7 +295219,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 79984.196,
+      "effective_seconds": 83864.903,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -293847,7 +295245,8 @@
         "WP02-21b",
         "WP02-20",
         "WP02-18",
-        "WP02-17"
+        "WP02-17",
+        "WP11-01"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -293919,8 +295318,8 @@
           "reason": "实际原生 Owner 的冻结、竞争和恢复已验证，完整观察及作业保留、调度和跨库出口仍有证据缺口。"
         }
       ],
-      "current_stage": "B",
-      "next_card": null,
+      "current_stage": "C",
+      "next_card": "WP03-05",
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -294072,11 +295471,28 @@
         }
       },
       "next_card_selection": {
-        "rule": "阶段 B 本轮可领取项已核销，WP02-29 按 #330 保持暂缓。后续阶段和派工由 COORD 根据新台账安排。",
-        "baseline_sha": "d678ea8eefa135c897009698c20943f8e359c6c3",
-        "after_card": "WP02-17",
-        "selected": null,
-        "candidates": [],
+        "rule": "阶段 C 展开全部拆分严格前置，在全图比较后继最长边数，等长按原计划顺序。后续领取由 COORD 派工。",
+        "baseline_sha": "091b5773a2c0568166b4aaa6e0467375e27ae0fb",
+        "after_card": "WP11-01",
+        "selected": "WP03-05",
+        "candidates": [
+          {
+            "task": "WP03-05",
+            "longest_downstream_edges": 41
+          },
+          {
+            "task": "WP11-65",
+            "longest_downstream_edges": 41
+          },
+          {
+            "task": "WP02-22",
+            "longest_downstream_edges": 39
+          },
+          {
+            "task": "WP03-12",
+            "longest_downstream_edges": 6
+          }
+        ],
         "deferral_ref": {
           "commit": "f3bee20f0853bd9117213b965c4cc5a382c83123",
           "path": "handoffs/CP6-DEV-20261012/tasks/WP02-29/replies/20261119T084313Z-coord-deferral-decision/MESSAGE.md"
@@ -294145,10 +295561,10 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 3898.135,
+      "target_review_effective_seconds": 3954.997,
       "last_checkpoint_counts": {
-        "original_done": 57,
-        "fully_done": 57,
+        "original_done": 58,
+        "fully_done": 58,
         "targets_done": 10,
         "new_splits": 7,
         "periodic_checkpoint_due": false
