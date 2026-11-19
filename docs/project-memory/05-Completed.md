@@ -3,10 +3,11 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP03-02 浏览器绑定公开提交与H01自动受理](../development/evidence/WP03-02/DELIVERY.md)（DONE），核对时间 `2026-11-18T20:31:39.187281-05:00`。
+- [WP03-04 询盘同意、保留匿名化与隐私导出](../development/evidence/WP03-04/DELIVERY.md)（DONE），核对时间 `2026-11-18T21:40:01.981651-05:00`。
 
 ### 已关闭目标
 
+- [CRM-INQ-01 公开询盘与受理](../development/evidence/WP03-04/DELIVERY.md)
 - [OA-DEF-01 流程和表单定义](../development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md)
 - [SYS-AUD-01 操作、安全与字段审计](../development/evidence/WP02-13b/DELIVERY.md)
 - [SYS-NUM-01 编号与开发辅助生成](../development/evidence/WP02-16b/DELIVERY.md)

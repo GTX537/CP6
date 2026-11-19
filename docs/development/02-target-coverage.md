@@ -4,7 +4,7 @@
 
 | 目标 | 名称 | 大任务 | 实现评估 | 交付状态 | 修订运行场景数 |
 |---|---|---|---|---|---:|
-| [CRM-INQ-01](../../docs/design-handbook/modules/CRM-INQ-01.md) | 公开询盘与受理 | WP03 | CHANGE_REQUIRED | 待安排 | 2 |
+| [CRM-INQ-01](../../docs/design-handbook/modules/CRM-INQ-01.md) | 公开询盘与受理 | WP03 | CHANGE_REQUIRED | 已交付 | 2 |
 | [CRM-LEAD-01](../../docs/design-handbook/modules/CRM-LEAD-01.md) | 线索管理与资格确认 | WP03 | CHANGE_REQUIRED | 待安排 | 12 |
 | [CRM-ACT-01](../../docs/design-handbook/modules/CRM-ACT-01.md) | 客户互动与销售活动 | WP03 | NEW_REQUIRED | 待安排 | 2 |
 | [CRM-ACC-01](../../docs/design-handbook/modules/CRM-ACC-01.md) | 客户关系账户 | WP03 | NEW_REQUIRED | 待安排 | 10 |

@@ -921,7 +921,7 @@
           "scope": "CRM-INQ-01: fixed Main/CRM/Platform/candidate evidence; known implementation delta, not exhaustive runtime conformance. Actual per-file source SHA is in the report."
         }
       ],
-      "delivery_state": "PLANNED",
+      "delivery_state": "DONE",
       "blockers": [],
       "runtime_case_ids": [
         "DR-COM-INQ-GENERATED-CONTRACT-ADOPTION::COM-INQ-GENERATED-CONTRACT-ADOPTION-POS",
@@ -2542,8 +2542,28 @@
           }
         ]
       },
-      "implementation_evidence": [],
-      "delivery_evidence": null,
+      "implementation_evidence": [
+        {
+          "path": "docs/development/evidence/WP03-04/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+          "adopted_main_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+          "observed_at": "2026-11-18T21:40:01.981651-05:00",
+          "environment": "Windows、PostgreSQL 18.6、.NET SDK 8.0.424、真实 Main Kestrel TLS、CRM HTTP、Next 16.3.3、Node 22.22.0、Chromium。独立库及模拟历史业务、签名登记。",
+          "command": "dotnet test CRM 原生 PG/HTTP/浏览器及 Main TLS 联验，Node 定向测试和实际 Next 构建；精确过滤与原 TRX 见报告。",
+          "scope": "CRM .NET 133、Main .NET 2、Web 67 项通过，零跳过；定向运行范围、实验先期夹具与历史证据复用见报告。",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP03-04/DELIVERY.md",
+        "source_sha": "a6ca763620105777dd9faf25d853937b6f94ea24",
+        "remote_main_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+        "pr_url": "https://github.com/GTX537/CP6.CRM/pull/186",
+        "scope": "CRM #152、#168、#182、#185、#186 等正式交付的实际版本已采用。本卡业务复验以远端同一提交运行；本关卡 PR 采用报告、目标和台账。",
+        "main_provider_commit": "3a20a0e332c1ddcbb64a70f597a4844d5f5d8620",
+        "effective_contract_sha256": "fd9a9444eac23225ecbf8ab91856dc7df2c0e4da53d9b765cbfccdeb2223ba2d"
+      },
       "wave485_acceptance_adoption": {
         "report": "docs/development/evidence/W485-01/DELIVERY.md",
         "status": "CLOSED",
@@ -2778,6 +2798,24 @@
         "associated_runtime_pass": 2,
         "associated_runtime_total": 2,
         "full_target_complete": false
+      },
+      "completion_audit": {
+        "result": "DONE",
+        "reviewed_at": "2026-11-18T21:33:34.380970-05:00",
+        "report": "docs/development/evidence/WP03-04/DELIVERY.md",
+        "original_cases_reviewed": 60,
+        "required_revision_cases": 2,
+        "coverage_cards": [
+          "WP03-01",
+          "WP03-02",
+          "WP03-03",
+          "WP03-04"
+        ],
+        "evidence_versions_verified": 24,
+        "gaps": [],
+        "classification": "BUSINESS",
+        "new_product_execution": true,
+        "review_effective_seconds": 134.035
       }
     },
     {
@@ -141211,8 +141249,20 @@
             "id": "SYS-PRIV-01::AC-PV02-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV02-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP03-04/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+                "adopted_main_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+                "observed_at": "2026-11-18T21:40:01.981651-05:00",
+                "environment": "Windows、PostgreSQL 18.6、.NET SDK 8.0.424、真实 Main Kestrel TLS、CRM HTTP、Next 16.3.3、Node 22.22.0、Chromium。独立库及模拟历史业务、签名登记。",
+                "command": "domain-retention.trx；retention-parent-worker.trx（soft-delete）；native-privacy.trx",
+                "scope": "真实 PG 历史 Lead UTC 24 日历月准确；变更和软删保留原锚点及期限。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/5"
@@ -141222,8 +141272,20 @@
             "id": "SYS-PRIV-01::AC-PV02-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV02-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP03-04/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+                "adopted_main_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+                "observed_at": "2026-11-18T21:40:01.981651-05:00",
+                "environment": "Windows、PostgreSQL 18.6、.NET SDK 8.0.424、真实 Main Kestrel TLS、CRM HTTP、Next 16.3.3、Node 22.22.0、Chromium。独立库及模拟历史业务、签名登记。",
+                "command": "native-privacy.trx 中 W491 历史实际 Owner 场景；domain-retention.trx",
+                "scope": "当前及历史命令、搜索、活动更正的个人数据统一处置；原 ETag、版本和非个人事实保持。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/6"
@@ -141233,8 +141295,20 @@
             "id": "SYS-PRIV-01::AC-PV02-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV02-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP03-04/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+                "adopted_main_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+                "observed_at": "2026-11-18T21:40:01.981651-05:00",
+                "environment": "Windows、PostgreSQL 18.6、.NET SDK 8.0.424、真实 Main Kestrel TLS、CRM HTTP、Next 16.3.3、Node 22.22.0、Chromium。独立库及模拟历史业务、签名登记。",
+                "command": "retention-parent-worker.trx（earlier-submission、wrong-binding）",
+                "scope": "更早 Submission 期限独立执行，Lead 仍保持有效；非法绑定由实际 Worker 拒绝且保留原图。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/7"
@@ -141244,8 +141318,20 @@
             "id": "SYS-PRIV-01::AC-PV02-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV02-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP03-04/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+                "adopted_main_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+                "observed_at": "2026-11-18T21:40:01.981651-05:00",
+                "environment": "Windows、PostgreSQL 18.6、.NET SDK 8.0.424、真实 Main Kestrel TLS、CRM HTTP、Next 16.3.3、Node 22.22.0、Chromium。独立库及模拟历史业务、签名登记。",
+                "command": "commit-unknown.trx 的 erasure 测试；native-privacy.trx 的 hold 和原单元回归",
+                "scope": "真实 PostgreSQL COMMIT 确认丢失、同一单元恢复和重复执行，原效果、墓碑及匿名投影保持。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/8"
@@ -141255,8 +141341,20 @@
             "id": "SYS-PRIV-01::AC-PV02-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV02-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP03-04/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+                "adopted_main_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+                "observed_at": "2026-11-18T21:40:01.981651-05:00",
+                "environment": "Windows、PostgreSQL 18.6、.NET SDK 8.0.424、真实 Main Kestrel TLS、CRM HTTP、Next 16.3.3、Node 22.22.0、Chromium。独立库及模拟历史业务、签名登记。",
+                "command": "retention-parent-worker.trx（3600 秒配置首次扫描）；native-privacy.trx 宿主 Worker",
+                "scope": "历史小时调度、现行真实扫描与日志、设计 24 小时目标分列。生产 SLA 和完整小时轮询未测。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/9"
@@ -141266,8 +141364,20 @@
             "id": "SYS-PRIV-01::AC-PV02-06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-PV02-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP03-04/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+                "adopted_main_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+                "observed_at": "2026-11-18T21:40:01.981651-05:00",
+                "environment": "Windows、PostgreSQL 18.6、.NET SDK 8.0.424、真实 Main Kestrel TLS、CRM HTTP、Next 16.3.3、Node 22.22.0、Chromium。独立库及模拟历史业务、签名登记。",
+                "command": "retention-parent-worker.trx（wrong-binding）；native-privacy.trx 图及密钥负例",
+                "scope": "实际 Worker 隔离非法图，持久 Failed 与计数信号；保护密钥或结果形态异常无假成功。外部告警投递未测。",
+                "result": "PASS"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/4/cases/10"
@@ -141496,11 +141606,6 @@
         "required_revision_cases": 0,
         "gaps": [
           {
-            "case_id": "SYS-PRIV-01::AC-PV02-01",
-            "owner_task_id": "WP03-04",
-            "gap": "在最新 CRM 真实 Owner 的询盘、Lead 与相关活动中核对原保留锚点、历史和搜索、父子独立时限、原键恢复与实际调度报警。沿本卡已有证据复用范围逐项组合。 对应 AC-PV02-01、AC-PV02-02、AC-PV02-03、AC-PV02-04、AC-PV02-05、AC-PV02-06。"
-          },
-          {
             "case_id": "SYS-PRIV-01::AC-PV01-03",
             "owner_task_id": "WP14-08",
             "gap": "按实际多仓和 Owner 核对逐来源 asOf、保留政策与引用全集，以及独立 FILE、WAL、外部归档和跨 Owner 的恢复墓碑及开放条件。 对应 AC-PV01-03、AC-PV04-01、AC-PV04-05。"
@@ -141508,7 +141613,25 @@
         ],
         "new_product_execution": true,
         "classification": "BUSINESS",
-        "review_effective_seconds": 287.897
+        "review_effective_seconds": 287.897,
+        "resolved_gaps": [
+          {
+            "case_id": "SYS-PRIV-01::AC-PV02-01",
+            "owner_task_id": "WP03-04",
+            "gap": "在最新 CRM 真实 Owner 的询盘、Lead 与相关活动中核对原保留锚点、历史和搜索、父子独立时限、原键恢复与实际调度报警。沿本卡已有证据复用范围逐项组合。 对应 AC-PV02-01、AC-PV02-02、AC-PV02-03、AC-PV02-04、AC-PV02-05、AC-PV02-06。",
+            "case_ids": [
+              "SYS-PRIV-01::AC-PV02-01",
+              "SYS-PRIV-01::AC-PV02-02",
+              "SYS-PRIV-01::AC-PV02-03",
+              "SYS-PRIV-01::AC-PV02-04",
+              "SYS-PRIV-01::AC-PV02-05",
+              "SYS-PRIV-01::AC-PV02-06"
+            ],
+            "resolved_at": "2026-11-18T21:40:01.981651-05:00",
+            "report": "docs/development/evidence/WP03-04/DELIVERY.md",
+            "source_sha": "5a3d272cea2579aaa904cec5db68d0b021932508"
+          }
+        ]
       }
     },
     {
@@ -168690,6 +168813,11 @@
       "at": "2026-11-18T20:31:39.187281-05:00",
       "change": "WP03-02 卡 DONE。CRM 在当前主线复验证明浏览器绑定、公开 H01 同事务、回执原键恢复及真实页面刷新，完成共用服务适用核对。原 60 项验收与两项必需修订保留，CRM-INQ-01 继续等 WP03-04 的消费与整目标核对。",
       "evidence": "docs/development/evidence/WP03-02/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-18T21:40:01.981651-05:00",
+      "change": "WP03-04 卡 DONE。现行 CRM 同意、匿名化、导出及原键运行验收通过，CRM-INQ-01 原 60 项、两项修订及四张覆盖卡已核对远端采用，关闭阶段 A 目标。SYS-PRIV-01 六项转 PASS；剩余三项归 WP14-08。按 #1264 补登 WP02-09b 同卡修复与缓冲，WP03-02 自身收尾单列。",
+      "evidence": "docs/development/evidence/WP03-04/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -187077,7 +187205,15 @@
         "target_review_started_at": "2026-11-18T17:28:02.954+00:00",
         "target_review_seconds": 197.031,
         "official_finish": "2026-11-18T12:40:22.750613-05:00",
-        "post_candidate_finalization_seconds": 542.767
+        "post_candidate_finalization_seconds": 542.767,
+        "same_card_bugfix_effective_seconds": 2276.932,
+        "final_effective_seconds": 17534.36,
+        "final_buffer_used_seconds": 4703.009,
+        "final_accounting_evidence": {
+          "issue": "https://github.com/GTX537/CP6/issues/1264",
+          "acknowledgment": "https://github.com/GTX537/CP6.AI-Handoff/blob/f7f384bc5803da231ee585784d0078eb0ad6fffd/handoffs/CP6-DEV-20261012/tasks/WP02-09b/replies/20261118T191049Z-coord-final-acceptance-ack/MESSAGE.md",
+          "report": "docs/development/evidence/WP03-04/DELIVERY.md"
+        }
       }
     },
     {
@@ -193875,7 +194011,9 @@
           "WP03-01"
         ],
         "new_product_execution": true,
-        "preceding_integration_seconds": 542.767
+        "preceding_integration_seconds": 542.767,
+        "official_finish": "2026-11-18T20:39:01.539844-05:00",
+        "post_candidate_finalization_seconds": 442.353
       }
     },
     {
@@ -194671,30 +194809,57 @@
         "file:CRM:apps/web/src/leads/PublicInquiry.tsx"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP03.md",
       "card_anchor": "wp03-04",
-      "entry_gate": "NOT_CHECKED",
+      "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W497-01",
+        "chat_label": "EXEC-WP02-14B",
         "repository": "CRM",
-        "branch": "codex/w497-01",
+        "branch": "codex/wp03-04",
         "worktree": "D:/CP6-worktrees/dev-2",
-        "claimed_at": "2026-11-12T10:34:20.000584+00:00",
-        "baseline_sha": "ae09fcd368f6aa3d5ff182537b9524f6f7c46933",
-        "entry_evidence": "docs/development/evidence/W497-01/DELIVERY.md",
+        "claimed_at": "2026-11-18T21:09:24.282436-05:00",
+        "baseline_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+        "entry_evidence": "docs/development/evidence/WP03-04/DELIVERY.md",
         "phase": "CLOSED",
-        "bounded_window_gate": "CONFIRMED",
-        "full_task_gate_unchanged": true,
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W497-01/DELIVERY.md",
-        "dispatch_scope": "AC-INQ-051: native privacy export rejection, terminal audit, artifact absence, and original acknowledgement replay.",
-        "source_sha": "a6ca763620105777dd9faf25d853937b6f94ea24",
-        "product_seat_released": true
+        "full_task_completed": true,
+        "delivery_report": "docs/development/evidence/WP03-04/DELIVERY.md",
+        "dispatch_scope": "实际 CRM 询盘同意和撤回、原期限及 hold、原生匿名化、导出 20/30/90/99、当前下载与原任务恢复。核对 NUM、FILE、PRIV 实际调用和采用版本。",
+        "actual_start_ref": {
+          "commit": "d449eb077e1f6ebef47e76f45cab542a43347d06",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-04/messages/20261119T021034Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-19T02:10:34Z"
+        },
+        "dispatch_decision_ref": {
+          "commit": "acaf2405b3c625fe58bc2345073e81de6aad2e1e",
+          "original_commit": "fd421ddd37465baedf29e2d6aecd07893a86f845",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261119T020014Z-exec-wp02-14b-wp03-04/MESSAGE.md"
+        }
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP03-04/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+          "adopted_main_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+          "observed_at": "2026-11-18T21:40:01.981651-05:00",
+          "environment": "Windows、PostgreSQL 18.6、.NET SDK 8.0.424、真实 Main Kestrel TLS、CRM HTTP、Next 16.3.3、Node 22.22.0、Chromium。独立库及模拟历史业务、签名登记。",
+          "command": "dotnet test CRM 原生 PG/HTTP/浏览器及 Main TLS 联验，Node 定向测试和实际 Next 构建；精确过滤与原 TRX 见报告。",
+          "scope": "CRM .NET 133、Main .NET 2、Web 67 项通过，零跳过；定向运行范围、实验先期夹具与历史证据复用见报告。",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP03-04/DELIVERY.md",
+        "source_sha": "a6ca763620105777dd9faf25d853937b6f94ea24",
+        "remote_main_sha": "5a3d272cea2579aaa904cec5db68d0b021932508",
+        "pr_url": "https://github.com/GTX537/CP6.CRM/pull/186",
+        "scope": "CRM #152、#168、#182、#185、#186 等正式交付的实际版本已采用。本卡业务复验以远端同一提交运行；本关卡 PR 采用报告、目标和台账。",
+        "main_provider_commit": "3a20a0e332c1ddcbb64a70f597a4844d5f5d8620",
+        "effective_contract_sha256": "fd9a9444eac23225ecbf8ab91856dc7df2c0e4da53d9b765cbfccdeb2223ba2d"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：CRM PostgreSQL可信租户路由、当前权限、原生外层事务/共同锁、原结果账与可靠消息实际采用",
@@ -195038,6 +195203,23 @@
           "worker_start_received": true,
           "delivery_report": "docs/development/evidence/W488-01/DELIVERY.md",
           "dispatch_scope": "新增privacy-export路由真实Owner原事件到HTTP sidecar确认/丢回执恢复；原一分钟租约实际到期前后保持原Request和已发送事实，不重复Job/H01/业务事务。已有其他路由成功按原范围复用。"
+        },
+        {
+          "chat_label": "COORD / W497-01",
+          "repository": "CRM",
+          "branch": "codex/w497-01",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "claimed_at": "2026-11-12T10:34:20.000584+00:00",
+          "baseline_sha": "ae09fcd368f6aa3d5ff182537b9524f6f7c46933",
+          "entry_evidence": "docs/development/evidence/W497-01/DELIVERY.md",
+          "phase": "CLOSED",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "delivery_report": "docs/development/evidence/W497-01/DELIVERY.md",
+          "dispatch_scope": "AC-INQ-051: native privacy export rejection, terminal audit, artifact absence, and original acknowledgement replay.",
+          "source_sha": "a6ca763620105777dd9faf25d853937b6f94ea24",
+          "product_seat_released": true
         }
       ],
       "wave126_delivery": {
@@ -195390,6 +195572,35 @@
         "crm_remote_main_sha": "8ff5820e9af96315e2c0c54e69774970c65847af",
         "observed": "合法模拟输入与测试专用 1024 字节阈值实测 20→90，单份拒绝审计，制品与凭据为空，下载 410，同键恢复原 202 及 ETag。",
         "full_task_complete": false
+      },
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP03-04/DELIVERY.md",
+        "started_at": "2026-11-18T21:09:24.282436-05:00",
+        "official_started_at": "2026-11-18T21:09:24.282436-05:00",
+        "verified_at": "2026-11-18T21:40:01.981651-05:00",
+        "effective_seconds": 1703.664,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-09",
+          "WP02-09b",
+          "WP02-14",
+          "WP02-14b",
+          "WP02-15",
+          "WP03-03"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 442.353,
+        "target_review_started_at": "2026-11-18T21:31:20.345631-05:00",
+        "target_review_seconds": 134.035,
+        "accounting_correction": {
+          "issue": "https://github.com/GTX537/CP6/issues/1264",
+          "WP02-09b_same_card_bugfix_seconds": 2276.932,
+          "WP02-09b_buffer_delta_seconds": 2819.699
+        }
       }
     },
     {
@@ -291709,7 +291920,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 55971.446,
+      "effective_seconds": 60528.43,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -291727,14 +291938,16 @@
         "WP02-15",
         "WP02-16b",
         "WP02-09b",
-        "WP03-02"
+        "WP03-02",
+        "WP03-04"
       ],
       "closed_targets": [
         "OA-DEF-01",
         "PLT-TEST-01",
         "SYS-AUD-01",
         "SYS-TENANT-01",
-        "SYS-NUM-01"
+        "SYS-NUM-01",
+        "CRM-INQ-01"
       ],
       "new_splits": [
         {
@@ -291779,7 +291992,7 @@
         }
       ],
       "current_stage": "A",
-      "next_card": "WP03-04",
+      "next_card": null,
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -291929,16 +292142,11 @@
         }
       },
       "next_card_selection": {
-        "rule": "阶段 A 严格前置展开后的唯一后继候选。适用派工仍由 COORD 发布。",
-        "baseline_sha": "d409b993c8885113903aff9fbf808e10269ac6c5",
-        "after_card": "WP03-02",
-        "selected": "WP03-04",
-        "candidates": [
-          {
-            "id": "WP03-04",
-            "longest_downstream_edges": 3
-          }
-        ]
+        "rule": "阶段 A 卡与目标已关闭，阶段 B 按完整前置和原下游依赖计算，等待 COORD 发布正式派工。",
+        "baseline_sha": "3a20a0e332c1ddcbb64a70f597a4844d5f5d8620",
+        "after_card": "WP03-04",
+        "selected": null,
+        "candidates": []
       },
       "phase0_user_confirmation": "2026-11-17 用户确认：先按证据核销或拆卡，列清缺口；完成阶段0核对后再按顺序实施剩余卡。",
       "budget_rule": "余卡上限=父卡上限−父卡已用有效时间（不足0按0计，超出计缓冲）；同一原号的分配守恒。第二次拆分先报总负责，不自动追加卡池。",
@@ -292003,15 +292211,22 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 3427.478,
+      "target_review_effective_seconds": 3561.513,
       "last_checkpoint_counts": {
-        "original_done": 51,
-        "fully_done": 51,
-        "targets_done": 5,
+        "original_done": 52,
+        "fully_done": 52,
+        "targets_done": 6,
         "new_splits": 5,
         "periodic_checkpoint_due": false
       },
-      "buffer_used_seconds": 1883.31
+      "buffer_used_seconds": 4703.009,
+      "stage_a_completion": {
+        "result": "COMPLETE",
+        "candidate_at": "2026-11-18T21:40:01.981651-05:00",
+        "last_card": "WP03-04",
+        "target": "CRM-INQ-01",
+        "report": "docs/development/evidence/WP03-04/DELIVERY.md"
+      }
     }
   },
   "acceptance_basis": {
