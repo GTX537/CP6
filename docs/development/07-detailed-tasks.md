@@ -2,13 +2,13 @@
 
 台账日期：2026-11-19。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 382 项，已交付 65 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 382 项，已交付 66 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)。按[单卡串行计划](planning/20261117-card-execution.md)核对完整前置并选择下一卡。
 
 原 375 卡及其全部出口保留；已登记 7 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。
 
-原号 DONE 58/375；完整 DONE 58/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。
+原号 DONE 59/375；完整 DONE 59/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。
 
 ## WP01 现有实现与设计对照
 
@@ -397,7 +397,7 @@
 | [WP11-62 应收权威Source目录和历史Cut读取端口](../../docs/development/task-plans/WP11.md#wp11-62) | Main | 待安排 | WP02-10, WP02-13, WP11-04, WP11-14 | CODE / M | 未领取 |
 | [WP11-63 FIN INV H30准确绑定与排他资格提供者](../../docs/development/task-plans/WP11.md#wp11-63) | Main | 待安排 | WP02-10, WP02-13, WP09-12, WP10-22, WP11-35 | CODE / M | 未领取 |
 | [WP11-64 真实Funds只读证据、完整目录与最终参加适配](../../docs/development/task-plans/WP11.md#wp11-64) | Main | 待安排 | WP02-10, WP02-11, WP02-13, WP11-01 | CODE / M | 未领取 |
-| [WP11-65 BP财务引用只读当前源与共同门](../../docs/development/task-plans/WP11.md#wp11-65) | Main | 待安排 | WP02-10, WP02-13, WP11-01 | CODE / M | 未领取 |
+| [WP11-65 BP财务引用只读当前源与共同门](../../docs/development/task-plans/WP11.md#wp11-65) | Main | 已交付 | WP02-10, WP02-13, WP11-01 | CODE / M | EXEC-WP02-14B |
 | [WP11-66 AP原义务共享预算与无内部提交参加底座](../../docs/development/task-plans/WP11.md#wp11-66) | Main | 待安排 | WP02-10, WP02-13, WP07-14, WP11-04 | CODE / M | 未领取 |
 
 ## WP12 流程与审批
