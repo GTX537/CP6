@@ -5315,8 +5315,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "CRM API 与浏览器中 PA 在 t1 结束、PB 在同一 t1 开始。分界点只解析到乙。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/4"
@@ -5326,8 +5339,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "开放 PB 与未展示的未来主要相交时整笔拒绝。另以 ADD 明确建立无主要关系。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/5"
@@ -5337,8 +5363,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C07",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C07",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "两位独立会话持同一 SetVersion 竞争，正好一个提交。未应用一方的修订、审计和 Outbox 业务效应为零。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/6"
@@ -5348,8 +5387,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C08",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C08",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "ACT 参加夹具保存 RA/rev1，更正后生成带精确证据和原因的后继。原参加内容逐字节相等。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/7"
@@ -5510,8 +5562,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C18",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C18",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "按独立对象范围检验两个方向。Account 可读但 Contact 隐藏时整体 404。Contact 可读但 Account 隐藏时裁剪子项，焦点查询返回同一安全码。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/17"
@@ -5569,8 +5634,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C21",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C21",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "相邻实际资料维护与独立归属回归通过。Account Owner 变动不改 Contact Owner 或关系，夹带账户关系及停用时普通资料维护均拒绝。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/20"
@@ -5615,8 +5693,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C24",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C24",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "带精确证据的历史新增和有明确起点的未来新增均通过。未来尚不可运营，倒置期间全拒。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/23"
@@ -5626,8 +5717,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C25",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C25",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "两个对象停用后专权结束成功，追加不可变结束修订且没有自动替补。非法终点和旧集合均拒绝。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/24"
@@ -5637,8 +5741,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C26",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C26",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "原活动视图保持甲和 rev1，更正解释显示同关系 ID 的后继 rev2，当前视图解释最新集合。历史视图没有写凭据。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/25"
@@ -5648,8 +5765,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C27",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C27",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "两位操作者同水位竞争，隐藏相交全拒。失败不先结束 PA，响应无隐藏坐标、期间和计数。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/26"
@@ -5659,8 +5789,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C28",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C28",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "停用使现存关系当前不可用于新业务，原期间保留。新增运营关系拒绝，授权结束成功。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/27"
@@ -5858,8 +6001,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C39",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C39",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "只存旧 AccountId 的模拟存量显示 LEGACY_REFERENCE_UNDATED，读取不造 RelationId、起点、终点或主要事实。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/38"
@@ -5869,8 +6025,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C40",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C40",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "原合同 C42 前段与 React 仅切主要一起通过。RA/RB 继续且原修订保持，PA/PB 在明确时点交接。实际 ACT 参加夹具继续指向原甲修订。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/39"
@@ -5880,8 +6049,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C41",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C41",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "仅主要变更权时结束并切换全拒。组合权正向一次提交，版本竞争与审计故障下业务图整体一致。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/40"
@@ -5891,8 +6073,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C42",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C42",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "API 与浏览器都拒绝开放到无穷的 PB，显式截止于 PC 起点时成功。PC 的绑定、修订和期间保持，RA/RB 与旧 ACT 原件保留。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/41"
@@ -5902,8 +6097,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C43",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C43",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "结束甲并明确截短 PA 后允许没有主要账户。更正跨账户遗漏当前主要的显式重绑时全拒。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/42"
@@ -5913,8 +6121,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C44",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C44",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "目标停用先提交则原切换被拒。切换先提交则仍保历史安排且后续不可运营。Account 锁阻塞时 Contact 根可由观察者立即持锁，旧 Account 停用后可专权移除主要。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/43"
@@ -5924,8 +6145,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C45",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C45",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "ADD 同时加主要与切换按同一 SetVersion 竞争，只有一次成功。部分可见集合不能删隐藏安排，缺完整凭据的请求拒绝。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/44"
@@ -5994,8 +6228,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/C49",
             "kind": "ORIGINAL_AC",
             "source_case_id": "C49",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "关系、用途策略或身份改变分别使已签预览失效。撤权分支拒绝敏感读取，业务修订为零。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/48"
@@ -6005,8 +6252,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/REV1-01",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "REV1-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "关闭抽屉及刷新页面后从新请求取得 RA/RB、PA/PC 的 ID、修订、关系种类、证据修订和 ETag。实际差异预览后一次应用。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/49"
@@ -6016,8 +6276,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/REV1-02",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "REV1-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "隐藏 PC 未列出时仍按完整集合保留，PB 冲突返回安全码。响应无隐藏 ID、期间及数，PA 没有半写。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/50"
@@ -6027,8 +6300,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/REV1-03",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "REV1-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "越权 scope 403。真实 Account 的资格向量和预览标签按不透明值绑定，证据标识 evidence-r7 保持字符串。错误证据形状 400，合法结构进入准确审批保护。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/51"
@@ -6038,8 +6324,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/REV1-04",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "REV1-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "无结束关系权时用主要变更权在明确时点结束 PA。甲关系修订保持，允许随后无主要。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/52"
@@ -6049,8 +6348,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/REV1-05",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "REV1-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "只撤回未来 PC 时 PA、RA、RB 保留。提交时 PC 已开始的对照整笔拒绝。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/53"
@@ -6060,8 +6372,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/REV1-06",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "REV1-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "只有新增关系权与拥有全部关系权的两类会话均拒绝 ADD 混入 END 或 CORRECT。业务修订、审计和 Outbox 不增加。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/54"
@@ -6071,8 +6396,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/REV1-07",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "REV1-07",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "分别检验仅主要变更权与双权限，确认 403 分支业务图不变，成功同事务。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/55"
@@ -6082,8 +6420,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/REV1-08",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "REV1-08",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "oldPrimaryId、oldRelationId 与实际变更不一致及过期凭据均拒绝。响应丢失按原键读回一次已提交结果。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/56"
@@ -6277,8 +6628,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/COR-AC01",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "COR-AC01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "以历史 queryAt 模拟倒签时点，早于服务端 readAsOf 的 REMOVE 被拒。篡改凭据同样全拒。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/69"
@@ -6288,8 +6652,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/COR-AC02",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "COR-AC02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "有效期内延迟提交保留原时点。预览不延长五分钟期限，在提交时已生效的未来期间无法撤回，读取时钟变化不提升 ETag 版本。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/70"
@@ -6299,8 +6676,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/COR-AC03",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "COR-AC03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "在 t2 结束 RB 但省略 PC 明确撤回时以 PRIMARY_OUTSIDE_RELATION 拒绝，业务计数完整不变。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/71"
@@ -6310,8 +6700,21 @@
             "id": "CRM-CON-01/6a000d26d7a638a4/COR-AC04",
             "kind": "REQUIRED_SUPPLEMENTAL_SCENARIO",
             "source_case_id": "COR-AC04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+                "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+                "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+                "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+                "scope": "显式撤回未生效 PC 时，RB 与 PC 各新增一个修订，PA/PB/RA 保留，Contact 和集合一次应用。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/4/cases/72"
@@ -6365,6 +6768,18 @@
           "result": "PASS",
           "environment": "Windows、实际 CRM Kestrel、原生 PostgreSQL 18.6 与 Next 转发。用户、业务数据、外部证据及 ACT 调用方的范围见唯一报告。",
           "scope": "WP03-10 核对至原 AC 19/49、必需补充 4/26、运行修订 0/2，目标开放。"
+        },
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+          "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+          "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+          "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+          "result": "PASS",
+          "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+          "scope": "WP03-09 核对至原 AC 38/49、必需补充 16/26、运行修订 0/2，目标开放。"
         }
       ],
       "delivery_evidence": null
@@ -172567,6 +172982,11 @@
       "at": "2026-11-20T06:33:02.983857+00:00",
       "evidence": "docs/development/planning/20261117-card-execution.md",
       "change": "WP03-10 联系人渠道值与用途证据策略 DONE。CRM-CON-01 原 AC 19/49，必需补充 4/26，运行修订 0/2，目标开放。按 #351 单次补记 WP04-02 正式收尾 159.941 秒。"
+    },
+    {
+      "at": "2026-11-20T07:33:30.199316+00:00",
+      "evidence": "docs/development/planning/20261117-card-execution.md",
+      "change": "WP03-09 联系人关系完整集合预览与主要期间 DONE。CRM-CON-01 原 AC 38/49，必需补充 16/26，运行修订 0/2，目标开放。按 #353 单次补记 WP03-10 正式收尾 148.838 秒。"
     }
   ],
   "implementation_assessment": {
@@ -200247,19 +200667,97 @@
         "file:CRM:src/CP6.CRM.Api/CrmEndpoints.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP03.md",
       "card_anchor": "wp03-09",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "EXEC-WP02-14B",
+        "repository": "CRM",
+        "owning_task_repository": "CRM",
+        "branch": "codex/wp03-09",
+        "worktree": "D:/CP6-worktrees/dev-2",
+        "claimed_at": "2026-11-20T06:57:26.035072+00:00",
+        "baseline_sha": "8658c4997673633785e289cf5e4737c5d6e8d316",
+        "entry_evidence": "docs/development/planning/20261117-card-execution.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "delivery_report": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+        "dispatch_scope": "CRM React 与 API 六种关系意图、完整集合与三视图、Account→Contact 锁序及 H02 同事务原计划参与。",
+        "actual_start_ref": {
+          "commit": "8bec0be86add50104e9ce1be3395feeb031daa5e",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-09/messages/20261120T065726Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-20T06:57:26.035072+00:00"
+        },
+        "dispatch_decision_ref": {
+          "commit": "e1fd3821a5f2b4bce19717f78c52a68df7ebbadb",
+          "original_commit": "a44946198109e4c255c7a13ccda506d4aebb59d3",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261120T065038Z-exec-wp02-14b-wp03-09/MESSAGE.md"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+          "adopted_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+          "command": "CRM 实际 Chrome、Kestrel 与隔离 PostgreSQL 专项 15/15、相邻回归 25/25，边界夹具更新后的定向复测 6/6。Web 165/165、类型检查、构建和存量前向迁移通过。同树采用后 CRM 冒烟 4/4。",
+          "observed_at": "2026-11-20T07:30:02.6617194+00:00",
+          "result": "PASS",
+          "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
+          "scope": "CRM React 与 API 六种关系意图、完整集合与三视图、Account→Contact 锁序及 H02 同事务原计划参与。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/planning/20261117-card-execution.md",
+        "report_url": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+        "source_sha": "d3040146a74823e5968662273c143d6619d07c71",
+        "remote_main_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+        "pr_url": "https://github.com/GTX537/CP6.CRM/pull/245",
+        "reviewed_crm_head": "611bee2404ed972d21ca491e3e6ece14baba487b",
+        "main_provider_commit": "c75748b649a83b82b59f5ebb7009b6c1f4cd9f92",
+        "main_contact_design_git_blob": "a4f9275292c878144cec0def32b50e922e43962e",
+        "main_activity_design_git_blob": "f18ae4295c3275f664e5a5688d355250939dfd67",
+        "main_common_wire_git_blob": "ccf3d9fbabdcc474698245ac7ed1dda98a326e0b",
+        "main_lead_design_git_blob": "68d9270097097dba54454575f596fe489f6112e8",
+        "relationship_contract": "CRM-CON-01 v1.1.1",
+        "scope": "CRM 产品及唯一报告先采用，采用后冒烟 4/4 并释放 DEV-2。本 PR 核销同一卡。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：CRM PostgreSQL可信租户路由、当前权限、原生外层事务/共同锁、原结果账与可靠消息实际采用",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "card_execution": {
+        "result": "DONE",
+        "report": "https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md",
+        "started_at": "2026-11-20T06:57:26.035072+00:00",
+        "official_started_at": "2026-11-20T06:57:26.035072+00:00",
+        "technical_verified_at": "2026-11-20T07:30:02.6617194+00:00",
+        "verified_at": "2026-11-20T07:33:30.199316+00:00",
+        "effective_seconds": 2164.111,
+        "product_verified_seconds": 1956.627,
+        "crm_integration_seconds": 157.039,
+        "workspace_transition_seconds": 44.656,
+        "main_ledger_candidate_seconds": 5.789,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-09",
+          "WP02-09b",
+          "WP03-08"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 148.838,
+        "target_review_started_at": "2026-11-20T07:33:30.145898+00:00",
+        "target_review_seconds": 0.053,
+        "crm_seat_finished_at": "2026-11-20T07:32:39.701172+00:00"
+      }
     },
     {
       "id": "WP03-10",
@@ -200354,7 +200852,7 @@
         "official_started_at": "2026-11-20T06:12:17.120374+00:00",
         "technical_verified_at": "2026-11-20T06:27:45.8825206Z",
         "verified_at": "2026-11-20T06:33:02.983857+00:00",
-        "effective_seconds": 1245.81,
+        "effective_seconds": 1394.648,
         "product_verified_seconds": 928.762,
         "crm_integration_seconds": 267.559,
         "workspace_transition_seconds": 43.713,
@@ -200373,7 +200871,9 @@
         "preceding_integration_seconds": 159.941,
         "target_review_started_at": "2026-11-20T06:33:02.930786+00:00",
         "target_review_seconds": 0.053,
-        "crm_seat_finished_at": "2026-11-20T06:32:13.441887+00:00"
+        "crm_seat_finished_at": "2026-11-20T06:32:13.441887+00:00",
+        "official_finish": "2026-11-20T06:35:31.822308Z",
+        "post_candidate_finalization_seconds": 148.838
       }
     },
     {
@@ -296751,7 +297251,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 96374.681,
+      "effective_seconds": 98687.683,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -296784,7 +297284,8 @@
         "WP04-01",
         "WP03-08",
         "WP04-02",
-        "WP03-10"
+        "WP03-10",
+        "WP03-09"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -296857,7 +297358,7 @@
         }
       ],
       "current_stage": "C",
-      "next_card": "WP03-09",
+      "next_card": "WP02-22",
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -297010,17 +297511,17 @@
       },
       "next_card_selection": {
         "rule": "阶段 C 展开全部拆分严格前置；全图最长下游边数降序，同长保留用户阶段数组的顺序。",
-        "baseline_sha": "a4962b7e05c5569758c6dd35b53a753cb437ace2",
-        "after_card": "WP03-10",
-        "selected": "WP03-09",
+        "baseline_sha": "c75748b649a83b82b59f5ebb7009b6c1f4cd9f92",
+        "after_card": "WP03-09",
+        "selected": "WP02-22",
         "candidates": [
-          {
-            "task": "WP03-09",
-            "longest_downstream_edges": 39
-          },
           {
             "task": "WP02-22",
             "longest_downstream_edges": 39
+          },
+          {
+            "task": "WP03-21",
+            "longest_downstream_edges": 38
           },
           {
             "task": "WP03-17",
@@ -297103,7 +297604,7 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 3985.688,
+      "target_review_effective_seconds": 3985.741,
       "last_checkpoint_counts": {
         "original_done": 58,
         "fully_done": 58,
