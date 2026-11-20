@@ -19,13 +19,15 @@ public partial class BusinessPartnerService : IBusinessPartnerService
 {
     private readonly CP6Context _db;
     private readonly OperationsOwnerV1? _owner;
+    private readonly BusinessPartnerWorkspaceV1? _workspace;
     private static readonly Regex ZipPattern = new(@"^\d{3}-?\d{4}$", RegexOptions.Compiled);
     private static readonly Regex TelPattern = new(@"^[\d\-\(\)\s]+$", RegexOptions.Compiled);
 
-    public BusinessPartnerService(CP6Context db, OperationsOwnerV1? owner = null)
+    public BusinessPartnerService(CP6Context db, OperationsOwnerV1? owner = null, BusinessPartnerWorkspaceV1? workspace = null)
     {
         _db = db;
         _owner = owner;
+        _workspace = workspace;
     }
 
     // ═══════════════════════════════════════════════════════════

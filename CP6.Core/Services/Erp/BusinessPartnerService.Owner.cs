@@ -16,16 +16,23 @@ public partial class BusinessPartnerService
     private IQueryable<BusinessPartner> LegacyRows(bool includeDeleted = false)
         => _db.BusinessPartners.AsNoTracking().Where(x => includeDeleted || !x.IsDeleted);
 
+    // 旧 DTO 无法表达逐字段及法人遮罩，正式工作区记录从新读协议返回。
+    private Task<IQueryable<BusinessPartner>> LegacyProjection(OperationsAccessV1 access, CancellationToken ct, bool includeDeleted = false)
+    {
+        var rows = access.BusinessPartners(includeDeleted);
+        return _workspace?.LegacyProjection(rows, ct) ?? Task.FromResult(rows);
+    }
+
     public Task<BusinessPartnerDto?> GetByCdAsync(string bpCd, bool includeDeleted = false)
         => _db.Database.IsNpgsql()
             ? Owner.ExecuteAsync(Resource, ProfileQuery, false,
-                (access, ct) => ReadAsync(access.BusinessPartners(includeDeleted), bpCd, access.BusinessPartnerNameReadable, ct))
+                async (access, ct) => await ReadAsync(await LegacyProjection(access, ct, includeDeleted), bpCd, access.BusinessPartnerNameReadable, ct))
             : ReadAsync(LegacyRows(includeDeleted), bpCd, true, default);
 
     public Task<bool> ExistsAsync(string bpCd)
         => _db.Database.IsNpgsql()
             ? Owner.ExecuteAsync(Resource, "query", false,
-                (access, ct) => access.BusinessPartners().AnyAsync(row => row.BpCd == bpCd, ct))
+                async (access, ct) => await (await LegacyProjection(access, ct)).AnyAsync(row => row.BpCd == bpCd, ct))
             : LegacyRows().AnyAsync(row => row.BpCd == bpCd);
 
     public Task<(List<BpListItemDto> Rows, int Total)> SearchAsync(BpQueryDto query)
@@ -33,7 +40,7 @@ public partial class BusinessPartnerService
         if (!_db.Database.IsNpgsql()) return SearchCoreAsync(LegacyRows(), query, true, default);
         var input = OperationsOwnerV1.Freeze(query);
         return Owner.ExecuteAsync(Resource, ProfileQuery, false,
-            (access, ct) => SearchCoreAsync(access.BusinessPartners(), input, access.BusinessPartnerNameReadable, ct));
+            async (access, ct) => await SearchCoreAsync(await LegacyProjection(access, ct), input, access.BusinessPartnerNameReadable, ct));
     }
 
     public async Task<byte[]> ExportListCsvAsync(BpQueryDto query)
@@ -47,7 +54,7 @@ public partial class BusinessPartnerService
         var input = OperationsOwnerV1.Freeze(query);
         return await Owner.ExecuteAsync(Resource, "export", false, async (access, ct) =>
         {
-            var (rows, _) = await SearchCoreAsync(access.BusinessPartners(), input, access.BusinessPartnerNameExportable, ct, export: true);
+            var (rows, _) = await SearchCoreAsync(await LegacyProjection(access, ct), input, access.BusinessPartnerNameExportable, ct, export: true);
             return EncodeCsv(rows);
         });
     }
@@ -66,6 +73,7 @@ public partial class BusinessPartnerService
             access.RequireBusinessPartnerCreation();
             if (!access.BusinessPartnerNameWritable) throw new OrderPriceCorrectionException("FIELD_WRITE_FORBIDDEN", 403);
             var query = await access.BusinessPartnerReadbackAsync(ct);
+            if (_workspace is not null) await _workspace.RequireLegacyCreateAsync(input.BaseCd, ct);
             var saved = await CreateCoreAsync(input, access.Actor, preRegister, reserveDeletedCode: true, ct);
             return query == null ? null : ToDto(saved, query.BusinessPartnerNameReadable);
         });
@@ -83,6 +91,7 @@ public partial class BusinessPartnerService
         return await Owner.ExecuteAsync(Resource, "edit", true, async (access, ct) =>
         {
             var row = await WriteRowAsync(access, bpCd, ct);
+            if (_workspace is not null) await _workspace.RequireLegacyEditAsync(row, input.BaseCd, ct);
             if (!string.Equals(input.BpCd, row.BpCd, StringComparison.Ordinal))
                 throw new OrderPriceCorrectionException("BUSINESS_PARTNER_CODE_IMMUTABLE", 400);
             var query = await access.BusinessPartnerReadbackAsync(ct);
@@ -110,7 +119,9 @@ public partial class BusinessPartnerService
         await Owner.ExecuteAsync(Resource, "del", true, async (access, ct) =>
         {
             access.RequireBusinessPartnerAdministrator();
-            await DeleteCoreAsync(await WriteRowAsync(access, bpCd, ct), version, access.Actor, ct);
+            var row = await WriteRowAsync(access, bpCd, ct);
+            if (_workspace is null || !await _workspace.RetireCompatibilityAsync(access, row, version, ct))
+                await DeleteCoreAsync(row, version, access.Actor, ct);
             return true;
         });
     }

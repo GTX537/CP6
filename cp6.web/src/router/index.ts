@@ -139,6 +139,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/erp/fx-rate': () => import('@/views/erp/FxRateView.vue'),
   '/business-partner': () => import('@/views/erp/BusinessPartnerView.vue'),
   '/business-partner-list': () => import('@/views/erp/BusinessPartnerListView.vue'),
+  '/business-partner/workspace': () => import('@/views/erp/BusinessPartnerWorkspaceView.vue'),
   '/fsc-checklist': () => import('@/views/erp/FscChecklistView.vue'),
   '/sheet-unit-price': () => import('@/views/erp/SheetUnitPriceView.vue'),
   '/plate-mold': () => import('@/views/erp/PlateMoldView.vue'),
@@ -444,13 +445,15 @@ function platformChildren(): RouteRecordRaw[] {
 const internalSubRoutePaths = [
   '/oa/form-initiate',
   '/space/location-publish',
-  '/fin/master/accounts'
+  '/fin/master/accounts',
+  '/business-partner/workspace'
 ]
 function internalSubChildren(): RouteRecordRaw[] {
   return internalSubRoutePaths.map(p => ({
     path: p.replace(/^\//, ''),
     name: p.replace(/^\//, ''),
-    component: viewModules[p]
+    component: viewModules[p],
+    meta: p === '/business-partner/workspace' ? { permission: 'erp-business-partner:profile-query' } : undefined
   })) as RouteRecordRaw[]
 }
 

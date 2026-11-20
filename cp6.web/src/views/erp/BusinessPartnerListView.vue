@@ -51,6 +51,7 @@
         <el-form-item>
           <el-button type="primary" @click="search" :loading="loading">{{ t('sales.btn.search') }}</el-button>
           <el-button @click="resetQuery">{{ t('sales.btn.clear') }}</el-button>
+          <RouterLink v-if="permission.has('erp-business-partner:profile-query')" to="/business-partner/workspace">资料与状态</RouterLink>
           <el-button v-if="canExport" :icon="Download" @click="exportCsv" :loading="exporting">{{ t('sales.btn.exportCsv') }}</el-button>
         </el-form-item>
       </el-form>

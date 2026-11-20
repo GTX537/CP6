@@ -90,7 +90,8 @@ public sealed class BusinessPartnerIdentityOwnerV1(CP6Context db, OperationsOwne
         if (source.GetProperty("businessPartnerId").GetGuid() != id || source.GetProperty("tenantId").GetGuid() != db.CurrentTenantId)
             throw Error("BUSINESS_PARTNER_IDENTITY_SOURCE_UNAVAILABLE");
     }
-    internal static async Task<BusinessPartnerIdentityViewV1> ReadOwnedAsync(CP6Context db, OperationsAccessV1 a, Guid id, long? exact, CancellationToken ct)
+    internal static async Task<BusinessPartnerIdentityViewV1> ReadOwnedAsync(CP6Context db, OperationsAccessV1 a, Guid id, long? exact,
+        CancellationToken ct, bool allowOwnedProfileAdvance = false)
     {
         var current = await Current(db, a, id, ct);
         var selected = exact == null || exact == current.Revision ? current : await db.Database.SqlQuery<Row>($"""
@@ -102,7 +103,16 @@ public sealed class BusinessPartnerIdentityOwnerV1(CP6Context db, OperationsOwne
         a.AtCommit(async t =>
         {
             if (!ReferenceEquals(tx, db.Database.CurrentTransaction)) throw Error("AUTHORITY_FENCE_UNAVAILABLE");
-            if (Reference(id, await Current(db, a, id, t)) != currentRef) throw Error("BUSINESS_PARTNER_IDENTITY_CHANGED", 412);
+            var latest = await Current(db, a, id, t);
+            if (Reference(id, latest) == currentRef) return;
+            // 资料写入持有伙伴写门，可在同一事务更新一次头；提交前仍须验证它所依据的原版本。
+            if (!allowOwnedProfileAdvance || latest.Revision - current.Revision != 1 ||
+                !await db.Database.SqlQuery<bool>($"""
+                    SELECT EXISTS(SELECT FROM cp6_business_partner_identity_v1.versions
+                        WHERE tenant_id={db.CurrentTenantId} AND partner_id={id} AND revision={current.Revision}
+                          AND source_digest={current.Digest} AND source_json={current.Json}) AS "Value"
+                    """).SingleAsync(t))
+                throw Error("BUSINESS_PARTNER_IDENTITY_CHANGED", 412);
         });
         var projected = JsonNode.Parse(selected.Json)!.AsObject();
         if (!a.BusinessPartnerNameReadable) projected["bpName"] = null;
