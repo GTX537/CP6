@@ -19,6 +19,7 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
     private readonly TimeProvider clock = clock ?? runtime.Clock;
     internal IDataProtectionProvider? PartnerProtection { get; init; }
     internal IErpOrderPartnerUseSource? PartnerUseSource { get; init; }
+    internal ErpIntegrationOpsV1? ReplayOps { get; init; }
 
     public async Task<Cp6InboxProcessingResult> ConsumeAsync(ReadOnlyMemory<byte> payload, string topic, string partitionKey,
         CancellationToken ct = default)
@@ -45,6 +46,10 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
             }
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+        catch (IntegrationOpsExceptionV1 error) when (error.Message == ErpIntegrationOpsV1.Blocked)
+        {
+            return new(Cp6InboxDisposition.RetryScheduled, ErpIntegrationOpsV1.Blocked, digest);
+        }
         catch (Exception)
         {
             // ProcessAsync's context/transaction have already been disposed and rolled back.
@@ -59,8 +64,11 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
     {
         await using var queue = await factory.CreateDbContextAsync(ct);
         RequireSql(queue);
+        var manual = ReplayOps is not null && await queue.Inbox.AsNoTracking().AnyAsync(x => x.TenantId == command.TenantId &&
+            x.MessageId == command.MessageId && x.ReplayedAtUtc != null, ct);
         await using var transaction = await queue.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
         await using var db = await CreateBusinessContextAsync(queue, command.TenantId, ct);
+        if (manual) await ErpIntegrationOpsV1.HoldWorkerRootAsync(db, ct);
         var scopedPartner = await BpUseScopeGate.IsCutoverAsync(db, ct);
         if (scopedPartner) await BpUseScopeGate.HoldIamAsync(db, ct);
         await LockMessageAsync(queue, command, ct);
@@ -71,6 +79,32 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
             if (existingResult.Disposition == Cp6InboxDisposition.PayloadConflict) await queue.SaveChangesAsync(ct);
             await transaction.CommitAsync(ct);
             return existingResult;
+        }
+        if (ReplayOps is not null && receipt?.ReplayedAtUtc != null)
+        {
+            if (!manual) throw IntegrationOpsContractV1.Error(ErpIntegrationOpsV1.Blocked);
+            await LockAggregateAsync(queue, command.TenantId, command.Kind, command.AggregateId, ct);
+            // 新业务已由原 Owner 完成时，恢复操作止于原结果，避免再次产生投递。
+            var current = await LoadRequestAsync(queue, command, ct);
+            if (current?.Terminal == true && current.InputSha256 == command.InputSha256)
+            {
+                receipt.Status = ErpInboxStatus.Processed;
+                receipt.ProcessedAtUtc = clock.GetUtcNow();
+                receipt.RetryAtUtc = null;
+                await queue.SaveChangesAsync(ct);
+                await transaction.CommitAsync(ct);
+                return new(Cp6InboxDisposition.Duplicate, "", command.PayloadSha256);
+            }
+            if (!await ReplayOps.CheckRequestExecutionAsync(queue, db, receipt, command, ct))
+            {
+                receipt.Status = ErpInboxStatus.DeadLettered;
+                receipt.ErrorCode = ErpIntegrationOpsV1.Blocked;
+                receipt.ProcessedAtUtc = clock.GetUtcNow();
+                receipt.RetryAtUtc = null;
+                await queue.SaveChangesAsync(ct);
+                await transaction.CommitAsync(ct);
+                return new(Cp6InboxDisposition.DeadLettered, ErpIntegrationOpsV1.Blocked, command.PayloadSha256);
+            }
         }
         receipt ??= NewReceipt(command);
         if (queue.Entry(receipt).State == EntityState.Detached) queue.Inbox.Add(receipt);
@@ -159,6 +193,8 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
             if (existing.Disposition == Cp6InboxDisposition.PayloadConflict) await queue.SaveChangesAsync(ct);
             await transaction.CommitAsync(ct); return existing;
         }
+        if (ReplayOps is not null && receipt?.ReplayedAtUtc != null)
+            return new(Cp6InboxDisposition.RetryScheduled, "C03_REPLAY_EXECUTION_UNKNOWN", command.PayloadSha256);
         receipt ??= NewReceipt(command);
         if (queue.Entry(receipt).State == EntityState.Detached) queue.Inbox.Add(receipt);
         receipt.AttemptCount++;
@@ -255,13 +291,16 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
 
     private async Task<ErpIntegrationAggregate> LoadAggregateAsync(ErpIntegrationContext queue, Command command, CancellationToken ct)
     {
-        await ErpSqlLock.AcquireAsync(queue, $"c03:aggregate:{command.TenantId:D}:{(int)command.Kind}:{command.AggregateId:D}", ct);
+        await LockAggregateAsync(queue, command.TenantId, command.Kind, command.AggregateId, ct);
         var result = await queue.Aggregates.SingleOrDefaultAsync(x => x.TenantId == command.TenantId &&
             x.Kind == command.Kind && x.AggregateId == command.AggregateId, ct);
         if (result is not null) return result;
         result = new() { TenantId = command.TenantId, Kind = command.Kind, AggregateId = command.AggregateId };
         queue.Aggregates.Add(result); return result;
     }
+
+    internal static Task LockAggregateAsync(ErpIntegrationContext queue, Guid tenant, ErpRequestKind kind, Guid id,
+        CancellationToken ct) => ErpSqlLock.AcquireAsync(queue, $"c03:aggregate:{tenant:D}:{(int)kind}:{id:D}", ct);
 
     private static Task<ErpIntegrationRequest?> LoadRequestAsync(ErpIntegrationContext queue, Command command, CancellationToken ct)
         => queue.Requests.SingleOrDefaultAsync(x => x.TenantId == command.TenantId && x.Kind == command.Kind &&
@@ -301,7 +340,23 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
     }
     private static Cp6InboxProcessingResult Invalid(string digest) => new(Cp6InboxDisposition.Invalid, "C03_EVENT_INVALID", digest);
 
-    private sealed record Command(Guid TenantId, Guid RequestId, Guid AccountId, int RequestVersion, Guid AggregateId,
+    internal static Command? ReadOriginal(ErpInboxReceipt receipt, ErpIntegrationRuntime runtime)
+    {
+        if (!runtime.Options.Tenants.TryGetValue(receipt.TenantId, out var region) || receipt.ConflictCount != 0 ||
+            receipt.EventType is not (ErpEventContracts.BusinessPartnerRequested or ErpEventContracts.OrderRequested) ||
+            ErpEventContracts.Hash(receipt.Payload) != receipt.PayloadSha256 || !runtime.Validator.IsValid(receipt.Payload))
+            return null;
+        using var document = JsonDocument.Parse(receipt.Payload);
+        var root = document.RootElement;
+        if (root.GetProperty("id").GetString() != receipt.MessageId || root.GetProperty("tenantid").GetGuid() != receipt.TenantId ||
+            root.GetProperty("aggregateid").GetGuid() != receipt.AggregateId ||
+            root.GetProperty("aggregateversion").GetInt32() != receipt.AggregateVersion ||
+            root.GetProperty("type").GetString() != receipt.EventType || root.GetProperty("region").GetString() != region)
+            return null;
+        return Command.Read(root, receipt.Payload, receipt.PayloadSha256);
+    }
+
+    internal sealed record Command(Guid TenantId, Guid RequestId, Guid AccountId, int RequestVersion, Guid AggregateId,
         int AggregateVersion, ErpRequestKind Kind, string MessageId, string EventType, string CorrelationId,
         string Region, byte[] Payload, string PayloadSha256, string InputSha256,
         ErpBusinessPartnerRequested? BusinessPartner, ErpOrderRequested? Order)

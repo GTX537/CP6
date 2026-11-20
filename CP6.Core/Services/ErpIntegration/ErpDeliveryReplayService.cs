@@ -100,6 +100,15 @@ public sealed class ErpDeliveryReplayService(IDbContextFactory<ErpIntegrationCon
         }
 
         var now = runtime.Clock.GetUtcNow();
+        var audit = await StageAsync(queue, business, tenant, kind, target, input, actor, now, ct);
+        await queue.SaveChangesAsync(ct);
+        await transaction.CommitAsync(ct);
+        return Scheduled(audit);
+    }
+
+    internal async Task<ErpDeliveryReplayAudit> StageAsync(ErpIntegrationContext queue, CP6Context business,
+        Guid tenant, string kind, string target, ErpReplayRequest input, string actor, DateTimeOffset now, CancellationToken ct)
+    {
         var audit = new ErpDeliveryReplayAudit
         {
             TenantId = tenant, OperationId = input.OperationId, Kind = kind, TargetId = target,
@@ -109,15 +118,13 @@ public sealed class ErpDeliveryReplayService(IDbContextFactory<ErpIntegrationCon
         if (kind == "result") await RequeueResultAsync(queue, tenant, Guid.Parse(target), input, audit, now, ct);
         else await RequeueBridgeAsync(queue, business, tenant, target, input, audit, now, ct);
         queue.Set<ErpDeliveryReplayAudit>().Add(audit);
-        await queue.SaveChangesAsync(ct);
-        await transaction.CommitAsync(ct);
-        return Scheduled(audit);
+        return audit;
     }
 
     private async Task RequeueResultAsync(ErpIntegrationContext queue, Guid tenant, Guid id, ErpReplayRequest input,
         ErpDeliveryReplayAudit audit, DateTimeOffset now, CancellationToken ct)
     {
-        await ErpSqlLock.AcquireAsync(queue, $"c03:delivery-result:{tenant:D}:{id:D}", ct);
+        await LockResultAsync(queue, tenant, id, ct);
         var messageQuery = queue.Database.IsNpgsql()
             ? queue.Set<Cp6OutboxMessage>().FromSqlInterpolated(
                 $"""SELECT * FROM erp_integration."Cp6_OutboxMessage" WHERE "TenantId"={tenant} AND "Id"={id} FOR UPDATE""")
@@ -125,7 +132,8 @@ public sealed class ErpDeliveryReplayService(IDbContextFactory<ErpIntegrationCon
                 $"SELECT * FROM erp_integration.Cp6_OutboxMessage WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={tenant} AND Id={id}");
         var message = await messageQuery.SingleOrDefaultAsync(ct) ?? throw Error("NOT_FOUND");
         RequirePrecondition(message.RowVersion, message.PayloadSha256, input);
-        if (message.Status != Cp6OutboxStatus.DeadLettered) throw Error("NOT_DEADLETTERED");
+        if (message.Status != Cp6OutboxStatus.DeadLettered || message.LeaseExpiresAtUtc > now ||
+            (message.LeaseOwner is not null && message.LeaseExpiresAtUtc is null)) throw Error("NOT_DEADLETTERED");
         var envelope = new Cp6OutboxEnvelope(message.MessageId, message.TenantId, message.TopicName, message.PartitionKey,
             message.Payload, message.CorrelationId, message.CausationId, message.AggregateId, message.AggregateVersion);
         if (message.TopicName != ErpEventContracts.ResultTopic || ErpEventContracts.Hash(message.Payload) != message.PayloadSha256 ||
@@ -159,7 +167,7 @@ public sealed class ErpDeliveryReplayService(IDbContextFactory<ErpIntegrationCon
         ErpReplayRequest input, ErpDeliveryReplayAudit audit, DateTimeOffset now, CancellationToken ct)
     {
         // This is the same transaction-owned lock used by ErpOrderBridgeWorker around its real hooks.
-        await ErpSqlLock.AcquireAsync(queue, $"c03:bridge:{tenant:D}:{key}", ct);
+        await LockBridgeAsync(queue, tenant, key, ct);
         var bridgeQuery = queue.Database.IsNpgsql()
             ? queue.OrderBridges.FromSqlInterpolated(
                 $"""SELECT * FROM erp_integration."OrderBridgeDispatch" WHERE "TenantId"={tenant} AND "OrderKey"=CAST({key} AS bpchar) FOR UPDATE""")
@@ -210,8 +218,14 @@ public sealed class ErpDeliveryReplayService(IDbContextFactory<ErpIntegrationCon
         if (!version.SequenceEqual(input.RowVersion) || hash != input.PayloadSha256) throw Error("PRECONDITION_FAILED");
     }
 
-    private static string BridgeHash(Guid tenant, string key) =>
+    internal static string BridgeHash(Guid tenant, string key) =>
         ErpEventContracts.Hash(Encoding.UTF8.GetBytes($"c03:bridge:{tenant:D}:{key}"));
+
+    internal static Task LockResultAsync(ErpIntegrationContext queue, Guid tenant, Guid id, CancellationToken ct) =>
+        ErpSqlLock.AcquireAsync(queue, $"c03:delivery-result:{tenant:D}:{id:D}", ct);
+
+    internal static Task LockBridgeAsync(ErpIntegrationContext queue, Guid tenant, string key, CancellationToken ct) =>
+        ErpSqlLock.AcquireAsync(queue, $"c03:bridge:{tenant:D}:{key}", ct);
 
     private static ErpDeliveryReplayScheduled Scheduled(ErpDeliveryReplayAudit audit) =>
         new(audit.OperationId, audit.Kind, audit.TargetId, audit.MessageId, audit.ReplayedAtUtc);

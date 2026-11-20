@@ -41,21 +41,45 @@ public sealed class ErpOrderBridgeWorker(IDbContextFactory<ErpIntegrationContext
         await using var queue = await factory.CreateDbContextAsync(ct);
         if (!(queue.Database.IsSqlServer() || queue.Database.IsNpgsql()))
             throw new InvalidOperationException("C03_REQUIRES_SQL_TRANSACTION");
-        // Hold only the dispatch record lock while hooks use their own committed ERP context.
+        using var scope = scopes.CreateScope();
+        var ops = scope.ServiceProvider.GetService<ErpIntegrationOpsV1>();
+        var manual = ops is not null && await ErpIntegrationOpsV1.HasManualBridgeAsync(queue, tenant, key, ct);
+        // 原有自动路径持有 dispatch 锁。受控续行先取得 IAM 根，并在同一事务内暂存新效果。
         // This prevents a second worker entering even if a wall-clock lease would expire.
         await using var transaction = await queue.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
-        await ErpSqlLock.AcquireAsync(queue, $"c03:bridge:{tenant:D}:{key}", ct);
+        await using var business = manual ? await IntegrationOpsAuthorityV1.BindAsync(queue, tenant, ct) : null;
+        if (business is not null) await ErpIntegrationOpsV1.HoldWorkerRootAsync(business, ct);
+        await ErpDeliveryReplayService.LockBridgeAsync(queue, tenant, key, ct);
         var dispatchQuery = queue.Database.IsNpgsql()
             ? queue.OrderBridges.FromSqlInterpolated($"""SELECT * FROM erp_integration."OrderBridgeDispatch" WHERE "TenantId"={tenant} AND "OrderKey"=CAST({key} AS bpchar) FOR UPDATE""")
             : queue.OrderBridges.FromSqlInterpolated($"SELECT * FROM erp_integration.OrderBridgeDispatch WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={tenant} AND OrderKey={key}");
         var dispatch = await dispatchQuery.SingleOrDefaultAsync(ct);
+        var now = runtime.Clock.GetUtcNow();
         if (dispatch is null || dispatch.CompletedAtUtc is not null || dispatch.AttemptCount >= 10 ||
-            dispatch.AvailableAtUtc > runtime.Clock.GetUtcNow()) return;
+            dispatch.AvailableAtUtc > now || dispatch.LeaseExpiresAtUtc > now ||
+            (dispatch.LeaseOwner is not null && dispatch.LeaseExpiresAtUtc is null)) return;
+        if (ops is not null && await ErpIntegrationOpsV1.HasManualBridgeAsync(queue, tenant, key, ct))
+        {
+            if (business is null) return;
+            if (await ops.ExecuteBridgeAsync(queue, business, dispatch, ct))
+            {
+                dispatch.CompletedAtUtc = now;
+                dispatch.AttemptCount++;
+                dispatch.LastErrorCode = null;
+            }
+            else
+            {
+                dispatch.AttemptCount = 10;
+                dispatch.LastErrorCode = ErpIntegrationOpsV1.Blocked;
+            }
+            await queue.SaveChangesAsync(ct);
+            await transaction.CommitAsync(ct);
+            return;
+        }
         dispatch.AttemptCount++;
         var completed = false;
         try
         {
-            using var scope = scopes.CreateScope();
             scope.ServiceProvider.GetRequiredService<ITenantContext>().CurrentTenantId = tenant;
             var wms = await scope.ServiceProvider.GetRequiredService<IWmsBridgeHook>().OnOrderCreatedAsync(key, "crm-integration");
             var mes = await scope.ServiceProvider.GetRequiredService<IMesBridgeHook>().OnOrderCreatedAsync(key, "crm-integration");

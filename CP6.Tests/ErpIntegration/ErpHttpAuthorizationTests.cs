@@ -389,7 +389,8 @@ public sealed partial class ErpHttpAuthorizationTests
             catch { await fixture.DisposeAsync(); throw; }
         }
 
-        private async Task InitializeAsync(bool csrfEnabled, string? proofConnection = null)
+        private async Task InitializeAsync(bool csrfEnabled, string? proofConnection = null,
+            Action<IServiceCollection>? configure = null)
         {
             var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "Development", Args = [] });
             builder.Logging.ClearProviders();
@@ -433,6 +434,7 @@ public sealed partial class ErpHttpAuthorizationTests
                 };
             });
             builder.Services.AddErpIntegration(builder.Configuration, Oidc);
+            configure?.Invoke(builder.Services);
             // HTTP boundary tests must not start SQL, sidecar or bridge workers.
             foreach (var registration in builder.Services.Where(d => d.ServiceType == typeof(IHostedService) &&
                          d.ImplementationType?.Namespace == "CP6.WebApi.BackgroundServices").ToArray())
@@ -459,6 +461,18 @@ public sealed partial class ErpHttpAuthorizationTests
             });
             App.UseMiddleware<CsrfMiddleware>();
             App.UseAuthorization();
+            if (configure is not null)
+                App.Use(async (context, next) =>
+                {
+                    if (!context.Request.Headers.ContainsKey("x-fixture-drop-response"))
+                    {
+                        await next();
+                        return;
+                    }
+                    context.Response.Body = Stream.Null;
+                    await next();
+                    context.Abort();
+                });
             App.MapControllers();
             App.MapErpIntegrationEvents();
             if (proofConnection is null) await SeedAsync();
@@ -660,7 +674,8 @@ public sealed partial class ErpHttpAuthorizationTests
         public void PopulateFeature(IEnumerable<ApplicationPart> parts, ControllerFeature feature)
         {
             foreach (var controller in feature.Controllers.Where(c => c.AsType() != typeof(ErpReadController) &&
-                         c.AsType() != typeof(ErpReplayController) && c.AsType() != typeof(ErpDeliveryReplayController)).ToArray())
+                         c.AsType() != typeof(ErpReplayController) && c.AsType() != typeof(ErpDeliveryReplayController) &&
+                         c.AsType() != typeof(IntegrationOpsController)).ToArray())
                 feature.Controllers.Remove(controller);
         }
     }

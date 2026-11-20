@@ -95,7 +95,8 @@ public sealed partial class ErpHttpAuthorizationTests
                 profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema).Options;
         }
 
-        public static async Task<Fixture> StartPostgreSqlAsync(string connection)
+        public static async Task<Fixture> StartPostgreSqlAsync(string connection,
+            Action<IServiceCollection>? configure = null)
         {
             var fixture = new Fixture
             {
@@ -108,7 +109,7 @@ public sealed partial class ErpHttpAuthorizationTests
                 await core.Database.MigrateAsync();
                 await using var queue = fixture.Queue.CreateDbContext();
                 await queue.Database.MigrateAsync();
-                await fixture.InitializeAsync(false, connection);
+                await fixture.InitializeAsync(false, connection, configure);
                 return fixture;
             }
             catch { await fixture.DisposeAsync(); throw; }
@@ -116,12 +117,13 @@ public sealed partial class ErpHttpAuthorizationTests
 
         private async Task SeedProofCallers()
         {
-            await ChangeDbAsync(db =>
+            await ChangeDbAsync(async db =>
             {
-                db.Sys_Tenants.Add(new() { Id = First, TenantCode = "proof-a", TenantName = "模拟组织甲", Enable = true });
-                db.Sys_Tenants.Add(new() { Id = Second, TenantCode = "proof-b", TenantName = "模拟组织乙", Enable = true });
+                if (!await db.Sys_Tenants.IgnoreQueryFilters().AnyAsync(t => t.Id == First))
+                    db.Sys_Tenants.Add(new() { Id = First, TenantCode = "proof-a", TenantName = "模拟组织甲", Enable = true });
+                if (!await db.Sys_Tenants.IgnoreQueryFilters().AnyAsync(t => t.Id == Second))
+                    db.Sys_Tenants.Add(new() { Id = Second, TenantCode = "proof-b", TenantName = "模拟组织乙", Enable = true });
                 db.CrmServiceTokenRecords.AddRange(TokenRecord(First, "reader-a", FirstJti), TokenRecord(Second, "reader-b", SecondJti));
-                return Task.CompletedTask;
             });
         }
 

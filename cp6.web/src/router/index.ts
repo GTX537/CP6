@@ -28,6 +28,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/erp/plate-mold-sources': () => import('@/views/erp/PlateMoldSourcesView.vue'),
   '/erp/time-unit-bases': () => import('@/views/erp/UomTimeBasesView.vue'),
   '/erp/currency-policies': () => import('@/views/erp/CurrencyPoliciesView.vue'),
+  '/erp/integration-ops': () => import('@/views/erp/IntegrationOpsView.vue'),
   '/plm/configuration-rules': () => import('@/views/plm/ConfigurationRulesView.vue'),
   '/plm/tool-specifications': () => import('@/views/plm/ToolSpecificationsView.vue'),
   '/plm/engineering-iteration': () => import('@/views/plm/EngineeringIterationsView.vue'),
@@ -487,6 +488,7 @@ export function addDynamicRoutes(menus: any[]) {
         path: menu.routePath.replace(/^\//, ''),
         name: menu.routePath.replace(/^\//, ''),
         component: viewModules[menu.routePath],
+        meta: menu.routePath === '/erp/integration-ops' ? { permission: 'integration-ops:query' } : undefined,
         props: menu.routePath === '/dashboard' ? { scoped: true }
           : menu.routePath === '/menu' ? { versionedOnly: true } : undefined
       })) as RouteRecordRaw[],

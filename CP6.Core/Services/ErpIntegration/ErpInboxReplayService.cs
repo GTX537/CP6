@@ -1,6 +1,5 @@
 using System.Data;
 using System.Text;
-using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Persistence;
 using CP6.Core.Services.Common;
@@ -60,36 +59,39 @@ public sealed class ErpInboxReplayService(IDbContextFactory<ErpIntegrationContex
             await tx.CommitAsync(ct);
             return new(previous.OperationId, previous.MessageId, previous.ReplayedAtUtc);
         }
-        await ErpSqlLock.AcquireAsync(db, "c03:message:" + ErpEventContracts.Hash(Encoding.UTF8.GetBytes(messageId)), ct);
+        var now = runtime.Clock.GetUtcNow();
+        var audit = await StageAsync(db, tenant, messageId, input, actor, now, ct);
+        await db.SaveChangesAsync(ct);
+        await tx.CommitAsync(ct);
+        return new(audit.OperationId, audit.MessageId, audit.ReplayedAtUtc);
+    }
+
+    internal async Task<ErpInboxReplayAudit> StageAsync(ErpIntegrationContext db, Guid tenant, string messageId,
+        ErpReplayRequest input, string actor, DateTimeOffset now, CancellationToken ct)
+    {
+        await LockAsync(db, messageId, ct);
         var receipt = await db.Inbox.SingleOrDefaultAsync(x => x.TenantId == tenant && x.MessageId == messageId, ct)
             ?? throw Error("C03_REPLAY_NOT_FOUND");
         if (!receipt.RowVersion.SequenceEqual(input.RowVersion) || receipt.PayloadSha256 != input.PayloadSha256)
             throw Error("C03_REPLAY_PRECONDITION_FAILED");
         if (receipt.Status != ErpInboxStatus.DeadLettered) throw Error("C03_REPLAY_NOT_DEADLETTERED");
-        if (ErpEventContracts.Hash(receipt.Payload) != receipt.PayloadSha256 || !runtime.Validator.IsValid(receipt.Payload))
+        if (ErpRequestHandler.ReadOriginal(receipt, runtime) is null)
             throw Error("C03_REPLAY_PAYLOAD_INVALID");
-        using var document = JsonDocument.Parse(receipt.Payload);
-        var root = document.RootElement;
-        if (root.GetProperty("id").GetString() != messageId || root.GetProperty("tenantid").GetGuid() != tenant ||
-            root.GetProperty("aggregateid").GetGuid() != receipt.AggregateId ||
-            root.GetProperty("aggregateversion").GetInt32() != receipt.AggregateVersion ||
-            root.GetProperty("type").GetString() != receipt.EventType ||
-            root.GetProperty("region").GetString() != runtime.Options.Tenants[tenant] ||
-            ErpEventContracts.TopicFor(receipt.EventType) != ErpEventContracts.RequestTopic)
-            throw Error("C03_REPLAY_PAYLOAD_INVALID");
-        var now = runtime.Clock.GetUtcNow();
-        db.ReplayAudits.Add(new()
+        var audit = new ErpInboxReplayAudit
         {
             TenantId = tenant, OperationId = input.OperationId, MessageId = messageId,
             PayloadSha256 = receipt.PayloadSha256, InputRowVersion = input.RowVersion.ToArray(), ActorId = actor,
             ReasonCode = input.ReasonCode, PreviousAttemptCount = receipt.AttemptCount, ReplayedAtUtc = now
-        });
+        };
+        db.ReplayAudits.Add(audit);
         receipt.Status = ErpInboxStatus.Processing; receipt.AttemptCount = 0;
         receipt.ProcessedAtUtc = null; receipt.ErrorCode = null; receipt.RetryAtUtc = now;
         receipt.ReplayedAtUtc = now; receipt.ReplayReasonCode = input.ReasonCode;
-        await db.SaveChangesAsync(ct); await tx.CommitAsync(ct);
-        return new(input.OperationId, messageId, now);
+        return audit;
     }
+
+    internal static Task LockAsync(ErpIntegrationContext db, string messageId, CancellationToken ct) =>
+        ErpSqlLock.AcquireAsync(db, "c03:message:" + ErpEventContracts.Hash(Encoding.UTF8.GetBytes(messageId)), ct);
 
     private static ErpCommerceException Error(string code) => new(code);
 }
