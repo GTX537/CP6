@@ -6881,8 +6881,21 @@
             "id": "CRM-OPP-01/bdc91e2093023cf7/AC-OPP-004",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OPP-004",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/65e308ea33d1622aa003402b5de9cef5ff00428d/docs/development/evidence/WP03-21/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "20d504991a9d30cb863456d3904dad520426216b",
+                "adopted_main_sha": "65e308ea33d1622aa003402b5de9cef5ff00428d",
+                "command": "实际 CRM Kestrel、Next/React、Chrome 和隔离 PostgreSQL 18.6，商机定向 16/16、相邻 5/5、前向安装 1/1、Web 165/165，采用后冒烟 3/3。",
+                "observed_at": "2026-11-20T09:52:33.8443903+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome 和隔离 PostgreSQL 18.6。用户、设备、数据、H02 协调者、外部绑定及故障按报告使用夹具。",
+                "scope": "实际 CRM API 对伪造 Won、Main 金额、Tenant 或无权 Contact 整笔拒绝。持久计数为零，跨租户和不存在的显式成员返回中性错误。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/5/cases/3"
@@ -6892,8 +6905,21 @@
             "id": "CRM-OPP-01/bdc91e2093023cf7/AC-OPP-005",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OPP-005",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/65e308ea33d1622aa003402b5de9cef5ff00428d/docs/development/evidence/WP03-21/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "20d504991a9d30cb863456d3904dad520426216b",
+                "adopted_main_sha": "65e308ea33d1622aa003402b5de9cef5ff00428d",
+                "command": "实际 CRM Kestrel、Next/React、Chrome 和隔离 PostgreSQL 18.6，商机定向 16/16、相邻 5/5、前向安装 1/1、Web 165/165，采用后冒烟 3/3。",
+                "observed_at": "2026-11-20T09:52:33.8443903+00:00",
+                "result": "PASS",
+                "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome 和隔离 PostgreSQL 18.6。用户、设备、数据、H02 协调者、外部绑定及故障按报告使用夹具。",
+                "scope": "实际提交后断开 HTTP，再按同键同正文取得同一商机与创建时点。改标题报 COMMAND_CONTENT_CONFLICT。真实浏览器刷新查原键，核对只有一份商机及原创建记录。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/5/cases/4"
@@ -7440,7 +7466,20 @@
           }
         ]
       },
-      "implementation_evidence": [],
+      "implementation_evidence": [
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/65e308ea33d1622aa003402b5de9cef5ff00428d/docs/development/evidence/WP03-21/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "20d504991a9d30cb863456d3904dad520426216b",
+          "adopted_main_sha": "65e308ea33d1622aa003402b5de9cef5ff00428d",
+          "command": "实际 CRM Kestrel、Next/React、Chrome 和隔离 PostgreSQL 18.6，商机定向 16/16、相邻 5/5、前向安装 1/1、Web 165/165，采用后冒烟 3/3。",
+          "observed_at": "2026-11-20T09:52:33.8443903+00:00",
+          "result": "PASS",
+          "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome 和隔离 PostgreSQL 18.6。用户、设备、数据、H02 协调者、外部绑定及故障按报告使用夹具。",
+          "scope": "WP03-21 完整原 AC 2/54，必需运行修订 0/14，CRM-OPP-01 保持开放。"
+        }
+      ],
       "delivery_evidence": null
     },
     {
@@ -173137,6 +173176,11 @@
       "at": "2026-11-20T08:45:07.893807+00:00",
       "evidence": "docs/development/planning/20261117-card-execution.md",
       "change": "WP02-22 商业交接原生合同与持久保护原语 DONE。INT-COM-01 原 AC 10/106、必需修订 0/20，目标开放。按 #355 单次补记 WP03-09 正式收尾 171.111 秒。"
+    },
+    {
+      "at": "2026-11-20T09:56:52.767624+00:00",
+      "evidence": "docs/development/planning/20261117-card-execution.md",
+      "change": "WP03-21 商机创建、需求预测与关联人 DONE。CRM-OPP-01 原 AC 2/54、必需运行修订 0/14，目标开放。按 #357 单次补记 WP02-22 收尾 395.977 秒至 2510.327 秒。"
     }
   ],
   "implementation_assessment": {
@@ -195911,7 +195955,7 @@
         "official_started_at": "2026-11-20T08:09:53.303293+00:00",
         "technical_verified_at": "2026-11-20T08:43:57.2004599Z",
         "verified_at": "2026-11-20T08:45:07.893807+00:00",
-        "effective_seconds": 2114.35,
+        "effective_seconds": 2510.327,
         "size": "M",
         "budget_seconds": 14400,
         "mandatory_split_seconds": 21600,
@@ -195923,7 +195967,9 @@
         "new_product_execution": true,
         "preceding_integration_seconds": 171.111,
         "target_review_started_at": "2026-11-20T08:45:07.652846+00:00",
-        "target_review_seconds": 0.241
+        "target_review_seconds": 0.241,
+        "official_finish": "2026-11-20T08:51:43.870833Z",
+        "post_candidate_finalization_seconds": 395.977
       }
     },
     {
@@ -201476,19 +201522,98 @@
         "file:CRM:src/CP6.CRM.Infrastructure/Erp/Contracts/ErpEventContracts.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP03.md",
       "card_anchor": "wp03-21",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "EXEC-WP02-14B",
+        "repository": "CRM",
+        "owning_task_repository": "CRM",
+        "branch": "codex/wp03-21",
+        "worktree": "D:/CP6-worktrees/dev-2",
+        "claimed_at": "2026-11-20T09:08:54.587681+00:00",
+        "baseline_sha": "2887d57b76c4869e0aa7c05e38dbb1754872a5e1",
+        "entry_evidence": "docs/development/planning/20261117-card-execution.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "delivery_report": "https://github.com/GTX537/CP6.CRM/blob/65e308ea33d1622aa003402b5de9cef5ff00428d/docs/development/evidence/WP03-21/DELIVERY.md",
+        "dispatch_scope": "CRM 手工商机、独立需求预测版本、完整关联人集合与基础管道，H02 CreatePrimary 在调用方事务恢复原槽。",
+        "actual_start_ref": {
+          "commit": "00da570a48794c0b008445581034db9729b091a6",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-21/messages/20261120T090854Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-20T09:08:54.587681+00:00"
+        },
+        "dispatch_decision_ref": {
+          "commit": "26ecd04c7e68fd9a30c25ad344faf8b986362c9b",
+          "original_commit": "5eadc8e5ec8eecaaf84c64d8dac265402fff811b",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261120T085809Z-exec-wp02-14b-wp03-21/MESSAGE.md"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/65e308ea33d1622aa003402b5de9cef5ff00428d/docs/development/evidence/WP03-21/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "20d504991a9d30cb863456d3904dad520426216b",
+          "adopted_main_sha": "65e308ea33d1622aa003402b5de9cef5ff00428d",
+          "command": "实际 CRM Kestrel、Next/React、Chrome 和隔离 PostgreSQL 18.6，商机定向 16/16、相邻 5/5、前向安装 1/1、Web 165/165，采用后冒烟 3/3。",
+          "observed_at": "2026-11-20T09:52:33.8443903+00:00",
+          "result": "PASS",
+          "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome 和隔离 PostgreSQL 18.6。用户、设备、数据、H02 协调者、外部绑定及故障按报告使用夹具。",
+          "scope": "CRM 手工商机、独立需求预测版本、完整关联人集合与基础管道，H02 CreatePrimary 在调用方事务恢复原槽。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/planning/20261117-card-execution.md",
+        "report_url": "https://github.com/GTX537/CP6.CRM/blob/65e308ea33d1622aa003402b5de9cef5ff00428d/docs/development/evidence/WP03-21/DELIVERY.md",
+        "source_sha": "20d504991a9d30cb863456d3904dad520426216b",
+        "remote_main_sha": "65e308ea33d1622aa003402b5de9cef5ff00428d",
+        "pr_url": "https://github.com/GTX537/CP6.CRM/pull/246",
+        "reviewed_crm_head": "41e2d7be778be152062531c55b38a3841615e0af",
+        "main_provider_commit": "a015ed8d267ecbcdb44547272a54710a999f0d9b",
+        "main_opportunity_design_git_blob": "3b904d41193dcee6ff02857b757402fc22a9b24f",
+        "main_lead_design_git_blob": "68d9270097097dba54454575f596fe489f6112e8",
+        "main_lead_overlay_git_blob": "78fab635d7db6739c9b41e8aa08c3e5d8afb1810",
+        "main_common_wire_git_blob": "ccf3d9fbabdcc474698245ac7ed1dda98a326e0b",
+        "opportunity_contract": "OPP/1 + CP22 H02 CreatePrimary",
+        "scope": "CRM 产品及唯一报告先采用，采用后冒烟 3/3 并释放 DEV-2。Main 随后核销同一卡。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：CRM PostgreSQL可信租户路由、当前权限、原生外层事务/共同锁、原结果账与可靠消息实际采用",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "card_execution": {
+        "result": "DONE",
+        "report": "https://github.com/GTX537/CP6.CRM/blob/65e308ea33d1622aa003402b5de9cef5ff00428d/docs/development/evidence/WP03-21/DELIVERY.md",
+        "started_at": "2026-11-20T09:08:54.587681+00:00",
+        "official_started_at": "2026-11-20T09:08:54.587681+00:00",
+        "technical_verified_at": "2026-11-20T09:52:33.8443903+00:00",
+        "verified_at": "2026-11-20T09:56:52.767624+00:00",
+        "effective_seconds": 2878.074,
+        "product_verified_seconds": 2619.257,
+        "crm_integration_seconds": 172.331,
+        "workspace_transition_seconds": 73.253,
+        "main_ledger_candidate_seconds": 13.233,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-09",
+          "WP02-09b",
+          "WP03-05",
+          "WP03-09"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 395.977,
+        "target_review_started_at": "2026-11-20T09:56:52.661162+00:00",
+        "target_review_seconds": 0.106,
+        "crm_seat_finished_at": "2026-11-20T09:55:26.175637+00:00"
+      }
     },
     {
       "id": "WP03-22",
@@ -297465,7 +297590,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 100973.385,
+      "effective_seconds": 104247.542,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -297500,7 +297625,8 @@
         "WP04-02",
         "WP03-10",
         "WP03-09",
-        "WP02-22"
+        "WP02-22",
+        "WP03-21"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -297573,7 +297699,7 @@
         }
       ],
       "current_stage": "C",
-      "next_card": "WP03-21",
+      "next_card": "WP03-17",
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -297726,14 +297852,10 @@
       },
       "next_card_selection": {
         "rule": "阶段 C 展开全部拆分严格前置；全图最长下游边数降序，同长保留用户阶段数组的顺序。",
-        "baseline_sha": "af73b53801e3ce0f9ba5d0a8b0b7a7fbd91e48ae",
-        "after_card": "WP02-22",
-        "selected": "WP03-21",
+        "baseline_sha": "a015ed8d267ecbcdb44547272a54710a999f0d9b",
+        "after_card": "WP03-21",
+        "selected": "WP03-17",
         "candidates": [
-          {
-            "task": "WP03-21",
-            "longest_downstream_edges": 38
-          },
           {
             "task": "WP03-17",
             "longest_downstream_edges": 38
@@ -297819,7 +297941,7 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 3985.982,
+      "target_review_effective_seconds": 3986.088,
       "last_checkpoint_counts": {
         "original_done": 58,
         "fully_done": 58,
