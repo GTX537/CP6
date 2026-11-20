@@ -18,7 +18,8 @@ public sealed partial class BusinessPartnerWorkspaceV1(CP6Context db, Operations
     public Task<HttpResult> ReadAsync(string operation, Guid? id, string? legal, Guid? financeContext, CancellationToken ct)
     {
         if (operation == "COMMAND_READ")
-            return owner.ExecuteAsync(Resource, CommandRead, false, (access, token) => CommandReadAsync(access, id!.Value, token), ct);
+            return owner.ExecuteAsync(Resource, CommandRead, false, (access, token) => CommandReadAsync(access, id!.Value, token), ct,
+                scopedActionAtFence: (subject, token) => SelectCommandReadAction(id!.Value, subject, token));
         return owner.ExecuteAsync(Resource, View, false, async (access, token) =>
         {
             if (operation == "SCOPES")
@@ -219,6 +220,7 @@ public sealed partial class BusinessPartnerWorkspaceV1(CP6Context db, Operations
         var writable = add ?? edit;
         var canPropose = add is not null && await CanCreateFields(add, ct);
         var actions = new List<string> { "read" };
+        if (await access.TryPartnerActionAsync("export", ct) is not null) actions.Add("export");
         if (canPropose) actions.Add("create");
         if (register is not null) actions.Add("register");
         if (edit is not null) actions.Add("profile.edit");

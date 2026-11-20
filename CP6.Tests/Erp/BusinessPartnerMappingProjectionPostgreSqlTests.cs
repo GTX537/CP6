@@ -222,6 +222,34 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await Worker(false);
         Assert.Equal("CONFLICT", (await ReadReconcileJob(host, cookies, stillConflict)).Body.GetProperty("observation").GetProperty("knowledge").GetString());
 
+        var correctionBefore = await MappingCounts(h);
+        foreach (var (field, replacement) in new (string, string?)[]
+        {
+            ("legalEntityKey", "JP-B"), ("mappingRevision", "11"),
+            ("originalBodyBase64", null), ("receivedTrustRef", null)
+        })
+        {
+            var malformed = System.Text.Json.JsonSerializer.SerializeToNode(BridgeConflict(covered), MappingJson)!.AsObject();
+            var entry = malformed["records"]![0]!.AsObject();
+            if (replacement is null) entry.Remove(field);
+            else entry[field] = replacement;
+            bridge.Conflicts(account, malformed, journal, trust);
+            ConflictProjection();
+            var unproved = await Correction();
+            Assert.Equal("UNPROVEN", unproved.Body.GetProperty("resolution").GetString());
+            Assert.Empty(unproved.Body.GetProperty("ownerEvidence").EnumerateArray());
+        }
+        Assert.Equal(correctionBefore, await MappingCounts(h));
+        var unchanged = (await MappingHead(host, cookies, account)).Body.GetProperty("head");
+        Assert.Equal("12", unchanged.GetProperty("mappingRevision").GetString());
+        Assert.Equal(right, unchanged.GetProperty("bp").GetProperty("bpId").GetGuid());
+        bridge.Conflicts(account, BridgeConflict(covered), journal, trust);
+        await DeviceEvidence("wp04-38-ac090.json", new
+        {
+            rejected = new[] { "otherLegal", "otherRevision", "missingBody", "missingTrust", "crmAhead" },
+            resolution = "UNPROVEN", mainRevision = "12", writes = 0
+        });
+
         ConflictProjection();
         var correction = (await Correction()).Body;
         Assert.Equal("CORRECTABLE", correction.GetProperty("resolution").GetString());

@@ -7315,6 +7315,86 @@
       ]
     },
     {
+      "id": "WP04-38",
+      "package_id": "WP04",
+      "title": "正式伙伴导出与未归属原验收补正",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "ERP-BP-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP04-03",
+        "WP02-23"
+      ],
+      "external_prerequisites": [
+        "总负责授权 #366 与总控派工 #367 已采用，Main 直接前置及拆分余卡完整 DONE"
+      ],
+      "scope": [
+        "B03 正式工作区将当前筛选、租户与法人、对象读权和字段政策用于全部命中，在同一 PostgreSQL 快照读取。保留旧档 CSV 投影。",
+        "逐项复验并核销 ERP-BP-01 由 #366 划入的 24 项原断言：AC011、AC021、AC022、AC023、AC024、AC026、AC027、AC028、AC035、AC036、AC037、AC072、AC075、AC079、AC082、AC090、AC092、AC093、AC102、AC104、AC105、AC109、AC119、AC124",
+        "单次登记 #366 原池内划拨，保留 #363 的既有五组出口及两条 QUESTION，按 #365 结转前卡收尾。"
+      ],
+      "outputs": [
+        "POST /api/main/v1/bp/export、正式 Vue 下载操作、当前策略版本、asOf 与安全审计证据",
+        "24 项逐项报告、隔离 PostgreSQL 回归、唯一台账及生成状态页"
+      ],
+      "code_paths": [
+        "CP6.Core/Services/Erp/BusinessPartnerWorkspaceV1.Query.cs",
+        "CP6.Core/Services/Erp/BusinessPartnerWorkspaceV1.Commands.cs",
+        "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+        "CP6.WebApi/Controllers/Erp/BusinessPartnerWorkspaceController.cs",
+        "cp6.web/src/api/erp/businessPartnerWorkspace.ts",
+        "cp6.web/src/views/erp/BusinessPartnerWorkspaceView.vue"
+      ],
+      "new_paths": [
+        "CP6.Core/Services/Erp/BusinessPartnerWorkspaceV1.Export.cs",
+        "docs/development/evidence/WP04-38"
+      ],
+      "acceptance_positive": [
+        "实际 Main、Vue 与隔离 PostgreSQL 验证授权范围内全部 5000 行，包含当前页之外的命中、UTF-8 BOM、CRLF、RFC 4180 及公式文本化。",
+        "逐项执行各原断言，记录实际入口、输入、期望、结果、证据和模拟范围。合法划拨不增加 2052 小时卡池。"
+      ],
+      "acceptance_negative": [
+        "同筛选 5001 行为 422 EXPORT_LIMIT，零截断文件。跨租户、法人、对象和字段失权均按当前范围收敛。导出零伙伴业务写。",
+        "静态文书、JSON 及摘要不能把业务场景登记为通过。五项已有承接的责任组继续核对剩余 21 项和七项必需运行修订。"
+      ],
+      "exclusive_resources": [
+        "Main:erp-bp-owner",
+        "file:Main:CP6.Core/Services/Erp/BusinessPartnerWorkspaceV1.Query.cs",
+        "file:Main:CP6.Core/Services/Erp/BusinessPartnerWorkspaceV1.Commands.cs",
+        "file:Main:CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+        "file:Main:CP6.WebApi/Controllers/Erp/BusinessPartnerWorkspaceController.cs",
+        "file:Main:cp6.web/src/api/erp/businessPartnerWorkspace.ts",
+        "file:Main:cp6.web/src/views/erp/BusinessPartnerWorkspaceView.vue"
+      ],
+      "notes": "划拨 14400 秒来自 WP04-03 已结清节余，21600 秒触发强制拆卡。生产数据、环境切换和部署另按原责任执行。",
+      "prerequisite_bindings": [
+        {
+          "requirement": "正式伙伴 Owner 及总负责指定的串行前置",
+          "task_ids": [
+            "WP04-03",
+            "WP02-23"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "两卡及其拆分余卡已完整 DONE，实际 Main 远端采用已核实。"
+        }
+      ],
+      "source_refs": [
+        "docs/design-handbook/modules/ERP-BP-01.md",
+        "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "docs/development/evidence/WP04-03/DELIVERY.md",
+        "docs/development/evidence/WP02-23/DELIVERY.md",
+        "docs/development/planning/20261117-card-execution.md"
+      ],
+      "supplemental_authorization": {
+        "commit": "7e1f80d606516b4d40f89a13f0d14de958f39acb",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP04-03/replies/20261120T153943Z-coord-supplement-authorization/MESSAGE.md",
+        "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/366"
+      }
+    },
+    {
       "id": "WP05-01",
       "package_id": "WP05",
       "title": "S00：ITER/REL缺失原验收的替代依据设计",

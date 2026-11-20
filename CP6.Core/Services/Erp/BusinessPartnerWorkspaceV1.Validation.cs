@@ -129,8 +129,8 @@ public sealed partial class BusinessPartnerWorkspaceV1
     private async Task AuthorizeCreate(OperationsAccessV1 access, CreateIntent intent, BaseChoice[] bases, CancellationToken ct)
     {
         var add = await access.ActionAsync(Resource, "add", ct);
-        if (!await CanCreateFields(add, ct)) throw Denied("FIELD_WRITE_FORBIDDEN");
-        RequireBase(bases, Base(intent.Row), true);
+        if (!await CanCreateFields(add, ct)) throw Denied("FIELD_DENIED");
+        if (!RequireBase(bases, Base(intent.Row), false).CanManage) throw Denied("ORG_SCOPE_DENIED");
         if (intent.Registration == Registered) await access.ActionAsync(Resource, "register", ct);
     }
 

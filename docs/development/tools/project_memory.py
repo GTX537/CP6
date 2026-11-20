@@ -48,8 +48,15 @@ def sections(data, counts):
         todo = f"台账指定的下一卡为 {link}。直接前置为 {'、'.join(task['dependencies']) or '无'}。"
     else:
         todo = "台账尚未指定下一卡。"
+    previous = policy.get("next_card_selection", {}).get("after_card")
+    transfers = policy.get("supplemental_budget_transfers", [])
+    if previous in {transfer["target_task_id"] for transfer in transfers}:
+        report = evidence_link(previous, tasks[previous]["card_execution"]["report"])
+        todo += f" 最近的获批补正及剩余出口见 {report}。"
     progress = (f"原号 DONE {counts['original_done']}/{total}，完整 DONE {counts['fully_done']}/{total}。"
                 f"已关闭目标 {len(targets)}/{len(data['targets'])}。")
+    if counts.get("supplemental_total"):
+        progress += f"获批补正完整 DONE {counts['supplemental_done']}/{counts['supplemental_total']}。"
     return {
         "PROJECT_STATE.md": "## 单卡进度\n\n" + progress,
         "05-Completed.md": "## 最近交付\n\n" + (log[0] if log else "尚无单卡交付。")

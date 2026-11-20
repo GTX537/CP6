@@ -87,7 +87,8 @@ public class OperLogFilter : IAsyncActionFilter
                 native?.ActualActor ?? actual ?? effective, native?.EffectiveActor ?? effective, native?.Service,
                 native?.PermissionVersion ?? context.HttpContext.Items[AuditEvidenceV1.PermissionVersionItem] as string, native?.OperationId, outcome,
                 Activity.Current?.TraceId.ToHexString() ?? Guid.NewGuid().ToString("N"), RecordedAtUtc: DateTimeOffset.UtcNow,
-                DataPolicy: "HTTP_TELEMETRY_V1", Action: actionName, OriginalOperationDigest: native?.OriginalOperationDigest).Encode()
+                DataPolicy: "HTTP_TELEMETRY_V1", Action: actionName, OriginalOperationDigest: native?.OriginalOperationDigest,
+                SnapshotAsOfUtc: context.HttpContext.Items[AuditEvidenceV1.SnapshotAsOfItem] as DateTimeOffset?).Encode()
         };
 
         // 优先投递 Kafka。

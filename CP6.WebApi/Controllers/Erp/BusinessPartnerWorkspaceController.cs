@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using CP6.Core.Services.Erp;
+using CP6.Core.Services.Sys;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,6 +33,9 @@ public sealed class BusinessPartnerWorkspaceController(BusinessPartnerWorkspaceV
 
     [HttpPost("query")]
     public Task<IActionResult> Query([FromBody] JsonElement body, CancellationToken ct) => Post("QUERY", body, ct);
+
+    [HttpPost("export")]
+    public Task<IActionResult> Export([FromBody] JsonElement body, CancellationToken ct) => Post("EXPORT", body, ct);
 
     [HttpPost("history")]
     public Task<IActionResult> History([FromBody] JsonElement body, CancellationToken ct) => Post("HISTORY", body, ct);
@@ -137,6 +141,14 @@ public sealed class BusinessPartnerWorkspaceController(BusinessPartnerWorkspaceV
         {
             var result = await run();
             if (result.ETag is not null) Response.Headers.ETag = result.ETag;
+            if (result.Body is BusinessPartnerWorkspaceV1.ExportFile csv)
+            {
+                Response.Headers["X-BP-Policy-Version"] = csv.PolicyVersion;
+                Response.Headers["X-BP-As-Of"] = csv.AsOf.UtcDateTime.ToString("O", System.Globalization.CultureInfo.InvariantCulture);
+                HttpContext.Items[AuditEvidenceV1.PermissionVersionItem] = csv.PolicyVersion;
+                HttpContext.Items[AuditEvidenceV1.SnapshotAsOfItem] = csv.AsOf;
+                return File(csv.Bytes, "text/csv; charset=utf-8", "business-partners.csv");
+            }
             return new JsonResult(result.Body, Wire);
         }
         catch (OrderPriceCorrectionException error)

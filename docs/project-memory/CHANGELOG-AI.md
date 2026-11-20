@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP04-38 正式伙伴导出与未归属原验收补正](../development/evidence/WP04-38/DELIVERY.md)（DONE），核对时间 `2026-11-20T16:33:20.515145+00:00`。
 - [WP02-23 INT-OPS Main原结果目录与受控重放](../development/evidence/WP02-23/DELIVERY.md)（DONE），核对时间 `2026-11-20T15:06:02.514840+00:00`。
 - [WP04-03 Main账户映射、ReverseClaim和纠错目录](../development/evidence/WP04-03/DELIVERY.md)（DONE），核对时间 `2026-11-20T12:29:46.624729+00:00`。
 - [WP03-17 账户联系人原生活动登记与时间线](https://github.com/GTX537/CP6.CRM/blob/8a9b2a5c3ed468953a0c63a483515c88690a23b4/docs/development/evidence/WP03-17/DELIVERY.md)（DONE），核对时间 `2026-11-20T11:03:46.711084+00:00`。

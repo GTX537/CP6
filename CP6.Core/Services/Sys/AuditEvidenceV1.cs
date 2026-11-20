@@ -8,10 +8,12 @@ public sealed record AuditEvidenceV1(
     string Source, string Reliability, string ActorKind, Guid? ActualActor = null, Guid? EffectiveActor = null,
     string? Service = null, string? PermissionVersion = null, Guid? OperationId = null,
     string? Outcome = null, string? TraceId = null, string? EntityVersion = null, DateTimeOffset? RecordedAtUtc = null,
-    string? TransactionRef = null, string? DataPolicy = null, string? Action = null, string? OriginalOperationDigest = null)
+    string? TransactionRef = null, string? DataPolicy = null, string? Action = null, string? OriginalOperationDigest = null,
+    DateTimeOffset? SnapshotAsOfUtc = null)
 {
     public const string HttpItem = "CP6.AuditEvidence.v1";
     public const string PermissionVersionItem = "CP6.AuditPermissionVersion.v1";
+    public const string SnapshotAsOfItem = "CP6.AuditSnapshotAsOf.v1";
     private static readonly JsonSerializerOptions Format = new(JsonSerializerDefaults.Web)
     { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
 

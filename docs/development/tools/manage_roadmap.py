@@ -572,10 +572,15 @@ def fully_done(tid, tasks, definitions):
 
 
 def card_completion_counts(tasks, definitions):
-    originals = [tid for tid in tasks if not definitions.get(tid, {}).get("split_parent")]
-    return {"original_done": sum(tasks[tid]["state"] == "DONE" for tid in originals),
-            "fully_done": sum(fully_done(tid, tasks, definitions) for tid in originals),
-            "original_total": len(originals)}
+    supplements = [tid for tid in tasks if definitions.get(tid, {}).get("supplemental_authorization")]
+    originals = [tid for tid in tasks if tid not in supplements and not definitions.get(tid, {}).get("split_parent")]
+    counts = {"original_done": sum(tasks[tid]["state"] == "DONE" for tid in originals),
+              "fully_done": sum(fully_done(tid, tasks, definitions) for tid in originals),
+              "original_total": len(originals)}
+    if supplements:
+        counts.update(supplemental_total=len(supplements),
+                      supplemental_done=sum(fully_done(tid, tasks, definitions) for tid in supplements))
+    return counts
 
 
 def validate_target_gaps(coverage, targets, tasks, definitions):
@@ -609,8 +614,10 @@ def validate_target_gaps(coverage, targets, tasks, definitions):
 def validate_card_budgets(policy, tasks, definitions):
     """只分配原剩余卡池；原号历史 cap 保留，余卡不能重新获得 M/L 全额。"""
     excluded = policy.get("budget_baseline_done_task_ids")
+    supplements = {tid for tid, definition in definitions.items() if "supplemental_authorization" in definition}
+    transfers = policy.get("supplemental_budget_transfers", [])
     if excluded is None:
-        return []  # 尚未采用预算策略的历史台账。
+        return ["supplemental card budgets require the original pool"] if supplements or transfers else []
     if (not string_list(excluded) or len(excluded) != len(set(excluded))
             or any(tid not in tasks or definitions.get(tid, {}).get("split_parent") for tid in excluded)):
         return ["invalid card budget baseline exclusions"]
@@ -625,9 +632,10 @@ def validate_card_budgets(policy, tasks, definitions):
             caps[tid] = Decimal(str(cap))
             if not caps[tid].is_finite() or caps[tid] < 0:
                 raise ValueError("nonfinite or negative cap")
-        total = sum(cap for tid, cap in caps.items() if not definitions.get(tid, {}).get("split_parent"))
+        total = sum(cap for tid, cap in caps.items() if tid not in supplements and not definitions.get(tid, {}).get("split_parent"))
         if total != Decimal(str(policy["base_card_hours"])) * 3600:
             errors.append("card budget total differs from original remaining-card pool")
+        errors.extend(validate_supplemental_transfers(transfers, supplements, caps, tasks, definitions))
         for tid, definition in definitions.items():
             children = definition.get("split_children", [])
             if not children:
@@ -640,6 +648,40 @@ def validate_card_budgets(policy, tasks, definitions):
     except (KeyError, TypeError, ValueError, InvalidOperation):
         errors.append("invalid card budget or missing split effective time")
     return errors
+
+
+def validate_supplemental_transfers(transfers, supplements, caps, tasks, definitions):
+    if not isinstance(transfers, list):
+        return ["invalid supplemental card budget transfers"]
+    recipients = set()
+    authorizations = set()
+    allocated = collections.defaultdict(Decimal)
+    for transfer in transfers:
+        source = transfer["source_task_id"]
+        target = transfer["target_task_id"]
+        decision = transfer["decision"]
+        ref = (decision["commit"], decision["path"])
+        if (target not in supplements or target in recipients or ref in authorizations
+                or source in supplements or source not in caps or target not in caps
+                or definitions[source].get("split_parent") or definitions[source].get("split_children")
+                or definitions[target].get("split_parent") or tasks[source]["state"] != "DONE"
+                or decision != definitions[target]["supplemental_authorization"]
+                or not re.fullmatch(r"[a-f0-9]{40}", ref[0]) or not ref[1].startswith("handoffs/")
+                or not ref[1].endswith("/MESSAGE.md") or "\\" in ref[1] or ".." in Path(ref[1]).parts
+                or not re.fullmatch(r"https://github\.com/GTX537/CP6\.AI-Handoff/pull/[1-9][0-9]*", decision["pr_url"])):
+            return ["invalid or duplicate supplemental card budget transfer"]
+        seconds = Decimal(str(transfer["seconds"]))
+        spent = Decimal(str(tasks[source]["card_execution"]["effective_seconds"]))
+        if not spent.is_finite() or spent < 0 or not seconds.is_finite() or seconds <= 0 or seconds != caps[target]:
+            return ["invalid supplemental card budget or source effective time"]
+        allocated[source] += seconds
+        if allocated[source] > max(Decimal(0), caps[source] - spent):
+            return ["supplemental card budget exceeds completed source surplus"]
+        recipients.add(target)
+        authorizations.add(ref)
+    if recipients != supplements:
+        return ["supplemental card budget transfer missing"]
+    return []
 
 
 def render_cards(definitions, data):
@@ -747,6 +789,8 @@ def render(data, definitions=None):
         count_text = (f"原号 DONE {counts['original_done']}/{counts['original_total']}；"
                       f"完整 DONE {counts['fully_done']}/{counts['original_total']}。"
                       "完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。")
+        if counts.get("supplemental_total"):
+            count_text += f"获批补正完整 DONE {counts['supplemental_done']}/{counts['supplemental_total']}，沿用原卡池内划拨。"
         task_view += [count_text, ""]
         overview += ["", count_text, ""]
     for package in data["work_packages"]:

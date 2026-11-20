@@ -154,10 +154,11 @@ public sealed partial class OperationsOwnerV1
         var uses = partnerExport
             ? new[] { FieldPermissionUseV1.Read, FieldPermissionUseV1.Write, FieldPermissionUseV1.Export }
             : new[] { FieldPermissionUseV1.Read, FieldPermissionUseV1.Write };
-        var mappings = source.Fields.SelectMany(f => uses.Where(use => use != FieldPermissionUseV1.Export || f == "BpName")
+        var mappings = source.Fields.SelectMany(f => uses
+            .Where(use => use != FieldPermissionUseV1.Export || BusinessPartnerWorkspaceV1.ExportPermissionFields.Contains(f))
             .Select(use => new FieldPermissionMappingV1(f, use,
-            use == FieldPermissionUseV1.Export ? "/api/business-partners/export-csv#bpName" : "/operations/" + resource + "/" + f,
-            true, [])));
+                use == FieldPermissionUseV1.Export ? "/api/main/v1/bp/export#" + f : "/operations/" + resource + "/" + f, true, [])))
+            .Concat(partnerExport ? [new("BpName", FieldPermissionUseV1.Export, "/api/business-partners/export-csv#bpName", true, [])] : []);
         var constraints=source.Fields.SelectMany(f=>uses.Select(use=>new FieldPermissionConstraintsV1(f,use,
             FieldPermissionCheckV1.Allowed,FieldPermissionCheckV1.Allowed,FieldPermissionCheckV1.Allowed,
             FieldPermissionCheckV1.NotApplicable,FieldPermissionCheckV1.NotApplicable,FieldPermissionCheckV1.Allowed,FieldPermissionCheckV1.Allowed)));
@@ -169,11 +170,13 @@ public sealed partial class OperationsOwnerV1
     internal async Task<T> ExecuteAsync<T>(string resource,string action,bool write,
         Func<OperationsAccessV1,CancellationToken,Task<T>> body,CancellationToken ct=default, OperationsDelegationV1? delegation=null,
         Func<CancellationToken,Task<string>>? actionAtFence=null,bool readOnlyAuthorityFence=false,
-        Func<Guid,CancellationToken,Task<string>>? scopedActionAtFence=null)
+        Func<Guid,CancellationToken,Task<string>>? scopedActionAtFence=null,
+        bool partnerExportSnapshot=false)
     {
         using var linked=CancellationTokenSource.CreateLinkedTokenSource(ct,http.HttpContext?.RequestAborted??CancellationToken.None);ct=linked.Token;
         if((resource is not (ReturnCorrection or ReturnQuality or LocationRule or EngineeringBaseline or EngineeringIteration or RequirementSet or EngineeringRequirement or QualitySpecification or ControlledDocument or FileContent or EngineeringOutputRelations or EngineeringManufacturing or EngineeringBom or EngineeringRouting or BusinessPartner or ToolInstance or ToolSpecification or PlateMold or ConfigurationRule or EngineeringRevision or EngineeringProduct or PhysicalSite or CurrencyPolicy or UomProfile or InventoryIdentity or TransferEnvironment or TransferSource or TransferRequest or Product or Mes or Outbound or Production or Inbound or Receipt or Stock or StockTake or WmsDashboard or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or Rma or Replenish or Mobile or WorkCenter or ProcessCostRate or FinCost or StockDwell or Expiry or MaterialShortage or LotTrace or CrossDock or Slotting or Vmi or Kitting or ReportCenter or Warehouse or Location or Routing or Packaging or Sample) && !CP6.Core.Services.Wms.ReturnDispositionOwnersV2.ContainsResource(resource)) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
             || System.Transactions.Transaction.Current!=null || db.ChangeTracker.HasChanges()
+            || partnerExportSnapshot && (resource != BusinessPartner || action != "export" || write)
             || readOnlyAuthorityFence && (write || delegation!=null || actionAtFence!=null || scopedActionAtFence!=null)
             || db.ChangeTracker.Entries().Any(e=>IsBusiness(e.Entity.GetType().Name))
             || resource==FinCost && db.ChangeTracker.Entries().Any(e=>e.Entity is CP6.Entity.DomainModels.Fin.CostSheet
@@ -188,7 +191,8 @@ public sealed partial class OperationsOwnerV1
         IDbContextTransaction? tx=null;var committing=false;
         try
         {
-            tx=await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted,ct);
+            // 正式伙伴导出在一个 PostgreSQL 快照中完成授权、筛选和读取。
+            tx=await db.Database.BeginTransactionAsync(partnerExportSnapshot ? IsolationLevel.Serializable : IsolationLevel.ReadCommitted,ct);
             var bpScopeGate = resource == BusinessPartner && await BpUseScopeGate.IsCutoverAsync(db, ct);
             if (bpScopeGate)
                 await BpUseScopeGate.HoldIamAsync(db, ct);

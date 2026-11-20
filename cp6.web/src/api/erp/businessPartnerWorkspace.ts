@@ -1,3 +1,4 @@
+import { isAxiosError } from 'axios'
 import http from '../http'
 
 export type ProfileValue = string | number | boolean | null
@@ -77,14 +78,30 @@ function response<T>(method: 'GET' | 'POST', path: string, data?: unknown, heade
   })
 }
 
-export const businessPartnerWorkspace = {
-  scopes: () => response<WorkspaceScope[]>('GET', '/scopes'),
-  options: (legal: string) => response<WorkspaceOptions>('GET', '/options?legalEntityKey=' + encodeURIComponent(legal)),
-  list: (legal: string, name: string, page: number) => response<{ items: PartnerListItem[]; total: number }>('POST', '/query', {
+function listInput(legal: string, name: string, page: number) {
+  return {
     filter: { legalEntityKey: legal, name: name.trim() || null, rolesAny: [], registrations: [], lifecycles: [], holds: [],
       bpCd: null, baseCds: [], salesStaffCd: null, businessStaffCd: null, classFilters: [], createdFrom: null, createdTo: null },
     sort: 'BP_CD', direction: 'ASC', page, pageSize: 25,
-  }),
+  }
+}
+
+export const businessPartnerWorkspace = {
+  scopes: () => response<WorkspaceScope[]>('GET', '/scopes'),
+  options: (legal: string) => response<WorkspaceOptions>('GET', '/options?legalEntityKey=' + encodeURIComponent(legal)),
+  list: (legal: string, name: string, page: number) =>
+    response<{ items: PartnerListItem[]; total: number }>('POST', '/query', listInput(legal, name, page)),
+  async exportCsv(legal: string, name: string, page: number) {
+    try {
+      return await http.post<Blob, Blob>('/main/v1/bp/export', listInput(legal, name, page), { responseType: 'blob' })
+    } catch (error) {
+      if (isAxiosError(error) && error.response?.data instanceof Blob && error.response.data.type.startsWith('application/json')) {
+        const text = await error.response.data.text()
+        try { error.response.data = { body: JSON.parse(text) } } catch { /* 由工作区显示通用请求错误。 */ }
+      }
+      throw error
+    }
+  },
   detail: (bp: string) => response<PartnerDetail>('GET', '/' + encodeURIComponent(bp)),
   editContext: (bp: string) => response<EditContext>('GET', '/' + encodeURIComponent(bp) + '/edit-context'),
   statusContext: (bp: string) => response<StatusContext>('GET', '/' + encodeURIComponent(bp) + '/status-context'),
