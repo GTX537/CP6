@@ -374,3 +374,13 @@ WP04-02 DONE。I02 在实际 C03 报价转订单的 PostgreSQL 外层事务运�
 按 [总控签收 #348](https://github.com/GTX537/CP6.AI-Handoff/blob/008311826fa124fec12fe9c6b8a1aaa1e0601588/handoffs/CP6-DEV-20261012/tasks/WP03-08/replies/20261120T040241Z-coord-acceptance-ack/MESSAGE.md) 单次补记 WP03-08 正式收尾 158.562 秒，该卡最终 1612.951 秒。结转后计划起点 93180.418 秒，本卡有效 1788.357 秒，目标核对 0.102 秒，计划累计 94968.877 秒。登记卡 DONE 70/382，原号和完整 DONE 均为 63/375，目标 10/125。本卡未拆分。正式收尾据实际采用回执记录。
 
 当前阶段 C 可开工顺序为 WP03-10（39）、WP03-09（39）、WP02-22（39）、WP04-03（7）、WP03-12（6），实际领取依独立派工。WP02-29 继续暂缓。
+
+## WP03-10 联系人渠道值与用途证据策略
+
+WP03-10 DONE。CRM 受保护 PR 采用 `8658c4997673633785e289cf5e4737c5d6e8d316`，受验源码 `c1d80034ebd1547b8804b851b915af8fc334ae2d`。渠道改值和 Policy0、逐段证据、ACT 当前准入及原历史绑定已运行。采用后冒烟 4/4，DEV-2 经正式 finish 释放。Main 在随后同卡台账 PR 核销。[派工 #351](https://github.com/GTX537/CP6.AI-Handoff/pull/351) · [唯一交付报告](https://github.com/GTX537/CP6.CRM/blob/8658c4997673633785e289cf5e4737c5d6e8d316/docs/development/evidence/WP03-10/DELIVERY.md) · [CRM PR](https://github.com/GTX537/CP6.CRM/pull/244)
+
+CRM-CON-01 原 AC 19/49，必需补充 4/26，必需运行修订 0/2，目标保持开放。新增项目为 C10、C29、C30、C31、C32、C33、C46、C48、REV1-09、REV1-10、REV1-11、REV1-12。登记卡 DONE 71/382，原号和完整 DONE 均 64/375，目标 10/125。本卡未拆分。
+
+按 [总控签收 #350](https://github.com/GTX537/CP6.AI-Handoff/blob/a89eaa68d656c515390704534242f0b732cd8416/handoffs/CP6-DEV-20261012/tasks/WP04-02/replies/20261120T055956Z-coord-acceptance-ack/MESSAGE.md) 单次补记 WP04-02 正式收尾 159.941 秒，该卡最终 1948.298 秒。结转后计划起点 95128.818 秒，本卡有效 1245.810 秒，目标复核另记 0.053 秒，计划累计 96374.681 秒。Main 正式收尾依实际回执另留证。
+
+当前阶段 C 可开工顺序为 WP03-09（39）、WP02-22（39）、WP03-17（38）、WP04-03（7）、WP03-12（6）。实际领取依独立派工。WP02-29 依原裁决继续暂缓。
