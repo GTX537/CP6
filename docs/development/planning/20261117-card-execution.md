@@ -356,3 +356,13 @@ CRM-ACC-01 完整运行证据支持 13/47 项原 AC 和 1/10 项必需修订，�
 WP04-01 DONE。Main 实际 API、Vue 和 PostgreSQL 验证 143 原字段、128 资料字段、九关系槽、预览与不可变版以及注册、生命周期和冻结。B13 原路和旧 DELETE #1277 回归均有报告，远端采用及合并后冒烟以实际 PR/finish 为准。ERP-BP-01 为 27/124 项原 AC、1/10 项必需修订，目标开放。 [唯一报告](../evidence/WP04-01/DELIVERY.md) · [Main PR](https://github.com/GTX537/CP6/pull/1281)
 
 按 #345 一次补记 WP03-05 正式收尾 135.875 秒，最终 1854.370 秒。计划累计起点 89092.746 秒，本卡有效 2234.210 秒，目标核对 2.274 秒，累计 91329.230 秒，未新增拆分。阶段 C 后续候选为 WP03-08（40）、WP04-02（39）、WP02-22（39）、WP03-12（6），等独立派工。
+
+## WP03-08 独立联系人身份、归属与 H02 参与
+
+WP03-08 DONE。CRM 受保护 PR 实际采用 `6c203a3d03e246ac859c6176e1b154660b4d6396`，实现提交 `d31fbac11c1856f6b60c0115c7219be86fbbe906`。独立联系人、初始子项、版本化归属状态、安全原回执及 H02 Contact Create/Use 完成实际 CRM API、Next、Chrome 与隔离 PostgreSQL 验收。CRM 合并后冒烟 2/2，通过正式 finish 后释放 DEV-2。按 Handoff [#347](https://github.com/GTX537/CP6.AI-Handoff/pull/347) 先采用 CRM 产品，随后由 Main 本 PR 核销同卡。[唯一报告](https://github.com/GTX537/CP6.CRM/blob/6c203a3d03e246ac859c6176e1b154660b4d6396/docs/development/evidence/WP03-08/DELIVERY.md) · [CRM PR](https://github.com/GTX537/CP6.CRM/pull/243)
+
+CRM-CON-01 已核销 11/49 项原 AC，原编号为 C01、C02、C03、C04、C09、C11、C17、C19、C20、C23、C38。必需补充场景 0/26，必需运行修订 0/2。目标保持开放，剩余出口以本卡报告为准。登记卡 DONE 69/382，原号和完整 DONE 均为 62/375，目标 10/125，本卡新增拆分和缓冲为 0。
+
+按 [总控签收 #346](https://github.com/GTX537/CP6.AI-Handoff/blob/f76f497b55ef3a57eafab1de27ea50d722181d8e/handoffs/CP6-DEV-20261012/tasks/WP04-01/replies/20261120T030705Z-coord-acceptance-ack/MESSAGE.md) 单次补记 WP04-01 正式收尾 238.183 秒，最终 2472.393 秒。结转后计划起点 91567.413 秒，WP03-08 有效 1454.389 秒，目标复核另计 0.054 秒，计划累计 93021.856 秒。首个 24 有效小时检查点已登记。Main PR 正式收尾依后续采用记录回读。
+
+当前阶段 C 可开工顺序为 WP04-02（39）、WP03-10（39）、WP03-09（39）、WP02-22（39）、WP03-12（6）。实际领取依独立派工。WP02-29 依原裁决继续暂缓。
