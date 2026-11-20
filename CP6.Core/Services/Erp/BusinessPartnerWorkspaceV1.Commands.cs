@@ -43,10 +43,38 @@ public sealed partial class BusinessPartnerWorkspaceV1
             };
         }, ct, scopedActionAtFence: async (subject, token) =>
         {
-            // 同一真实授权事务内查看原命令。已有结果不要求当前的新写权限。
+            // 先规划 Scope，再取得原命令锁并重查终态。未观察到终态时才核对新动作。
             var prior = await FindCommand(command, token);
+            if (await BpUseScopeGate.IsCutoverAsync(db, token))
+            {
+                var planned = prior?.Legal ?? await PlanCommandScope(operation, body, subject, token);
+                if (planned is not null)
+                {
+                    await BpUseScopeGate.LockAsync(db, planned, prior is null, token);
+                    await BpUseScopeGate.LockCommandAsync(db, command, token);
+                    prior = await FindCommand(command, token);
+                    if (prior is not null && prior.Legal != planned)
+                    {
+                        if (prior.Actor != subject) throw Missing();
+                        throw Rejected("COMMAND_IDEMPOTENCY_CONFLICT", 409);
+                    }
+                }
+            }
             return prior?.Actor == subject ? CommandRead : View;
         });
+    }
+
+    private async Task<string?> PlanCommandScope(string operation, JsonElement body, Guid subject, CancellationToken ct)
+    {
+        if (operation is "CREATE" or "PROFILE_APPLY")
+        {
+            var reference = Exact(Exact(body, "preview")["preview"], "previewId", "intentHash", "expiresAt");
+            var preview = await FindPreview(Uuid(reference["previewId"]), ct);
+            return preview?.Actor == subject ? preview.Legal : null;
+        }
+        if (operation is "REGISTER" or "HOLD" or "RETIRE" or "RESTORE")
+            return (await HeadAsync(ParseState(operation, body).Id, ct))?.Legal;
+        return null;
     }
 
     private sealed record Proposal(Scope Scope, BusinessPartner Row, Head? Head, CandidateSet Candidates, string Sources,
@@ -347,6 +375,8 @@ public sealed partial class BusinessPartnerWorkspaceV1
         Receipt? receipt = null;
         if (original?.Actor == access.ActorId)
         {
+            if (await BpUseScopeGate.IsCutoverAsync(db, ct))
+                await BpUseScopeGate.LockAsync(db, original.Legal, false, ct);
             var current = await VisibleAsync(access, original.Target, false, ct);
             if (current.Head?.Legal == original.Legal) receipt = ReadReceipt(original);
         }
@@ -375,6 +405,11 @@ public sealed partial class BusinessPartnerWorkspaceV1
     internal async Task RequireLegacyCreateAsync(string baseCd, CancellationToken ct)
     {
         if (!await WorkspaceInstalled(ct)) return;
+        if (await BpUseScopeGate.IsCutoverAsync(db, ct))
+        {
+            await BpUseScopeGate.LockLegacyWriterAsync(db, null, baseCd, ct);
+            throw Rejected("BP_CREATE_PREVIEW_REQUIRED", 409);
+        }
         if (await UsesFormalBase(baseCd.TrimEnd(), baseCd.TrimEnd(), ct))
             throw Rejected("BP_CREATE_PREVIEW_REQUIRED", 409);
     }
@@ -388,6 +423,11 @@ public sealed partial class BusinessPartnerWorkspaceV1
     internal async Task RequireLegacyEditAsync(BusinessPartner row, string? proposedBase, CancellationToken ct)
     {
         if (!await WorkspaceInstalled(ct)) return;
+        if (await BpUseScopeGate.IsCutoverAsync(db, ct))
+        {
+            await BpUseScopeGate.LockLegacyWriterAsync(db, row.Id, Base(row), ct);
+            throw Rejected("BP_PROFILE_PREVIEW_REQUIRED", 409);
+        }
         if (await HeadAsync(row.Id, ct) is not null)
             throw Rejected("BP_PROFILE_PREVIEW_REQUIRED", 409);
         if (await UsesFormalBase(Base(row), proposedBase?.TrimEnd() ?? Base(row), ct))
@@ -398,7 +438,15 @@ public sealed partial class BusinessPartnerWorkspaceV1
     {
         if (!await WorkspaceInstalled(ct)) return false;
         var head = await HeadAsync(row.Id, ct);
-        if (head is null) return false;
+        if (head is null)
+        {
+            if (await BpUseScopeGate.IsCutoverAsync(db, ct))
+            {
+                await BpUseScopeGate.LockLegacyWriterAsync(db, row.Id, Base(row), ct);
+                throw Rejected("BP_LEGAL_SCOPE_UNPROVEN", 409);
+            }
+            return false;
+        }
         if (version is null || !version.SequenceEqual(row.RowVersion ?? []) || !version.SequenceEqual(head.RowVersion))
             throw new DbUpdateConcurrencyException("该业务伙伴已被其他操作修改。");
         var scope = await ScopeAsync(head.Legal, true, ct);

@@ -6,6 +6,7 @@ using CP6.Core.Persistence;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Erp;
 using CP6.Platform.EntityFramework;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.ErpIntegration;
@@ -16,6 +17,8 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
     Func<string, CancellationToken, Task>? observeStage = null)
 {
     private readonly TimeProvider clock = clock ?? runtime.Clock;
+    internal IDataProtectionProvider? PartnerProtection { get; init; }
+    internal IErpOrderPartnerUseSource? PartnerUseSource { get; init; }
 
     public async Task<Cp6InboxProcessingResult> ConsumeAsync(ReadOnlyMemory<byte> payload, string topic, string partitionKey,
         CancellationToken ct = default)
@@ -32,7 +35,15 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
             topic, partitionKey, payload, root.GetProperty("aggregateid").GetString()!, root.GetProperty("aggregateversion").GetInt32());
         if (!runtime.Validator.Validate(delivery).IsValid) return Invalid(digest);
         var command = Command.Read(root, payload.ToArray(), digest);
-        try { return await ProcessAsync(command, ct); }
+        try
+        {
+            try { return await ProcessAsync(command, ct); }
+            catch (Exception error) when (DatabaseFailureClassifier.Classify(error).SqlState is "40001" or "40P01")
+            {
+                // PostgreSQL 已明示原事务失败。按相同事件原键重新取得当前资格和快照。
+                return await ProcessAsync(command, ct);
+            }
+        }
         catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
         catch (Exception)
         {
@@ -49,6 +60,9 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
         await using var queue = await factory.CreateDbContextAsync(ct);
         RequireSql(queue);
         await using var transaction = await queue.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
+        await using var db = await CreateBusinessContextAsync(queue, command.TenantId, ct);
+        var scopedPartner = await BpUseScopeGate.IsCutoverAsync(db, ct);
+        if (scopedPartner) await BpUseScopeGate.HoldIamAsync(db, ct);
         await LockMessageAsync(queue, command, ct);
         var receipt = await queue.Inbox.SingleOrDefaultAsync(x => x.MessageId == command.MessageId, ct);
         var existingResult = InspectReceipt(receipt, command);
@@ -69,15 +83,17 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
         var handled = await HandlePriorAsync(queue, command, aggregate, previous, ct);
         if (!handled)
         {
-            await using var db = await CreateBusinessContextAsync(queue, command.TenantId, ct);
+            const string beforeBusiness = "c03_before_business";
+            if (scopedPartner) await transaction.CreateSavepointAsync(beforeBusiness, ct);
             try
             {
                 var now = clock.GetUtcNow().UtcDateTime;
                 if (!await db.Sys_Tenants.IgnoreQueryFilters().AnyAsync(t => t.Id == command.TenantId && t.Enable &&
                         (t.ExpireDate == null || t.ExpireDate > now), ct))
                     throw new ErpCommerceException("C03_TENANT_DISABLED");
-                if (command.BusinessPartner is { } bpRequest)
+                if (command.BusinessPartner is not null)
                 {
+                    if (scopedPartner) await RejectLegacyPartnerWriteAsync(db, command.AccountId, ct);
                     var partnerQuery = db.Database.IsNpgsql()
                         ? db.BusinessPartners.FromSqlInterpolated($"""SELECT * FROM public."T_WebBusinessPartner" WHERE "TenantId"={command.TenantId} AND "CrmAccountId"={command.AccountId} FOR UPDATE""")
                         : db.BusinessPartners.FromSqlInterpolated($"SELECT * FROM dbo.T_WebBusinessPartner WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={command.TenantId} AND CrmAccountId={command.AccountId}");
@@ -95,7 +111,7 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
                 }
                 else
                 {
-                    var result = await new ErpQuotationOrderFactory(db, createOrderService(db), clock)
+                    var result = await new ErpQuotationOrderFactory(db, createOrderService(db), clock, PartnerProtection, PartnerUseSource)
                         .CreateAsync(command.Order!, command.InputSha256, ct);
                     if (observeStage is not null) await observeStage("order-staged", ct);
                     queue.OrderBridges.Add(new() { TenantId = command.TenantId, OrderKey = result.OrderKey, AvailableAtUtc = clock.GetUtcNow() });
@@ -109,7 +125,8 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
             }
             catch (ErpCommerceException ex)
             {
-                // Validation errors are raised before any ERP domain mutation. Unexpected failures escape and roll back.
+                // 已拒绝的用途及随后报价校验均不得留凭证或订单。原 C03 拒绝结果仍按协议记账。
+                if (scopedPartner) await transaction.RollbackToSavepointAsync(beforeBusiness, ct);
                 SaveFailure(queue, command, aggregate, previous, ex.Code, retryable: false);
             }
         }
@@ -117,6 +134,16 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
         await queue.SaveChangesAsync(ct);
         await transaction.CommitAsync(ct);
         return new(Cp6InboxDisposition.Applied, "", command.PayloadSha256);
+    }
+
+    private static async Task RejectLegacyPartnerWriteAsync(CP6Context db, Guid account, CancellationToken ct)
+    {
+        var target = await db.BusinessPartners.AsNoTracking().Where(row => row.CrmAccountId == account)
+            .Select(row => new { row.Id, row.BaseCd }).SingleOrDefaultAsync(ct)
+            ?? throw new ErpCommerceException("C03_OWNER_PARTICIPANT_UNPROVEN");
+        try { await BpUseScopeGate.LockLegacyWriterAsync(db, target.Id, target.BaseCd, ct); }
+        catch (OrderPriceCorrectionException error) { throw new ErpCommerceException("C03_" + error.Message); }
+        throw new ErpCommerceException("C03_BP_PROFILE_PREVIEW_REQUIRED");
     }
 
     private async Task<Cp6InboxProcessingResult> RecordFailureAsync(Command command, CancellationToken ct)

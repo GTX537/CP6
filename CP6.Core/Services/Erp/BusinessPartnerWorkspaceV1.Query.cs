@@ -125,12 +125,17 @@ public sealed partial class BusinessPartnerWorkspaceV1
         var target = Uuid(input["bpId"]);
         var limit = Positive(input["limit"], 100);
         var kind = Key(input["kind"], 15);
-        if (kind is not ("PROFILE" or "STATUS")) throw Invalid();
+        if (kind is not ("PROFILE" or "STATUS" or "USE")) throw Invalid();
         long? before = input["beforeSequence"].ValueKind == JsonValueKind.Null ? null : Version(input["beforeSequence"]);
         var reader = await access.ActionAsync(Resource, View, ct);
+        var useHistory = kind == "USE" && await BpUseScopeGate.IsCutoverAsync(db, ct);
+        if (useHistory) await BpUseScopeGate.LockAsync(db, legal, false, ct);
         var known = await VisibleAsync(reader, target, false, ct);
         if (Adopted(known.Head).Legal != legal) throw Missing();
         var fields = await Readable(reader, ct);
+        if (kind == "USE")
+            return useHistory ? await UseHistory(reader, fields, legal, target, before, limit, ct)
+                : new { items = System.Array.Empty<object>(), nextBeforeSequence = (string?)null, asOf = Instant(Now) };
         var records = await db.Database.SqlQuery<AuditRow>($"""
             SELECT a.revision AS "Version", p.content_hash AS "Hash", a.actor_id AS "Actor", a.reason AS "Reason",
                 a.fields AS "Fields", a.recorded_at AS "At", p.protected_body AS "Body"
@@ -154,6 +159,53 @@ public sealed partial class BusinessPartnerWorkspaceV1
                 reference, changes = HistoryChanges(target, record, hidden), redactedFields = hidden };
         }).ToArray();
         return new { items, nextBeforeSequence = records.Length > limit ? items[^1].sequence : null, asOf = Instant(Now) };
+    }
+
+    private sealed record UseHistoryRow
+    {
+        public long Sequence { get; init; }
+        public Guid UseKey { get; init; }
+        public string Actor { get; init; } = "";
+        public DateTimeOffset At { get; init; }
+        public string Receipt { get; init; } = "";
+    }
+
+    private async Task<object> UseHistory(OperationsAccessV1 reader, ReadProjection fields, string legal, Guid bp, long? before,
+        int limit, CancellationToken ct)
+    {
+        var stored = await db.Database.SqlQuery<UseHistoryRow>($"""
+            SELECT history_sequence AS "Sequence",use_key AS "UseKey",actor_display AS "Actor",recorded_at AS "At",
+                receipt AS "Receipt" FROM main_bp.use_receipts
+            WHERE tenant_id={Tenant} AND legal_entity_key={legal} AND bp_id={bp}
+                AND ({before}::bigint IS NULL OR history_sequence < {before})
+            ORDER BY history_sequence DESC LIMIT {limit + 1}
+            """).ToArrayAsync(ct);
+        var full = fields.IsComplete && reader.CanReadPartnerField("Relations") && reader.CanReadPartnerField("FinanceLinks");
+        var items = stored.Take(limit).Select(row =>
+        {
+            var original = BpUseParticipant.ReadOriginal(row.Receipt);
+            if (original.UseKey != row.UseKey || original.Bp.BpId != bp || original.Bp.LegalEntityKey != legal)
+                throw BpUseScopeGate.Unproven();
+            // 本页只证明当前伙伴下的原凭证。仍需其他 Owner 范围证明时只披露安全引用。
+            var canDisclose = full && original.AccountId is null && original.DependencyRefs.Length == 0;
+            var changes = canDisclose
+                ? new[] { new { field = "useReceipt", value = (object)original } }
+                : new[]
+                {
+                    new { field = "purpose", value = (object)original.Purpose },
+                    new { field = "bpRevision", value = (object)original.Bp.Revision }
+                };
+            return new
+            {
+                sequence = Revision(row.Sequence), kind = "USE", occurredAt = Instant(row.At), actorDisplay = row.Actor,
+                reason = (string?)null, reference = new
+                {
+                    owner = "Main.Erp.BusinessPartnerUse.v1", id = original.UseKey.ToString("D"),
+                    version = Revision(row.Sequence), digest = canDisclose ? original.ReceiptHash : null, purpose = "BP_USE_HISTORY"
+                }, changes, redactedFields = canDisclose ? System.Array.Empty<string>() : ["useReceipt"]
+            };
+        }).ToArray();
+        return new { items, nextBeforeSequence = stored.Length > limit ? items[^1].sequence : null, asOf = Instant(Now) };
     }
 
     private static bool CanReadChange(OperationsAccessV1 reader, ReadProjection projection, string field)
