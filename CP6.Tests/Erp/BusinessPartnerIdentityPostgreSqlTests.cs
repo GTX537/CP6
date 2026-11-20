@@ -283,7 +283,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(displayName, original.RootElement.GetProperty("bpName").GetString());
         Assert.Equal(1, await db.Database.SqlQueryRaw<int>("SELECT count(*)::int AS \"Value\" FROM cp6_business_partner_identity_v1.versions").SingleAsync());
         var actions = await db.Sys_MenuActions.Where(x => x.MenuId == 212).Select(x => x.ActionCode).ToArrayAsync();
-        Assert.Equal(new[] { "export", "finance-reference-read", "profile-query", "query" }, actions.Order(StringComparer.Ordinal));
+        Assert.Equal(new[] { "command-result.read", "duplicate-review", "export", "finance-reference-read", "history", "profile-query",
+            "query", "register", "sensitive.read", "sensitive.write", "status" }, actions.Order(StringComparer.Ordinal));
         Assert.Empty(await db.Sys_RoleActions.Where(x => x.MenuId == 212).ToArrayAsync());
+        // 目录定义已迁移，旧伙伴仍缺少独立的法人采用和正式资料头。
+        Assert.Equal(0, await db.Database.SqlQueryRaw<int>("SELECT count(*)::int AS \"Value\" FROM main_bp.scopes").SingleAsync());
+        Assert.Equal(0, await db.Database.SqlQueryRaw<int>("SELECT count(*)::int AS \"Value\" FROM main_bp.heads").SingleAsync());
     }
 }

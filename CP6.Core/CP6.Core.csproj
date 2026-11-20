@@ -56,4 +56,7 @@
     <InternalsVisibleTo Include="CP6.TenantStorage" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Services/Erp/BusinessPartnerUnicode15.txt" LogicalName="CP6.BusinessPartner.Unicode15.txt" />
+  </ItemGroup>
 </Project>

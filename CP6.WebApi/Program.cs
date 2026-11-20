@@ -636,7 +636,7 @@ CP6.Core.Services.Sys.FieldRegistry.Register(CP6.Core.Services.Fin.GlAccountWork
     CP6.Core.Services.Fin.GlAccountWorkflowOwnerV1.Fields.ToArray());
 CP6.Core.Services.Sys.FieldRegistry.Register("product");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("erp-business-partner", "客户原身份来源", new[] { 1, 2, 3, 4, 5 }, 1);
-CP6.Core.Services.Sys.FieldRegistry.Register("erp-business-partner", CP6.Core.Services.Fin.BusinessPartnerFinanceReferenceReader.Fields.ToArray());
+CP6.Core.Services.Sys.FieldRegistry.Register("erp-business-partner", CP6.Core.Services.Erp.BusinessPartnerWorkspaceV1.PermissionFields.ToArray());
 CP6.Core.Services.Sys.DataScopeRegistry.Register("uom-profile", "单位配置", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("uom-profile");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-location-rule", "库位规则候选", new[] { 1, 2, 3, 4, 5 }, 1);
@@ -1109,6 +1109,7 @@ builder.Services.AddScoped<IPowerEggWorkflowService, NoOpPowerEggWorkflowService
 // 4.5 MSBBPA100/110/120 FSC・取引先マスタ
 builder.Services.AddScoped<IBusinessPartnerService, BusinessPartnerService>();
 builder.Services.AddScoped<CP6.Core.Services.Erp.BusinessPartnerIdentityOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Erp.BusinessPartnerWorkspaceV1>();
 builder.Services.AddScoped<CP6.Core.Services.Fin.BusinessPartnerFinanceReferenceReader>();
 builder.Services.AddScoped<IFscChecklistService, FscChecklistService>();
 

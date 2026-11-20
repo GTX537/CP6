@@ -69,8 +69,17 @@ public sealed class BusinessPartnerFinanceReferenceReader(CP6Context db, Operati
         }, ct);
     }
 
-    internal async Task<BusinessPartnerFinanceCurrentV1> EnlistAsync(OperationsAccessV1 consumer, DbTransaction transaction,
+    internal Task<BusinessPartnerFinanceCurrentV1> EnlistAsync(OperationsAccessV1 consumer, DbTransaction transaction,
         Guid bp, Guid context, string expectedBpRevision, IReadOnlyList<BusinessPartnerFinanceUseV1> references, CancellationToken ct)
+        => ValidateCurrentAsync(consumer, transaction, bp, context, expectedBpRevision, references, null, ct);
+
+    // 资料域核对准确财务原件；本调用不为当前交易签发使用资格。
+    internal Task<BusinessPartnerFinanceCurrentV1> ValidateProfileReferencesAsync(OperationsAccessV1 consumer, DbTransaction transaction,
+        Guid bp, Guid context, string legal, string expectedBpRevision, IReadOnlyList<BusinessPartnerFinanceUseV1> references, CancellationToken ct)
+        => ValidateCurrentAsync(consumer, transaction, bp, context, expectedBpRevision, references, legal, ct);
+
+    private async Task<BusinessPartnerFinanceCurrentV1> ValidateCurrentAsync(OperationsAccessV1 consumer, DbTransaction transaction,
+        Guid bp, Guid context, string expectedBpRevision, IReadOnlyList<BusinessPartnerFinanceUseV1> references, string? profileLegal, CancellationToken ct)
     {
         RequireTransaction(transaction);
         owner.RequireOriginalFinanceActor();
@@ -88,8 +97,10 @@ public sealed class BusinessPartnerFinanceReferenceReader(CP6Context db, Operati
             return new("DENIED", false, "NOT_AUTHORIZED");
         if (!await FenceAsync(ct)) return new("UNPROVEN", false, "SOURCE_UNAVAILABLE");
         var ledger = await finance.RequireContextAsync(context, access.ActorId, ct);
-        var partner = await PartnerAsync(access, bp, null, ct);
-        if (partner.Revision != revision || !partner.CurrentlyActive)
+        if (profileLegal is not null && ledger.LegalEntityKey != profileLegal)
+            return new("UNPROVEN", false, "SOURCE_SCOPE_UNPROVEN");
+        var partner = await PartnerAsync(access, bp, null, ct, allowOwnedProfileAdvance: profileLegal is not null);
+        if (partner.Revision != revision || profileLegal is null && !partner.CurrentlyActive)
             return new("DENIED", false, "PARTNER_CHANGED");
 
         var guardRevision = await GuardRevisionAsync(ledger.Id, ct);
@@ -115,6 +126,30 @@ public sealed class BusinessPartnerFinanceReferenceReader(CP6Context db, Operati
                     throw Failure("BP_FINANCE_SOURCE_CHANGED", 412);
         });
         return new("VALID", true, Observations: selected.Select(s => s.View).ToArray(), GuardRevision: Text(guardRevision.Value));
+    }
+
+    internal async Task<BusinessPartnerFinanceReferenceViewV1> ReadProfileReferenceAsync(OperationsAccessV1 consumer,
+        DbTransaction transaction, Guid bp, Guid context, string legal, string field, CancellationToken ct)
+    {
+        RequireTransaction(transaction);
+        owner.RequireOriginalFinanceActor();
+        var access = await consumer.SourceAsync(OperationsOwnerV1.BusinessPartner, ct);
+        await access.RequireBusinessPartner(db, bp, ct);
+        var fields = await consumer.ActionAsync(OperationsOwnerV1.BusinessPartner, ReadAction, ct);
+        if (!fields.CanReadBusinessPartnerFinance(field)) return new("NOT_AUTHORIZED");
+        if (!await FenceAsync(ct)) return Unproven();
+        var ledger = await finance.RequireContextAsync(context, access.ActorId, ct);
+        if (ledger.LegalEntityKey != legal) return Unproven();
+        var partner = await PartnerAsync(access, bp, null, ct);
+        var original = await LookupAsync(bp, field, partner, ledger, ct);
+        consumer.AtCommit(async final =>
+        {
+            RequireTransaction(transaction);
+            var latest = await finance.RequireContextAsync(context, access.ActorId, final);
+            if (latest.LegalEntityKey != legal || await LookupAsync(bp, field, partner, latest, final) != original)
+                throw Failure("BP_FINANCE_SOURCE_CHANGED", 412);
+        });
+        return original.View;
     }
 
     internal async Task<BpFinanceLinkReadBodyV1?> ReadFinanceLinkInUowAsync(OperationsAccessV1 consumer,
@@ -147,10 +182,11 @@ public sealed class BusinessPartnerFinanceReferenceReader(CP6Context db, Operati
         return new(bp, ledger.LegalEntityKey, field["finance.".Length..], reference, Text(partner.Revision), DateTime.UtcNow, "REAL");
     }
 
-    private async Task<Partner> PartnerAsync(OperationsAccessV1 access, Guid bp, long? exact, CancellationToken ct)
+    private async Task<Partner> PartnerAsync(OperationsAccessV1 access, Guid bp, long? exact, CancellationToken ct,
+        bool allowOwnedProfileAdvance = false)
     {
         // 复用伙伴 Owner 的原版本与提交前身份复核，冻结/退休不依赖本读取器。
-        var view = await BusinessPartnerIdentityOwnerV1.ReadOwnedAsync(db, access, bp, exact, ct);
+        var view = await BusinessPartnerIdentityOwnerV1.ReadOwnedAsync(db, access, bp, exact, ct, allowOwnedProfileAdvance);
         var active = view.IsCurrent && view.SourcePresent
             && view.Source.GetProperty("status").GetInt32() == 1
             && !view.Source.GetProperty("isDeleted").GetBoolean()

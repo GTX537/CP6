@@ -15,6 +15,12 @@ internal sealed partial class OperationsAccessV1
         if (authority.Resource != OperationsOwnerV1.BusinessPartner || authority.Action != "query")
             throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
     }
+    internal int[] BusinessPartnerRoles => authority.Actor.RoleIds.ToArray();
+    internal bool CanReadPartnerField(string name) => authority.Fields.Fields.TryGetValue(name, out var field) && field.CanRead;
+    internal bool CanWritePartnerField(string name) => authority.Fields.Fields.TryGetValue(name, out var field) && field.CanWrite;
+    internal Task<OperationsAccessV1?> TryPartnerActionAsync(string action, CancellationToken ct)
+        => LinkedSource(OperationsOwnerV1.BusinessPartner, ct, action);
+
     internal bool BusinessPartnerNameReadable => authority.Fields.Fields.TryGetValue("BpName", out var field) && field.CanRead;
     internal bool CanReadBusinessPartnerFinance(string field)
         => authority.Resource == OperationsOwnerV1.BusinessPartner
