@@ -340,3 +340,13 @@ WP11-65 DONE。Main 实际回读旧银行及信用来源，隔离 PostgreSQL 证
 WP11-01 的历史候选更正按 [#1276](https://github.com/GTX537/CP6/issues/1276) 和 [#338 裁决](https://github.com/GTX537/CP6.AI-Handoff/blob/fbd6854209c17257f9071220212a2e1e284721fb/handoffs/CP6-DEV-20261012/tasks/WP11-01/replies/20261119T160035Z-coord-acceptance-ack/MESSAGE.md) 登记。其采用提交上四个可开工候选正确顺序为 WP11-65（41）、WP03-05（41）、WP02-22（39）、WP03-12（6）。阶段 C 同长以用户阶段顺序为准。原报告和错误快照可追溯，本轮历史复算工具输出与更正一致。
 
 本卡有效 2655.877 秒，联合目标复核另计 16.662 秒。WP11-01 正式收尾 470.929 秒单次结转，该卡最终 3924.491 秒。累计 87008.371 秒。首个 24 有效小时检查点于 2026-11-19T17:14:23.382773+00:00 达到，累计 86400.000 秒。当时登记卡 65/382，原号和完整 DONE 各 58/375，目标 10/125，累计拆分余卡 7 张，本卡新增拆分 0。 M 卡内完成，预算缓冲无增量。当前可开工候选为 WP03-05（41）、WP04-01（40）、WP02-22（39）、WP03-12（6）。WP02-29 的暂缓按 #330 保持，下一卡依 COORD 单独派工。
+
+## WP03-05 账户创建、维护和独立生命周期
+
+WP03-05 DONE。CRM #242 实际采用 `677509b2b5fa48db213d00e44098a9de654e53ea`，源码提交 `1daf950df8441473dcc016a28ba20f97ffe735c5`。CRM A01–A07、原键恢复与 H02 Create/Use 同事务参与验收通过。隔离 PostgreSQL 用事务号核对真实写入，两条路径外层回滚均零残留。实际浏览器及合并后冒烟通过，CRM DEV-2 已释放。总控已就 [#343 的原链 QUESTION](https://github.com/GTX537/CP6.AI-Handoff/commit/6bab509a0ede5c6c747704e45a8e51328fa2b34d) 裁决先采用 CRM，后登记 Main 台账。Main 提供合同采用基线 `5a3e14a41b6818fa6d4cc71156b442c143d0aaa8`。[唯一交付报告](https://github.com/GTX537/CP6.CRM/blob/677509b2b5fa48db213d00e44098a9de654e53ea/docs/development/evidence/WP03-05/DELIVERY.md) · [CRM #242](https://github.com/GTX537/CP6.CRM/pull/242)
+
+CRM-ACC-01 完整运行证据支持 13/47 项原 AC 和 1/10 项必需修订，目标保持开放。原 AC 通过项为 A.AC01–A.AC06、A17、A18、A20、A28、A29、A31、A37。修订通过项为 W1-ACC-02。登记卡 DONE 67/382，原号和完整 DONE 均为 60/375，目标 DONE 10/125。现有全局页面规格检查在候选和原基线报同样 10 项历史问题，本卡页面和路由回归通过。
+
+本卡本轮记 1718.495 秒，其中技术候选 1331.042 秒、CRM 收尾 380.458 秒、Main 台账候选 6.995 秒。总控等待区间除实测目标复核外不计，目标复核另记 11.546 秒。按 [WP11-65 收尾依据](https://github.com/GTX537/CP6.AI-Handoff/blob/db9a1efe913466815761fd9088f78e4da1fd070a/handoffs/CP6-DEV-20261012/tasks/WP11-65/replies/20261119T235739Z-coord-acceptance-ack/MESSAGE.md) 单次补记 218.459 秒，该卡最终 2,874.336 秒，结转后计划起点 87,226.830 秒，当前累计 88956.871 秒。已登记首个 24 有效小时检查点，本卡未新增拆分或缓冲。Main PR 的正式收尾另据席位回执结转。
+
+本卡核销后的阶段 C 可开工顺序为 WP04-01（40）、WP03-08（40）、WP02-22（39）、WP03-12（6）。下一卡仍由 COORD 单独派工。
