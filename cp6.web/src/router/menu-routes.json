@@ -6,6 +6,7 @@
   "/erp/backorder",
   "/erp/credit-note",
   "/erp/currency-policies",
+  "/erp/integration-ops",
   "/erp/fx-rate",
   "/erp/order-trace",
   "/erp/otd-report",

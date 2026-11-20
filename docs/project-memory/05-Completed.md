@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP04-03 Main账户映射、ReverseClaim和纠错目录](../development/evidence/WP04-03/DELIVERY.md)（DONE），核对时间 `2026-11-20T12:29:46.624729+00:00`。
+- [WP02-23 INT-OPS Main原结果目录与受控重放](../development/evidence/WP02-23/DELIVERY.md)（DONE），核对时间 `2026-11-20T15:06:02.514840+00:00`。
 
 ### 已关闭目标
 

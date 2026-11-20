@@ -1,4 +1,3 @@
-using System.Data.Common;
 using System.Security.Claims;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.ErpIntegration;
@@ -14,37 +13,60 @@ namespace CP6.WebApi.Controllers.Integration;
 [Route("api/erp-integration/delivery-deadletters")]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public sealed class ErpDeliveryReplayController(ITenantContext tenant, ErpIntegrationRuntime? runtime = null,
-    ErpDeliveryReplayService? replay = null) : ControllerBase
+    ErpDeliveryReplayService? replay = null, ErpIntegrationOpsV1? ops = null) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> List(CancellationToken ct)
     {
         if (runtime is null || replay is null) return NotFound();
         if (Actor() is null || !runtime.Options.Enabled || !runtime.Options.Tenants.ContainsKey(tenant.CurrentTenantId)) return Forbid();
-        try { return Ok(new { items = await replay.ListAsync(tenant.CurrentTenantId, ct) }); }
+        try
+        {
+            if (ops is not null) await ops.RequireLegacyListReadAsync(tenant.CurrentTenantId, ct);
+            var items = await replay.ListAsync(tenant.CurrentTenantId, ct);
+            return Ok(new { items = items.Select(x => x with
+            { ErrorCode = x.ErrorCode is null ? null : IntegrationOpsDirectoryV1.SafeCode(x.ErrorCode) }) });
+        }
+        catch (IntegrationOpsExceptionV1 ex) { return StatusCode(ex.Status, new { code = ex.Message }); }
         catch (ErpCommerceException ex) { return Failure(ex); }
-        catch (Exception ex) when (ex is DbException or DbUpdateException or TimeoutException)
+        catch (Exception ex) when (IntegrationOpsContractV1.IsUnavailable(ex))
         { return StatusCode(503, new { code = "C03_ERP_UNAVAILABLE" }); }
     }
 
     [HttpPost("results/{outboxId:guid}/replay")]
     public Task<IActionResult> ScheduleResult(Guid outboxId, [FromBody] ErpReplayRequest input, CancellationToken ct) =>
-        Schedule((actor) => replay!.ScheduleResultAsync(tenant.CurrentTenantId, outboxId, input, actor, ct));
+        Schedule(IntegrationOpsContractV1.Outbox, outboxId.ToString("D"), input,
+            actor => replay!.ScheduleResultAsync(tenant.CurrentTenantId, outboxId, input, actor, ct), ct);
 
     [HttpPost("bridges/{orderKey}/replay")]
     public Task<IActionResult> ScheduleBridge(string orderKey, [FromBody] ErpReplayRequest input, CancellationToken ct) =>
-        Schedule((actor) => replay!.ScheduleBridgeAsync(tenant.CurrentTenantId, orderKey, input, actor, ct));
+        Schedule(IntegrationOpsContractV1.Bridge, orderKey, input,
+            actor => replay!.ScheduleBridgeAsync(tenant.CurrentTenantId, orderKey, input, actor, ct), ct);
 
-    private async Task<IActionResult> Schedule(Func<string, Task<ErpDeliveryReplayScheduled>> operation)
+    private async Task<IActionResult> Schedule(string type, string id, ErpReplayRequest input,
+        Func<string, Task<ErpDeliveryReplayScheduled>> operation, CancellationToken ct)
     {
         if (runtime is null || replay is null) return NotFound();
         var actor = Actor();
         if (actor is null || !runtime.Options.Enabled || !runtime.Options.Tenants.ContainsKey(tenant.CurrentTenantId)) return Forbid();
-        try { return Accepted(await operation(actor)); }
+        try
+        {
+            if (ops is null) return Accepted(await operation(actor));
+            var admission = await ops.ScheduleLegacyAsync(tenant.CurrentTenantId, type, id, input, ct);
+            return admission.Receipt.Status == "Blocked"
+                ? Conflict(new { code = admission.Receipt.SafeCode, operationId = input.OperationId })
+                : Accepted(new ErpDeliveryReplayScheduled(input.OperationId,
+                    type == IntegrationOpsContractV1.Outbox ? "result" : "bridge", id,
+                    admission.Receipt.OriginalMessageRef, admission.Receipt.AcceptedAtUtc));
+        }
+        catch (IntegrationOpsExceptionV1 ex) { return StatusCode(ex.Status, new { code = ex.Message }); }
         catch (ErpCommerceException ex) { return Failure(ex); }
         catch (DbUpdateConcurrencyException) { return Conflict(new { code = "C03_DELIVERY_REPLAY_PRECONDITION_FAILED" }); }
-        catch (Exception ex) when (ex is DbException or DbUpdateException or TimeoutException)
-        { return StatusCode(503, new { code = "C03_ERP_UNAVAILABLE" }); }
+        catch (Exception ex) when (IntegrationOpsContractV1.IsUnavailable(ex))
+        {
+            return ops is null ? StatusCode(503, new { code = "C03_ERP_UNAVAILABLE" }) :
+                StatusCode(503, new { code = "C03_ERP_UNAVAILABLE", status = "UNKNOWN", operationId = input.OperationId });
+        }
     }
 
     private IActionResult Failure(ErpCommerceException exception)

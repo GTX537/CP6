@@ -10694,7 +10694,7 @@
           },
           {
             "owner_task_id": "WP14-08",
-            "gap": "跨仓实际环境和参与者的撤权、未知与迟到原结果专项。复核已采用权限、同原键/额度和实际边界，待核部分保留原范围。 原项 AC070、AC073、AC074、AC076、AC077、AC078、AC107、AC108、AC115、AC117、AC121、AC122。 必需修订 W1-ACC-01。"
+            "gap": "跨仓实际环境和参与者的撤权、未知与迟到原结果专项。复核已采用权限、同原键/额度和实际边界，待核部分保留原范围。 原项 AC063、AC070、AC073、AC074、AC076、AC077、AC078、AC107、AC108、AC115、AC117、AC121、AC122。 必需修订 W1-ACC-01。 按 #363 复验两次 Main 映射修订之间的迟到原回应。"
           }
         ],
         "coordination_question": {
@@ -10718,7 +10718,6 @@
             "AC035",
             "AC036",
             "AC037",
-            "AC063",
             "AC072",
             "AC075",
             "AC079",
@@ -10732,7 +10731,12 @@
             "AC109",
             "AC119",
             "AC124"
-          ]
+          ],
+          "decision": {
+            "commit": "45f973226c7ca21b622504ff41e13009f454628c",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP04-03/replies/20261120T140229Z-coord-gap-decision/MESSAGE.md",
+            "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/363"
+          }
         }
       }
     },
@@ -150016,8 +150020,18 @@
             "id": "INT-OPS-01::AC-OP01-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OP01-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+                "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+                "observed_at": "2026-11-20T15:03:15.224382+00:00",
+                "result": "PASS",
+                "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+                "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+                "scope": "三个原生动作逐个核对原标识和 typed digest。请求及结果逐字节复算 raw SHA-256，桥仅身份摘要且 message/envelope 均为空。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/12/cases/0"
@@ -150027,8 +150041,18 @@
             "id": "INT-OPS-01::AC-OP01-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OP01-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+                "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+                "observed_at": "2026-11-20T15:03:15.224382+00:00",
+                "result": "PASS",
+                "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+                "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+                "scope": "当前租户、受信 JWT 用户、独立 query 授权和源行范围实际验证。异租户及无读权拒绝，外部模拟 Owner 撤可见后无记录返回。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/12/cases/1"
@@ -150038,8 +150062,18 @@
             "id": "INT-OPS-01::AC-OP01-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OP01-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+                "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+                "observed_at": "2026-11-20T15:03:15.224382+00:00",
+                "result": "PASS",
+                "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+                "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+                "scope": "同一 UTC 时刻和同一 nativeId 跨三来源，用固定 sourceSet 及签名 cursor 重复翻页。恢复源仅新查询加入，已选源丢失要求重新查。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/12/cases/2"
@@ -150049,8 +150083,18 @@
             "id": "INT-OPS-01::AC-OP01-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OP01-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+                "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+                "observed_at": "2026-11-20T15:03:15.224382+00:00",
+                "result": "PASS",
+                "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+                "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+                "scope": "一源离线为 partial，保留缺源名。筛到唯一离线源返回 503，无正常空页。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/12/cases/3"
@@ -150060,8 +150104,18 @@
             "id": "INT-OPS-01::AC-OP01-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OP01-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+                "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+                "observed_at": "2026-11-20T15:03:15.224382+00:00",
+                "result": "PASS",
+                "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+                "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+                "scope": "Inbox 与模拟源注入敏感异常。详情、列表、安全码、审计和实际宿主日志均未返回该值。诊断仅给受控摘要和允许的安全码。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/12/cases/4"
@@ -150170,8 +150224,18 @@
             "id": "INT-OPS-01::AC-OP03-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OP03-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+                "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+                "observed_at": "2026-11-20T15:03:15.224382+00:00",
+                "result": "PASS",
+                "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+                "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+                "scope": "响应实际提交后丢失、原 nativeVersion 改变、eligibility 过期三分钟及撤投递／重放权后，同键同输入恢复原回执，无调度、调度审计及业务新增。同键异义 409。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/12/cases/14"
@@ -150181,8 +150245,18 @@
             "id": "INT-OPS-01::AC-OP03-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OP03-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+                "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+                "observed_at": "2026-11-20T15:03:15.224382+00:00",
+                "result": "PASS",
+                "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+                "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+                "scope": "三动作各取本域版本和摘要。错域、错 codec、错摘要、错原生版本及跨 Owner 伪造拒绝，无队列或业务新增。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/12/cases/15"
@@ -150214,8 +150288,18 @@
             "id": "INT-OPS-01::AC-OP03-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OP03-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+                "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+                "observed_at": "2026-11-20T15:03:15.224382+00:00",
+                "result": "PASS",
+                "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+                "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+                "scope": "活 lease、路由 epoch 和当前租户授权复核。两调度者竞争同一键只受理一次，两桥 worker 在 PG 下只提交一份模拟步骤。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/12/cases/18"
@@ -150225,8 +150309,18 @@
             "id": "INT-OPS-01::AC-OP03-06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OP03-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+                "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+                "observed_at": "2026-11-20T15:03:15.224382+00:00",
+                "result": "PASS",
+                "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+                "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+                "scope": "真实 IAM 根锁超时返回 503 UNKNOWN、同 ID、Retry-After。审计后段错误整笔回滚，同 ID 调度后回包丢失，读取原 ID 恢复，换 ID 重用票据拒绝。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/12/cases/19"
@@ -150236,8 +150330,18 @@
             "id": "INT-OPS-01::AC-OP03-07",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OP03-07",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+                "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+                "observed_at": "2026-11-20T15:03:15.224382+00:00",
+                "result": "PASS",
+                "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+                "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+                "scope": "实际 Main 202 与同站 Location 只承诺安排。生产 Vue 详情关闭及刷新后，按同 ID 回查原回执。撤写和原资格过期时原操作仍可查询。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/12/cases/20"
@@ -150247,8 +150351,18 @@
             "id": "INT-OPS-01::AC-OP04-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OP04-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+                "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+                "observed_at": "2026-11-20T15:03:15.224382+00:00",
+                "result": "PASS",
+                "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+                "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+                "scope": "原生队列转换、原审计与原操作日志同事务。注入失败后队列、死信、原回执均保原状，重复和异义不增删或改写原审计。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/12/cases/21"
@@ -150269,8 +150383,18 @@
             "id": "INT-OPS-01::AC-OP04-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OP04-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+                "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+                "observed_at": "2026-11-20T15:03:15.224382+00:00",
+                "result": "PASS",
+                "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+                "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+                "scope": "真实审计逐一核对三类 action、nativeType、typed digest 和原版本。raw 与桥身份域独立，桥载体为空。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/12/cases/23"
@@ -150335,8 +150459,18 @@
             "id": "INT-OPS-01::AC-OP05-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OP05-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+                "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+                "observed_at": "2026-11-20T15:03:15.224382+00:00",
+                "result": "PASS",
+                "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+                "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+                "scope": "Main 原调度、PG 平台投递和模拟发布者实际运行，EventId、字节、金额 9007199254740.12345678 及原版本 7 保持，订单及原请求计数不变。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/12/cases/29"
@@ -150379,8 +150513,18 @@
             "id": "INT-OPS-01::AC-OP05-06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OP05-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+                "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+                "observed_at": "2026-11-20T15:03:15.224382+00:00",
+                "result": "PASS",
+                "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+                "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+                "scope": "真实字段权设置 NativeEvidence 隐藏，原回执和 Owner 原结果当前投影均裁剪。受控读取时准确原摘要、nativeRef 与原始载荷一致，业务事实不改。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/12/cases/33"
@@ -150399,7 +150543,17 @@
           }
         ]
       },
-      "implementation_evidence": [],
+      "implementation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+          "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+          "observed_at": "2026-11-20T15:03:15.224382+00:00",
+          "result": "PASS",
+          "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+          "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+          "scope": "Main WP02-23 限定原目录与受控调度。原 AC 14/35，必需运行修订 0/2。"
+        }
+      ],
       "delivery_evidence": null
     },
     {
@@ -152153,8 +152307,18 @@
             "id": "PLT-DEL-01::DEL05-A2",
             "kind": "ORIGINAL_AC",
             "source_case_id": "DEL05-A2",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+                "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+                "observed_at": "2026-11-20T15:03:15.224382+00:00",
+                "result": "PASS",
+                "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+                "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+                "scope": "三个原生动作逐个核对原标识和 typed digest。请求及结果逐字节复算 raw SHA-256，桥仅身份摘要且 message/envelope 均为空。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/foundation.json",
               "json_pointer": "/targets/16/cases/34"
@@ -152468,11 +152632,6 @@
         ],
         "gaps": [
           {
-            "case_id": "PLT-DEL-01::DEL05-A2",
-            "owner_task_id": "WP02-23",
-            "gap": "Main 原结果目录的三类受控动作、原生摘要域和旧 Bridge 精确映射仍需按该卡原范围采用。"
-          },
-          {
             "case_id": "PLT-DEL-01::DEL05-A10",
             "owner_task_id": "WP02-24",
             "gap": "CRM 原结果查询与受控重放的动作、当前权及旧状态语义仍需实际消费。"
@@ -152486,6 +152645,23 @@
             "case_id": "PLT-DEL-01::DEL04-A6",
             "owner_task_id": "WP14-08",
             "gap": "跨域撤权及多层重试后 UNKNOWN 的原操作和恢复链仍待专项联验。"
+          }
+        ],
+        "resolved_gaps": [
+          {
+            "case_id": "PLT-DEL-01::DEL05-A2",
+            "owner_task_id": "WP02-23",
+            "gap": "Main 原结果目录的三类受控动作、原生摘要域和旧 Bridge 精确映射仍需按该卡原范围采用。",
+            "state": "PASS",
+            "evidence": {
+              "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+              "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+              "observed_at": "2026-11-20T15:03:15.224382+00:00",
+              "result": "PASS",
+              "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+              "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+              "scope": "三个原生动作逐个核对原标识和 typed digest。请求及结果逐字节复算 raw SHA-256，桥仅身份摘要且 message/envelope 均为空。"
+            }
           }
         ]
       }
@@ -173876,6 +174052,11 @@
       "at": "2026-11-20T12:29:46.624729+00:00",
       "evidence": "docs/development/planning/20261117-card-execution.md",
       "change": "WP04-03 Main 账户映射卡 DONE 候选，ERP-BP-01 完整原目录与必需运行修订已逐项核对。原 79/124、必需修订 3/10，保留开放和原链裁决。WP03-17 按 #360 单次补记 151.743 秒。"
+    },
+    {
+      "at": "2026-11-20T15:06:02.514840+00:00",
+      "evidence": "docs/development/planning/20261117-card-execution.md",
+      "change": "WP02-23 Main 原结果目录与受控重放 DONE 候选。INT-OPS-01 原 14/35、必需运行修订 0/2，保持开放。核销本卡原承接的 PLT-DEL-01 DEL05-A2。按 #362 单次补记 WP04-03 372.252 秒，按 #363 同步 ERP-BP-01 AC063 由 WP14-08 承接及另 24 项待裁决记录。"
     }
   ],
   "implementation_assessment": {
@@ -196687,18 +196868,80 @@
         "file:Main:CP6.Core/Services/ErpIntegration/ErpRequestHandler.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-23",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "EXEC-WP02-14B",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp02-23",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-20T14:10:50.129134+00:00",
+        "baseline_sha": "9614cb89eaa65bf8ced38052beaf58274d196131",
+        "entry_evidence": "docs/development/planning/20261117-card-execution.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "dispatch_scope": "Main C03 三种原生动作、当前读权原回执、原子调度与审计、固定来源分页。",
+        "delivery_report": "docs/development/evidence/WP02-23/DELIVERY.md",
+        "actual_start_ref": {
+          "commit": "8f22a4cbbebd9d03b1e203d2d53c11e0b7a6bfb4",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-23/messages/20261120T141050Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-20T14:10:50.129134+00:00"
+        },
+        "dispatch_decision_ref": {
+          "commit": "a7750cc828d46c7557277d2ef9ee1826f487f6c7",
+          "original_commit": "1786134eaf44cfb3e4889ab359ad1d7bdae075f2",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261120T140456Z-exec-wp02-14b-wp02-23/MESSAGE.md"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+          "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+          "observed_at": "2026-11-20T15:03:15.224382+00:00",
+          "result": "PASS",
+          "environment": "实际 Main Kestrel、隔离 PostgreSQL 18、生产 Vue 和 Chromium。用户、设备状态、业务数据、来源适配、外部最终门及故障按报告模拟。",
+          "command": "本卡 test.ps1 与 test-c03-adjacent.ps1 使用 dotnet test 定向运行，生产 Vue 用 npm run type-check 及 build-only。实际 TRX 与 Chromium JSON 已存入 D:/CP6-test-artifacts/WP02-23/current-20261120",
+          "scope": "Main C03 三种原生动作、当前读权原回执、原子调度与审计、固定来源分页。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-23/DELIVERY.md",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1290",
+        "source_sha": "388f3af15c841b59ebc6132f8a8858f2801b1ae9",
+        "remote_main_sha": "9614cb89eaa65bf8ced38052beaf58274d196131",
+        "adoption_record": "D:/CP6-test-artifacts/WP02-23/current-20261120/finish.json",
+        "scope": "远端字段记录领卡时核实的 Main 基线。合并、同树核对、采用后冒烟和正式释放以原链 DELIVERY 回执为准。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP02-23/DELIVERY.md",
+        "started_at": "2026-11-20T14:10:50.129134+00:00",
+        "official_started_at": "2026-11-20T14:10:50.129134+00:00",
+        "technical_verified_at": "2026-11-20T15:03:15.224382+00:00",
+        "verified_at": "2026-11-20T15:06:02.514840+00:00",
+        "effective_seconds": 3312.209,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-10",
+          "WP02-22"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 372.252,
+        "target_review_started_at": "2026-11-20T15:06:02.337616+00:00",
+        "target_review_seconds": 0.177
+      }
     },
     {
       "id": "WP02-24",
@@ -202915,7 +203158,7 @@
         "official_started_at": "2026-11-20T11:22:22.730929+00:00",
         "technical_verified_at": "2026-11-20T12:28:28.135391+00:00",
         "verified_at": "2026-11-20T12:29:46.624729+00:00",
-        "effective_seconds": 4043.652,
+        "effective_seconds": 4415.904,
         "size": "L",
         "budget_seconds": 28800,
         "mandatory_split_seconds": 43200,
@@ -202930,7 +203173,14 @@
         "new_product_execution": true,
         "preceding_integration_seconds": 151.743,
         "target_review_started_at": "2026-11-20T12:29:46.382938+00:00",
-        "target_review_seconds": 0.242
+        "target_review_seconds": 0.242,
+        "official_finish": "2026-11-20T12:35:58.876882+00:00",
+        "post_candidate_finalization_seconds": 372.252,
+        "finalization_decision_ref": {
+          "commit": "df21a2711dd937b48827d93e1cc6521f7bd5cd6c",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP04-03/replies/20261120T135813Z-coord-acceptance-ack/MESSAGE.md",
+          "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/362"
+        }
       }
     },
     {
@@ -298433,7 +298683,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 111632.631,
+      "effective_seconds": 115317.269,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -298471,7 +298721,8 @@
         "WP02-22",
         "WP03-21",
         "WP03-17",
-        "WP04-03"
+        "WP04-03",
+        "WP02-23"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -298544,7 +298795,7 @@
         }
       ],
       "current_stage": "C",
-      "next_card": "WP02-23",
+      "next_card": "WP03-12",
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -298697,16 +298948,16 @@
       },
       "next_card_selection": {
         "rule": "阶段 C 展开全部拆分严格前置；全图最长下游边数降序，同长保留用户阶段数组的顺序。",
-        "baseline_sha": "18143a98567d7166ed6168c7312a99781568784b",
-        "after_card": "WP04-03",
-        "selected": "WP02-23",
+        "baseline_sha": "9614cb89eaa65bf8ced38052beaf58274d196131",
+        "after_card": "WP02-23",
+        "selected": "WP03-12",
         "candidates": [
           {
-            "task": "WP02-23",
-            "longest_downstream_edges": 7
+            "task": "WP03-12",
+            "longest_downstream_edges": 6
           },
           {
-            "task": "WP03-12",
+            "task": "WP03-06",
             "longest_downstream_edges": 6
           },
           {
@@ -298782,7 +299033,7 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 3986.439,
+      "target_review_effective_seconds": 3986.616,
       "last_checkpoint_counts": {
         "original_done": 58,
         "fully_done": 58,

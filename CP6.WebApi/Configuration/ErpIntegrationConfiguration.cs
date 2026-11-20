@@ -59,6 +59,12 @@ public static class ErpIntegrationConfiguration
         services.AddScoped<ErpBusinessPartnerOriginalReader>();
         if (database.Provider == DatabaseProvider.PostgreSql)
         {
+            services.AddHttpContextAccessor();
+            services.AddDataProtection();
+            services.AddScoped<ErpIntegrationOpsSourceV1>();
+            services.AddScoped<IIntegrationOpsSourceV1>(p => p.GetRequiredService<ErpIntegrationOpsSourceV1>());
+            services.AddScoped<IntegrationOpsDirectoryV1>();
+            services.AddScoped<ErpIntegrationOpsV1>();
             services.AddScoped<ErpBusinessPartnerResultReader>();
             services.AddScoped<IErpOrderPartnerUseSource>(provider => new ErpOrderAuthoritativePartnerUseSource(
                 provider.GetRequiredService<BusinessPartnerMappingAuthorityV1>(), provider.GetService<TimeProvider>() ?? TimeProvider.System));
@@ -70,7 +76,8 @@ public static class ErpIntegrationConfiguration
             db => ActivatorUtilities.CreateInstance<OrderService>(provider, db, new FxRateService(db)))
         {
             PartnerProtection = provider.GetService<IDataProtectionProvider>(),
-            PartnerUseSource = provider.GetService<IErpOrderPartnerUseSource>()
+            PartnerUseSource = provider.GetService<IErpOrderPartnerUseSource>(),
+            ReplayOps = provider.GetService<ErpIntegrationOpsV1>()
         });
         services.AddHostedService<ErpEventDispatchWorker>();
         services.AddHostedService<ErpCommandRetryWorker>();

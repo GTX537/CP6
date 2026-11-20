@@ -654,6 +654,9 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("erp-plate-mold", "版型工具
 CP6.Core.Services.Sys.FieldRegistry.Register("erp-plate-mold");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("currency-policy", "币种政策", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("currency-policy");
+CP6.Core.Services.Sys.DataScopeRegistry.Register("integration-ops", "集成原结果", new[] { 5 }, 5);
+CP6.Core.Services.Sys.FieldRegistry.Register("integration-ops",
+    new CP6.Core.Services.Sys.FieldRegistry.Field("NativeEvidence", "原生记录、版本与摘要"));
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-configuration-rule", "工程选项规则", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-configuration-rule");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-requirement", "工程需求与来源", new[] { 1, 2, 3, 4, 5 }, 5);

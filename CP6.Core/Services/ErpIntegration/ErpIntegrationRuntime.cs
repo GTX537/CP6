@@ -8,6 +8,8 @@ public sealed class ErpIntegrationOptions
     public Dictionary<Guid, string> Tenants { get; set; } = [];
     public ErpOriginalSourcePeriod[] BusinessPartnerOriginalSources { get; set; } = [];
     public string[] ReaderClientIds { get; set; } = [];
+    public string[] OpsOwners { get; set; } = [];
+    public string OpsRouteEpoch { get; set; } = "C03-MAIN-V1";
     public string DaprAppToken { get; set; } = "";
     public string DaprApiToken { get; set; } = "";
     public string DaprHttpEndpoint { get; set; } = "http://127.0.0.1:3500";
@@ -37,6 +39,12 @@ public sealed class ErpIntegrationRuntime
             options.MaximumRetrySeconds > 3600)
             throw new ArgumentException("C03 requires explicit tenants, reader clients, authenticated sidecar and bounded retries.", nameof(options));
         foreach (var region in options.Tenants.Values) Cp6CloudEventAttributes.Region.Validate(region);
+        if (options.OpsOwners.Length == 0) options.OpsOwners = [IntegrationOpsContractV1.Owner];
+        if (options.OpsOwners.Length is < 1 or > 16 || !options.OpsOwners.Contains(IntegrationOpsContractV1.Owner) ||
+            options.OpsOwners.Distinct(StringComparer.Ordinal).Count() != options.OpsOwners.Length ||
+            options.OpsOwners.Append(options.OpsRouteEpoch).Any(x => x is not { Length: > 0 and <= 96 } ||
+                x.Any(c => !char.IsAsciiLetterOrDigit(c) && c is not ('.' or '-' or '_'))))
+            throw new ArgumentException("集成目录来源或路由版本登记无效。", nameof(options));
         foreach (var group in options.BusinessPartnerOriginalSources.GroupBy(source => source.TenantId))
         {
             var epochs = new HashSet<string>(StringComparer.Ordinal);
