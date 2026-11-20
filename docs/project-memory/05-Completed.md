@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP11-65 BP财务引用只读当前源与共同门](../development/evidence/WP11-65/DELIVERY.md)（DONE），核对时间 `2026-11-19T17:24:31.753885+00:00`。
+- [WP03-05 账户创建、维护和独立生命周期](https://github.com/GTX537/CP6.CRM/blob/677509b2b5fa48db213d00e44098a9de654e53ea/docs/development/evidence/WP03-05/DELIVERY.md)（DONE），核对时间 `2026-11-20T01:52:45.558195+00:00`。
 
 ### 已关闭目标
 
