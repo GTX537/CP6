@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP03-21 商机创建、需求预测与关联人](https://github.com/GTX537/CP6.CRM/blob/65e308ea33d1622aa003402b5de9cef5ff00428d/docs/development/evidence/WP03-21/DELIVERY.md)（DONE），核对时间 `2026-11-20T09:56:52.767624+00:00`。
+- [WP03-17 账户联系人原生活动登记与时间线](https://github.com/GTX537/CP6.CRM/blob/8a9b2a5c3ed468953a0c63a483515c88690a23b4/docs/development/evidence/WP03-17/DELIVERY.md)（DONE），核对时间 `2026-11-20T11:03:46.711084+00:00`。
 
 ### 已关闭目标
 
