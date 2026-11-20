@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP02-22 商业交接原生wire、来源保护与原结果原语](../development/evidence/WP02-22/DELIVERY.md)（DONE），核对时间 `2026-11-20T08:45:07.893807+00:00`。
+- [WP03-21 商机创建、需求预测与关联人](https://github.com/GTX537/CP6.CRM/blob/65e308ea33d1622aa003402b5de9cef5ff00428d/docs/development/evidence/WP03-21/DELIVERY.md)（DONE），核对时间 `2026-11-20T09:56:52.767624+00:00`。
 
 ### 已关闭目标
 
