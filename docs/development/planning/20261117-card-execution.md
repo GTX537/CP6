@@ -412,3 +412,13 @@ CRM-OPP-01 原 AC 2/54，必需运行修订 0/14，目标开放。完整核销 A
 查重后单次补记 WP02-22 正式收尾 395.977 秒，该卡累计 2510.327 秒。结转后计划起点 101369.362 秒，本卡有效 2878.074 秒，目标核对另计 0.106 秒，计划累计 104247.542 秒。Main 正式收尾另按实际回执保留。[工时裁决 #356](https://github.com/GTX537/CP6.AI-Handoff/blob/f91e3b5a0dc5bcba474f2a58dfd0472783ab8bcc/handoffs/CP6-DEV-20261012/tasks/WP02-22/replies/20261120T085543Z-coord-acceptance-ack/MESSAGE.md)
 
 阶段 C 当前可开工顺序为 WP03-17（38）、WP04-03（7）、WP02-23（7）、WP03-12（6），实际领取依独立派工。WP02-29 依原裁决继续暂缓。
+
+## WP03-17 账户联系人原生活动登记与时间线
+
+WP03-17 DONE。CRM 采用 8a9b2a5c3ed468953a0c63a483515c88690a23b4，受验源码 a55ad709281c751627e6280b70f4241ac6020b4e。账户联系人原生活动写入、双宿主 React 时间线、数字和当面准入、原键跨进程恢复和明确 Lead 关联已复验。冒烟 3/3 后释放 DEV-2，Main 随后核销同一卡。[派工 #359](https://github.com/GTX537/CP6.AI-Handoff/pull/359) · [唯一交付报告](https://github.com/GTX537/CP6.CRM/blob/8a9b2a5c3ed468953a0c63a483515c88690a23b4/docs/development/evidence/WP03-17/DELIVERY.md) · [CRM PR](https://github.com/GTX537/CP6.CRM/pull/247)
+
+CRM-ACT-01 原 AC 10/51、必需补充 3/27、必需运行修订 0/2，目标开放。完整核销 MD-ACT-02、REV1-ACT-02、REV1-ACT-04、T01、T02、T03、T09、T10、T13、T18、T19、T27、T38。内容与事实更正、Void、引用更正、附件与跨页余项、工程收件和真实消费仍由报告所列职责卡继续。原卡完整 DONE，拆卡数 0。
+
+查重后单次补记 WP03-21 正式收尾 156.338 秒，该卡累计 3034.412 秒。结转后计划起点 104403.880 秒，本卡有效 3033.005 秒，目标核对另计 0.109 秒，计划累计 107436.994 秒。Main 正式收尾按实际回执保留。[工时裁决 #358](https://github.com/GTX537/CP6.AI-Handoff/blob/e1e6f6eaf1a28c177ca43b1a9a8c3f556fc5905b/handoffs/CP6-DEV-20261012/tasks/WP03-21/replies/20261120T100453Z-coord-acceptance-ack/MESSAGE.md)
+
+阶段 C 当前可开工顺序为 WP04-03（7）、WP02-23（7）、WP03-12（6）、WP03-11（2），实际领取依独立派工。WP02-29 依原裁决继续暂缓。
