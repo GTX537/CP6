@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 namespace CP6.Core.Services.Erp;
 
 public sealed partial class BusinessPartnerWorkspaceV1(CP6Context db, OperationsOwnerV1 owner, IDataProtectionProvider protection,
-    BusinessPartnerFinanceReferenceReader financeReader, TimeProvider clock)
+    BusinessPartnerFinanceReferenceReader financeReader, TimeProvider clock, BusinessPartnerMappingAuthorityV1? mappingAuthority = null)
 {
     public sealed record HttpResult(object Body, string? ETag = null);
 
@@ -224,6 +224,8 @@ public sealed partial class BusinessPartnerWorkspaceV1(CP6Context db, Operations
         if (edit is not null) actions.Add("profile.edit");
         if (await access.TryPartnerActionAsync("status", ct) is not null) actions.Add("status");
         if (await access.TryPartnerActionAsync(CommandRead, ct) is not null) actions.Add(CommandRead);
+        foreach (var action in new[] { MappingAction, MappingRead, MappingCorrect, MappingReconcile })
+            if (await access.TryPartnerActionAsync(action, ct) is not null) actions.Add(action);
         var fields = BusinessPartnerProfileFieldsV1.Writable.Select(field =>
         {
             var matching = options.Where(x => x.Field == field.Name && x.Owner == DirectoryOwner).ToArray();

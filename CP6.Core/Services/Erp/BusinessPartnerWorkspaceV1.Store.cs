@@ -84,7 +84,8 @@ public sealed partial class BusinessPartnerWorkspaceV1
         public Guid Id { get; init; }
         public Guid Actor { get; init; }
         public string Legal { get; init; } = "";
-        public Guid Target { get; init; }
+        public Guid? Target { get; init; }
+        public Guid? Account { get; init; }
         public string Operation { get; init; } = "";
         public byte[] Fingerprint { get; init; } = [];
         public string Original { get; init; } = "";
@@ -324,7 +325,7 @@ public sealed partial class BusinessPartnerWorkspaceV1
 
     private Task<SavedCommand?> FindCommand(Guid id, CancellationToken ct)
         => db.Database.SqlQuery<SavedCommand>($"""
-            SELECT command_id AS "Id",actor_id AS "Actor",legal_entity_key AS "Legal",bp_id AS "Target",operation AS "Operation",
+            SELECT command_id AS "Id",actor_id AS "Actor",legal_entity_key AS "Legal",bp_id AS "Target",account_id AS "Account",operation AS "Operation",
                 fingerprint AS "Fingerprint",receipt AS "Original"
             FROM main_bp.commands WHERE tenant_id={Tenant} AND command_id={id}
             """).SingleOrDefaultAsync(ct);
@@ -342,15 +343,21 @@ public sealed partial class BusinessPartnerWorkspaceV1
             INSERT INTO main_bp.commands(tenant_id,command_id,actor_id,legal_entity_key,bp_id,operation,fingerprint,receipt)
             VALUES({Tenant},{id},{access.ActorId},{head.Legal},{row.Id},{operation},{fingerprint},{original})
             """, ct);
+        await RecordBpAudit(access, id, operation, row, head, outcome, reason, fields, applied && recordState, occurred, ct);
+        return new(receipt, false);
+    }
+
+    private async Task RecordBpAudit(OperationsAccessV1 access, Guid id, string operation, BusinessPartner row,
+        Head head, string outcome, string? reason, string[] fields, bool recordState, DateTimeOffset occurred, CancellationToken ct)
+    {
         await db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO main_bp.audit(tenant_id,command_id,legal_entity_key,bp_id,revision,actor_id,operation,outcome,reason,fields,recorded_at)
             VALUES({Tenant},{id},{head.Legal},{row.Id},{head.Revision},{access.ActorId},{operation},{outcome},{reason},{fields},{occurred})
             """, ct);
-        if (applied && recordState)
+        if (recordState)
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 INSERT INTO main_bp.state_history(tenant_id,legal_entity_key,bp_id,revision,command_id,registration,lifecycle,hold)
                 VALUES({Tenant},{head.Legal},{row.Id},{head.Revision},{id},{head.Registration},{Lifecycle(row)},{Hold(row)})
                 """, ct);
-        return new(receipt, false);
     }
 }

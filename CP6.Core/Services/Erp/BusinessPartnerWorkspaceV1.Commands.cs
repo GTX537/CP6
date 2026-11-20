@@ -361,9 +361,7 @@ public sealed partial class BusinessPartnerWorkspaceV1
 
     private async Task<CommandResponse> Replay(OperationsAccessV1 access, SavedCommand prior, byte[] fingerprint, CancellationToken ct)
     {
-        if (prior.Actor != access.ActorId) throw Missing();
-        var visible = await VisibleAsync(access, prior.Target, false, ct);
-        if (visible.Head?.Legal != prior.Legal) throw Missing();
+        await RequireCommandVisibility(access, prior, ct);
         if (!CryptographicOperations.FixedTimeEquals(prior.Fingerprint, fingerprint))
             throw Rejected("COMMAND_IDEMPOTENCY_CONFLICT", 409);
         return new(ReadReceipt(prior), true);
@@ -377,18 +375,36 @@ public sealed partial class BusinessPartnerWorkspaceV1
         {
             if (await BpUseScopeGate.IsCutoverAsync(db, ct))
                 await BpUseScopeGate.LockAsync(db, original.Legal, false, ct);
-            var current = await VisibleAsync(access, original.Target, false, ct);
-            if (current.Head?.Legal == original.Legal) receipt = ReadReceipt(original);
+            await RequireCommandVisibility(access, original, ct);
+            receipt = ReadReceipt(original);
         }
         return new HttpResult(new { knowledge = receipt is null ? "NOT_OBSERVED" : "FOUND",
             receipt, replayed = receipt is not null, noEffectProven = false });
+    }
+
+    private async Task RequireCommandVisibility(OperationsAccessV1 access, SavedCommand original, CancellationToken ct)
+    {
+        if (original.Actor != access.ActorId) throw Missing();
+        if (original.Account is { } account)
+        {
+            await access.ActionAsync(Resource, MappingRead, ct);
+            await MappingAccess(access, original.Legal, false, ct);
+            var slot = await ReadMappingSlot(original.Legal, account, false, ct);
+            if (slot?.Revision is null) throw Missing();
+        }
+        if (original.Target is { } id)
+        {
+            var visible = await VisibleAsync(access, id, false, ct);
+            if (visible.Head?.Legal != original.Legal) throw Missing();
+        }
     }
 
     private static Receipt ReadReceipt(SavedCommand original)
     {
         var receipt = JsonSerializer.Deserialize<Receipt>(original.Original, Json);
         if (receipt is null || receipt.CommandId != original.Id || receipt.Operation != original.Operation ||
-            receipt.Bp.BpId != original.Target || receipt.Bp.LegalEntityKey != original.Legal || receipt.ReceiptHash != ReceiptHash(receipt))
+            receipt.Bp?.BpId != original.Target || receipt.Bp is not null && receipt.Bp.LegalEntityKey != original.Legal ||
+            receipt.ReceiptHash != ReceiptHash(receipt))
             throw Rejected("BP_COMMAND_ORIGINAL_UNPROVEN", 503);
         return receipt;
     }

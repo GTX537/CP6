@@ -26,6 +26,9 @@ public static class ErpIntegrationConfiguration
     {
         database ??= DatabaseOptions.FromConfiguration(configuration);
         services.AddScoped<ErpReadService>();
+        services.AddHttpClient<BusinessPartnerMappingAuthorityV1, BusinessPartnerMappingHttpAuthorityV1>(
+            client => client.Timeout = TimeSpan.FromSeconds(15))
+            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false, UseCookies = false });
         var section = configuration.GetSection("ErpIntegration");
         var options = section.Get<ErpIntegrationOptions>() ?? new();
         if (!options.Enabled) return services;
@@ -55,7 +58,11 @@ public static class ErpIntegrationConfiguration
         services.AddSingleton<IDbContextFactory<ErpIntegrationContext>>(new ErpQueueContextFactory(database, connection));
         services.AddScoped<ErpBusinessPartnerOriginalReader>();
         if (database.Provider == DatabaseProvider.PostgreSql)
+        {
             services.AddScoped<ErpBusinessPartnerResultReader>();
+            services.AddScoped<IErpOrderPartnerUseSource>(provider => new ErpOrderAuthoritativePartnerUseSource(
+                provider.GetRequiredService<BusinessPartnerMappingAuthorityV1>(), provider.GetService<TimeProvider>() ?? TimeProvider.System));
+        }
         services.AddScoped<ErpInboxReplayService>();
         services.AddScoped<ErpDeliveryReplayService>();
         services.AddScoped(provider => new ErpRequestHandler(provider.GetRequiredService<IDbContextFactory<ErpIntegrationContext>>(),

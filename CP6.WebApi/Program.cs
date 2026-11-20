@@ -1110,6 +1110,8 @@ builder.Services.AddScoped<IPowerEggWorkflowService, NoOpPowerEggWorkflowService
 builder.Services.AddScoped<IBusinessPartnerService, BusinessPartnerService>();
 builder.Services.AddScoped<CP6.Core.Services.Erp.BusinessPartnerIdentityOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Erp.BusinessPartnerWorkspaceV1>();
+if (builder.Configuration.GetValue<bool>("BusinessPartnerMapping:WorkerEnabled"))
+    builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.BusinessPartnerMappingWorkerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Fin.BusinessPartnerFinanceReferenceReader>();
 builder.Services.AddScoped<IFscChecklistService, FscChecklistService>();
 

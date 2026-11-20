@@ -60,6 +60,53 @@ public sealed class BusinessPartnerWorkspaceController(BusinessPartnerWorkspaceV
     [HttpPost("restore")]
     public Task<IActionResult> Restore([FromBody] JsonElement body, CancellationToken ct) => Post("RESTORE", body, ct);
 
+    [HttpPost("account-probes")]
+    public Task<IActionResult> AccountProbe([FromBody] JsonElement body, CancellationToken ct) =>
+        Run(() => owner.ProbeMappingAccount(Preparation(body), ct));
+
+    [HttpPost("mapping-contexts")]
+    public Task<IActionResult> MappingContext([FromBody] JsonElement body, CancellationToken ct) =>
+        Run(() => owner.PrepareMappingContext(Preparation(body), ct));
+
+    [HttpPost("mapping-previews")]
+    public Task<IActionResult> MappingPreview([FromBody] JsonElement body, CancellationToken ct) =>
+        Run(() => owner.PrepareMappingPreview(Preparation(body), FinanceContext(), ct));
+
+    [HttpPost("mapping-apply")]
+    public Task<IActionResult> MappingApply([FromBody] JsonElement body, CancellationToken ct) =>
+        Run(() => owner.ApplyMapping(body, Header("If-Match"), Header("Idempotency-Key"), FinanceContext(), ct));
+
+    [HttpPost("mapping-decision-bindings")]
+    public Task<IActionResult> MappingDecisionBinding([FromBody] JsonElement body, CancellationToken ct) =>
+        Run(() => owner.BindMappingDecision(Preparation(body), ct));
+
+    [HttpGet("mapping")]
+    public Task<IActionResult> Mapping([FromQuery] string? legalEntityKey, [FromQuery] string? accountId, CancellationToken ct) =>
+        Run(() => owner.ReadMapping(legalEntityKey, accountId, null, null, false, ct));
+
+    [HttpGet("mapping-history")]
+    public Task<IActionResult> MappingHistory([FromQuery] string? legalEntityKey, [FromQuery] string? accountId,
+        [FromQuery] string? beforeRevision, [FromQuery] int? limit, CancellationToken ct) =>
+        Run(() => owner.ReadMapping(legalEntityKey, accountId, beforeRevision, limit, true, ct));
+
+    [HttpPost("mapping-reconcile")]
+    public Task<IActionResult> MappingReconcile([FromBody] JsonElement body, CancellationToken ct) =>
+        Run(() => owner.ReconcileMapping(body, Header("If-Match"), Header("Idempotency-Key"), ct));
+
+    [HttpGet("reconcile-jobs/{id:guid}")]
+    public Task<IActionResult> MappingJob(Guid id, CancellationToken ct) => Run(() => owner.ReadMappingJob(id, ct));
+
+    [HttpPost("mapping-correction-contexts")]
+    public Task<IActionResult> MappingCorrectionContext([FromBody] JsonElement body, CancellationToken ct) =>
+        Run(() => owner.PrepareMappingCorrection(Preparation(body), ct));
+
+    private JsonElement Preparation(JsonElement body)
+    {
+        if (Header("If-Match") is not null || Header("Idempotency-Key") is not null)
+            throw new OrderPriceCorrectionException("PRECONDITION_SYNTAX", 400);
+        return body;
+    }
+
     private Task<IActionResult> Get(string operation, Guid? id, string? legal, CancellationToken ct)
         => Run(() => owner.ReadAsync(operation, id, legal, FinanceContext(), ct));
 
@@ -98,6 +145,7 @@ public sealed class BusinessPartnerWorkspaceController(BusinessPartnerWorkspaceV
             var retry = error.Status switch
             {
                 400 or 422 => "FIX_INPUT", 412 => "REFRESH_CONTEXT",
+                409 when error.Message is "MAPPING_CONTEXT_MISMATCH" or "CORRECTION_CONTEXT_STALE" => "REFRESH_CONTEXT",
                 503 when error.Message == "OPERATIONS_OUTCOME_UNKNOWN" => "QUERY_ORIGINAL",
                 503 => "CONTACT_OWNER", _ => "NONE"
             };

@@ -19,9 +19,11 @@ public sealed partial class BusinessPartnerWorkspaceV1
     private static IdentityCriteria Criteria(BusinessPartner row)
         => new(Code(row), Name(row), row.StdCoCd?.TrimEnd(), row.EinType?.TrimEnd(), row.Ein?.TrimEnd());
 
-    private async Task<(CandidateSet Set, string? Issue)> Candidates(OperationsAccessV1 access, Scope scope, BusinessPartner proposed, CancellationToken ct)
+    private Task<(CandidateSet Set, string? Issue)> Candidates(OperationsAccessV1 access, Scope scope, BusinessPartner proposed, CancellationToken ct)
+        => Candidates(access, scope, Criteria(proposed), ct);
+
+    private async Task<(CandidateSet Set, string? Issue)> Candidates(OperationsAccessV1 access, Scope scope, IdentityCriteria criteria, CancellationToken ct)
     {
-        var criteria = Criteria(proposed);
         var key = scope.Key;
         var normVersion = BusinessPartnerUnicode15.Version;
         var scopeRevision = Revision(scope.Revision);

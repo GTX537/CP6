@@ -33,8 +33,35 @@ export interface WorkspacePreview {
   reference: PreviewRef; canApply: boolean; issues: PartnerIssue[]
   candidates: { visibility: string; items: { reference: CandidateRef; bpCd: string; displayName: string; matchReasons: string[] }[] }
 }
-export interface CommandReceipt { commandId: string; operation: string; outcome: string; bp: PartnerRef; completedAt: string; receiptHash: string }
-export type CommandPath = 'create' | 'profile-apply' | 'register' | 'hold' | 'retire' | 'restore'
+export type MappingAction = 'LINK' | 'CREATE_AND_LINK' | 'REPLACE' | 'UNLINK' | 'CONFIRM' | 'CORRECT_CURRENT'
+export interface CandidateCriteria { bpCd: string | null; bpName: string; stdCoCd: string | null; einType: string | null; ein: string | null }
+export interface AccountProbe {
+  availability: string
+  observation: { observationId: string; accountCode: string; accountStatus: string; sourceAsOf: string } | null
+}
+export interface MappingHead { accountId: string; legalEntityKey: string; state: string; mappingRevision: string | null; bp: PartnerRef | null }
+export interface MappingRef { accountId: string; legalEntityKey: string; state: string; mappingRevision: string; businessPartnerKey: string | null }
+export interface MappingSourceRef { owner: string; id: string; version: string; digest: string; purpose: string }
+export interface MappingContext {
+  reference: { contextId: string; contextHash: string; expiresAt: string }
+  observation: AccountProbe['observation']; head: MappingHead; allowedActions: MappingAction[]
+  candidates: { visibility: string; setHash: string; items: {
+    reference: CandidateRef; bpCd: string; displayName: string; availability: string; registration: string; hold: string
+  }[] }
+}
+export interface MappingRead {
+  head: MappingHead; history: MappingRef[]
+  deliveries: { eventId: string; state: string; mapping: MappingRef }[]
+  projection: { knowledge: string; observedAt: string | null }
+}
+export interface MappingCorrection { correctionContextId: string; resolution: string; ownerEvidence: MappingSourceRef[] }
+export interface MappingJob { jobId: string; state: string; lastError: string | null }
+export interface CommandReceipt {
+  commandId: string; operation: string; outcome: string; bp: PartnerRef | null; mapping: MappingRef | null
+  reconcile: { jobId: string; accountId: string; legalEntityKey: string } | null
+  completedAt: string; receiptHash: string
+}
+export type CommandPath = 'create' | 'profile-apply' | 'register' | 'hold' | 'retire' | 'restore' | 'mapping-apply' | 'mapping-reconcile'
 export interface WithTag<T> { body: T; etag: string | null }
 
 function response<T>(method: 'GET' | 'POST', path: string, data?: unknown, headers?: Record<string, string>) {
@@ -63,7 +90,17 @@ export const businessPartnerWorkspace = {
   statusContext: (bp: string) => response<StatusContext>('GET', '/' + encodeURIComponent(bp) + '/status-context'),
   preview: (kind: 'create' | 'edit', data: unknown) =>
     response<WorkspacePreview>('POST', kind === 'create' ? '/create-previews' : '/profile-previews', data),
-  execute: (path: CommandPath, key: string, tag: string, body: unknown) =>
-    response<{ receipt: CommandReceipt; replayed: boolean }>('POST', '/' + path, body, { 'If-Match': tag, 'Idempotency-Key': key }),
+  execute: (path: CommandPath, key: string, tag: string | null, body: unknown) =>
+    response<{ receipt: CommandReceipt; replayed: boolean }>('POST', '/' + path, body, { ...(tag ? { 'If-Match': tag } : {}), 'Idempotency-Key': key }),
   original: (key: string) => response<{ knowledge: string; receipt: CommandReceipt | null }>('GET', '/commands/' + encodeURIComponent(key)),
+  probeAccount: (legal: string, account: string) => response<AccountProbe>('POST', '/account-probes', { legalEntityKey: legal, accountId: account }),
+  mappingContext: (data: unknown) => response<MappingContext>('POST', '/mapping-contexts', data),
+  mappingPreview: (data: unknown) => response<WorkspacePreview>('POST', '/mapping-previews', data),
+  mappingBinding: (data: unknown) => response<{ bindingId: string | null; availability: string }>('POST', '/mapping-decision-bindings', data),
+  mappingCorrection: (data: unknown) => response<MappingCorrection>('POST', '/mapping-correction-contexts', data),
+  mapping: (legal: string, account: string) => response<MappingRead>('GET', '/mapping?' + new URLSearchParams({ legalEntityKey: legal, accountId: account })),
+  mappingHistory: (legal: string, account: string, before: string) =>
+    response<{ items: MappingRef[]; nextBeforeRevision: string | null }>('GET',
+      '/mapping-history?' + new URLSearchParams({ legalEntityKey: legal, accountId: account, beforeRevision: before })),
+  mappingJob: (id: string) => response<MappingJob>('GET', '/reconcile-jobs/' + encodeURIComponent(id)),
 }

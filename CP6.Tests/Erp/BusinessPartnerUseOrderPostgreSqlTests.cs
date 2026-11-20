@@ -171,7 +171,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             fxRate: new FxRateService(db)), observeStage: observe) { PartnerProtection = protection, PartnerUseSource = source };
     }
 
-    private static async Task<ErpOrderRequested> PrepareUseOrder(Harness h, (Guid Id, string Code) partner, string baseCd = "BPA")
+    private static async Task<ErpOrderRequested> PrepareUseOrder(Harness h, (Guid Id, string Code) partner, string baseCd = "BPA",
+        Guid? authoritativeAccount = null)
     {
         var tag = Guid.NewGuid().ToString("N")[..12];
         var quote = new Quotation
@@ -203,8 +204,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             .Select(row => row.RowVersion!).SingleAsync();
         h.Db.ChangeTracker.Clear();
 
-        var request = new ErpOrderRequested(h.Tenant, Guid.NewGuid(), Guid.NewGuid(), 1, Guid.NewGuid(), partner.Code,
+        var request = new ErpOrderRequested(h.Tenant, Guid.NewGuid(), authoritativeAccount ?? Guid.NewGuid(), 1, Guid.NewGuid(), partner.Code,
             quote.QtnNo, Convert.ToBase64String(version), 25m, quote.CurrencyCd!);
+        if (authoritativeAccount is not null) return request;
         await h.Db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO wp0402_fixture.mapping VALUES
               ({h.Tenant},{request.AccountId},{partner.Id},{UseLegal},{partner.Code},7,'LINKED',false);
