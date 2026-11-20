@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP03-09 联系人关系完整集合预览与主要期间](https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md)（DONE），核对时间 `2026-11-20T07:33:30.199316+00:00`。
 - [WP03-10 联系人渠道值与用途证据策略](https://github.com/GTX537/CP6.CRM/blob/8658c4997673633785e289cf5e4737c5d6e8d316/docs/development/evidence/WP03-10/DELIVERY.md)（DONE），核对时间 `2026-11-20T06:33:02.983857+00:00`。
 - [WP04-02 伙伴用途参与门与旧写者收敛](../development/evidence/WP04-02/DELIVERY.md)（DONE），核对时间 `2026-11-20T05:46:31.133860+00:00`。
 - [WP03-08 独立联系人身份、归属与H02参与](https://github.com/GTX537/CP6.CRM/blob/6c203a3d03e246ac859c6176e1b154660b4d6396/docs/development/evidence/WP03-08/DELIVERY.md)（DONE），核对时间 `2026-11-20T03:36:39.871473+00:00`。
