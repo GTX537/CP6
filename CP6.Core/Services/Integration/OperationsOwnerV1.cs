@@ -189,7 +189,10 @@ public sealed partial class OperationsOwnerV1
         try
         {
             tx=await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted,ct);
-            if(readOnlyAuthorityFence)
+            var bpScopeGate = resource == BusinessPartner && await BpUseScopeGate.IsCutoverAsync(db, ct);
+            if (bpScopeGate)
+                await BpUseScopeGate.HoldIamAsync(db, ct);
+            else if(readOnlyAuthorityFence)
             {
                 // Application read-only recovery still uses native READ COMMITTED row locking.
                 if(!await db.Database.SqlQueryRaw<bool>("""
@@ -197,7 +200,7 @@ public sealed partial class OperationsOwnerV1
                     """).SingleAsync(ct))throw new CurrentPermissionUnavailableException();
             }
             else await AuthenticationCompletionGateV1.AcquireAsync(db,ct);
-            await LockGraph(write,ct,resource);
+            if (!bpScopeGate) await LockGraph(write,ct,resource);
             if(delegation!=null && (!write || !ReferenceEquals(delegation.Context,db)
                 || delegation.Tenant!=db.CurrentTenantId || !AllowsDelegation(resource,action,delegation)))
                 throw new OrderPriceCorrectionException("DELEGATION_FORBIDDEN",403);

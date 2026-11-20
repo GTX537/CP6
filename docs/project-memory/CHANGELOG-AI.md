@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP04-02 伙伴用途参与门与旧写者收敛](../development/evidence/WP04-02/DELIVERY.md)（DONE），核对时间 `2026-11-20T05:46:31.133860+00:00`。
 - [WP03-08 独立联系人身份、归属与H02参与](https://github.com/GTX537/CP6.CRM/blob/6c203a3d03e246ac859c6176e1b154660b4d6396/docs/development/evidence/WP03-08/DELIVERY.md)（DONE），核对时间 `2026-11-20T03:36:39.871473+00:00`。
 - [WP04-01 交易伙伴不可变资料和注册控制](../development/evidence/WP04-01/DELIVERY.md)（DONE），核对时间 `2026-11-20T02:56:54.849806+00:00`。
 - [WP03-05 账户创建、维护和独立生命周期](https://github.com/GTX537/CP6.CRM/blob/677509b2b5fa48db213d00e44098a9de654e53ea/docs/development/evidence/WP03-05/DELIVERY.md)（DONE），核对时间 `2026-11-20T01:52:45.558195+00:00`。

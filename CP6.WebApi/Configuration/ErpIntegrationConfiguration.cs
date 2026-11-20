@@ -12,6 +12,7 @@ using CP6.WebApi.BackgroundServices;
 using CP6.WebApi.Controllers.Internal;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -59,7 +60,11 @@ public static class ErpIntegrationConfiguration
         services.AddScoped<ErpDeliveryReplayService>();
         services.AddScoped(provider => new ErpRequestHandler(provider.GetRequiredService<IDbContextFactory<ErpIntegrationContext>>(),
             provider.GetRequiredService<ErpIntegrationRuntime>(),
-            db => ActivatorUtilities.CreateInstance<OrderService>(provider, db, new FxRateService(db))));
+            db => ActivatorUtilities.CreateInstance<OrderService>(provider, db, new FxRateService(db)))
+        {
+            PartnerProtection = provider.GetService<IDataProtectionProvider>(),
+            PartnerUseSource = provider.GetService<IErpOrderPartnerUseSource>()
+        });
         services.AddHostedService<ErpEventDispatchWorker>();
         services.AddHostedService<ErpCommandRetryWorker>();
         services.AddHostedService<ErpOrderBridgeWorker>();

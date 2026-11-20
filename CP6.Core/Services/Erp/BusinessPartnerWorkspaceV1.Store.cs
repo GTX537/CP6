@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using CP6.Core.EFDbContext;
 using System.Text.Json;
 using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Erp;
@@ -95,6 +96,11 @@ public sealed partial class BusinessPartnerWorkspaceV1
 
     private async Task<Scope> ScopeAsync(string legal, bool write, CancellationToken ct)
     {
+        if (await BpUseScopeGate.IsCutoverAsync(db, ct))
+        {
+            if (write) await BpUseScopeGate.RequireWriterAsync(db, legal, ct);
+            else await BpUseScopeGate.LockAsync(db, legal, false, ct);
+        }
         var rows = write
             ? await db.Database.SqlQuery<Scope>($"""
                 SELECT legal_entity_key AS "Key", label AS "Label", revision AS "Revision", norm_version AS "NormVersion",
@@ -146,20 +152,24 @@ public sealed partial class BusinessPartnerWorkspaceV1
         return rows.Where(row => !adopted.Contains(row.Id));
     }
 
-    private Task<List<Option>> OptionsAsync(string legal, CancellationToken ct)
-        => db.Database.SqlQuery<Option>($"""
+    private Task<List<Option>> OptionsAsync(string legal, CancellationToken ct) => ReadOptions(db, legal, ct);
+
+    private static Task<List<Option>> ReadOptions(CP6Context context, string legal, CancellationToken ct)
+        => context.Database.SqlQuery<Option>($"""
             SELECT field AS "Field",code AS "Code",label AS "Label",owner AS "Owner",source_id AS "SourceId",
                    source_version AS "Version",source_digest AS "Digest",enabled AS "Enabled"
-            FROM main_bp.option_values WHERE tenant_id={Tenant} AND legal_entity_key={legal}
+            FROM main_bp.option_values WHERE tenant_id={context.CurrentTenantId} AND legal_entity_key={legal}
             ORDER BY field,code FOR SHARE
             """).ToListAsync(ct);
 
-    private Task<Head?> HeadAsync(Guid id, CancellationToken ct)
-        => db.Database.SqlQuery<Head>($"""
+    private Task<Head?> HeadAsync(Guid id, CancellationToken ct) => ReadHead(db, id, ct);
+
+    private static Task<Head?> ReadHead(CP6Context context, Guid id, CancellationToken ct)
+        => context.Database.SqlQuery<Head>($"""
             SELECT h.bp_id AS "Id",h.legal_entity_key AS "Legal",h.registration AS "Registration",h.revision AS "Revision",
                    p.row_version AS "RowVersion",p.content_hash AS "Hash",p.protected_body AS "Body"
             FROM main_bp.heads h JOIN main_bp.profile_revisions p USING(tenant_id,legal_entity_key,bp_id,revision)
-            WHERE h.tenant_id={Tenant} AND h.bp_id={id}
+            WHERE h.tenant_id={context.CurrentTenantId} AND h.bp_id={id}
             """).SingleOrDefaultAsync(ct);
 
     private async Task<(BusinessPartner Row, Head? Head)> VisibleAsync(OperationsAccessV1 access, Guid id, bool tracked, CancellationToken ct)
@@ -184,18 +194,19 @@ public sealed partial class BusinessPartnerWorkspaceV1
 
     private static Head Adopted(Head? head) => head ?? throw Rejected("BP_LEGAL_SCOPE_UNPROVEN", 409);
 
-    private Task<SlotRow[]> ReadSlotsAsync(Guid id, CancellationToken ct)
-        => ReadSlotRows(id, ct);
+    private Task<SlotRow[]> ReadSlotsAsync(Guid id, CancellationToken ct) => ReadSlotRows(db, id, ct);
 
-    private async Task<SlotRow[]> ReadSlotRows(Guid id, CancellationToken ct)
-        => (await db.Database.SqlQuery<SlotRow>($"""
+    private static Task<SlotRow[]> ReadSlotRows(CP6Context context, Guid id, CancellationToken ct)
+        => context.Database.SqlQuery<SlotRow>($"""
             SELECT slot AS "Slot",target_id AS "TargetId" FROM main_bp.relations
-            WHERE tenant_id={Tenant} AND bp_id={id} ORDER BY slot
-            """).ToListAsync(ct)).ToArray();
+            WHERE tenant_id={context.CurrentTenantId} AND bp_id={id} ORDER BY slot
+            """).ToArrayAsync(ct);
 
-    private FinanceLink[] PriorFinance(Head head)
+    private FinanceLink[] PriorFinance(Head head) => ReadFinance(head, Protect("revision", head.Id));
+
+    private static FinanceLink[] ReadFinance(Head head, IDataProtector protector)
     {
-        var original = Protect("revision", head.Id).Unprotect(head.Body);
+        var original = protector.Unprotect(head.Body);
         try
         {
             using var doc = JsonDocument.Parse(original);
@@ -270,6 +281,8 @@ public sealed partial class BusinessPartnerWorkspaceV1
         row.Creator = row.Modifier = access.Actor;
         row.CreateDate = DateTime.Now;
         row.ModifyDate = row.CreateDate;
+        // 新建与维护使用相同的事务内写者标记，数据库同时复核 Scope X 和主写者登记。
+        await db.Database.ExecuteSqlInterpolatedAsync($"SELECT set_config('cp6.bp_workspace_writer',{row.Id.ToString("D")},true)", ct);
         db.BusinessPartners.Add(row);
         try { await db.SaveChangesAsync(ct); }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation,

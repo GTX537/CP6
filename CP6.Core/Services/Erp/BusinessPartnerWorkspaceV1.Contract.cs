@@ -136,7 +136,7 @@ public sealed partial class BusinessPartnerWorkspaceV1
         return HashPattern.IsMatch(text) ? text : throw Invalid();
     }
 
-    private static byte[] Canonical<T>(T value)
+    internal static byte[] Canonical<T>(T value)
     {
         using var output = new MemoryStream();
         using (var writer = new Utf8JsonWriter(output)) WriteCanonical(writer, JsonSerializer.SerializeToElement(value, Json));

@@ -1,4 +1,6 @@
+using System.Data;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Erp;
 using CP6.Core.Persistence;
 using CP6.Entity;
 using CP6.Entity.DomainModels.Erp;
@@ -18,6 +20,18 @@ public sealed class ErpCommerceAuthority(CP6Context db, TimeProvider? clock = nu
         RequireActor(actor);
         if (!ErpQuotationAcceptance.IsCurrency(input.Currency) || input.CrmAccountId == Guid.Empty)
             throw new ErpCommerceException("C03_COMMERCE_TERMS_INVALID");
+        if (await BpUseScopeGate.IsCutoverAsync(db, ct))
+        {
+            await using var own = db.Database.CurrentTransaction is null
+                ? await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct) : null;
+            await BpUseScopeGate.HoldIamAsync(db, ct);
+            var target = await db.BusinessPartners.AsNoTracking().Where(x => x.BpCd == key && !x.IsDeleted)
+                .Select(x => new { x.Id, x.BaseCd }).SingleOrDefaultAsync(ct)
+                ?? throw new ErpCommerceException("C03_BUSINESS_PARTNER_NOT_FOUND");
+            try { await BpUseScopeGate.LockLegacyWriterAsync(db, target.Id, target.BaseCd, ct); }
+            catch (OrderPriceCorrectionException error) { throw new ErpCommerceException("C03_" + error.Message); }
+            throw new ErpCommerceException("C03_BP_PROFILE_PREVIEW_REQUIRED");
+        }
         var partner = await db.BusinessPartners.SingleOrDefaultAsync(x => x.BpCd == key && !x.IsDeleted, ct)
             ?? throw new ErpCommerceException("C03_BUSINESS_PARTNER_NOT_FOUND");
         RequireVersion(partner, input.RowVersion);

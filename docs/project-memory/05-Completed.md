@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP03-08 独立联系人身份、归属与H02参与](https://github.com/GTX537/CP6.CRM/blob/6c203a3d03e246ac859c6176e1b154660b4d6396/docs/development/evidence/WP03-08/DELIVERY.md)（DONE），核对时间 `2026-11-20T03:36:39.871473+00:00`。
+- [WP04-02 伙伴用途参与门与旧写者收敛](../development/evidence/WP04-02/DELIVERY.md)（DONE），核对时间 `2026-11-20T05:46:31.133860+00:00`。
 
 ### 已关闭目标
 

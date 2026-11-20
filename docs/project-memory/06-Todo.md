@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 下一卡
 
-台账指定的下一卡为 [WP04-02 伙伴用途参与门与旧写者收敛](../development/task-plans/WP04.md#wp04-02)。直接前置为 WP02-10、WP02-13、WP04-01、WP11-65。
+台账指定的下一卡为 [WP03-10 联系人渠道值与用途证据策略](../development/task-plans/WP03.md#wp03-10)。直接前置为 WP02-09、WP02-15、WP03-08。
 <!-- /cp6:roadmap -->
 
 2026-11-17，WP02-06 卡 DONE。CRM 实际采用批准的新身份来源，旧会话封存，新会话按当前权限读取原业务结果。本地 77 项通过，零跳过。SYS-TENANT-01 原 23 条复核通过。INT-ID-01 和 SYS-IAM-01 的待补验收已归入现有卡。原号 DONE / 完整 DONE 为 48 / 46，目标 4/125。下一卡 WP02-09。 [本卡报告](../development/evidence/WP02-06/DELIVERY.md)

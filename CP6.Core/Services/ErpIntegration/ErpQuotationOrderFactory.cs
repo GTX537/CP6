@@ -1,8 +1,13 @@
+using System.Globalization;
+using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Sys;
 using CP6.Core.Services.Erp;
 using CP6.Entity.DomainModels.Erp;
 using CP6.Entity.DTOs.Erp;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Core.Services.ErpIntegration;
 
@@ -10,18 +15,40 @@ internal sealed record ErpOrderOrigin(Guid TenantId, Guid OpportunityId, Guid Ac
     int RequestVersion, Guid QuotationId, string InputSha256, string Currency);
 
 /// <summary>Creates actual ERP order rows from a locked, accepted ERP quotation and approved master snapshots.</summary>
-internal sealed class ErpQuotationOrderFactory(CP6Context db, OrderService orders, TimeProvider clock)
+internal sealed class ErpQuotationOrderFactory(CP6Context db, OrderService orders, TimeProvider clock,
+    IDataProtectionProvider? partnerProtection = null, IErpOrderPartnerUseSource? useSource = null)
 {
     public async Task<(string OrderKey, decimal Amount)> CreateAsync(ErpOrderRequested request, string inputHash, CancellationToken ct)
     {
         if (db.Database.CurrentTransaction is null || !(db.Database.IsSqlServer() || db.Database.IsNpgsql()) ||
             db.CurrentTenantId != request.TenantId)
             throw new InvalidOperationException("C03_ORDER_REQUIRES_TENANT_SQL_TRANSACTION");
-        var bpQuery = db.Database.IsNpgsql()
-            ? db.BusinessPartners.FromSqlInterpolated($"""SELECT * FROM public."T_WebBusinessPartner" WHERE "TenantId"={request.TenantId} AND "BpCd"=CAST({request.BusinessPartnerKey} AS bpchar) FOR UPDATE""")
-            : db.BusinessPartners.FromSqlInterpolated($"SELECT * FROM dbo.T_WebBusinessPartner WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={request.TenantId} AND BpCd={request.BusinessPartnerKey}");
-        var bp = await bpQuery.SingleOrDefaultAsync(ct);
-        RequireBusinessPartner(bp, request.AccountId, allowPreRegistered: false);
+        BpUseReceipt? use = null;
+        string? quoteBase = null;
+        BusinessPartner? bp;
+        if (await BpUseScopeGate.IsCutoverAsync(db, ct))
+        {
+            quoteBase = (await db.Quotations.AsNoTracking().Where(row => row.QtnNo == request.QuotationKey && !row.IsDeleted)
+                .Select(row => row.BaseCd).SingleOrDefaultAsync(ct))?.TrimEnd()
+                ?? throw new ErpCommerceException("C03_QUOTATION_NOT_FOUND");
+            use = await EnlistPartnerAsync(request, inputHash, ct);
+            if (!await BusinessPartnerWorkspaceV1.CurrentUseBaseAsync(db, use.Bp.LegalEntityKey, quoteBase, ct))
+                throw new ErpCommerceException("C03_OWNER_PARTICIPANT_UNPROVEN");
+            bp = await db.BusinessPartners.AsNoTracking().SingleAsync(row => row.Id == use.Bp.BpId, ct);
+            // 先固定 EST 和已批准产品来源，再进入 QTN 根与明细。
+            await db.Database.ExecuteSqlRawAsync("""
+                LOCK TABLE public."T_EstimateCalc",public."T_EstimateCalcProcess",public."T_ProductMaster",
+                    public."T_ProductProcess",public."T_ProductMaterial" IN SHARE MODE
+                """, ct);
+        }
+        else
+        {
+            var bpQuery = db.Database.IsNpgsql()
+                ? db.BusinessPartners.FromSqlInterpolated($"""SELECT * FROM public."T_WebBusinessPartner" WHERE "TenantId"={request.TenantId} AND "BpCd"=CAST({request.BusinessPartnerKey} AS bpchar) FOR UPDATE""")
+                : db.BusinessPartners.FromSqlInterpolated($"SELECT * FROM dbo.T_WebBusinessPartner WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={request.TenantId} AND BpCd={request.BusinessPartnerKey}");
+            bp = await bpQuery.SingleOrDefaultAsync(ct);
+            RequireBusinessPartner(bp, request.AccountId, allowPreRegistered: false);
+        }
         var quotationQuery = db.Database.IsNpgsql()
             ? db.Quotations.FromSqlInterpolated($"""SELECT * FROM public."T_Quotation" WHERE "TenantId"={request.TenantId} AND "QtnNo"=CAST({request.QuotationKey} AS bpchar) FOR UPDATE""")
             : db.Quotations.FromSqlInterpolated($"SELECT * FROM dbo.T_Quotation WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={request.TenantId} AND QtnNo={request.QuotationKey}");
@@ -31,6 +58,14 @@ internal sealed class ErpQuotationOrderFactory(CP6Context db, OrderService order
             ? db.QuotationDetails.FromSqlInterpolated($"""SELECT * FROM public."T_QuotationDetail" WHERE "TenantId"={request.TenantId} AND "QtnNo"=CAST({request.QuotationKey} AS bpchar) FOR UPDATE""")
             : db.QuotationDetails.FromSqlInterpolated($"SELECT * FROM dbo.T_QuotationDetail WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={request.TenantId} AND QtnNo={request.QuotationKey}");
         quotation.Details = await detailsQuery.Where(d => !d.IsDeleted).OrderBy(d => d.DetailNo).ToListAsync(ct);
+        if (use is not null)
+        {
+            if (quotation.BaseCd.TrimEnd() != quoteBase)
+                throw new ErpCommerceException("C03_LOCK_PLAN_UNPROVEN");
+            var estimates = quotation.Details.Select(row => row.QtnCalcNo).OfType<string>().Distinct().ToArray();
+            if (await db.EstimateCalcs.CountAsync(row => estimates.Contains(row.QtnCalcNo) && !row.IsDeleted, ct) != estimates.Length)
+                throw new ErpCommerceException("C03_OWNER_PARTICIPANT_UNPROVEN");
+        }
         if (quotation.CustomerCd != bp!.BpCd) throw new ErpCommerceException("C03_QUOTATION_CUSTOMER_MISMATCH");
         if (quotation.RowVersion is null || Convert.ToBase64String(quotation.RowVersion) != request.QuotationVersion)
             throw new ErpCommerceException("C03_QUOTATION_VERSION_CHANGED");
@@ -38,7 +73,7 @@ internal sealed class ErpQuotationOrderFactory(CP6Context db, OrderService order
         if (!ErpQuotationAcceptance.IsCurrent(quotation, clock.GetUtcNow()))
             throw new ErpCommerceException("C03_CUSTOMER_ACCEPTANCE_REQUIRED");
         if (quotation.TotalAmount != request.ExpectedAmount) throw new ErpCommerceException("C03_AMOUNT_MISMATCH");
-        var bpCurrency = string.IsNullOrEmpty(bp.CurrencyCd) ? FxConstants.BaseCurrency : bp.CurrencyCd;
+        var bpCurrency = use?.Currency ?? (string.IsNullOrEmpty(bp.CurrencyCd) ? FxConstants.BaseCurrency : bp.CurrencyCd);
         if (quotation.CurrencyCd != request.Currency || bpCurrency != request.Currency)
             throw new ErpCommerceException("C03_CURRENCY_MISMATCH");
         if (await db.Orders.AnyAsync(x => x.CrmOpportunityId == request.OpportunityId, ct))
@@ -98,7 +133,54 @@ internal sealed class ErpQuotationOrderFactory(CP6Context db, OrderService order
         var origin = new ErpOrderOrigin(request.TenantId, request.OpportunityId, request.AccountId, request.RequestId,
             request.RequestVersion, quotation.Id, inputHash, quotation.CurrencyCd!);
         var key = await orders.CreateForIntegrationAsync(dto, origin);
+        if (use is not null) await RecordUseAuditAsync(request, key, use, ct);
         return (key, quotation.TotalAmount!.Value);
+    }
+
+    private async Task<BpUseReceipt> EnlistPartnerAsync(ErpOrderRequested request, string inputHash, CancellationToken ct)
+    {
+        try
+        {
+            var tx = db.Database.CurrentTransaction?.GetDbTransaction();
+            BpUseScopeGate.RequireTransaction(db, tx, serializable: true);
+            // 旧事件保留原 wire，可信消费身份来自本地 C03 和已核对的原指纹。
+            var coordinate = await BusinessPartnerWorkspaceV1.FindUseCoordinatesAsync(db, request.BusinessPartnerKey, ct)
+                ?? throw BpUseScopeGate.Unproven();
+            await BpUseScopeGate.RequireBeforeEstimateAndQuoteAsync(db, ct);
+            await BpUseScopeGate.HoldIamAsync(db, ct);
+            await BpUseScopeGate.LockAsync(db, coordinate.Legal, false, ct);
+            var verified = useSource is null ? null : await useSource.ReadAsync(db, tx!, request, coordinate.Id, coordinate.Legal, ct);
+            var participant = new BpUseParticipant(db, partnerProtection ?? throw BpUseScopeGate.Unproven(), clock);
+            const string purpose = "SALES_NEW_SOURCE";
+            var consumer = new BpUseSourceRef(BpUseParticipant.SalesOwner, request.OpportunityId.ToString("D"),
+                request.RequestVersion.ToString(CultureInfo.InvariantCulture), inputHash, purpose);
+            var enlisted = await participant.EnlistAsync(tx!, new(request.TenantId, coordinate.Legal, coordinate.Id,
+                request.AccountId, purpose, consumer, coordinate.Revision, verified?.ExpectedRevision, request.RequestId,
+                "crm-integration", request.RequestId.ToString("D"), verified), ct);
+            // 已提交意图应已在 C03 原命令分流。若账不一致，不能把原凭证用于重建订单。
+            if (enlisted.Replayed) throw BpUseScopeGate.Unproven();
+            return enlisted.Receipt;
+        }
+        catch (OrderPriceCorrectionException error)
+        {
+            throw new ErpCommerceException("C03_" + error.Message);
+        }
+    }
+
+    private async Task RecordUseAuditAsync(ErpOrderRequested request, string key, BpUseReceipt receipt, CancellationToken ct)
+    {
+        var now = clock.GetUtcNow();
+        db.Sys_OperLogs.Add(new()
+        {
+            TenantId = request.TenantId, UserName = "crm-integration", Controller = "ErpRequestHandler",
+            Action = "CreateOrderWithPartnerUse", StatusCode = 200, CreateDate = now.UtcDateTime, AuditAtUtc = now,
+            RequestBody = JsonSerializer.Serialize(new { orderKey = key, useKey = receipt.UseKey }),
+            AuditEvidenceJson = new AuditEvidenceV1("ERP_OWNER_UTC", "REQUIRED_AUDIT", "SERVICE",
+                Service: "crm-integration", OperationId: request.RequestId, Outcome: "COMMITTED",
+                EntityVersion: receipt.Consumer.Version, RecordedAtUtc: now, DataPolicy: "BUSINESS_REFERENCE_ONLY",
+                Action: "SALES_NEW_SOURCE", OriginalOperationDigest: receipt.Consumer.Digest).Encode()
+        });
+        await db.SaveChangesAsync(ct);
     }
 
     public static void RequireBusinessPartner(BusinessPartner? bp, Guid accountId, bool allowPreRegistered)
