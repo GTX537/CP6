@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "CRM-HO-OPP/1",
+  "tenantId": "b0000000-0000-4000-8000-000000000001",
+  "eventId": "21111111-1111-4111-8111-111111111111",
+  "producer": "CRM_HO",
+  "handoffId": "31111111-1111-4111-8111-111111111111",
+  "requestVersion": "1",
+  "previousRequestVersion": null,
+  "originalIntentId": "41111111-1111-4111-8111-111111111111",
+  "intentDigest": "4c2e2ba0fc1215446e2915fbc5dec55b4d3be762cdc2a4747789dbab23912668",
+  "intent": {
+    "schemaVersion": "OPP-INTENT/1",
+    "tenantId": "b0000000-0000-4000-8000-000000000001",
+    "opportunityId": "61111111-1111-4111-8111-111111111111",
+    "accountId": "b1111111-1111-4111-8111-111111111111",
+    "opportunitySalesRevision": "5",
+    "requirementVersion": "2",
+    "forecastVersion": "2",
+    "stakeholderVersion": "1",
+    "requirement": {
+      "summary": "本次采购制造协作服务100元净额范围，允许分批商业确认。",
+      "lines": [
+        {
+          "lineId": "71111111-1111-4111-8111-111111111111",
+          "clientRef": null,
+          "description": "制造协作服务范围A",
+          "customerItemCode": null,
+          "productReference": null,
+          "quantity": "1.000000",
+          "unitCode": "LOT",
+          "needByDate": "2026-11-01"
+        }
+      ],
+      "decisionPath": "采购联络收集方案后由采购负责人确认。",
+      "noDecisionDateReason": null
+    },
+    "forecast": {
+      "estimatedNet": {
+        "amount": "100.0000",
+        "currency": "CNY",
+        "basis": "NET_EX_TAX_AFTER_DISCOUNT",
+        "currencyPolicyVersion": "fixture-cny-net-1"
+      },
+      "probabilityPercent": 60,
+      "expectedDecisionDate": "2026-10-20"
+    },
+    "stakeholders": [
+      {
+        "contactId": "c1111111-1111-4111-8111-111111111111",
+        "roleCode": "BUYER",
+        "relation": {
+          "relationId": "e1111111-1111-4111-8111-111111111111",
+          "relationRevision": "1"
+        }
+      }
+    ],
+    "evidenceRefs": [],
+    "targetOwner": "MAIN_INTAKE",
+    "targetLegalEntityKey": "MAIN-CN-01",
+    "processingType": "ESTIMATE_AND_QUOTE",
+    "requestedBy": "a1111111-1111-4111-8111-111111111111",
+    "requestReason": "明确向Main申请估算报价；预测不作为正式定价。"
+  },
+  "sourcePermissionEvidence": {
+    "authority": "FIXTURE_OWNER",
+    "key": "handoff-source-rights",
+    "version": "1",
+    "proofRef": "fixture-signature-handoff-source-rights"
+  },
+  "createdAt": "2026-09-30T08:05:00.000Z",
+  "supersession": null
+}

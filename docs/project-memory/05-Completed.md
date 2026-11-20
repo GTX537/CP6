@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP03-09 联系人关系完整集合预览与主要期间](https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md)（DONE），核对时间 `2026-11-20T07:33:30.199316+00:00`。
+- [WP02-22 商业交接原生wire、来源保护与原结果原语](../development/evidence/WP02-22/DELIVERY.md)（DONE），核对时间 `2026-11-20T08:45:07.893807+00:00`。
 
 ### 已关闭目标
 

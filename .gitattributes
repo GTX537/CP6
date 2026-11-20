@@ -43,6 +43,9 @@ eng/p10/verifier.Dockerfile text eol=lf
 contracts/events/platform/**/*.json text eol=lf
 contracts/events/erp/**/*.json text eol=lf
 
+# 商业原合同测试向量保留冻结的 UTF-8 字节。
+CP6.Tests/Erp/Fixtures/CommercialV1/*.json -text
+
 # Shared C04A protocol must match the CRM repository byte for byte.
 contracts/c04a/TargetRollbackProtocol.cs text eol=lf
 contracts/c04a/TargetRollbackSet.cs text eol=lf
