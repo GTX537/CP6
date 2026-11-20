@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP04-02 伙伴用途参与门与旧写者收敛](../development/evidence/WP04-02/DELIVERY.md)（DONE），核对时间 `2026-11-20T05:46:31.133860+00:00`。
+- [WP03-10 联系人渠道值与用途证据策略](https://github.com/GTX537/CP6.CRM/blob/8658c4997673633785e289cf5e4737c5d6e8d316/docs/development/evidence/WP03-10/DELIVERY.md)（DONE），核对时间 `2026-11-20T06:33:02.983857+00:00`。
 
 ### 已关闭目标
 
