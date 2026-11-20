@@ -436,14 +436,20 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await using var blockSource = await offline.BeginTransactionAsync();
         await using (var lockSource = new NpgsqlCommand("LOCK TABLE cp6_bp_finance_ref_v1.frontiers IN ACCESS EXCLUSIVE MODE", offline, blockSource))
             await lockSource.ExecuteNonQueryAsync();
-        await StateCommand(host, cookies, id, detail, "freeze", Guid.NewGuid(), financeContext: context);
+        var unrelated = await WorkspaceCall(host, cookies, "/profile-previews", HttpMethod.Post,
+            ProfilePatch(id, CurrentRevision(detail), "bpName", "财务来源离线时维护名称"));
+        await ApplyWorkspace(host, cookies, unrelated, Guid.NewGuid(), path: "/profile-apply");
+        var profileHistory = await WorkspaceCall(host, cookies, "/history", HttpMethod.Post,
+            new { legalEntityKey = legal, bpId = id, kind = "PROFILE", beforeSequence = (string?)null, limit = 50 });
+        Assert.True(profileHistory.Body.GetProperty("items").GetArrayLength() >= 3);
+        await StateCommand(host, cookies, id, await WorkspaceStatus(host, cookies, id), "freeze", Guid.NewGuid(), financeContext: context);
         var frozen = await WorkspaceStatus(host, cookies, id);
         var denied = await StateCommand(host, cookies, id, frozen, "register", Guid.NewGuid(), 422, financeContext: context);
         Assert.Equal("REFERENCE_UNPROVEN", denied.Body.GetProperty("code").GetString());
         var missing = await WorkspaceCall(host, cookies, $"/{id:D}", financeContext: context);
         Assert.Equal("UNPROVEN", Assert.Single(missing.Body.GetProperty("finance").EnumerateArray(),
             item => item.GetProperty("kind").GetString() == "PAYMENT_BANK").GetProperty("availability").GetString());
-        Assert.Equal(new[] { 1, 3, 9, 3, 3, 2 }, await FormalCounts(h));
+        Assert.Equal(new[] { 1, 4, 9, 4, 4, 2 }, await FormalCounts(h));
         await blockSource.RollbackAsync();
 
         await StateCommand(host, cookies, id, frozen, "register", Guid.NewGuid(), financeContext: context);
@@ -458,7 +464,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(JsonValueKind.Null, maskedBank.GetProperty("reference").ValueKind);
         await DeviceEvidence("wp04-01-finance.json", new { source.Owner, source.Version, source.Digest, mask = "****0456",
             offlineRegistration = 422, offlineFreeze = 200, registeredFrozen = true, actionRevoked = "NOT_AUTHORIZED",
-            counts = await FormalCounts(h) });
+            offlineUnrelatedNameEdit = true, offlineHistoryVisible = true, counts = await FormalCounts(h) });
     }
 
     [CurrentPermissionPostgresFact]

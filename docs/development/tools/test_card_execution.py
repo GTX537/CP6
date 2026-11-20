@@ -165,6 +165,47 @@ class CardExecutionTests(unittest.TestCase):
         self.assertIn('card budget total differs from original remaining-card pool',
                       roadmap.validate_card_budgets(policy, tasks, definitions))
 
+    def test_authorized_supplement_spends_completed_card_surplus_once(self):
+        policy = {
+            'size_budget_hours': {'M': 4, 'L': 8},
+            'base_card_hours': 8,
+            'budget_baseline_done_task_ids': [],
+        }
+        decision = {
+            'commit': 'a' * 40,
+            'path': 'handoffs/tasks/WP04-03/replies/authorization/MESSAGE.md',
+            'pr_url': 'https://github.com/GTX537/CP6.AI-Handoff/pull/366',
+        }
+        tasks = {
+            'WP04-03': {'relative_size': 'L', 'state': 'DONE', 'card_execution': {'effective_seconds': 4415.904}},
+            'WP04-38': {'relative_size': 'M', 'state': 'DONE', 'card_execution': {'effective_seconds': 5100}},
+        }
+        definitions = {'WP04-03': {}, 'WP04-38': {'supplemental_authorization': decision}}
+        transfer = {
+            'source_task_id': 'WP04-03', 'target_task_id': 'WP04-38', 'seconds': 14400, 'decision': decision,
+        }
+        policy['supplemental_budget_transfers'] = [transfer]
+        self.assertEqual(roadmap.validate_card_budgets(policy, tasks, definitions), [])
+        self.assertEqual(roadmap.card_completion_counts(tasks, definitions)['original_total'], 1)
+
+        definitions['WP04-38']['split_children'] = ['WP04-38b']
+        definitions['WP04-38b'] = {'split_parent': 'WP04-38'}
+        tasks['WP04-38b'] = {'relative_size': 'M', 'state': 'PLANNED', 'card_budget_seconds': 9300}
+        self.assertEqual(roadmap.validate_card_budgets(policy, tasks, definitions), [])
+        tasks['WP04-38b']['card_budget_seconds'] = 14400
+        self.assertIn('WP04-38: split budgets must conserve parent cap minus effective time',
+                      roadmap.validate_card_budgets(policy, tasks, definitions))
+        tasks['WP04-38b']['card_budget_seconds'] = 9300
+
+        policy['supplemental_budget_transfers'] = [transfer, copy.deepcopy(transfer)]
+        self.assertTrue(roadmap.validate_card_budgets(policy, tasks, definitions))
+        policy['supplemental_budget_transfers'] = [transfer]
+        tasks['WP04-03']['card_execution']['effective_seconds'] = 15000
+        self.assertTrue(roadmap.validate_card_budgets(policy, tasks, definitions))
+        tasks['WP04-03']['card_execution']['effective_seconds'] = 4415.904
+        tasks['WP04-03']['state'] = 'PLANNED'
+        self.assertTrue(roadmap.validate_card_budgets(policy, tasks, definitions))
+
 
 if __name__ == '__main__':
     unittest.main()

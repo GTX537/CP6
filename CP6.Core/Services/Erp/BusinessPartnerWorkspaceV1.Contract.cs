@@ -13,6 +13,7 @@ public sealed partial class BusinessPartnerWorkspaceV1
     public const string DirectoryOwner = "Main.Erp.BusinessPartnerDirectory.v1";
     public const string ProfileOwner = "Main.Erp.BusinessPartnerProfile.v1";
     private const string Resource = "erp-business-partner", View = "profile-query", CommandRead = "command-result.read";
+    private const string CommandAuditRead = "command-result.audit.read";
     private const string PreRegistered = "PRE_REGISTERED", Registered = "REGISTERED", UnknownLegacy = "UNKNOWN_LEGACY";
     private const string Active = "ACTIVE", Retired = "RETIRED", Clear = "CLEAR", Frozen = "FROZEN";
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);

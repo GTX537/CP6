@@ -11,6 +11,12 @@ public sealed partial class BusinessPartnerWorkspaceV1
     public Task<HttpResult> PostAsync(string operation, JsonElement body, string? ifMatch, string? commandKey,
         Guid? financeContext, CancellationToken ct)
     {
+        if (operation == "EXPORT")
+        {
+            if (ifMatch is not null || commandKey is not null) throw Invalid("PRECONDITION_SYNTAX");
+            return owner.ExecuteAsync(Resource, "export", false,
+                async (access, token) => new HttpResult(await Export(access, body, token)), ct, partnerExportSnapshot: true);
+        }
         if (operation is "QUERY" or "HISTORY")
         {
             if (ifMatch is not null || commandKey is not null) throw Invalid("PRECONDITION_SYNTAX");
@@ -197,7 +203,8 @@ public sealed partial class BusinessPartnerWorkspaceV1
         if (saved.UsedCommand is not null) throw Rejected("PREVIEW_ALREADY_USED", 409);
         RequireStrongTag(ifMatch, PreviewTag(id, saved.IntentHash), stale: true);
         if (saved.IntentHash != hash || saved.Operation != operation || saved.Expires <= Now ||
-            Instant(saved.Expires) != Token(preview["expiresAt"], 40) || saved.Permission != access.ReadScopeVersion) throw Stale();
+            Instant(saved.Expires) != Token(preview["expiresAt"], 40) ||
+            operation != "CREATE" && saved.Permission != access.ReadScopeVersion) throw Stale();
 
         var plain = Protect("preview", id).Unprotect(saved.Body);
         JsonElement intent;
@@ -214,6 +221,7 @@ public sealed partial class BusinessPartnerWorkspaceV1
             if (create.Legal != scope.Key) throw Stale();
             var authorized = await BasesAsync(access, scope.Key, ct);
             await AuthorizeCreate(access, create, authorized, ct);
+            if (saved.Permission != access.ReadScopeVersion) throw Stale();
             if (create.Decision.Kind == "NEW_DISTINCT" && await CodeExists(create.Row, ct)) throw Rejected("BP_CODE_EXISTS", 409);
             if (saved.ScopeRevision != scope.Revision) throw Stale();
             var proposal = await ProposeCreate(access, create, scope, financeContext, ct);
@@ -361,22 +369,46 @@ public sealed partial class BusinessPartnerWorkspaceV1
 
     private async Task<CommandResponse> Replay(OperationsAccessV1 access, SavedCommand prior, byte[] fingerprint, CancellationToken ct)
     {
+        if (prior.Actor != access.ActorId) throw Missing();
         await RequireCommandVisibility(access, prior, ct);
         if (!CryptographicOperations.FixedTimeEquals(prior.Fingerprint, fingerprint))
             throw Rejected("COMMAND_IDEMPOTENCY_CONFLICT", 409);
         return new(ReadReceipt(prior), true);
     }
 
+    private async Task<string> SelectCommandReadAction(Guid command, Guid subject, CancellationToken ct)
+    {
+        if ((await FindCommand(command, ct))?.Actor == subject) return CommandRead;
+        try
+        {
+            await owner.AuthorityAsync(Resource, CommandAuditRead, ct);
+            return CommandAuditRead;
+        }
+        catch (OrderPriceCorrectionException error) when (error.Status == 403 && error.Message == "ACTION_FORBIDDEN")
+        {
+            return CommandRead;
+        }
+    }
+
     private async Task<HttpResult> CommandReadAsync(OperationsAccessV1 access, Guid command, CancellationToken ct)
     {
         var original = await FindCommand(command, ct);
         Receipt? receipt = null;
-        if (original?.Actor == access.ActorId)
+        var audit = access.IsPartnerAction(CommandAuditRead) && original?.Actor != access.ActorId;
+        if (original is not null && (original.Actor == access.ActorId || audit))
         {
+            if (!audit && !access.IsPartnerAction(CommandRead)) access = await access.ActionAsync(Resource, CommandRead, ct);
             if (await BpUseScopeGate.IsCutoverAsync(db, ct))
                 await BpUseScopeGate.LockAsync(db, original.Legal, false, ct);
-            await RequireCommandVisibility(access, original, ct);
-            receipt = ReadReceipt(original);
+            try
+            {
+                await RequireCommandVisibility(access, original, ct);
+                receipt = ReadReceipt(original);
+            }
+            catch (OrderPriceCorrectionException error) when (audit && error.Status is 403 or 404)
+            {
+                // 独立审计查询仍须通过资源范围及字段披露门。
+            }
         }
         return new HttpResult(new { knowledge = receipt is null ? "NOT_OBSERVED" : "FOUND",
             receipt, replayed = receipt is not null, noEffectProven = false });
@@ -384,7 +416,6 @@ public sealed partial class BusinessPartnerWorkspaceV1
 
     private async Task RequireCommandVisibility(OperationsAccessV1 access, SavedCommand original, CancellationToken ct)
     {
-        if (original.Actor != access.ActorId) throw Missing();
         if (original.Account is { } account)
         {
             await access.ActionAsync(Resource, MappingRead, ct);

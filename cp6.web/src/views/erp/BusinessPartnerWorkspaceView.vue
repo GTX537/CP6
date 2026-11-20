@@ -23,6 +23,8 @@
         <form class="partner-row" @submit.prevent="run(search)">
           <label>名称 <input v-model="searchName" maxlength="100" /></label>
           <button type="submit" :disabled="busy">查询</button>
+          <button v-if="options?.capabilities.includes('export')" type="button" :disabled="busy"
+            @click="run(exportPartners)">导出 CSV</button>
         </form>
         <button v-if="canCreate" type="button" :disabled="busy || !!pending" @click="newPartner">建档</button>
       </div>
@@ -217,6 +219,8 @@ const labels: Record<string, string> = {
   DUPLICATE_REVIEW_REQUIRED: '需要核对候选', BP_CODE_EXISTS: '业务编号已被占用',
   PROFILE_INCOMPLETE: '注册资料不完整', REFERENCE_UNPROVEN: '当前来源未核实', BP_VERSION_STALE: '版本已变化，请重新读取',
   PREVIEW_STALE: '预览已失效，请重新预览', FIELD_WRITE_FORBIDDEN: '没有字段写入权',
+  FIELD_DENIED: '没有建档所需的字段写入权', ORG_SCOPE_DENIED: '没有该据点的管理权',
+  EXPORT_LIMIT: '筛选结果超过 5000 条，请缩小范围后重新导出。',
 }
 const relationSlots = ['AP_SCHEDULE', 'AR_BILLING', 'BILLING_CREDIT_AR', 'BILLING_RECEIPT', 'CUSTOMER_AR', 'CUSTOMER_CREDIT', 'PARENT_CUSTOMER', 'SCHEDULE_PAYEE', 'SUPPLIER_AP']
 const pendingKey = 'cp6-business-partner-workspace-pending'
@@ -232,6 +236,7 @@ const rows = ref<PartnerListItem[]>([])
 const total = ref(0)
 const page = ref(1)
 const searchName = ref('')
+const appliedName = ref('')
 const detail = shallowRef<PartnerDetail>()
 const status = shallowRef<WithTag<StatusContext>>()
 const stateAction = ref<PartnerStateAction | ''>('')
@@ -349,20 +354,33 @@ function startMappingDraft(criteria: CandidateCriteria) {
 
 function requestMappingCommand(request: Original) { void run(() => send(request)) }
 
-async function list(target: number) {
+async function list(target: number, name = appliedName.value) {
   if (!legal.value) return
-  const result = await api.list(legal.value, searchName.value, target)
+  const result = await api.list(legal.value, name, target)
   rows.value = result.body.items
   total.value = result.body.total
   page.value = target
+  appliedName.value = name
 }
 
-async function search() { await list(1) }
+async function search() { await list(1, searchName.value) }
+
+async function exportPartners() {
+  const scope = legal.value
+  const csv = await api.exportCsv(scope, appliedName.value, page.value)
+  if (identityStamp() !== stamp || legal.value !== scope) return
+  const url = URL.createObjectURL(csv)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'business-partners.csv'
+  link.click()
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
 
 async function loadScope() {
   if (!legal.value) return
   options.value = (await api.options(legal.value)).body
-  await list(1)
+  await search()
 }
 
 async function changeScope() {

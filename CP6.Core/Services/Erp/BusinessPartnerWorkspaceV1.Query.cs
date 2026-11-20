@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 using CP6.Core.Services.Integration;
+using CP6.Entity.DomainModels.Erp;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Erp;
@@ -8,6 +9,21 @@ namespace CP6.Core.Services.Erp;
 public sealed partial class BusinessPartnerWorkspaceV1
 {
     private async Task<object> List(OperationsAccessV1 access, JsonElement body, CancellationToken ct)
+    {
+        var result = await FindWorkspaceRows(access, body, null, ct);
+        var offset = Math.Min((long)(result.Page - 1) * result.PageSize, result.Rows.Length);
+        var items = result.Rows.Skip((int)offset).Take(result.PageSize).Select(value => new
+        {
+            bp = BpReference(value.Row, value.Head, value.Head.Revision), name = Name(value.Row), baseCd = Base(value.Row),
+            roles = RoleSet(value.Row), state = StateOf(value.Row, value.Head, value.Head.Revision),
+            createdAt = Instant(value.Row.CreateDate), canOpen = true
+        }).ToArray();
+        return new { items, total = result.Rows.Length, page = result.Page, pageSize = result.PageSize, asOf = Instant(Now) };
+    }
+
+    private sealed record WorkspaceRows((BusinessPartner Row, Head Head)[] Rows, int Page, int PageSize);
+
+    private async Task<WorkspaceRows> FindWorkspaceRows(OperationsAccessV1 access, JsonElement body, int? limit, CancellationToken ct)
     {
         var query = Exact(body, "filter", "sort", "direction", "page", "pageSize");
         var filter = Exact(query["filter"], "legalEntityKey", "rolesAny", "registrations", "lifecycles", "holds", "bpCd", "name",
@@ -53,16 +69,24 @@ public sealed partial class BusinessPartnerWorkspaceV1
         if (requested.Distinct(StringComparer.Ordinal).Count() != requested.Length || requested.Any(x => !allowed.Contains(x, StringComparer.Ordinal)))
             throw Denied("BP_BASE_READ_REQUIRED");
         var codes = requested.Length == 0 ? allowed : requested;
-        var adopted = db.Database.SqlQuery<Guid>($"""
-            SELECT bp_id AS "Value" FROM main_bp.heads WHERE tenant_id={Tenant} AND legal_entity_key={legal}
+        var heads = db.Database.SqlQuery<Head>($"""
+            SELECT h.bp_id AS "Id",h.legal_entity_key AS "Legal",h.registration AS "Registration",
+                   h.revision AS "Revision",p.row_version AS "RowVersion",p.content_hash AS "Hash",''::bytea AS "Body"
+            FROM main_bp.heads h JOIN main_bp.profile_revisions p USING(tenant_id,legal_entity_key,bp_id,revision)
+            WHERE h.tenant_id={Tenant} AND h.legal_entity_key={legal}
             """);
-        var rows = await access.BusinessPartners(includeDeleted: true).Where(row => adopted.Contains(row.Id) && codes.Contains(row.BaseCd)).ToListAsync(ct);
-        var results = new List<(CP6.Entity.DomainModels.Erp.BusinessPartner Row, Head Head)>();
-        foreach (var row in rows)
+        var rows = from row in access.BusinessPartners(includeDeleted: true)
+                   where codes.Contains(row.BaseCd)
+                   join head in heads on row.Id equals head.Id
+                   select new { row, head };
+        var results = new List<(BusinessPartner Row, Head Head)>();
+        var normalizedName = name is null ? null : BusinessPartnerUnicode15.Normalize(name);
+        await foreach (var match in rows.AsAsyncEnumerable().WithCancellation(ct))
         {
+            var (row, head) = (match.row, match.head);
             var created = row.CreateDate;
             if (code is not null && !Code(row).Contains(code, StringComparison.Ordinal) ||
-                name is not null && !BusinessPartnerUnicode15.Normalize(Name(row)).Contains(BusinessPartnerUnicode15.Normalize(name), StringComparison.Ordinal) ||
+                normalizedName is not null && !BusinessPartnerUnicode15.Normalize(Name(row)).Contains(normalizedName, StringComparison.Ordinal) ||
                 salesStaff is not null && row.SalesStaffCd?.TrimEnd() != salesStaff ||
                 businessStaff is not null && row.BusinessStaffCd?.TrimEnd() != businessStaff ||
                 roles.Length > 0 && !roles.Any(role => HasRole(row, role)) ||
@@ -72,10 +96,12 @@ public sealed partial class BusinessPartnerWorkspaceV1
                 dateTo is { } last && DateOnly.FromDateTime(created) > last ||
                 classes.Any(item => (NormalizeFixedColumn(item.Field.Value(row)) as string) != item.Code))
                 continue;
-            var head = Adopted(await HeadAsync(row.Id, ct));
             if (!head.RowVersion.SequenceEqual(row.RowVersion ?? [])) throw Rejected("BP_PROFILE_FRONTIER_UNPROVEN", 503);
             if (registrations.Length == 0 || registrations.Contains(head.Registration, StringComparer.Ordinal))
+            {
+                if (results.Count == limit) throw Rejected("EXPORT_LIMIT", 422);
                 results.Add((row, head));
+            }
         }
         var ordered = sort switch
         {
@@ -83,15 +109,7 @@ public sealed partial class BusinessPartnerWorkspaceV1
             "CREATED_AT" => results.OrderBy(x => x.Row.CreateDate).ThenBy(x => x.Row.Id),
             _ => results.OrderBy(x => Code(x.Row), StringComparer.Ordinal).ThenBy(x => x.Row.Id)
         };
-        var orderedRows = direction == "ASC" ? ordered : ordered.Reverse();
-        var offset = Math.Min((long)(page - 1) * size, results.Count);
-        var items = orderedRows.Skip((int)offset).Take(size).Select(value => new
-        {
-            bp = BpReference(value.Row, value.Head, value.Head.Revision), name = Name(value.Row), baseCd = Base(value.Row),
-            roles = RoleSet(value.Row), state = StateOf(value.Row, value.Head, value.Head.Revision),
-            createdAt = Instant(value.Row.CreateDate), canOpen = true
-        }).ToArray();
-        return new { items, total = results.Count, page, pageSize = size, asOf = Instant(Now) };
+        return new((direction == "ASC" ? ordered : ordered.Reverse()).ToArray(), page, size);
     }
 
     private static string[] FilterKeys(JsonElement input, string[] selection)
@@ -224,7 +242,7 @@ public sealed partial class BusinessPartnerWorkspaceV1
             foreach (var field in record.Fields)
             {
                 if (hidden.Contains(field, StringComparer.Ordinal)) continue;
-                var name = field switch { "bpName" => "name", "bpAbbrev" => "abbreviation", "commercialCurrency" => "currency", _ => field };
+                var name = field switch { "bpName" => "name", "bpAbbrev" => "abbreviation", _ => field };
                 if (CoreEditFields.Contains(field, StringComparer.Ordinal) && root.TryGetProperty(name, out var core))
                     changes.Add(new { field, value = core.Clone() });
                 else if (profile.TryGetProperty(field, out var value)) changes.Add(new { field, value = value.Clone() });

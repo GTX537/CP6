@@ -21,6 +21,9 @@ class ProgressIntegrityTests(unittest.TestCase):
 
     def setUp(self):
         self.data = copy.deepcopy(self.baseline)
+        # 此类把既有交付者重置为待排。拨款与拆卡守恒由 test_card_execution 独立校验，
+        # 真实台账另由 CLI 完整校验。
+        self.enterContext(mock.patch.object(roadmap, "validate_card_budgets", return_value=[]))
         # Reset a copy for isolated checker fixtures; live ledger progress may advance.
         for target in self.data["targets"]:
             target.update(assessment="PENDING", assessment_evidence=[], delivery_state="PLANNED", blockers=[], implementation_evidence=[], delivery_evidence=None)
@@ -70,6 +73,22 @@ class ProgressIntegrityTests(unittest.TestCase):
         case = next(c for c in self.data["revision_acceptances"] if c["kind"] == "HISTORICAL_STATIC")
         case["kind"] = "RUNTIME"
         self.reject("static/runtime classification")
+
+    def test_partner_static_catalog_checks_do_not_credit_business_execution(self):
+        self.enterContext(mock.patch.object(roadmap, "validate_definitions", return_value=[]))
+        source = "docs/development/assessments/20261011/catalogs/commercial-finance.json"
+        catalog = roadmap.read_json(ROOT / source)
+        original = next(t for t in catalog["targets"] if t["id"] == "ERP-BP-01")
+        scenario = copy.deepcopy(next(c for c in original["cases"] if c["source_case_id"] == "AC079"))
+        target = next(t for t in self.data["targets"] if t["id"] == "ERP-BP-01")
+        target["original_acceptance_inventory"].update(state="COMPLETE", cases=[scenario])
+        scenario["evidence"] = [{"path": source, "source_sha": self.data["main_baseline_sha"],
+                                 "scope": "仅校验原 JSON、文书及其摘要"}]
+        self.assertEqual(roadmap.validate(self.data, ROOT, check_pins=False), [])
+        self.assertEqual(scenario["state"], "NOT_RUN")
+        self.assertEqual(roadmap.metrics(self.data)["targets_delivered"], 0)
+        scenario["state"] = "PASS"
+        self.reject("original acceptance PASS lacks evidence")
 
     def test_missing_consumer_rejected(self):
         case = self.data["revision_acceptances"][0]
