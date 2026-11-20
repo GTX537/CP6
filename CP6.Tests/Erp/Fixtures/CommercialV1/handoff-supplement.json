@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "CRM-HO-OPP/1",
+  "tenantId": "b0000000-0000-4000-8000-000000000001",
+  "eventId": "22222222-2222-4222-8222-222222222222",
+  "producer": "CRM_HO",
+  "handoffId": "31111111-1111-4111-8111-111111111111",
+  "requestVersion": "2",
+  "previousRequestVersion": "1",
+  "originalIntentId": "42222222-2222-4222-8222-222222222222",
+  "intentDigest": "b25a32555b7d7e8a0b9987da2294f8d313c268cc6bac1465a12c41a795b01033",
+  "intent": {
+    "schemaVersion": "OPP-INTENT/1",
+    "tenantId": "b0000000-0000-4000-8000-000000000001",
+    "opportunityId": "61111111-1111-4111-8111-111111111111",
+    "accountId": "b1111111-1111-4111-8111-111111111111",
+    "opportunitySalesRevision": "8",
+    "requirementVersion": "3",
+    "forecastVersion": "2",
+    "stakeholderVersion": "1",
+    "requirement": {
+      "summary": "本次采购制造协作服务100元净额范围，允许分批商业确认。",
+      "lines": [
+        {
+          "lineId": "71111111-1111-4111-8111-111111111111",
+          "clientRef": null,
+          "description": "制造协作服务范围A",
+          "customerItemCode": null,
+          "productReference": null,
+          "quantity": "1.000000",
+          "unitCode": "LOT",
+          "needByDate": "2026-11-01"
+        }
+      ],
+      "decisionPath": "补充：采购联络收集后，采购负责人审批并确认。",
+      "noDecisionDateReason": null
+    },
+    "forecast": {
+      "estimatedNet": {
+        "amount": "100.0000",
+        "currency": "CNY",
+        "basis": "NET_EX_TAX_AFTER_DISCOUNT",
+        "currencyPolicyVersion": "fixture-cny-net-1"
+      },
+      "probabilityPercent": 60,
+      "expectedDecisionDate": "2026-10-20"
+    },
+    "stakeholders": [
+      {
+        "contactId": "c1111111-1111-4111-8111-111111111111",
+        "roleCode": "BUYER",
+        "relation": {
+          "relationId": "e1111111-1111-4111-8111-111111111111",
+          "relationRevision": "1"
+        }
+      }
+    ],
+    "evidenceRefs": [],
+    "targetOwner": "MAIN_INTAKE",
+    "targetLegalEntityKey": "MAIN-CN-01",
+    "processingType": "ESTIMATE_AND_QUOTE",
+    "requestedBy": "a1111111-1111-4111-8111-111111111111",
+    "requestReason": "按Main明确缺项补充同一商业交接。"
+  },
+  "sourcePermissionEvidence": {
+    "authority": "CRM_HO",
+    "key": "supplement-source-rights",
+    "version": "1",
+    "proofRef": "fixture-signature-supplement-source-rights"
+  },
+  "createdAt": "2026-09-30T10:08:00.000Z",
+  "supersession": {
+    "tenantId": "b0000000-0000-4000-8000-000000000001",
+    "opportunityId": "61111111-1111-4111-8111-111111111111",
+    "handoffId": "31111111-1111-4111-8111-111111111111",
+    "fromRequestVersion": "1",
+    "toRequestVersion": "2",
+    "priorMainReceiptId": "IR-NEEDS-V1",
+    "priorIntakeOrdinal": "1",
+    "priorIntakeBusinessDigest": "26852566a548f6755e1edb94cf8b2bd5b84ead9c006386af1823954627cbd72e",
+    "priorIntentDigest": "4c2e2ba0fc1215446e2915fbc5dec55b4d3be762cdc2a4747789dbab23912668",
+    "newIntentId": "42222222-2222-4222-8222-222222222222",
+    "newIntentDigest": "b25a32555b7d7e8a0b9987da2294f8d313c268cc6bac1465a12c41a795b01033",
+    "expectedHandoffSlotVersion": "1",
+    "committedHandoffSlotVersion": "2",
+    "needsInfoEvidence": {
+      "authority": "MAIN_INTAKE",
+      "key": "needs-v1",
+      "version": "1",
+      "proofRef": "fixture-signature-needs-v1"
+    },
+    "hoAuthorizationEvidence": {
+      "authority": "CRM_HO",
+      "key": "supplement-v1-v2",
+      "version": "1",
+      "proofRef": "fixture-signature-supplement-v1-v2"
+    },
+    "commandKey": "ee000043-0000-4000-8000-000000000043",
+    "reason": "按Main明确缺项补充同一商业交接。",
+    "recordedAt": "2026-09-30T10:08:00.000Z"
+  }
+}

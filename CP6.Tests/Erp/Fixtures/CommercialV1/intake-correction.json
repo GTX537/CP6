@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "OPP-INTAKE/1",
+  "kind": "INTAKE_CORRECTION",
+  "tenantId": "b0000000-0000-4000-8000-000000000001",
+  "eventId": "fixture-intake-correction-1",
+  "producer": "MAIN_INTAKE",
+  "epoch": "main-intake-e1",
+  "source": {
+    "handoffId": "31111111-1111-4111-8111-111111111111",
+    "requestVersion": "1",
+    "intentId": "41111111-1111-4111-8111-111111111111",
+    "intentDigest": "4c2e2ba0fc1215446e2915fbc5dec55b4d3be762cdc2a4747789dbab23912668",
+    "opportunityId": "61111111-1111-4111-8111-111111111111",
+    "accountId": "b1111111-1111-4111-8111-111111111111",
+    "requirementVersion": "2",
+    "forecastVersion": "2"
+  },
+  "sourceHandoffIdentity": {
+    "handoffId": "31111111-1111-4111-8111-111111111111",
+    "requestVersion": "1",
+    "intentId": "41111111-1111-4111-8111-111111111111",
+    "intentDigest": "4c2e2ba0fc1215446e2915fbc5dec55b4d3be762cdc2a4747789dbab23912668",
+    "opportunityId": "61111111-1111-4111-8111-111111111111",
+    "accountId": "b1111111-1111-4111-8111-111111111111",
+    "requirementVersion": "2",
+    "forecastVersion": "2"
+  },
+  "sequence": {
+    "ordinal": "2",
+    "previousOrdinal": "1",
+    "previousBusinessDigest": "61d37f83eb38cb190b897dda9ae8771a8fb33858709d1a1cf8aa074c3a90ec69"
+  },
+  "mainReceiptId": "IR-CORRECTION-2",
+  "intakeId": "INTAKE-CORRECTED-A1",
+  "outcome": "ACCEPTED",
+  "replacesOutcome": "REJECTED_FINAL",
+  "predecessorResultId": "IR-WRONG-REJECT-1",
+  "correctionRevision": "1",
+  "mainEvidenceRef": {
+    "authority": "MAIN_SALES",
+    "legalEntityKey": "MAIN-CN-01",
+    "groupKey": "G-REV1-INTAKE-CORR",
+    "stream": {
+      "producer": "MAIN_SALES",
+      "contractVersion": "OPP-COMMERCIAL/1",
+      "epoch": "sales-e1"
+    },
+    "ordinal": "1",
+    "resultId": "MAIN-CONFIRM-CORR-1",
+    "businessDigest": "d9a8d67155f59fdc871d60393cda3bc01ea22791b9e65fa35908d7f1f4bf5799",
+    "bindingDigest": "c4dd6bc099cedfc0307563ba8bb45b3045f70bef98ff56d4c2ae673b89b33213",
+    "source": {
+      "handoffId": "31111111-1111-4111-8111-111111111111",
+      "requestVersion": "1",
+      "intentId": "41111111-1111-4111-8111-111111111111",
+      "intentDigest": "4c2e2ba0fc1215446e2915fbc5dec55b4d3be762cdc2a4747789dbab23912668",
+      "opportunityId": "61111111-1111-4111-8111-111111111111",
+      "accountId": "b1111111-1111-4111-8111-111111111111",
+      "requirementVersion": "2",
+      "forecastVersion": "2"
+    },
+    "ownerEvidence": {
+      "authority": "MAIN_SALES",
+      "key": "confirm-corr-proof",
+      "version": "1",
+      "proofRef": "fixture-signature-confirm-corr-proof"
+    }
+  },
+  "resolvedConflicts": [
+    {
+      "conflictId": "93333333-3333-4333-8333-333333333333",
+      "conflictKeyHash": "8c5326e891162ed1c898cd2016dd7e98397b4b60957e8dea60b4c8d31eb6f5e5",
+      "incomingDigest": "d9a8d67155f59fdc871d60393cda3bc01ea22791b9e65fa35908d7f1f4bf5799"
+    }
+  ],
+  "missingFieldCodes": [],
+  "errorCode": null,
+  "retryableTechnical": false,
+  "reason": "原拒绝为Main受理错误记录，按同源真实商业确认纠正，保留原拒绝历史。",
+  "ownerRecordedAt": "2026-09-30T10:16:00.000Z",
+  "ownerDecision": {
+    "authority": "MAIN_INTAKE",
+    "key": "authorize-intake-correction-1",
+    "version": "1",
+    "proofRef": "fixture-signature-authorize-intake-correction-1"
+  }
+}

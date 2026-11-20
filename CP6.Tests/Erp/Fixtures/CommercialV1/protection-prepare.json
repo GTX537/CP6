@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "IC-SOURCE-PROTECTION/1",
+  "protectionKey": "5a46ec8d8113a5845b88438a19d2028d24809ad2980bb145504611ce302b22c0",
+  "execution": {
+    "tenantId": "b0000000-0000-4000-8000-000000000001",
+    "consumerAuthority": "MAIN_INTAKE",
+    "operationKind": "intake.decide",
+    "operationId": "f1000000-0000-4000-8000-000000000002",
+    "executionFingerprint": "5dbfdd13569dc84a00496a6ec96f5372c5e64e8e50af6da0de3697433c9f2ede",
+    "executionGeneration": "1",
+    "participantSetDigest": "7c59d0faa58ff3e26c44fc38d06b92494f9f16ffcb700f48973bb04d440e5997"
+  },
+  "participantAuthority": "CRM_HO",
+  "subject": {
+    "kind": "HANDOFF",
+    "locator": {
+      "tenantId": "b0000000-0000-4000-8000-000000000001",
+      "authority": "MAIN_INTAKE",
+      "legalEntityKey": "MAIN-CN-01",
+      "handoffId": "31111111-1111-4111-8111-111111111111",
+      "requestVersion": "2",
+      "intentDigest": "b25a32555b7d7e8a0b9987da2294f8d313c268cc6bac1465a12c41a795b01033"
+    },
+    "source": {
+      "handoffId": "31111111-1111-4111-8111-111111111111",
+      "requestVersion": "2",
+      "intentId": "42222222-2222-4222-8222-222222222222",
+      "intentDigest": "b25a32555b7d7e8a0b9987da2294f8d313c268cc6bac1465a12c41a795b01033",
+      "opportunityId": "61111111-1111-4111-8111-111111111111",
+      "accountId": "b1111111-1111-4111-8111-111111111111",
+      "requirementVersion": "3",
+      "forecastVersion": "2"
+    },
+    "originalBodyHash": "32ac4d8a0cd19aea38c9ac99cc191327b66112eecb835590c44a3603c2f62e44"
+  },
+  "purpose": "MAIN_INTAKE_NEW_EFFECT",
+  "expectedControlWatermark": "fixture-crm-source-watermark-2",
+  "admissionDeadline": "2026-09-30T10:12:00.000Z",
+  "consumerRegistration": {
+    "authority": "MAIN_INTAKE",
+    "key": "fixture-execution-registration-1",
+    "version": "1",
+    "proofRef": "fixture-proof-fixture-execution-registration-1"
+  }
+}
