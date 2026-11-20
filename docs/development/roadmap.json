@@ -7519,8 +7519,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC001",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC001",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "身份 ID、法人、编号三个 PATCH 均为 400 BP_SCOPE_IMMUTABLE，原身份、版本和成功命令数保持。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/0"
@@ -7530,8 +7540,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC002",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC002",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "同租户 JP-B 预览与执行重用 JP-A 编号被拒，结果为 BP_CODE_EXISTS，回执和候选均不披露 JP-A 对象。PostgreSQL 保留租户及编号唯一约束。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/1"
@@ -7541,8 +7561,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC003",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC003",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "B13 退休后按同编号预览和提交，历史候选仍指原 BpId 且显示 RETIRED。B06 返回 BP_CODE_EXISTS，保持一个历史身份。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/2"
@@ -7552,8 +7582,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC004",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC004",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "全 false 及仅信用/制造商角色都返回 400 ROLE_SET_INVALID，没有新增成功命令。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/3"
@@ -7563,8 +7603,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC005",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC005",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "SupplierFlg 与 CustomerFlg 用资料预览提交均为 400 ROLE_IMMUTABLE，Vue 只在建档显示角色编辑，原版本保持。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/4"
@@ -7574,8 +7624,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC006",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC006",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "角色资料缺失时合法 PRE_REGISTERED，详情显示缺少 CUSTOMER_AR，已填非法电话仍返回 400。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/5"
@@ -7585,8 +7645,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC007",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC007",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "请求 REGISTERED 时缺 CUSTOMER_AR 和销售担当，预览准确列 PROFILE_INCOMPLETE，执行 422 且没有注册伙伴。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/6"
@@ -7596,8 +7666,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC008",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC008",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "实际 B06 的三个 SELF 槽指向本次 BpId，九槽完整，Root 与 ProfileRevision1 一致。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/7"
@@ -7607,8 +7687,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC009",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC009",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "Unicode 归一后同名候选需要准确候选及理由，NEW_DISTINCT 只创建另一个不同编号的主体。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/8"
@@ -7640,8 +7730,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC012",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC012",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "双 B06、各自 UUID、同时用同租户同号执行，200 和 409 各一，只有一条 Root、初始资料与成功回执。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/11"
@@ -7651,8 +7751,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC013",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC013",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "另事务提升 scopeRevision 后，原 Preview 执行返回 412 PREVIEW_STALE，业务记录数保持。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/12"
@@ -7662,8 +7772,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC014",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC014",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "创建后冻结，再按原键执行，返回完全相同的 Revision1 回执，当前仍 Revision2/FROZEN。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/13"
@@ -7673,8 +7793,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC015",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC015",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "同 Preview 换 UUID 为 PREVIEW_ALREADY_USED，原 UUID 改 Preview 为 COMMAND_IDEMPOTENCY_CONFLICT，零重复保存。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/14"
@@ -7684,8 +7814,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC016",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC016",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "字符串布尔、浮点 JSON、超长电话、未知键均 400，类型与精度没有隐式转换。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/15"
@@ -7695,8 +7835,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC017",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC017",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "账户原始账号、CrmAccountId 和状态均为 400 OWNER_FIELD_READ_ONLY。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/16"
@@ -7706,8 +7856,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC018",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC018",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "失去敏感权后 Tel=null 且列入遮罩，显式 null 写入 403，只修改名称后旧 Tel 保留。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/17"
@@ -7717,8 +7877,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC019",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC019",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "跨法人关系返回 RELATION_SCOPE_MISMATCH，当前目标缺 AR 角色返回 REFERENCE_INVALID。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/18"
@@ -7728,8 +7898,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC020",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC020",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "SELF 缺目标角色时 REFERENCE_INVALID，只有两个合法样本被持久化。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/19"
@@ -7783,8 +7963,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC025",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC025",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "不允许未定义的跨日时间窗，合法 HH:mm:ss 回读精确到秒。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/24"
@@ -7827,8 +8017,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC029",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC029",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "FREEZE 的资料、时间线、审计和命令 xmin 一致，根行版本和 Hold 与 ProfileRevision2 一致。故障模拟使整个事务回滚，随后同当前版本可成功执行。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/28"
@@ -8289,8 +8489,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC071",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC071",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "B13 缺强 If-Match 返回 428，通配符为 400，旧版本为 412，业务行和原结果保持。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/70"
@@ -8597,8 +8807,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC099",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC099",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "100 个 U+FDFA 经 HTTP 保存，原显示 100 单元，数据库完整保存 1800 单元，准确同名经索引后匹配。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/98"
@@ -8608,8 +8828,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC100",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC100",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "模拟归一版本不一致时 REVIEW_REQUIRED，强制相同索引摘要夹具仍按完整规范字符串比较。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/99"
@@ -8729,8 +8959,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC111",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC111",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "撤除 register 后，保留 create、基地和字段权限的演员通过实际 B05 和 B06 完成预登记。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/110"
@@ -8751,8 +8991,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC113",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC113",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "撤除 add/register 后，B06 原 UUID、正文和 ETag 返回完全相同的原回执和摘要。当前业务记录数保持。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/112"
@@ -8784,8 +9034,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC116",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC116",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "B13 结果存在，撤除 command-result.read 后 GET 原结果和同键 POST 均为 403，无原回执。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/115"
@@ -8806,8 +9066,18 @@
             "id": "ERP-BP-01/92c20d1ee1dc090f/AC118",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC118",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+                "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+                "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+                "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+                "observed_at": "2026-11-20T02:56:45.432687+00:00",
+                "result": "PASS",
+                "scope": "相同 UUID 更换 Preview 正文或只更换 If-Match 均冲突。原回执原样，未生成新业务效果。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/7/cases/117"
@@ -8881,7 +9151,17 @@
           }
         ]
       },
-      "implementation_evidence": [],
+      "implementation_evidence": [
+        {
+          "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+          "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+          "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+          "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+          "observed_at": "2026-11-20T02:56:45.432687+00:00",
+          "result": "PASS",
+          "scope": "WP04-01 完整通过 27/124 项原 AC。已采用 CRM 修订保持 1/10，ERP-BP-01 开放。"
+        }
+      ],
       "delivery_evidence": null
     },
     {
@@ -171814,6 +172094,11 @@
       "at": "2026-11-20T01:52:45.558195+00:00",
       "evidence": "docs/development/planning/20261117-card-execution.md",
       "change": "WP03-05 账户维护、独立生命周期和 H02 Account 同事务参与 DONE。CRM-ACC-01 核销 13/47 项原 AC 和 1/10 项必需修订，目标保持开放。按 #343 单次补记 WP11-65 正式收尾 218.459 秒。"
+    },
+    {
+      "at": "2026-11-20T02:56:54.849806+00:00",
+      "evidence": "docs/development/evidence/WP04-01/DELIVERY.md",
+      "change": "WP04-01 交易伙伴不可变资料和注册控制 DONE。ERP-BP-01 核销 27/124 项原 AC，已采用 CRM 修订保持 1/10，目标开放。一次补记 WP03-05 正式收尾 135.875 秒。"
     }
   ],
   "implementation_assessment": {
@@ -199268,7 +199553,7 @@
         "official_started_at": "2026-11-20T01:20:25.6273260+00:00",
         "technical_verified_at": "2026-11-20T01:42:36.6694927+00:00",
         "verified_at": "2026-11-20T01:52:45.558195+00:00",
-        "effective_seconds": 1718.495,
+        "effective_seconds": 1854.37,
         "product_verified_seconds": 1331.042,
         "crm_integration_seconds": 380.458,
         "main_ledger_candidate_seconds": 6.995,
@@ -199286,7 +199571,9 @@
         "preceding_integration_seconds": 218.459,
         "target_review_started_at": "2026-11-20T01:46:31.5386191+00:00",
         "target_review_seconds": 11.546,
-        "crm_seat_finished_at": "2026-11-20T01:52:09.156935+00:00"
+        "crm_seat_finished_at": "2026-11-20T01:52:09.156935+00:00",
+        "official_finish": "2026-11-20T01:55:01.433Z",
+        "post_candidate_finalization_seconds": 135.875
       }
     },
     {
@@ -200116,21 +200403,86 @@
         "file:Main:CP6.WebApi/Controllers/Erp/BusinessPartnerController.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP04.md",
       "card_anchor": "wp04-01",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "EXEC-WP02-14B",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp04-01",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-20T02:19:38.366234+00:00",
+        "baseline_sha": "ed2f4d717028895a1b0c1327ae281ed4ab3cad1e",
+        "entry_evidence": "docs/development/evidence/WP04-01/DELIVERY.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "delivery_report": "docs/development/evidence/WP04-01/DELIVERY.md",
+        "dispatch_scope": "交易伙伴不可变资料、注册及独立状态，实际 Vue 与 Main 原结果读取。",
+        "actual_start_ref": {
+          "commit": "85b8abcceaf18013ed7841f2830c83c8b0539f66",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP04-01/messages/20261120T021951Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-20T02:19:51Z"
+        },
+        "dispatch_decision_ref": {
+          "commit": "9ee6e3b770e3d90ebc7583e6270246be82c08ed4",
+          "original_commit": "ce7a37f67e210867960cec14ddc6d7eb3f693e8e",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261120T020319Z-exec-wp02-14b-wp04-01/MESSAGE.md"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+          "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+          "command": "本地 workspace-final.trx（后端）及 workspace-browser-verified.trx（实际 Vue）、workspace-migration-release.trx（前向迁移） 实际 37/37。证据命令、HTTP 和数据库断言见交付报告。",
+          "environment": "Windows，实际 Main Kestrel、Vue 生产构建、Chromium、隔离 PostgreSQL 18。模拟用户、设备、法人/基地、业务数据、CRM 离线、财务 Owner 发布和存储错误。",
+          "observed_at": "2026-11-20T02:56:45.432687+00:00",
+          "result": "PASS",
+          "scope": "WP04-01 伙伴建档、资料、九个关系槽、注册和独立状态。Main API/Vue/隔离 PostgreSQL，复测旧 DELETE。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP04-01/DELIVERY.md",
+        "source_sha": "e72c1fb9250f4328fc5a7ea4781b7003009e5f5f",
+        "remote_main_sha": "ed2f4d717028895a1b0c1327ae281ed4ab3cad1e",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1281",
+        "scope": "远端字段为已核实的 Main 开工基线。产品和核销由同一 PR 采用，准确采用、冒烟和席位释放见原通信分支 DELIVERY。",
+        "adoption_record": "D:/CP6-test-artifacts/WP04-01/current-20261120/finish.json"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：Main当前授权、可信scope、共享Owner事务/最终fence、原结果账和持久消息",
         "WP02：真实组织及角色/字段字典",
         "WP11：财务引用专业读取能力",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP04-01/DELIVERY.md",
+        "started_at": "2026-11-20T02:19:38.366234+00:00",
+        "official_started_at": "2026-11-20T02:19:38.366234+00:00",
+        "verified_at": "2026-11-20T02:56:54.849806+00:00",
+        "technical_verified_at": "2026-11-20T02:56:45.432687+00:00",
+        "effective_seconds": 2234.21,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "S02-00",
+          "WP02-10",
+          "WP02-13",
+          "WP02-13b",
+          "WP11-65"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 135.875,
+        "target_review_started_at": "2026-11-20T02:56:45.432687+00:00",
+        "target_review_seconds": 2.274
+      }
     },
     {
       "id": "WP04-02",
@@ -295708,7 +296060,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 88956.871,
+      "effective_seconds": 91329.23,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -295737,7 +296089,8 @@
         "WP02-17",
         "WP11-01",
         "WP11-65",
-        "WP03-05"
+        "WP03-05",
+        "WP04-01"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -295810,7 +296163,7 @@
         }
       ],
       "current_stage": "C",
-      "next_card": "WP04-01",
+      "next_card": "WP03-08",
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -295963,17 +296316,17 @@
       },
       "next_card_selection": {
         "rule": "阶段 C 展开全部拆分严格前置；全图最长下游边数降序，同长保留用户阶段数组的顺序。",
-        "baseline_sha": "5a3e14a41b6818fa6d4cc71156b442c143d0aaa8",
-        "after_card": "WP03-05",
-        "selected": "WP04-01",
+        "baseline_sha": "ed2f4d717028895a1b0c1327ae281ed4ab3cad1e",
+        "after_card": "WP04-01",
+        "selected": "WP03-08",
         "candidates": [
-          {
-            "task": "WP04-01",
-            "longest_downstream_edges": 40
-          },
           {
             "task": "WP03-08",
             "longest_downstream_edges": 40
+          },
+          {
+            "task": "WP04-02",
+            "longest_downstream_edges": 39
           },
           {
             "task": "WP02-22",
@@ -296052,7 +296405,7 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 3983.205,
+      "target_review_effective_seconds": 3985.479,
       "last_checkpoint_counts": {
         "original_done": 58,
         "fully_done": 58,
