@@ -220,7 +220,7 @@ public sealed partial class BusinessPartnerWorkspaceV1
     private sealed record FinanceView(string Kind, BusinessPartnerFinanceSourceRefV1? Reference, string Availability,
         string? DisplayName = null, string? MaskedAccount = null, string? CreditLimit = null, string? Currency = null);
     private sealed record PreviewReference(Guid PreviewId, string IntentHash, string ExpiresAt);
-    private sealed record Receipt(Guid CommandId, string Operation, string Outcome, Reference Bp, object? Mapping, object? Reconcile,
+    private sealed record Receipt(Guid CommandId, string Operation, string Outcome, Reference? Bp, MappingReference? Mapping, ReconcileReceipt? Reconcile,
         string? ErrorCode, string CompletedAt, string ReceiptHash);
     private sealed record CommandResponse(Receipt Receipt, bool Replayed);
     private sealed record Patch(string Field, JsonElement Value);
@@ -228,7 +228,7 @@ public sealed partial class BusinessPartnerWorkspaceV1
     private sealed record CandidateItem(CandidateReference Reference, string BpCd, string DisplayName, Dictionary<string, bool> Roles,
         string Registration, string Lifecycle, string Hold, string Availability, string[] MatchReasons);
     private sealed record CandidateSet(string Visibility, CandidateItem[] Items, string SetHash, string ScopeRevision);
-    private sealed record IdentityCriteria(string BpCd, string BpName, string? StdCoCd, string? EinType, string? Ein);
+    private sealed record IdentityCriteria(string? BpCd, string BpName, string? StdCoCd, string? EinType, string? Ein);
     private sealed record DuplicateDecision(string Kind, CandidateReference[] Acknowledged, string? Reason, CandidateReference? Existing);
     private sealed record StateRequest(Guid Id, long Revision, string Reason, string? RequestedHold, bool ConfirmRegistration);
 }

@@ -1,6 +1,9 @@
 using System.Data.Common;
 using System.Security.Claims;
+using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Common;
+using CP6.Core.Services.Erp;
 using CP6.Core.Services.ErpIntegration;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -43,6 +46,47 @@ public sealed class ErpReadController(CP6Context db, CrmOidcOptions oidc, ICrmOi
         return value is null ? NotFound() : Ok(value);
     });
 
+    [HttpPost("/internal/main/v1/bp/mapping-snapshots")]
+    public Task<IActionResult> MappingSnapshot([FromBody] JsonElement body, CancellationToken ct)
+        => ReadMappingOwner((owner, client) => owner.QueryMappingSnapshot(client, body, ct));
+
+    [HttpPost("/internal/main/v2/account-mapping-decisions/query")]
+    public Task<IActionResult> MappingDecision([FromBody] JsonElement body, CancellationToken ct)
+        => ReadMappingOwner((owner, client) => owner.QueryMappingDecision(client, body, ct));
+
+    [HttpGet("/internal/main/v2/account-mapping-decisions/evidence/{evidenceId}")]
+    public Task<IActionResult> MappingDecisionEvidence(string evidenceId, [FromQuery] string? legalEntityKey,
+        [FromQuery] string? accountId, CancellationToken ct) =>
+        ReadAuthorizedAsync(Request.Query.Count == 2 && Request.Query["legalEntityKey"].Count == 1 && Request.Query["accountId"].Count == 1,
+            async (tenant, client, _) =>
+            {
+                var workspace = MappingOwner(tenant);
+                try
+                {
+                    var bytes = await workspace.ReadMappingDecisionEvidence(client, legalEntityKey, accountId, evidenceId, ct);
+                    return bytes is null ? NotFound() : File(bytes, "application/json");
+                }
+                catch (OrderPriceCorrectionException error) { return StatusCode(error.Status, new { code = error.Message }); }
+            }, allowQuery: true);
+
+    private BusinessPartnerWorkspaceV1 MappingOwner(Guid tenant)
+    {
+        var services = HttpContext.RequestServices;
+        services.GetRequiredService<ITenantContext>().CurrentTenantId = tenant;
+        return services.GetRequiredService<BusinessPartnerWorkspaceV1>();
+    }
+
+    private Task<IActionResult> ReadMappingOwner(Func<BusinessPartnerWorkspaceV1, string, Task<BusinessPartnerWorkspaceV1.HttpResult?>> read)
+        => ReadAuthorizedAsync(true, async (tenant, client, _) =>
+        {
+            try
+            {
+                var result = await read(MappingOwner(tenant), client);
+                return result is null ? NotFound() : new JsonResult(result.Body, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+            }
+            catch (OrderPriceCorrectionException error) { return StatusCode(error.Status, new { code = error.Message }); }
+        });
+
     [HttpGet("business-partner-request-proofs/{account:guid}/{requestId:guid}/{requestVersion:int}")]
     public Task<IActionResult> BusinessPartnerOriginal(Guid account, Guid requestId, int requestVersion)
         => ReadAuthorizedAsync(true, async (tenant, client, _) =>
@@ -82,7 +126,7 @@ public sealed class ErpReadController(CP6Context db, CrmOidcOptions oidc, ICrmOi
     private Task<IActionResult> ReadAsync(string key, Func<Guid, Task<IActionResult>> read)
         => ReadAuthorizedAsync(key.Length is > 0 and <= 20 && !key.Any(char.IsControl), (tenant, _, _) => read(tenant));
 
-    private async Task<IActionResult> ReadAuthorizedAsync(bool validKey, Func<Guid, string, ClaimsPrincipal, Task<IActionResult>> read)
+    private async Task<IActionResult> ReadAuthorizedAsync(bool validKey, Func<Guid, string, ClaimsPrincipal, Task<IActionResult>> read, bool allowQuery = false)
     {
         Response.Headers.CacheControl = "no-store";
         if (runtime is null) return NotFound();
@@ -102,7 +146,7 @@ public sealed class ErpReadController(CP6Context db, CrmOidcOptions oidc, ICrmOi
         var correlation = Header(CorrelationHeader);
         if (Header(TenantHeader) != tenant.ToString("D") || correlation is not { Length: > 0 and <= 128 } ||
             !correlation.All(c => char.IsAsciiLetterOrDigit(c) || c is '-' or '_' or '.' or ':') ||
-            Request.Query.Count != 0 || !validKey)
+            !allowQuery && Request.Query.Count != 0 || !validKey)
             return BadRequest(new { code = "C03_REQUEST_METADATA_INVALID" });
         Response.Headers[CorrelationHeader] = correlation;
         try

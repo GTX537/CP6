@@ -94,7 +94,7 @@
 
     <section v-if="mode !== 'view' && options" class="partner-panel" aria-labelledby="partner-form">
       <div class="partner-header">
-        <h2 id="partner-form">{{ mode === 'create' ? '建档' : '维护资料' }}</h2>
+        <h2 id="partner-form">{{ mappingCreate ? '建档并关联资料' : mode === 'create' ? '建档' : '维护资料' }}</h2>
         <button type="button" :disabled="busy || !!pending" @click="endForm">返回</button>
       </div>
       <div class="partner-form-grid">
@@ -174,7 +174,7 @@
         <button v-else type="button" @click="chooseExisting('')">改为新建</button>
       </div>
 
-      <div class="partner-row">
+      <div v-if="!mappingCreate" class="partner-row">
         <button type="button" :disabled="busy || !!pending" @click="run(makePreview)">预览</button>
         <button type="button" :disabled="busy || !!pending || !preview?.body.canApply || !preview.etag" @click="run(applyPreview)">执行预览</button>
         <span v-if="preview?.body.canApply">预览已通过当前校验。</span>
@@ -183,6 +183,9 @@
         <li v-for="issue in preview.body.issues" :key="issue.field + issue.code">{{ label(issue.field) }} · {{ label(issue.code) }}</li>
       </ul>
     </section>
+    <BusinessPartnerMappingPanel v-if="legal && options?.capabilities.some(action => action === 'mapping' || action === 'mapping.read')"
+      :key="legal" :legal="legal" :capabilities="options.capabilities" :locked="busy || !!pending" :new-partner="mappingDraft"
+      :receipt="mappingReceipt" @prepare-partner="startMappingDraft" @command="requestMappingCommand" />
   </main>
 </template>
 
@@ -191,8 +194,9 @@ import { computed, onMounted, onUnmounted, reactive, ref, shallowRef } from 'vue
 import { useRoute } from 'vue-router'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { businessPartnerWorkspace as api } from '@/api/erp/businessPartnerWorkspace'
+import BusinessPartnerMappingPanel from './BusinessPartnerMappingPanel.vue'
 import type {
-  CommandPath, CommandReceipt, FieldRule, PartnerDetail, PartnerListItem, PartnerStateAction,
+  CandidateCriteria, CommandPath, CommandReceipt, FieldRule, PartnerDetail, PartnerListItem, PartnerStateAction,
   ProfileValue, Registration, StatusContext, WithTag, WorkspaceOptions, WorkspacePreview, WorkspaceScope,
 } from '@/api/erp/businessPartnerWorkspace'
 
@@ -250,9 +254,16 @@ const acknowledge = ref(false)
 const duplicateReason = ref('')
 const choice = ref('')
 interface Pending { stamp: string; key: string }
-interface Original { path: CommandPath; body: unknown; tag: string }
+interface Original { path: CommandPath; body: unknown; tag: string | null }
 const pending = ref<Pending>()
 const originalRequest = shallowRef<Original>()
+const mappingCreate = ref(false)
+const mappingReceipt = shallowRef<CommandReceipt>()
+const mappingDraft = computed(() => {
+  if (!mappingCreate.value || mode.value !== 'create') return undefined
+  const { identity, registration } = createBody()
+  return { identity, registration, duplicateDecision: { kind: 'NEW_DISTINCT', acknowledged: [], reason: null } }
+})
 const canCreate = computed(() => options.value?.bases.some(x => x.canCreate))
 const canEdit = computed(() => detail.value?.state.legacyScopeState === 'ADOPTED' && options.value?.capabilities.includes('profile.edit'))
 const formBases = computed(() => options.value?.bases.filter(x => mode.value !== 'create' || x.canCreate) ?? [])
@@ -311,11 +322,13 @@ function resetForm() {
 
 function endForm() {
   mode.value = 'view'
+  mappingCreate.value = false
   resetForm()
 }
 
 function newPartner() {
   if (!options.value) return
+  mappingCreate.value = false
   resetForm()
   mode.value = 'create'
   detail.value = undefined
@@ -324,6 +337,17 @@ function newPartner() {
   for (const rule of options.value.fieldRules) fieldValues[rule.field] = rule.type === 'BOOL' ? false : null
   for (const role of options.value.roles) roleValues[role] = false
 }
+
+function startMappingDraft(criteria: CandidateCriteria) {
+  newPartner()
+  mappingCreate.value = true
+  form.bpCd = criteria.bpCd ?? ''
+  form.bpName = criteria.bpName
+  roleValues.Customer = true
+  Object.assign(fieldValues, { stdCoCd: criteria.stdCoCd, einType: criteria.einType, ein: criteria.ein })
+}
+
+function requestMappingCommand(request: Original) { void run(() => send(request)) }
 
 async function list(target: number) {
   if (!legal.value) return
@@ -486,9 +510,13 @@ async function readOriginal() {
 
 async function showReceipt(receipt: CommandReceipt) {
   clearPending()
-  notice.value = '已取得原回执，版本 ' + receipt.bp.revision + '。'
-  await openPartner(receipt.bp.bpId)
-  await list(1)
+  if (receipt.mapping || receipt.reconcile) mappingReceipt.value = receipt
+  const revision = receipt.mapping?.mappingRevision ?? receipt.bp?.revision
+  notice.value = revision ? '已取得原回执，版本 ' + revision + '。' : '已取得原回执。'
+  if (receipt.bp && !receipt.reconcile) {
+    await openPartner(receipt.bp.bpId)
+    await list(1)
+  }
 }
 
 function statusCode(value: unknown) {
