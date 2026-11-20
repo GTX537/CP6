@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using CP6.Core.Auth;
+using CP6.Core.EFDbContext;
 using CP6.Core.Services;
 using CP6.Entity.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -84,12 +85,15 @@ public class BusinessPartnerController : LocalizedControllerBase
         }
     }
 
-    /// <summary>削除 — DELETE /api/business-partners/{cd}（管理者のみ）</summary>
+    /// <summary>按当前授权软退休业务伙伴。</summary>
     [HttpDelete("{bpCd}")]
-    [Authorize(Roles = "1,Admin")]   // RoleId=1 = 管理者
     [RequirePermission("erp-business-partner", "del")]
-    public async Task<IActionResult> Delete(string bpCd, [FromBody] DeleteRequest? req = null)
+    public async Task<IActionResult> Delete(string bpCd, [FromServices] CP6Context db, [FromBody] DeleteRequest? req = null)
     {
+        // PostgreSQL 退休由 Owner 在事务内复核角色 1。旧存储路径沿用原角色声明校验。
+        if (!db.Database.IsNpgsql() && !User.IsInRole("1") && !User.IsInRole("Admin"))
+            return Forbid();
+
         try
         {
             await _service.DeleteAsync(bpCd, req?.RowVersion, UserName);
