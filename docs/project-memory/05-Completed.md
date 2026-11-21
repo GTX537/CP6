@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP04-38 正式伙伴导出与未归属原验收补正](../development/evidence/WP04-38/DELIVERY.md)（DONE），核对时间 `2026-11-20T16:33:20.515145+00:00`。
+- [WP03-12 线索手工进入、列表和归属协作](https://github.com/GTX537/CP6.CRM/blob/738e31d82f7bce33fc88f5acfba9fe959a8b64af/docs/development/evidence/WP03-12/DELIVERY.md)（DONE），核对时间 `2026-11-21T08:15:18.181389+00:00`。
 
 ### 已关闭目标
 
