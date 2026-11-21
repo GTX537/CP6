@@ -440,3 +440,15 @@ WP02-23 DONE。Main 三种原生动作、当前读权原回执、原子调度审
 按 #366 授权和 #367 派工，将本卡置于 WP02-23 之后。WP04-03 与 WP02-23 及其全部余卡严格完成后领取。原 375 卡及 7 次既有拆卡保留，本卡单列为获批补正。卡池 2052 小时，总上限 2503.55 小时。WP04-03 历史额度 28800 秒、实用 4415.904 秒、可调剂 24384.096 秒，单次划拨 14400 秒后保有节余 9984.096 秒。若补正触发拆卡，余卡只用原补正额度扣实耗后的余额。[授权 #366](https://github.com/GTX537/CP6.AI-Handoff/pull/366) · [派工 #367](https://github.com/GTX537/CP6.AI-Handoff/pull/367)
 
 2026-11-20T16:33:20.515145+00:00 核销快照。B03 正式导出和原 24 项通过，ERP-BP-01 原 AC 103/124、必需运行修订 3/10，现有五组剩余职责继续有效。按 #365 查重后仅补 WP02-23 的 288.834 秒，该卡累计 3601.043 秒。本卡 2593.725 秒，目标复核 0.235 秒，计划累计 118200.063 秒。下一候选 WP03-12，实际领取依独立派工。[唯一报告](../evidence/WP04-38/DELIVERY.md) · [Main PR](https://github.com/GTX537/CP6/pull/1294)
+
+## WP03-12 线索手工进入、列表和归属协作
+
+WP03-12 DONE。CRM 采用 `738e31d82f7bce33fc88f5acfba9fe959a8b64af`，受验源码 `ad2815f521689609573282bf1175db6f0b24c3c8`。手工建档 62 列图、原键恢复、当前队列及详情、连续归属和 H01 复用均在实际入口复验。冒烟 3/3 后释放 DEV-2，Main 随后核销同一卡。[派工 #369](https://github.com/GTX537/CP6.AI-Handoff/pull/369) · [唯一交付报告](https://github.com/GTX537/CP6.CRM/blob/738e31d82f7bce33fc88f5acfba9fe959a8b64af/docs/development/evidence/WP03-12/DELIVERY.md) · [CRM PR](https://github.com/GTX537/CP6.CRM/pull/248)
+
+CRM-LEAD-01 原 AC 13/60，必需运行修订 1/12，目标保持开放。完整核销 AC-LEAD-003、AC-LEAD-007、AC-LEAD-008、AC-LEAD-009、AC-LEAD-014、AC-LEAD-016、AC-LEAD-017、AC-LEAD-018、AC-LEAD-020、AC-LEAD-021、AC-LEAD-022、AC-LEAD-024、AC-LEAD-028。首响与 SLA、查重与资格、H02、通知与保留及转换后读分别由 WP03-13 至 WP03-16 继续核验。
+
+Main 以完整原断言核销。CRM 逐项报告中下列三条验证了对应运行行为，完整原 AC 保留余项。AC-LEAD-011 实际 H01 已校验原图和既有绑定，变更摘要的隔离告警缺少完整实证。AC-LEAD-013 实际接收方法返回 SOURCE_CONFLICT 且保持原赢家，对应 HTTP 409 仍待完整验证。AC-LEAD-019 实际同 ETag 并发只有一个提交，败方验收允许 409 或 412，原目录固定 412 仍待验证。
+
+按 #368 查重后单次补记 WP04-38 的 456.752 秒，累计 3050.477 秒。结转后计划起点 118656.815 秒。本卡已入账 3105.449 秒，已扣除桌面更新中断 51869.547 秒。目标核对另计 0.116 秒，计划累计 121762.380 秒。Main 正式收尾以采用回执为准。[工时裁决 #368](https://github.com/GTX537/CP6.AI-Handoff/blob/877e55b91c5c7b96f6bf7dcadb1dd168690874a5/handoffs/CP6-DEV-20261012/tasks/WP04-38/replies/20261120T164924Z-coord-acceptance-ack/MESSAGE.md)
+
+阶段 C 当前可开工顺序为 WP03-06（6）、WP03-13（5）、WP03-11（2），实际领取依独立派工。WP02-29 依原裁决继续暂缓。
