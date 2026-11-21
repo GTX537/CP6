@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP03-16 线索通知、保留清除与转换后读取](https://github.com/GTX537/CP6.CRM/blob/9c33181d621bfed58ac93cba818e8a689ec9af8b/docs/development/evidence/WP03-16/DELIVERY.md)（拆卡，余项 WP03-16b），核对时间 `2026-11-21T15:11:25.397935+00:00`。
+- [WP02-30 独立入站与手工 Lead 的维护授权合同](../development/evidence/WP02-30/DELIVERY.md)（DONE），核对时间 `2026-11-21T16:05:51.802084+00:00`。
 
 ### 已关闭目标
 
