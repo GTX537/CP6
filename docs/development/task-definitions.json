@@ -2512,7 +2512,73 @@
         "docs/crm/C03-ERP-INTEGRATION.md",
         "docs/development/evidence/COORD-WP02-09B-A12/DELIVERY.md",
         "docs/development/evidence/COORD-WP02-09B-C03-PROOF/DELIVERY.md"
+      ],
+      "split_children": [
+        "WP03-06b"
+      ],
+      "split_delivered_scope": [
+        "A08/A09 原 H02 请求和 Manifest、独立账户精确目标、权威前驱替代与失效、到期历史和零业务新增。",
+        "A10 只使用批准 Main 落点，目标独立鉴权与零业务写入。A11 当前 RQ 下按原操作键和完整 Main 请求域只读恢复。",
+        "A12 已知原请求 v1 原件、前导零、按流版本、乱序重复、同版隔离和迟到成功保留历史，当前伙伴映射保持。"
       ]
+    },
+    {
+      "id": "WP03-06b",
+      "package_id": "WP03",
+      "title": "旧 C03 斜线伙伴键权威合同与入史余项",
+      "repository": "CRM",
+      "kind": "CODE",
+      "target_ids": [
+        "CRM-ACC-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP03-06"
+      ],
+      "external_prerequisites": [
+        "本卡派工包含斜线键。两仓已采用 ACC-C03-V1 同一规范的 BusinessPartnerKey 字符白名单不接受斜线，实际解码拒绝。含斜线的成功原件需要 Main.C03 Owner 与总控明确合法历史原件或批准兼容合同。",
+        "取得合法提供方原件和确认的合同，再按独立派工领取。"
+      ],
+      "scope": [
+        "确认含斜线 BusinessPartnerKey 的权威历史合同。按 Main.C03 Owner 和总控批准的精确原件与解码版本，验证真实 A12 成功入史、完整字符串、原字节和按请求恢复，维持当前映射隔离。"
+      ],
+      "outputs": [
+        "确认的原件或兼容合同依据、实际 CRM A12 原键和原字节运行证据。"
+      ],
+      "code_paths": [
+        "src/CP6.CRM.Infrastructure/Persistence/Generated/CrmRuntimeRows.g.cs",
+        "src/CP6.CRM.Api/CrmEndpoints.cs"
+      ],
+      "new_paths": [],
+      "acceptance_positive": [
+        "合法的含斜线伙伴键原字符串及原字节通过本卡确认的权威解码，按独立原请求持久入史及原键回读。"
+      ],
+      "acceptance_negative": [
+        "缺来源、非法旧合同或不匹配的证据保持拒绝。原 C03 ResultVersion 不产生当前 LINKED。"
+      ],
+      "exclusive_resources": [
+        "CRM:crm-acc-owner",
+        "file:CRM:src/CP6.CRM.Infrastructure/Persistence/Generated/CrmRuntimeRows.g.cs",
+        "file:CRM:src/CP6.CRM.Api/CrmEndpoints.cs"
+      ],
+      "notes": "原 WP03-06 范围保留。WP03-07 保持原 A13 职责。",
+      "prerequisite_bindings": [],
+      "source_refs": [
+        "docs/development/08-postgresql-baseline.md",
+        "docs/development/assessments/20261011/implementation-assessment.json",
+        "docs/design-handbook/modules/CRM-ACC-01.md",
+        "docs/design-handbook/remediation/02-commercial-physical-contracts.md",
+        "docs/design-handbook/remediation/06-wire-types-and-fixtures.md",
+        "docs/design-handbook/remediation/assets/commercial/commercial-owner-bindings-1.0.0.json",
+        "docs/design-handbook/remediation/assets/commercial/commercial-wire-1.0.0.openapi.json",
+        "docs/design-handbook/remediation/assets/commercial/ord-dem-fields-1.0.0.json",
+        "docs/design-handbook/remediation/assets/core-types/lead-acceptance-supersession.json",
+        "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "docs/crm/C03-ERP-INTEGRATION.md",
+        "docs/development/evidence/COORD-WP02-09B-A12/DELIVERY.md",
+        "docs/development/evidence/COORD-WP02-09B-C03-PROOF/DELIVERY.md"
+      ],
+      "split_parent": "WP03-06"
     },
     {
       "id": "WP03-07",

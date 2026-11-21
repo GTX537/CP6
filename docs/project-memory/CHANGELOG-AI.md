@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP03-06 账户来源证明和旧C03结果历史](https://github.com/GTX537/CP6.CRM/blob/6f8bbfb4b051495bdf45d188f75a904b09cd4969/docs/development/evidence/WP03-06/DELIVERY.md)（拆卡，余项 WP03-06b），核对时间 `2026-11-21T09:20:29.689160+00:00`。
 - [WP03-12 线索手工进入、列表和归属协作](https://github.com/GTX537/CP6.CRM/blob/738e31d82f7bce33fc88f5acfba9fe959a8b64af/docs/development/evidence/WP03-12/DELIVERY.md)（DONE），核对时间 `2026-11-21T08:15:18.181389+00:00`。
 - [WP04-38 正式伙伴导出与未归属原验收补正](../development/evidence/WP04-38/DELIVERY.md)（DONE），核对时间 `2026-11-20T16:33:20.515145+00:00`。
 - [WP02-23 INT-OPS Main原结果目录与受控重放](../development/evidence/WP02-23/DELIVERY.md)（DONE），核对时间 `2026-11-20T15:06:02.514840+00:00`。
