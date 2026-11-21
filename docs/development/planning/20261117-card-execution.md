@@ -484,3 +484,13 @@ CRM-LEAD-01 原 AC 29/60，必需运行修订 2/12，目标保持开放。本卡
 按 #374 查重后单次补记 WP03-13 收尾 266.392 秒，累计 2789.372 秒。结转后计划起点 127225.412 秒。本卡入账 2844.286 秒，目标核对另计 0.098 秒，计划累计 130069.796 秒。Main 正式收尾以采用回执为准。[收尾决定 #374](https://github.com/GTX537/CP6.AI-Handoff/blob/72c09d1120e0b136630fc57cbe3428596c3174a4/handoffs/CP6-DEV-20261012/tasks/WP03-13/replies/20261121T111331Z-coord-acceptance-ack/MESSAGE.md)
 
 阶段 C 依当前图排序为 WP03-06b（6）、WP03-15（3）、WP03-11（2）。WP03-06b 保持等待权威 C03 斜线原件或兼容合同，余量 11879.299 秒。WP03-07 等待其完整 DONE，WP02-29 依既有裁决暂缓。下一张实际领取以独立派工为准。
+
+## WP03-15 线索到账户、联系人及可选商机的原子转换
+
+WP03-15 DONE。依 #377 核实全部前置和拆分余卡完整 DONE。CRM 采用 `2b41b3da8728c8932fdbc2bf12885f88071d81e5`，受验源码 `c1bc85b2358be213a5a70616e807e42a383bda7f`。CRM 合并、冒烟及 DEV-2 释放后，用 Main DEV-1 核销同一卡。[派工 #377](https://github.com/GTX537/CP6.AI-Handoff/pull/377) · [CRM PR](https://github.com/GTX537/CP6.CRM/pull/252) · [唯一交付报告](https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md)
+
+CRM-LEAD-01 原 AC 42/60、必需运行修订 4/12，CRM-ACC-01 原 AC 22/47、必需运行修订 4/10，CRM-CON-01 原 AC 54/75、必需运行修订 2/2，CRM-OPP-01 原 AC 4/54、必需运行修订 2/14。四个目标保持开放。共享 POS 和 NEG 各以其原修订 ID 核销一次。AC-LEAD-055、056 保留 H01 和其他未覆盖命令出口，059 保留其它领域的完整写序与审计图。033 归 WP03-16，011、013、019 沿 #370。AC-OPP-008 保留交接、改客户及历史互动的组合余验。
+
+按 #376 查重后单次补记 WP03-14 收尾 226.204 秒，累计 3070.490 秒。结转后计划起点 130296.000 秒。本卡入账 3841.938 秒，目标核对另计 0.125 秒，计划累计 134138.063 秒。[收尾决定 #376](https://github.com/GTX537/CP6.AI-Handoff/blob/eb60bf5241655b63e43de4abc89661a47c0905dc/handoffs/CP6-DEV-20261012/tasks/WP03-14/replies/20261121T124206Z-coord-acceptance-ack/MESSAGE.md)
+
+阶段 C 当前排序为 WP03-06b（6）、WP03-16（2）、WP03-11（2）。WP03-06b 余量 11879.299 秒，WP03-07 等待其完整 DONE。WP02-29 沿既有裁决暂缓。下一张实际领取以独立派工为准。
