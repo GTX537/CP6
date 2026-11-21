@@ -94,6 +94,12 @@ var inquiryServices = builder.Configuration.GetSection("InquiryServicePrincipals
     ?? new CP6.WebApi.Services.InquiryServicePrincipalOptionsV1();
 var inquiryRegistry = new CP6.WebApi.Services.InquiryServicePrincipalRegistryV1(inquiryServices, crmOidc);
 builder.Services.AddSingleton(inquiryRegistry);
+var leadMaintenance = builder.Configuration.GetSection("LeadMaintenanceContext").Get<CP6.WebApi.Services.LeadMaintenanceOptionsV1>()
+    ?? new CP6.WebApi.Services.LeadMaintenanceOptionsV1();
+if (leadMaintenance.Enabled && (!inquiryServices.Enabled || !inquiryServices.IdentityPublicationEnabled || !inquirySigning.Enabled))
+    throw new InvalidOperationException("LEAD_MAINTENANCE_REQUIRES_CURRENT_SERVICE_IDENTITY_AND_SIGNING");
+builder.Services.AddSingleton(new CP6.WebApi.Services.LeadMaintenanceTrustV1(leadMaintenance));
+builder.Services.AddScoped<CP6.WebApi.Services.LeadMaintenanceContextIssuerV1>();
 var accountServices = builder.Configuration.GetSection("AccountC03ServicePrincipals").Get<CP6.WebApi.Services.InquiryServicePrincipalOptionsV1>()
     ?? new CP6.WebApi.Services.InquiryServicePrincipalOptionsV1();
 var accountRegistry = new CP6.WebApi.Services.AccountC03ServicePrincipalRegistryV1(accountServices, crmOidc, inquiryRegistry);

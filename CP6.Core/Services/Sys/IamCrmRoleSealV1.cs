@@ -65,6 +65,13 @@ internal sealed class IamCrmRoleSealV1
                     jsonb_build_object('siteId',{site}::uuid,'formId',{form}::uuid)))) AS "Value"
             """).SingleAsync(ct);
 
+    // 全局角色变更同样冻结独立维护。仅限询盘站点与表单的变更由原入口处理。
+    internal static Task<bool> BlocksUnscopedIssuanceAsync(CP6Context db, Guid tenant, int[] roles, CancellationToken ct)
+        => db.Database.SqlQuery<bool>($"""
+            SELECT EXISTS(SELECT 1 FROM cp6_authentication_v1.pending_crm_role_seals
+              WHERE tenant_id={tenant} AND role_id=ANY({roles}) AND affected_site_forms IS NULL) AS "Value"
+            """).SingleAsync(ct);
+
     internal static Task InsertAsync(CP6Context db, Guid tenant, int role, Guid actor, string kind, IamCommandV1 command,
         string requestProtected, Guid store, CrmRoleSealRequiredV1 required, CancellationToken ct)
     {

@@ -207,5 +207,49 @@ class CardExecutionTests(unittest.TestCase):
         self.assertTrue(roadmap.validate_card_budgets(policy, tasks, definitions))
 
 
+    def test_authorized_supplements_accept_exact_distinct_sources_and_conserve_pool(self):
+        refs_root = "handoffs/CP6-DEV-20261012/tasks/WP03-16/replies/"
+        refs = {
+            target: {"commit": "c7abf2b30f1f21eeed075769cb573f744c666fae",
+                     "path": refs_root + f"20261121T152956Z-coord-{slug}-authorization/MESSAGE.md",
+                     "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/381"}
+            for target, slug in (("WP02-30", "maintenance-contract"),
+                                 ("WP03-28", "lead-read-h01"), ("WP03-29", "account-a03"))
+        }
+        spent = {"WP03-02": 1590.862, "WP03-05": 1854.370, "WP03-15": 4042.361}
+        tasks = {source: {"relative_size": "M" if source == "WP03-05" else "L",
+                          "state": "DONE", "card_execution": {"effective_seconds": seconds}}
+                 for source, seconds in spent.items()}
+        tasks.update({target: {"relative_size": "M", "state": "PLANNED"} for target in refs})
+        definitions = {source: {} for source in spent}
+        definitions.update({target: {"supplemental_authorization": ref} for target, ref in refs.items()})
+        transfers = [{"source_task_id": source, "target_task_id": target, "seconds": seconds,
+                      "decision": refs[target]}
+                     for source, target, seconds in (("WP03-02", "WP02-30", 14400),
+                                                     ("WP03-15", "WP03-28", 14400),
+                                                     ("WP03-05", "WP03-29", 12545.630),
+                                                     ("WP03-02", "WP03-29", 1854.370))]
+        policy = {"size_budget_hours": {"M": 4, "L": 8}, "base_card_hours": 20,
+                  "budget_baseline_done_task_ids": []}
+        def validate(records):
+            return roadmap.validate_card_budgets(dict(policy, supplemental_budget_transfers=records),
+                                                 tasks, definitions)
+
+        self.assertEqual(validate(transfers), [])
+        self.assertEqual(validate(list(reversed(transfers))), [])
+        self.assertTrue(validate(transfers + [transfers[-1]]))
+        for amount in (0, -1854.370, 1854.369, 1854.371):
+            with self.subTest(amount=amount):
+                self.assertTrue(validate(transfers[:-1] + [dict(transfers[-1], seconds=amount)]))
+        self.assertTrue(validate(transfers[:-1]))
+
+        definitions["WP03-28"]["supplemental_authorization"] = refs["WP03-29"]
+        self.assertTrue(validate([record if record["target_task_id"] != "WP03-28"
+                                  else dict(record, decision=refs["WP03-29"]) for record in transfers]))
+        definitions["WP03-28"]["supplemental_authorization"] = refs["WP03-28"]
+        tasks["WP03-02"]["card_execution"]["effective_seconds"] = 12546
+        self.assertTrue(validate(transfers))
+
+
 if __name__ == '__main__':
     unittest.main()

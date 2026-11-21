@@ -1,0 +1,858 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CP6 Lead 维护授权合同 v1",
+  "description": "联合根定义请求、签名信封、解码后的 Main 与 Owner 原件以及结构化拒绝。可按对应 $defs 分别验证，各原件签名按 CONTRACT.md 验证。",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/request"
+    },
+    {
+      "$ref": "#/$defs/context"
+    },
+    {
+      "$ref": "#/$defs/contextPayload"
+    },
+    {
+      "$ref": "#/$defs/sourceEvidence"
+    },
+    {
+      "$ref": "#/$defs/policyEvidence"
+    },
+    {
+      "$ref": "#/$defs/holdEvidence"
+    },
+    {
+      "$ref": "#/$defs/error"
+    }
+  ],
+  "$defs": {
+    "token": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "uuid": {
+      "type": "string",
+      "format": "uuid",
+      "not": {
+        "const": "00000000-0000-0000-0000-000000000000"
+      }
+    },
+    "utc": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "(Z|\\+00:00)$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "base64url": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "nonce": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{43}$"
+    },
+    "positiveDecimal": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]{0,18}$",
+      "description": "可表示的正 Int64，其十进制原串。"
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenantId",
+        "targetKind",
+        "authority",
+        "objectId"
+      ],
+      "properties": {
+        "tenantId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "targetKind": {
+          "enum": [
+            "INDEPENDENT_INBOUND",
+            "MANUAL_LEAD"
+          ]
+        },
+        "authority": {
+          "$ref": "#/$defs/token"
+        },
+        "objectId": {
+          "$ref": "#/$defs/uuid"
+        }
+      }
+    },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenantId",
+        "targetKind",
+        "authority",
+        "objectId",
+        "sourceMessageId",
+        "purpose",
+        "requestNonce"
+      ],
+      "properties": {
+        "tenantId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "targetKind": {
+          "enum": [
+            "INDEPENDENT_INBOUND",
+            "MANUAL_LEAD"
+          ]
+        },
+        "authority": {
+          "$ref": "#/$defs/token"
+        },
+        "objectId": {
+          "$ref": "#/$defs/uuid"
+        },
+        "sourceMessageId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/token"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "purpose": {
+          "enum": [
+            "privacy:policy",
+            "privacy:hold",
+            "privacy:maintain"
+          ]
+        },
+        "requestNonce": {
+          "$ref": "#/$defs/nonce"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "targetKind": {
+                "const": "INDEPENDENT_INBOUND"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "sourceMessageId": {
+                "$ref": "#/$defs/token"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "targetKind": {
+                "const": "MANUAL_LEAD"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "sourceMessageId": {
+                "const": null
+              }
+            }
+          }
+        }
+      ]
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "issuer",
+        "keyId",
+        "algorithm",
+        "payload",
+        "signature"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "cp6-lead-maintenance-context-v1"
+        },
+        "issuer": {
+          "type": "string",
+          "pattern": "^https://iam\\.[a-z0-9.-]+$",
+          "maxLength": 200
+        },
+        "keyId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]{8,80}$"
+        },
+        "algorithm": {
+          "const": "Ed25519"
+        },
+        "payload": {
+          "$ref": "#/$defs/base64url"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{86}$"
+        }
+      }
+    },
+    "ownerEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component",
+        "keyId",
+        "sha256",
+        "payload",
+        "signature"
+      ],
+      "properties": {
+        "component": {
+          "enum": [
+            "SOURCE",
+            "POLICY",
+            "HOLD"
+          ]
+        },
+        "keyId": {
+          "$ref": "#/$defs/token"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "payload": {
+          "$ref": "#/$defs/base64url"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{86}$"
+        }
+      }
+    },
+    "contextPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "sourceMessageId",
+        "purpose",
+        "requestNonce",
+        "scopeDigest",
+        "decision",
+        "issuedAtUtc",
+        "expiresAtUtc",
+        "grantVersion",
+        "service",
+        "purgeAtUtc",
+        "holdActive",
+        "evidence"
+      ],
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/target"
+        },
+        "sourceMessageId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/token"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "purpose": {
+          "enum": [
+            "privacy:policy",
+            "privacy:hold",
+            "privacy:maintain"
+          ]
+        },
+        "requestNonce": {
+          "$ref": "#/$defs/nonce"
+        },
+        "scopeDigest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "decision": {
+          "const": "ALLOW"
+        },
+        "issuedAtUtc": {
+          "$ref": "#/$defs/utc"
+        },
+        "expiresAtUtc": {
+          "$ref": "#/$defs/utc"
+        },
+        "grantVersion": {
+          "$ref": "#/$defs/token"
+        },
+        "service": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "principalId",
+            "clientId",
+            "authenticationEpoch",
+            "registrationVersion",
+            "registrationRevision",
+            "sourceVersion",
+            "sourceSha256",
+            "identityBundleSha256"
+          ],
+          "properties": {
+            "principalId": {
+              "$ref": "#/$defs/uuid"
+            },
+            "clientId": {
+              "$ref": "#/$defs/token"
+            },
+            "authenticationEpoch": {
+              "$ref": "#/$defs/uuid"
+            },
+            "registrationVersion": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "registrationRevision": {
+              "$ref": "#/$defs/positiveDecimal"
+            },
+            "sourceVersion": {
+              "$ref": "#/$defs/positiveDecimal"
+            },
+            "sourceSha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "identityBundleSha256": {
+              "$ref": "#/$defs/sha256"
+            }
+          }
+        },
+        "purgeAtUtc": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/utc"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "holdActive": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ownerEnvelope"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "target": {
+                "properties": {
+                  "targetKind": {
+                    "const": "INDEPENDENT_INBOUND"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "sourceMessageId": {
+                "$ref": "#/$defs/token"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "target": {
+                "properties": {
+                  "targetKind": {
+                    "const": "MANUAL_LEAD"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "sourceMessageId": {
+                "const": null
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "purpose": {
+                "const": "privacy:policy"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "purgeAtUtc": {
+                "$ref": "#/$defs/utc"
+              },
+              "holdActive": {
+                "const": null
+              },
+              "evidence": {
+                "minItems": 2,
+                "items": false,
+                "prefixItems": [
+                  {
+                    "properties": {
+                      "component": {
+                        "const": "SOURCE"
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "component": {
+                        "const": "POLICY"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "purpose": {
+                "const": "privacy:hold"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "purgeAtUtc": {
+                "const": null
+              },
+              "holdActive": {
+                "type": "boolean"
+              },
+              "evidence": {
+                "minItems": 2,
+                "items": false,
+                "prefixItems": [
+                  {
+                    "properties": {
+                      "component": {
+                        "const": "SOURCE"
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "component": {
+                        "const": "HOLD"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "purpose": {
+                "const": "privacy:maintain"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "purgeAtUtc": {
+                "$ref": "#/$defs/utc"
+              },
+              "holdActive": {
+                "const": false
+              },
+              "evidence": {
+                "minItems": 3,
+                "items": false,
+                "prefixItems": [
+                  {
+                    "properties": {
+                      "component": {
+                        "const": "SOURCE"
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "component": {
+                        "const": "POLICY"
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "component": {
+                        "const": "HOLD"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "sourceEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "providerAuthority",
+        "version",
+        "sequence",
+        "sourceMessageId",
+        "receivedAtUtc",
+        "policyAuthority"
+      ],
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/target"
+        },
+        "providerAuthority": {
+          "$ref": "#/$defs/token"
+        },
+        "version": {
+          "$ref": "#/$defs/token"
+        },
+        "sequence": {
+          "$ref": "#/$defs/positiveDecimal"
+        },
+        "sourceMessageId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/token"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "receivedAtUtc": {
+          "$ref": "#/$defs/utc"
+        },
+        "policyAuthority": {
+          "$ref": "#/$defs/token"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "target": {
+                "properties": {
+                  "targetKind": {
+                    "const": "INDEPENDENT_INBOUND"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "sourceMessageId": {
+                "$ref": "#/$defs/token"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "target": {
+                "properties": {
+                  "targetKind": {
+                    "const": "MANUAL_LEAD"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "sourceMessageId": {
+                "const": null
+              }
+            }
+          }
+        }
+      ]
+    },
+    "policyEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "providerAuthority",
+        "version",
+        "sequence",
+        "sourceSha256",
+        "contentDigest",
+        "payloadClass",
+        "purpose",
+        "effectiveFromUtc",
+        "effectiveToUtc",
+        "retainSeconds",
+        "retainCalendarMonths",
+        "holdAuthority",
+        "keyPolicyVersion"
+      ],
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/target"
+        },
+        "providerAuthority": {
+          "$ref": "#/$defs/token"
+        },
+        "version": {
+          "$ref": "#/$defs/token"
+        },
+        "sequence": {
+          "$ref": "#/$defs/positiveDecimal"
+        },
+        "sourceSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "contentDigest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "payloadClass": {
+          "enum": [
+            "H01_QUARANTINED_RAW",
+            "MANUAL_LEAD_PII"
+          ]
+        },
+        "purpose": {
+          "enum": [
+            "CRM_LEAD_INBOUND_RETENTION",
+            "CRM_LEAD_RETENTION"
+          ]
+        },
+        "effectiveFromUtc": {
+          "$ref": "#/$defs/utc"
+        },
+        "effectiveToUtc": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/utc"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retainSeconds": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retainCalendarMonths": {
+          "enum": [
+            null,
+            24
+          ]
+        },
+        "holdAuthority": {
+          "$ref": "#/$defs/token"
+        },
+        "keyPolicyVersion": {
+          "$ref": "#/$defs/token"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "target": {
+                "properties": {
+                  "targetKind": {
+                    "const": "INDEPENDENT_INBOUND"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payloadClass": {
+                "const": "H01_QUARANTINED_RAW"
+              },
+              "purpose": {
+                "const": "CRM_LEAD_INBOUND_RETENTION"
+              },
+              "retainSeconds": {
+                "type": "integer"
+              },
+              "retainCalendarMonths": {
+                "const": null
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "target": {
+                "properties": {
+                  "targetKind": {
+                    "const": "MANUAL_LEAD"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payloadClass": {
+                "const": "MANUAL_LEAD_PII"
+              },
+              "purpose": {
+                "const": "CRM_LEAD_RETENTION"
+              },
+              "retainSeconds": {
+                "const": null
+              },
+              "retainCalendarMonths": {
+                "const": 24
+              }
+            }
+          }
+        }
+      ]
+    },
+    "holdEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "providerAuthority",
+        "version",
+        "sequence",
+        "sourceSha256",
+        "policySha256",
+        "observedAtUtc",
+        "validUntilUtc",
+        "windows"
+      ],
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/target"
+        },
+        "providerAuthority": {
+          "$ref": "#/$defs/token"
+        },
+        "version": {
+          "$ref": "#/$defs/token"
+        },
+        "sequence": {
+          "$ref": "#/$defs/positiveDecimal"
+        },
+        "sourceSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "policySha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "observedAtUtc": {
+          "$ref": "#/$defs/utc"
+        },
+        "validUntilUtc": {
+          "$ref": "#/$defs/utc"
+        },
+        "windows": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "fromUtc",
+              "toUtc"
+            ],
+            "properties": {
+              "fromUtc": {
+                "$ref": "#/$defs/utc"
+              },
+              "toUtc": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/utc"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "error"
+      ],
+      "properties": {
+        "error": {
+          "enum": [
+            "invalid_request",
+            "unsupported_projection_purpose",
+            "invalid_client",
+            "insufficient_scope",
+            "active_hold",
+            "retention_not_due",
+            "lead_maintenance_authority_unavailable"
+          ]
+        }
+      }
+    }
+  }
+}

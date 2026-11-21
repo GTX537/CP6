@@ -86,16 +86,8 @@ public sealed class InquiryServicePermissionIssuerV1(CP6Context db, ITenantConte
             CrmIdentitySnapshot? serviceSource = null;
             if (registry.IdentityPublicationEnabled)
             {
-                var aggregate = "service-principal:" + registration.Subject.ToString("D");
-                var row = await db.CrmIdentitySnapshots.AsNoTracking().SingleOrDefaultAsync(x => x.TenantId == registration.Tenant && x.AggregateId == aggregate, ct);
-                serviceSource = row;
-                var source = row is null ? null : System.Text.Json.JsonSerializer.Deserialize<ServicePrincipalIdentityData>(row.PayloadJson, IdentityEventContracts.Json);
-                if (row is null || row.IsDeleted || row.EventType != IdentityEventContracts.ServicePrincipalChanged || source is null
-                    || source.Version != row.Version || row.PayloadSha256 != IdentityEventContracts.Hash(Encoding.UTF8.GetBytes(row.PayloadJson))
-                    || source.TenantId != registration.Tenant || source.PrincipalId != registration.Subject || source.ClientId != registration.Client
-                    || source.DepartmentId != registration.Department || !source.Enabled || source.AuthenticationEpoch != registration.AuthenticationEpoch
-                    || source.RegistrationVersion != registration.Version || source.RegistrationRevision != registration.Revision
-                    || source.SourceProfile != "cp6-inquiry-service-v1" || !source.Roles.SequenceEqual(registration.Roles.Select(IdentityEventContracts.RoleSubject)))
+                serviceSource = await ReadPublishedSourceAsync(db, registration, ct);
+                if (serviceSource is null)
                     throw new InquiryPermissionExceptionV1(503, "inquiry_service_identity_not_current");
             }
             if (nonce is not null && (identityRuntime is null || serviceSource is null
@@ -147,6 +139,26 @@ public sealed class InquiryServicePermissionIssuerV1(CP6Context db, ITenantConte
             return new(result ?? throw new InquiryPermissionExceptionV1(503,"inquiry_authority_unavailable"), fence);
         }
         finally { tenant.CurrentTenantId = previousTenant; }
+    }
+
+    // 两类签发都从已发布的当前服务身份核对登记，业务范围由各自入口另行判断。
+    internal static async Task<CrmIdentitySnapshot?> ReadPublishedSourceAsync(CP6Context db,
+        ServicePrincipalRegistryV1.Registration registration, CancellationToken ct)
+    {
+        var aggregate = "service-principal:" + registration.Subject.ToString("D");
+        var row = await db.CrmIdentitySnapshots.AsNoTracking()
+            .SingleOrDefaultAsync(item => item.TenantId == registration.Tenant && item.AggregateId == aggregate, ct);
+        if (row is null || row.IsDeleted || row.EventType != IdentityEventContracts.ServicePrincipalChanged
+            || row.PayloadSha256 != IdentityEventContracts.Hash(Encoding.UTF8.GetBytes(row.PayloadJson))) return null;
+        var source = JsonSerializer.Deserialize<ServicePrincipalIdentityData>(row.PayloadJson, IdentityEventContracts.Json);
+        if (source is null || source.Version != row.Version || source.TenantId != registration.Tenant
+            || source.PrincipalId != registration.Subject || source.ClientId != registration.Client
+            || source.DepartmentId != registration.Department || !source.Enabled || source.AuthenticationEpoch != registration.AuthenticationEpoch
+            || source.RegistrationVersion != registration.Version || source.RegistrationRevision != registration.Revision
+            || source.SourceProfile != "cp6-inquiry-service-v1" || source.Roles is null
+            || !source.Roles.SequenceEqual(registration.Roles.Select(IdentityEventContracts.RoleSubject)))
+            return null;
+        return row;
     }
 
     // Ordinary retention uses the service's department only. Review expiry also writes an eligible row's department.
