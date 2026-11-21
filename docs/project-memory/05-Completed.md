@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP03-13 线索原生活动、首响及SLA双时钟](https://github.com/GTX537/CP6.CRM/blob/4f6fa762ca6b8532714ef5bcdf5a67466db9becf/docs/development/evidence/WP03-13/DELIVERY.md)（DONE），核对时间 `2026-11-21T10:32:59.829053+00:00`。
+- [WP03-14 线索查重观察与资格决定](https://github.com/GTX537/CP6.CRM/blob/a15e4a5503207f1cdba71e78c8590fb7e05e95c3/docs/development/evidence/WP03-14/DELIVERY.md)（DONE），核对时间 `2026-11-21T12:33:25.123572+00:00`。
 
 ### 已关闭目标
 
