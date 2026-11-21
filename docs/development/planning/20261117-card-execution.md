@@ -452,3 +452,15 @@ Main 以完整原断言核销。CRM 逐项报告中下列三条验证了对应�
 按 #368 查重后单次补记 WP04-38 的 456.752 秒，累计 3050.477 秒。结转后计划起点 118656.815 秒。本卡已入账 3105.449 秒，已扣除桌面更新中断 51869.547 秒。目标核对另计 0.116 秒，计划累计 121762.380 秒。Main 正式收尾以采用回执为准。[工时裁决 #368](https://github.com/GTX537/CP6.AI-Handoff/blob/877e55b91c5c7b96f6bf7dcadb1dd168690874a5/handoffs/CP6-DEV-20261012/tasks/WP04-38/replies/20261120T164924Z-coord-acceptance-ack/MESSAGE.md)
 
 阶段 C 当前可开工顺序为 WP03-06（6）、WP03-13（5）、WP03-11（2），实际领取依独立派工。WP02-29 依原裁决继续暂缓。
+
+## WP03-06 账户来源证明和旧 C03 结果历史
+
+WP03-06 已核销实际通过范围，登记余项 WP03-06b。CRM 采用 `6f8bbfb4b051495bdf45d188f75a904b09cd4969`，受验源码 `19bed895f06bafe87357329ee7d5e1bde2fe962c`。H02 证明、Main 批准导航、当前 RQ 原结果及 C03 按请求入史在实际 CRM API、React 和隔离 PostgreSQL 受验。CRM 采用后冒烟 3/3，两侧 C03 各 1 项通过后先释放 DEV-2，Main 随后核销同卡。[派工 #371](https://github.com/GTX537/CP6.AI-Handoff/pull/371) · [唯一交付报告](https://github.com/GTX537/CP6.CRM/blob/6f8bbfb4b051495bdf45d188f75a904b09cd4969/docs/development/evidence/WP03-06/DELIVERY.md)
+
+本卡派工包含斜线键。两仓已采用 ACC-C03-V1 同一规范的 BusinessPartnerKey 字符白名单不接受斜线，实际解码拒绝。含斜线的成功原件需要 Main.C03 Owner 与总控明确合法历史原件或批准兼容合同。 WP03-06b 只承接斜线成功原件和原键验收，额度 12112.780 秒。原 scope 与原 AC 保留，严格前置包括余卡。A13 仍归 WP03-07。
+
+CRM-ACC-01 原 AC 22/47、必需运行修订 2/10，目标开放。ERP-BP-01 的 AC065 与共享 W1-ACC-08 通过，原 AC 104/124、必需运行修订 4/10，原其余四组待验。共享 W1-ACC-08 单 ID 更新，同样适用于 CRM-LEAD-01，其运行修订为 2/12。
+
+按 #370 原回执查重，单次补记 WP03-12 收尾 152.746 秒，累计 3258.195 秒。本卡核销快照 `2026-11-21T09:20:29.689160+00:00`，卡内入账 2287.220 秒，目标核对另计 0.114 秒，计划累计 124202.460 秒。Main 正式收尾以采用后的座席回执为准。[#370 收尾](https://github.com/GTX537/CP6.AI-Handoff/blob/ca5205673a3497b964694edf7e2e65978e5b6596/handoffs/CP6-DEV-20261012/tasks/WP03-12/replies/20261121T082914Z-coord-acceptance-ack/MESSAGE.md)
+
+阶段 C 候选 WP03-06b（6）、WP03-13（5）、WP03-11（2）。WP03-06b 领取前需核实批准合同和独立派工，WP02-29 维持既有暂缓裁决。
