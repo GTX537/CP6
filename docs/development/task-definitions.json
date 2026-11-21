@@ -3302,7 +3302,74 @@
         "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
         "docs/design-handbook/remediation/assets/core-types/lead-acceptance-supersession.json",
         "docs/development/assessments/20261011/catalogs/commercial-finance.json"
+      ],
+      "split_children": [
+        "WP03-16b"
+      ],
+      "split_delivered_scope": [
+        "实际 SLA 观察、原事件摘要与每收件人通知槽。丢回包、撤权、迟到、原身份恢复，业务观察和首响零新增。",
+        "关联询盘和 Lead 保留、hold、末段 PostgreSQL 回滚及原键恢复，实际 H02 封装密钥销毁及清除后当前读取。",
+        "转换后归属独立和当前投影，当前适用 Main PRIV 的精确合同与输出门，归档 CP22 固定注册表原件核验。"
       ]
+    },
+    {
+      "id": "WP03-16b",
+      "package_id": "WP03",
+      "title": "线索独立保留、CP22 安全审计与恢复余项",
+      "repository": "CRM",
+      "kind": "CODE",
+      "target_ids": [
+        "CRM-LEAD-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP03-16"
+      ],
+      "external_prerequisites": [
+        "独立入站及手工 Lead 的可信保留授权、完整 CP22 运行审计和恢复水位仍缺。原书面说明与原件已核验。沿本卡 QUESTION 等待授权及归属裁决。",
+        "按总控裁决和独立派工登记领取。"
+      ],
+      "scope": [
+        "在真实授权下完成独立无 Lead 入站保留与 hold、NEVER_RETAINED、原消息和原擦除键，完成手工 Lead 自身保留清除。",
+        "完成 WP03-16 范围的完整受保护图、CP22 47 表 Record/Confirm、当前授权导出及恢复水位重放，留存恢复及 KMS 边界。",
+        "补齐本卡通知的维护重驱和相关当前输出门，按实际采用的 NUM、FILE、PRIV 适用场景补验。"
+      ],
+      "outputs": [
+        "实际 CRM 授权入口、隔离 PostgreSQL 拒绝/回滚/恢复及完整 CP22 审计和导出原件。"
+      ],
+      "code_paths": [
+        "src/CP6.CRM.Domain/Leads/Lead.cs",
+        "src/CP6.CRM.Api/CrmEndpoints.cs"
+      ],
+      "new_paths": [],
+      "acceptance_positive": [
+        "验证独立无 Lead 与手工 Lead 的法定保留、原键恢复、CP22 完整安全图前后确认及应用清除水位后的恢复。"
+      ],
+      "acceptance_negative": [
+        "无已采用保留/hold 权威时拒绝或按原约保留最小拒绝事实。清除失败、回放与备份恢复均不得复活已清 PII。"
+      ],
+      "exclusive_resources": [
+        "CRM:crm-lead-owner",
+        "file:CRM:src/CP6.CRM.Domain/Leads/Lead.cs",
+        "file:CRM:src/CP6.CRM.Api/CrmEndpoints.cs"
+      ],
+      "notes": "原 WP03-16 断言与并集范围保留。跨卡未归属项等待总控裁决。",
+      "prerequisite_bindings": [],
+      "source_refs": [
+        "docs/development/08-postgresql-baseline.md",
+        "docs/development/assessments/20261011/implementation-assessment.json",
+        "docs/design-handbook/modules/CRM-LEAD-01.md",
+        "docs/design-handbook/remediation/02-commercial-physical-contracts.md",
+        "docs/design-handbook/remediation/06-wire-types-and-fixtures.md",
+        "docs/design-handbook/remediation/assets/commercial/commercial-owner-bindings-1.0.0.json",
+        "docs/design-handbook/remediation/assets/commercial/commercial-wire-1.0.0.openapi.json",
+        "docs/design-handbook/remediation/assets/commercial/ord-dem-fields-1.0.0.json",
+        "docs/design-handbook/remediation/assets/core-types/attachment-compile-validation.json",
+        "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
+        "docs/design-handbook/remediation/assets/core-types/lead-acceptance-supersession.json",
+        "docs/development/assessments/20261011/catalogs/commercial-finance.json"
+      ],
+      "split_parent": "WP03-16"
     },
     {
       "id": "WP03-17",
