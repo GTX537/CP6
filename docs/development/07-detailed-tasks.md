@@ -2,13 +2,13 @@
 
 台账日期：2026-11-21。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 384 项，已交付 80 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 384 项，已交付 81 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)。按[单卡串行计划](planning/20261117-card-execution.md)核对完整前置并选择下一卡。
 
 原 375 卡及其全部出口保留；已登记 8 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。
 
-原号 DONE 72/375；完整 DONE 71/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 1/1，沿用原卡池内划拨。
+原号 DONE 73/375；完整 DONE 72/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 1/1，沿用原卡池内划拨。
 
 ## WP01 现有实现与设计对照
 
@@ -88,7 +88,7 @@
 | [WP03-10 联系人渠道值与用途证据策略](../../docs/development/task-plans/WP03.md#wp03-10) | CRM | 已交付 | WP02-09, WP02-15, WP03-08 | CODE / M | EXEC-WP02-14B |
 | [WP03-11 联系人互动历史与受控导出](../../docs/development/task-plans/WP03.md#wp03-11) | CRM | 待安排 | WP02-09, WP02-14, WP02-15, WP03-09, WP03-10, WP03-17 | CODE / M | 未领取 |
 | [WP03-12 线索手工进入、列表和归属协作](../../docs/development/task-plans/WP03.md#wp03-12) | CRM | 已交付 | S01-08, S02-00, WP02-09 | CODE / M | EXEC-WP02-14B |
-| [WP03-13 线索原生活动、首响及SLA双时钟](../../docs/development/task-plans/WP03.md#wp03-13) | CRM | 待安排 | WP02-09, WP03-01, WP03-12 | CODE / M | 未领取 |
+| [WP03-13 线索原生活动、首响及SLA双时钟](../../docs/development/task-plans/WP03.md#wp03-13) | CRM | 已交付 | WP02-09, WP03-01, WP03-12 | CODE / M | EXEC-WP02-14B |
 | [WP03-14 线索查重观察与资格决定](../../docs/development/task-plans/WP03.md#wp03-14) | CRM | 待安排 | WP02-09, WP03-12, WP03-13 | CODE / M | 未领取 |
 | [WP03-15 Lead到Account Contact及可选商机原子转换](../../docs/development/task-plans/WP03.md#wp03-15) | CRM | 待安排 | WP02-09, WP03-05, WP03-09, WP03-14, WP03-21 | CODE / L | 未领取 |
 | [WP03-16 线索通知、保留清除与转换后读取](../../docs/development/task-plans/WP03.md#wp03-16) | CRM | 待安排 | WP02-09, WP02-15, WP03-04, WP03-15 | CODE / M | 未领取 |
