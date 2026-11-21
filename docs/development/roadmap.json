@@ -4086,8 +4086,21 @@
             "id": "CRM-LEAD-01/9f8fd4357559f8d2/AC-LEAD-057",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LEAD-057",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/e4af6d8f8c6b2d93100cbd3057a12fd524267b4e/docs/development/evidence/WP03-16b/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "6013f8a92a4291f378eeabefb3b04aacbff02d98",
+                "adopted_main_sha": "e4af6d8f8c6b2d93100cbd3057a12fd524267b4e",
+                "command": "实际 CRM、Main TLS 与隔离 PostgreSQL 18.6。定向保留/擦除/恢复 9/9，H01 7/7，React 4/4，通知 4/4，合同与注册表 2/2。确认异常、缺证旧 Lead、同键及物理备份实测。",
+                "environment": "Windows、实际 CRM Kestrel/React、采用的 Main Kestrel TLS 与两套隔离 PostgreSQL。用户、设备、业务数据、时间、签名/KMS 与合同外部服务及故障由隔离夹具提供。",
+                "observed_at": "2026-11-21T20:01:41.1313942Z",
+                "result": "PASS",
+                "scope": "现行 H01 关联询盘、无 Lead 入站和手工 Lead 均复核持久期限及当前 hold。实际锁定保护范围、单 PostgreSQL 工作单元清除，法定命令、审计和 Outbox 为持久父项。锁前期限及旧 hold 拒绝，尾部 Confirm 缺失、源图缺证或冲突全笔回滚。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/1/cases/56"
@@ -4097,8 +4110,21 @@
             "id": "CRM-LEAD-01/9f8fd4357559f8d2/AC-LEAD-058",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LEAD-058",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/e4af6d8f8c6b2d93100cbd3057a12fd524267b4e/docs/development/evidence/WP03-16b/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "6013f8a92a4291f378eeabefb3b04aacbff02d98",
+                "adopted_main_sha": "e4af6d8f8c6b2d93100cbd3057a12fd524267b4e",
+                "command": "实际 CRM、Main TLS 与隔离 PostgreSQL 18.6。定向保留/擦除/恢复 9/9，H01 7/7，React 4/4，通知 4/4，合同与注册表 2/2。确认异常、缺证旧 Lead、同键及物理备份实测。",
+                "environment": "Windows、实际 CRM Kestrel/React、采用的 Main Kestrel TLS 与两套隔离 PostgreSQL。用户、设备、业务数据、时间、签名/KMS 与合同外部服务及故障由隔离夹具提供。",
+                "observed_at": "2026-11-21T20:01:41.1313942Z",
+                "result": "PASS",
+                "scope": "H01 原准入只余最小身份与摘要，实际 H02 预览、参与者、终态、密钥、查重和缓存按真实保护图擦除。仅追加的 Owner 回执密文保留，销毁封装密钥。已证明旧备份在水位、墓碑和 hold 复验后开放，缺证明或水位时持续隔离，当前读取与下载维持隔离边界。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/1/cases/57"
@@ -4108,8 +4134,21 @@
             "id": "CRM-LEAD-01/9f8fd4357559f8d2/AC-LEAD-059",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LEAD-059",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/e4af6d8f8c6b2d93100cbd3057a12fd524267b4e/docs/development/evidence/WP03-16b/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "6013f8a92a4291f378eeabefb3b04aacbff02d98",
+                "adopted_main_sha": "e4af6d8f8c6b2d93100cbd3057a12fd524267b4e",
+                "command": "实际 CRM、Main TLS 与隔离 PostgreSQL 18.6。定向保留/擦除/恢复 9/9，H01 7/7，React 4/4，通知 4/4，合同与注册表 2/2。确认异常、缺证旧 Lead、同键及物理备份实测。",
+                "environment": "Windows、实际 CRM Kestrel/React、采用的 Main Kestrel TLS 与两套隔离 PostgreSQL。用户、设备、业务数据、时间、签名/KMS 与合同外部服务及故障由隔离夹具提供。",
+                "observed_at": "2026-11-21T20:01:41.1313942Z",
+                "result": "PASS",
+                "scope": "按父卡证据和本轮受影响回归覆盖 H01、H02、建档归属、SLA、查重、资格、通知和保留。验证稳定槽、当前授权、资源锁与 CAS、领域/编码/存储、持久审计、Outbox 和原回执写序。手工 Lead 与独立入站的新清除必须完成同一事务内 Record/Confirm，竞争只产生一份终态，失败无提交效果。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/1/cases/58"
@@ -4188,20 +4227,28 @@
           "observed_at": "2026-11-21T15:06:51.0817593+00:00",
           "result": "PASS",
           "scope": "WP03-16 已受验范围，CRM-LEAD-01 原 AC 45/60、必需运行修订 6/12，保持开放。"
+        },
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/e4af6d8f8c6b2d93100cbd3057a12fd524267b4e/docs/development/evidence/WP03-16b/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "6013f8a92a4291f378eeabefb3b04aacbff02d98",
+          "adopted_main_sha": "e4af6d8f8c6b2d93100cbd3057a12fd524267b4e",
+          "command": "实际 CRM、Main TLS 与隔离 PostgreSQL 18.6。定向保留/擦除/恢复 9/9，H01 7/7，React 4/4，通知 4/4，合同与注册表 2/2。确认异常、缺证旧 Lead、同键及物理备份实测。",
+          "environment": "Windows、实际 CRM Kestrel/React、采用的 Main Kestrel TLS 与两套隔离 PostgreSQL。用户、设备、业务数据、时间、签名/KMS 与合同外部服务及故障由隔离夹具提供。",
+          "observed_at": "2026-11-21T20:01:41.1313942Z",
+          "result": "PASS",
+          "scope": "WP03-16b 完整受验范围。CRM-LEAD-01 原 AC 48/60、必需运行修订 6/12，保持开放。"
         }
       ],
       "delivery_evidence": null,
       "completion_audit": {
-        "reviewed_at": "2026-11-21T16:05:51.802071+00:00",
-        "original_pass": 45,
+        "reviewed_at": "2026-11-21T20:04:49.709045+00:00",
+        "original_pass": 48,
         "runtime_pass": 6,
-        "review_effective_seconds": 0.055,
-        "latest_review_effective_seconds": 0.001,
+        "review_effective_seconds": 0.117,
+        "latest_review_effective_seconds": 0.062,
         "gaps": [
-          {
-            "owner_task_id": "WP03-16b",
-            "gap": "以 WP02-30 的真实 Main 合同在 CRM 完整事务执行独立入站与手工 Lead 保留、hold、清除、重驱、CP22 完整 v4、当前导出与恢复。承接 AC-LEAD-057 至 059 本域余项。"
-          },
           {
             "owner_task_id": "WP03-07",
             "gap": "A13 实际接收、当前资格和范围裁决竞争，W1-ACC-03 至 06。"
@@ -175383,6 +175430,11 @@
       "at": "2026-11-21T16:05:51.802084+00:00",
       "evidence": "docs/development/evidence/WP02-30/DELIVERY.md",
       "change": "WP02-30 核销 Main 维护合同。#381 登记 WP02-30、WP03-28、WP03-29 并按原池划拨，CRM-LEAD-01 原 AC 45/60、必需运行修订 6/12，保持开放。#380 单次给 WP03-16 补记 250.367 秒，父卡 3775.198 秒，WP03-16b 额度 10624.802 秒。"
+    },
+    {
+      "at": "2026-11-21T20:04:49.709045+00:00",
+      "evidence": "docs/development/planning/20261117-card-execution.md",
+      "change": "WP03-16b 完整 DONE，CRM 采用后冒烟并释放 DEV-2。CRM-LEAD-01 原 AC 48/60、必需运行修订 6/12，保持开放。 按 #383 对 WP02-30 单次补记 290.545 秒至 1898.211 秒。"
     }
   ],
   "implementation_assessment": {
@@ -199289,7 +199341,7 @@
         "official_started_at": "2026-11-21T15:39:04.135126+00:00",
         "technical_verified_at": "2026-11-21T16:04:34.237773+00:00",
         "verified_at": "2026-11-21T16:05:51.802084+00:00",
-        "effective_seconds": 1607.666,
+        "effective_seconds": 1898.211,
         "size": "M",
         "budget_seconds": 14400,
         "mandatory_split_seconds": 21600,
@@ -199303,7 +199355,15 @@
         "new_product_execution": true,
         "preceding_integration_seconds": 250.367,
         "target_review_started_at": "2026-11-21T16:05:51.801019+00:00",
-        "target_review_seconds": 0.001
+        "target_review_seconds": 0.001,
+        "official_finish": "2026-11-21T16:10:42.346599Z",
+        "post_candidate_finalization_seconds": 290.545,
+        "finalization_decision_ref": {
+          "commit": "d4a4776ab6a06837231119b765e97b7f18004b45",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-30/replies/20261121T165042Z-coord-acceptance-ack/MESSAGE.md",
+          "receipt_commit": "07836be948d6e3b69e97ff32f9803e74f5c0a28b",
+          "receipt_path": "handoffs/CP6-DEV-20261012/tasks/WP02-30/messages/20261121T161042Z-exec-wp02-14b-delivery/MESSAGE.md"
+        }
       }
     },
     {
@@ -204361,24 +204421,101 @@
         "file:CRM:src/CP6.CRM.Api/CrmEndpoints.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP03.md",
       "card_anchor": "wp03-16b",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "EXEC-WP02-14B",
+        "repository": "CRM",
+        "owning_task_repository": "CRM",
+        "branch": "codex/wp03-16b",
+        "worktree": "D:/CP6-worktrees/dev-2",
+        "claimed_at": "2026-11-21T16:58:44.175095+00:00",
+        "baseline_sha": "9c33181d621bfed58ac93cba818e8a689ec9af8b",
+        "entry_evidence": "docs/development/planning/20261117-card-execution.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "delivery_report": "https://github.com/GTX537/CP6.CRM/blob/e4af6d8f8c6b2d93100cbd3057a12fd524267b4e/docs/development/evidence/WP03-16b/DELIVERY.md",
+        "dispatch_scope": "独立入站、手工 Lead、实际 CP22 全图、授权导出与旧备份隔离恢复、通知维护重驱。",
+        "actual_start_ref": {
+          "commit": "791f3ccf369c4d7e6f50b5e80c1360ae9d806a2d",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-16b/messages/20261121T165844Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-21T16:58:44.175095+00:00"
+        },
+        "dispatch_decision_ref": {
+          "commit": "a7f1036007950e777605174c7e7c6ab62a74d013",
+          "original_commit": "a811dc3fadddbf1bf788c5ed84087c4124eed2bb",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261121T165331Z-exec-wp02-14b-wp03-16b/MESSAGE.md"
+        },
+        "resume_decision_ref": {
+          "commit": "c50d4cb0b37ab69d868addc65580760d2a8f4cdd",
+          "original_commit": "ca78d6dec46d896ae89e65f0daecdab405bd2c66",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-16b/replies/20261121T190459Z-coord-cp22-history-decision/MESSAGE.md"
+        }
+      },
       "blockers": [],
       "entry_conditions": [
         "WP03-16 父卡已核销，先回读已采用的 WP02-30 Main 合同、签名与正反样例，再按独立派工验证 CRM 当前事务消费。"
       ],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/e4af6d8f8c6b2d93100cbd3057a12fd524267b4e/docs/development/evidence/WP03-16b/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "6013f8a92a4291f378eeabefb3b04aacbff02d98",
+          "adopted_main_sha": "e4af6d8f8c6b2d93100cbd3057a12fd524267b4e",
+          "command": "实际 CRM、Main TLS 与隔离 PostgreSQL 18.6。定向保留/擦除/恢复 9/9，H01 7/7，React 4/4，通知 4/4，合同与注册表 2/2。确认异常、缺证旧 Lead、同键及物理备份实测。",
+          "environment": "Windows、实际 CRM Kestrel/React、采用的 Main Kestrel TLS 与两套隔离 PostgreSQL。用户、设备、业务数据、时间、签名/KMS 与合同外部服务及故障由隔离夹具提供。",
+          "observed_at": "2026-11-21T20:01:41.1313942Z",
+          "result": "PASS",
+          "scope": "本卡 AC-LEAD-057 至 059 完整验收，实际与模拟边界见唯一报告。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/planning/20261117-card-execution.md",
+        "report_url": "https://github.com/GTX537/CP6.CRM/blob/e4af6d8f8c6b2d93100cbd3057a12fd524267b4e/docs/development/evidence/WP03-16b/DELIVERY.md",
+        "source_sha": "6013f8a92a4291f378eeabefb3b04aacbff02d98",
+        "remote_main_sha": "e4af6d8f8c6b2d93100cbd3057a12fd524267b4e",
+        "pr_url": "https://github.com/GTX537/CP6.CRM/pull/254",
+        "reviewed_crm_head": "a8d8775675bace7ea94a5e5235ca7bf8eeb04057",
+        "main_provider_commit": "e247ea5965c9dae2ea66e226c5280ddcccfee49e",
+        "scope": "CRM 产品先采用、合并后冒烟及释放，Main 随后核销同卡。"
+      },
       "split_parent": "WP03-16",
       "remaining_scope": [
         "在真实授权下完成独立无 Lead 入站保留与 hold、NEVER_RETAINED、原消息和原擦除键，完成手工 Lead 自身保留清除。",
         "完成 WP03-16 范围的完整受保护图、CP22 47 表 Record/Confirm、当前授权导出及恢复水位重放，留存恢复及 KMS 边界。",
         "补齐本卡通知的维护重驱和相关当前输出门，按实际采用的 NUM、FILE、PRIV 适用场景补验。"
       ],
-      "card_budget_seconds": 10624.802
+      "card_budget_seconds": 10624.802,
+      "card_execution": {
+        "result": "DONE",
+        "report": "https://github.com/GTX537/CP6.CRM/blob/e4af6d8f8c6b2d93100cbd3057a12fd524267b4e/docs/development/evidence/WP03-16b/DELIVERY.md",
+        "started_at": "2026-11-21T16:58:44.175095+00:00",
+        "official_started_at": "2026-11-21T16:58:44.175095+00:00",
+        "technical_verified_at": "2026-11-21T20:01:41.1313942Z",
+        "verified_at": "2026-11-21T20:04:49.709045+00:00",
+        "effective_seconds": 7931.7,
+        "size": "M",
+        "budget_seconds": 10624.802,
+        "mandatory_split_seconds": 15937.203,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-30",
+          "WP03-16"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 290.545,
+        "target_review_started_at": "2026-11-21T20:04:49.647108+00:00",
+        "target_review_seconds": 0.062,
+        "crm_seat_finished_at": "2026-11-21T20:04:15.755439+00:00",
+        "checkpoint_verified_at": "2026-11-21T18:15:37.9884672+00:00",
+        "resumed_at": "2026-11-21T19:09:31.7602264+00:00",
+        "prior_segment_effective_seconds": 4613.813,
+        "excluded_wait_seconds": 3233.772
+      }
     },
     {
       "id": "WP03-17",
@@ -300947,7 +301084,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 139721.405,
+      "effective_seconds": 147943.712,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -300994,7 +301131,8 @@
         "WP03-14",
         "WP03-15",
         "WP03-16",
-        "WP02-30"
+        "WP02-30",
+        "WP03-16b"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -301242,17 +301380,13 @@
       },
       "next_card_selection": {
         "rule": "阶段 C 展开全部拆分严格前置；全图最长下游边数降序，同长保留用户阶段数组的顺序。",
-        "baseline_sha": "482a70a55ff4dacc4e44c6b8767f2e48bbc37f41",
-        "after_card": "WP02-30",
+        "baseline_sha": "e247ea5965c9dae2ea66e226c5280ddcccfee49e",
+        "after_card": "WP03-16b",
         "selected": "WP03-06b",
         "candidates": [
           {
             "task": "WP03-06b",
             "longest_downstream_edges": 6
-          },
-          {
-            "task": "WP03-16b",
-            "longest_downstream_edges": 2
           },
           {
             "task": "WP03-11",
@@ -301335,7 +301469,7 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 3987.458,
+      "target_review_effective_seconds": 3987.52,
       "last_checkpoint_counts": {
         "original_done": 58,
         "fully_done": 58,

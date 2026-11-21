@@ -514,3 +514,13 @@ CRM-LEAD-01 原 AC 45/60、必需运行修订 6/12，保持开放。WP03-16b 依
 三张 M 卡的 43200 秒取自已完成卡的实际节余，原卡池及计划上限守恒。#380 正式收尾单次补记 WP03-16 的 250.367 秒至 3775.198 秒，WP03-16b 额度为 10624.802 秒，150% 为 15937.203 秒。核销快照 `2026-11-21T16:05:51.802084+00:00`，本卡 1607.666 秒，目标归属核对 0.001 秒，计划累计 139721.405 秒。[收尾 #380](https://github.com/GTX537/CP6.AI-Handoff/pull/380)
 
 阶段 C 候选 WP03-06b（6）、WP03-16b（2）、WP03-11（2）、WP03-28（2）、WP03-29（2）。WP03-06b 的 C03 原件裁决和 WP02-29 的暂缓裁决继续有效。下一张卡须独立派工。
+
+## WP03-16b 线索独立保留、CP22 安全审计与恢复余项
+
+WP03-16b 完整 DONE。CRM 采用 e4af6d8f8c6b2d93100cbd3057a12fd524267b4e，受验源码 6013f8a92a4291f378eeabefb3b04aacbff02d98。手工 Lead 的非空 47 表安全前后像完成 Record/Confirm。完整旧备份重放水位后开放读取，缺证旧备份持续隔离。合并后冒烟 3/3 并释放 DEV-2 后 Main 核销同卡。[CRM 产品 PR](https://github.com/GTX537/CP6.CRM/pull/254) · [唯一交付报告](https://github.com/GTX537/CP6.CRM/blob/e4af6d8f8c6b2d93100cbd3057a12fd524267b4e/docs/development/evidence/WP03-16b/DELIVERY.md) · [#385 裁定](https://github.com/GTX537/CP6.AI-Handoff/blob/c50d4cb0b37ab69d868addc65580760d2a8f4cdd/handoffs/CP6-DEV-20261012/tasks/WP03-16b/replies/20261121T190459Z-coord-cp22-history-decision/MESSAGE.md)
+
+CRM-LEAD-01 原 AC 48/60、必需运行修订 6/12，保持开放。 新增通过 AC-LEAD-057、058、059。其余 12 项原 AC 和 6 项必需运行修订沿 WP03-07、WP14-02、WP03-28、WP03-29 的已登记职责完成。
+
+沿用 10624.802 秒额度及 15937.203 秒升级点。保存候选前 4613.813 秒计入，等待裁定与中断扣除 3233.772 秒。按 #383 和原交付去重后单次补记 WP02-30 收尾 290.545 秒至 1898.211 秒。核销快照为 2026-11-21T20:04:49.709045+00:00，本卡入账 7931.700 秒，目标核对另计 0.062 秒，计划累计 147943.712 秒。[#383 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/d4a4776ab6a06837231119b765e97b7f18004b45/handoffs/CP6-DEV-20261012/tasks/WP02-30/replies/20261121T165042Z-coord-acceptance-ack/MESSAGE.md)
+
+阶段 C 候选为 WP03-06b（6）、WP03-11（2）、WP03-28（2）、WP03-29（2）。WP03-06b 的权威原件裁定及 WP02-29 的暂缓裁定继续有效。实际领取须有独立派工。
