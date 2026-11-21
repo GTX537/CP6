@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP02-30 独立入站与手工 Lead 的维护授权合同](../development/evidence/WP02-30/DELIVERY.md)（DONE），核对时间 `2026-11-21T16:05:51.802084+00:00`。
+- [WP03-16b 线索独立保留、CP22 安全审计与恢复余项](https://github.com/GTX537/CP6.CRM/blob/e4af6d8f8c6b2d93100cbd3057a12fd524267b4e/docs/development/evidence/WP03-16b/DELIVERY.md)（DONE），核对时间 `2026-11-21T20:04:49.709045+00:00`。
 
 ### 已关闭目标
 
