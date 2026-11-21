@@ -2047,6 +2047,101 @@
       ]
     },
     {
+      "id": "WP02-30",
+      "package_id": "WP02",
+      "title": "独立入站与手工 Lead 的维护授权合同",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "CRM-LEAD-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP02-05",
+        "WP02-10",
+        "WP02-15"
+      ],
+      "external_prerequisites": [
+        "#381 授权已采用。正式领取以独立派工为准。"
+      ],
+      "scope": [
+        "核实现用服务身份与持久 IAM，验证无 Lead 入站的租户、SourceAuthority、原消息和 InboundId，以及手工 Lead 的租户、Lead 权威和 LeadId。",
+        "为取政策、取 hold 和到期维护签发绑定原用途、当前授予、确切策略和 hold 的合同证据。保留询盘 SiteId、FormId v1/v2 行为。",
+        "向 WP03-16b 交回可核签的版本、摘要和正反例。"
+      ],
+      "outputs": [
+        "Main 维护合同、前向 PostgreSQL 迁移、实际 TLS 正反样例和唯一交付报告。"
+      ],
+      "code_paths": [
+        "CP6.WebApi/Controllers/Sys/CrmOidcController.cs",
+        "CP6.WebApi/Services/InquiryServicePermissionIssuerV1.cs",
+        "CP6.WebApi/Services/InquiryServicePrincipalRegistryV1.cs",
+        "CP6.WebApi/Services/InquiryRetentionPermissionSourceV1.cs",
+        "CP6.Core/Services/Sys/IamCrmRoleSealV1.cs",
+        "CP6.WebApi/Middleware/CsrfMiddleware.cs",
+        "CP6.WebApi/Program.cs"
+      ],
+      "new_paths": [
+        "CP6.WebApi/Controllers/Sys/CrmOidcController.LeadMaintenance.cs",
+        "CP6.WebApi/Services/LeadMaintenanceContractV1.cs",
+        "CP6.WebApi/Services/LeadMaintenanceContextIssuerV1.cs",
+        "CP6.Persistence.PostgreSql/Migrations/Core/20261121154000_LeadMaintenanceAuthorityV1.cs",
+        "contracts/lead-maintenance/v1",
+        "CP6.Tests/Platform/IamLeadMaintenanceContextHttpTests.cs",
+        "docs/development/evidence/WP02-30/DELIVERY.md"
+      ],
+      "acceptance_positive": [
+        "两类对象通过实际 Main 和隔离 PostgreSQL 取得当前凭据，验证冻结入站政策、手工 Lead期限、hold 及原范围回查。",
+        "丢回包重试和新宿主仍按原身份办理，每次复核当前权限。实际询盘 TLS 保留 v1、导出 v2 均通过。"
+      ],
+      "acceptance_negative": [
+        "错租户、对象、认证来源或用途、撤权、失效、过期、来源不可证、活动 hold 均拒绝相应用途。",
+        "不完整或冲突证据失败关闭。CRM 业务擦除、NEVER_RETAINED、审计、导出与恢复留给 WP03-16b，原 AC 不核销。"
+      ],
+      "exclusive_resources": [
+        "Main:iam-service-principals",
+        "Main:privacy-orchestration",
+        "file:Main:CP6.WebApi/Controllers/Sys/CrmOidcController.cs",
+        "file:Main:CP6.WebApi/Services/InquiryServicePermissionIssuerV1.cs",
+        "file:Main:CP6.WebApi/Services/InquiryServicePrincipalRegistryV1.cs",
+        "file:Main:CP6.WebApi/Services/InquiryRetentionPermissionSourceV1.cs",
+        "file:Main:CP6.Core/Services/Sys/IamCrmRoleSealV1.cs",
+        "file:Main:CP6.WebApi/Middleware/CsrfMiddleware.cs",
+        "file:Main:CP6.WebApi/Program.cs",
+        "file:Main:CP6.WebApi/Controllers/Sys/CrmOidcController.LeadMaintenance.cs",
+        "file:Main:CP6.WebApi/Services/LeadMaintenanceContractV1.cs",
+        "file:Main:CP6.WebApi/Services/LeadMaintenanceContextIssuerV1.cs",
+        "file:Main:CP6.Persistence.PostgreSql/Migrations/Core/20261121154000_LeadMaintenanceAuthorityV1.cs",
+        "file:Main:contracts/lead-maintenance/v1"
+      ],
+      "notes": "本卡为 Main 基础能力。预算 14400 秒从 WP03-02 节余划拨，21600 秒强制拆卡。",
+      "prerequisite_bindings": [
+        {
+          "requirement": "直接前置及完整余卡已采用",
+          "task_ids": [
+            "WP02-05",
+            "WP02-10",
+            "WP02-15"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "实际主线采用已回读，全部直接前置及拆分余项完整 DONE。"
+        }
+      ],
+      "source_refs": [
+        "docs/design-handbook/modules/CRM-LEAD-01.md",
+        "docs/design-handbook/modules/SYS-PRIV-01.md",
+        "docs/development/evidence/WP02-15/DELIVERY.md",
+        "docs/development/planning/20261117-card-execution.md",
+        "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "docs/design-handbook/remediation/08-acceptance-catalog.json"
+      ],
+      "supplemental_authorization": {
+        "commit": "c7abf2b30f1f21eeed075769cb573f744c666fae",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP03-16/replies/20261121T152956Z-coord-maintenance-contract-authorization/MESSAGE.md",
+        "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/381"
+      }
+    },
+    {
       "id": "WP03-01",
       "package_id": "WP03",
       "title": "公开表单Bundle与配置生效",
@@ -3323,10 +3418,11 @@
       ],
       "relative_size": "M",
       "dependencies": [
-        "WP03-16"
+        "WP03-16",
+        "WP02-30"
       ],
       "external_prerequisites": [
-        "独立入站及手工 Lead 的可信保留授权、完整 CP22 运行审计和恢复水位仍缺。原书面说明与原件已核验。沿本卡 QUESTION 等待授权及归属裁决。",
+        "WP03-16 父卡已核销，先回读已采用的 WP02-30 Main 合同、签名与正反样例，再按独立派工验证 CRM 当前事务消费。",
         "按总控裁决和独立派工登记领取。"
       ],
       "scope": [
@@ -3353,8 +3449,17 @@
         "file:CRM:src/CP6.CRM.Domain/Leads/Lead.cs",
         "file:CRM:src/CP6.CRM.Api/CrmEndpoints.cs"
       ],
-      "notes": "原 WP03-16 断言与并集范围保留。跨卡未归属项等待总控裁决。",
-      "prerequisite_bindings": [],
+      "notes": "原 WP03-16 断言与拆分并集保留。#381 已分派旧缺口，当前卡按实际 Main 合同及 CRM 完整事务验收。",
+      "prerequisite_bindings": [
+        {
+          "requirement": "独立入站与手工 Lead 可信维护合同",
+          "task_ids": [
+            "WP02-30"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "WP02-30 及其如有的拆分余卡完整 DONE，回读 Main 采用提交、签名合同版本及精确摘要。"
+        }
+      ],
       "source_refs": [
         "docs/development/08-postgresql-baseline.md",
         "docs/development/assessments/20261011/implementation-assessment.json",
@@ -3367,7 +3472,8 @@
         "docs/design-handbook/remediation/assets/core-types/attachment-compile-validation.json",
         "docs/design-handbook/remediation/assets/core-types/bounded-patches.json",
         "docs/design-handbook/remediation/assets/core-types/lead-acceptance-supersession.json",
-        "docs/development/assessments/20261011/catalogs/commercial-finance.json"
+        "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "docs/development/evidence/WP02-30/DELIVERY.md"
       ],
       "split_parent": "WP03-16"
     },
@@ -4251,6 +4357,135 @@
         "docs/design-handbook/remediation/assets/shared-consumers/validation.json",
         "docs/development/assessments/20261011/catalogs/commercial-finance.json"
       ]
+    },
+    {
+      "id": "WP03-28",
+      "package_id": "WP03",
+      "title": "Lead 当前读取与 H01 原结果补正",
+      "repository": "CRM",
+      "kind": "CODE",
+      "target_ids": [
+        "CRM-LEAD-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP03-12",
+        "WP03-15"
+      ],
+      "external_prerequisites": [
+        "#381 授权已采用。正式领取以独立派工为准。"
+      ],
+      "scope": [
+        "承接 #381 指定的 11 项原验收 AC-LEAD-001、AC-LEAD-002、AC-LEAD-004、AC-LEAD-005、AC-LEAD-006、AC-LEAD-010、AC-LEAD-011、AC-LEAD-012、AC-LEAD-013、AC-LEAD-055、AC-LEAD-056。",
+        "验证固定视野、当前租户/对象/字段授权、游标与 ETag、相关子头及撤权后的预览和缓存。",
+        "回读 WP03-16 与 H02 既有证据，走实际 H01 原字节、62 列、首次赢家及原结果补正。"
+      ],
+      "outputs": [
+        "11 项逐条证据和所需 CRM 实现或实际采用，保存请求原件、原结果、安全报警和效果增量。"
+      ],
+      "code_paths": [
+        "src/CP6.CRM.Domain/Leads/Lead.cs",
+        "src/CP6.CRM.Api/CrmEndpoints.cs"
+      ],
+      "new_paths": [],
+      "acceptance_positive": [
+        "并发新增或更正时固定视野继续翻页。同一授权快照保护详情和全部字段，包括 null。",
+        "H01 真入口使用原字节及首次赢家。冷同键返回原 HTTP 结果，零新增。"
+      ],
+      "acceptance_negative": [
+        "同原来源改正文返回原 HTTP 409。失权、原件损坏或缺失拒绝或受限，坏消息隔离并告警。"
+      ],
+      "exclusive_resources": [
+        "CRM:crm-lead-owner",
+        "CRM:crm-lead-inbound-h01",
+        "file:CRM:src/CP6.CRM.Domain/Leads/Lead.cs",
+        "file:CRM:src/CP6.CRM.Api/CrmEndpoints.cs"
+      ],
+      "notes": "预算 14400 秒从 WP03-15 节余划拨，21600 秒强制拆卡。沿原 QUESTION 保留历史。",
+      "prerequisite_bindings": [
+        {
+          "requirement": "直接前置及完整余卡已采用",
+          "task_ids": [
+            "WP03-12",
+            "WP03-15"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "实际主线采用已回读，全部直接前置及拆分余项完整 DONE。"
+        }
+      ],
+      "source_refs": [
+        "docs/design-handbook/modules/CRM-LEAD-01.md",
+        "docs/development/planning/20261117-card-execution.md",
+        "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "docs/design-handbook/remediation/08-acceptance-catalog.json"
+      ],
+      "supplemental_authorization": {
+        "commit": "c7abf2b30f1f21eeed075769cb573f744c666fae",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP03-16/replies/20261121T152956Z-coord-lead-read-h01-authorization/MESSAGE.md",
+        "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/381"
+      }
+    },
+    {
+      "id": "WP03-29",
+      "package_id": "WP03",
+      "title": "Account A03 的原回执权限与单次配额",
+      "repository": "CRM",
+      "kind": "CODE",
+      "target_ids": [
+        "CRM-ACC-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP03-05"
+      ],
+      "external_prerequisites": [
+        "#381 授权已采用。正式领取以独立派工为准。"
+      ],
+      "scope": [
+        "承接共享修订 DR-COM-ACC-PHYSICAL-WIRE::W1-ACC-01，先核对 WP03-05 现有真实采用证据。",
+        "A03 实际建档后丢回包，将 Account 停用、撤销新写权并保留 RQ。当前读权按原键取回原账户和首次操作。",
+        "保留原子命令、出错及未知恢复边界，核对 Account、原命令与真实配额占用各一次。"
+      ],
+      "outputs": [
+        "共享运行修订的一份真实证据，供 CRM-ACC-01、CRM-LEAD-01、ERP-BP-01 引用同一原 ID。"
+      ],
+      "code_paths": [
+        "src/CP6.CRM.Api/CrmEndpoints.cs"
+      ],
+      "new_paths": [],
+      "acceptance_positive": [
+        "丢回包、账户失活和新写权撤销后，现有 RQ 仍能恢复原回执且无新增额度。"
+      ],
+      "acceptance_negative": [
+        "撤 RQ、跨主体或跨租户拒绝或不可见，额外扣减和新增对象为零。W1-ACC-03 至 07 沿其既有责任。"
+      ],
+      "exclusive_resources": [
+        "CRM:crm-account-owner",
+        "CRM:account-creation-quota",
+        "file:CRM:src/CP6.CRM.Api/CrmEndpoints.cs"
+      ],
+      "notes": "WP03-05 拨出 12545.630 秒，WP03-02 拨出 1854.370 秒，合计 14400 秒。21600 秒强制拆卡。",
+      "prerequisite_bindings": [
+        {
+          "requirement": "直接前置及完整余卡已采用",
+          "task_ids": [
+            "WP03-05"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "实际主线采用已回读，全部直接前置及拆分余项完整 DONE。"
+        }
+      ],
+      "source_refs": [
+        "docs/design-handbook/modules/CRM-ACC-01.md",
+        "docs/development/planning/20261117-card-execution.md",
+        "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "docs/design-handbook/remediation/08-acceptance-catalog.json"
+      ],
+      "supplemental_authorization": {
+        "commit": "c7abf2b30f1f21eeed075769cb573f744c666fae",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP03-16/replies/20261121T152956Z-coord-account-a03-authorization/MESSAGE.md",
+        "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/381"
+      }
     },
     {
       "id": "WP04-01",
@@ -29356,6 +29591,8 @@
         "WP03-25",
         "WP03-26",
         "WP03-27",
+        "WP03-28",
+        "WP03-29",
         "WP04-01",
         "WP04-02",
         "WP04-03",

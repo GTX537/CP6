@@ -2,13 +2,13 @@
 
 台账日期：2026-11-21。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 385 项，已交付 84 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 388 项，已交付 85 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)。按[单卡串行计划](planning/20261117-card-execution.md)核对完整前置并选择下一卡。
 
 原 375 卡及其全部出口保留；已登记 9 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。
 
-原号 DONE 76/375；完整 DONE 74/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 1/1，沿用原卡池内划拨。
+原号 DONE 76/375；完整 DONE 74/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 2/4，沿用原卡池内划拨。
 
 ## WP01 现有实现与设计对照
 
@@ -70,6 +70,7 @@
 | [WP02-27 Platform包能力矩阵与不可变信任验证](../../docs/development/task-plans/WP02.md#wp02-27) | Platform | 已交付 | S01-09, WP02-01 | CODE / M | B / WP02-27（沿用原S01-10对话） |
 | [WP02-28 Main宿主实际加载身份与兼容回退验证](../../docs/development/task-plans/WP02.md#wp02-28) | Main | 已交付 | WP02-25, WP02-27 | CODE / M | FORWARD-COMPAT / W351-01 |
 | [WP02-29 CRM宿主平台合同与观测包采用](../../docs/development/task-plans/WP02.md#wp02-29) | CRM | 待安排 | WP02-09, WP02-11, WP02-12, WP02-25, WP02-27 | CODE / M | COORD / W62-01 |
+| [WP02-30 独立入站与手工 Lead 的维护授权合同](../../docs/development/task-plans/WP02.md#wp02-30) | Main | 已交付 | WP02-05, WP02-10, WP02-15 | CODE / M | EXEC-WP02-14B |
 
 ## WP03 CRM客户经营
 
@@ -92,7 +93,7 @@
 | [WP03-14 线索查重观察与资格决定](../../docs/development/task-plans/WP03.md#wp03-14) | CRM | 已交付 | WP02-09, WP03-12, WP03-13 | CODE / M | EXEC-WP02-14B |
 | [WP03-15 Lead到Account Contact及可选商机原子转换](../../docs/development/task-plans/WP03.md#wp03-15) | CRM | 已交付 | WP02-09, WP03-05, WP03-09, WP03-14, WP03-21 | CODE / L | EXEC-WP02-14B |
 | [WP03-16 线索通知、保留清除与转换后读取](../../docs/development/task-plans/WP03.md#wp03-16) | CRM | 已交付 | WP02-09, WP02-15, WP03-04, WP03-15 | CODE / M | EXEC-WP02-14B |
-| [WP03-16b 线索独立保留、CP22 安全审计与恢复余项](../../docs/development/task-plans/WP03.md#wp03-16b) | CRM | 待安排 | WP03-16 | CODE / M | 未领取 |
+| [WP03-16b 线索独立保留、CP22 安全审计与恢复余项](../../docs/development/task-plans/WP03.md#wp03-16b) | CRM | 待安排 | WP03-16, WP02-30 | CODE / M | 未领取 |
 | [WP03-17 账户联系人原生活动登记与时间线](../../docs/development/task-plans/WP03.md#wp03-17) | CRM | 已交付 | WP02-09, WP03-05, WP03-10 | CODE / M | EXEC-WP02-14B |
 | [WP03-18 活动内容、事实更正与Void](../../docs/development/task-plans/WP03.md#wp03-18) | CRM | 待安排 | WP02-09, WP03-17 | CODE / M | 未领取 |
 | [WP03-19 活动引用集合与附件字节访问](../../docs/development/task-plans/WP03.md#wp03-19) | CRM | 待安排 | WP02-09, WP02-14, WP03-17 | CODE / M | 未领取 |
@@ -104,6 +105,8 @@
 | [WP03-25 商业交接投递重试与安全原键查询](../../docs/development/task-plans/WP03.md#wp03-25) | CRM | 待安排 | WP02-09, WP02-11, WP02-21, WP02-23, WP03-23, WP04-13 | CODE / M | 未领取 |
 | [WP03-26 工程Case自然槽、准备与新提交](../../docs/development/task-plans/WP03.md#wp03-26) | CRM | 待安排 | WP02-09, WP02-14, WP03-21, WP05-60 | CODE / M | 未领取 |
 | [WP03-27 工程受理、进度与精确纠错恢复](../../docs/development/task-plans/WP03.md#wp03-27) | CRM | 待安排 | WP02-09, WP03-26, WP05-61 | CODE / M | 未领取 |
+| [WP03-28 Lead 当前读取与 H01 原结果补正](../../docs/development/task-plans/WP03.md#wp03-28) | CRM | 待安排 | WP03-12, WP03-15 | CODE / M | 未领取 |
+| [WP03-29 Account A03 的原回执权限与单次配额](../../docs/development/task-plans/WP03.md#wp03-29) | CRM | 待安排 | WP03-05 | CODE / M | 未领取 |
 
 ## WP04 商业交易与订单
 
@@ -455,7 +458,7 @@
 | 任务 | 仓库 | 状态 | 直接前置 | 类型/规模 | 对话 |
 |---|---|---|---|---|---|
 | [WP14-01 全链验收映射、数据责任与证据索引](../../docs/development/task-plans/WP14.md#wp14-01) | Main | 已交付 | 无任务前置，仍需准入核对 | DESIGN / M | D / WP14-01 |
-| [WP14-02 CRM入站、转化与商业交接闭环](../../docs/development/task-plans/WP14.md#wp14-02) | Main | 待安排 | 共62项，详见任务卡 | VALIDATION / M | 未领取 |
+| [WP14-02 CRM入站、转化与商业交接闭环](../../docs/development/task-plans/WP14.md#wp14-02) | Main | 待安排 | 共64项，详见任务卡 | VALIDATION / M | 未领取 |
 | [WP14-03 报价订单、需求释放与计划转单闭环](../../docs/development/task-plans/WP14.md#wp14-03) | Main | 待安排 | 共48项，详见任务卡 | VALIDATION / M | 未领取 |
 | [WP14-04 采购来料、检验入库与供给更新闭环](../../docs/development/task-plans/WP14.md#wp14-04) | Main | 待安排 | 共93项，详见任务卡 | VALIDATION / M | 未领取 |
 | [WP14-05 制造追加料、报工质量入库与领料闭环](../../docs/development/task-plans/WP14.md#wp14-05) | Main | 待安排 | 共96项，详见任务卡 | VALIDATION / M | 未领取 |

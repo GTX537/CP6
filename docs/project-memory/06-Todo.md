@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 下一卡
 
-台账指定的下一卡为 [WP03-06b 旧 C03 斜线伙伴键权威合同与入史余项](../development/task-plans/WP03.md#wp03-06b)。直接前置为 WP03-06。
+台账指定的下一卡为 [WP03-06b 旧 C03 斜线伙伴键权威合同与入史余项](../development/task-plans/WP03.md#wp03-06b)。直接前置为 WP03-06。 最近的获批补正及剩余出口见 [WP02-30](../development/evidence/WP02-30/DELIVERY.md)。
 <!-- /cp6:roadmap -->
 
 2026-11-21，WP03-16 已验范围核销。CRM-LEAD-01 原 AC 45/60、必需运行修订 6/12，保持开放。WP03-16b 保留独立无 Lead、手工 Lead 保留、完整 CP22 审计、导出及恢复。未归属原断言沿原链等待总控裁决。CRM-ACC-01 原 AC 22/47、运行修订 4/10，CRM-CON-01 原 AC 38/49、补充 16/26、运行修订 2/2，CRM-OPP-01 原 AC 4/54、运行修订 2/14。三个目标继续开放。AC-OPP-008 保留组合余验。WP03-06b 等待权威 C03 斜线原件或兼容合同。WP03-07 等待其完整 DONE。阶段 C 当前候选 WP03-06b、WP03-16b、WP03-11，实际领卡以独立派工为准。[单卡核销与当前候选](../development/planning/20261117-card-execution.md#wp03-16-线索通知保留清除与转换后读取)

@@ -653,15 +653,17 @@ def validate_card_budgets(policy, tasks, definitions):
 def validate_supplemental_transfers(transfers, supplements, caps, tasks, definitions):
     if not isinstance(transfers, list):
         return ["invalid supplemental card budget transfers"]
-    recipients = set()
-    authorizations = set()
+    pairs = set()
+    authorizations = {}
     allocated = collections.defaultdict(Decimal)
+    received = collections.defaultdict(Decimal)
     for transfer in transfers:
         source = transfer["source_task_id"]
         target = transfer["target_task_id"]
         decision = transfer["decision"]
         ref = (decision["commit"], decision["path"])
-        if (target not in supplements or target in recipients or ref in authorizations
+        if (target not in supplements or (source, target) in pairs
+                or authorizations.get(ref, target) != target
                 or source in supplements or source not in caps or target not in caps
                 or definitions[source].get("split_parent") or definitions[source].get("split_children")
                 or definitions[target].get("split_parent") or tasks[source]["state"] != "DONE"
@@ -672,15 +674,18 @@ def validate_supplemental_transfers(transfers, supplements, caps, tasks, definit
             return ["invalid or duplicate supplemental card budget transfer"]
         seconds = Decimal(str(transfer["seconds"]))
         spent = Decimal(str(tasks[source]["card_execution"]["effective_seconds"]))
-        if not spent.is_finite() or spent < 0 or not seconds.is_finite() or seconds <= 0 or seconds != caps[target]:
+        if not spent.is_finite() or spent < 0 or not seconds.is_finite() or seconds <= 0:
             return ["invalid supplemental card budget or source effective time"]
         allocated[source] += seconds
         if allocated[source] > max(Decimal(0), caps[source] - spent):
             return ["supplemental card budget exceeds completed source surplus"]
-        recipients.add(target)
-        authorizations.add(ref)
-    if recipients != supplements:
+        pairs.add((source, target))
+        received[target] += seconds
+        authorizations[ref] = target
+    if received.keys() != supplements:
         return ["supplemental card budget transfer missing"]
+    if any(received[target] != caps[target] for target in supplements):
+        return ["supplemental card budget does not match the authorized cap"]
     return []
 
 

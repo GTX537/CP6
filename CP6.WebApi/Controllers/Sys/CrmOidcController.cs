@@ -24,7 +24,8 @@ public sealed partial class CrmOidcController(CrmOidcOptions options, CrmOidcCry
     ICrmOidcGrantStore grants, CrmOidcDirectory directory, IConfiguration configuration,
     ITokenBlacklistService blacklist, IAuthCookieWriter cookies,
     CrmOidcServiceTokens? serviceTokens = null, InquiryPermissionIssuerV1? inquiryPermissions = null,
-    InquiryServicePermissionIssuerV1? inquiryServicePermissions = null) : ControllerBase
+    InquiryServicePermissionIssuerV1? inquiryServicePermissions = null,
+    LeadMaintenanceContextIssuerV1? leadMaintenance = null) : ControllerBase
 {
     [HttpGet("/.well-known/openid-configuration")]
     public IActionResult Discovery() => !options.Enabled ? NotFound() : Ok(new
