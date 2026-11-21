@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP03-15 Lead到Account Contact及可选商机原子转换](https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md)（DONE），核对时间 `2026-11-21T13:54:18.706935+00:00`。
 - [WP03-14 线索查重观察与资格决定](https://github.com/GTX537/CP6.CRM/blob/a15e4a5503207f1cdba71e78c8590fb7e05e95c3/docs/development/evidence/WP03-14/DELIVERY.md)（DONE），核对时间 `2026-11-21T12:33:25.123572+00:00`。
 - [WP03-13 线索原生活动、首响及SLA双时钟](https://github.com/GTX537/CP6.CRM/blob/4f6fa762ca6b8532714ef5bcdf5a67466db9becf/docs/development/evidence/WP03-13/DELIVERY.md)（DONE），核对时间 `2026-11-21T10:32:59.829053+00:00`。
 - [WP03-06 账户来源证明和旧C03结果历史](https://github.com/GTX537/CP6.CRM/blob/6f8bbfb4b051495bdf45d188f75a904b09cd4969/docs/development/evidence/WP03-06/DELIVERY.md)（拆卡，余项 WP03-06b），核对时间 `2026-11-21T09:20:29.689160+00:00`。

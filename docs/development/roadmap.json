@@ -3557,8 +3557,21 @@
             "id": "CRM-LEAD-01/9f8fd4357559f8d2/AC-LEAD-036",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LEAD-036",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+                "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+                "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+                "observed_at": "2026-11-21T13:48:42.485622+00:00",
+                "result": "PASS",
+                "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+                "scope": "冻结源与候选 ETag、策略和 normalizer、原观察键、时间和摘要。变更可见候选处置使原证据失效，隐藏候选的数量和身份不返回。用虚拟时钟分别越过原观察期限再准备与准备后在到期毫秒提交，两入口拒绝且零新增。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/1/cases/35"
@@ -3701,6 +3714,18 @@
                 "result": "PASS",
                 "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
                 "scope": "在隔离库植入标记为模拟的已提交 Manifest，并关联实际 Qualified 版本。实际资格入口拒绝随后的 Unqualified 和 Rejected，均为 409。来源唯一约束拒绝第二 Manifest，Owner、队列、审计、事件和回执零新增。同原键仍可读原 admission。完整 H02 参与者选择及第二次转换的实际调用留 WP03-15。"
+              },
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+                "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+                "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+                "observed_at": "2026-11-21T13:48:42.485622+00:00",
+                "result": "PASS",
+                "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+                "scope": "实际 H02 成功后使用正式资格动作提交矛盾决定，返回 `409 crm.lead_conversion_already_committed`，原已核销证据保留。"
               }
             ],
             "definition_ref": {
@@ -3712,8 +3737,21 @@
             "id": "CRM-LEAD-01/9f8fd4357559f8d2/AC-LEAD-043",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LEAD-043",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+                "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+                "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+                "observed_at": "2026-11-21T13:48:42.485622+00:00",
+                "result": "PASS",
+                "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+                "scope": "一账户、1 或 20 名联系人，预览绑定当前 Lead、资格、重复证据及各 Owner 的精确观察。原准备键回读同一预览，已消费预览不再公开其可执行内容。无有效证据或已被不同意图占用时拒绝。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/1/cases/42"
@@ -3723,8 +3761,21 @@
             "id": "CRM-LEAD-01/9f8fd4357559f8d2/AC-LEAD-044",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LEAD-044",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+                "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+                "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+                "observed_at": "2026-11-21T13:48:42.485622+00:00",
+                "result": "PASS",
+                "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+                "scope": "使用真实 Account、Contact 版本及关闭式复用计划，验证 `REUSED` 和原 Plan/Apply 的 `RELATION_APPLIED`。移除实际 Owner 执行能力返回 `503 COMMIT_GUARD_UNPROVEN`，原查询仍为 `NOT_OBSERVED`，无部分预览或领域写入。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/1/cases/43"
@@ -3734,8 +3785,21 @@
             "id": "CRM-LEAD-01/9f8fd4357559f8d2/AC-LEAD-045",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LEAD-045",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+                "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+                "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+                "observed_at": "2026-11-21T13:48:42.485622+00:00",
+                "result": "PASS",
+                "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+                "scope": "浏览器和 API 分别走 `NONE` 和 `CREATE_PRIMARY`。NONE 零商机新增，主商机仅由实际 Opportunity Owner 写为 `OPEN`，保留四位小数，未写订单、Won 或 Main 确认。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/1/cases/44"
@@ -3745,8 +3809,21 @@
             "id": "CRM-LEAD-01/9f8fd4357559f8d2/AC-LEAD-046",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LEAD-046",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+                "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+                "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+                "observed_at": "2026-11-21T13:48:42.485622+00:00",
+                "result": "PASS",
+                "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+                "scope": "关闭式创建提案按 1、20、零、21 及重复项验，保留显式 Account 绑定。未知成员 400、缺执行能力 503，准备阶段的 Owner 效果为零。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/1/cases/45"
@@ -3756,8 +3833,21 @@
             "id": "CRM-LEAD-01/9f8fd4357559f8d2/AC-LEAD-047",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LEAD-047",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+                "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+                "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+                "observed_at": "2026-11-21T13:48:42.485622+00:00",
+                "result": "PASS",
+                "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+                "scope": "提交重核当前权限、Lead ETag、资格和观察期限。过期 `H02_EVIDENCE_EXPIRED`、撤权 403、旧版本 412 均零新增。成功原键走结果读；已被原槽占用的变更意图返回 409。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/1/cases/46"
@@ -3767,8 +3857,21 @@
             "id": "CRM-LEAD-01/9f8fd4357559f8d2/AC-LEAD-048",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LEAD-048",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+                "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+                "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+                "observed_at": "2026-11-21T13:48:42.485622+00:00",
+                "result": "PASS",
+                "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+                "scope": "原准备键返回同一冻结预览和保留 ConversionId。两个进程的同选择复用稳定 Owner 槽。PostgreSQL 在末端故障后原预览仍可提交，成功清单的唯一参与者、实际 Owner 操作、原回执和版本逐项匹配。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/1/cases/47"
@@ -3778,8 +3881,21 @@
             "id": "CRM-LEAD-01/9f8fd4357559f8d2/AC-LEAD-049",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LEAD-049",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+                "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+                "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+                "observed_at": "2026-11-21T13:48:42.485622+00:00",
+                "result": "PASS",
+                "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+                "scope": "丢失提交回包后终止首进程，重启按原键、原命令和业务槽取得原结果。`NOT_OBSERVED` 显示提交知识 `UNKNOWN`。实际浏览器重载的写请求计数为零。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/1/cases/48"
@@ -3789,8 +3905,21 @@
             "id": "CRM-LEAD-01/9f8fd4357559f8d2/AC-LEAD-050",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LEAD-050",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+                "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+                "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+                "observed_at": "2026-11-21T13:48:42.485622+00:00",
+                "result": "PASS",
+                "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+                "scope": "对真实 Account、Contact、Opportunity、Lead 审计父行、末端效果行和终态回执六处注入 PostgreSQL 错误。均返回 503 或提交未知，无部分成功 Manifest，既有 Account、Contact 原事实仍可读取，业务计数各项增量为零。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/1/cases/49"
@@ -3800,8 +3929,21 @@
             "id": "CRM-LEAD-01/9f8fd4357559f8d2/AC-LEAD-051",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LEAD-051",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+                "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+                "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+                "observed_at": "2026-11-21T13:48:42.485622+00:00",
+                "result": "PASS",
+                "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+                "scope": "成功从数据库的同一个事务标识回核 Account、Contact、Opportunity、Lead 末端探针。Manifest 的参与者效果、版本、Owner 请求、回执、审计、事件和最终状态与落库相符。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/1/cases/50"
@@ -3811,8 +3953,21 @@
             "id": "CRM-LEAD-01/9f8fd4357559f8d2/AC-LEAD-052",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LEAD-052",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+                "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+                "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+                "observed_at": "2026-11-21T13:48:42.485622+00:00",
+                "result": "PASS",
+                "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+                "scope": "同稳定键返回原不含业务数据的 admission；按当前结果权限 GET 原终态。两实例异键同选择重放原清单，改选新账户或主商机种子时均返回 `H02_CONVERSION_CONFLICT`，零新增。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/1/cases/51"
@@ -3822,8 +3977,21 @@
             "id": "CRM-LEAD-01/9f8fd4357559f8d2/AC-LEAD-053",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LEAD-053",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+                "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+                "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+                "observed_at": "2026-11-21T13:48:42.485622+00:00",
+                "result": "PASS",
+                "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+                "scope": "两独立 API 实例读取同一 PostgreSQL 源槽，一次 COMMITTED、一次 REPLAYED。Lead 数量不变，同一 Lead 仅有一份 Manifest、一套效果及一份主商机。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/1/cases/52"
@@ -3833,8 +4001,21 @@
             "id": "CRM-LEAD-01/9f8fd4357559f8d2/AC-LEAD-054",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-LEAD-054",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+                "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+                "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+                "observed_at": "2026-11-21T13:48:42.485622+00:00",
+                "result": "PASS",
+                "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+                "scope": "提案 ERP 未知成员返回 `400 invalid_json_member`。新 CRM Account 保存自己的来源和回执；实际 H02 入口仅调用 CRM Owner，零 Main 或 ERP 业务写入。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/1/cases/53"
@@ -3944,6 +4125,18 @@
           "result": "PASS",
           "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
           "scope": "WP03-14 原 AC 29/60，必需运行修订 2/12。目标保持开放。AC-LEAD-036 已验证同源候选、政策及观察版本绑定和过期证据拒绝，转换预览与 H02 的实际过期拒绝留 WP03-15。"
+        },
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+          "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+          "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+          "observed_at": "2026-11-21T13:48:42.485622+00:00",
+          "result": "PASS",
+          "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+          "scope": "WP03-15 原 AC 42/60，必需运行修订 4/12，目标开放。精确预览一账户、1–20 联系人和可选商机。同一 PostgreSQL 连接和事务调用实际 Owner，核对 ConversionManifest 的完整实际效果。按原命令和原槽恢复。AC-LEAD-055、056 保留 H01 和其他未覆盖命令出口，059 保留其它领域的完整写序与审计图。033 归 WP03-16，011、013、019 沿 #370。AC-OPP-008 保留交接、改客户及历史互动的组合余验。"
         }
       ],
       "delivery_evidence": null
@@ -5903,6 +6096,18 @@
           "observed_at": "2026-11-21T09:13:27.9357011+00:00",
           "result": "PASS",
           "scope": "WP03-06 已验证范围，原 AC 22/47，必需运行修订 2/10。A27 斜线合同余卡保留，目标开放。"
+        },
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+          "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+          "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+          "observed_at": "2026-11-21T13:48:42.485622+00:00",
+          "result": "PASS",
+          "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+          "scope": "WP03-15 原 AC 22/47，必需运行修订 4/10，目标开放。精确预览一账户、1–20 联系人和可选商机。同一 PostgreSQL 连接和事务调用实际 Owner，核对 ConversionManifest 的完整实际效果。按原命令和原槽恢复。AC-LEAD-055、056 保留 H01 和其他未覆盖命令出口，059 保留其它领域的完整写序与审计图。033 归 WP03-16，011、013、019 沿 #370。AC-OPP-008 保留交接、改客户及历史互动的组合余验。"
         }
       ],
       "delivery_evidence": null
@@ -7505,6 +7710,18 @@
           "result": "PASS",
           "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome、原生 PostgreSQL 18.6。模拟用户、设备、业务数据、时钟、证据权威资料、H02 协调者和 ACT 读取方，范围见唯一报告。",
           "scope": "WP03-09 核对至原 AC 38/49、必需补充 16/26、运行修订 0/2，目标开放。"
+        },
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+          "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+          "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+          "observed_at": "2026-11-21T13:48:42.485622+00:00",
+          "result": "PASS",
+          "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+          "scope": "WP03-15 原 AC 54/75，必需运行修订 2/2，目标开放。精确预览一账户、1–20 联系人和可选商机。同一 PostgreSQL 连接和事务调用实际 Owner，核对 ConversionManifest 的完整实际效果。按原命令和原槽恢复。AC-LEAD-055、056 保留 H01 和其他未覆盖命令出口，059 保留其它领域的完整写序与审计图。033 归 WP03-16，011、013、019 沿 #370。AC-OPP-008 保留交接、改客户及历史互动的组合余验。"
         }
       ],
       "delivery_evidence": null
@@ -7573,8 +7790,21 @@
             "id": "CRM-OPP-01/bdc91e2093023cf7/AC-OPP-001",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OPP-001",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+                "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+                "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+                "observed_at": "2026-11-21T13:48:42.485622+00:00",
+                "result": "PASS",
+                "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+                "scope": "已资格且有原 Account、Contact 的 Lead，由两进程异键同选择同时提交。真实主商机一次、Manifest 一份；任一 Owner 失败后原对象和已有版本仍可读，零第二对象或部分效果。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/5/cases/0"
@@ -7584,8 +7814,21 @@
             "id": "CRM-OPP-01/bdc91e2093023cf7/AC-OPP-002",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-OPP-002",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+                "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+                "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+                "observed_at": "2026-11-21T13:48:42.485622+00:00",
+                "result": "PASS",
+                "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+                "scope": "原转换槽读回冻结原身份；同选择恢复历史，变更账户或主商机输入均 409，首版与原关联还在。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/5/cases/1"
@@ -8203,6 +8446,18 @@
           "result": "PASS",
           "environment": "Windows、实际 CRM Kestrel、Next/React、Chrome 和隔离 PostgreSQL 18.6。用户、设备、数据、H02 协调者、外部绑定及故障按报告使用夹具。",
           "scope": "WP03-21 完整原 AC 2/54，必需运行修订 0/14，CRM-OPP-01 保持开放。"
+        },
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+          "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+          "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+          "observed_at": "2026-11-21T13:48:42.485622+00:00",
+          "result": "PASS",
+          "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+          "scope": "WP03-15 原 AC 4/54，必需运行修订 2/14，目标开放。精确预览一账户、1–20 联系人和可选商机。同一 PostgreSQL 连接和事务调用实际 Owner，核对 ConversionManifest 的完整实际效果。按原命令和原槽恢复。AC-LEAD-055、056 保留 H01 和其他未覆盖命令出口，059 保留其它领域的完整写序与审计图。033 归 WP03-16，011、013、019 沿 #370。AC-OPP-008 保留交接、改客户及历史互动的组合余验。"
         }
       ],
       "delivery_evidence": null
@@ -167592,9 +167847,22 @@
       ],
       "coordinator_package": "WP03",
       "kind": "RUNTIME",
-      "state": "NOT_RUN",
+      "state": "PASS",
       "source_result": "NOT_RUN",
-      "execution_evidence": []
+      "execution_evidence": [
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+          "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+          "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+          "observed_at": "2026-11-21T13:48:42.485622+00:00",
+          "result": "PASS",
+          "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+          "scope": "四目标共同证据。真实 Lead、Account、Contact、Opportunity 同一 UoW 提交完整效果和唯一 Manifest，复用对象保持原值，读取后原键重放零新增。"
+        }
+      ]
     },
     {
       "id": "DR-COM-LEAD-AC-ATOMIC-SUPERSESSION::COM-LEAD-AC-ATOMIC-SUPERSESSION-NEG",
@@ -167610,9 +167878,22 @@
       ],
       "coordinator_package": "WP03",
       "kind": "RUNTIME",
-      "state": "NOT_RUN",
+      "state": "PASS",
       "source_result": "NOT_RUN",
-      "execution_evidence": []
+      "execution_evidence": [
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+          "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+          "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+          "observed_at": "2026-11-21T13:48:42.485622+00:00",
+          "result": "PASS",
+          "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+          "scope": "四目标共同证据。六处真实 PostgreSQL 故障、双期限拒绝、撤权及同槽改选均无未授权、重复或部分业务效果。错误及恢复协议没有旧 202 或部分 Map 成功。"
+        }
+      ]
     },
     {
       "id": "DR-PLAN-IF-003::PLAN-IF-003-POS",
@@ -174920,6 +175201,11 @@
       "at": "2026-11-21T12:33:25.123572+00:00",
       "evidence": "docs/development/planning/20261117-card-execution.md",
       "change": "WP03-14 DONE。CRM-LEAD-01 原 AC 29/60，必需运行修订 2/12，目标开放。按 #374 一次补记 WP03-13 收尾 266.392 秒至 2789.372 秒。"
+    },
+    {
+      "at": "2026-11-21T13:54:18.706935+00:00",
+      "evidence": "docs/development/planning/20261117-card-execution.md",
+      "change": "WP03-15 DONE。CRM-LEAD-01 原 AC 42/60、必需运行修订 4/12，CRM-ACC-01 原 AC 22/47、必需运行修订 4/10，CRM-CON-01 原 AC 54/75、必需运行修订 2/2，CRM-OPP-01 原 AC 4/54、必需运行修订 2/14，目标开放。按 #376 一次补记 WP03-14 收尾 226.204 秒至 3070.490 秒。"
     }
   ],
   "implementation_assessment": {
@@ -203471,7 +203757,7 @@
         "official_started_at": "2026-11-21T11:46:00.738819+00:00",
         "technical_verified_at": "2026-11-21T12:28:02.6776744+00:00",
         "verified_at": "2026-11-21T12:33:25.123572+00:00",
-        "effective_seconds": 2844.286,
+        "effective_seconds": 3070.49,
         "product_verified_seconds": 2521.939,
         "crm_integration_seconds": 237.804,
         "workspace_transition_seconds": 68.146,
@@ -203490,7 +203776,15 @@
         "preceding_integration_seconds": 266.392,
         "target_review_started_at": "2026-11-21T12:33:25.025903+00:00",
         "target_review_seconds": 0.098,
-        "crm_seat_finished_at": "2026-11-21T12:32:00.482040+00:00"
+        "crm_seat_finished_at": "2026-11-21T12:32:00.482040+00:00",
+        "official_finish": "2026-11-21T12:37:11.327791Z",
+        "post_candidate_finalization_seconds": 226.204,
+        "finalization_decision_ref": {
+          "commit": "eb60bf5241655b63e43de4abc89661a47c0905dc",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-14/replies/20261121T124206Z-coord-acceptance-ack/MESSAGE.md",
+          "receipt_commit": "9a948620af33117b49687e40e17fefc2dd8906d8",
+          "receipt_path": "handoffs/CP6-DEV-20261012/tasks/WP03-14/messages/20261121T123729Z-exec-wp02-14b-delivery/MESSAGE.md"
+        }
       }
     },
     {
@@ -203516,19 +203810,103 @@
         "file:CRM:src/CP6.CRM.Api/CrmEndpoints.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP03.md",
       "card_anchor": "wp03-15",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "EXEC-WP02-14B",
+        "repository": "CRM",
+        "owning_task_repository": "CRM",
+        "branch": "codex/wp03-15",
+        "worktree": "D:/CP6-worktrees/dev-2",
+        "claimed_at": "2026-11-21T12:50:16.644074+00:00",
+        "baseline_sha": "a15e4a5503207f1cdba71e78c8590fb7e05e95c3",
+        "entry_evidence": "docs/development/planning/20261117-card-execution.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "delivery_report": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+        "dispatch_scope": "精确预览一账户、1–20 联系人和可选商机。同一 PostgreSQL 连接和事务调用实际 Owner，核对 ConversionManifest 的完整实际效果。按原命令和原槽恢复。",
+        "actual_start_ref": {
+          "commit": "a1a2059672ba8fc88227d02e2cf3fb9164a05f61",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-15/messages/20261121T125016Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-21T12:50:16.644074+00:00"
+        },
+        "dispatch_decision_ref": {
+          "commit": "3ec32924856c8032a26d955992c036dcf9546eef",
+          "original_commit": "5b4d06f0f2f8a3c0f96d1cf7c064c87ea74369d3",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261121T124442Z-exec-wp02-14b-wp03-15/MESSAGE.md"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+          "adopted_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+          "command": "实际 CRM API、隔离 PostgreSQL、Next/Chrome 定向 24/24。Web 166/166、生产构建、受影响 .NET 236 项通过及 1 项既有跳过。 同树采用后冒烟 4/4。",
+          "observed_at": "2026-11-21T13:48:42.485622+00:00",
+          "result": "PASS",
+          "environment": "实际 CRM API、Next/React、Chrome、隔离 PostgreSQL 18.6。模拟范围见唯一报告。",
+          "scope": "精确预览一账户、1–20 联系人和可选商机。同一 PostgreSQL 连接和事务调用实际 Owner，核对 ConversionManifest 的完整实际效果。按原命令和原槽恢复。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/planning/20261117-card-execution.md",
+        "report_url": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+        "source_sha": "c1bc85b2358be213a5a70616e807e42a383bda7f",
+        "remote_main_sha": "2b41b3da8728c8932fdbc2bf12885f88071d81e5",
+        "pr_url": "https://github.com/GTX537/CP6.CRM/pull/252",
+        "reviewed_crm_head": "acaf62f71ed1abe395899ed3587eaa3c5eb51334",
+        "main_provider_commit": "86b8d03453524f1f9baf5d7dbd8c13aa3c414b7c",
+        "contract": "CRM-LEAD-01 R1，CP21 冻结资格及 H02 wire，CP22 精确预览、实际 Owner、原结果和审计约束。",
+        "contract_blobs": {
+          "catalog": "feac0b5526a695ec250e58ab68a29a5ac582eb77",
+          "acceptance": "6b185347371e1eaafd22066cb01ce90030c2dbbd",
+          "supersession": "78fab635d7db6739c9b41e8aa08c3e5d8afb1810",
+          "design": "68d9270097097dba54454575f596fe489f6112e8",
+          "ownerBindings": "3d94dcc622a0335c43bd7425104d167804b9abdb"
+        },
+        "scope": "CRM 产品采用、冒烟并释放 DEV-2 后，Main 核销同一卡。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：CRM PostgreSQL可信租户路由、当前权限、原生外层事务/共同锁、原结果账与可靠消息实际采用",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "card_execution": {
+        "result": "DONE",
+        "report": "https://github.com/GTX537/CP6.CRM/blob/2b41b3da8728c8932fdbc2bf12885f88071d81e5/docs/development/evidence/WP03-15/DELIVERY.md",
+        "started_at": "2026-11-21T12:50:16.644074+00:00",
+        "official_started_at": "2026-11-21T12:50:16.644074+00:00",
+        "technical_verified_at": "2026-11-21T13:48:42.485622+00:00",
+        "verified_at": "2026-11-21T13:54:18.706935+00:00",
+        "effective_seconds": 3841.938,
+        "product_verified_seconds": 3505.842,
+        "crm_integration_seconds": 279.917,
+        "workspace_transition_seconds": 41.174,
+        "main_ledger_candidate_seconds": 15.005,
+        "size": "L",
+        "budget_seconds": 28800,
+        "mandatory_split_seconds": 43200,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-09",
+          "WP02-09b",
+          "WP03-05",
+          "WP03-09",
+          "WP03-14",
+          "WP03-21"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 226.204,
+        "target_review_started_at": "2026-11-21T13:54:18.581634+00:00",
+        "target_review_seconds": 0.125,
+        "crm_seat_finished_at": "2026-11-21T13:53:22.402685+00:00"
+      }
     },
     {
       "id": "WP03-16",
@@ -300065,7 +300443,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 130069.796,
+      "effective_seconds": 134138.063,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -300109,7 +300487,8 @@
         "WP03-12",
         "WP03-06",
         "WP03-13",
-        "WP03-14"
+        "WP03-14",
+        "WP03-15"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -300345,8 +300724,8 @@
       },
       "next_card_selection": {
         "rule": "阶段 C 展开全部拆分严格前置；全图最长下游边数降序，同长保留用户阶段数组的顺序。",
-        "baseline_sha": "baa5ae7650a9c5914c11ebf1a606dd5aa5e21acc",
-        "after_card": "WP03-14",
+        "baseline_sha": "86b8d03453524f1f9baf5d7dbd8c13aa3c414b7c",
+        "after_card": "WP03-15",
         "selected": "WP03-06b",
         "candidates": [
           {
@@ -300354,8 +300733,8 @@
             "longest_downstream_edges": 6
           },
           {
-            "task": "WP03-15",
-            "longest_downstream_edges": 3
+            "task": "WP03-16",
+            "longest_downstream_edges": 2
           },
           {
             "task": "WP03-11",
@@ -300430,7 +300809,7 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 3987.278,
+      "target_review_effective_seconds": 3987.403,
       "last_checkpoint_counts": {
         "original_done": 58,
         "fully_done": 58,
