@@ -534,3 +534,13 @@ CRM-CON-01 原 AC 42/49、必需补充 24/26、必需运行修订 2/2，保持�
 按 #386 的原回执查重后单次补记 WP03-16b 正式收尾 233.222 秒，累计 8164.922 秒。本卡核销快照 `2026-11-22T08:22:53.753698+00:00`，卡内 3576.827 秒，目标核对 0.055 秒，计划累计 151753.816 秒。 [#386 收尾](https://github.com/GTX537/CP6.AI-Handoff/blob/87c2d706978f878d14ff48336bafd3bf23b8ecc2/handoffs/CP6-DEV-20261012/tasks/WP03-16b/replies/20261122T070626Z-coord-acceptance-ack/MESSAGE.md)
 
 阶段 C 候选 WP03-06b（6）、WP03-11b（2）、WP03-28（2）、WP03-29（2）。WP03-11b 仍须在来源获准和独立派工后领取。WP02-29 沿用原暂缓裁决。
+
+## WP03-28 Lead 当前读取与 H01 原结果补正
+
+WP03-28 完整 DONE。CRM 已采用 `7b28fbac72222a6ff003fe464303744dd5c8f2b2`，产品受验提交 `78666588f93891e8ed67e2c1ce9315de17b1b441`，同树采用后冒烟 5/5，DEV-2 已先释放。经实际 CRM API、React 与隔离 PostgreSQL 针对固定分页、详情当前投影和 H01 原结果新增证据。 [派工 #390](https://github.com/GTX537/CP6.AI-Handoff/pull/390) · [唯一交付报告](https://github.com/GTX537/CP6.CRM/blob/7b28fbac72222a6ff003fe464303744dd5c8f2b2/docs/development/evidence/WP03-28/DELIVERY.md)
+
+CRM-LEAD-01 原 AC 59/60，必需运行修订 6/12，保持开放。 本卡 11 项原 AC 完整核销。AC-LEAD-060、W1-ACC-07 归 WP14-02，W1-ACC-03 至 06 归 WP03-07，W1-ACC-01 归 WP03-29。全部原项和模拟范围见报告。
+
+按 #388 以原 DELIVERY 去重，单次补记 WP03-11 222.499 秒，父卡累计 3799.326 秒，WP03-11b 额度 10600.674 秒，150% 为 15901.011 秒。本卡核销快照 `2026-11-22T09:59:05.129951+00:00`，卡内 3169.698 秒，目标核对 0.053 秒，计划累计 155146.066 秒。 [#388 原签收](https://github.com/GTX537/CP6.AI-Handoff/blob/ba34225515b4fcb0a1c2ffe3ea94215b62e9f6a8/handoffs/CP6-DEV-20261012/tasks/WP03-11/replies/20261122T083259Z-coord-split-ack/MESSAGE.md)
+
+阶段 C 候选 WP03-06b（6）、WP03-11b（2）、WP03-29（2）。后继卡按已有前置与独立派工开工，WP02-29 沿用原暂缓裁决。
