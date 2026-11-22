@@ -544,3 +544,13 @@ CRM-LEAD-01 原 AC 59/60，必需运行修订 6/12，保持开放。 本卡 11 �
 按 #388 以原 DELIVERY 去重，单次补记 WP03-11 222.499 秒，父卡累计 3799.326 秒，WP03-11b 额度 10600.674 秒，150% 为 15901.011 秒。本卡核销快照 `2026-11-22T09:59:05.129951+00:00`，卡内 3169.698 秒，目标核对 0.053 秒，计划累计 155146.066 秒。 [#388 原签收](https://github.com/GTX537/CP6.AI-Handoff/blob/ba34225515b4fcb0a1c2ffe3ea94215b62e9f6a8/handoffs/CP6-DEV-20261012/tasks/WP03-11/replies/20261122T083259Z-coord-split-ack/MESSAGE.md)
 
 阶段 C 候选 WP03-06b（6）、WP03-11b（2）、WP03-29（2）。后继卡按已有前置与独立派工开工，WP02-29 沿用原暂缓裁决。
+
+## WP03-29 Account A03 的原回执权限与单次配额
+
+WP03-29 完整 DONE。CRM 采用 `bb393c171fdd934e7ffbe15f76ef1fe24380c028`，受验代码 `3c4ba18f20040ac2dc18ca0f7f4550f5daa7a422`，同树冒烟 5/5，DEV-2 已释放。实际 CRM、React 与隔离 PostgreSQL 证实 A03 首次扣减与账户、原命令同事务。账户停用并撤新写权后，原主体仍可用 RQ 恢复安全回执，撤 RQ、跨主体、跨租户零新增。配额 Owner 使用同合同模拟，正式 Portal 绑定沿原链协调。 [派工 #394](https://github.com/GTX537/CP6.AI-Handoff/pull/394) · [唯一报告](https://github.com/GTX537/CP6.CRM/blob/bb393c171fdd934e7ffbe15f76ef1fe24380c028/docs/development/evidence/WP03-29/DELIVERY.md) · [QUESTION](https://github.com/GTX537/CP6.AI-Handoff/blob/befb3adfbed7ed8cf7d23ee41440396898c28b53/handoffs/CP6-DEV-20261012/tasks/WP03-29/messages/20261122T112926Z-exec-wp02-14b-question/MESSAGE.md)
+
+CRM-ACC-01 原 AC 23/47、必需运行修订 5/10。CRM-LEAD-01 为 59/60、7/12，ERP-BP-01 为 104/124、5/10。三个目标保持开放。 原 A30 已核销，W1-ACC-01 只登记一份运行证据。W1-ACC-03 至 06 归 WP03-07，W1-ACC-07 的跨域验收及 AC-LEAD-060 归 WP14-02，既有参与卡责任继续沿台账。
+
+按 #391 和原 DELIVERY 完整 SHA 与路径去重，为 WP03-28 单次补记 180.210 秒，累计 3349.908 秒，目标核对 0.053 秒单列。既有累计由 155146.066 至 155326.276 秒。本卡核销快照 `2026-11-22T11:49:16.995785+00:00`，卡内 1354.959 秒，目标核对 0.520 秒，计划累计 156681.755 秒。 [#391 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/5b4de2bb80fd0e5ea722ecf3a474df59aa4cd693/handoffs/CP6-DEV-20261012/tasks/WP03-28/replies/20261122T101059Z-coord-acceptance-ack/MESSAGE.md) · [WP03-28 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/bbf0cd45cc00d5fcbd60a0c2156c2cecc1281f0f/handoffs/CP6-DEV-20261012/tasks/WP03-28/messages/20261122T100222Z-exec-wp02-14b-delivery/MESSAGE.md)
+
+阶段 C 候选 WP03-06b（6）、WP03-11b（2）。WP03-06b 继续等待 C03 权威原件或兼容合同，WP03-11b 继续等待 G05/C35 权威来源。后续领取以 COORD 独立派工为准。

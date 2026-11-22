@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP03-29 Account A03 的原回执权限与单次配额](https://github.com/GTX537/CP6.CRM/blob/bb393c171fdd934e7ffbe15f76ef1fe24380c028/docs/development/evidence/WP03-29/DELIVERY.md)（DONE），核对时间 `2026-11-22T11:49:16.995785+00:00`。
 - [WP03-28 Lead 当前读取与 H01 原结果补正](https://github.com/GTX537/CP6.CRM/blob/7b28fbac72222a6ff003fe464303744dd5c8f2b2/docs/development/evidence/WP03-28/DELIVERY.md)（DONE），核对时间 `2026-11-22T09:59:05.129951+00:00`。
 - [WP03-11 联系人互动历史与受控导出](https://github.com/GTX537/CP6.CRM/blob/42303adecfe42560b0b3482c053ad28c5ccdcfb9/docs/development/evidence/WP03-11/DELIVERY.md)（拆卡，余项 WP03-11b），核对时间 `2026-11-22T08:22:53.753698+00:00`。
 - [WP03-16b 线索独立保留、CP22 安全审计与恢复余项](https://github.com/GTX537/CP6.CRM/blob/e4af6d8f8c6b2d93100cbd3057a12fd524267b4e/docs/development/evidence/WP03-16b/DELIVERY.md)（DONE），核对时间 `2026-11-21T20:04:49.709045+00:00`。
