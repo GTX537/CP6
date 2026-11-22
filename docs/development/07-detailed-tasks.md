@@ -2,13 +2,13 @@
 
 台账日期：2026-11-22。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 390 项，已交付 91 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 390 项，已交付 92 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)。按[单卡串行计划](planning/20261117-card-execution.md)核对完整前置并选择下一卡。
 
 原 375 卡及其全部出口保留；已登记 10 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。
 
-原号 DONE 77/375；完整 DONE 76/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 5/5，沿用原卡池内划拨。
+原号 DONE 78/375；完整 DONE 77/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 5/5，沿用原卡池内划拨。
 
 ## WP01 现有实现与设计对照
 
@@ -83,7 +83,7 @@
 | [WP03-05 账户创建、维护和独立生命周期](../../docs/development/task-plans/WP03.md#wp03-05) | CRM | 已交付 | S01-08, S02-00, WP02-09 | CODE / M | EXEC-WP02-14B |
 | [WP03-06 账户来源证明和旧C03结果历史](../../docs/development/task-plans/WP03.md#wp03-06) | CRM | 已交付 | WP02-09, WP02-23, WP03-05, WP04-03 | CODE / M | EXEC-WP02-14B |
 | [WP03-06b 旧 C03 斜线伙伴键权威合同与入史余项](../../docs/development/task-plans/WP03.md#wp03-06b) | CRM | 已交付 | WP03-06, WP04-39 | CODE / M | EXEC-WP02-14B |
-| [WP03-07 账户Main当前映射裁决与资格竞争](../../docs/development/task-plans/WP03.md#wp03-07) | CRM | 待安排 | WP02-09, WP03-06, WP04-03 | CODE / M | 未领取 |
+| [WP03-07 账户Main当前映射裁决与资格竞争](../../docs/development/task-plans/WP03.md#wp03-07) | CRM | 已交付 | WP02-09, WP03-06, WP04-03 | CODE / M | EXEC-WP02-14B |
 | [WP03-08 独立联系人身份、归属与H02参与](../../docs/development/task-plans/WP03.md#wp03-08) | CRM | 已交付 | WP02-09, WP03-05 | CODE / M | EXEC-WP02-14B |
 | [WP03-09 联系人关系完整集合预览与主要期间](../../docs/development/task-plans/WP03.md#wp03-09) | CRM | 已交付 | WP02-09, WP03-08 | CODE / M | EXEC-WP02-14B |
 | [WP03-10 联系人渠道值与用途证据策略](../../docs/development/task-plans/WP03.md#wp03-10) | CRM | 已交付 | WP02-09, WP02-15, WP03-08 | CODE / M | EXEC-WP02-14B |

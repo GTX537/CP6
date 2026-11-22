@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 下一卡
 
-台账指定的下一卡为 [WP03-07 账户Main当前映射裁决与资格竞争](../development/task-plans/WP03.md#wp03-07)。直接前置为 WP02-09、WP03-06、WP04-03。
+台账指定的下一卡为 [WP03-11b 联系人历史正式 Owner 采用及原断言余项](../development/task-plans/WP03.md#wp03-11b)。直接前置为 WP03-11。
 <!-- /cp6:roadmap -->
 
 2026-11-21 20:04 UTC，WP03-16b 完整 DONE。CRM-LEAD-01 原 AC 48/60、必需运行修订 6/12，保持开放。WP03-28、WP14-02、WP03-07 和 WP03-29 承接已登记余项。阶段 C 候选为 WP03-06b、WP03-11、WP03-28、WP03-29。WP03-06b 继续等待 C03 斜线权威原件或兼容合同，实际领取以独立派工为准。[当前核销](../development/planning/20261117-card-execution.md)
