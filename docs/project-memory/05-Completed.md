@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP04-39 Main.C03 伙伴成功结果兼容版本](../development/evidence/WP04-39/DELIVERY.md)（DONE），核对时间 `2026-11-22T12:44:11.492530+00:00`。
+- [WP03-06b 旧 C03 斜线伙伴键权威合同与入史余项](https://github.com/GTX537/CP6.CRM/blob/0370eaa45ee6376c786db01f5c2465b54aadf0b2/docs/development/evidence/WP03-06b/DELIVERY.md)（DONE），核对时间 `2026-11-22T14:01:49.246336+00:00`。
 
 ### 已关闭目标
 

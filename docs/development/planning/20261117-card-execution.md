@@ -564,3 +564,11 @@ WP04-39 完整 DONE。实际 Main.C03 处理独立 v1 原请求，在隔离 Post
 WP04-03 与 WP04-02 分别拨入 9984.096 秒和 4415.904 秒，WP04-39 原额 14400 秒，21600 秒强制拆分。按 #395 以原回执的 SHA 和完整路径查重，WP03-29 单次补记 220.714 秒，累计 1575.673 秒，另有目标核对 0.520 秒。既有计划累计至 156902.469 秒。核销快照 `2026-11-22T12:44:11.492530+00:00`，本卡 1870.060 秒，目标核对 0.190 秒，计划合计 158772.719 秒。[#395 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/33872f98e4c51015b71ff96b39316319d453d574/handoffs/CP6-DEV-20261012/tasks/WP03-29/replies/20261122T115937Z-coord-acceptance-ack/MESSAGE.md) · [WP03-29 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/ea0fcc8ad6a7aba28b242bcc20fc92630362c94f/handoffs/CP6-DEV-20261012/tasks/WP03-29/messages/20261122T115320Z-exec-wp02-14b-delivery/MESSAGE.md)
 
 阶段 C 候选为 WP03-06b（6）、WP03-11b（2）。总控回读 Main 采用和原件后单独派 WP03-06b，WP03-11b 继续等待 G05/C35 权威来源。
+
+## WP03-06b 旧 C03 斜线伙伴键权威合同与入史余项
+
+WP03-06b 完整 DONE，原号 WP03-06 随余项完整收口。CRM 采用 `0370eaa45ee6376c786db01f5c2465b54aadf0b2`，同树联验通过后 DEV-2 干净释放。实际 Main 查证独立 v1 原请求和兼容 v2 成功原件。CRM A12 把 `BP-2026/0007` 原字节持久入史，原键恢复及重复投递只形成一组历史、回执、Inbox、审计和 Outbox。当前映射待核，实际 Chrome 显示完整字符串并只用批准落点和 opaque handle。[#398 派工](https://github.com/GTX537/CP6.AI-Handoff/blob/f7d6461381c59f60bf87605aa6f584346b425715/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261122T131519Z-exec-wp02-14b-wp03-06b/MESSAGE.md) · [CRM 唯一报告](https://github.com/GTX537/CP6.CRM/blob/0370eaa45ee6376c786db01f5c2465b54aadf0b2/docs/development/evidence/WP03-06b/DELIVERY.md)
+
+A27 按原断言核销。CRM-ACC-01 原 AC 24/47、必需运行修订 5/10，目标保持开放。A13 当前映射和后续资格归 WP03-07，等其独立派工。阶段 C 下一候选为 WP03-07（5）、WP03-11b（2），后者继续等待 G05/C35 权威来源。
+
+按 #397 的原 DELIVERY 完整提交与路径查重，单次补记 WP04-39 287.938 秒，累计 2157.998 秒，原目标核对 0.190 秒单列。新卡入账前累计 159060.657 秒。WP03-06b 核销快照 `2026-11-22T14:01:49.246336+00:00`，卡内 2364.843 秒、目标核对 0.122 秒，计划累计 161425.622 秒。余卡原额 11879.299 秒，二次拆分升级点 17818.9485 秒。[#397 原签收](https://github.com/GTX537/CP6.AI-Handoff/blob/4e28e23e41c2b30c4e9760fd108d4d3d399333d6/handoffs/CP6-DEV-20261012/tasks/WP04-39/replies/20261122T131313Z-coord-acceptance-ack/MESSAGE.md) · [WP04-39 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/d961c0ca8055386c5503368f2ca447b1e6f6c4ed/handoffs/CP6-DEV-20261012/tasks/WP04-39/messages/20261122T124929Z-exec-wp02-14b-delivery/MESSAGE.md)
