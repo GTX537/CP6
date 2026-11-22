@@ -6,7 +6,7 @@
 |---|---:|---:|---|
 | WP01 现有实现与设计对照 | 2 | 0 | [查看卡片](../../docs/development/task-plans/WP01.md) |
 | WP02 公共平台与系统基础 | 50 | 20 | [查看卡片](../../docs/development/task-plans/WP02.md) |
-| WP03 CRM客户经营 | 31 | 7 | [查看卡片](../../docs/development/task-plans/WP03.md) |
+| WP03 CRM客户经营 | 32 | 7 | [查看卡片](../../docs/development/task-plans/WP03.md) |
 | WP04 商业交易与订单 | 38 | 8 | [查看卡片](../../docs/development/task-plans/WP04.md) |
 | WP05 工程与产品生命周期 | 44 | 14 | [查看卡片](../../docs/development/task-plans/WP05.md) |
 | WP06 计划计算与决策 | 13 | 7 | [查看卡片](../../docs/development/task-plans/WP06.md) |
@@ -29,7 +29,7 @@
 | CRM-LEAD-01 | WP03-12, WP03-13, WP03-14, WP03-15, WP03-16, WP03-16b, WP03-28 |
 | CRM-ACT-01 | WP03-17, WP03-18, WP03-19, WP03-20 |
 | CRM-ACC-01 | WP03-05, WP03-06, WP03-06b, WP03-07, WP03-29 |
-| CRM-CON-01 | WP03-08, WP03-09, WP03-10, WP03-11 |
+| CRM-CON-01 | WP03-08, WP03-09, WP03-10, WP03-11, WP03-11b |
 | CRM-OPP-01 | WP03-21, WP03-22, WP03-23, WP03-24 |
 | CRM-HO-01 | WP03-23, WP03-25, WP03-26, WP03-27 |
 | ERP-BP-01 | WP04-01, WP04-02, WP04-03, WP04-38 |

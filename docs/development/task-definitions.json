@@ -3028,7 +3028,69 @@
         "docs/design-handbook/remediation/06-wire-types-and-fixtures.md",
         "docs/design-handbook/remediation/assets/core-types/lead-acceptance-supersession.json",
         "docs/development/assessments/20261011/catalogs/commercial-finance.json"
+      ],
+      "split_children": [
+        "WP03-11b"
+      ],
+      "split_delivered_scope": [
+        "实际 Contact、ACT、React 和 PostgreSQL 的关系历史、来源状态、匿名化披露、权限与只读隔离。",
+        "CONTACT-HISTORY-EXPORT/1.1 的 CRM 本地事务、持久事件投影、重启和严格下载门。外部 Owner 同合同模拟，未配置生产提供方时失败关闭。",
+        "C22 原停用、重放、关系及 ACT 不改写已验，H39 同根组合归 WP03-20。C47 收紧两种顺序及只读镜像复验，原更正和 Void 归 WP03-18。"
       ]
+    },
+    {
+      "id": "WP03-11b",
+      "package_id": "WP03",
+      "title": "联系人历史正式 Owner 采用及原断言余项",
+      "repository": "CRM",
+      "kind": "CODE",
+      "target_ids": [
+        "CRM-CON-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP03-11"
+      ],
+      "external_prerequisites": [
+        "已核实 Main PRIV/FILE 未提供 CONTACT_HISTORY 的原键受理及精确制品当前许可。待总负责确认权威接口及提供方后，CRM 余卡按真实版本和当前准入接入。",
+        "明确 Lead 活动关联的权威来源及 #352 对应许可，收到独立派工后领取。"
+      ],
+      "scope": [
+        "C16、C36、C37、REV1-18。核实已采用的 CONTACT_HISTORY 数据集、原请求和有限当前下载许可。经 Main TLS 连接真实 PRIV/FILE Owner，复验按当前读权原键恢复、当前字段和用途、精确制品及撤权/匿名化拒字节。",
+        "C35。采用权威目录中的显式 Contact 与原 Lead 活动绑定，复核原 ActivityId、版、终态、当前可读范围及分页，Lead 原事实与首响不改写。",
+        "C34、REV1-13。按 #352 复核身份流 v10/v9、epoch 切代、过期 RQ、草稿清理及实际指纹密钥轮换、值、根及处置历史最终门。"
+      ],
+      "outputs": [
+        "正式 Owner 合同版本与原件、两仓实际 TLS、当前读权及原键证据。",
+        "权威活动链接和 #352 余项逐例验证。"
+      ],
+      "code_paths": [
+        "src/CP6.CRM.Infrastructure/Persistence/Generated/CrmRuntimeRows.g.cs",
+        "src/CP6.CRM.Api/CrmEndpoints.cs"
+      ],
+      "new_paths": [],
+      "acceptance_positive": [
+        "正式 Main Owner 接入后核对精确导出、同键和下载当前许可，核对实际 Lead 镜像及原始事实。"
+      ],
+      "acceptance_negative": [
+        "合同缺失、错误许可或旧授权、旧密钥、缺活动原件时返回相应安全状态，业务新增和旧明文输出为零。"
+      ],
+      "exclusive_resources": [
+        "CRM:crm-con-owner",
+        "file:CRM:src/CP6.CRM.Infrastructure/Persistence/Generated/CrmRuntimeRows.g.cs",
+        "file:CRM:src/CP6.CRM.Api/CrmEndpoints.cs"
+      ],
+      "notes": "原 WP03-11 定义和原验收保留。WP03-18 的原 Void 和 WP03-20 的 H39 职责保留。",
+      "prerequisite_bindings": [],
+      "source_refs": [
+        "docs/development/08-postgresql-baseline.md",
+        "docs/development/assessments/20261011/implementation-assessment.json",
+        "docs/design-handbook/modules/CRM-CON-01.md",
+        "docs/design-handbook/remediation/06-wire-types-and-fixtures.md",
+        "docs/design-handbook/remediation/assets/core-types/lead-acceptance-supersession.json",
+        "docs/development/assessments/20261011/catalogs/commercial-finance.json"
+      ],
+      "split_parent": "WP03-11"
     },
     {
       "id": "WP03-12",

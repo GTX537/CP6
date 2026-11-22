@@ -524,3 +524,13 @@ CRM-LEAD-01 原 AC 48/60、必需运行修订 6/12，保持开放。 新增通�
 沿用 10624.802 秒额度及 15937.203 秒升级点。保存候选前 4613.813 秒计入，等待裁定与中断扣除 3233.772 秒。按 #383 和原交付去重后单次补记 WP02-30 收尾 290.545 秒至 1898.211 秒。核销快照为 2026-11-21T20:04:49.709045+00:00，本卡入账 7931.700 秒，目标核对另计 0.062 秒，计划累计 147943.712 秒。[#383 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/d4a4776ab6a06837231119b765e97b7f18004b45/handoffs/CP6-DEV-20261012/tasks/WP02-30/replies/20261121T165042Z-coord-acceptance-ack/MESSAGE.md)
 
 阶段 C 候选为 WP03-06b（6）、WP03-11（2）、WP03-28（2）、WP03-29（2）。WP03-06b 的权威原件裁定及 WP02-29 的暂缓裁定继续有效。实际领取须有独立派工。
+
+## WP03-11 联系人互动历史与受控导出
+
+WP03-11 按已受验范围核销并登记 WP03-11b。CRM 采用 `42303adecfe42560b0b3482c053ad28c5ccdcfb9`，受验代码 `2f52ba0252d55b976ae9522caede4ee92b970351`，同树采用后冒烟 5/5，DEV-2 已释放。实际 API、React 及 PostgreSQL 证实切主要关系后原互动仍指向甲原修订，历史读无写入 token，按原键恢复及受控导出本地事务通过。外部 Owner 同合同模拟。 [派工 #387](https://github.com/GTX537/CP6.AI-Handoff/pull/387) · [唯一交付报告](https://github.com/GTX537/CP6.CRM/blob/42303adecfe42560b0b3482c053ad28c5ccdcfb9/docs/development/evidence/WP03-11/DELIVERY.md)
+
+CRM-CON-01 原 AC 42/49、必需补充 24/26、必需运行修订 2/2，保持开放。 全部 49 原 AC、26 补充和 2 运行修订逐项见唯一报告。WP03-11b 等待已采用的 Main PRIV/FILE 与显式 Lead 原活动来源，复验 C16、C34–C37、REV1-13、REV1-18，额度 10823.173 有效秒。C47 归 WP03-18，C22 的 H39 组合归 WP03-20。 [原链 QUESTION](https://github.com/GTX537/CP6.AI-Handoff/blob/ea43f98546456d200d1ff575e031bb0d1daf863d/handoffs/CP6-DEV-20261012/tasks/WP03-11/messages/20261122T072611Z-exec-wp02-14b-question/MESSAGE.md)
+
+按 #386 的原回执查重后单次补记 WP03-16b 正式收尾 233.222 秒，累计 8164.922 秒。本卡核销快照 `2026-11-22T08:22:53.753698+00:00`，卡内 3576.827 秒，目标核对 0.055 秒，计划累计 151753.816 秒。 [#386 收尾](https://github.com/GTX537/CP6.AI-Handoff/blob/87c2d706978f878d14ff48336bafd3bf23b8ecc2/handoffs/CP6-DEV-20261012/tasks/WP03-16b/replies/20261122T070626Z-coord-acceptance-ack/MESSAGE.md)
+
+阶段 C 候选 WP03-06b（6）、WP03-11b（2）、WP03-28（2）、WP03-29（2）。WP03-11b 仍须在来源获准和独立派工后领取。WP02-29 沿用原暂缓裁决。
