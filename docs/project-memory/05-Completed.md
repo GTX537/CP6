@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP03-07 账户Main当前映射裁决与资格竞争](https://github.com/GTX537/CP6.CRM/blob/512303e9f6c530dbd398991d96a69ffe9990cf23/docs/development/evidence/WP03-07/DELIVERY.md)（DONE），核对时间 `2026-11-22T15:09:41.508899+00:00`。
+- [WP02-31 联系人历史导出与受控下载](../development/evidence/WP02-31/DELIVERY.md)（DONE），核对时间 `2026-11-22T16:05:38.360019+00:00`。
 
 ### 已关闭目标
 

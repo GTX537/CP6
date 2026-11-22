@@ -237,6 +237,8 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
     internal int ProcessId => process.Id;
     internal Uri Origin => client.BaseAddress!;
     internal Task<HttpResponseMessage> Send(HttpRequestMessage request, CancellationToken ct = default) => client.SendAsync(request, ct);
+    internal Task<HttpResponseMessage> SendHeaders(HttpRequestMessage request, CancellationToken ct = default) =>
+        client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, ct);
     internal string Token(Sys_User user, string? version = null) => JwtHelper.GenerateToken(user.Id.ToString(), user.UserName,
         secret, "auth-state-component", "auth-state-component", 5, user.TenantId,
         mustChangePassword: user.MustChangePassword, isPlatformAdmin: user.IsPlatformAdmin, authenticationVersion: version ?? AuthSessionVersion.For(user));
@@ -263,7 +265,8 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         return client.SendAsync(request);
     }
-    internal static async Task<AuthenticationApiProcess> Start(string connection, IReadOnlyDictionary<string,string>? environment = null, bool allowAutoRedirect = true)
+    internal static async Task<AuthenticationApiProcess> Start(string connection, IReadOnlyDictionary<string,string>? environment = null,
+        bool allowAutoRedirect = true, string? serverCertificateThumbprint = null)
     {
         const string sourceFixture = "CP6_FIXTURE_APPROVED_INITIAL_IDENTITY_SOURCE";
         if (environment?.GetValueOrDefault(sourceFixture) == "true")
@@ -304,7 +307,11 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
             if (!child.Start()) throw new InvalidOperationException("Owned API failed to start.");
             child.BeginOutputReadLine(); child.BeginErrorReadLine();
             var url = await ready.Task.WaitAsync(TimeSpan.FromSeconds(40));
-            return new AuthenticationApiProcess(child, new HttpClient(new HttpClientHandler { UseCookies = false, AllowAutoRedirect = allowAutoRedirect })
+            var handler = new HttpClientHandler { UseCookies = false, AllowAutoRedirect = allowAutoRedirect };
+            if (serverCertificateThumbprint is not null)
+                handler.ServerCertificateCustomValidationCallback = (request, certificate, _, _) =>
+                    request.RequestUri is { IsLoopback: true, Scheme: "https" } && certificate?.Thumbprint == serverCertificateThumbprint;
+            return new AuthenticationApiProcess(child, new HttpClient(handler)
                 { BaseAddress = new Uri(url), Timeout = TimeSpan.FromSeconds(15) }, secret,
                 () => { lock(log) File.WriteAllText(Path.Combine(directory, "runtime.log"), log.ToString()); });
         }
