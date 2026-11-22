@@ -572,3 +572,32 @@ WP03-06b 完整 DONE，原号 WP03-06 随余项完整收口。CRM 采用 `0370ea
 A27 按原断言核销。CRM-ACC-01 原 AC 24/47、必需运行修订 5/10，目标保持开放。A13 当前映射和后续资格归 WP03-07，等其独立派工。阶段 C 下一候选为 WP03-07（5）、WP03-11b（2），后者继续等待 G05/C35 权威来源。
 
 按 #397 的原 DELIVERY 完整提交与路径查重，单次补记 WP04-39 287.938 秒，累计 2157.998 秒，原目标核对 0.190 秒单列。新卡入账前累计 159060.657 秒。WP03-06b 核销快照 `2026-11-22T14:01:49.246336+00:00`，卡内 2364.843 秒、目标核对 0.122 秒，计划累计 161425.622 秒。余卡原额 11879.299 秒，二次拆分升级点 17818.9485 秒。[#397 原签收](https://github.com/GTX537/CP6.AI-Handoff/blob/4e28e23e41c2b30c4e9760fd108d4d3d399333d6/handoffs/CP6-DEV-20261012/tasks/WP04-39/replies/20261122T131313Z-coord-acceptance-ack/MESSAGE.md) · [WP04-39 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/d961c0ca8055386c5503368f2ca447b1e6f6c4ed/handoffs/CP6-DEV-20261012/tasks/WP04-39/messages/20261122T124929Z-exec-wp02-14b-delivery/MESSAGE.md)
+
+## WP03-07 账户 Main 当前映射裁决与资格竞争
+
+WP03-07 完整 DONE，CRM 远端采用 `512303e9f6c530dbd398991d96a69ffe9990cf23`，同树冒烟 5/5，DEV-2 已于 `2026-11-22T15:08:59.944812+00:00` 释放。实际 Main 供给完整签名快照和 UNLINK 后继，其出件代码随 WP04-03 已采用。分叉、相反决定和完整解决使用同合同登记签名。CRM A13 与账户更新按同一 PostgreSQL 最终门复核，Next/React 可分别读原成功和当前资格。[#400 派工](https://github.com/GTX537/CP6.AI-Handoff/blob/f474d457324e540b3815f42b328b91e30186d24f/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261122T141447Z-exec-wp02-14b-wp03-07/MESSAGE.md) · [CRM 产品 PR](https://github.com/GTX537/CP6.CRM/pull/260) · [唯一报告](https://github.com/GTX537/CP6.CRM/blob/512303e9f6c530dbd398991d96a69ffe9990cf23/docs/development/evidence/WP03-07/DELIVERY.md) · [运行对账](https://github.com/GTX537/CP6.CRM/blob/512303e9f6c530dbd398991d96a69ffe9990cf23/docs/development/evidence/WP03-07/a13-observation.json)
+
+### CRM-ACC-01 目标复核
+
+五张所属实施卡均完整 DONE。已逐条核对 47 项原清单和来源原行、10 项必需运行修订及两仓采用。原 AC **32/47**，必需修订 **9/10**，目标开放。W1-ACC-03 至 06 各有同一原 ID 与一份 CRM 运行证据，由 CRM-ACC-01、CRM-LEAD-01、ERP-BP-01 引用。W1-ACC-07 的最终商业使用由 WP14-02 实际联验。[原清单](../assessments/20261011/catalogs/commercial-finance.json) · [实际采用登记](../roadmap.json)
+
+| 原项 | 复核 | 实际证据 |
+|---|---|---|
+| A.AC01、A.AC02、A.AC03、A.AC04、A.AC05、A.AC06、A17、A18、A20、A28、A29、A31、A37 | 保持通过 | [已有实际采用](https://github.com/GTX537/CP6.CRM/blob/677509b2b5fa48db213d00e44098a9de654e53ea/docs/development/evidence/WP03-05/DELIVERY.md) |
+| A.AC10、A.AC14、A.AC15、A19、A21、A22、A24、A25、A34 | 保持通过 | [已有实际采用](https://github.com/GTX537/CP6.CRM/blob/6f8bbfb4b051495bdf45d188f75a904b09cd4969/docs/development/evidence/WP03-06/DELIVERY.md) |
+| A27 | 保持通过 | [已有实际采用](https://github.com/GTX537/CP6.CRM/blob/0370eaa45ee6376c786db01f5c2465b54aadf0b2/docs/development/evidence/WP03-06b/DELIVERY.md) |
+| A30 | 保持通过 | [已有实际采用](https://github.com/GTX537/CP6.CRM/blob/bb393c171fdd934e7ffbe15f76ef1fe24380c028/docs/development/evidence/WP03-29/DELIVERY.md) |
+| A23、A26、A36、A41、A42、A44、A45 | 新核销通过 | [同一账户 C03 原历史、A13 决定及写并发](https://github.com/GTX537/CP6.CRM/blob/512303e9f6c530dbd398991d96a69ffe9990cf23/docs/development/evidence/WP03-07/DELIVERY.md) |
+| C42 | 新核销通过 | [WP03-09 原 C42 及隐藏 PC 安全冲突](https://github.com/GTX537/CP6.CRM/blob/2887d57b76c4869e0aa7c05e38dbb1754872a5e1/docs/development/evidence/WP03-09/DELIVERY.md) |
+
+| 后继职责 | 仍待完整证明 | 剩余断言 |
+|---|---|---|
+| WP14-02 | A.AC07、A.AC08、A.AC09、A.AC11、A.AC12、A.AC13、A32、A33、A38、A43、W1-ACC-07 | 跨 CRM、Main 与 H02 的商业交接联验。核对停用/恢复和联系人匿名、渠道、关系、活动、在途请求。真实 H02 原参与映射在账户线只读重放。初始联系人关联预选后撤权及各 tab 独立裁剪。CRM 已有合法原请求的 Broker ACK 与 Main 离线/迟到。冲突内和缓存之后的正式商业事务须从各自 Owner 重核。 |
+| WP02-24 | A.AC16、A35、A46 | CRM 商业原结果消费者按正式目录处理超时、单次未见和有条件重试，核对过期原回执、墓碑、身份水位、412 后原状态及浏览器恢复，原请求不因刷新重发。 |
+| WP14-08 | A39、A40 | 跨域恢复专项联验真实拒绝、原未知域、客户端假 Fence、Owner 原子 Fence 后的迟到请求及导出对照，按执行域保留原状态。 |
+
+CRM-LEAD-01 原 AC 59/60，必需修订 11/12。ERP-BP-01 新核销 AC058、AC086，原 AC 106/124，必需修订 9/10。真实 Main 读取停用账户和实际业务零新增仍沿 WP14-02 核验 AC047，Main 真实更正13、UNLINK14 与两份迟到原件沿 WP14-08 核验 AC091。
+
+按 #399 原 DELIVERY 完整提交与路径查重，单次补记 WP03-06b 收尾 **213.072 秒**，累计 2577.915 秒，原目标核对 0.122 秒单列。本卡核销前累计 161638.694 秒。本卡快照 `2026-11-22T15:09:41.508899+00:00`，卡内 3010.417 秒，目标核对 2.820 秒，计划累计 164651.931 秒。本卡预算 14400 秒，21600 秒强制拆卡。[#399 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/1523b08ad9a9e2bf1b4ff440894ba4041c2a946b/handoffs/CP6-DEV-20261012/tasks/WP03-06b/replies/20261122T141232Z-coord-acceptance-ack/MESSAGE.md) · [原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/1e699ed73983072d7b0784ca09b2714d50094aef/handoffs/CP6-DEV-20261012/tasks/WP03-06b/messages/20261122T140600Z-exec-wp02-14b-delivery/MESSAGE.md)
+
+阶段 C 余候选 WP03-11b 有 2 条下游边，继续按 #389 等待 G05/C35 权威来源。下一张实际领取以独立派工为准。[#389 裁定](https://github.com/GTX537/CP6.AI-Handoff/pull/389)

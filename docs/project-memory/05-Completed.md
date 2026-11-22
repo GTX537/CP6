@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP03-06b 旧 C03 斜线伙伴键权威合同与入史余项](https://github.com/GTX537/CP6.CRM/blob/0370eaa45ee6376c786db01f5c2465b54aadf0b2/docs/development/evidence/WP03-06b/DELIVERY.md)（DONE），核对时间 `2026-11-22T14:01:49.246336+00:00`。
+- [WP03-07 账户Main当前映射裁决与资格竞争](https://github.com/GTX537/CP6.CRM/blob/512303e9f6c530dbd398991d96a69ffe9990cf23/docs/development/evidence/WP03-07/DELIVERY.md)（DONE），核对时间 `2026-11-22T15:09:41.508899+00:00`。
 
 ### 已关闭目标
 
