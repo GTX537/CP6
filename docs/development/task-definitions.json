@@ -2142,6 +2142,79 @@
       }
     },
     {
+      "id": "WP02-31",
+      "package_id": "WP02",
+      "title": "联系人历史导出与受控下载",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "CRM-CON-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP02-14",
+        "WP02-14b",
+        "WP02-15"
+      ],
+      "exclusive_resources": [
+        "Main:contact-history-export-v11"
+      ],
+      "external_prerequisites": [
+        "按 #402 回读正式 G05 提供方授权、两笔原池划拨及 C35 权威裁定。"
+      ],
+      "scope": [
+        "提供 CONTACT_HISTORY、CONTACT-HISTORY-SCHEMA/1 与 CSV_VIEW。按完整意图、原请求及当前授权受理或原键回读。",
+        "保存独立 Job/Artifact 前驱、签名原件、checkpoint、精确制品及有限当前许可。",
+        "为 CRM-CON-01 提供 FOUNDATION，交回 C16、C36、C37 与 REV1-18 所需 Main 原件。CRM 消费、C35、C34、REV1-13 归 WP03-11b。"
+      ],
+      "outputs": [
+        "正式 TLS 路径、CONTACT-HISTORY-EXPORT/1.1 合同和隔离 PostgreSQL 实际原件、签名、SHA-256 与下载观察。",
+        "按 #402 同卡登记两笔预算、WP03-11b 前置及 C35 权威，按 #401 单次补记 WP03-07。"
+      ],
+      "code_paths": [
+        "CP6.Core/Services/Platform/ContactHistoryExportOwnerV11.cs",
+        "CP6.Core/Services/Platform/ContactHistoryExportOwnerV11.Download.cs",
+        "CP6.WebApi/Controllers/Platform/ContactHistoryExportControllerV11.cs",
+        "CP6.Persistence.PostgreSql/Migrations/Core/20261122153000_ContactHistoryExportV11.cs"
+      ],
+      "new_paths": [
+        "docs/development/contracts/contact-history-export-v11.md",
+        "docs/development/evidence/WP02-31/DELIVERY.md",
+        "docs/development/evidence/WP02-31/sha256.json"
+      ],
+      "acceptance_positive": [
+        "实际 Main TLS 与 PostgreSQL 核对完整意图、原键、丢包与重启、并发、独立前驱与签名 checkpoint。",
+        "按当前对象与用途权限取得准确版本、字节与摘要，观察有限下载窗口及不同脱敏版本。"
+      ],
+      "acceptance_negative": [
+        "异意图、错租户、错误 Job、错版本/摘要/字段/用途及过期或撤销许可拒绝，分配前终拒可原键核验。",
+        "错流 checkpoint 不解决冲突，旧 READY 和旧许可不能提供文件。首字节前失效零字节，流中撤权停止续发。"
+      ],
+      "notes": "WP02-15 拨入 13102.913 秒、WP02-23 拨入 1297.087 秒，合计 14400 秒。21600 秒强制拆卡。",
+      "prerequisite_bindings": [
+        {
+          "requirement": "正式 PRIV、FILE 和当前精确制品边界",
+          "task_ids": [
+            "WP02-14",
+            "WP02-14b",
+            "WP02-15"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "WP02-14、WP02-14b、WP02-15 及适用拆分余卡完整 DONE，核对实际采用。"
+        }
+      ],
+      "source_refs": [
+        "docs/development/contracts/contact-history-export-v11.md",
+        "docs/design-handbook/modules/CRM-CON-01.md",
+        "docs/development/planning/20261117-card-execution.md"
+      ],
+      "supplemental_authorization": {
+        "commit": "027eab421b934bbd6833d39d6551026d9eb62418",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP03-11/replies/20261122T152246Z-coord-g05-main-owner-authorization/MESSAGE.md",
+        "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/402"
+      }
+    },
+    {
       "id": "WP03-01",
       "package_id": "WP03",
       "title": "公开表单Bundle与配置生效",
@@ -3059,15 +3132,16 @@
       ],
       "relative_size": "M",
       "dependencies": [
-        "WP03-11"
+        "WP03-11",
+        "WP02-31"
       ],
       "external_prerequisites": [
-        "已核实 Main PRIV/FILE 未提供 CONTACT_HISTORY 的原键受理及精确制品当前许可。待总负责确认权威接口及提供方后，CRM 余卡按真实版本和当前准入接入。",
-        "明确 Lead 活动关联的权威来源及 #352 对应许可，收到独立派工后领取。"
+        "回读已采用的 WP02-31 Main PRIV/FILE 合同、原件与 SHA-256，获得 COORD 独立派工。",
+        "CRM Lead 按 [C35 权威裁定](https://github.com/GTX537/CP6.AI-Handoff/blob/027eab421b934bbd6833d39d6551026d9eb62418/handoffs/CP6-DEV-20261012/tasks/WP03-11/replies/20261122T152246Z-coord-c35-lead-owner-decision/MESSAGE.md) 履行显式关联，C34 与 REV1-13 沿 #352。"
       ],
       "scope": [
         "C16、C36、C37、REV1-18。核实已采用的 CONTACT_HISTORY 数据集、原请求和有限当前下载许可。经 Main TLS 连接真实 PRIV/FILE Owner，复验按当前读权原键恢复、当前字段和用途、精确制品及撤权/匿名化拒字节。",
-        "C35。采用权威目录中的显式 Contact 与原 Lead 活动绑定，复核原 ActivityId、版、终态、当前可读范围及分页，Lead 原事实与首响不改写。",
+        "C35 由 CRM Lead 经授权入口显式绑定租户、Contact、Lead 原生 ActivityId 与 LeadId，保存来源、版本及变更。经真实 CRM 与 PostgreSQL 分别核对有无绑定的原活动、原版与更正视图、终态、分页覆盖、权限、匿名化及零附带写入。",
         "C34、REV1-13。按 #352 复核身份流 v10/v9、epoch 切代、过期 RQ、草稿清理及实际指纹密钥轮换、值、根及处置历史最终门。"
       ],
       "outputs": [
@@ -3080,10 +3154,12 @@
       ],
       "new_paths": [],
       "acceptance_positive": [
-        "正式 Main Owner 接入后核对精确导出、同键和下载当前许可，核对实际 Lead 镜像及原始事实。"
+        "正式 Main Owner 接入后核对精确导出、同键和下载当前许可，核对实际 Lead 镜像及原始事实。",
+        "按 C35 回读有权写入的明确四元绑定与原活动，验证原始和更正视图、版本、终态和分页。"
       ],
       "acceptance_negative": [
-        "合同缺失、错误许可或旧授权、旧密钥、缺活动原件时返回相应安全状态，业务新增和旧明文输出为零。"
+        "合同缺失、错误许可或旧授权、旧密钥、缺活动原件时返回相应安全状态，业务新增和旧明文输出为零。",
+        "无显式绑定、错租户、降权、匿名化或来源不全时按合同裁剪或拒绝，隐藏活动 ID 和计数不外泄，首响及原活动数量无副作用。"
       ],
       "exclusive_resources": [
         "CRM:crm-con-owner",
@@ -3091,16 +3167,31 @@
         "file:CRM:src/CP6.CRM.Api/CrmEndpoints.cs"
       ],
       "notes": "原 WP03-11 定义和原验收保留。WP03-18 的原 Void 和 WP03-20 的 H39 职责保留。",
-      "prerequisite_bindings": [],
+      "prerequisite_bindings": [
+        {
+          "requirement": "Main CONTACT-HISTORY-EXPORT/1.1 提供方和精确原件",
+          "task_ids": [
+            "WP02-31"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "WP02-31 及其适用拆分余卡完整 DONE，实际 Main 采用与原件经 COORD 回读后独立派工。"
+        }
+      ],
       "source_refs": [
         "docs/development/08-postgresql-baseline.md",
         "docs/development/assessments/20261011/implementation-assessment.json",
         "docs/design-handbook/modules/CRM-CON-01.md",
         "docs/design-handbook/remediation/06-wire-types-and-fixtures.md",
         "docs/design-handbook/remediation/assets/core-types/lead-acceptance-supersession.json",
-        "docs/development/assessments/20261011/catalogs/commercial-finance.json"
+        "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "docs/development/contracts/contact-history-export-v11.md"
       ],
-      "split_parent": "WP03-11"
+      "split_parent": "WP03-11",
+      "c35_authority_decision": {
+        "commit": "027eab421b934bbd6833d39d6551026d9eb62418",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP03-11/replies/20261122T152246Z-coord-c35-lead-owner-decision/MESSAGE.md",
+        "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/402"
+      }
     },
     {
       "id": "WP03-12",

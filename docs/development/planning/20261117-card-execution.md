@@ -601,3 +601,13 @@ CRM-LEAD-01 原 AC 59/60，必需修订 11/12。ERP-BP-01 新核销 AC058、AC08
 按 #399 原 DELIVERY 完整提交与路径查重，单次补记 WP03-06b 收尾 **213.072 秒**，累计 2577.915 秒，原目标核对 0.122 秒单列。本卡核销前累计 161638.694 秒。本卡快照 `2026-11-22T15:09:41.508899+00:00`，卡内 3010.417 秒，目标核对 2.820 秒，计划累计 164651.931 秒。本卡预算 14400 秒，21600 秒强制拆卡。[#399 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/1523b08ad9a9e2bf1b4ff440894ba4041c2a946b/handoffs/CP6-DEV-20261012/tasks/WP03-06b/replies/20261122T141232Z-coord-acceptance-ack/MESSAGE.md) · [原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/1e699ed73983072d7b0784ca09b2714d50094aef/handoffs/CP6-DEV-20261012/tasks/WP03-06b/messages/20261122T140600Z-exec-wp02-14b-delivery/MESSAGE.md)
 
 阶段 C 余候选 WP03-11b 有 2 条下游边，继续按 #389 等待 G05/C35 权威来源。下一张实际领取以独立派工为准。[#389 裁定](https://github.com/GTX537/CP6.AI-Handoff/pull/389)
+
+## WP02-31 联系人历史导出与受控下载
+
+WP02-31 完整 DONE，作为 CRM-CON-01 FOUNDATION。经 Main 真实 TLS 与隔离 PostgreSQL 验证原请求同键恢复、独立 Job/Artifact 签名和 checkpoint。当前对象、字段、用途、隐私和 DL 权限共同保护原件。首字节前失效零输出，流中撤权停止后续批次。原 CSV SHA-256 为 `0bced2f97833de5765ecf4822f3c9a3a390967816713f59d8b446ad81aac4d78`。[唯一报告](../evidence/WP02-31/DELIVERY.md) · [正式合同](../contracts/contact-history-export-v11.md) · [Main PR](https://github.com/GTX537/CP6/pull/1310)
+
+阶段 C 在 WP03-11b 前插入 WP02-31 并增加该依赖，保留原父 WP03-11。WP03-11b 余量 10600.674 秒及强制拆卡点 15901.011 秒。C35 权威由 CRM Lead 承担显式租户、Contact、ActivityId 与 LeadId 关联。CRM-CON-01 原 AC 42/49、必需补充 24/26、必需运行修订 2/2。C16、C36、C37、REV1-18 的 CRM 消费以及 C35、C34、REV1-13 归 WP03-11b。C22 归 WP03-20，C47 归 WP03-18。[G05 授权](https://github.com/GTX537/CP6.AI-Handoff/blob/027eab421b934bbd6833d39d6551026d9eb62418/handoffs/CP6-DEV-20261012/tasks/WP03-11/replies/20261122T152246Z-coord-g05-main-owner-authorization/MESSAGE.md) · [C35 裁定](https://github.com/GTX537/CP6.AI-Handoff/blob/027eab421b934bbd6833d39d6551026d9eb62418/handoffs/CP6-DEV-20261012/tasks/WP03-11/replies/20261122T152246Z-coord-c35-lead-owner-decision/MESSAGE.md)
+
+WP02-15 拨入 13102.913 秒，WP02-23 拨入 1297.087 秒。本卡原额度 14400 秒，21600 秒强制拆卡。按 #401 原 DELIVERY 完整提交与路径查重，单次补记 WP03-07 收尾 187.323 秒至 3197.740 秒，目标核对 2.820 秒单列。计入本卡前计划累计 164839.254 秒。核销快照 `2026-11-22T16:05:38.360019+00:00`，卡内 2125.703 秒，目标核对 0.000 秒，计划累计 166964.957 秒。本次快照低于 48 小时检查点。[#401 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/0b5590dab6d2550abdbf05d0e078ec83d015b93c/handoffs/CP6-DEV-20261012/tasks/WP03-07/replies/20261122T152012Z-coord-acceptance-ack/MESSAGE.md) · [原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/b6219fa3d08ec085b77aad6bc985d38430a08770/handoffs/CP6-DEV-20261012/tasks/WP03-07/messages/20261122T151309Z-exec-wp02-14b-delivery/MESSAGE.md)
+
+阶段 C 下一候选 WP03-11b 有 2 条下游边。实际领取以 COORD 独立派工为准。

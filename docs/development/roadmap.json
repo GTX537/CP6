@@ -176192,6 +176192,11 @@
       "at": "2026-11-22T15:09:41.508899+00:00",
       "evidence": "docs/development/planning/20261117-card-execution.md",
       "change": "WP03-07 完整 DONE。A13 当前映射和资格经实际 CRM、Main 出件及同合同签名夹具受验。CRM-ACC-01 原 AC 32/47、必需修订 9/10，保持开放。共享 W1-ACC-03 至 06 每条核销一次。按 #399 单次补记 WP03-06b 213.072 秒。"
+    },
+    {
+      "at": "2026-11-22T16:05:38.360019+00:00",
+      "evidence": "docs/development/planning/20261117-card-execution.md",
+      "change": "WP02-31 Main PRIV/FILE 提供方完整 DONE。登记 #402 两笔原池拨额和 WP03-11b 前置及 C35 权威。按 #401 单次补记 WP03-07 187.323 秒。"
     }
   ],
   "implementation_assessment": {
@@ -200124,6 +200129,107 @@
       }
     },
     {
+      "id": "WP02-31",
+      "package_id": "WP02",
+      "title": "联系人历史导出与受控下载",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "CRM-CON-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP02-14",
+        "WP02-14b",
+        "WP02-15"
+      ],
+      "exclusive_resources": [
+        "Main:contact-history-export-v11"
+      ],
+      "coverage_role": "FOUNDATION",
+      "state": "DONE",
+      "plan_path": "docs/development/task-plans/WP02.md",
+      "card_anchor": "wp02-31",
+      "entry_gate": "CONFIRMED",
+      "blockers": [],
+      "entry_conditions": [
+        "WP02-14、WP02-14b、WP02-15 及适用拆分余卡完整 DONE，核对实际采用。",
+        "#402 两项授权及正式派工已登记并回读。"
+      ],
+      "assignment": {
+        "chat_label": "EXEC-WP02-14B",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp02-31",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-22T15:30:12.656834+00:00",
+        "baseline_sha": "18a5b2420b75fe15d868e962973d9c0cf4efd3f5",
+        "entry_evidence": "docs/development/planning/20261117-card-execution.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "delivery_report": "docs/development/evidence/WP02-31/DELIVERY.md",
+        "actual_start_ref": {
+          "commit": "e68bcf017aa53c99d01f40bb3353ef61df95edd0",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-31/messages/20261122T153141Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-22T15:30:12.656834+00:00"
+        },
+        "dispatch_decision_ref": {
+          "commit": "20c9674dfce85ddcf916f03c5b9b5ee9bd093d67",
+          "original_commit": "36f758a041cc5b7702b22f3472ed093bdcf5f3a9",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261122T152454Z-exec-wp02-14b-wp02-31/MESSAGE.md"
+        },
+        "dispatch_scope": "Main PRIV/FILE CONTACT_HISTORY 的原请求、签名结果流、精确制品与受控下载。"
+      },
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-31/DELIVERY.md",
+          "source_sha": "c1d00fc82b14c1975db0592afb0768f1abc60d0e",
+          "result": "PASS",
+          "observed_at": "2026-11-22T11:02:57.216642-05:00",
+          "environment": "Windows，Main .NET 8 Kestrel 实际回环 TLS，隔离 PostgreSQL 18.6，模拟 CRM 联系人、源授权投影和已登记服务身份。",
+          "command": "dotnet build CP6.Tests/CP6.Tests.csproj --no-restore，dotnet vstest 筛选 Contact_history_G05，PrivacyExport、FileContent、CrmOidcServiceTokenTests 相邻回归。",
+          "scope": "Main PRIV/FILE CONTACT_HISTORY 的原请求、签名结果流、精确制品与受控下载。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-31/DELIVERY.md",
+        "source_sha": "c1d00fc82b14c1975db0592afb0768f1abc60d0e",
+        "remote_main_sha": "18a5b2420b75fe15d868e962973d9c0cf4efd3f5",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1310",
+        "adoption_record": "D:/CP6-test-artifacts/WP02-31/current-20261122/main-finish.json",
+        "scope": "远端字段记录领卡基线。实际采用与同树冒烟以本 PR 和原链 DELIVERY 为准。",
+        "contract": "CONTACT-HISTORY-EXPORT/1.1",
+        "contract_path": "docs/development/contracts/contact-history-export-v11.md",
+        "original_path": "docs/development/evidence/WP02-31/contact-history.csv",
+        "original_sha256": "0bced2f97833de5765ecf4822f3c9a3a390967816713f59d8b446ad81aac4d78",
+        "manifest_path": "docs/development/evidence/WP02-31/sha256.json",
+        "manifest_sha256": "f8fe4fbe86105780b6878b6da9e89cbea879e55084aad1a35e96c035af8adc09"
+      },
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP02-31/DELIVERY.md",
+        "started_at": "2026-11-22T15:30:12.656834+00:00",
+        "official_started_at": "2026-11-22T15:30:12.656834+00:00",
+        "technical_verified_at": "2026-11-22T11:02:57.216642-05:00",
+        "verified_at": "2026-11-22T16:05:38.360019+00:00",
+        "effective_seconds": 2125.703,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-14",
+          "WP02-14b",
+          "WP02-15"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 187.323,
+        "target_review_started_at": "2026-11-22T16:05:38.359931+00:00",
+        "target_review_seconds": 0.0
+      }
+    },
+    {
       "id": "WP03-01",
       "package_id": "WP03",
       "title": "公开表单Bundle与配置生效",
@@ -204262,7 +204368,7 @@
         "official_started_at": "2026-11-22T14:19:28.271538+00:00",
         "technical_verified_at": "2026-11-22T10:01:26.9323202-05:00",
         "verified_at": "2026-11-22T15:09:41.508899+00:00",
-        "effective_seconds": 3010.417,
+        "effective_seconds": 3197.74,
         "size": "M",
         "budget_seconds": 14400,
         "mandatory_split_seconds": 21600,
@@ -204278,7 +204384,15 @@
         "preceding_integration_seconds": 213.072,
         "target_review_started_at": "2026-11-22T15:09:38.688678+00:00",
         "target_review_seconds": 2.82,
-        "crm_seat_finished_at": "2026-11-22T15:08:59.944812+00:00"
+        "crm_seat_finished_at": "2026-11-22T15:08:59.944812+00:00",
+        "official_finish": "2026-11-22T15:12:48.831542Z",
+        "post_candidate_finalization_seconds": 187.323,
+        "finalization_decision_ref": {
+          "commit": "0b5590dab6d2550abdbf05d0e078ec83d015b93c",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-07/replies/20261122T152012Z-coord-acceptance-ack/MESSAGE.md",
+          "receipt_commit": "b6219fa3d08ec085b77aad6bc985d38430a08770",
+          "receipt_path": "handoffs/CP6-DEV-20261012/tasks/WP03-07/messages/20261122T151309Z-exec-wp02-14b-delivery/MESSAGE.md"
+        }
       }
     },
     {
@@ -204770,7 +204884,8 @@
       ],
       "relative_size": "M",
       "dependencies": [
-        "WP03-11"
+        "WP03-11",
+        "WP02-31"
       ],
       "exclusive_resources": [
         "CRM:crm-con-owner",
@@ -204784,20 +204899,25 @@
       "entry_gate": "NOT_CHECKED",
       "assignment": null,
       "blockers": [
-        "已核实 Main PRIV/FILE 未提供 CONTACT_HISTORY 的原键受理及精确制品当前许可。待总负责确认权威接口及提供方后，CRM 余卡按真实版本和当前准入接入。"
+        "等 COORD 回读 WP02-31 Main 实际采用和固定原件，再单独派 WP03-11b。"
       ],
       "entry_conditions": [
-        "已核实 Main PRIV/FILE 未提供 CONTACT_HISTORY 的原键受理及精确制品当前许可。待总负责确认权威接口及提供方后，CRM 余卡按真实版本和当前准入接入。"
+        "WP02-31 及其适用拆分余卡完整 DONE，实际 Main 采用与原件经 COORD 回读后独立派工。"
       ],
       "validation_evidence": [],
       "delivery_evidence": null,
       "split_parent": "WP03-11",
       "remaining_scope": [
         "C16、C36、C37、REV1-18。核实已采用的 CONTACT_HISTORY 数据集、原请求和有限当前下载许可。经 Main TLS 连接真实 PRIV/FILE Owner，复验按当前读权原键恢复、当前字段和用途、精确制品及撤权/匿名化拒字节。",
-        "C35。采用权威目录中的显式 Contact 与原 Lead 活动绑定，复核原 ActivityId、版、终态、当前可读范围及分页，Lead 原事实与首响不改写。",
+        "C35 由 CRM Lead 经授权入口显式绑定租户、Contact、Lead 原生 ActivityId 与 LeadId，保存来源、版本及变更。经真实 CRM 与 PostgreSQL 分别核对有无绑定的原活动、原版与更正视图、终态、分页覆盖、权限、匿名化及零附带写入。",
         "C34、REV1-13。按 #352 复核身份流 v10/v9、epoch 切代、过期 RQ、草稿清理及实际指纹密钥轮换、值、根及处置历史最终门。"
       ],
-      "card_budget_seconds": 10600.674
+      "card_budget_seconds": 10600.674,
+      "c35_authority_decision": {
+        "commit": "027eab421b934bbd6833d39d6551026d9eb62418",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP03-11/replies/20261122T152246Z-coord-c35-lead-owner-decision/MESSAGE.md",
+        "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/402"
+      }
     },
     {
       "id": "WP03-12",
@@ -302399,7 +302519,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 164651.931,
+      "effective_seconds": 166964.957,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -302453,7 +302573,8 @@
         "WP03-29",
         "WP04-39",
         "WP03-06b",
-        "WP03-07"
+        "WP03-07",
+        "WP02-31"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -302608,6 +302729,7 @@
           "WP02-30",
           "WP03-16b",
           "WP03-11",
+          "WP02-31",
           "WP03-11b",
           "WP03-28",
           "WP03-29"
@@ -302711,8 +302833,8 @@
       },
       "next_card_selection": {
         "rule": "阶段 C 展开全部拆分严格前置；全图最长下游边数降序，同长保留用户阶段数组的顺序。",
-        "baseline_sha": "ee5728b67f9d19ea82a861ac64c95c9aea955cc5",
-        "after_card": "WP03-07",
+        "baseline_sha": "18a5b2420b75fe15d868e962973d9c0cf4efd3f5",
+        "after_card": "WP02-31",
         "selected": "WP03-11b",
         "candidates": [
           {
@@ -302937,6 +303059,26 @@
             "commit": "bf469ca177ceb00927949aeb9140a279efa79bed",
             "path": "handoffs/CP6-DEV-20261012/tasks/WP03-06/replies/20261122T120526Z-coord-main-c03-compat-authorization/MESSAGE.md",
             "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/396"
+          }
+        },
+        {
+          "source_task_id": "WP02-15",
+          "target_task_id": "WP02-31",
+          "seconds": 13102.913,
+          "decision": {
+            "commit": "027eab421b934bbd6833d39d6551026d9eb62418",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-11/replies/20261122T152246Z-coord-g05-main-owner-authorization/MESSAGE.md",
+            "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/402"
+          }
+        },
+        {
+          "source_task_id": "WP02-23",
+          "target_task_id": "WP02-31",
+          "seconds": 1297.087,
+          "decision": {
+            "commit": "027eab421b934bbd6833d39d6551026d9eb62418",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-11/replies/20261122T152246Z-coord-g05-main-owner-authorization/MESSAGE.md",
+            "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/402"
           }
         }
       ]
