@@ -28,6 +28,24 @@ public sealed class ErpRuntimeOptionsTests
         Assert.Throws<ArgumentException>(() => new ErpIntegrationRuntime(options, Validator));
     }
 
+    [Fact]
+    public void V2_emission_requires_explicit_unique_registered_tenants()
+    {
+        var options = Options();
+        Assert.Empty(options.BusinessPartnerSuccessV2Tenants);
+        var tenant = Assert.Single(options.Tenants).Key;
+        var compatible = ErpEventValidator.Load(Path.Combine(AppContext.BaseDirectory, "contracts/events/erp"));
+        options.BusinessPartnerSuccessV2Tenants = [tenant];
+        Assert.Throws<ArgumentException>(() => new ErpIntegrationRuntime(options, Validator));
+        Assert.NotNull(new ErpIntegrationRuntime(options, compatible));
+        options = Options();
+        options.BusinessPartnerSuccessV2Tenants = [Guid.NewGuid()];
+        Assert.Throws<ArgumentException>(() => new ErpIntegrationRuntime(options, compatible));
+        options = Options();
+        options.BusinessPartnerSuccessV2Tenants = [tenant, tenant];
+        Assert.Throws<ArgumentException>(() => new ErpIntegrationRuntime(options, compatible));
+    }
+
     [Theory]
     [InlineData(" ")]
     [InlineData("\t")]

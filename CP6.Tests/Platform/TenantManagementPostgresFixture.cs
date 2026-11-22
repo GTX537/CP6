@@ -54,19 +54,35 @@ public sealed class TenantManagementPostgresFixture : IAsyncLifetime
         if (!CurrentPermissionPostgresFactAttribute.Selected) return;
         try
         {
-            await using (var owner = await _server.OpenOwnerAsync("postgres"))
-                await CurrentPermissionPostgresFixture.Sql(owner, $"CREATE DATABASE {Database}");
-            await using var core = Context(new TenantContext());
-            await core.Database.MigrateAsync();
-            await using var priority = PriorityContext();
-            await priority.Database.MigrateAsync();
+            await CreateDatabaseAsync(Database);
         }
         catch { await _server.DisposeAsync(); throw; }
     }
 
-    internal CP6Context Context(ITenantContext tenant, CrmIdentityRuntime? identity = null, params IInterceptor[] interceptors)
+    internal async Task<string> CreateIsolatedDatabaseAsync()
     {
-        using var template = _server.Context(tenant.CurrentTenantId, Database);
+        var database = "tenant_component_" + Guid.NewGuid().ToString("N");
+        await CreateDatabaseAsync(database);
+        return database;
+    }
+
+    private async Task CreateDatabaseAsync(string database)
+    {
+        await using (var owner = await _server.OpenOwnerAsync("postgres"))
+            await CurrentPermissionPostgresFixture.Sql(owner, $"CREATE DATABASE {database}");
+        await using var core = ContextForDatabase(database, new TenantContext());
+        await core.Database.MigrateAsync();
+        await using var priority = PriorityContext(database);
+        await priority.Database.MigrateAsync();
+    }
+
+    internal CP6Context Context(ITenantContext tenant, CrmIdentityRuntime? identity = null, params IInterceptor[] interceptors)
+        => ContextForDatabase(Database, tenant, identity, interceptors);
+
+    internal CP6Context ContextForDatabase(string databaseName, ITenantContext tenant,
+        CrmIdentityRuntime? identity = null, params IInterceptor[] interceptors)
+    {
+        using var template = _server.Context(tenant.CurrentTenantId, databaseName);
         var database = new DatabaseOptions(DatabaseProvider.PostgreSql);
         var profile = DatabaseMigrationProfile.For(database, DatabaseContextKind.Core);
         var options = DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6Context>(), database,
@@ -77,9 +93,9 @@ public sealed class TenantManagementPostgresFixture : IAsyncLifetime
         return context;
     }
 
-    internal IdentityMessagingContext PriorityContext()
+    internal IdentityMessagingContext PriorityContext(string databaseName = Database)
     {
-        using var template = _server.Context(TenantContext.DefaultTenant, Database);
+        using var template = _server.Context(TenantContext.DefaultTenant, databaseName);
         var database = new DatabaseOptions(DatabaseProvider.PostgreSql);
         var profile = DatabaseMigrationProfile.For(database, DatabaseContextKind.IdentityPriority);
         return new IdentityMessagingContext(DatabaseContextOptions.Configure(new DbContextOptionsBuilder<IdentityMessagingContext>(),

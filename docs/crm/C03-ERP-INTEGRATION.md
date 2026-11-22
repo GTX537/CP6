@@ -24,6 +24,16 @@ A12 服务可用当前 C01 读取令牌请求一条原生成功或失败事件�
 
 Main 在 PostgreSQL 事务中复核原请求、当前 C02 账户服务发布及读取令牌，并锁定仅适用于这一份原件的有效读权登记。来源期、身份期、事件键、因果键、关联键、原生合同和持久化摘要均须相符。响应的 `payload` 是 ERP Outbox 原字节的 Base64，`payloadSha256` 为小写十六进制。对象登记由授权归属方维护，初始为空。读取失败不披露原件或摘要。
 
+### 含斜线伙伴键的成功原件
+
+伙伴成功结果兼容版本使用 `com.gtx537.erp.business-partner-synchronized.v2`、`ACC-C03-V2` 和 schema `2.0.0`。键仍为 1 至 20 位区分大小写的字符串，斜线分隔的每段须以 ASCII 字母或数字开头。消费者保存原字符串，导航使用获批落点。业务 `resultVersion` 继续在同一请求流内计数。请求及其独立原件凭据继续使用 v1。[兼容合同包](../../contracts/events/erp/business-partner-synchronized/v2/contract-bundle.v1.json)
+
+仅当租户列入 `ErpIntegration:BusinessPartnerSuccessV2Tenants` 且实际伙伴键含斜线时，Main 为新成功结果选择 v2。清单默认空，既有合法 v1 键及失败结果沿 v1 处理。结果类型随原请求日志持久化，重发沿已记录类型。伙伴 Owner 及已切换旧写者的校验先于出件。
+
+有对象当前读权的账户服务可经 `/internal/erp/v2/business-partner-result-proofs/{account}/{requestId}/{requestVersion}/{eventId}/{resultVersion}` 查证 v2 成功原件。既有对象读权登记继续绑定原请求、指定事件、版本及摘要，v2 响应的 `resultContract` 固定结果版本与合同包 SHA-256。原请求凭据仍在 `original`。v1 查证入口继续交付 v1 成功或失败事件。[v2 查证合同](../../contracts/erp/business-partner-result-proof/v2/contract.json)
+
+从安装输出的 `contracts/events/erp` 用 `ErpEventValidator.Load` 加载两个合同包。先核对查证响应的合同、事件键与重算摘要，再将原字节传给 `DecodeBusinessPartnerSuccessV2` 取回伙伴键。该入口按事件类型、schema 标识、schema 版本及数据一致性验证。可复现实测见 [WP04-39 交付](../development/evidence/WP04-39/DELIVERY.md)。
+
 ## ERP 数据与操作
 
 业务权威继续使用 `T_WebBusinessPartner`、`T_Quotation`/`T_QuotationDetail`、`T_ProductMaster` 和 `T_Order`/`T_OrderDetail`。`erp_integration` 中的表只记录命令、结果、重试和审计，不保存另一套法定客户或订单。

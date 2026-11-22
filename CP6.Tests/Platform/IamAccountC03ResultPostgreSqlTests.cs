@@ -61,7 +61,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
 
     private static void ConfigureResultProvider(WebApplicationBuilder builder, Harness h, string client,
         AccountC03ServicePrincipalRegistryV1 account, CrmIdentityRuntime identity, CrmOidcOptions oidc,
-        CrmOidcCrypto crypto, HttpClient backchannel)
+        CrmOidcCrypto crypto, HttpClient backchannel, bool compatibleSuccess)
     {
         var settings = new Dictionary<string, string?> {
             ["Database:Provider"] = "PostgreSql", ["ConnectionStrings:DefaultConnection"] = h.Db.Database.GetConnectionString(),
@@ -76,6 +76,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         settings[source + "FromUtc"] = "2020-01-01T00:00:00Z";
         settings[source + "UntilUtc"] = "2100-01-01T00:00:00Z";
         settings[source + "ReaderClientIds:0"] = client;
+        if (compatibleSuccess) settings["ErpIntegration:BusinessPartnerSuccessV2Tenants:0"] = h.Tenant.ToString("D");
         builder.Configuration.AddInMemoryCollection(settings);
         builder.Services.AddSingleton(oidc);
         builder.Services.AddSingleton(crypto);
@@ -203,7 +204,10 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             using var read = await Read(s);
             Assert.Equal(HttpStatusCode.OK, read.StatusCode);
             Assert.True(read.Headers.CacheControl?.NoStore);
-            var proof = (await read.Content.ReadFromJsonAsync<ErpBusinessPartnerResultProof>())!;
+            var bytes = await read.Content.ReadAsByteArrayAsync();
+            using var body = JsonDocument.Parse(bytes);
+            Assert.False(body.RootElement.TryGetProperty("resultContract", out _));
+            var proof = JsonSerializer.Deserialize<ErpBusinessPartnerResultProof>(bytes, ErpEventContracts.Json)!;
             Assert.Equal(ErpBusinessPartnerResultReader.Contract, proof.ProofContract);
             Assert.Equal(s.OriginalMessageId, proof.Original.OriginalMessageId);
             Assert.Equal(s.OriginalSha256, proof.Original.OriginalSha256);

@@ -8,6 +8,7 @@ namespace CP6.Core.Services.ErpIntegration;
 public sealed class ErpEventValidator : ICp6OutboxEnvelopeValidator, ICp6InboxDeliveryValidator
 {
     private readonly Cp6CloudEventValidator platform;
+    private readonly Cp6CloudEventValidator? businessPartnerV2;
     private static readonly HashSet<string> SensitiveNames = new(StringComparer.OrdinalIgnoreCase)
     {
         "name", "names", "displayname", "username", "nickname", "firstname", "lastname", "fullname",
@@ -19,7 +20,19 @@ public sealed class ErpEventValidator : ICp6OutboxEnvelopeValidator, ICp6InboxDe
         "unitprice", "unitprices", "pricelist", "orderlines", "quotationlines", "lines", "bankaccount", "creditcard"
     };
 
-    public ErpEventValidator(Cp6ContractBundle bundle) => platform = new(bundle);
+    public ErpEventValidator(Cp6ContractBundle bundle) : this(bundle, null) { }
+
+    private ErpEventValidator(Cp6ContractBundle bundle, Cp6ContractBundle? compatible)
+    {
+        platform = new(bundle);
+        businessPartnerV2 = compatible is null ? null : new(compatible);
+    }
+
+    public static ErpEventValidator Load(string root) => new(Cp6ContractBundle.Load(root),
+        Cp6ContractBundle.Load(Path.Combine(root, "business-partner-synchronized", "v2"),
+            ErpEventContracts.BusinessPartnerV2SchemaVersion, ErpEventContracts.BusinessPartnerV2BundleSha256));
+
+    internal bool SupportsBusinessPartnerSuccessV2 => businessPartnerV2 is not null;
 
     public bool IsValid(ReadOnlyMemory<byte> payload)
     {
@@ -28,8 +41,10 @@ public sealed class ErpEventValidator : ICp6OutboxEnvelopeValidator, ICp6InboxDe
         {
             using var document = JsonDocument.Parse(payload, new JsonDocumentOptions { MaxDepth = 32 });
             var root = document.RootElement;
-            if (!SafeProperties(root) || !platform.Validate(payload).IsValid) return false;
+            if (!SafeProperties(root)) return false;
             var type = root.GetProperty("type").GetString()!;
+            var schema = type == ErpEventContracts.BusinessPartnerSynchronizedV2 ? businessPartnerV2 : platform;
+            if (schema?.Validate(payload).IsValid != true) return false;
             var topic = ErpEventContracts.TopicFor(type);
             var data = root.GetProperty("data");
             var tenant = root.GetProperty("tenantid").GetString();
@@ -60,6 +75,19 @@ public sealed class ErpEventValidator : ICp6OutboxEnvelopeValidator, ICp6InboxDe
         {
             return false;
         }
+    }
+
+    /// <summary>按已固定的兼容合同解码原件，保留伙伴键的每个字符。</summary>
+    public ErpBusinessPartnerSynchronized? DecodeBusinessPartnerSuccessV2(ReadOnlyMemory<byte> payload)
+    {
+        if (payload.Length is 0 or > 1048576) return null;
+        var bytes = payload.ToArray();
+        if (!IsValid(bytes)) return null;
+        using var document = JsonDocument.Parse(bytes);
+        var root = document.RootElement;
+        return root.GetProperty("type").GetString() == ErpEventContracts.BusinessPartnerSynchronizedV2
+            ? root.GetProperty("data").Deserialize<ErpBusinessPartnerSynchronized>(ErpEventContracts.Json)
+            : null;
     }
 
     public Cp6MessageValidationResult Validate(Cp6OutboxEnvelope envelope)

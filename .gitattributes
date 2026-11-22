@@ -42,6 +42,7 @@ eng/p10/verifier.Dockerfile text eol=lf
 # C02 local Schema/example hashes must be identical on Windows and Linux.
 contracts/events/platform/**/*.json text eol=lf
 contracts/events/erp/**/*.json text eol=lf
+contracts/erp/business-partner-result-proof/v2/contract.json text eol=lf
 
 # 商业原合同测试向量保留冻结的 UTF-8 字节。
 CP6.Tests/Erp/Fixtures/CommercialV1/*.json -text
@@ -135,3 +136,6 @@ tools/build_planning_fixture_patches.py -text whitespace=cr-at-eol
 # Preserve raw task-planning unittest output, including unittest's trailing spaces.
 docs/development/evidence/full-breakdown/*.log -text whitespace=cr-at-eol,-blank-at-eol
 docs/development/evidence/full-breakdown/*.txt -text whitespace=cr-at-eol,-blank-at-eol
+
+# WP04-39 的 CloudEvent 文件保存实际请求和结果的原始字节。
+docs/development/evidence/WP04-39/*.cloudevent.json -text

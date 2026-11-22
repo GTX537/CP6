@@ -103,6 +103,14 @@ public sealed class ErpReadController(CP6Context db, CrmOidcOptions oidc, ICrmOi
 
     [HttpGet("business-partner-result-proofs/{account:guid}/{requestId:guid}/{requestVersion:int}/{eventId}/{resultVersion:int}")]
     public Task<IActionResult> BusinessPartnerResult(Guid account, Guid requestId, int requestVersion, string eventId, int resultVersion)
+        => ReadBusinessPartnerResult(account, requestId, requestVersion, eventId, resultVersion, compatible: false);
+
+    [HttpGet("/internal/erp/v2/business-partner-result-proofs/{account:guid}/{requestId:guid}/{requestVersion:int}/{eventId}/{resultVersion:int}")]
+    public Task<IActionResult> BusinessPartnerResultV2(Guid account, Guid requestId, int requestVersion, string eventId, int resultVersion)
+        => ReadBusinessPartnerResult(account, requestId, requestVersion, eventId, resultVersion, compatible: true);
+
+    private Task<IActionResult> ReadBusinessPartnerResult(Guid account, Guid requestId, int requestVersion, string eventId,
+        int resultVersion, bool compatible)
         => ReadAuthorizedAsync(true, async (tenant, client, principal) =>
         {
             var original = Header("X-C03-Original-Message");
@@ -119,7 +127,7 @@ public sealed class ErpReadController(CP6Context db, CrmOidcOptions oidc, ICrmOi
             var resolver = HttpContext.RequestServices.GetService<ErpBusinessPartnerResultReader>();
             if (resolver is null) return NotFound();
             var proof = await resolver.ReadAsync(tenant, client, Single(principal, "jti")!, issued, expires,
-                account, requestId, requestVersion, original, eventId, resultVersion, digest, HttpContext.RequestAborted);
+                account, requestId, requestVersion, original, eventId, resultVersion, digest, HttpContext.RequestAborted, compatible);
             return proof is null ? NotFound() : Ok(proof);
         });
 

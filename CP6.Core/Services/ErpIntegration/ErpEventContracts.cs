@@ -6,7 +6,7 @@ using CP6.Platform.Messaging;
 
 namespace CP6.Core.Services.ErpIntegration;
 
-/// <summary>The frozen C03 request/result identities shared by CRM and ERP.</summary>
+/// <summary>C03 的冻结 v1 请求与结果身份，以及独立发布的伙伴成功结果兼容版本。</summary>
 public static class ErpEventContracts
 {
     public const string RequestTopic = "cp6.crm.events.v1";
@@ -16,6 +16,10 @@ public static class ErpEventContracts
     public const string BusinessPartnerRequested = "com.gtx537.crm.erp.business-partner-requested.v1";
     public const string OrderRequested = "com.gtx537.crm.erp.order-requested.v1";
     public const string BusinessPartnerSynchronized = "com.gtx537.erp.business-partner-synchronized.v1";
+    public const string BusinessPartnerSynchronizedV2 = "com.gtx537.erp.business-partner-synchronized.v2";
+    public const string BusinessPartnerV2ContractId = "ACC-C03-V2";
+    public const string BusinessPartnerV2SchemaVersion = "2.0.0";
+    public const string BusinessPartnerV2BundleSha256 = "ab1778b6b08b57f8976e7b707cb24324934c951c9189582318c0a3dd66328528";
     public const string BusinessPartnerFailed = "com.gtx537.erp.business-partner-failed.v1";
     public const string OrderCreated = "com.gtx537.erp.order-created.v1";
     public const string OrderFailed = "com.gtx537.erp.order-failed.v1";
@@ -41,11 +45,12 @@ public static class ErpEventContracts
     {
         var topic = TopicFor(type);
         var source = topic == RequestTopic ? RequestSource : ResultSource;
+        var schemaVersion = type == BusinessPartnerSynchronizedV2 ? BusinessPartnerV2SchemaVersion : "1.0.0";
         var id = Guid.NewGuid().ToString("N");
         var descriptor = new Cp6CloudEventDescriptor(id, new Uri(source), type,
             $"tenants/{tenantId:D}/{aggregateId}", (clock ?? TimeProvider.System).GetUtcNow(),
             Cp6EventContractIdentity.Parse(type).SchemaId, tenantId, correlationId, causationId,
-            aggregateId, version, "1.0.0", region);
+            aggregateId, version, schemaVersion, region);
         var bytes = Cp6CloudEventCodec.EncodeStructured(Cp6CloudEventCodec.Create(descriptor,
             JsonSerializer.SerializeToElement(data, Json)));
         return new(id, tenantId, topic, $"{tenantId:D}:{aggregateId}", bytes,
@@ -55,7 +60,7 @@ public static class ErpEventContracts
     public static string TopicFor(string type) => type switch
     {
         BusinessPartnerRequested or OrderRequested => RequestTopic,
-        BusinessPartnerSynchronized or BusinessPartnerFailed or OrderCreated or OrderFailed => ResultTopic,
+        BusinessPartnerSynchronized or BusinessPartnerSynchronizedV2 or BusinessPartnerFailed or OrderCreated or OrderFailed => ResultTopic,
         _ => throw new ArgumentException("Unsupported C03 event type.", nameof(type))
     };
 }
