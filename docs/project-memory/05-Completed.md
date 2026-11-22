@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP03-29 Account A03 的原回执权限与单次配额](https://github.com/GTX537/CP6.CRM/blob/bb393c171fdd934e7ffbe15f76ef1fe24380c028/docs/development/evidence/WP03-29/DELIVERY.md)（DONE），核对时间 `2026-11-22T11:49:16.995785+00:00`。
+- [WP04-39 Main.C03 伙伴成功结果兼容版本](../development/evidence/WP04-39/DELIVERY.md)（DONE），核对时间 `2026-11-22T12:44:11.492530+00:00`。
 
 ### 已关闭目标
 

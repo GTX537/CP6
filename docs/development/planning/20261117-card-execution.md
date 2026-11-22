@@ -554,3 +554,13 @@ CRM-ACC-01 原 AC 23/47、必需运行修订 5/10。CRM-LEAD-01 为 59/60、7/12
 按 #391 和原 DELIVERY 完整 SHA 与路径去重，为 WP03-28 单次补记 180.210 秒，累计 3349.908 秒，目标核对 0.053 秒单列。既有累计由 155146.066 至 155326.276 秒。本卡核销快照 `2026-11-22T11:49:16.995785+00:00`，卡内 1354.959 秒，目标核对 0.520 秒，计划累计 156681.755 秒。 [#391 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/5b4de2bb80fd0e5ea722ecf3a474df59aa4cd693/handoffs/CP6-DEV-20261012/tasks/WP03-28/replies/20261122T101059Z-coord-acceptance-ack/MESSAGE.md) · [WP03-28 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/bbf0cd45cc00d5fcbd60a0c2156c2cecc1281f0f/handoffs/CP6-DEV-20261012/tasks/WP03-28/messages/20261122T100222Z-exec-wp02-14b-delivery/MESSAGE.md)
 
 阶段 C 候选 WP03-06b（6）、WP03-11b（2）。WP03-06b 继续等待 C03 权威原件或兼容合同，WP03-11b 继续等待 G05/C35 权威来源。后续领取以 COORD 独立派工为准。
+
+## WP04-39 Main.C03 伙伴成功结果兼容版本
+
+WP04-39 完整 DONE。实际 Main.C03 处理独立 v1 原请求，在隔离 PostgreSQL 持久化 v2 成功 Outbox。指定租户和对象当前读权经正式查证入口返回同一原字节，解码保真 `BP-2026/0007`。原件 SHA-256 `27b1f13e8091f578afa09d1b621094029d6be6ac989f1da91250ff8f9ff7058b`。v1 原件及拒斜线规则按原合同回归。实际远端采用、同树冒烟和席位释放见原链 DELIVERY。[派工 #396](https://github.com/GTX537/CP6.AI-Handoff/pull/396) · [唯一报告](../evidence/WP04-39/DELIVERY.md)
+
+本卡作为 CRM-ACC-01 的 FOUNDATION 插入阶段 C 的 WP03-06b 之前，并成为其直接前置。WP03-06b 保留原拆分关系、旧依赖及 11879.299 秒余量。CRM-ACC-01 原 AC 23/47、必需运行修订 5/10。A27 的实际入史、原键恢复、消费显示和批准落点由 CRM 复验，等 COORD 独立派工。A13 归 WP03-07。
+
+WP04-03 与 WP04-02 分别拨入 9984.096 秒和 4415.904 秒，WP04-39 原额 14400 秒，21600 秒强制拆分。按 #395 以原回执的 SHA 和完整路径查重，WP03-29 单次补记 220.714 秒，累计 1575.673 秒，另有目标核对 0.520 秒。既有计划累计至 156902.469 秒。核销快照 `2026-11-22T12:44:11.492530+00:00`，本卡 1870.060 秒，目标核对 0.190 秒，计划合计 158772.719 秒。[#395 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/33872f98e4c51015b71ff96b39316319d453d574/handoffs/CP6-DEV-20261012/tasks/WP03-29/replies/20261122T115937Z-coord-acceptance-ack/MESSAGE.md) · [WP03-29 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/ea0fcc8ad6a7aba28b242bcc20fc92630362c94f/handoffs/CP6-DEV-20261012/tasks/WP03-29/messages/20261122T115320Z-exec-wp02-14b-delivery/MESSAGE.md)
+
+阶段 C 候选为 WP03-06b（6）、WP03-11b（2）。总控回读 Main 采用和原件后单独派 WP03-06b，WP03-11b 继续等待 G05/C35 权威来源。

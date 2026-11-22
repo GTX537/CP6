@@ -7,7 +7,7 @@
 | WP01 现有实现与设计对照 | 2 | 0 | [查看卡片](../../docs/development/task-plans/WP01.md) |
 | WP02 公共平台与系统基础 | 50 | 20 | [查看卡片](../../docs/development/task-plans/WP02.md) |
 | WP03 CRM客户经营 | 32 | 7 | [查看卡片](../../docs/development/task-plans/WP03.md) |
-| WP04 商业交易与订单 | 38 | 8 | [查看卡片](../../docs/development/task-plans/WP04.md) |
+| WP04 商业交易与订单 | 39 | 8 | [查看卡片](../../docs/development/task-plans/WP04.md) |
 | WP05 工程与产品生命周期 | 44 | 14 | [查看卡片](../../docs/development/task-plans/WP05.md) |
 | WP06 计划计算与决策 | 13 | 7 | [查看卡片](../../docs/development/task-plans/WP06.md) |
 | WP07 采购执行 | 15 | 7 | [查看卡片](../../docs/development/task-plans/WP07.md) |
