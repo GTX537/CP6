@@ -6120,8 +6120,21 @@
             "id": "CRM-ACC-01/e51b3ead9274f739/A27",
             "kind": "ORIGINAL_AC",
             "source_case_id": "A27",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/planning/20261117-card-execution.md",
+                "report_url": "https://github.com/GTX537/CP6.CRM/blob/0370eaa45ee6376c786db01f5c2465b54aadf0b2/docs/development/evidence/WP03-06b/DELIVERY.md",
+                "source_repository": "GTX537/CP6.CRM",
+                "source_sha": "6ed5955bfee293bbf3497e2973870eb7bc9569f4",
+                "adopted_main_sha": "0370eaa45ee6376c786db01f5c2465b54aadf0b2",
+                "command": "test-cross.ps1 固定原件与 v1 两仓联验，test-native.ps1 A12 引用、账户来源与浏览器回归，npm run test:web 和 build:web。",
+                "environment": "两个实际 Kestrel、隔离 PostgreSQL 18.6、正式 Next/Chrome，原件恢复、服务和用户数据使用明确的本机夹具。",
+                "observed_at": "2026-11-22T08:55:34.7205632-05:00",
+                "result": "PASS",
+                "scope": "按 A27 实际 CRM A12、Next/Chrome 和独立 PostgreSQL。匹配已采用 Main 的独立 v1 原请求及 v2 已授权成功原件，保留 BP-2026/0007 完整原字符串、原字节和摘要。原键与出站回执逐字节一致，重复和丢确认仅一次入史。浏览器使用批准的落点和 opaque handle，外部 URL 无伙伴键，当前映射未推进。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/commercial-finance.json",
               "json_pointer": "/targets/3/cases/26"
@@ -6475,6 +6488,18 @@
           "observed_at": "2026-11-22T11:42:51.5085725+00:00",
           "result": "PASS",
           "scope": "A03 的已采用运行证据覆盖原 A30 及共享 W1-ACC-01；生产 Portal 权益绑定由原链 QUESTION 跟踪。"
+        },
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/0370eaa45ee6376c786db01f5c2465b54aadf0b2/docs/development/evidence/WP03-06b/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "6ed5955bfee293bbf3497e2973870eb7bc9569f4",
+          "adopted_main_sha": "0370eaa45ee6376c786db01f5c2465b54aadf0b2",
+          "command": "test-cross.ps1 固定原件与 v1 两仓联验，test-native.ps1 A12 引用、账户来源与浏览器回归，npm run test:web 和 build:web。",
+          "environment": "两个实际 Kestrel、隔离 PostgreSQL 18.6、正式 Next/Chrome，原件恢复、服务和用户数据使用明确的本机夹具。",
+          "observed_at": "2026-11-22T08:55:34.7205632-05:00",
+          "result": "PASS",
+          "scope": "实际采用证据只核销原 A27。A13 归 WP03-07。"
         }
       ],
       "delivery_evidence": null
@@ -175862,6 +175887,11 @@
       "at": "2026-11-22T12:44:11.492530+00:00",
       "evidence": "docs/development/planning/20261117-card-execution.md",
       "change": "WP04-39 Main.C03 提供方完整 DONE。新增 WP03-06b 的严格前置，A27 消费继续待验。按 #396 登记两笔原池划拨，按 #395 单次补记 WP03-29 220.714 秒。"
+    },
+    {
+      "at": "2026-11-22T14:01:49.246336+00:00",
+      "evidence": "docs/development/planning/20261117-card-execution.md",
+      "change": "WP03-06b 完整 DONE，原号 WP03-06 全部余项完成。原 A27 按实际 CRM 原件和批准落点核销。CRM-ACC-01 原 AC 24/47、必需运行修订 5/10，A13 归 WP03-07。按 #397 单次补记 WP04-39 287.938 秒。"
     }
   ],
   "implementation_assessment": {
@@ -203746,24 +203776,93 @@
         "file:CRM:src/CP6.CRM.Api/CrmEndpoints.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP03.md",
       "card_anchor": "wp03-06b",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
-      "blockers": [
-        "等总控回读 WP04-39 的 Main 采用、固定成功原件与对应解码版本，再按独立派工领取。"
-      ],
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "EXEC-WP02-14B",
+        "repository": "CRM",
+        "owning_task_repository": "CRM",
+        "branch": "codex/wp03-06b",
+        "worktree": "D:/CP6-worktrees/dev-2",
+        "claimed_at": "2026-11-22T13:22:24.281646+00:00",
+        "baseline_sha": "bb393c171fdd934e7ffbe15f76ef1fe24380c028",
+        "entry_evidence": "docs/development/planning/20261117-card-execution.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "delivery_report": "https://github.com/GTX537/CP6.CRM/blob/0370eaa45ee6376c786db01f5c2465b54aadf0b2/docs/development/evidence/WP03-06b/DELIVERY.md",
+        "actual_start_ref": {
+          "commit": "e42b5880d3ea3b25d6bbf3ee99454aa5afd0b2a0",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-06b/messages/20261122T132349Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-22T13:22:24.281646+00:00"
+        },
+        "dispatch_decision_ref": {
+          "commit": "3351edbcb64e5164ec13c2aa093c5fad145eb989",
+          "original_commit": "f7d6461381c59f60bf87605aa6f584346b425715",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261122T131519Z-exec-wp02-14b-wp03-06b/MESSAGE.md"
+        },
+        "dispatch_scope": "A12 权威斜线伙伴键入史、原件回读和 A27 页面验收。"
+      },
+      "blockers": [],
       "entry_conditions": [
         "本卡派工包含斜线键。两仓已采用 ACC-C03-V1 同一规范的 BusinessPartnerKey 字符白名单不接受斜线，实际解码拒绝。含斜线的成功原件需要 Main.C03 Owner 与总控明确合法历史原件或批准兼容合同。"
       ],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/0370eaa45ee6376c786db01f5c2465b54aadf0b2/docs/development/evidence/WP03-06b/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "6ed5955bfee293bbf3497e2973870eb7bc9569f4",
+          "adopted_main_sha": "0370eaa45ee6376c786db01f5c2465b54aadf0b2",
+          "command": "test-cross.ps1 固定原件与 v1 两仓联验，test-native.ps1 A12 引用、账户来源与浏览器回归，npm run test:web 和 build:web。",
+          "environment": "两个实际 Kestrel、隔离 PostgreSQL 18.6、正式 Next/Chrome，原件恢复、服务和用户数据使用明确的本机夹具。",
+          "observed_at": "2026-11-22T08:55:34.7205632-05:00",
+          "result": "PASS",
+          "scope": "按 A27 实际 CRM A12、Next/Chrome 和独立 PostgreSQL。匹配已采用 Main 的独立 v1 原请求及 v2 已授权成功原件，保留 BP-2026/0007 完整原字符串、原字节和摘要。原键与出站回执逐字节一致，重复和丢确认仅一次入史。浏览器使用批准的落点和 opaque handle，外部 URL 无伙伴键，当前映射未推进。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/planning/20261117-card-execution.md",
+        "report_url": "https://github.com/GTX537/CP6.CRM/blob/0370eaa45ee6376c786db01f5c2465b54aadf0b2/docs/development/evidence/WP03-06b/DELIVERY.md",
+        "source_sha": "6ed5955bfee293bbf3497e2973870eb7bc9569f4",
+        "remote_main_sha": "0370eaa45ee6376c786db01f5c2465b54aadf0b2",
+        "pr_url": "https://github.com/GTX537/CP6.CRM/pull/259",
+        "reviewed_crm_head": "0595e9026da1fc589bf8c42db21a3d6cc0875d12",
+        "main_provider_commit": "b9905f59fd68380feeef126e993685855545e328",
+        "contract": "ACC-C03-V2/2.0.0、C03-BP-RESULT-PROOF/2",
+        "original_path": "docs/development/evidence/WP04-39/result.v2.cloudevent.json",
+        "original_sha256": "27b1f13e8091f578afa09d1b621094029d6be6ac989f1da91250ff8f9ff7058b",
+        "scope": "实际 CRM 已远端采用。跨两仓同树冒烟通过且 DEV-2 先释放，原 A27 已验收。"
+      },
       "split_parent": "WP03-06",
       "remaining_scope": [
         "确认含斜线 BusinessPartnerKey 的权威历史合同。按 Main.C03 Owner 和总控批准的精确原件与解码版本，验证真实 A12 成功入史、完整字符串、原字节和按请求恢复，维持当前映射隔离。"
       ],
-      "card_budget_seconds": 11879.299
+      "card_budget_seconds": 11879.299,
+      "card_execution": {
+        "result": "DONE",
+        "report": "https://github.com/GTX537/CP6.CRM/blob/0370eaa45ee6376c786db01f5c2465b54aadf0b2/docs/development/evidence/WP03-06b/DELIVERY.md",
+        "started_at": "2026-11-22T13:22:24.281646+00:00",
+        "official_started_at": "2026-11-22T13:22:24.281646+00:00",
+        "technical_verified_at": "2026-11-22T08:55:34.7205632-05:00",
+        "verified_at": "2026-11-22T14:01:49.246336+00:00",
+        "effective_seconds": 2364.843,
+        "size": "M",
+        "budget_seconds": 11879.299,
+        "mandatory_split_seconds": 17818.9485,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP03-06",
+          "WP04-39"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 287.938,
+        "target_review_started_at": "2026-11-22T14:01:49.124181+00:00",
+        "target_review_seconds": 0.122,
+        "crm_seat_finished_at": "2026-11-22T14:01:00.430204+00:00"
+      }
     },
     {
       "id": "WP03-07",
@@ -208025,7 +208124,7 @@
         "official_started_at": "2026-11-22T12:13:01.242192+00:00",
         "technical_verified_at": "2026-11-22T07:42:46.4659441-05:00",
         "verified_at": "2026-11-22T12:44:11.492530+00:00",
-        "effective_seconds": 1870.06,
+        "effective_seconds": 2157.998,
         "size": "M",
         "budget_seconds": 14400,
         "mandatory_split_seconds": 21600,
@@ -208037,7 +208136,15 @@
         "new_product_execution": true,
         "preceding_integration_seconds": 220.714,
         "target_review_started_at": "2026-11-22T12:44:11.303014+00:00",
-        "target_review_seconds": 0.19
+        "target_review_seconds": 0.19,
+        "official_finish": "2026-11-22T12:48:59.430981Z",
+        "post_candidate_finalization_seconds": 287.938,
+        "finalization_decision_ref": {
+          "commit": "4e28e23e41c2b30c4e9760fd108d4d3d399333d6",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP04-39/replies/20261122T131313Z-coord-acceptance-ack/MESSAGE.md",
+          "receipt_commit": "d961c0ca8055386c5503368f2ca447b1e6f6c4ed",
+          "receipt_path": "handoffs/CP6-DEV-20261012/tasks/WP04-39/messages/20261122T124929Z-exec-wp02-14b-delivery/MESSAGE.md"
+        }
       }
     },
     {
@@ -301910,7 +302017,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 158772.719,
+      "effective_seconds": 161425.622,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -301962,7 +302069,8 @@
         "WP03-11",
         "WP03-28",
         "WP03-29",
-        "WP04-39"
+        "WP04-39",
+        "WP03-06b"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -302059,7 +302167,7 @@
         }
       ],
       "current_stage": "C",
-      "next_card": "WP03-06b",
+      "next_card": "WP03-07",
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -302220,13 +302328,13 @@
       },
       "next_card_selection": {
         "rule": "阶段 C 展开全部拆分严格前置；全图最长下游边数降序，同长保留用户阶段数组的顺序。",
-        "baseline_sha": "632494cf4f5dc6b8506d8b0933d2dcd33b269ae1",
-        "after_card": "WP04-39",
-        "selected": "WP03-06b",
+        "baseline_sha": "b9905f59fd68380feeef126e993685855545e328",
+        "after_card": "WP03-06b",
+        "selected": "WP03-07",
         "candidates": [
           {
-            "task": "WP03-06b",
-            "longest_downstream_edges": 6
+            "task": "WP03-07",
+            "longest_downstream_edges": 5
           },
           {
             "task": "WP03-11b",
@@ -302301,7 +302409,7 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 3988.338,
+      "target_review_effective_seconds": 3988.46,
       "last_checkpoint_counts": {
         "original_done": 58,
         "fully_done": 58,
