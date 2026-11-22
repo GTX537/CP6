@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP03-11 联系人互动历史与受控导出](https://github.com/GTX537/CP6.CRM/blob/42303adecfe42560b0b3482c053ad28c5ccdcfb9/docs/development/evidence/WP03-11/DELIVERY.md)（拆卡，余项 WP03-11b），核对时间 `2026-11-22T08:22:53.753698+00:00`。
+- [WP03-28 Lead 当前读取与 H01 原结果补正](https://github.com/GTX537/CP6.CRM/blob/7b28fbac72222a6ff003fe464303744dd5c8f2b2/docs/development/evidence/WP03-28/DELIVERY.md)（DONE），核对时间 `2026-11-22T09:59:05.129951+00:00`。
 
 ### 已关闭目标
 
