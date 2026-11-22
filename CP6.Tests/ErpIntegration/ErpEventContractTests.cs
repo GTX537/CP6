@@ -45,6 +45,59 @@ public class ErpEventContractTests
                 Assert.Equal(example.Valid, validator.IsValid(File.ReadAllBytes(bundle.GetAssetPath(example.Path))));
     }
 
+    [Fact]
+    public void V2_has_its_own_hashed_bundle_and_decodes_original_key_characters()
+    {
+        var bundle = Cp6ContractBundle.Load(Path.Combine(Root, "business-partner-synchronized", "v2"),
+            "2.0.0", ErpEventContracts.BusinessPartnerV2BundleSha256);
+        var entry = Assert.Single(bundle.Entries);
+        Assert.Equal(ErpEventContracts.BusinessPartnerSynchronizedV2, entry.EventType);
+        var validator = ErpEventValidator.Load(Root);
+        foreach (var example in entry.Examples)
+        {
+            var bytes = File.ReadAllBytes(bundle.GetAssetPath(example.Path));
+            Assert.Equal(example.Valid, validator.IsValid(bytes));
+            Assert.False(Validator().IsValid(bytes));
+            var result = validator.DecodeBusinessPartnerSuccessV2(bytes);
+            if (!example.Valid) Assert.Null(result);
+            else Assert.Equal(example.Name == "valid" ? "BP-2026/0007" : "bP-2026/00a7", result?.BusinessPartnerKey);
+        }
+    }
+
+    [Theory]
+    [InlineData("0007-BP", true)]
+    [InlineData("0008", true)]
+    [InlineData("BP-2026/0007", false)]
+    public void V1_partner_key_rules_are_unchanged_with_the_v2_bundle_loaded(string key, bool accepted)
+    {
+        var node = Example(ErpEventContracts.BusinessPartnerSynchronized);
+        Set(node, "data.businessPartnerKey", JsonValue.Create(key));
+        var bytes = Bytes(node);
+        var validator = ErpEventValidator.Load(Root);
+        Assert.Equal(accepted, Validator().IsValid(bytes));
+        Assert.Equal(accepted, validator.IsValid(bytes));
+        Assert.Null(validator.DecodeBusinessPartnerSuccessV2(bytes));
+        if (accepted)
+            Assert.Equal(key, node["data"]!.Deserialize<ErpBusinessPartnerSynchronized>(ErpEventContracts.Json)!.BusinessPartnerKey);
+    }
+
+    [Theory]
+    [InlineData("type", ErpEventContracts.BusinessPartnerSynchronized)]
+    [InlineData("dataschema", "https://contracts.cp6.uk/events/erp/business-partner-synchronized/v1/schema.json")]
+    [InlineData("schemaversion", "1.0.0")]
+    [InlineData("data.businessPartnerKey", "1234567890123456789/00")]
+    [InlineData("data.businessPartnerKey", "BP-2026/../0007")]
+    public void V2_rejects_inconsistent_contract_metadata_and_invalid_keys(string field, string value)
+    {
+        var envelope = Make(Account, 2, ErpEventContracts.BusinessPartnerSynchronizedV2,
+            new ErpBusinessPartnerSynchronized(Tenant, Request, Account, 1, 2, "BP-2026/0007"));
+        var original = JsonNode.Parse(envelope.Payload.Span)!.AsObject();
+        var validator = ErpEventValidator.Load(Root);
+        Assert.True(validator.Validate(envelope).IsValid);
+        Set(original, field, JsonValue.Create(value));
+        Assert.False(validator.IsValid(Bytes(original)));
+    }
+
     [Theory]
     [InlineData("source", "urn:cp6:erp")]
     [InlineData("type", "com.gtx537.crm.erp.order-requested.v2")]

@@ -139,7 +139,9 @@ public sealed class ErpRequestHandler(IDbContextFactory<ErpIntegrationContext> f
                     partner!.Status = 1; partner.Modifier = "crm-integration"; partner.ModifyDate = now;
                     await db.SaveChangesAsync(ct);
                     var version = NextResultVersion(aggregate, command);
-                    SaveOutcome(queue, command, previous, ErpEventContracts.BusinessPartnerSynchronized,
+                    var resultType = partner.BpCd.Contains('/') && runtime.Options.BusinessPartnerSuccessV2Tenants.Contains(command.TenantId)
+                        ? ErpEventContracts.BusinessPartnerSynchronizedV2 : ErpEventContracts.BusinessPartnerSynchronized;
+                    SaveOutcome(queue, command, previous, resultType,
                         new ErpBusinessPartnerSynchronized(command.TenantId, command.RequestId, command.AccountId,
                             command.RequestVersion, version, partner.BpCd), version, true, true);
                 }

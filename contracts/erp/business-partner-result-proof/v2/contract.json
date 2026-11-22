@@ -1,0 +1,34 @@
+{
+  "contract": "C03-BP-RESULT-PROOF/2",
+  "owner": "Main.C03",
+  "method": "GET",
+  "path": "/internal/erp/v2/business-partner-result-proofs/{account}/{requestId}/{requestVersion}/{eventId}/{resultVersion}",
+  "headers": {
+    "Authorization": "Bearer <C01 cp6.services>",
+    "tenantid": "受信服务的租户 UUID",
+    "correlationid": "C03 关联键",
+    "X-C03-Original-Message": "独立取得的原 v1 命令消息键",
+    "X-C03-Result-Sha256": "指定结果原件的 64 位小写十六进制 SHA-256"
+  },
+  "requestProof": "C03-BP-REQUEST-PROOF/1",
+  "resultContract": {
+    "id": "ACC-C03-V2",
+    "version": "2.0.0",
+    "source": "urn:cp6:erp",
+    "bundleSha256": "ab1778b6b08b57f8976e7b707cb24324934c951c9189582318c0a3dd66328528"
+  },
+  "eventType": "com.gtx537.erp.business-partner-synchronized.v2",
+  "resultVersion": "正整数，仅在同一原请求流内比较。请求版本与 schema 版本分别校验。",
+  "response": {
+    "proofContract": "C03-BP-RESULT-PROOF/2",
+    "original": "完整 C03-BP-REQUEST-PROOF/1 核验结果",
+    "resultContract": "本合同固定的结果合同对象",
+    "eventId": "ERP Outbox 原消息键，保留大小写",
+    "resultVersion": "原生结果版本",
+    "eventType": "com.gtx537.erp.business-partner-synchronized.v2",
+    "payloadSha256": "已存摘要，须等于引用摘要和原字节重算结果",
+    "payload": "ERP Outbox 原始 CloudEvent 字节的标准 Base64"
+  },
+  "access": "要求当前 C01 读取令牌、账户服务发布、独立的原请求出处和指定原件的现行对象读权。授权绑定租户、账户、原请求和消息键、来源及身份 epoch、结果消息键、版本与摘要。",
+  "unavailable": "原件或授权缺失、结果版本或摘要错配时返回 404，无原件或摘要。租户头和令牌不一致时返回 400。"
+}

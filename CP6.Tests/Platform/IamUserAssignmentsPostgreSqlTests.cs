@@ -148,12 +148,15 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests(TenantManagementPo
     private async Task<Harness> Seed(params IInterceptor[] interceptors)
         => await SeedWithBundle(null, interceptors);
 
-    private async Task<Harness> SeedWithBundle(Cp6ContractBundle? bundle, params IInterceptor[] interceptors)
+    private Task<Harness> SeedWithBundle(Cp6ContractBundle? bundle, params IInterceptor[] interceptors)
+        => SeedInDatabase(TenantManagementPostgresFixture.Database, bundle, interceptors);
+
+    private async Task<Harness> SeedInDatabase(string database, Cp6ContractBundle? bundle = null, params IInterceptor[] interceptors)
     {
         var tenant=Guid.NewGuid();const string issuer="https://iam-writer.example.test";
         var options=new CrmIdentityOptions{Enabled=true,Issuer=issuer,ProjectionReaderClientIds=["fixture-reader"]};options.Tenants.Add(tenant,"us");
         var runtime=new CrmIdentityRuntime(options,new IdentityEventValidator(bundle ?? Cp6ContractBundle.Load(Path.Combine(AppContext.BaseDirectory,"contracts/events/platform")),issuer));
-        var db=server.Context(new TenantContext{CurrentTenantId=tenant},runtime,interceptors);
+        var db=server.ContextForDatabase(database,new TenantContext{CurrentTenantId=tenant},runtime,interceptors);
         var actor=new Sys_User{UserName="iam-admin",Enable=true,Password=new BCryptPasswordHasher(4).Hash("Iam1!Password")};
         var parent=Guid.NewGuid();var child=Guid.NewGuid();
         db.Sys_Tenants.Add(new Sys_Tenant{Id=tenant,TenantCode="iam_"+tenant.ToString("N"),TenantName="IAM"});db.Sys_Users.Add(actor);

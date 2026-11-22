@@ -175857,6 +175857,11 @@
       "at": "2026-11-22T11:49:16.995785+00:00",
       "evidence": "docs/development/planning/20261117-card-execution.md",
       "change": "WP03-29 完整 DONE，核销原 A30 和三目标引用的单一 W1-ACC-01。CRM-ACC-01 原 AC 23/47、必需运行修订 5/10。CRM-LEAD-01 为 59/60、7/12，ERP-BP-01 为 104/124、5/10。三个目标保持开放。 按 #391 去重后补记 WP03-28 180.210 秒。"
+    },
+    {
+      "at": "2026-11-22T12:44:11.492530+00:00",
+      "evidence": "docs/development/planning/20261117-card-execution.md",
+      "change": "WP04-39 Main.C03 提供方完整 DONE。新增 WP03-06b 的严格前置，A27 消费继续待验。按 #396 登记两笔原池划拨，按 #395 单次补记 WP03-29 220.714 秒。"
     }
   ],
   "implementation_assessment": {
@@ -203732,7 +203737,8 @@
       ],
       "relative_size": "M",
       "dependencies": [
-        "WP03-06"
+        "WP03-06",
+        "WP04-39"
       ],
       "exclusive_resources": [
         "CRM:crm-acc-owner",
@@ -203746,7 +203752,7 @@
       "entry_gate": "NOT_CHECKED",
       "assignment": null,
       "blockers": [
-        "本卡派工包含斜线键。两仓已采用 ACC-C03-V1 同一规范的 BusinessPartnerKey 字符白名单不接受斜线，实际解码拒绝。含斜线的成功原件需要 Main.C03 Owner 与总控明确合法历史原件或批准兼容合同。"
+        "等总控回读 WP04-39 的 Main 采用、固定成功原件与对应解码版本，再按独立派工领取。"
       ],
       "entry_conditions": [
         "本卡派工包含斜线键。两仓已采用 ACC-C03-V1 同一规范的 BusinessPartnerKey 字符白名单不接受斜线，实际解码拒绝。含斜线的成功原件需要 Main.C03 Owner 与总控明确合法历史原件或批准兼容合同。"
@@ -205847,7 +205853,7 @@
         "official_started_at": "2026-11-22T11:26:41.517010+00:00",
         "technical_verified_at": "2026-11-22T11:42:51.5085725+00:00",
         "verified_at": "2026-11-22T11:49:16.995785+00:00",
-        "effective_seconds": 1354.959,
+        "effective_seconds": 1575.673,
         "size": "M",
         "budget_seconds": 14400,
         "mandatory_split_seconds": 21600,
@@ -205859,7 +205865,15 @@
         "preceding_integration_seconds": 180.21,
         "target_review_started_at": "2026-11-22T11:49:16.475501+00:00",
         "target_review_seconds": 0.52,
-        "crm_seat_finished_at": "2026-11-22T11:47:16.505560+00:00"
+        "crm_seat_finished_at": "2026-11-22T11:47:16.505560+00:00",
+        "official_finish": "2026-11-22T11:52:57.709728Z",
+        "post_candidate_finalization_seconds": 220.714,
+        "finalization_decision_ref": {
+          "commit": "33872f98e4c51015b71ff96b39316319d453d574",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-29/replies/20261122T115937Z-coord-acceptance-ack/MESSAGE.md",
+          "receipt_commit": "ea0fcc8ad6a7aba28b242bcc20fc92630362c94f",
+          "receipt_path": "handoffs/CP6-DEV-20261012/tasks/WP03-29/messages/20261122T115320Z-exec-wp02-14b-delivery/MESSAGE.md"
+        }
       }
     },
     {
@@ -207926,6 +207940,104 @@
           "receipt_commit": "38c38d05ad6f1a33e9f45a2b55b25b2e132fbc03",
           "receipt_path": "handoffs/CP6-DEV-20261012/tasks/WP04-38/messages/20261120T164118Z-exec-wp02-14b-delivery/MESSAGE.md"
         }
+      }
+    },
+    {
+      "id": "WP04-39",
+      "package_id": "WP04",
+      "title": "Main.C03 伙伴成功结果兼容版本",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "CRM-ACC-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP02-09b",
+        "WP04-03"
+      ],
+      "exclusive_resources": [
+        "Main:c03-business-partner-results",
+        "file:Main:CP6.Core/Services/ErpIntegration/ErpRequestHandler.cs",
+        "file:Main:CP6.WebApi/Services/ErpBusinessPartnerResultReader.cs"
+      ],
+      "coverage_role": "FOUNDATION",
+      "state": "DONE",
+      "plan_path": "docs/development/task-plans/WP04.md",
+      "card_anchor": "wp04-39",
+      "entry_gate": "CONFIRMED",
+      "blockers": [],
+      "entry_conditions": [
+        "WP02-09b、WP04-03 及适用拆分余项均完整 DONE。",
+        "#396 的授权、派工和预算均已回读。"
+      ],
+      "assignment": {
+        "chat_label": "EXEC-WP02-14B",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp04-39",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-22T12:13:01.242192+00:00",
+        "baseline_sha": "632494cf4f5dc6b8506d8b0933d2dcd33b269ae1",
+        "entry_evidence": "docs/development/planning/20261117-card-execution.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "delivery_report": "docs/development/evidence/WP04-39/DELIVERY.md",
+        "actual_start_ref": {
+          "commit": "0ccae81d9a3b97f4b31baa38abc213cb62c6fc38",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP04-39/messages/20261122T121331Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-22T12:13:01.242192+00:00"
+        },
+        "dispatch_decision_ref": {
+          "commit": "b98b05c7e4401f312c5bf7771c4813b726997969",
+          "original_commit": "3cebaf8f622f76011acbe83052046f595260211d",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261122T120635Z-exec-wp02-14b-wp04-39/MESSAGE.md"
+        },
+        "dispatch_scope": "Main.C03 伙伴成功结果兼容版本、实际出件与指定 v2 原件查证。"
+      },
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP04-39/DELIVERY.md",
+          "source_sha": "027fa2ced58f501654fb6f952c140ba96b1f3738",
+          "result": "PASS",
+          "observed_at": "2026-11-22T07:42:46.4659441-05:00",
+          "environment": "Windows .NET 8、Main HTTPS 正式请求入口和 Outbox、隔离 PostgreSQL 18.6，租户与授权为模拟数据。",
+          "command": "本地 dotnet test。筛选 ErpEventContractTests | ErpRuntimeOptionsTests | Account_C03_compatible_success | Account_C03_registered_service | Business_partner_wp04_02_legacy_crud_commerce_and_C03 | Business_partner_wp04_03_actual_C03 | Business_partner_original_proof_matches_real_commands_and_denies_unverified_sources",
+          "scope": "Main.C03 伙伴成功结果兼容版本、实际出件与指定 v2 原件查证。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP04-39/DELIVERY.md",
+        "source_sha": "027fa2ced58f501654fb6f952c140ba96b1f3738",
+        "remote_main_sha": "632494cf4f5dc6b8506d8b0933d2dcd33b269ae1",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1307",
+        "adoption_record": "D:/CP6-test-artifacts/WP04-39/current-20261122/finish.json",
+        "scope": "远端字段记录领卡基线。实际采用、同树冒烟、原件和席位释放以本 PR 与原链 DELIVERY 为准。",
+        "original_path": "docs/development/evidence/WP04-39/result.v2.cloudevent.json",
+        "original_sha256": "27b1f13e8091f578afa09d1b621094029d6be6ac989f1da91250ff8f9ff7058b",
+        "result_contract": "ACC-C03-V2/2.0.0"
+      },
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP04-39/DELIVERY.md",
+        "started_at": "2026-11-22T12:13:01.242192+00:00",
+        "official_started_at": "2026-11-22T12:13:01.242192+00:00",
+        "technical_verified_at": "2026-11-22T07:42:46.4659441-05:00",
+        "verified_at": "2026-11-22T12:44:11.492530+00:00",
+        "effective_seconds": 1870.06,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "WP02-09b",
+          "WP04-03"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 220.714,
+        "target_review_started_at": "2026-11-22T12:44:11.303014+00:00",
+        "target_review_seconds": 0.19
       }
     },
     {
@@ -301798,7 +301910,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 156681.755,
+      "effective_seconds": 158772.719,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -301849,7 +301961,8 @@
         "WP03-16b",
         "WP03-11",
         "WP03-28",
-        "WP03-29"
+        "WP03-29",
+        "WP04-39"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -301994,6 +302107,7 @@
           "WP04-38",
           "WP03-12",
           "WP03-06",
+          "WP04-39",
           "WP03-06b",
           "WP03-13",
           "WP03-07",
@@ -302106,8 +302220,8 @@
       },
       "next_card_selection": {
         "rule": "阶段 C 展开全部拆分严格前置；全图最长下游边数降序，同长保留用户阶段数组的顺序。",
-        "baseline_sha": "5eb005faeaf3d39ecf9f5188103c5191b37fcb45",
-        "after_card": "WP03-29",
+        "baseline_sha": "632494cf4f5dc6b8506d8b0933d2dcd33b269ae1",
+        "after_card": "WP04-39",
         "selected": "WP03-06b",
         "candidates": [
           {
@@ -302187,7 +302301,7 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 3988.148,
+      "target_review_effective_seconds": 3988.338,
       "last_checkpoint_counts": {
         "original_done": 58,
         "fully_done": 58,
@@ -302316,6 +302430,26 @@
             "commit": "c7abf2b30f1f21eeed075769cb573f744c666fae",
             "path": "handoffs/CP6-DEV-20261012/tasks/WP03-16/replies/20261121T152956Z-coord-account-a03-authorization/MESSAGE.md",
             "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/381"
+          }
+        },
+        {
+          "source_task_id": "WP04-03",
+          "target_task_id": "WP04-39",
+          "seconds": 9984.096,
+          "decision": {
+            "commit": "bf469ca177ceb00927949aeb9140a279efa79bed",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-06/replies/20261122T120526Z-coord-main-c03-compat-authorization/MESSAGE.md",
+            "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/396"
+          }
+        },
+        {
+          "source_task_id": "WP04-02",
+          "target_task_id": "WP04-39",
+          "seconds": 4415.904,
+          "decision": {
+            "commit": "bf469ca177ceb00927949aeb9140a279efa79bed",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-06/replies/20261122T120526Z-coord-main-c03-compat-authorization/MESSAGE.md",
+            "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/396"
           }
         }
       ]

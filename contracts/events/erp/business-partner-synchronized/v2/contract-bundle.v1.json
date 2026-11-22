@@ -1,0 +1,46 @@
+{
+  "bundleVersion": "2.0.0",
+  "cloudEventsSpecVersion": "1.0",
+  "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
+  "entries": [
+    {
+      "eventType": "com.gtx537.erp.business-partner-synchronized.v2",
+      "schemaVersion": "2.0.0",
+      "schemaId": "https://contracts.cp6.uk/events/erp/business-partner-synchronized/v2/schema.json",
+      "schemaPath": "schema.json",
+      "schemaSha256": "307ea9a9ba2888d360eacacb362ffef26838f2323547f71b713fa482a4d48991",
+      "examples": [
+        {
+          "name": "valid",
+          "path": "examples/valid.json",
+          "valid": true,
+          "sha256": "22af3f9a61d2459ca99302b8759f629c81d4e5dc959b67106b10ef28d4baef0a"
+        },
+        {
+          "name": "unknown-optional",
+          "path": "examples/unknown-optional.json",
+          "valid": true,
+          "sha256": "44d4dce4efbef473737459b740bd056e532fd836d5946fb4d88c5fc1ff6449f8"
+        },
+        {
+          "name": "missing-required",
+          "path": "examples/missing-required.json",
+          "valid": false,
+          "sha256": "4e878c9baffba1e619864fdbc2d43988c8ac7c2e503fd277cca9049606604a2b"
+        },
+        {
+          "name": "wrong-type",
+          "path": "examples/wrong-type.json",
+          "valid": false,
+          "sha256": "8d3d37d4055d3f13a86bcd4278587b2d5154b2344242853e431551e56aaee34e"
+        },
+        {
+          "name": "pii-negative",
+          "path": "examples/pii-negative.json",
+          "valid": false,
+          "sha256": "d753e4858c7f8a4a31f8aa0dec64073cd1adfd06ebd2685dffaab7cf896518f9"
+        }
+      ]
+    }
+  ]
+}

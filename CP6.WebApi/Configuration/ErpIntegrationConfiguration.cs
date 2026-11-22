@@ -52,7 +52,7 @@ public static class ErpIntegrationConfiguration
             if (!Uri.TryCreate(endpoint, UriKind.Absolute, out var uri) || !uri.IsLoopback || uri.Scheme is not ("http" or "https") ||
                 uri.UserInfo.Length != 0 || uri.Query.Length != 0 || uri.Fragment.Length != 0 || uri.AbsolutePath != "/")
                 throw new InvalidOperationException("C03_DAPR_ENDPOINT_MUST_BE_LOCAL_SIDECAR");
-        var validator = new ErpEventValidator(Cp6ContractBundle.Load(Path.Combine(AppContext.BaseDirectory, "contracts/events/erp")));
+        var validator = ErpEventValidator.Load(Path.Combine(AppContext.BaseDirectory, "contracts/events/erp"));
         services.AddSingleton(validator);
         services.AddSingleton(provider => new ErpIntegrationRuntime(options, validator, provider.GetService<TimeProvider>()));
         services.AddSingleton<IDbContextFactory<ErpIntegrationContext>>(new ErpQueueContextFactory(database, connection));

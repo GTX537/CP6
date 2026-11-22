@@ -26,9 +26,18 @@ namespace CP6.Tests.Platform;
 public sealed partial class IamUserAssignmentsPostgreSqlTests
 {
     [CurrentPermissionPostgresFact]
-    public async Task Account_C03_registered_service_actual_TLS_publication_rotation_and_removal()
+    public Task Account_C03_registered_service_actual_TLS_publication_rotation_and_removal()
+        => CheckAccountC03ProviderAsync(compatibleSuccess: false);
+
+    [CurrentPermissionPostgresFact]
+    public Task Account_C03_compatible_success_is_produced_and_proven_by_current_reader()
+        => CheckAccountC03ProviderAsync(compatibleSuccess: true);
+
+    private async Task CheckAccountC03ProviderAsync(bool compatibleSuccess)
     {
-        await using var h = await Seed();
+        // Outbox 分发会读取整个数据库。每次出件使用独立数据库，避免其他案例的业务事件进入对账。
+        var database = await server.CreateIsolatedDatabaseAsync();
+        await using var h = await SeedInDatabase(database);
         var pair = await GrantIntake(h);
         var inquirySigning = InquiryPermissionSigningTests.Options();
         using var inquiryKey = InquiryPermissionSigningTests.Signer(inquirySigning);
@@ -62,11 +71,11 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         await new IdentityBootstrapService(h.Db, runtime).InitializeAsync(h.Tenant);
         h.Db.ChangeTracker.Clear();
         var publisherTenant = new TenantContext();
-        await using (var db = server.Context(publisherTenant, runtime))
+        await using (var db = server.ContextForDatabase(database, publisherTenant, runtime))
             await new InquiryServiceIdentityPublisherV1(db, publisherTenant, inquiry, runtime).PublishAsync(h.Tenant);
         async Task Publish(AccountC03ServicePrincipalRegistryV1 registration)
         {
-            await using var db = server.Context(publisherTenant, runtime);
+            await using var db = server.ContextForDatabase(database, publisherTenant, runtime);
             await new AccountC03ServiceIdentityPublisher(db, publisherTenant, registration, runtime).PublishAsync(h.Tenant);
         }
 
@@ -82,14 +91,14 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         builder.Logging.ClearProviders();
         builder.WebHost.ConfigureKestrel(serverOptions => serverOptions.Listen(IPAddress.Loopback, 0, l => l.UseHttps(certificate)));
         builder.Services.AddScoped<TenantContext>();
-        builder.Services.AddScoped<CP6Context>(sp => server.Context(sp.GetRequiredService<TenantContext>(), runtime));
+        builder.Services.AddScoped<CP6Context>(sp => server.ContextForDatabase(database, sp.GetRequiredService<TenantContext>(), runtime));
         builder.Services.AddScoped(sp => new AccountC03ServiceIdentityIssuer(sp.GetRequiredService<CP6Context>(),
             sp.GetRequiredService<TenantContext>(), account, runtime, oidc, crypto));
         builder.Services.AddScoped(sp => new InquiryServicePermissionIssuerV1(sp.GetRequiredService<CP6Context>(),
             sp.GetRequiredService<TenantContext>(), inquiry, inquiryKey, () => IntakeCatalog(), runtime));
         var discovery = ResultDiscovery(oidc.Issuer, certificate.Thumbprint);
         using var resultBackchannel = discovery.Client;
-        ConfigureResultProvider(builder, h, accountClient, account, runtime, oidc, crypto, resultBackchannel);
+        ConfigureResultProvider(builder, h, accountClient, account, runtime, oidc, crypto, resultBackchannel, compatibleSuccess);
         builder.Services.AddControllers().AddApplicationPart(typeof(CrmOidcController).Assembly)
             .ConfigureApplicationPartManager(m => m.FeatureProviders.Add(new AccountResultControllers())).AddControllersAsServices();
         builder.Services.RemoveAll<CrmOidcController>();
@@ -108,6 +117,12 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             discovery.Port.SetResult(new Uri(origin).Port);
             using var http = new HttpClient(new HttpClientHandler { UseProxy = false, UseCookies = false, AllowAutoRedirect = false,
                 ServerCertificateCustomValidationCallback = (_, cert, _, _) => cert?.Thumbprint == certificate.Thumbprint }) { BaseAddress = new(origin) };
+            if (compatibleSuccess)
+            {
+                await Publish(account);
+                await CheckCompatiblePartnerOriginalAsync(app, http, h, basic, accountClient, subject, epoch);
+                return;
+            }
             const string route = "/connect/account-c03-service-identity";
             const string purpose = AccountC03ServiceIdentityIssuer.Purpose;
             var nonce = ServiceNonce();

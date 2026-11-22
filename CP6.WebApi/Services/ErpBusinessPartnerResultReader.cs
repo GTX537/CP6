@@ -1,5 +1,6 @@
 using System.Data;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using CP6.Core.EFDbContext;
 using CP6.Core.Persistence;
 using CP6.Core.Services.Common;
@@ -13,7 +14,13 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.WebApi.Services;
 
 public sealed record ErpBusinessPartnerResultProof(string ProofContract, ErpBusinessPartnerOriginal Original,
-    string EventId, int ResultVersion, string EventType, string PayloadSha256, byte[] Payload);
+    string EventId, int ResultVersion, string EventType, string PayloadSha256, byte[] Payload)
+{
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ErpBusinessPartnerResultContract? ResultContract { get; init; }
+}
+
+public sealed record ErpBusinessPartnerResultContract(string Id, string Version, string Source, string BundleSha256);
 
 /// <summary>在来源、账户服务和对象资格均可核实时，仅交付指定 Outbox 事件的持久化字节。</summary>
 public sealed class ErpBusinessPartnerResultReader(IDbContextFactory<ErpIntegrationContext> factory,
@@ -21,10 +28,11 @@ public sealed class ErpBusinessPartnerResultReader(IDbContextFactory<ErpIntegrat
     CrmIdentityRuntime? identity = null, AccountC03ServicePrincipalRegistryV1? accounts = null)
 {
     public const string Contract = "C03-BP-RESULT-PROOF/1";
+    public const string CompatibleContract = "C03-BP-RESULT-PROOF/2";
 
     public async Task<ErpBusinessPartnerResultProof?> ReadAsync(Guid tenant, string clientId, string tokenId,
         long issued, long expires, Guid account, Guid request, int requestVersion, string originalId, string eventId,
-        int resultVersion, string expectedDigest, CancellationToken ct)
+        int resultVersion, string expectedDigest, CancellationToken ct, bool compatible = false)
     {
         if (identity?.ContractBundleSha256 != CrmIdentityRuntime.AccountBundleSha256 ||
             identity.Options.Issuer != oidc.Issuer || !identity.Options.Tenants.ContainsKey(tenant) ||
@@ -93,8 +101,10 @@ public sealed class ErpBusinessPartnerResultReader(IDbContextFactory<ErpIntegrat
         var root = document.RootElement;
         var type = root.GetProperty("type").GetString();
         var data = root.GetProperty("data");
-        if (type is not (ErpEventContracts.BusinessPartnerSynchronized or ErpEventContracts.BusinessPartnerFailed) ||
-            root.GetProperty("schemaversion").GetString() != original.ContractVersion ||
+        var eventMatches = compatible ? type == ErpEventContracts.BusinessPartnerSynchronizedV2
+            : type is ErpEventContracts.BusinessPartnerSynchronized or ErpEventContracts.BusinessPartnerFailed;
+        var version = compatible ? ErpEventContracts.BusinessPartnerV2SchemaVersion : original.ContractVersion;
+        if (!eventMatches || root.GetProperty("schemaversion").GetString() != version ||
             root.GetProperty("region").GetString() != erp.Options.Tenants[tenant] ||
             data.GetProperty("requestId").GetGuid() != request || data.GetProperty("requestVersion").GetInt32() != requestVersion)
             return null;
@@ -107,6 +117,10 @@ public sealed class ErpBusinessPartnerResultReader(IDbContextFactory<ErpIntegrat
             issued > now.ToUnixTimeSeconds() || organization.ExpireDate is { } end &&
             now >= new DateTimeOffset(DateTime.SpecifyKind(end, DateTimeKind.Local))) return null;
         await tx.CommitAsync(ct);
-        return new(Contract, original, eventId, resultVersion, type, expectedDigest, message.Payload);
+        return new(compatible ? CompatibleContract : Contract, original, eventId, resultVersion, type!, expectedDigest, message.Payload)
+        {
+            ResultContract = compatible ? new(ErpEventContracts.BusinessPartnerV2ContractId, version,
+                ErpEventContracts.ResultSource, ErpEventContracts.BusinessPartnerV2BundleSha256) : null
+        };
     }
 }

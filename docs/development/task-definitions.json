@@ -2628,7 +2628,8 @@
       ],
       "relative_size": "M",
       "dependencies": [
-        "WP03-06"
+        "WP03-06",
+        "WP04-39"
       ],
       "external_prerequisites": [
         "本卡派工包含斜线键。两仓已采用 ACC-C03-V1 同一规范的 BusinessPartnerKey 字符白名单不接受斜线，实际解码拒绝。含斜线的成功原件需要 Main.C03 Owner 与总控明确合法历史原件或批准兼容合同。",
@@ -2657,7 +2658,16 @@
         "file:CRM:src/CP6.CRM.Api/CrmEndpoints.cs"
       ],
       "notes": "原 WP03-06 范围保留。WP03-07 保持原 A13 职责。",
-      "prerequisite_bindings": [],
+      "prerequisite_bindings": [
+        {
+          "requirement": "含斜线键的 Main.C03 提供方原件",
+          "task_ids": [
+            "WP04-39"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "等 WP04-39 完整 DONE、Main 实际采用及合法成功原件经 COORD 核对后，独立派工。"
+        }
+      ],
       "source_refs": [
         "docs/development/08-postgresql-baseline.md",
         "docs/development/assessments/20261011/implementation-assessment.json",
@@ -7822,6 +7832,81 @@
         "commit": "7e1f80d606516b4d40f89a13f0d14de958f39acb",
         "path": "handoffs/CP6-DEV-20261012/tasks/WP04-03/replies/20261120T153943Z-coord-supplement-authorization/MESSAGE.md",
         "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/366"
+      }
+    },
+    {
+      "id": "WP04-39",
+      "package_id": "WP04",
+      "title": "Main.C03 伙伴成功结果兼容版本",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "CRM-ACC-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP02-09b",
+        "WP04-03"
+      ],
+      "exclusive_resources": [
+        "Main:c03-business-partner-results",
+        "file:Main:CP6.Core/Services/ErpIntegration/ErpRequestHandler.cs",
+        "file:Main:CP6.WebApi/Services/ErpBusinessPartnerResultReader.cs"
+      ],
+      "external_prerequisites": [
+        "#396 授权与派工已采用，Main 直接前置及适用拆分余项完整 DONE。"
+      ],
+      "scope": [
+        "保留冻结 v1 请求、成功、失败和原件验证。独立发布 v2 成功事件、schema、合同包、查证及解码。",
+        "仅授权租户的新含斜线成功结果使用兼容合同。保留伙伴 Owner 和已切换旧写者的限制。",
+        "以 FOUNDATION 提供 A27 斜线原件。A27 消费验收归 CRM WP03-06b，A13 归 WP03-07。"
+      ],
+      "outputs": [
+        "正式 Main 请求处理和 PostgreSQL Outbox 产生的 BP-2026/0007 成功原件、SHA-256 与解码依据。",
+        "按 #396 登记两笔原池划拨，按 #395 单次补记 WP03-29 收尾。"
+      ],
+      "code_paths": [
+        "CP6.Core/Services/ErpIntegration/ErpRequestHandler.cs",
+        "CP6.Core/Services/ErpIntegration/ErpEventValidator.cs",
+        "CP6.WebApi/Controllers/Internal/ErpReadController.cs",
+        "CP6.WebApi/Services/ErpBusinessPartnerResultReader.cs"
+      ],
+      "new_paths": [
+        "contracts/events/erp/business-partner-synchronized/v2",
+        "contracts/erp/business-partner-result-proof/v2/contract.json",
+        "docs/development/evidence/WP04-39/DELIVERY.md"
+      ],
+      "acceptance_positive": [
+        "实际 Main 在隔离 PostgreSQL 为独立已知原请求产出兼容成功原件，经现行对象读权正式查证。同一原件重复返回字节及摘要一致。",
+        "核对原请求、事件键、合同和业务版本、作用租户及来源 epoch，解码保留斜线、大小写和前导零。"
+      ],
+      "acceptance_negative": [
+        "v1 保留 0007-BP、0008 原值并拒绝斜线。版本、原请求、原件或摘要错配、错租户及撤读权均按合同拒绝。",
+        "重复查证与拒绝均零新增业务效果，既有伙伴 Owner 与旧写者约束仍适用。"
+      ],
+      "notes": "WP04-03 节余拨入 9984.096 秒，WP04-02 拨入 4415.904 秒，合计 14400 秒。21600 秒强制拆卡。",
+      "prerequisite_bindings": [
+        {
+          "requirement": "实际采用的原请求查证和伙伴 Owner",
+          "task_ids": [
+            "WP02-09b",
+            "WP04-03"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "WP02-09b、WP04-03 及适用拆分余项均完整 DONE。"
+        }
+      ],
+      "source_refs": [
+        "docs/crm/C03-ERP-INTEGRATION.md",
+        "docs/design-handbook/modules/CRM-ACC-01.md",
+        "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "docs/development/evidence/COORD-WP02-09B-C03-PROOF/DELIVERY.md",
+        "docs/development/planning/20261117-card-execution.md"
+      ],
+      "supplemental_authorization": {
+        "commit": "bf469ca177ceb00927949aeb9140a279efa79bed",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP03-06/replies/20261122T120526Z-coord-main-c03-compat-authorization/MESSAGE.md",
+        "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/396"
       }
     },
     {

@@ -263,7 +263,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         public string Description { get; init; } = "";
     }
 
-    private static async Task<string> UseOuterCommit(CP6Context db, string before, string[] rowXids)
+    internal static async Task<string> UseOuterCommit(DbContext db, string before, string[] rowXids)
     {
         // EF 采用保存点写入。xmin 可为子事务号，按真实 WAL COMMIT 核对其外层归属。
         var after = await db.Database.SqlQueryRaw<string>("""

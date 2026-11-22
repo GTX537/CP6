@@ -7,6 +7,7 @@ public sealed class ErpIntegrationOptions
     public bool Enabled { get; set; }
     public Dictionary<Guid, string> Tenants { get; set; } = [];
     public ErpOriginalSourcePeriod[] BusinessPartnerOriginalSources { get; set; } = [];
+    public Guid[] BusinessPartnerSuccessV2Tenants { get; set; } = [];
     public string[] ReaderClientIds { get; set; } = [];
     public string[] OpsOwners { get; set; } = [];
     public string OpsRouteEpoch { get; set; } = "C03-MAIN-V1";
@@ -39,6 +40,11 @@ public sealed class ErpIntegrationRuntime
             options.MaximumRetrySeconds > 3600)
             throw new ArgumentException("C03 requires explicit tenants, reader clients, authenticated sidecar and bounded retries.", nameof(options));
         foreach (var region in options.Tenants.Values) Cp6CloudEventAttributes.Region.Validate(region);
+        if (options.BusinessPartnerSuccessV2Tenants.Length != 0 && !validator.SupportsBusinessPartnerSuccessV2)
+            throw new ArgumentException("C03 租户已启用伙伴成功兼容版本，但当前宿主缺少对应合同包。", nameof(options));
+        if (options.BusinessPartnerSuccessV2Tenants.Distinct().Count() != options.BusinessPartnerSuccessV2Tenants.Length ||
+            options.BusinessPartnerSuccessV2Tenants.Any(tenant => !options.Tenants.ContainsKey(tenant)))
+            throw new ArgumentException("C03 伙伴成功兼容版本只能启用于已登记且不重复的租户。", nameof(options));
         if (options.OpsOwners.Length == 0) options.OpsOwners = [IntegrationOpsContractV1.Owner];
         if (options.OpsOwners.Length is < 1 or > 16 || !options.OpsOwners.Contains(IntegrationOpsContractV1.Owner) ||
             options.OpsOwners.Distinct(StringComparer.Ordinal).Count() != options.OpsOwners.Length ||
