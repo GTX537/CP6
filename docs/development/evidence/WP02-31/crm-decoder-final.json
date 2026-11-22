@@ -1,0 +1,130 @@
+{
+  "crmAdopted": "512303e9f6c530dbd398991d96a69ffe9990cf23",
+  "decoderAssemblySha256": "ea9c386903e0d15d2fd397c966c8853f025ee5db9b9b03c46170da52732763c0",
+  "cases": 13,
+  "results": [
+    {
+      "filename": "download-results.json",
+      "artifact": false,
+      "stream": "61e290aef59eb7c8e18eb6f1ffd1b89c3ffb0f21160c4fec3535203f68198f7d",
+      "eventId": "5915cd8a-91b0-499d-92dc-399c899e223b",
+      "revision": 1,
+      "snapshotKind": "INITIAL_COMPLETE",
+      "previousRevision": null
+    },
+    {
+      "filename": "download-results.json",
+      "artifact": false,
+      "stream": "61e290aef59eb7c8e18eb6f1ffd1b89c3ffb0f21160c4fec3535203f68198f7d",
+      "eventId": "f3b0d3b2-d1b3-43e7-a3c5-4d481e1d3ae9",
+      "revision": 2,
+      "snapshotKind": "CONTIGUOUS",
+      "previousRevision": 1
+    },
+    {
+      "filename": "download-results.json",
+      "artifact": false,
+      "stream": "61e290aef59eb7c8e18eb6f1ffd1b89c3ffb0f21160c4fec3535203f68198f7d",
+      "eventId": "bb3005dd-e86f-4287-9a02-7878fc8b7a1d",
+      "revision": 3,
+      "snapshotKind": "CONTIGUOUS",
+      "previousRevision": 2
+    },
+    {
+      "filename": "download-results.json",
+      "artifact": true,
+      "stream": "2efd6333fa1a77591176ebdf6571afd78768f4df72589ae2820e6374aa3b1bb9",
+      "eventId": "b859f939-58ba-4e7c-a154-908d8a027bf1",
+      "revision": 1,
+      "snapshotKind": "INITIAL_COMPLETE",
+      "previousRevision": null
+    },
+    {
+      "filename": "download-results.json",
+      "artifact": true,
+      "stream": "4b8a7ae5f2f0a7570f3e16f7e0a64c5bdfa8cc5c7385bb107f292fb4a83ea4f1",
+      "eventId": "c67d3f06-590c-4ce7-8324-5f425376b2dc",
+      "revision": 1,
+      "snapshotKind": "INITIAL_COMPLETE",
+      "previousRevision": null
+    },
+    {
+      "filename": "download-results.json",
+      "artifact": true,
+      "stream": "2efd6333fa1a77591176ebdf6571afd78768f4df72589ae2820e6374aa3b1bb9",
+      "eventId": "fd057f51-1db1-4416-93ab-5649eeaeecd8",
+      "revision": 2,
+      "snapshotKind": "CONTIGUOUS",
+      "previousRevision": 1
+    },
+    {
+      "filename": "checkpoint-results.json",
+      "artifact": false,
+      "stream": "e08d19b5c41bc0234dcdda0a5448ec5e774ac24930e70f8558ce6e8522b084e8",
+      "eventId": "788dd641-a688-440f-867e-0fed6bec3bad",
+      "revision": 1,
+      "snapshotKind": "INITIAL_COMPLETE",
+      "previousRevision": null
+    },
+    {
+      "filename": "checkpoint-results.json",
+      "artifact": false,
+      "stream": "e08d19b5c41bc0234dcdda0a5448ec5e774ac24930e70f8558ce6e8522b084e8",
+      "eventId": "103cab12-8089-4a17-b5df-6ca8d9ab5af5",
+      "revision": 2,
+      "snapshotKind": "CONTIGUOUS",
+      "previousRevision": 1
+    },
+    {
+      "filename": "checkpoint-results.json",
+      "artifact": false,
+      "stream": "e08d19b5c41bc0234dcdda0a5448ec5e774ac24930e70f8558ce6e8522b084e8",
+      "eventId": "e3e9d8e9-b1cf-4f28-9655-941305b90a2b",
+      "revision": 3,
+      "snapshotKind": "CONTIGUOUS",
+      "previousRevision": 2
+    },
+    {
+      "filename": "checkpoint-results.json",
+      "artifact": true,
+      "stream": "734765264e675f30ae818e59ff493f989cd0ccb8f9e50a958e11ee854d0be786",
+      "eventId": "69ececd7-6e19-4144-83cb-54d08552ccc2",
+      "revision": 1,
+      "snapshotKind": "INITIAL_COMPLETE",
+      "previousRevision": null
+    },
+    {
+      "filename": "checkpoint-results.json",
+      "artifact": false,
+      "stream": "e08d19b5c41bc0234dcdda0a5448ec5e774ac24930e70f8558ce6e8522b084e8",
+      "eventId": "b61f17c6-9126-49f9-8e74-6dc5d820c9f9",
+      "revision": 4,
+      "snapshotKind": "CHECKPOINT",
+      "previousRevision": null
+    },
+    {
+      "filename": "checkpoint-results.json",
+      "artifact": true,
+      "stream": "734765264e675f30ae818e59ff493f989cd0ccb8f9e50a958e11ee854d0be786",
+      "eventId": "0a768157-055e-4032-9de9-8a18011e2286",
+      "revision": 2,
+      "snapshotKind": "CHECKPOINT",
+      "previousRevision": null
+    },
+    {
+      "filename": "checkpoint-results.json",
+      "artifact": true,
+      "stream": "734765264e675f30ae818e59ff493f989cd0ccb8f9e50a958e11ee854d0be786",
+      "eventId": "10d17b51-11fd-4d97-8443-f2e03c8a7241",
+      "revision": 3,
+      "snapshotKind": "CHECKPOINT",
+      "previousRevision": null
+    }
+  ],
+  "decoderBuildRef": "0370eaa45ee6376c786db01f5c2465b54aadf0b2",
+  "wireBlobs": {
+    "src/CP6.CRM.Api/Contacts/ContactHistoryExportV11.cs": "04b71a84c337024a64bee784938ab6f06feb1d9d",
+    "src/CP6.CRM.Api/Contacts/ContactWireV1.cs": "c3383fd5e3615951440dd3465cf90a7a8e467002",
+    "src/CP6.CRM.Api/Account/AccountWireV1.cs": "0a52e834bd78123eeb5604d0eb83e884a457e65b"
+  }
+}
