@@ -28,7 +28,8 @@ public sealed class WorkflowNotificationDeliveryService(CP6Context db, ScopeAuth
         Suppressed = "SUPPRESSED", BlockedAddress = "BLOCKED_ADDRESS", InFlight = "IN_FLIGHT";
 
     private sealed record Source(Guid Id, Guid Recipient, Guid OriginalActor, Guid? InstanceId, Guid? TaskId, int Type,
-        string Kind, bool InAppRequested, bool EmailRequested);
+        string Kind, bool InAppRequested, bool EmailRequested, bool HasPreferenceVersion);
+    private sealed record LegacyDelivery(int Status, int Attempts, bool HasDispatchedAt, bool HasError, bool Deferred);
     private sealed record Delivery(string RecipientVersion, string State, DateTimeOffset? NextAttempt,
         Guid? AttemptId, int Attempts);
     private sealed record Current(string Version, string? Address, string? HeldReason);
@@ -61,11 +62,12 @@ public sealed class WorkflowNotificationDeliveryService(CP6Context db, ScopeAuth
         var lease = await scope.AcquireAsync(ct);
         var rows = await db.Database.SqlQuery<Source>($"""
             SELECT n."Id",n."UserId" AS "Recipient",s.actor_id AS "OriginalActor",n."InstanceId",n."TaskId",n."Type",s.kind AS "Kind",
-                   n."InAppRequested",n."EmailRequested"
+                   n."InAppRequested",n."EmailRequested",s.preference_version IS NOT NULL AS "HasPreferenceVersion"
             FROM public."Wf_Notification" n JOIN cp6_oa_notification_v1.owner_sources s ON s.notification_id=n."Id"
             WHERE n."TenantId"={db.CurrentTenantId} AND s.tenant_id=n."TenantId" AND s.environment_id={scope.EnvironmentId}
               AND s.recipient_id=n."UserId" AND s.task_id IS NOT DISTINCT FROM n."TaskId"
-              AND s.preference_version IS NOT NULL
+              AND NOT (s.preference_version IS NULL AND n."DispatchStatus"=0 AND n."DispatchAttempts"=0
+                  AND n."NextAttemptAtUtc" IS NOT NULL AND n."NextAttemptAtUtc">clock_timestamp())
               AND EXISTS (SELECT 1 FROM (VALUES ('IN_APP',n."InAppRequested"),('EMAIL',n."EmailRequested")) lane(channel,requested)
                   WHERE lane.requested AND NOT EXISTS (SELECT 1 FROM cp6_oa_notification_v1.deliveries d
                     WHERE d.tenant_id=n."TenantId" AND d.environment_id=s.environment_id AND d.notification_id=n."Id"
@@ -85,6 +87,12 @@ public sealed class WorkflowNotificationDeliveryService(CP6Context db, ScopeAuth
         var prior = await ReadDeliveryAsync(source, channel, ct);
         var now = DateTimeOffset.UtcNow;
         if (prior is not null && (prior.NextAttempt is null || prior.NextAttempt > now)) return new();
+
+        if (!source.HasPreferenceVersion && await RetainLegacyResultAsync(source, channel, scopeLease, ct))
+        {
+            await transaction.CommitAsync(ct);
+            return new();
+        }
 
         if (prior is { State: InFlight or Unknown })
         {
@@ -134,6 +142,33 @@ public sealed class WorkflowNotificationDeliveryService(CP6Context db, ScopeAuth
         await scope.ValidateAsync(scopeLease, ct);
         await transaction.CommitAsync(ct);
         return new(EmailWork: new(source, claim, false));
+    }
+
+    private async Task<bool> RetainLegacyResultAsync(Source source, string channel, ScopeAuthorizationLeaseV1 lease,
+        CancellationToken ct)
+    {
+        var rows = await db.Database.SqlQuery<LegacyDelivery>($"""
+            SELECT "DispatchStatus" AS "Status","DispatchAttempts" AS "Attempts",
+                "DispatchedAtUtc" IS NOT NULL AS "HasDispatchedAt","LastDispatchError" IS NOT NULL AS "HasError",
+                coalesce("NextAttemptAtUtc">clock_timestamp(),false) AS "Deferred"
+            FROM public."Wf_Notification"
+            WHERE "TenantId"={db.CurrentTenantId} AND "Id"={source.Id} AND "UserId"={source.Recipient}
+            FOR UPDATE
+            """).ToListAsync(ct);
+        var history = rows.Single();
+        var neverAttempted = history is { Status: 0, Attempts: 0, HasDispatchedAt: false, HasError: false };
+        if (neverAttempted && history.Deferred) return true;
+        if (channel == InApp && neverAttempted) return false;
+
+        // 旧状态是整条通知的结果，只有已完成的站内记录足以确认原刷新处理完成。
+        // 无通道收据的旧邮件或半程记录一律保留原证据，不生成第二次派送。
+        var accepted = channel == InApp && history is { Status: 1, Attempts: > 0, HasDispatchedAt: true, HasError: false };
+        var reason = channel == Email ? "LEGACY_EMAIL_PROVIDER_UNPROVEN" :
+            accepted ? "LEGACY_IN_APP_COMPLETED" : "LEGACY_IN_APP_OUTCOME_UNKNOWN";
+        await WriteAsync(source, channel, RecipientVersion(source.Id, source.Recipient, null), accepted ? Accepted : Unknown,
+            reason, null, history.Attempts, null, ct);
+        await scope.ValidateAsync(lease, ct);
+        return true;
     }
 
     private async Task FinishEmailAsync(Prepared work, IWorkflowNotificationEmailV1 transport, CancellationToken ct)
@@ -217,14 +252,16 @@ public sealed class WorkflowNotificationDeliveryService(CP6Context db, ScopeAuth
     {
         if (source.Kind == "FORM_SUBMITTED" && source.TaskId is null)
             return Task.FromResult(source.OriginalActor == source.Recipient);
-        if (source.Kind is "TASK_ASSIGNED" or "TASK_TRANSFERRED" or "TIMEOUT_REMINDER" or "TIMEOUT_ESCALATED")
+        if (source.Kind is "TASK_ASSIGNED" or "TASK_TRANSFERRED" or "TIMEOUT_REMINDER" or "TIMEOUT_ESCALATED"
+            or "DEADLINE_RECALCULATED" or "LEGACY_ENGINE_ASSIGNMENT")
         {
             return source.TaskId is Guid id
                 ? db.Wf_FlowTasks.AnyAsync(t => t.Id == id && t.InstanceId == source.InstanceId &&
                     t.AssigneeId == source.Recipient && t.Status == FlowTaskStatus.Pending, ct)
                 : Task.FromResult(false);
         }
-        return source.InstanceId is Guid instance && source.Kind is "FLOW_FINISHED" or "BRANCH_PRUNED" or "TASK_SENT_BACK" or "TIMEOUT_BLOCKED" or "TIMEOUT_EXECUTED"
+        return source.InstanceId is Guid instance && source.Kind is "FLOW_FINISHED" or "BRANCH_PRUNED" or "TASK_SENT_BACK"
+            or "TIMEOUT_BLOCKED" or "TIMEOUT_EXECUTED" or "LEGACY_ENGINE_STARTER"
             ? db.Wf_FlowInstances.AnyAsync(row => row.Id == instance && row.StarterId == source.Recipient, ct)
             : Task.FromResult(false);
     }

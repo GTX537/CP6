@@ -144,22 +144,47 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.False((await h.Db.Wf_Notifications.AsNoTracking().SingleAsync(x=>x.Id==late.Id)).IsRead);
         Assert.False((await h.Db.Wf_Notifications.AsNoTracking().SingleAsync(x=>x.Id==hidden.Id)).IsRead);
 
-        using var unobserved = await host.Send(OperationsRequest(cookies,HttpMethod.Post,"api/oa/notification/read-all"));
-        Assert.Equal((HttpStatusCode)428,unobserved.StatusCode);
-        using var legacy = await host.Send(OperationsRequest(cookies,HttpMethod.Get,"api/oa/notification/list?unreadOnly=true"));
-        Assert.Equal(HttpStatusCode.OK,legacy.StatusCode);
-        var cookie = legacy.Headers.GetValues("Set-Cookie").Single(x=>x.StartsWith("cp6_oa_notice_observed=",StringComparison.Ordinal));
-        var binding = cookie.Split(';')[0].Split('=',2);
-        cookies[binding[0]] = binding[1];
-        var afterObservation = NewNotice(h.User);
-        h.Db.Wf_Notifications.Add(afterObservation);
+        const string legacyList = "api/oa/notification/list?unreadOnly=true";
+        const string legacyReadAll = "api/oa/notification/read-all";
+        using var firstPage = await host.Send(OperationsRequest(cookies,HttpMethod.Get,legacyList));
+        var firstObservation = await firstPage.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(HttpStatusCode.OK,firstPage.StatusCode);
+        Assert.Equal(late.Id,Assert.Single(firstObservation.GetProperty("data").EnumerateArray()).GetProperty("id").GetGuid());
+        var firstWatermark = firstObservation.GetProperty("watermark").GetString()!;
+        Assert.False(firstPage.Headers.TryGetValues("Set-Cookie",out var setCookies) &&
+            setCookies.Any(c=>c.StartsWith("cp6_oa_notice_observed=",StringComparison.Ordinal)));
+
+        var betweenPages = NewNotice(h.User);
+        h.Db.Wf_Notifications.Add(betweenPages);
         await h.Db.SaveChangesAsync();
-        using var marked = await host.Send(OperationsRequest(cookies,HttpMethod.Post,"api/oa/notification/read-all"));
-        Assert.Equal(HttpStatusCode.OK,marked.StatusCode);
-        Assert.True((await h.Db.Wf_Notifications.AsNoTracking().SingleAsync(x=>x.Id==late.Id)).IsRead);
-        Assert.False((await h.Db.Wf_Notifications.AsNoTracking().SingleAsync(x=>x.Id==afterObservation.Id)).IsRead);
+        using var secondPage = await host.Send(OperationsRequest(cookies,HttpMethod.Get,legacyList));
+        var secondObservation = await secondPage.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(HttpStatusCode.OK,secondPage.StatusCode);
+        Assert.Equal(2,secondObservation.GetProperty("data").GetArrayLength());
+        var secondWatermark = secondObservation.GetProperty("watermark").GetString()!;
+        var afterBoth = NewNotice(h.User);
+        h.Db.Wf_Notifications.Add(afterBoth);
+        await h.Db.SaveChangesAsync();
+
+        using var unbound = await host.Send(OperationsRequest(cookies,HttpMethod.Post,legacyReadAll));
+        Assert.Equal((HttpStatusCode)428,unbound.StatusCode);
+        Assert.Equal("NOTIFICATION_WATERMARK_REQUIRED",(await unbound.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("code").GetString());
+
+        using var fromFirst = await host.Send(OperationsRequest(cookies,HttpMethod.Post,legacyReadAll,new{watermark=firstWatermark}));
+        Assert.Equal(HttpStatusCode.OK,fromFirst.StatusCode);
+        var firstLegacyReadAt = (await h.Db.Wf_Notifications.AsNoTracking().SingleAsync(x=>x.Id==late.Id)).ReadAt;
+        Assert.NotNull(firstLegacyReadAt);
+        Assert.False((await h.Db.Wf_Notifications.AsNoTracking().SingleAsync(x=>x.Id==betweenPages.Id)).IsRead);
+        using var firstReplay = await host.Send(OperationsRequest(cookies,HttpMethod.Post,legacyReadAll,new{watermark=firstWatermark}));
+        Assert.Equal(HttpStatusCode.OK,firstReplay.StatusCode);
+        Assert.Equal(firstLegacyReadAt,(await h.Db.Wf_Notifications.AsNoTracking().SingleAsync(x=>x.Id==late.Id)).ReadAt);
+
+        using var fromSecond = await host.Send(OperationsRequest(cookies,HttpMethod.Post,legacyReadAll,new{watermark=secondWatermark}));
+        Assert.Equal(HttpStatusCode.OK,fromSecond.StatusCode);
+        Assert.NotNull((await h.Db.Wf_Notifications.AsNoTracking().SingleAsync(x=>x.Id==betweenPages.Id)).ReadAt);
+        Assert.False((await h.Db.Wf_Notifications.AsNoTracking().SingleAsync(x=>x.Id==afterBoth.Id)).IsRead);
         Assert.False((await f.Db.Wf_Notifications.AsNoTracking().SingleAsync()).IsRead);
-        output.WriteLine("Actual HTTP: stable cursor with in-flight insertion, bound observations, exact legacy cookie compatibility, no late or foreign read, original readAt preserved.");
+        output.WriteLine("同一真实登录的两页面各自使用列表水位。页面一只读旧通知，重放保留原 ReadAt；页面二只到自己的观察点，之后提交及其他租户不变。无水位返回 428。");
     }
 
     [CurrentPermissionPostgresFact]

@@ -93,8 +93,33 @@ try {
   const foreign = await login(env.CP6_NOTICE_FOREIGN_TENANT,'price-owner','Price1!Password','foreign')
   await foreign.goto(origin + '/oa/inbox', { waitUntil: 'networkidle' })
   expect((await bell(foreign)).map(row => row.id)).toEqual([env.CP6_NOTICE_FOREIGN])
+  const app = await login(env.CP6_NOTICE_APP_TENANT, 'app-notice-reviewer', 'Delegate1!Fixture', 'app')
+  await app.goto(origin + '/oa/inbox?folder=draft', { waitUntil: 'networkidle' })
+  const appItems = await bell(app)
+  expect(appItems.map(row => row.id).sort()).toEqual([env.CP6_NOTICE_APP_LIVE, env.CP6_NOTICE_APP_REVOKED].sort())
+  const appLive = app.waitForResponse(r => r.url().endsWith('/' + env.CP6_NOTICE_APP_LIVE_TASK + '/action-context'))
+  await item(app, env.CP6_NOTICE_APP_LIVE).click()
+  const appContext = await appLive
+  expect(appContext.status()).toBe(200)
+  expect((await appContext.json()).data.contextKind).toBe('APP')
+  await app.waitForURL(url => url.pathname === '/oa/inbox' && url.searchParams.get('appTask') === env.CP6_NOTICE_APP_LIVE_TASK)
+  await expect(app.locator('.app-task-panel').getByText(/固定业务版本/)).toBeVisible()
+  await app.screenshot({ path: path.join(output, 'app-opened.png') })
+
+  await app.goto(origin + '/oa/inbox?appTask=' + env.CP6_NOTICE_APP_REVOKED_TASK, { waitUntil: 'networkidle' })
+  await bell(app)
+  const appRevoked = app.waitForResponse(r => r.url().endsWith('/' + env.CP6_NOTICE_APP_REVOKED_TASK + '/action-context'))
+  await item(app, env.CP6_NOTICE_APP_REVOKED).click()
+  expect([403, 404]).toContain((await appRevoked).status())
+  await expect(app.locator('.notify-panel').getByRole('alert')).toContainText('当前不可查看')
+  await app.waitForURL(url => url.pathname === '/oa/inbox' && !url.searchParams.has('appTask'))
+  await expect(app.locator('.app-task-panel')).toHaveCount(0)
+  await expect(app.locator('.notify-panel .notify-item')).toHaveCount(0)
+  await app.screenshot({ path: path.join(output, 'app-safe-denial.png') })
+
   await writeFile(path.join(output, 'result.json'), JSON.stringify({ result: 'PASS', commandId: wire.commandId,
-    actorInbox: owned.map(row => row.id), recipientOnly: true, sameInboxLinkOpened: true, revokedLinkCleared: true, requests }, null, 2))
+    actorInbox: owned.map(row => row.id), recipientOnly: true, sameInboxLinkOpened: true, revokedLinkCleared: true,
+    appLinkOpened: true, appRevokedLinkCleared: true, requests }, null, 2))
 } catch (error) {
   if (active) await active.screenshot({ path: path.join(output, 'failure.png') }).catch(() => {})
   throw error

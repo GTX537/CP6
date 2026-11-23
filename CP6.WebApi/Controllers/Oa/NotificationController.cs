@@ -3,6 +3,7 @@ using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CP6.WebApi.Controllers.Oa;
 
@@ -11,8 +12,6 @@ namespace CP6.WebApi.Controllers.Oa;
 public class NotificationController(INotificationService notifications, ICurrentPermissionContext actor,
     WorkflowNotificationInboxV1 observed) : LocalizedControllerBase
 {
-    private const string ObservationCookie = "cp6_oa_notice_observed";
-
     [HttpGet("list")]
     public Task<IActionResult> List(bool? unreadOnly, int? page, int? pageSize, CancellationToken ct)
         => Reply(async () =>
@@ -22,22 +21,17 @@ public class NotificationController(INotificationService notifications, ICurrent
             if (!observed.IsAvailable)
             {
                 var rows = await notifications.ListAsync(await CurrentUser(), unreadOnly ?? false, number, take);
-                return rows.Select(x => x with { Title = NotifyMatrix.Summary(x.Type), Body = NotifyMatrix.Summary(x.Type),
-                    TaskId = null, InstanceId = null, FlowKey = null }).ToArray();
+                return Success(rows.Select(x => x with { Title = NotifyMatrix.Summary(x.Type), Body = NotifyMatrix.Summary(x.Type),
+                    TaskId = null, InstanceId = null, FlowKey = null }).ToArray());
             }
             var result = await observed.ListAsync(unreadOnly ?? false, take, null, null, ct, (number - 1) * take);
-            Response.Cookies.Append(ObservationCookie, result.Watermark, new CookieOptions
-            {
-                HttpOnly = true, Secure = Request.IsHttps, SameSite = SameSiteMode.Lax,
-                Path = "/api/oa/notification", MaxAge = TimeSpan.FromMinutes(30)
-            });
-            return result.Items;
+            return Ok(new { code = 0, message = "OK", data = result.Items, watermark = result.Watermark });
         });
 
     [HttpGet("unread-count")]
     public Task<IActionResult> UnreadCount(CancellationToken ct)
-        => Reply(async () => new { count = observed.IsAvailable ? await observed.UnreadCountAsync(ct)
-            : await notifications.UnreadCountAsync(await CurrentUser()) });
+        => Reply(async () => Success(new { count = observed.IsAvailable ? await observed.UnreadCountAsync(ct)
+            : await notifications.UnreadCountAsync(await CurrentUser()) }));
 
     [HttpPost("read"), RequirePermission("oa-inbox", "read")]
     public Task<IActionResult> Read([FromBody] IdReq input, CancellationToken ct)
@@ -45,20 +39,21 @@ public class NotificationController(INotificationService notifications, ICurrent
         {
             if (observed.IsAvailable) await observed.MarkReadAsync(input.Id, ct);
             else await notifications.MarkReadAsync(await CurrentUser(), input.Id);
-            return null;
+            return Success();
         });
 
-    [HttpPost("read-all"), RequirePermission("oa-inbox", "read")]
-    public Task<IActionResult> ReadAll(CancellationToken ct)
+    [HttpPost("read-all"), RequestSizeLimit(32768), RequirePermission("oa-inbox", "read")]
+    public Task<IActionResult> ReadAll([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] ReadAllReq? input, CancellationToken ct)
         => Reply(async () =>
         {
             if (!observed.IsAvailable)
                 throw new ScopeAuthorizationExceptionV1("NOTIFICATION_SCOPE_UNAVAILABLE");
-            await observed.ReadThroughAsync(Request.Cookies[ObservationCookie], ct);
-            return null;
+            await observed.ReadThroughAsync(input?.Watermark, ct);
+            return Success();
         });
 
     public record IdReq(Guid Id);
+    public record ReadAllReq(string? Watermark);
 
     private async Task<Guid> CurrentUser()
     {
@@ -67,9 +62,11 @@ public class NotificationController(INotificationService notifications, ICurrent
         return (await actor.GetAsync()).UserId;
     }
 
-    private async Task<IActionResult> Reply(Func<Task<object?>> action)
+    private IActionResult Success(object? data = null) => Ok(new { code = 0, message = "OK", data });
+
+    private async Task<IActionResult> Reply(Func<Task<IActionResult>> action)
     {
-        try { return Ok(new { code = 0, message = "OK", data = await action() }); }
+        try { return await action(); }
         catch (ScopeAuthorizationExceptionV1 error) { return StatusCode(error.Status, new { code = error.Message }); }
         catch (CurrentPermissionUnavailableException) { return StatusCode(403, new { code = "ACTION_FORBIDDEN" }); }
         catch (Exception error) when (error is Npgsql.NpgsqlException or Microsoft.EntityFrameworkCore.DbUpdateException)

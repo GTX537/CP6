@@ -63,6 +63,29 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             Assert.DoesNotContain("synthetic-private-form-title",await OperationsFailure(noLonger));
         }
         var delegatedNotice=await h.Db.Wf_Notifications.AsNoTracking().SingleAsync(n=>n.UserId==delegateId);
+
+        await using var app=await Seed();
+        var (_,firstReviewer,secondReviewer)=await DecisionSetup(app);
+        await NativeOperationPermissions(app);
+        await NoticePermissions(app);
+        await NoticeRoutes(app);
+        var notificationReviewer=Guid.NewGuid();
+        var newReviewer=Guid.NewGuid();
+        app.Db.Sys_Users.Add(new() { Id=notificationReviewer,UserName="app-notice-reviewer",Password=password,RoleId=73 });
+        app.Db.Sys_Users.Add(new() { Id=newReviewer,UserName="app-notice-final-reviewer",Password=password,RoleId=73 });
+        await app.Db.SaveChangesAsync();
+        await TaskPermission(app,notificationReviewer);
+        await TaskPermission(app,newReviewer);
+        var appRevokedTask=(await DecisionInput(DecisionActor(app,firstReviewer))).Task;
+        var appLiveTask=(await DecisionInput(DecisionActor(app,secondReviewer))).Task;
+        await TransferAppNotice(app,firstReviewer,notificationReviewer,appRevokedTask,"notice-app-original");
+        await TransferAppNotice(app,notificationReviewer,newReviewer,appRevokedTask,"notice-app-revoked");
+        await TransferAppNotice(app,secondReviewer,notificationReviewer,appLiveTask,"notice-app-live");
+        var appFormerNotice=await app.Db.Wf_Notifications.AsNoTracking()
+            .SingleAsync(n=>n.UserId==notificationReviewer && n.TaskId==appRevokedTask);
+        var appLiveNotice=await app.Db.Wf_Notifications.AsNoTracking()
+            .SingleAsync(n=>n.UserId==notificationReviewer && n.TaskId==appLiveTask);
+
         using var result=await BrowserScenario(h,delegateId,"oa-notification-workflow-browser.mjs","workflow-notification-browser",ConnSettings(),
             new()
             {
@@ -73,12 +96,30 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
                 ["CP6_NOTICE_REVOKED_TASK"]=f.Task.ToString("D"),
                 ["CP6_NOTICE_DELEGATE"]=delegatedNotice.Id.ToString("D"),
                 ["CP6_NOTICE_FOREIGN_TENANT"]=foreign.Tenant.ToString("N"),
-                ["CP6_NOTICE_FOREIGN"]=foreignRow.Id.ToString("D")
+                ["CP6_NOTICE_FOREIGN"]=foreignRow.Id.ToString("D"),
+                ["CP6_NOTICE_APP_TENANT"]=app.Tenant.ToString("N"),
+                ["CP6_NOTICE_APP_LIVE"]=appLiveNotice.Id.ToString("D"),
+                ["CP6_NOTICE_APP_LIVE_TASK"]=appLiveTask.ToString("D"),
+                ["CP6_NOTICE_APP_REVOKED"]=appFormerNotice.Id.ToString("D"),
+                ["CP6_NOTICE_APP_REVOKED_TASK"]=appRevokedTask.ToString("D")
             });
         Assert.Equal("PASS",result.RootElement.GetProperty("result").GetString());
         Assert.Equal(1,await NoticeReceiptCount(h));
         Assert.Empty((await NativeInbox(h,f.Owner).DetailAsync(f.Instance)).Votes);
-        output.WriteLine("Chrome uses exact settings CAS, live FORM action-context, denied former assignee, actual deputy and second tenant. No approval or external channel is invoked.");
+        Assert.True(result.RootElement.GetProperty("appLinkOpened").GetBoolean());
+        Assert.True(result.RootElement.GetProperty("appRevokedLinkCleared").GetBoolean());
+        Assert.Equal(0,await app.Db.Database.SqlQuery<int>($"""
+            SELECT count(*)::int AS "Value" FROM cp6_approval_decision_v2.votes WHERE tenant_id={app.Tenant}
+            """).SingleAsync());
+        output.WriteLine("Chrome 实测偏好 CAS、FORM 和 APP 原通知的可用与失权深链、实际代理及隔离租户收件。审批投票和外送均未调用。");
+    }
+
+    private static async Task TransferAppNotice(Harness h,Guid actor,Guid recipient,Guid task,string key)
+    {
+        var owner=Decisions(DecisionActor(h,actor));
+        var before=await owner.ContextAsync(task);
+        await owner.TransferTaskAsync(task,PersonalCommand(
+            new NativeTransferInputV2(task,recipient,"合成 APP 收件转交",before.TaskRowVersion),key,before.InstanceRowVersion));
     }
 
     private static async Task NoticeRoutes(Harness h)

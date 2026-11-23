@@ -1,6 +1,13 @@
 import http from '../http'
 import type { NotificationItem, NotificationPage } from '../../types/oa/notification'
 
+interface LegacyNotificationList {
+  code: number
+  message: string
+  data: NotificationItem[]
+  watermark?: string
+}
+
 export const notificationApi = {
   page: async (take = 10, signal?: AbortSignal): Promise<NotificationPage> =>
     (await http.get('/oa/v2/notifications', { params: { take }, signal }) as unknown as { data: NotificationPage }).data,
@@ -18,8 +25,8 @@ export const notificationApi = {
     (await http.get('/oa/v2/tasks/' + encodeURIComponent(task) + '/action-context', { signal }) as unknown as
       { data: { contextKind?: string } }).data,
 
-  list: (unreadOnly?: boolean, page?: number, pageSize?: number) =>
-    http.get<NotificationItem[]>('/oa/notification/list', { params: { unreadOnly, page, pageSize } }),
+  list: (unreadOnly?: boolean, page?: number, pageSize?: number): Promise<LegacyNotificationList> =>
+    http.get('/oa/notification/list', { params: { unreadOnly, page, pageSize } }) as unknown as Promise<LegacyNotificationList>,
 
   unreadCount: () =>
     http.get<number>('/oa/notification/unread-count'),
@@ -27,6 +34,6 @@ export const notificationApi = {
   read: (id: string) =>
     http.post('/oa/notification/read', { id }),
 
-  readAll: () =>
-    http.post('/oa/notification/read-all'),
+  readAll: (watermark: string) =>
+    http.post('/oa/notification/read-all', { watermark }),
 }

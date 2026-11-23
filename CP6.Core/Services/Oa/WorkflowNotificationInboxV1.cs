@@ -39,18 +39,19 @@ public sealed class WorkflowNotificationInboxV1(CP6Context db, ScopeAuthorizatio
             : await Observe(user, ct));
         var lastCreated = next?.LastCreated?.ToString("O", CultureInfo.InvariantCulture);
         var rows = await db.Database.SqlQuery<WorkflowNotificationItemV1>($"""
-            SELECT n."Id",n."Type",''::text AS "Title",''::text AS "Body",
-              CASE WHEN s.notification_id IS NOT NULL THEN n."InstanceId" END AS "InstanceId",
-              CASE WHEN s.notification_id IS NOT NULL THEN n."TaskId" END AS "TaskId",
+            SELECT n."Id",n."Type",CASE WHEN s.kind='DEADLINE_RECALCULATED'
+              THEN '待办期限已重算' ELSE '' END AS "Title",''::text AS "Body",
+              CASE WHEN s.kind NOT IN ('LEGACY_ENGINE_ASSIGNMENT','LEGACY_ENGINE_STARTER') THEN n."InstanceId" END AS "InstanceId",
+              CASE WHEN s.kind NOT IN ('LEGACY_ENGINE_ASSIGNMENT','LEGACY_ENGINE_STARTER') THEN n."TaskId" END AS "TaskId",
               NULL::text AS "FlowKey",n."IsRead",n."ReadAt",n."CreateDate",
               COALESCE((SELECT d.state FROM cp6_oa_notification_v1.deliveries d
                 WHERE d.tenant_id=n."TenantId" AND d.environment_id={scope.EnvironmentId} AND d.notification_id=n."Id"
                   AND d.recipient_id={user} AND d.channel='IN_APP' ORDER BY d.updated_at DESC LIMIT 1),
-                CASE WHEN s.preference_version IS NOT NULL AND n."InAppRequested" THEN 'PENDING' END) AS "InAppDelivery",
+                CASE WHEN s.notification_id IS NOT NULL AND n."InAppRequested" THEN 'PENDING' END) AS "InAppDelivery",
               COALESCE((SELECT d.state FROM cp6_oa_notification_v1.deliveries d
                 WHERE d.tenant_id=n."TenantId" AND d.environment_id={scope.EnvironmentId} AND d.notification_id=n."Id"
                   AND d.recipient_id={user} AND d.channel='EMAIL' ORDER BY d.updated_at DESC LIMIT 1),
-                CASE WHEN s.preference_version IS NOT NULL AND n."EmailRequested" THEN 'PENDING' END) AS "EmailDelivery"
+                CASE WHEN s.notification_id IS NOT NULL AND n."EmailRequested" THEN 'PENDING' END) AS "EmailDelivery"
             FROM public."Wf_Notification" n
             LEFT JOIN cp6_oa_notification_v1.owner_sources s ON s.notification_id=n."Id"
             WHERE n."TenantId"={db.CurrentTenantId} AND n."UserId"={user} AND n."InAppRequested"
@@ -64,7 +65,7 @@ public sealed class WorkflowNotificationInboxV1(CP6Context db, ScopeAuthorizatio
             """).ToListAsync(ct);
         var items = rows.Take(take).Select(row =>
         {
-            var summary = NotifyMatrix.Summary(row.Type);
+            var summary = row.Title.Length > 0 ? row.Title : NotifyMatrix.Summary(row.Type);
             return row with { Title = summary, Body = summary };
         }).ToArray();
         var nextCursor = rows.Count > take
