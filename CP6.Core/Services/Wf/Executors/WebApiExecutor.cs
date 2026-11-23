@@ -17,11 +17,13 @@ public sealed class WebApiExecutor : IServiceTaskExecutor
 
     // D5 解析合并：先租户表（Wf_Connector Enabled 行 → DbWfConnector）→ 未命中回落 app 字典。
     private readonly TenantConnectorResolver _resolver;
+    private readonly CP6.Core.Services.Oa.ConnectorControlRuntimeV1? _control;
 
     /// <summary>生产构造（DI）：注入租户感知解析器（内部持 CP6Context + app 字典 + DataProtection + HttpClientFactory）。</summary>
-    public WebApiExecutor(TenantConnectorResolver resolver)
+    public WebApiExecutor(TenantConnectorResolver resolver, CP6.Core.Services.Oa.ConnectorControlRuntimeV1? control = null)
     {
         _resolver = resolver;
+        _control = control;
     }
 
     /// <summary>兼容构造（app-only）：仅 app 级连接器、无租户表，供既有单测零改写复用。
@@ -46,14 +48,21 @@ public sealed class WebApiExecutor : IServiceTaskExecutor
         { return ServiceTaskResult.Fail($"E-WF-018|parseError:{ex.GetType().Name}"); }
 
         var connectorName = r.ConnectorName;
+        if (r.ConnectorPin is { } pin)
+        {
+            if (_control == null || !string.IsNullOrEmpty(r.Path) || !string.IsNullOrEmpty(r.ParamsJson) ||
+                !string.IsNullOrEmpty(r.HttpMethod) || r.TimeoutSec != null) return ServiceTaskResult.Blocked("BLOCKED_CONNECTOR");
+            return await _control.Admit(pin,ctx,CancellationToken.None);
+        }
         if (string.IsNullOrEmpty(connectorName))
             return ServiceTaskResult.Fail($"E-WF-018|{connectorName}");
 
-        var connector = await _resolver.ResolveAsync(connectorName);
-        if (connector == null)
-            return ServiceTaskResult.Fail($"E-WF-018|{connectorName}");
-
-        // 把 path/paramsJson 原样传给连接器；连接器自己决定模板求值/method/headers/response-map（P1-5）
-        return await connector.CallAsync(r.Path ?? "", r.ParamsJson, ctx);
+        async Task<ServiceTaskResult> CallLegacy()
+        {
+            var connector = await _resolver.ResolveAsync(connectorName);
+            return connector == null ? ServiceTaskResult.Fail($"E-WF-018|{connectorName}")
+                : await connector.CallAsync(r.Path ?? "", r.ParamsJson, ctx);
+        }
+        return _control == null ? await CallLegacy() : await _control.LegacyCall(connectorName,CallLegacy,CancellationToken.None);
     }
 }

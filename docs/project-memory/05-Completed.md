@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP03-11b 联系人历史正式 Owner 采用及原断言余项](https://github.com/GTX537/CP6.CRM/blob/2179c6831b107f65550796e22f31df834829f0c4/docs/development/evidence/WP03-11b/DELIVERY.md)（DONE），核对时间 `2026-11-23T01:19:16.569856+00:00`。
+- [WP12-13 触发器与连接器不可变版本及控制审批](../development/evidence/WP12-13/DELIVERY.md)（DONE），核对时间 `2026-11-23T02:40:29.922293+00:00`。
 
 ### 已关闭目标
 

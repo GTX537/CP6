@@ -245,6 +245,18 @@ public sealed class WfServiceJobService : IWfServiceJobService
             // A claim from an outdated pre-execution read can be reaped and executed by the next scan.
             return false;
         }
+        else if (result.AdmissionBlocked)
+        {
+            // 原 Job 与 token 均保留，准入失败没有外呼或错误边推进。新准入由恢复路径独立判断。
+            job.Status = ServiceJobStatus.Pending;
+            job.LastError = result.Error;
+            job.NextAttemptAtUtc = DateTime.SpecifyKind(DateTime.MaxValue, DateTimeKind.Utc);
+            job.AttemptCount--;
+            job.LockedBy = null;
+            job.LockedAtUtc = null;
+            job.LockExpiresAtUtc = null;
+            return true;
+        }
         else if (result.Success)
         {
             await _engine.ResumeServiceTokenAsync(job.InstanceId, job.TokenId, job.NodeId, result.OutputVars);

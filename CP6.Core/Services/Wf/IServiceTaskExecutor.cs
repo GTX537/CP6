@@ -33,6 +33,7 @@ public sealed class ServiceTaskContext
 public sealed class ServiceTaskResult
 {
     public bool Success { get; init; }
+    public bool AdmissionBlocked { get; init; }
     public string? Error { get; init; }
     public Dictionary<string, object?>? OutputVars { get; init; }   // §3.6 合并规则
 
@@ -41,4 +42,5 @@ public sealed class ServiceTaskResult
 
     public static ServiceTaskResult Fail(string error)
         => new() { Success = false, Error = error };
+    public static ServiceTaskResult Blocked(string reason) => new() { AdmissionBlocked = true, Error = reason };
 }

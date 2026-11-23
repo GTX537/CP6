@@ -76,6 +76,7 @@ public class FlowNode
     // 动作绑定
     public string? ServiceActionName { get; set; }      // dataWriteback / timer 动作:注册执行器键
     public string? ServiceConnectorName { get; set; }   // webApi / timer 动作:注册连接器键
+    public CP6.Core.Services.Oa.ConnectorPinV1? ServiceConnectorPin { get; set; }
     public string? ServicePath { get; set; }            // webApi:相对 baseURL 的路径模板
     public string? ServiceParamsJson { get; set; }      // 参数模板:JSON,键→表达式(§3.6 语法)
 

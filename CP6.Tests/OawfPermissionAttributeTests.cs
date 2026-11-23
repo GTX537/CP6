@@ -42,6 +42,7 @@ public class OawfPermissionAttributeTests
     // 明确到方法，不按整个控制器放行；命令重读由 Owner 区分当前读权与写权。
     private static readonly HashSet<string> BoundaryGuardedActions = new()
     {
+        "ConnectorVersionControlController.Creation", "ConnectorVersionControlController.Create", "ConnectorVersionControlController.Change",
         "ApprovalBindingController.Create", "ApprovalBindingController.Revise", "ApprovalBindingController.Disable",
         "DraftController.Create", "DraftController.Update", "DraftController.Rebase", "DraftController.Submit", "DraftController.Delete",
         "FlowAuthoringController.Preview", "FlowAuthoringController.Simulate", "FlowAuthoringController.Publish", "FlowAuthoringController.Clone", "FlowAuthoringController.Next", "FlowAuthoringController.Activate", "FlowAuthoringController.Save",

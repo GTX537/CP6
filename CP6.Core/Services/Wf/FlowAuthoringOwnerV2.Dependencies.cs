@@ -67,7 +67,7 @@ public sealed partial class FlowAuthoringOwnerV2
                 {
                     schema ??= Schema(p.Fields["SchemaJson"]!);
                     var node = schema.Nodes.Single(n => n.Id == reference.Location);
-                    if (owner.ServiceDependency(node) != reference) throw Error("SERVICE_DEPENDENCY_CHANGED", 422);
+                    if (await owner.ServiceDependency(node,ct) != reference) throw Error("SERVICE_DEPENDENCY_CHANGED", 422);
                 }
                 else throw Error("DEPENDENCY_KIND_UNSUPPORTED", 422);
             }
@@ -76,8 +76,27 @@ public sealed partial class FlowAuthoringOwnerV2
     }
     private static Guid Pin(FlowDependencyRefV2 reference)
         => Guid.TryParseExact(reference.Version, "D", out var id) && id != Guid.Empty ? id : throw Error("DEPENDENCY_PIN_REQUIRED", 422);
-    private FlowDependencyRefV2? ServiceDependency(FlowNode node)
+    private async Task<FlowDependencyRefV2?> ServiceDependency(FlowNode node,CancellationToken ct)
     {
+        if (node.ServiceConnectorPin is { } pin)
+        {
+            var present=await db.Database.SqlQuery<bool>($"""
+                SELECT EXISTS(SELECT FROM cp6_oa_conn_v1.roots r JOIN cp6_oa_conn_v1.versions v
+                  ON (v.tenant_id,v.environment_id,v.root_id)=(r.tenant_id,r.environment_id,r.id)
+                  JOIN cp6_oa_conn_v1.profiles p ON (p.tenant_id,p.environment_id,p.id)=(v.tenant_id,v.environment_id,v.profile_id)
+                  JOIN cp6_oa_conn_v1.profile_control c ON (c.tenant_id,c.environment_id,c.profile_id)=(p.tenant_id,p.environment_id,p.id)
+                  WHERE r.tenant_id={db.CurrentTenantId} AND r.environment_id={fence.EnvironmentId} AND r.id={pin.RootId}
+                  AND r.kind='CONNECTOR' AND r.source_kind={pin.SourceKind} AND r.active_version={pin.VersionId}
+                  AND v.id={pin.VersionId} AND c.enabled AND p.content->>'operation'={pin.Operation}) AS "Value"
+                """).SingleAsync(ct);
+            return present ? new("SERVICE",node.Id,pin.SourceKind+"/"+pin.RootId.ToString("D")+"/"+pin.Operation,
+                pin.VersionId.ToString("D"),"EXACT_CONNECTOR_VERSION") : null;
+        }
+        if(node.ServiceConnectorName is {Length:>0} legacyName && node.ServiceKind is ServiceKind.WebApi or ServiceKind.Timer &&
+            await db.Database.SqlQuery<bool>($"""
+                SELECT EXISTS(SELECT FROM cp6_oa_conn_v1.roots WHERE tenant_id={db.CurrentTenantId} AND environment_id={fence.EnvironmentId}
+                    AND kind='CONNECTOR' AND lower(name)=lower({legacyName})) AS "Value"
+                """).SingleAsync(ct)) throw Error("DEPENDENCY_PIN_REQUIRED",422);
         object? provider = node.ServiceKind == ServiceKind.DataWriteback
             ? executors.SingleOrDefault(x => x.Kind == ServiceKind.DataWriteback && string.Equals(x.Key, node.ServiceActionName, StringComparison.OrdinalIgnoreCase))
             : node.ServiceKind == ServiceKind.WebApi ? connectors.SingleOrDefault(x => string.Equals(x.Name, node.ServiceConnectorName, StringComparison.OrdinalIgnoreCase)) : null;
@@ -122,7 +141,12 @@ public sealed partial class FlowAuthoringOwnerV2
         foreach (var node in schema.Nodes)
         {
             if (string.Equals(node.Type?.Trim(), "subFlow", StringComparison.OrdinalIgnoreCase)) await Resolve("FLOW", node.Id, node.SubFlowKey ?? "");
-            if (string.Equals(node.Type?.Trim(), "serviceTask", StringComparison.OrdinalIgnoreCase) && ServiceDependency(node) is { } service) dependencies.Add(service);
+            if (string.Equals(node.Type?.Trim(), "serviceTask", StringComparison.OrdinalIgnoreCase))
+            {
+                var service=await ServiceDependency(node,ct);
+                if(service!=null) dependencies.Add(service);
+                else if(node.ServiceConnectorPin!=null) diagnostics.Add(new($"$.nodes[{schema.Nodes.IndexOf(node)}].serviceConnectorPin","SERVICE_DEPENDENCY_CHANGED",NodeId:node.Id));
+            }
         }
         return (diagnostics.Select(d=>d.Code).Distinct().ToArray(), dependencies.ToArray(),diagnostics.Distinct().ToArray());
     }

@@ -1,0 +1,1208 @@
+{
+  "source_sha": "99bc5d33e8a2a4ced0614906f0e1fdc3bd0b8b8d",
+  "main_baseline": "b2f3cb9f341f6e15a6cbc31dd3b3d721ec947be8",
+  "scope": "WP12-13",
+  "result": "PASS",
+  "observed_at": "2026-11-23T02:40:15.447398+00:00",
+  "environment": "实际 Main 登录/API/工作队列、Vue 流程管理页、Chrome 和隔离 PostgreSQL 18.6。身份、来源登记、凭据及外部提供方为本地同合同资料。",
+  "targeted": {
+    "cases": [
+      {
+        "name": "connector_exact_pin_stale_real_job_dispatch_retire_and_immutable_credential",
+        "outcome": "Passed",
+        "duration": "00:00:29.2961883"
+      },
+      {
+        "name": "timer_and_event_versions_preserve_source_contract_and_deny_reserved_variables(kind: \"TIMER\")",
+        "outcome": "Passed",
+        "duration": "00:00:24.8671967"
+      },
+      {
+        "name": "unproven_provider_or_total_duration_cannot_activate(adoption: \"SIMULATED\", duration: 300, code: \"CALL_DURATION_UNPROVEN\")",
+        "outcome": "Passed",
+        "duration": "00:00:13.5897831"
+      },
+      {
+        "name": "legacy_disabled_source_handoff_fences_old_control_and_marks_unproven_inflight",
+        "outcome": "Passed",
+        "duration": "00:00:17.0073026"
+      },
+      {
+        "name": "timer_and_event_versions_preserve_source_contract_and_deny_reserved_variables(kind: \"EVENT\")",
+        "outcome": "Passed",
+        "duration": "00:00:20.9902830"
+      },
+      {
+        "name": "public_trigger_reviews_zero_manifest_original_replay_and_independent_disable",
+        "outcome": "Passed",
+        "duration": "00:00:34.8507524"
+      },
+      {
+        "name": "options_require_current_read_and_return_only_registered_choices",
+        "outcome": "Passed",
+        "duration": "00:00:07.2924710"
+      },
+      {
+        "name": "lost_commit_recovers_once_with_current_read_after_write_revoke_and_hides_other_scope",
+        "outcome": "Passed",
+        "duration": "00:00:14.8514944"
+      },
+      {
+        "name": "real_tenant_seed_registers_actions_without_granting_review_or_activation",
+        "outcome": "Passed",
+        "duration": "00:00:28.3843997"
+      },
+      {
+        "name": "unproven_provider_or_total_duration_cannot_activate(adoption: \"UNPROVEN\", duration: 10, code: \"EXTERNAL_CONTRACT_UNPROVEN\")",
+        "outcome": "Passed",
+        "duration": "00:00:13.3447362"
+      },
+      {
+        "name": "unproven_provider_or_total_duration_cannot_activate(adoption: \"ADOPTED\", duration: 10, code: \"EXTERNAL_CONTRACT_UNPROVEN\")",
+        "outcome": "Passed",
+        "duration": "00:00:13.1012181"
+      },
+      {
+        "name": "trigger_retains_exact_form_and_requires_reviewer_current_original_read",
+        "outcome": "Passed",
+        "duration": "00:00:18.0650632"
+      },
+      {
+        "name": "unproven_provider_or_total_duration_cannot_activate(adoption: \"SIMULATED\", duration: null, code: \"CALL_DURATION_UNPROVEN\")",
+        "outcome": "Passed",
+        "duration": "00:00:12.8593548"
+      },
+      {
+        "name": "browser_actual_OA_tab_two_people_and_lost_publish_reply",
+        "outcome": "Passed",
+        "duration": "00:01:44.6966341"
+      }
+    ],
+    "passed": 14
+  },
+  "adjacent": {
+    "passed": 67,
+    "cases": [
+      "CP6.Tests.Wf.ServiceTaskValidatorTests.ServiceMode_Invalid_E_WF_016",
+      "ServiceTaskModelTests.FlowEdge_HasIsError",
+      "CP6.Tests.Erp.OrderPriceCorrectionPostgreSqlTests.PGT017_legacy_OA_message_trigger_orders_rotation_and_pause(pause: False, authorityFirst: False)",
+      "CP6.Tests.Wf.ServiceTaskValidatorTests.Timer_MissingOnlyDelayMode_E_WF_016",
+      "CP6.Tests.FlowSchemaValidatorTests.EndUnreachable_Reported",
+      "CP6.Tests.Wf.ServiceTaskActionRefTests.Snapshot_WebApi",
+      "CP6.Tests.Wf.WebApiExecutorTests.UnknownConnector_Fails_WithStructuredCode_NoProse",
+      "CP6.Tests.Wf.ServiceTaskHandlerTests.Sync_Fail_EnqueuesJob_AttemptCount1_ParksToken",
+      "CP6.Tests.Wf.ServiceTaskValidatorTests.Current_draft_validator_preserves_case_insensitive_connector_names",
+      "CP6.Tests.Erp.OrderPriceCorrectionPostgreSqlTests.PGT017_legacy_OA_event_trigger_retries_only_missing_effect_with_original_long_key",
+      "CP6.Tests.Erp.OrderPriceCorrectionPostgreSqlTests.PGT017_journal_service_timer_and_pause_share_native_commit_order(pauseFirst: True)",
+      "CP6.Tests.Wf.ServiceTaskValidatorTests.ErrorEdge_FromNonServiceTask_E_WF_017",
+      "ServiceTaskModelTests.FlowNode_HasServiceTaskFields",
+      "CP6.Tests.Erp.OrderPriceCorrectionPostgreSqlTests.PGT017_legacy_OA_event_trigger_orders_pause_for_http_and_retry(replay: False, pauseFirst: True)",
+      "CP6.Tests.Erp.OrderPriceCorrectionPostgreSqlTests.PGT017_legacy_OA_event_trigger_orders_pause_for_http_and_retry(replay: True, pauseFirst: True)",
+      "CP6.Tests.FlowSchemaValidatorTests.FormFieldNode_MissingFieldName_EWF014",
+      "CP6.Tests.Wf.ServiceTaskValidatorTests.ServiceTask_NonEnd_NoSuccessEdge_E_WF_016",
+      "CP6.Tests.OawfPermissionAttributeTests.EveryMutatingAction_IsGuarded_WithConventionalKeyOrExemption",
+      "CP6.Tests.Wf.ServiceTaskHandlerTests.Enqueue_Dedupe_SameTokenNode",
+      "CP6.Tests.OawfPermissionAttributeTests.ReadPermissions_MatchCurrentDeclaredBindings",
+      "CP6.Tests.OawfPermissionAttributeTests.ReadOnlyPostExemptions_AreAllStillUntaggedMutatingEndpoints",
+      "CP6.Tests.Erp.OrderPriceCorrectionPostgreSqlTests.PGT017_legacy_OA_message_trigger_orders_rotation_and_pause(pause: True, authorityFirst: True)",
+      "CP6.Tests.Wf.WebApiExecutorTests.UnknownConnector_Fails",
+      "CP6.Tests.Wf.WebApiExecutorTests.Resolves_Connector_And_Templates_Path",
+      "CP6.Tests.Erp.OrderPriceCorrectionPostgreSqlTests.PGT017_legacy_OA_message_trigger_orders_rotation_and_pause(pause: True, authorityFirst: False)",
+      "CP6.Tests.Erp.OrderPriceCorrectionPostgreSqlTests.PGT017_legacy_OA_dispatches_external_work_after_commit(batch: False)",
+      "CP6.Tests.WorkCalendarConnectorPermissionSeedTests.EnsureSeeded_RegistersGovernedActionsButKeepsAdministratorGrantsSeparate",
+      "CP6.Tests.Erp.OrderPriceCorrectionPostgreSqlTests.FormBinding_exact_published_source_survives_draft_changes_and_disable_releases_unique_binding",
+      "CP6.Tests.WorkCalendarConnectorPermissionSeedTests.EnsureSeeded_NoTenants_StillCreatesMenu_ButNoActions",
+      "CP6.Tests.Wf.ServiceTaskContractTests.Result_Fail_HasError",
+      "CP6.Tests.FlowSchemaValidatorTests.MissingStart_Reported",
+      "CP6.Tests.WorkCalendarConnectorPermissionSeedTests.EnsureSeeded_RoleActionsAllAttachRoleId1_ExplicitTenantId",
+      "CP6.Tests.Wf.ServiceTaskValidatorTests.ValidServiceTask_Passes",
+      "CP6.Tests.FlowSchemaValidatorTests.DataMapNode_Valid_NoError",
+      "CP6.Tests.Wf.ServiceTaskActionRefTests.Snapshot_Timer_WithWebApiAction",
+      "CP6.Tests.FlowSchemaValidatorTests.GroupNode_EmptyMembers_EWF014",
+      "ServiceTaskModelTests.Wf_ServiceJob_Defaults",
+      "CP6.Tests.Erp.OrderPriceCorrectionPostgreSqlTests.PGT017_legacy_OA_dispatches_external_work_after_commit(batch: True)",
+      "CP6.Tests.Wf.ServiceTaskValidatorTests.WebApi_PathWithArraySubscript_E_WF_016",
+      "CP6.Tests.FlowSchemaValidatorTests.Valid_Linear_NoErrors",
+      "CP6.Tests.Erp.OrderPriceCorrectionPostgreSqlTests.PGT017_legacy_OA_event_trigger_orders_pause_for_http_and_retry(replay: False, pauseFirst: False)",
+      "CP6.Tests.Wf.ServiceTaskValidatorTests.DataWriteback_MissingAction_E_WF_016",
+      "CP6.Tests.Wf.ServiceTaskValidatorTests.Save_WebApi_UnregisteredConnector_ThrowsE_WF_018",
+      "CP6.Tests.Wf.WebApiExecutorTests.EmptyActionRef_Fails_WithStructuredCode",
+      "CP6.Tests.Wf.ServiceTaskValidatorTests.Timer_MissingDelay_E_WF_016",
+      "CP6.Tests.Wf.ServiceTaskValidatorTests.Save_DataWriteback_UnregisteredAction_ThrowsE_WF_018",
+      "CP6.Tests.Wf.ServiceTaskHandlerTests.Async_Enqueues_AttemptCount0_ParksToken",
+      "CP6.Tests.FlowSchemaValidatorTests.EdgeToUnknownNode_Reported",
+      "CP6.Tests.Erp.OrderPriceCorrectionPostgreSqlTests.PGT017_legacy_OA_event_trigger_orders_pause_for_http_and_retry(replay: True, pauseFirst: False)",
+      "CP6.Tests.Wf.ServiceTaskValidatorTests.WebApi_MissingConnector_E_WF_016",
+      "CP6.Tests.Erp.OrderPriceCorrectionPostgreSqlTests.PGT017_journal_service_timer_and_pause_share_native_commit_order(pauseFirst: False)",
+      "CP6.Tests.Wf.ServiceTaskValidatorTests.Current_draft_validator_accepts_registered_names_without_writes",
+      "CP6.Tests.Wf.WebApiExecutorTests.EchoConnector_ResolvesTemplate_And_EmitsIdempotencyKey",
+      "CP6.Tests.OawfPermissionAttributeTests.OawfControllers_AreDiscovered",
+      "CP6.Tests.FlowSchemaValidatorTests.ApprovalWithoutStrategy_Reported",
+      "CP6.Tests.Wf.ServiceTaskHandlerTests.Sync_Success_AdvancesToken_NoJob",
+      "CP6.Tests.Wf.ServiceTaskContractTests.Result_Ok_CarriesOutputVars",
+      "CP6.Tests.Wf.ServiceTaskActionRefTests.Snapshot_Timer_PureWait_ResolvesNull",
+      "CP6.Tests.Wf.ServiceTaskValidatorTests.ServiceMode_SyncOrAsync_Or_Null_Passes",
+      "CP6.Tests.WorkCalendarConnectorPermissionSeedTests.EnsureSeeded_IsIdempotent_SecondCallNoNewRows",
+      "ServiceTaskModelTests.ServiceJobStatus_Constants",
+      "CP6.Tests.WorkCalendarConnectorPermissionSeedTests.EnsureSeeded_CreatesCalendarMenu743_WithExplicitMenuKey_AndAdminRoleMenu",
+      "CP6.Tests.Wf.ServiceTaskActionRefTests.Snapshot_DataWriteback",
+      "CP6.Tests.Wf.ServiceTaskHandlerTests.Timer_UntilDate_TenantTz_ToUtc",
+      "CP6.Tests.Wf.ServiceTaskValidatorTests.MoreThanOneErrorEdge_E_WF_017",
+      "CP6.Tests.Erp.OrderPriceCorrectionPostgreSqlTests.PGT017_legacy_OA_message_trigger_orders_rotation_and_pause(pause: False, authorityFirst: True)",
+      "CP6.Tests.Wf.ServiceTaskHandlerTests.Timer_Enqueues_FutureDueAt"
+    ]
+  },
+  "web": {
+    "passed": 251,
+    "files": 39,
+    "type_check": "PASS",
+    "validated_web_tree_at": "f1dfcf893215a73d109ca8971e9726263713a3bf"
+  },
+  "control": {
+    "trigger": {
+      "root": "dc7b2a51-0425-4f06-aee7-1405f7757951",
+      "version": "75f3b684-3c2f-44f8-b4e7-c2b45fd261ce",
+      "lost_publish_command": "2dd25529-28a0-468d-83ee-bdb4e6aa5fc0",
+      "published_effect_count": 1,
+      "independent_approvals": 2,
+      "first_enable": {
+        "coverage": "COMPLETE",
+        "invocations": 0,
+        "slots": 0,
+        "instances": 0,
+        "jobs": 0,
+        "inFlight": 0
+      }
+    },
+    "connector": {
+      "tenant_root": "0ec9ca91-e7e3-49da-9903-2a454cc51daf",
+      "tenant_version": "e29cf779-44ec-4330-8d08-542ec63dbba5",
+      "app_root": "079a90a6-253b-4147-b24c-7712141a64d2",
+      "app_version": "a7fe00f2-4ce6-45db-ad83-af1a3edc3f74",
+      "job": "f06e2757-1fe6-4791-9545-514b1ebc8b68",
+      "root_revision_unchanged_during_independent_writes": true,
+      "stale_after_job": 412,
+      "stale_after_dispatch": 412,
+      "error": "IMPACT_CHANGED",
+      "retained_sent": 1,
+      "blocked_job": "BLOCKED_CONNECTOR",
+      "blocked_attempts": 0,
+      "app_calls": 0
+    },
+    "recovery": {
+      "key": "lost-connector",
+      "original_audit_rows": 1,
+      "concurrent_original_replays": 2,
+      "foreign_actor": "NOT_OBSERVED",
+      "foreign_tenant": "NOT_OBSERVED",
+      "revoked_read_http": 403
+    },
+    "provider": {
+      "simulation": "SIMULATED",
+      "unsupported_declared_adoption": "UNPROVEN",
+      "unknown_or_300_seconds": "CALL_DURATION_UNPROVEN",
+      "actual_external_business_calls": 0,
+      "required_chain": "UNPROVEN"
+    }
+  },
+  "browser": {
+    "steps": [
+      "MESSAGE 草稿经实际页面保存",
+      "独立复核发布",
+      "发布已提交后丢包，刷新页面按原键恢复",
+      "独立复核启用",
+      "完整零影响清单与首次启用",
+      "修订生成 v2，原 v1 仍以原名称和启用状态读取",
+      "独立复核激活",
+      "独立复核激活",
+      "同名 TENANT、APP 分别激活，停用 TENANT 后 APP 仍为 ENABLED"
+    ],
+    "same_name_connectors": {
+      "TENANT": {
+        "rootId": "164531e4-e77b-4264-ac1a-3e3dcbef5b61",
+        "versionId": "dc385446-f213-4857-bcf6-6ae5003df96a"
+      },
+      "APP": {
+        "rootId": "16f3ed8f-735c-4266-a0b5-86ce2d387be7",
+        "versionId": "dc18baa6-61a1-4256-9eb2-7b2b7830057c"
+      }
+    },
+    "final_state": {
+      "TENANT": "DISABLED",
+      "APP": "ENABLED"
+    },
+    "requests": [
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/creation-contexts",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/triggers",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/versions/75f3b684-3c2f-44f8-b4e7-c2b45fd261ce",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/submit-review",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/versions/75f3b684-3c2f-44f8-b4e7-c2b45fd261ce",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/decisions",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/versions/75f3b684-3c2f-44f8-b4e7-c2b45fd261ce",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/versions/75f3b684-3c2f-44f8-b4e7-c2b45fd261ce",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/commands/2dd25529-28a0-468d-83ee-bdb4e6aa5fc0",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/versions/75f3b684-3c2f-44f8-b4e7-c2b45fd261ce",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/control-impact-previews",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/versions/75f3b684-3c2f-44f8-b4e7-c2b45fd261ce",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/submit-review",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/versions/75f3b684-3c2f-44f8-b4e7-c2b45fd261ce",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/versions/75f3b684-3c2f-44f8-b4e7-c2b45fd261ce",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/decisions",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/versions/75f3b684-3c2f-44f8-b4e7-c2b45fd261ce",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/versions/75f3b684-3c2f-44f8-b4e7-c2b45fd261ce",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/control-impact-previews/773ba445-7f97-4d85-84c5-16586a2b1e8c",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/enable",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/versions/75f3b684-3c2f-44f8-b4e7-c2b45fd261ce",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/versions",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/versions/6a5c214b-3eae-49f5-ac08-00c5a89eeced",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/triggers/dc7b2a51-0425-4f06-aee7-1405f7757951/versions/75f3b684-3c2f-44f8-b4e7-c2b45fd261ce",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/creation-contexts",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors/164531e4-e77b-4264-ac1a-3e3dcbef5b61/versions/dc385446-f213-4857-bcf6-6ae5003df96a",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/connectors/164531e4-e77b-4264-ac1a-3e3dcbef5b61/control-impact-previews",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors/164531e4-e77b-4264-ac1a-3e3dcbef5b61/versions/dc385446-f213-4857-bcf6-6ae5003df96a",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/connectors/164531e4-e77b-4264-ac1a-3e3dcbef5b61/submit-review",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors/164531e4-e77b-4264-ac1a-3e3dcbef5b61/versions/dc385446-f213-4857-bcf6-6ae5003df96a",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/connectors/164531e4-e77b-4264-ac1a-3e3dcbef5b61/decisions",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors/164531e4-e77b-4264-ac1a-3e3dcbef5b61/versions/dc385446-f213-4857-bcf6-6ae5003df96a",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors/164531e4-e77b-4264-ac1a-3e3dcbef5b61/versions/dc385446-f213-4857-bcf6-6ae5003df96a",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/control-impact-previews/67d4e34b-f973-4702-82af-84ec986f61cc",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/connectors/164531e4-e77b-4264-ac1a-3e3dcbef5b61/activate",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors/164531e4-e77b-4264-ac1a-3e3dcbef5b61/versions/dc385446-f213-4857-bcf6-6ae5003df96a",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/creation-contexts",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors/16f3ed8f-735c-4266-a0b5-86ce2d387be7/versions/dc18baa6-61a1-4256-9eb2-7b2b7830057c",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/connectors/16f3ed8f-735c-4266-a0b5-86ce2d387be7/control-impact-previews",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors/16f3ed8f-735c-4266-a0b5-86ce2d387be7/versions/dc18baa6-61a1-4256-9eb2-7b2b7830057c",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/connectors/16f3ed8f-735c-4266-a0b5-86ce2d387be7/submit-review",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors/16f3ed8f-735c-4266-a0b5-86ce2d387be7/versions/dc18baa6-61a1-4256-9eb2-7b2b7830057c",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors/164531e4-e77b-4264-ac1a-3e3dcbef5b61/versions/dc385446-f213-4857-bcf6-6ae5003df96a",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/connectors/16f3ed8f-735c-4266-a0b5-86ce2d387be7/decisions",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "conn-reviewer",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors/16f3ed8f-735c-4266-a0b5-86ce2d387be7/versions/dc18baa6-61a1-4256-9eb2-7b2b7830057c",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors/16f3ed8f-735c-4266-a0b5-86ce2d387be7/versions/dc18baa6-61a1-4256-9eb2-7b2b7830057c",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/control-impact-previews/cce0a397-425f-45b5-bacb-e53b3a541a6a",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/connectors/16f3ed8f-735c-4266-a0b5-86ce2d387be7/activate",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors/16f3ed8f-735c-4266-a0b5-86ce2d387be7/versions/dc18baa6-61a1-4256-9eb2-7b2b7830057c",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors/164531e4-e77b-4264-ac1a-3e3dcbef5b61/versions/dc385446-f213-4857-bcf6-6ae5003df96a",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/connectors/164531e4-e77b-4264-ac1a-3e3dcbef5b61/control-impact-previews",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors/164531e4-e77b-4264-ac1a-3e3dcbef5b61/versions/dc385446-f213-4857-bcf6-6ae5003df96a",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "POST",
+        "path": "/api/oa/conn/v1/connectors/164531e4-e77b-4264-ac1a-3e3dcbef5b61/disable",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/options",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/review-subjects",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors/164531e4-e77b-4264-ac1a-3e3dcbef5b61/versions/dc385446-f213-4857-bcf6-6ae5003df96a",
+        "status": 200
+      },
+      {
+        "user": "price-owner",
+        "method": "GET",
+        "path": "/api/oa/conn/v1/connectors/16f3ed8f-735c-4266-a0b5-86ce2d387be7/versions/dc18baa6-61a1-4256-9eb2-7b2b7830057c",
+        "status": 200
+      }
+    ]
+  },
+  "redaction": {
+    "api_runtime_logs_checked": 26,
+    "unique_fixture_secret_markers_found": 0
+  },
+  "initial_legacy_diagnostic": {
+    "passed": 66,
+    "failed": 29,
+    "reason": "历史 SQLite 夹具建库缺少 Latin1_General_100_BIN2 排序规则。"
+  },
+  "artifacts_sha256": {
+    "native_test_results": "29da711ce9de5708f05f453f814f15dcb5ba8ef02697ae0418ba394d5ff9f82e",
+    "browser_test_results": "107024717cc1f4a60d3174832d54dbb2312e2e6288018ca6f3704d6cb1f3259b",
+    "browser_result": "78b1f9d950c1a114c2b9ab185d1d1722bc1f42d9024f981400d98e30443fe75e",
+    "browser_screenshot": "4f635e6c98a1ff332d4ee101ec42435f95b894afc70258679e1b4e6d7597f1a8",
+    "web_regression": "384b99a2adb03542f44de720565bf491c0cb1466a7182b525086e48cb05c3690",
+    "type_check": "f39358c5d264df40c833ad6cf8f6286b9652d06fe1275645745b8a8de5be4a22"
+  }
+}
