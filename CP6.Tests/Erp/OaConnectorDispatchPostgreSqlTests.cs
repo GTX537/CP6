@@ -505,15 +505,21 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
 
     internal static WfServiceJobService DispatchWorker(CP6Context db, IConnectorDispatchAdmissionV1[] providers, params IWfConnector[] legacy)
+        => DispatchWorkerWithRecorder(db, providers, null, legacy);
+
+    private static WfServiceJobService DispatchWorkerWithRecorder(CP6Context db, IConnectorDispatchAdmissionV1[] providers,
+        ApprovalTaskDecisionOwnerV2? recorder, params IWfConnector[] legacy)
     {
         var fence = new ScopeAuthorizationFenceV1(db, Options.Create(new ScopeAuthorizationOptionsV1 { EnvironmentId = ScopeEnvironment }));
         var runtime = new ConnectorControlRuntimeV1(db, fence,
             Options.Create(new OaConnectorControlOptionsV1 { AllowSimulatedParticipants = true }), providers);
         var executor = new WebApiExecutor(new TenantConnectorResolver(db, legacy), runtime);
-        return new WfServiceJobService(db, new FlowEngine(db, new ApproverResolver(db)), [executor]);
+        return new WfServiceJobService(db, new FlowEngine(db, new ApproverResolver(db)), [executor],
+            connectorResults: runtime, appRecorder: recorder);
     }
 
-    private static (Process Worker, string PidPath) StartDispatchProcess(Harness h, ConnResource root, OaConnectorDispatchWireFixture wire, Guid job)
+    private static (Process Worker, string PidPath) StartDispatchProcess(Harness h, ConnResource root,
+        OaConnectorDispatchWireFixture wire, Guid job, bool result = false, bool pauseApply = false, string? testAssembly = null)
     {
         var pidPath = Path.Combine(Environment.GetEnvironmentVariable("CP6_PERMISSION_PG_ROOT")!, "dispatch-worker-" + Guid.NewGuid().ToString("N") + ".pid");
         var start = new ProcessStartInfo(Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet")
@@ -521,12 +527,12 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true,
         };
         start.ArgumentList.Add("vstest");
-        start.ArgumentList.Add(typeof(OaConnectorDispatchProcessTests).Assembly.Location);
+        start.ArgumentList.Add(testAssembly ?? typeof(OaConnectorDispatchProcessTests).Assembly.Location);
         start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName~OaConnectorDispatchProcessTests.RunScan");
         start.Environment["CP6_WP1216_SCAN_PID"] = pidPath;
         start.Environment["CP6_WP1216_SCAN_DB"] = h.Db.Database.GetConnectionString()!;
         start.Environment["CP6_WP1216_SCAN_BINDING"] = JsonSerializer.Serialize(new DispatchProcessBinding(h.Tenant, ScopeEnvironment,
-            new("TENANT", root.Id, root.Version, "lookup-v1"), job, wire.Origin));
+            new("TENANT", root.Id, root.Version, "lookup-v1"), job, wire.Origin, result, pauseApply));
         return (Process.Start(start)!, pidPath);
     }
 
@@ -558,7 +564,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
 }
 
-internal sealed record DispatchProcessBinding(Guid Tenant, Guid Environment, ConnectorPinV1 Pin, Guid Job, Uri Origin);
+internal sealed record DispatchProcessBinding(Guid Tenant, Guid Environment, ConnectorPinV1 Pin, Guid Job, Uri Origin,
+    bool Result, bool PauseApply);
 
 internal sealed class OaConnectorDispatchProcessFactAttribute : FactAttribute
 {
@@ -578,7 +585,10 @@ public sealed class OaConnectorDispatchProcessTests
         var options = new DbContextOptionsBuilder<CP6Context>()
             .UseNpgsql(Environment.GetEnvironmentVariable("CP6_WP1216_SCAN_DB")).Options;
         using var http = new HttpClient(new HttpClientHandler { UseProxy = false, AllowAutoRedirect = false });
-        var provider = new OaConnectorDispatchHttpParticipant(binding.Tenant, binding.Environment, binding.Pin, binding.Origin, http);
+        var provider = binding.Result
+            ? new OaConnectorResultHttpParticipant(binding.Tenant, binding.Environment, binding.Pin, binding.Origin, http)
+                { BeforeApply = binding.PauseApply ? ct => Task.Delay(Timeout.InfiniteTimeSpan, ct) : null }
+            : new OaConnectorDispatchHttpParticipant(binding.Tenant, binding.Environment, binding.Pin, binding.Origin, http);
         var services = new ServiceCollection().AddScoped<ITenantContext, TenantContext>()
             .AddScoped(sp => new CP6Context(options, sp.GetRequiredService<ITenantContext>()))
             .AddScoped<ITenantEnumerator, TenantEnumerator>()
@@ -590,7 +600,8 @@ public sealed class OaConnectorDispatchProcessTests
         try
         {
             await using var witness = new CP6Context(options, new TenantContext { CurrentTenantId = binding.Tenant });
-            while (!await witness.Wf_ServiceJobs.AsNoTracking().AnyAsync(j => j.Id == binding.Job && j.LastError != null, timeout.Token))
+            while (!await witness.Wf_ServiceJobs.AsNoTracking().AnyAsync(j => j.Id == binding.Job &&
+                (j.LastError != null || j.Status == ServiceJobStatus.Succeeded), timeout.Token))
                 await Task.Delay(50, timeout.Token);
         }
         finally { await scan.StopAsync(CancellationToken.None); }

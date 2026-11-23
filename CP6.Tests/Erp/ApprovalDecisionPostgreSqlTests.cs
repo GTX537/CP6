@@ -19,9 +19,10 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
     private static ApprovalTaskDecisionOwnerV2 Decisions(Harness h)
         => new(h.Db, ScopeFence(h), TaskAuthority(h), ToolApproval(h));
-    private async Task<(IntakeFixture Source, Guid First, Guid Second)> DecisionSetup(Harness h, string schema = StartSchema, bool two = true)
+    private async Task<(IntakeFixture Source, Guid First, Guid Second)> DecisionSetup(Harness h, string schema = StartSchema,
+        bool two = true, IntakeFixture? prepared = null)
     {
-        var (source, first) = await StartSetup(h, schema);
+        var (source, first) = await StartSetup(h, schema, prepared: prepared);
         await TaskPermission(h, first); await EngineeringAction(h, "oa-inbox", "query");
         var second = Guid.NewGuid();
         if (two)

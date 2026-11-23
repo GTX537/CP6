@@ -39,6 +39,7 @@ public sealed class ServiceTaskResult
     public bool AdmissionBlocked { get; init; }
     internal bool DispatchHeld { get; init; }
     internal DateTime? CheckOriginalAfterUtc { get; init; }
+    internal Guid? ConnectorResultId { get; init; }
     public string? Error { get; init; }
     public Dictionary<string, object?>? OutputVars { get; init; }   // §3.6 合并规则
 
@@ -48,6 +49,7 @@ public sealed class ServiceTaskResult
     public static ServiceTaskResult Fail(string error)
         => new() { Success = false, Error = error };
     public static ServiceTaskResult Blocked(string reason) => new() { AdmissionBlocked = true, Error = reason };
+    internal static ServiceTaskResult ApplyConnectorResult(Guid result) => new() { ConnectorResultId = result };
     internal static ServiceTaskResult HoldDispatch(string state, DateTime? checkOriginalAfterUtc = null) =>
         new() { DispatchHeld = true, Error = state, CheckOriginalAfterUtc = checkOriginalAfterUtc };
 }

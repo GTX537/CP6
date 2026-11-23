@@ -9,6 +9,21 @@ public partial class FlowEngine
 {
     private bool _approvalDecisionV2;
 
+    internal async Task<Wf_FlowInstance> StageApprovalConnectorResumeV2(ApprovalSubmitCommandV2 original,
+        Guid root, Wf_FlowInstance instance, Wf_FlowToken token, FlowSchema schema,
+        Dictionary<string, object?> output, CancellationToken ct)
+    {
+        if (!_db.Database.IsNpgsql() || _db.Database.CurrentTransaction == null || _db.ChangeTracker.HasChanges() ||
+            ApprovalInstanceId(original) != root || instance.Creator != ApprovalRuntimeV2)
+            throw new ScopeAuthorizationExceptionV1("APP_DECISION_TRANSACTION_REQUIRED");
+        _approvalStartV2 = true;
+        _approvalDecisionV2 = true;
+        _approvalOriginal = original;
+        await StageServiceSuccess(instance, token, schema, output);
+        await DrainApprovalSubflows(ct);
+        return await _db.Wf_FlowInstances.SingleAsync(x => x.Id == root, ct);
+    }
+
     // The Owner has already locked the native Scope, command, instance and task, checked
     // both versions and acquired current human authority. This adapter only stages the
     // existing algorithm; its caller records the vote/decision and owns the single commit.

@@ -16,9 +16,10 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     private const string StartSchema = """
         {"start":"s","nodes":[{"id":"s","type":"start"},{"id":"a","type":"approval","approverStrategy":"Role","approverRoleId":73,"countersign":"all"},{"id":"e","type":"end"}],"edges":[{"from":"s","to":"a"},{"from":"a","to":"e"}]}
         """;
-    private async Task<(IntakeFixture Intake, Guid Approver)> StartSetup(Harness h, string schema = StartSchema, bool approver = true)
+    private async Task<(IntakeFixture Intake, Guid Approver)> StartSetup(Harness h, string schema = StartSchema,
+        bool approver = true, IntakeFixture? prepared = null)
     {
-        var f = await IntakeSetup(h); var reviewer = Guid.NewGuid();
+        var f = prepared ?? await IntakeSetup(h); var reviewer = Guid.NewGuid();
         if(approver)
         {
             h.Db.Sys_Roles.Add(new(){RoleId=73,RoleName="actual approval role"});

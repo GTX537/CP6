@@ -8,7 +8,9 @@ namespace CP6.Entity.Contracts.Wire;
 public static class WorkflowCommandJsonV1
 {
     public const string Version = "WFC-CJ-1";
-    public static StrictJsonDocument Parse(byte[] bytes) => Parse(bytes, 1024 * 1024);
+    public const int MaxDocumentBytes = 1024 * 1024;
+
+    public static StrictJsonDocument Parse(byte[] bytes) => Parse(bytes, MaxDocumentBytes);
     // A business Owner may budget bounded envelope overhead separately from its data limit.
     // The existing entry point, canonical identity and every other JSON rule stay unchanged.
     public static StrictJsonDocument Parse(byte[] bytes, int maxBytes) => Parse(bytes,maxBytes,8);

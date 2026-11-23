@@ -655,3 +655,11 @@ WP12-11 完整 DONE。以 `6e3d9d07ac92fb906027df1ecc6817755705a9d8` 领取，�
 按 [#411 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/7fe2544bcd4dca395253151f222892cb8f8dd90c/handoffs/CP6-DEV-20261012/tasks/WP12-16/replies/20261123T061113Z-coord-acceptance-ack/MESSAGE.md) 对 [WP12-16 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/d98aa9c450be2a1b7ef864583c7c63956a9085ea/handoffs/CP6-DEV-20261012/tasks/WP12-16/messages/20261123T060400Z-exec-wp02-14b-delivery/MESSAGE.md) 的完整提交和路径查重，单次补记 285.513 秒至 2768.678 秒，原目标复核 0.075 秒单列。加入本卡前计划累计 180402.682 秒。
 
 核销快照 `2026-11-23T07:14:09.885797+00:00`，本卡 3277.773 有效秒，目标复核另列 0.081 秒，计划累计 183680.536 秒。M 卡额度 14400 秒，21600 秒强制拆卡。本轮拆卡 0，原 48 小时检查点已登记。OA 完成 13/20，按图复算候选为 WP12-17（3）、WP12-05（2）、WP12-14（2）、WP12-15（2）、WP12-20（2）。正式派工归 COORD。
+
+## WP12-17 外部结果持久接收与本地流程/Owner 应用
+
+WP12-17 完整 DONE。以 `42efc232798beff73a508883226241abfadd4e17` 领取，18 项严格前置完整 DONE。总控已独立验收技术候选 `b00115ccc71106b60fe9240a21c0e73d7ce201fc`，受验源码 `c56c9e07d62e7f9af8bca544324aae9bf674e832`。晚到有效原件入箱后由正常扫描应用，唯一 ResumeReceipt 和 Outbox 同事务。核销 CONN-22、23、24、26、27、28，OA-CONN-01 原 AC 16/32，目标开放。CONN-21 整条与 WP12-18 合验，生产提供方和 Owner 采用为 UNPROVEN。 [正式派工 #414](https://github.com/GTX537/CP6.AI-Handoff/blob/f2fffc16d1b870bfb6c7feb577b66c02d4070841/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T081303Z-cp6-exec-2-wp12-17/MESSAGE.md) · [唯一报告](../evidence/WP12-17/DELIVERY.md) · [Main PR](https://github.com/GTX537/CP6/pull/1316)
+
+按 [#413 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/714ed5fb37448f19f90f7627af6af0ea80c4f517/handoffs/CP6-DEV-20261012/tasks/WP12-11/replies/20261123T075623Z-coord-acceptance-ack/MESSAGE.md) 对 [WP12-11 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/c31f0beb9661f0304d9ea9d8d9348a22c6fc88ec/handoffs/CP6-DEV-20261012/tasks/WP12-11/messages/20261123T072226Z-exec-wp02-14b-delivery/MESSAGE.md) 的完整提交和路径查重，单次补记 475.670 秒至 3753.443 秒，原目标复核 0.081 秒单列。计入本卡前计划累计 184156.206 秒。
+
+核销快照 `2026-11-23T11:08:39.877947+00:00`，本卡技术 6051.249 秒，三次草稿交接合计 486.545 秒，本轮正式收尾至快照计 374.056 秒。本卡计 6911.850 有效秒，目标复核另列 0.084 秒，计划累计 191068.140 秒。L 卡额度 28800 秒，43200 秒强制拆卡。本轮拆卡 0，原 48 小时检查点已登记。OA 完成 14/20，复算候选为 WP12-05（2）、WP12-14（2）、WP12-15（2）、WP12-18（2）、WP12-20（2）。下一卡待 COORD 独立派工。

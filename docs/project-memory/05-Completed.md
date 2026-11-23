@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP12-11 准确截止策略与超时worker竞争](../development/evidence/WP12-11/DELIVERY.md)（DONE），核对时间 `2026-11-23T07:14:09.885797+00:00`。
+- [WP12-17 外部结果持久接收与本地流程/Owner应用](../development/evidence/WP12-17/DELIVERY.md)（DONE），核对时间 `2026-11-23T11:08:39.877947+00:00`。
 
 ### 已关闭目标
 
