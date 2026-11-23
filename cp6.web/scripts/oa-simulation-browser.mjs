@@ -88,9 +88,11 @@ try {
   await expect(panel.locator('.result')).toHaveCount(0)
   steps.push('an actual Main forecast returning after an unsaved edit is discarded')
   await page.goto(origin + '/oa/work-calendar')
+  await page.waitForLoadState('networkidle')
   const time = page.getByRole('region', { name: 'Cron 时间解释' })
   await time.getByLabel('Cron（5 段）').fill('30 1 * * *')
   await time.getByLabel('起算 UTC').fill('2027-11-07T04:00:00Z')
+  await expect(time.getByRole('button', { name: '解释未来时点' })).toBeEnabled()
   const explained = page.waitForResponse(r => new URL(r.url()).pathname === '/api/oa/work-calendar/versions/cron-explanations')
   await time.getByRole('button', { name: '解释未来时点' }).click()
   const cronResponse = await explained
