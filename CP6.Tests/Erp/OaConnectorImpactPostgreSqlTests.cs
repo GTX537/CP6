@@ -87,6 +87,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             await insert.ExecuteNonQueryAsync();
             await tx.CommitAsync();
         }
+        Assert.Equal(tenant.Head,(await maker.Data(tenant.Route+"/context")).GetProperty("revision").GetString());
         await maker.Reject(tenant.Route+"/disable",Stop(next),HttpStatusCode.PreconditionFailed,"IMPACT_CHANGED");
         var accepted=await ConnImpact(checker,tenant,"DISABLE");
         Assert.Contains(accepted.GetProperty("entries").EnumerateArray(),entry=>entry.GetProperty("kind").GetString()=="DISPATCH"

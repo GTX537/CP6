@@ -104,7 +104,44 @@ try {
   await panel.getByLabel('查看版本').selectOption(version)
   await expect(panel.getByRole('heading', { name: /浏览器消息版本.*v1.*ENABLED/ })).toBeVisible()
   steps.push('修订生成 v2，原 v1 仍以原名称和启用状态读取')
-  await writeFile(path.join(output, 'result.json'), JSON.stringify({ result: 'PASS', root, version, steps, requests }, null, 2))
+  await page.locator('#tab-connectors').click()
+  await reviewer.page.locator('#tab-connectors').click()
+  panel = page.getByTestId('conn-CONNECTOR')
+  reviewer.panel = reviewer.page.getByTestId('conn-CONNECTOR')
+  const connectors = {}
+  for (const [source, profile] of [['TENANT', env.CP6_CONN_TENANT_PROFILE], ['APP', env.CP6_CONN_APP_PROFILE]]) {
+    const title = '浏览器连接器 ' + source
+    await button(panel, '新建版本配置').click()
+    await panel.getByLabel('配置名称').fill('browser-same-connector')
+    await panel.getByLabel('显示名称').fill(title)
+    await panel.getByLabel('登记依赖').selectOption(profile)
+    const saved = page.waitForResponse(r => new URL(r.url()).pathname === prefix + 'connectors' && r.request().method() === 'POST' && r.status() === 200)
+    await button(panel, '保存草稿').click()
+    const config = (await (await saved).json()).data
+    connectors[source] = { rootId: config.rootId, versionId: config.versionId }
+    await expect(panel.getByRole('heading', { name: title + ' · v1 · DRAFT' })).toBeVisible()
+    await expect(panel.getByText(/凭据绑定 已配置.*generation-1/)).toBeVisible()
+    await expect(panel).not.toContainText('opaque-binding')
+    await panel.getByLabel('控制动作').selectOption('ACTIVATE')
+    await button(panel, '读取影响预览').click()
+    await expect(panel.getByText(/覆盖 COMPLETE.*Job 0.*在途 0/)).toBeVisible()
+    await approval('激活')
+    await panel.getByLabel('操作原因').fill('浏览器核对 ' + source + ' 准入')
+    await button(panel, '确认激活').click()
+    await expect(panel.getByRole('heading', { name: title + ' · v1 · ENABLED' })).toBeVisible()
+  }
+  await button(panel, 'browser-same-connector · TENANT · v1').click()
+  await expect(panel.getByRole('heading', { name: '浏览器连接器 TENANT · v1 · ENABLED' })).toBeVisible()
+  await panel.getByLabel('控制动作').selectOption('DISABLE')
+  await button(panel, '读取影响预览').click()
+  await expect(panel.getByText(/覆盖 COMPLETE.*Job 0.*在途 0/)).toBeVisible()
+  await panel.getByLabel('操作原因').fill('只停用本租户版本')
+  await button(panel, '确认停用').click()
+  await expect(panel.getByRole('heading', { name: '浏览器连接器 TENANT · v1 · DISABLED' })).toBeVisible()
+  await button(panel, 'browser-same-connector · APP · v1').click()
+  await expect(panel.getByRole('heading', { name: '浏览器连接器 APP · v1 · ENABLED' })).toBeVisible()
+  steps.push('同名 TENANT、APP 分别激活，停用 TENANT 后 APP 仍为 ENABLED')
+  await writeFile(path.join(output, 'result.json'), JSON.stringify({ result: 'PASS', root, version, connectors, steps, requests }, null, 2))
 } catch (err) {
   for (const [i, p] of pages.entries()) {
     await p.screenshot({ path: path.join(output, 'error-' + i + '.png') }).catch(() => {})
