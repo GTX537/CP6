@@ -164287,7 +164287,7 @@
         "latest_review_effective_seconds": 0.084,
         "gaps": [
           {
-            "owner_task_id": "WP12-14",
+            "owner_task_id": "WP12-14b",
             "gap": "真实入站、时隙、实例及原键恢复，含时间前沿与预演协验",
             "source_cases": [
               "CONN-02",
@@ -177541,6 +177541,11 @@
       "at": "2026-11-23T14:07:09.731137+00:00",
       "evidence": "docs/development/evidence/WP12-05/DELIVERY.md",
       "change": "WP12-05 完整 DONE，OA-FORM-01 原 AC 35/35 通过并关目标。按 #415 单次补记 WP12-17 收尾 616.455 秒，CONN-21 仍随 WP12-18 合验。"
+    },
+    {
+      "at": "2026-11-23T16:10:33.327809+00:00",
+      "evidence": "docs/development/evidence/WP12-14/DELIVERY.md",
+      "change": "WP12-14 拆卡，词条交付，完整未完成。WP12-14b 受阻，原九项 AC 待验，OA-CONN-01 16/32。按 WP12-05 原回执单次结转 678.850 秒。"
     }
   ],
   "implementation_assessment": {
@@ -226665,7 +226670,7 @@
         "official_started_at": "2026-11-23T11:53:35.625483+00:00",
         "technical_verified_at": "2026-11-23T13:48:55.8016872Z",
         "verified_at": "2026-11-23T14:07:09.731137+00:00",
-        "effective_seconds": 6889.484,
+        "effective_seconds": 7568.334,
         "size": "M",
         "budget_seconds": 14400,
         "mandatory_split_seconds": 21600,
@@ -226697,7 +226702,15 @@
         "new_product_execution": true,
         "preceding_integration_seconds": 616.455,
         "target_review_started_at": "2026-11-23T14:00:46.3139097+00:00",
-        "target_review_seconds": 121.592
+        "target_review_seconds": 121.592,
+        "post_candidate_finalization_seconds": 678.85,
+        "official_finish": "2026-11-23T14:18:28.5809890Z",
+        "finalization_decision_ref": {
+          "commit": "2fc102c8f485a81af07532c5df627269f8632125",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP12-05/replies/20261123T142403Z-coord-acceptance-ack/MESSAGE.md",
+          "receipt_commit": "5e9325efea02ff603691ef3369a4a70ed90f5555",
+          "receipt_path": "handoffs/CP6-DEV-20261012/tasks/WP12-05/messages/20261123T141959Z-cp6-exec-2-delivery-closeout/MESSAGE.md"
+        }
       }
     },
     {
@@ -228349,20 +228362,167 @@
         "file:Main:CP6.Core/Services/Wf/ApprovalDispatcher.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP12.md",
       "card_anchor": "wp12-14",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "CP6-EXEC-3",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp12-14",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-23T14:36:48.102732+00:00",
+        "baseline_sha": "55667a87aea03405467dc47ec76ea938c320c69f",
+        "entry_evidence": "docs/development/evidence/WP12-14/DELIVERY.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": false,
+        "delivery_report": "docs/development/evidence/WP12-14/DELIVERY.md",
+        "dispatch_scope": "拆卡候选只交付手动触发动作词条。完整真实触发出口归 WP12-14b，原九项 AC 待验。",
+        "actual_start_ref": {
+          "commit": "5ec2c8efb4ac74be49ec35a4620550f1d957e0bb",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP12-14/messages/20261123T143856Z-cp6-exec-2-start/MESSAGE.md",
+          "at": "2026-11-23T14:38:56Z"
+        },
+        "dispatch_decision_ref": {
+          "commit": "f1e9a3deee93a4c5dd9dd18f9cae7340c460f4d9",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T143114Z-cp6-exec-2-wp12-14/MESSAGE.md"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP12-14/DELIVERY.md",
+          "source_repository": "GTX537/CP6",
+          "source_sha": "9ca28b0af3f567c52b83b7404490343d2d4bc699",
+          "pr_url": "https://github.com/GTX537/CP6/pull/1318",
+          "observed_at": "2026-11-23T15:30:19.203034+00:00",
+          "environment": "Windows、本机隔离 PostgreSQL 18.6、合成两租户与实际 PermissionService。",
+          "command": "本机 dotnet test CP6.Tests/CP6.Tests.csproj 定向执行连接器播种、只读选项及种子与权限回归。按三个相同源码 Blob 复用原 TRX。",
+          "scope": "仅登记 oa-flow-admin（734）的 conn.trigger.fire 词条。隔离 PostgreSQL 两租户首次及重复播种各一条，角色动作和菜单授权、Instance/Token、调用、命令回执及 Outbox 均零增量。35 项同源验证，九项原 AC 待验。",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP12-14/DELIVERY.md",
+        "source_sha": "9ca28b0af3f567c52b83b7404490343d2d4bc699",
+        "remote_main_sha": "55667a87aea03405467dc47ec76ea938c320c69f",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1318",
+        "scope": "仅词条拆卡候选。remote_main_sha 为已回读的候选基线，实际 Main 采用提交、必要同树冒烟及席位释放以合并后回执为准。完整 WP12-14 与九项原 AC 未完成。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
         "WP02：可靠Inbox/JOB、可信时区日历/DST和真实Main Uow引擎参加能力。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "card_execution": {
+        "result": "SPLIT",
+        "report": "docs/development/evidence/WP12-14/DELIVERY.md",
+        "started_at": "2026-11-23T14:36:48.102732+00:00",
+        "official_started_at": "2026-11-23T14:36:48.102732+00:00",
+        "technical_verified_at": "2026-11-23T15:30:19.203034+00:00",
+        "verified_at": "2026-11-23T16:10:33.327809+00:00",
+        "effective_seconds": 2519.47,
+        "size": "L",
+        "budget_seconds": 28800,
+        "mandatory_split_seconds": 43200,
+        "new_splits": [
+          "WP12-14b"
+        ],
+        "strict_prerequisites": [
+          "S01-01",
+          "S01-02",
+          "S01-07",
+          "S01-09",
+          "S02-00",
+          "WP02-01",
+          "WP02-02",
+          "WP02-03",
+          "WP02-04",
+          "WP02-07",
+          "WP02-08",
+          "WP02-10",
+          "WP02-13",
+          "WP02-13b",
+          "WP02-14",
+          "WP02-14b",
+          "WP02-15",
+          "WP02-21",
+          "WP02-21b",
+          "WP12-01",
+          "WP12-02",
+          "WP12-03",
+          "WP12-04",
+          "WP12-06",
+          "WP12-07",
+          "WP12-13"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 678.85,
+        "split_decision_ref": {
+          "commit": "246c4b327e46b90511c003f25a67820b9aa3cf34",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP12-14/replies/20261123T155134Z-coord3-split-decision/MESSAGE.md"
+        }
+      }
+    },
+    {
+      "id": "WP12-14b",
+      "package_id": "WP12",
+      "title": "定时事件消息与手动触发真实实例余项",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "OA-CONN-01"
+      ],
+      "relative_size": "L",
+      "dependencies": [
+        "WP12-14",
+        "S01-02",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP02-21",
+        "WP12-04",
+        "WP12-13"
+      ],
+      "exclusive_resources": [
+        "Main:oa-trigger",
+        "Main:workflow-engine",
+        "file:Main:CP6.Core/Services/Wf/WfConnectorService.cs",
+        "file:Main:CP6.Core/Services/Wf/Executors/WebApiExecutor.cs",
+        "file:Main:CP6.Core/Services/Wf/ApprovalDispatcher.cs"
+      ],
+      "coverage_role": "IMPLEMENTATION",
+      "state": "BLOCKED",
+      "plan_path": "docs/development/task-plans/WP12.md",
+      "card_anchor": "wp12-14b",
+      "entry_gate": "NOT_CHECKED",
+      "assignment": null,
+      "blockers": [
+        "RP-CONN-01 PinnedWorkflowAdmission 为 UNPROVEN。先由已采用的新 Workflow 和实际效果 Owner 共同确认正式可触发 Flow、确切 publication/version、schema digest、依赖和 activation。有 FORM 时沿真实绑定及原提交合同。须证明 Trigger 专用 Main PostgreSQL Uow 按原键同事务持久化冻结 vars、TriggerVersion/Invocation、真实 Instance/起始 Token、调用或时隙结果、命令回执、Outbox 和审计，并按原键恢复同一结果。",
+        "RP-CONN-02 WorkflowAuthorityRegistration 为 UNPROVEN。先由 SYS-IAM、来源和业务 Owner 确认可采用的principal、登记及代次、封闭 schema、可信租户/环境、Trigger、当前 Starter 受托和变量权、实际效果 Owner 绑定。采用共同锁和最终 WF_AUTH 复核来源状态、当前资格及写者。撤回后保留原合法接收事实并阻断新实例。TIMER 沿已登记调度主体和时间合同，手动沿当前用户、独立 fire 与实际 Owner 门。"
+      ],
+      "validation_evidence": [],
+      "delivery_evidence": null,
+      "entry_conditions": [
+        "核对 WP12-14 词条切片的实际远端采用及原七项直接前置与拆分余卡完整交付。",
+        "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
+        "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
+        "WP02：可靠Inbox/JOB、可信时区日历/DST和真实Main Uow引擎参加能力。",
+        "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。",
+        "由 Workflow/Engine、SYS-IAM、来源及业务 Owner 回读同一正式流程的已采用合同和接入证据。",
+        "两项运行合同均有 Main 采用证据并经独立核实后，按 TIMER、EVENT/MESSAGE、手动的顺序验收。"
+      ],
+      "split_parent": "WP12-14",
+      "remaining_scope": [
+        "CONN-02、04、05、06。发版后按原时隙恢复冻结 varsSnapshot、pins 与命令。两个实际 worker 竞争、事务回滚及提交后丢回执按原键恢复，实例唯一，nextDue 独立对账。LATEST_ONE_SKIP_MISSED 择一并保存跳过范围。核对原日历、时区、cron、DST 重复与缺失、UTC/offset/fold、旧预览失效和 RP-CONN-04 实际时间提供方。",
+        "CONN-07、08、09。认证登记的 EVENT/MESSAGE 按原 ID 与完整指纹持久接收，同键同体回原事实，同键异体按原合同 QUARANTINED/409。验证原 64 KiB、封闭 schema 和拒绝零实例。来源或 Starter 撤回时保留 Inbox，依最终门阻断新实例和业务效果。",
+        "CONN-13、14。context 与无副作用 preview 冻结原输入。仅旧 Edit 或 Starter 资格不符时确认拒绝，核对 403 与预览失效。实际确认、超时回查、重试和刷新按原 commandId/previewId 只产生一个真实实例，新意图重新通过效果 Owner 门。"
+      ],
+      "card_budget_seconds": 26280.53,
+      "card_mandatory_split_seconds": 39420.795
     },
     {
       "id": "WP12-15",
@@ -232433,6 +232593,7 @@
       "implementation_task_ids": [
         "WP12-13",
         "WP12-14",
+        "WP12-14b",
         "WP12-15",
         "WP12-16",
         "WP12-17",
@@ -304503,7 +304664,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 198695.671,
+      "effective_seconds": 201893.991,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -304565,7 +304726,8 @@
         "WP12-16",
         "WP12-11",
         "WP12-17",
-        "WP12-05"
+        "WP12-05",
+        "WP12-14"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -304660,6 +304822,14 @@
           ],
           "report": "docs/development/planning/20261117-card-execution.md",
           "reason": "已核实 Main PRIV/FILE 未提供 CONTACT_HISTORY 的原键受理及精确制品当前许可。待总负责确认权威接口及提供方后，CRM 余卡按真实版本和当前准入接入。"
+        },
+        {
+          "parent": "WP12-14",
+          "children": [
+            "WP12-14b"
+          ],
+          "report": "docs/development/evidence/WP12-14/DELIVERY.md",
+          "reason": "已验词条可局部交付。真实触发缺 RP-CONN-01/02 运行合同，原九项 AC 全部由受阻余卡保留。"
         }
       ],
       "current_stage": "OA",
@@ -304741,6 +304911,7 @@
           "WP12-12",
           "WP12-13",
           "WP12-14",
+          "WP12-14b",
           "WP12-15",
           "WP12-16",
           "WP12-17",
@@ -304847,15 +305018,11 @@
       },
       "next_card_selection": {
         "rule": "按全图最长下游边数降序，同长保留 OA 阶段原序。候选排序供 COORD 后续独立派工。",
-        "baseline_sha": "4d31801d0456064ae38cf367759d38000be286e2",
+        "baseline_sha": "55667a87aea03405467dc47ec76ea938c320c69f",
         "stage": "OA",
-        "after_card": "WP12-05",
+        "after_card": "WP12-14",
         "selected": null,
         "candidates": [
-          {
-            "task": "WP12-14",
-            "longest_downstream_edges": 2
-          },
           {
             "task": "WP12-15",
             "longest_downstream_edges": 2
@@ -304870,8 +305037,8 @@
           }
         ],
         "dispatch_ref": {
-          "commit": "451a66f2ca73d725195a380edce9fb90c6d8951e",
-          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T114542Z-cp6-exec-2-wp12-05/MESSAGE.md"
+          "commit": "f1e9a3deee93a4c5dd9dd18f9cae7340c460f4d9",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T143114Z-cp6-exec-2-wp12-14/MESSAGE.md"
         }
       },
       "phase0_user_confirmation": "2026-11-17 用户确认：先按证据核销或拆卡，列清缺口；完成阶段0核对后再按顺序实施剩余卡。",
