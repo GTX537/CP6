@@ -27,11 +27,3 @@ describe('flowTriggerModel', () => {
     expect(JSON.parse(buildConfigJson({ triggerType: 2, varsSchema: ['orderNo'] }))).toEqual({ varsSchema: ['orderNo'] })
   })
 })
-
-it('accepts the TIMER input at 200 characters and rejects overflow before save', () => {
-  const raw = Array.from({ length: 60 }, (_, n) => n).join(',') + ' 0,1,2,3,4,5,6,7,10,11,12 * * *'
-  expect(raw).toHaveLength(200)
-  const timer = { triggerType: 0, flowKey: 'synthetic-flow', starterUserId: 'synthetic-starter', cron: raw }
-  expect(validateTriggerForm(timer)).toEqual([])
-  expect(validateTriggerForm({ ...timer, cron: raw + ' ' })).toContain('oa.flowtrigger.err.cron')
-})

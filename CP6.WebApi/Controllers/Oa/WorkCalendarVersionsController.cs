@@ -22,10 +22,6 @@ public sealed class WorkCalendarVersionsController(VersionedWorkCalendarV1 owner
         TimeOnly localTime, int? ambiguousOffsetMinutes, string? expectedTimeZoneRulesVersion, CancellationToken ct) =>
         Run(() => owner.CalculateAsync(calendarId, revision, from, workdays, localTime, ambiguousOffsetMinutes, expectedTimeZoneRulesVersion, ct));
 
-    [HttpPost("cron-explanations"), RequestSizeLimit(16 * 1024)]
-    public Task<IActionResult> ExplainCron(CronExplanationInputV1 input, CancellationToken ct) =>
-        Run(() => owner.ExplainCronAsync(input, ct));
-
     [HttpPost("changes"), RequirePermission(Menu, "Calendar.Edit"), CurrentWriteAuthority(RollbackOnFailure = true)]
     public Task<IActionResult> Change(WorkCalendarChangeV1 command, CancellationToken ct) =>
         Run(() => owner.ChangeAsync(command, ct));

@@ -12,12 +12,10 @@ import type { WorkCalendarDay } from '@/api/oa/workCalendar'
 
 const listMock = vi.fn()
 const executeMock = vi.fn()
-const explainCronMock = vi.fn()
 vi.mock('@/api/oa/workCalendar', () => ({
   workCalendarApi: {
     list: (...a: any[]) => listMock(...a),
     execute: (...a: any[]) => executeMock(...a),
-    explainCron: (...a: any[]) => explainCronMock(...a),
   },
 }))
 
@@ -69,7 +67,6 @@ describe('WorkCalendar.vue 日历版本与原命令', () => {
   beforeEach(() => {
     listMock.mockReset()
     executeMock.mockReset()
-    explainCronMock.mockReset()
     listMock.mockResolvedValue(snapshot)
   })
   afterEach(() => sessionStorage.clear())
@@ -115,59 +112,6 @@ describe('WorkCalendar.vue 日历版本与原命令', () => {
     await nextTick()
     await flushPromises()
     expect(listMock).toHaveBeenCalledWith(year + 1, undefined, expect.any(AbortSignal))
-    w.unmount()
-  })
-
-  it('uses the shared 200-character Cron bound and discards a late reply after a policy update', async () => {
-    const timeZoneId = 'America/New_York', timeZoneRulesVersion = 'b'.repeat(64)
-    const afterUtc = '2027-11-07T04:00:00Z'
-    listMock.mockResolvedValue({ ...snapshot, timeZoneId, timeZoneRulesVersion })
-    let complete!: (value: unknown) => void
-    explainCronMock.mockImplementation(() => new Promise(resolve => { complete = resolve }))
-    const w = mountView()
-    await flushPromises()
-    const section = w.get('section[aria-label="Cron 时间解释"]')
-    const cron = section.get('input[maxlength]')
-    const after = section.get('input[placeholder="2027-11-07T04:00:00Z"]')
-    expect(cron.attributes('maxlength')).toBe('200')
-    const minutes = Array.from({ length: 60 }, (_, n) => n).join(',')
-    const legal = minutes + ' 0,1,2,3,4,5,6,7,10,11,12 * * *'
-    expect(legal).toHaveLength(200)
-    await after.setValue(afterUtc)
-    await cron.setValue(legal + ' ')
-    expect(section.get('button').attributes('disabled')).toBeDefined()
-    await cron.setValue(legal)
-    await section.get('button').trigger('click')
-    expect(explainCronMock).toHaveBeenCalledWith(expect.objectContaining({ timeZoneId, timeZoneRulesVersion }),
-      legal, afterUtc, false, expect.any(AbortSignal))
-    const signal = explainCronMock.mock.calls[0]![4] as AbortSignal
-    window.dispatchEvent(new Event('cp6-workspace-authority-changed'))
-    expect(signal.aborted).toBe(true)
-    complete({ mode: 'EXPLANATION_ONLY', isExecutionPermit: false, calendarId: snapshot.calendarId, calendarRevision: 0,
-      timeZoneId, timeZoneRulesVersion, afterUtc, workdaysOnly: false, coverage: 'FIVE_POINTS',
-      points: [{ utc: '2027-11-07T05:30:00Z', local: '2027-11-07T01:30:00', offsetMinutes: -240, fold: 0 }] })
-    await flushPromises()
-    expect(section.find('table').exists()).toBe(false)
-    expect((cron.element as HTMLInputElement).value).toBe('')
-    w.unmount()
-  })
-
-  it.each([
-    [503, 'FORECAST_AUTHORITY_UNPROVEN', '预演权限映射尚未采用'],
-    [403, 'FORECAST_ACTION_FORBIDDEN', '当前没有 Cron 解释权限'],
-  ])('clears Cron content and keeps the separately authorized calendar on %s', async (status, code, message) => {
-    listMock.mockResolvedValue({ ...snapshot, timeZoneId: 'America/New_York', timeZoneRulesVersion: 'b'.repeat(64) })
-    explainCronMock.mockRejectedValue({ response: { status, data: { code } } })
-    const w = mountView()
-    await flushPromises()
-    const section = w.get('section[aria-label="Cron 时间解释"]')
-    await section.get('input[maxlength]').setValue('30 1 * * *')
-    await section.get('input[placeholder="2027-11-07T04:00:00Z"]').setValue('2027-11-07T04:00:00Z')
-    await section.get('button').trigger('click')
-    await flushPromises()
-    expect(section.get('[role=alert]').text()).toContain(message)
-    expect((section.get('input[maxlength]').element as HTMLInputElement).value).toBe('')
-    expect(w.get('section[aria-label="工作日历版本"]').text()).toContain('America/New_York')
     w.unmount()
   })
 })

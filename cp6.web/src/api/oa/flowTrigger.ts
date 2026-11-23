@@ -1,5 +1,4 @@
 import http from '../http'
-import type { CronExplanation, CronExplanationInput } from './workCalendar'
 
 export interface FlowTriggerItem {
   id: string
@@ -47,6 +46,6 @@ export const flowTriggerApi = {
     unwrap(await http.post(`/oa/flow-triggers/${id}/manual-fire`)),
   fires: async (id: string, take = 20): Promise<TriggerFireItem[]> =>
     unwrap(await http.get(`/oa/flow-triggers/${id}/fires`, { params: { take } })) ?? [],
-  cronPreview: async (input: CronExplanationInput): Promise<{ next: string[]; explanation: CronExplanation }> =>
-    unwrap(await http.post('/oa/flow-triggers/cron-preview', input)),
+  cronPreview: async (cron: string): Promise<{ next: string[] }> =>
+    unwrap(await http.post('/oa/flow-triggers/cron-preview', { cron })),
 }

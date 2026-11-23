@@ -144,38 +144,26 @@ public sealed partial class VersionedWorkCalendarV1(CP6Context db, ScopeAuthoriz
         return result;
     }
 
-    private async Task<Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction> BeginReadAsync(CancellationToken ct, bool forecast = false)
+    private async Task<Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction> BeginReadAsync(CancellationToken ct)
     {
         if (!db.Database.IsNpgsql()) throw Error("CALENDAR_WRITER_COVERAGE_UNAVAILABLE", 503);
         var tx = await db.Database.BeginTransactionAsync(ct);
         try
         {
             await fence.Root(ct);
-            await RequireActorAsync("Calendar.View", ct, forecast);
+            await RequireActorAsync("Calendar.View", ct);
             await RequireCoverageAsync(db, ct);
             return tx;
         }
         catch { await tx.DisposeAsync(); throw; }
     }
 
-    private async Task<Guid> RequireActorAsync(string action, CancellationToken ct, bool forecast = false)
+    private async Task<Guid> RequireActorAsync(string action, CancellationToken ct)
     {
         var actor = CurrentPermissionContext.RequireCurrentUser(db, http);
         var permission = await PostgreSqlPermissionReader.ReadAsync(db, actor, ct);
         if (!permission.MenuKeys.Contains(Menu) || !permission.ActionKeys.Contains(Menu + ":" + action))
             throw Error("ACTION_FORBIDDEN", 403);
-        if (forecast)
-        {
-            var principal = http.HttpContext!.User;
-            var expires = principal.FindFirst("exp")?.Value;
-            if (principal.HasClaim(c => c.Type == "impersonator_id") ||
-                expires != null && (!long.TryParse(expires, out var end) || DateTimeOffset.UtcNow.ToUnixTimeSeconds() >= end) ||
-                !await db.Sys_Users.AsNoTracking().AnyAsync(u => u.Id == actor && u.Enable && (u.LockedUntil == null || u.LockedUntil <= DateTime.Now), ct) ||
-                !await db.Sys_Tenants.AsNoTracking().AnyAsync(t => t.Id == db.CurrentTenantId && t.Enable &&
-                    (t.ExpireDate == null || t.ExpireDate > DateTime.Now), ct))
-                throw Error("REAUTH_REQUIRED", 401);
-            await WorkflowForecastAuthorityV1.RequireAsync(db, permission, ct);
-        }
         return actor;
     }
 

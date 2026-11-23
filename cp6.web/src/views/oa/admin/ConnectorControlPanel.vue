@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { AUTH_EPOCH, AUTH_RECORD, IMPERSONATION, AUTH_EVENT, identityStamp } from '@/auth/identity'
-import { CRON_EXPRESSION_MAX_LENGTH, hasCronInput } from './flowTriggerModel'
 import { connectorControl as api, family, type Choices, type Control, type DispatchHistory, type Impact, type Intent, type Kind,
   type Approval, type Receipt, type Selection, type Subject, type Version } from '@/api/oa/connectorControl'
 
@@ -130,8 +129,6 @@ function save() {
       if (!flow) throw new Error('请选择准确的已发布流程版本。')
       selection.flowKey = flow.flowKey; selection.flowVersionId = flow.versionId
     }
-    if (profile.kind === 'TIMER' && !hasCronInput(cron.value))
-      throw new Error('请输入 1 至 ' + CRON_EXPRESSION_MAX_LENGTH + ' 字符的 Cron 表达式。')
     const config = profile.kind === 'TIMER' ? { cron: cron.value, vars: JSON.parse(vars.value) }
       : profile.kind === 'EVENT' ? { varsMap: JSON.parse(vars.value) } : null
     const row = selected.value
@@ -204,7 +201,10 @@ onBeforeUnmount(() => { live = false; controller.abort(); window.removeEventList
       <label>显示名称<input v-model="label" required maxlength="200"></label>
       <label>登记依赖<select v-model="profileId" required><option value="">请选择</option><option v-for="p in choices.profiles" :key="p.id" :value="p.id">{{ p.label }} · {{ p.adoption }}</option></select></label>
       <label v-if="kind === 'TRIGGER'">已发布流程版本<select v-model="flowId" required><option value="">请选择</option><option v-for="f in choices.definitions" :key="f.versionId" :value="f.versionId">{{ f.flowKey }} · v{{ f.version }}</option></select></label>
-      <label v-if="currentProfile?.kind === 'TIMER'">定时表达式<input v-model="cron" :maxlength="CRON_EXPRESSION_MAX_LENGTH" required></label>
+      <template v-if="currentProfile?.kind === 'TIMER'">
+        <label>定时表达式<input v-model="cron" maxlength="200" required aria-describedby="timer-draft-cron-format"></label>
+        <small id="timer-draft-cron-format">标准五段 Cron，1–200 字符。</small>
+      </template>
       <label v-if="currentProfile?.kind === 'TIMER' || currentProfile?.kind === 'EVENT'">变量配置 JSON<textarea v-model="vars" /></label>
       <button :disabled="locked">保存草稿</button><button type="button" :disabled="locked" @click="editing = false">取消</button>
     </form>

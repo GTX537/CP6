@@ -1,35 +1,45 @@
-using System.Text.Json;
+using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
-using CP6.Core.Services.Wf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CP6.WebApi.Controllers.Oa;
 
-/// <summary>旧发起前预演路由。提供准确发布版本后沿现行只读 Owner 解释。</summary>
-[ApiController, Route("api/oa/forecast"), Authorize]
-[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-public sealed class ForecastController(FlowAuthoringOwnerV2 owner) : LocalizedControllerBase
+/// <summary>
+/// 预计流程 REST（Phase B）。/api/oa/forecast — 发起前预览后续审批路径。
+/// 给发起方提供"还差几步/谁审"的全路径预计，不产生实例。
+/// </summary>
+[ApiController]
+[Route("api/oa/forecast")]
+[Authorize]
+public class ForecastController : LocalizedControllerBase
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
+    private readonly IForecastService _forecast;
+    private readonly ICurrentPermissionContext _ctx;
 
-    [HttpPost("preview"), RequestSizeLimit(1024 * 1024)]
-    public async Task<IActionResult> Preview([FromBody] PreviewReq input, CancellationToken ct)
+    public ForecastController(IForecastService forecast, ICurrentPermissionContext ctx)
     {
-        if (input.PublishedVersionId is not Guid version || version == Guid.Empty)
-            return UnprocessableEntity(new { code = "FORECAST_PIN_REQUIRED", legacyCode = "E-WF-006" });
-
-        try
-        {
-            var forecast = new WorkflowForecastInputV1(version, null, null, input.VarsJson ?? "{}", null);
-            var result = await owner.ForecastAsync(input.FlowKey, JsonSerializer.SerializeToUtf8Bytes(forecast, Json), ct);
-            return Ok(new { code = 0, data = result });
-        }
-        catch (ScopeAuthorizationExceptionV1 e)
-        { return StatusCode(e.Status, new { code = e.Message, legacyCode = "E-WF-006" }); }
-        catch (Exception e) when (e is CurrentPermissionUnavailableException or Npgsql.NpgsqlException)
-        { return StatusCode(503, new { code = "AUTHORITY_FENCE_UNAVAILABLE" }); }
+        _forecast = forecast;
+        _ctx = ctx;
     }
 
-    public record PreviewReq(string FlowKey, string? VarsJson, Guid? PublishedVersionId = null);
+    private async Task<Guid> CurrentUserIdAsync() => (await _ctx.GetAsync()).UserId;
+    private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
+    private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
+
+    // ── 发起前预览 ──
+
+    [HttpPost("preview")]
+    public async Task<IActionResult> Preview([FromBody] PreviewReq r)
+    {
+        try
+        {
+            var me = await CurrentUserIdAsync();
+            var result = await _forecast.ForecastAsync(r.FlowKey, r.VarsJson ?? "{}", me, fromNodeId: null);
+            return Ok2(result);
+        }
+        catch (InvalidOperationException e) { return Err(e); }
+    }
+
+    public record PreviewReq(string FlowKey, string? VarsJson);
 }

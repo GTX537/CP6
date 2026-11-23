@@ -22,10 +22,11 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="t('oa.flowtrigger.form.cron')">
-          <el-input v-model="form.cron" :maxlength="CRON_EXPRESSION_MAX_LENGTH" placeholder="0 9 * * *" />
-          <router-link v-permission="'oa-work-calendar:Calendar.View'" to="/oa/work-calendar" class="cron-preview">
-            按日历版本解释 Cron 时点
-          </router-link>
+          <el-input v-model="form.cron" placeholder="0 9 * * *" @change="loadPreview" />
+          <div class="cron-preview">
+            <div>{{ t('oa.flowtrigger.form.previewTz') }}</div>
+            <div v-for="d in preview" :key="d">{{ formatDateTime(d) }}</div>
+          </div>
         </el-form-item>
         <el-form-item :label="t('oa.flowtrigger.form.varsJson')">
           <el-input v-model="form.varsJson" type="textarea" :rows="2" placeholder='{"a":1}' />
@@ -71,7 +72,8 @@ import { reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { flowTriggerApi, type FlowTriggerItem } from '@/api/oa/flowTrigger'
-import { TRIGGER_TYPES, CRON_PRESETS, CRON_EXPRESSION_MAX_LENGTH, validateTriggerForm, buildConfigJson } from './flowTriggerModel'
+import { TRIGGER_TYPES, CRON_PRESETS, validateTriggerForm, buildConfigJson } from './flowTriggerModel'
+import { formatDateTime } from '@/utils/format'
 
 const props = defineProps<{ modelValue: boolean; editing: FlowTriggerItem | null }>()
 const emit = defineEmits<{ 'update:modelValue': [boolean]; saved: [string | null | undefined] }>()
@@ -81,12 +83,13 @@ const form = reactive({ triggerType: 0, flowKey: '', starterUserId: '', cron: ''
 const varsMapPairs = ref<{ k: string; v: string }[]>([])
 const varsSchemaText = ref('')
 const preset = ref('')
+const preview = ref<string[]>([])
 const saving = ref(false)
 
 watch(() => props.modelValue, open => { if (open) hydrate() })
 
 function hydrate() {
-  preset.value = ''
+  preview.value = []; preset.value = ''
   const e = props.editing
   if (!e) {
     Object.assign(form, { triggerType: 0, flowKey: '', starterUserId: '', cron: '', varsJson: '', eventKey: '', enabled: true })
@@ -100,9 +103,15 @@ function hydrate() {
   })
   varsMapPairs.value = Object.entries(cfg.varsMap ?? {}).map(([k, v]) => ({ k, v: String(v) }))
   varsSchemaText.value = (cfg.varsSchema ?? []).join(',')
+  if (form.cron) loadPreview()
 }
 
-function applyPreset(cron: string) { if (cron) form.cron = cron }
+function applyPreset(cron: string) { if (cron) { form.cron = cron; loadPreview() } }
+
+async function loadPreview() {
+  if (!form.cron) { preview.value = []; return }
+  try { preview.value = (await flowTriggerApi.cronPreview(form.cron)).next } catch { preview.value = [] }
+}
 
 function onClose() { emit('update:modelValue', false) }
 

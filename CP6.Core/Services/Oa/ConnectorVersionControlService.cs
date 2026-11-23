@@ -14,7 +14,7 @@ public sealed partial class ConnectorVersionControlService(CP6Context db, IHttpC
     IEnumerable<ITriggerRegistrationAuthorityV1> triggerAuthorities)
 {
     internal static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { PropertyNameCaseInsensitive=false };
-    internal const string Menu = "oa-flow-admin";
+    private const string Menu = "oa-flow-admin";
     private Guid Tenant => db.CurrentTenantId;
     private Guid Environment => fence.EnvironmentId;
     private static ScopeAuthorizationExceptionV1 Error(string code,int status=422) => new(code,status);

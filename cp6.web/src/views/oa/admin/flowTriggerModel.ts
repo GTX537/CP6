@@ -9,12 +9,6 @@ export interface TriggerFormState {
   varsSchema?: string[]
 }
 
-export const CRON_EXPRESSION_MAX_LENGTH = 200
-
-export function hasCronInput(cron?: string): boolean {
-  return !!cron && cron.length <= CRON_EXPRESSION_MAX_LENGTH && !!cron.trim()
-}
-
 export const TRIGGER_TYPES = [
   { value: 0, labelKey: 'oa.flowtrigger.type.timer' },
   { value: 1, labelKey: 'oa.flowtrigger.type.event' },
@@ -39,7 +33,7 @@ export function validateTriggerForm(f: TriggerFormState): string[] {
   const errs: string[] = []
   if (!f.flowKey) errs.push('oa.flowtrigger.err.flowKey')
   if (!f.starterUserId) errs.push('oa.flowtrigger.err.starter')
-  if (f.triggerType === 0 && !hasCronInput(f.cron)) errs.push('oa.flowtrigger.err.cron')
+  if (f.triggerType === 0 && !f.cron) errs.push('oa.flowtrigger.err.cron')
   if (f.triggerType === 1 && !f.eventKey) errs.push('oa.flowtrigger.err.eventKey')
   return errs
 }
