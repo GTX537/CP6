@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using CP6.Core.Services.Wf;
 
 namespace CP6.Core.Services.Oa;
 
@@ -24,8 +25,19 @@ public sealed record ReturnedFormContextV2(Guid InstanceId, Guid FormDataId, lon
     string SourceSnapshotRef, string SourceSnapshotHash, string Name, string SchemaJson, string DataJson,
     Dictionary<string,string> FieldMask, bool CanEdit, bool CanResubmit, string[] Reasons,int InstanceStatus);
 public sealed record ReturnedFormResultV2(Guid InstanceId, Guid FormDataId, long ReturnRevision, Guid ExecutionCycleId,
-    int InstanceStatus, string InstanceVersion, string FormDataVersion, Guid[] TaskIds, string[] ValidationErrors,
+    InstanceStatusV2 InstanceStatus, string InstanceVersion, string FormDataVersion, Guid[] TaskIds, string[] ValidationErrors,
     Guid FormDefVersionId,Guid FlowDefVersionId,Guid[] PendingResolutionIds);
+
+[JsonConverter(typeof(JsonStringEnumConverter<InstanceStatusV2>))]
+public enum InstanceStatusV2
+{
+    RUNNING = FlowInstanceStatus.Running,
+    APPROVED = FlowInstanceStatus.Approved,
+    REJECTED = FlowInstanceStatus.Rejected,
+    WITHDRAWN = FlowInstanceStatus.Withdrawn,
+    SUSPENDED = FlowInstanceStatus.Suspended,
+    DRAFT = FlowInstanceStatus.Draft
+}
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record ResolveApproverInputV2(string ExpectedInstanceVersion,Guid ExecutionCycleId,string NodeId,Guid TokenId,
     int StageIndex,int StageRound,Guid[] TargetPrincipalIds,string RoutePolicyRef,string Reason);

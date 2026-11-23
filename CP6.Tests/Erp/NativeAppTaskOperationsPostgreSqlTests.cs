@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Net;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
@@ -37,6 +38,10 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await h.Db.SaveChangesAsync();await TaskPermission(h,target);h.Db.ChangeTracker.Clear();
         var actor=DecisionActor(h,first);var owner=Decisions(actor);var input=await DecisionInput(actor);var before=await owner.ContextAsync(input.Task);
         var original=await ApprovalTaskAssignmentsV2.Read(h.Db,ScopeEnvironment,input.Task,default);
+        var blocked=PersonalCommand(new NativeTransferInputV2(input.Task,h.User,"与冻结业务主体职责冲突",before.TaskRowVersion),
+            "transfer-sod",before.InstanceRowVersion);
+        Assert.Equal("SOD_VIOLATION",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>owner.TransferTaskAsync(input.Task,blocked))).Message);
+        Assert.Equal(0,await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_native_tasks_v2.app_assignment_changes WHERE task_id={input.Task}").SingleAsync());
         var raw=PersonalCommand(new NativeTransferInputV2(input.Task,target,"change current responsible reviewer",before.TaskRowVersion),"app-transfer",before.InstanceRowVersion);
         var result=await owner.TransferTaskAsync(input.Task,raw);
         var current=await ApprovalTaskAssignmentsV2.Read(h.Db,ScopeEnvironment,input.Task,default);
@@ -95,6 +100,22 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(FlowInstanceStatus.Draft,(await h.Db.Wf_FlowInstances.AsNoTracking().SingleAsync(i=>i.Id==preview.InstanceId)).Status);
         Assert.Equal(before,await h.Db.Database.SqlQuery<byte[]>($"SELECT payload AS \"Value\" FROM cp6_approval_intake_v2.submissions WHERE id={f.Submission} AND tenant_id={h.Tenant}").SingleAsync());
         Assert.Equal(ApprovalCanonicalV2.Bytes(result),ApprovalCanonicalV2.Bytes(await tasks.OriginalOperationAsync("OA_TASK_SENDBACK",task.Task.TaskId,"app-return")));
+        await using(var host=await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!,
+            new Dictionary<string,string>{["ScopeAuthorization__EnvironmentId"]=ScopeEnvironment.ToString("D")}))
+        {
+            var cookies=await Login(host,h);
+            var path=$"/api/oa/v2/instances/{preview.InstanceId:D}";
+            using var read=await host.Send(BoundRequest(cookies,path+"/returned-form"));
+            using var edit=PersonalHttp(cookies,path+"/returned-form",PersonalCommand(
+                new ReturnedFormEditV2(1,preview.InstanceVersion,PersonalData("""{"subject":"改写冻结的主题"}"""),null),
+                "app-sfs-deny",preview.InstanceVersion));
+            edit.Method=HttpMethod.Put;
+            using var rejected=await host.Send(edit);
+            Assert.Equal(HttpStatusCode.NotFound,read.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound,rejected.StatusCode);
+            Assert.Empty(await h.Db.Database.SqlQuery<Guid>($"SELECT id AS \"Value\" FROM cp6_personal_form_v2.commands WHERE root_id={preview.InstanceId}").ToArrayAsync());
+            Assert.Equal(before,await h.Db.Database.SqlQuery<byte[]>($"SELECT payload AS \"Value\" FROM cp6_approval_intake_v2.submissions WHERE id={f.Submission} AND tenant_id={h.Tenant}").SingleAsync());
+        }
         var workflow=IterationWithdrawals(h,f);var context=await workflow.ContextAsync(f.Submission);
         var owner=IterationReviews(h,f.Source.Files);var id=f.Source.Context.IterationId;var application=await owner.ApplicationAsync(id,f.Submission);
         var withdrawn=await owner.WithdrawAsync(id,f.Submission,"\""+application.ControlRowVersion+"\"",new(Guid.NewGuid(),"Owner withdraws returned frozen revision"));

@@ -67,14 +67,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(data.Id,context.FormDataId);Assert.Equal(old.FormVersionId,context.FormDefVersionId);Assert.Equal(f.Instance,context.ExecutionCycleId);
         var edit=PersonalCommand(new ReturnedFormEditV2(context.ReturnRevision,context.FormDataVersion,PersonalData("{\"a\":\"edited\"}"),"correct data"),"edit-return",context.InstanceVersion);
         var edited=await f.Owner.EditReturnedAsync(f.Instance,edit);var editedValue=PersonalResult<ReturnedFormResultV2>(edited);
-        Assert.Equal(FlowInstanceStatus.Draft,editedValue.InstanceStatus);Assert.NotEqual(context.FormDataVersion,editedValue.FormDataVersion);
+        Assert.Equal(InstanceStatusV2.DRAFT,editedValue.InstanceStatus);Assert.NotEqual(context.FormDataVersion,editedValue.FormDataVersion);
         Assert.NotEqual(context.InstanceVersion,editedValue.InstanceVersion);Assert.Empty(editedValue.TaskIds);
         Assert.Equal("RETURN_CONTEXT_CHANGED",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>f.Owner.EditReturnedAsync(f.Instance,
             PersonalCommand(new ReturnedFormEditV2(context.ReturnRevision,context.FormDataVersion,PersonalData("{}"),null),"stale",context.InstanceVersion)))).Message);
         var submit=PersonalCommand(new ReturnedFormResubmitV2(context.ReturnRevision,editedValue.FormDataVersion,"resubmit"),"resubmit",editedValue.InstanceVersion);
         var resumed=await f.Owner.ResubmitReturnedAsync(f.Instance,submit);var resumedValue=PersonalResult<ReturnedFormResultV2>(resumed);
         Assert.NotEqual(context.ExecutionCycleId,resumedValue.ExecutionCycleId);Assert.Equal(f.Instance,resumedValue.InstanceId);
-        Assert.Equal(data.Id,resumedValue.FormDataId);Assert.Equal(FlowInstanceStatus.Running,resumedValue.InstanceStatus);
+        Assert.Equal(data.Id,resumedValue.FormDataId);Assert.Equal(InstanceStatusV2.RUNNING,resumedValue.InstanceStatus);
         var task=Assert.Single(resumedValue.TaskIds);Assert.NotEqual(f.Task,task);
         Assert.Equal(JsonSerializer.Serialize(resumed,PersonalFormOwnerV2.Json),JsonSerializer.Serialize(await f.Owner.ResubmitReturnedAsync(f.Instance,submit),PersonalFormOwnerV2.Json));
         Assert.Equal(JsonSerializer.Serialize(edited,PersonalFormOwnerV2.Json),JsonSerializer.Serialize(await f.Owner.EditReturnedAsync(f.Instance,edit),PersonalFormOwnerV2.Json));

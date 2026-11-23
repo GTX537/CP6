@@ -149,19 +149,32 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
 
     [CurrentPermissionPostgresFact]
-    public async Task App_assignment_sod_checks_original_principal_and_current_role_removal_does_not_rewrite_assignment()
+    public async Task App_assignment_sod_suspends_original_route_and_current_role_removal_keeps_created_duty()
     {
-        await using var h = await Seed(); var (_, reviewer) = await StartSetup(h, StartSchema.Replace("73", "72"));
+        await using var h = await Seed();
+        var schema = StartSchema.Replace("\"approverStrategy\":\"Role\",\"approverRoleId\":73",
+            $$"""
+            "approverStrategy":"Specified","approverUserId":"{{h.User:D}}","approverRecoveryPolicy":{"mode":"MANUAL_ASSIGNMENT","eligibleRoleIds":[73]}
+            """);
+        var (_, reviewer) = await StartSetup(h, schema);
         await TaskPermission(h, reviewer);
-        h.Db.Wf_FlowDelegates.Add(new() { GrantorId = h.User, DelegateId = reviewer,
-            ValidFrom = DateTime.Now.AddMinutes(-1), ValidTo = DateTime.Now.AddHours(1) });
-        await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear(); await Starter(h).RunAsync(h.Tenant);
-        var task = await h.Db.Wf_FlowTasks.SingleAsync(); Assert.Equal(h.User, task.AssigneeId); TaskActor(h, reviewer);
-        await using (var tx = await h.Db.Database.BeginTransactionAsync())
-        {
-            Assert.Equal("SOD_VIOLATION", (await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(() => TaskAuthority(h).AcquireAsync(task.Id, h.User))).Message);
-            await tx.RollbackAsync();
-        }
+        await EngineeringAction(h, "oa-inbox", "query");
+        await NativeOperationPermissions(h);
+        await Starter(h).RunAsync(h.Tenant);
+        var suspended = await h.Db.Wf_FlowInstances.AsNoTracking().SingleAsync();
+        Assert.Equal(FlowInstanceStatus.Suspended, suspended.Status);
+        Assert.Empty(await h.Db.Wf_FlowTasks.ToArrayAsync());
+        var owner = Decisions(h);
+        var slot = Assert.Single(await owner.PendingResolutionsAsync(suspended.Id));
+        Assert.Equal("审批职责与已冻结的业务主体冲突", slot.Reason);
+        Assert.Equal(reviewer, Assert.Single(slot.CandidatePrincipalIds));
+        var sod = await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(() =>
+            owner.ResolveApproverAsync(slot.ResolutionId, ResolveCommand(slot, h.User, "sod-recovery")));
+        Assert.Equal("TARGET_INELIGIBLE", sod.Message);
+        await owner.ResolveApproverAsync(slot.ResolutionId, ResolveCommand(slot, reviewer, "legal-recovery"));
+        Assert.Equal(reviewer, (await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync()).AssigneeId);
+        Assert.Equal(0, await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_approval_decision_v2.votes WHERE tenant_id={h.Tenant}").SingleAsync());
+
         await using var other = await Seed(); var (_, duty) = await StartSetup(other); await TaskPermission(other, duty);
         await Starter(other).RunAsync(other.Tenant); var actualTask = await other.Db.Wf_FlowTasks.SingleAsync(); TaskActor(other, duty);
         var original = await ApprovalTaskAssignmentsV2.Read(other.Db, ScopeEnvironment, actualTask.Id, default);

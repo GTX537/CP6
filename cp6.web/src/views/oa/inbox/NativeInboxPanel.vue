@@ -46,6 +46,7 @@ function current(identity: string, captured: number) {
 }
 function clearView() {
   selectedOperation.value = ''; selectedResolution.value = ''
+  message.value = ''
   rows.value = undefined; detail.value = undefined; selected.value = ''; selectedTask.value = ''
   listGeneration++; detailGeneration++; listController?.abort(); detailController?.abort(); busy.value = detailBusy.value = false
 }
@@ -81,6 +82,7 @@ function rejected(e: any) {
 }
 async function load(reset = false) {
   selectedOperation.value = ''; selectedResolution.value = ''
+  message.value = ''
   if (reset) page.value = 1
   const identity = stamp(), captured = epoch, request = ++listGeneration
   listController?.abort(); listController = new AbortController(); rows.value = undefined; detail.value = undefined; selected.value = ''; selectedTask.value = ''
@@ -93,6 +95,7 @@ async function load(reset = false) {
 }
 async function open(id: string) {
   selectedOperation.value = ''; selectedResolution.value = ''
+  message.value = ''
   const identity = stamp(), captured = epoch, request = ++detailGeneration
   detailController?.abort(); detailController = new AbortController(); selected.value = id; detail.value = undefined; selectedTask.value = ''; detailBusy.value = true; error.value = ''
   try {
@@ -100,6 +103,11 @@ async function open(id: string) {
     if (request !== detailGeneration || selected.value !== id) return; detail.value = value
   } catch (e) { try { current(identity, captured); if (request === detailGeneration) rejected(e) } catch { /* Obsolete identity. */ } }
   finally { if (live && request === detailGeneration && captured === epoch) detailBusy.value = false }
+}
+function returnedCompleted(notice?: string) {
+  if (selected.value) void open(selected.value)
+  else void load()
+  if (notice) message.value = notice
 }
 function accept(value: NativeReadResult, intent: NativeReadIntent) {
   if (value.commandId !== intent.command || value.state === 'READ' && (!value.result || value.result.kind !== intent.kind || value.result.targetId !== intent.target)) throw new Error('READ_RESULT_MISMATCH')
@@ -203,7 +211,7 @@ onBeforeUnmount(() => { live = false; epoch++; listController?.abort(); detailCo
     <PersonalTaskPanel v-if="selectedTask && selectedTaskKind === 'SFS'" :key="selectedTask" :task-id="selectedTask" @completed="selected ? open(selected) : load()" @private-clear="taskPrivateClear" />
     <AppTaskPanel v-if="selectedTask && selectedTaskKind === 'APP'" :key="selectedTask" :task-id="selectedTask" @completed="selected ? open(selected) : load()" @private-clear="taskPrivateClear" />
     <NativeTaskOperations :task-id="selectedOperation" :context-kind="detail?.contextKind ?? 'APP'" @completed="selected ? open(selected) : load()" @private-clear="clearView" />
-    <ReturnedFormPanel :instance-id="returnedInstance" @completed="selected ? open(selected) : load()" @private-clear="clearView" />
+    <ReturnedFormPanel :instance-id="returnedInstance" @completed="returnedCompleted" @private-clear="clearView" />
     <PendingResolutionPanel :instance-id="selectedResolution" @completed="selected ? open(selected) : load()" @private-clear="clearView" />
     <NativeTransferBatchPanel />
   </section>

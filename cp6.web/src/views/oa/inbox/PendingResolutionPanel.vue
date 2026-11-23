@@ -35,6 +35,8 @@ watch(() => props.instanceId, clear)
       <el-button v-if="r.state === 'PENDING'" :disabled="locked || loading" @click="load(r.resolutionId)">读取当前恢复条件</el-button></li></ul>
     <template v-if="selected">
       <p>节点 {{ selected.nodeId }}，阶段 {{ selected.stageIndex }} / 轮次 {{ selected.stageRound }}。</p>
+      <p>暂停原因 {{ selected.reason }}。发布时的恢复政策 {{ selected.routePolicyRef }}。</p>
+      <p v-if="selected.blockingReasons.includes('AUTHORITY_UNAVAILABLE')">当前组织来源无法确认，请待组织资料恢复后重新读取条件。</p>
       <p v-if="selected.blockingReasons.length">当前不能分配：{{ selected.blockingReasons.join('、') }}</p>
       <label v-for="candidate in selected.candidates" :key="candidate.userId"><input v-model="targets" type="checkbox" :value="candidate.userId" :disabled="locked || loading || !selected.canAssign">{{ candidate.name }}</label>
       <label>恢复原因 <textarea v-model="reason" maxlength="1000" :disabled="locked || loading || !selected.canAssign" /></label>

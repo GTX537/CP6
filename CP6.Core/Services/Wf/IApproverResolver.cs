@@ -55,9 +55,12 @@ public class ApproverResolveResult
     public List<Guid> ApproverIds { get; set; } = new();
     public bool Resolved => ApproverIds.Count > 0;
     public string? UnresolvedReason { get; set; }
+    public bool OrganizationUnverified { get; init; }
 
     public static ApproverResolveResult Ok(params Guid[] ids) => new() { ApproverIds = ids.ToList() };
     public static ApproverResolveResult Unres(string why) => new() { UnresolvedReason = why };
+    public static ApproverResolveResult UnverifiedOrganization(string why) =>
+        new() { UnresolvedReason = why, OrganizationUnverified = true };
 }
 
 public interface IApproverResolver

@@ -1,3 +1,4 @@
+using CP6.Core.Services.Common;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
@@ -7,6 +8,55 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Tests.Erp;
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
+    [CurrentPermissionPostgresFact]
+    public async Task NativeRecovery_withdrawal_and_approval_cannot_both_commit_the_same_frozen_submission()
+    {
+        var hook = new StartWriteHook();
+        await using var h = await Seed(hook);
+        var fixture = await IterationDecisionSetup(h);
+        await GrantIterationWithdrawRelay(h, fixture);
+        var business = IterationReviews(h, fixture.Source.Files);
+        var businessId = fixture.Source.Context.IterationId;
+        var control = await business.ApplicationAsync(businessId, fixture.Submission);
+
+        await using var peer = server.Context(new TenantContext { CurrentTenantId = h.Tenant });
+        var reviewer = DecisionActor(h with { Db = peer }, fixture.Source.Iteration.Reviewer);
+        var voteOwner = new ApprovalTaskDecisionOwnerV2(peer, ScopeFence(reviewer), TaskAuthority(reviewer), ToolApproval(reviewer),
+            new(ToolApproval(reviewer), null, null, IterationReviews(reviewer, fixture.Source.Files)));
+        var task = await peer.Wf_FlowTasks.AsNoTracking().SingleAsync(t => t.AssigneeId == reviewer.User && t.Status == FlowTaskStatus.Pending);
+        var view = await voteOwner.ContextAsync(task.Id);
+        var vote = new ApprovalTaskDecisionInputV2(Guid.NewGuid(), "approve", "审批固定原提交", view.TaskRowVersion, view.InstanceRowVersion);
+        var original = await business.WithdrawAsync(businessId, fixture.Submission, "\"" + control.ControlRowVersion + "\"",
+            new(Guid.NewGuid(), "撤回与原审批竞争"));
+        var payload = await h.Db.Database.SqlQuery<byte[]>($"SELECT payload AS \"Value\" FROM cp6_iteration_review_control_v1.withdraw_outbox WHERE tenant_id={h.Tenant}").SingleAsync();
+        var workflow = IterationWithdrawals(h, fixture);
+        var context = await workflow.ContextAsync(fixture.Submission);
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        hook.Before = async command =>
+        {
+            if (!command.CommandText.Contains("INSERT INTO cp6_approval_withdraw_v2.commands", StringComparison.Ordinal)) return;
+            entered.TrySetResult();
+            await release.Task;
+        };
+        var withdrawing = workflow.WithdrawAsync(fixture.Submission, "\"" + context.SubmissionRowVersion + "\"", payload);
+        Task<Exception?> losing;
+        try
+        {
+            await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            losing = Record.ExceptionAsync(() => voteOwner.DecideAsync(task.Id, vote, null, "\"" + view.TaskRowVersion + "\""));
+            await Task.Delay(100);
+            Assert.False(losing.IsCompleted);
+        }
+        finally { release.TrySetResult(); }
+        var result = await withdrawing;
+        Assert.IsType<ScopeAuthorizationExceptionV1>(await losing);
+        Assert.Equal("WITHDRAWN", result.Ack.State);
+        Assert.Equal(result, await workflow.OriginalAsync(original.TransportCommandId!.Value));
+        Assert.Empty(await h.Db.Database.SqlQuery<Guid>($"SELECT id AS \"Value\" FROM cp6_approval_decision_v2.votes WHERE tenant_id={h.Tenant} AND instance_id={task.InstanceId}").ToArrayAsync());
+        Assert.Equal(1, await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_approval_decision_v2.outbox WHERE tenant_id={h.Tenant} AND submission_id={fixture.Submission}").SingleAsync());
+    }
+
     [CurrentPermissionPostgresFact]
     public async Task App_subflow_real_iteration_owner_withdrawal_checks_tree_revision_and_cancels_atomically()
     {

@@ -140,6 +140,7 @@ public sealed partial class PersonalFormOwnerV2
             await CheckFiles(source.Head,source.FormVersion,"SUBMISSION",data.Id,actor.UserId,schema,computed.Data,before,resubmit,mask,ct);
             var write=Guid.NewGuid();await BeginCommand(write,actor.UserId,operation,instance.ToString("D"),command,null,data.Id,instance,null,ct);
             Guid cycle=record.Cycle;
+            Guid[] tasks=[];
             if(resubmit)
             {
                 if(data.DataJson!=computed.Data)
@@ -150,7 +151,9 @@ public sealed partial class PersonalFormOwnerV2
                     """,ct);
                 var engine=new FlowEngine(db,new ApproverResolver(db,exactConditions:true));
                 runtime=await engine.StagePersonalResubmitV2(fence.EnvironmentId,data.Id,instance,Parse<FlowPublicationV2>(source.Publication),actor.UserId,computed.Data,send!.Comment,ct);
-                await AssignmentNotifications(write,await engine.SavePersonalRuntime(write,ct),ct);
+                var assignments=await engine.SavePersonalRuntime(write,ct);
+                await AssignmentNotifications(write,assignments,ct);
+                tasks=assignments.Select(a=>a.TaskId).Order().ToArray();
                 await Notification(write,"FORM_RESUBMITTED",actor.UserId,WfNotificationType.FormSubmitted,"表单已重新送审",instance,null,runtime.FlowKey,ct);
                 if(runtime.Status is FlowInstanceStatus.Approved or FlowInstanceStatus.Rejected)await TerminalNotification(write,runtime,ct);
             }
@@ -167,11 +170,10 @@ public sealed partial class PersonalFormOwnerV2
                 VALUES({write},{instance},{revision},{before},{computed.Data},{data.RowVersion},{runtime.RowVersion})
                 """,ct);
             await BindFiles(write,source.FormVersion,"SUBMISSION",data.Id,Convert.ToBase64String(data.RowVersion!),schema,computed.Data,ct);
-            var tasks=await db.Wf_FlowTasks.AsNoTracking().Where(t=>t.InstanceId==instance&&t.Status==FlowTaskStatus.Pending).Select(t=>t.Id).ToArrayAsync(ct);
             // Field-specific validation is projected through the current context. Original results
             // contain no private field names or data that could outlive a field permission change.
             var resolutions=await db.Database.SqlQuery<Guid>($"SELECT id AS \"Value\" FROM cp6_native_tasks_v2.pending_resolutions WHERE root_id={instance} AND execution_cycle_id={cycle} AND state='PENDING' ORDER BY id").ToArrayAsync(ct);
-            var value=new ReturnedFormResultV2(instance,data.Id,revision,cycle,runtime.Status,Convert.ToBase64String(runtime.RowVersion!),Convert.ToBase64String(data.RowVersion!),tasks,
+            var value=new ReturnedFormResultV2(instance,data.Id,revision,cycle,(InstanceStatusV2)runtime.Status,Convert.ToBase64String(runtime.RowVersion!),Convert.ToBase64String(data.RowVersion!),tasks,
                 computed.Errors.Length==0?[]:["FORM_VALIDATION_FAILED"],source.FormVersion,runtime.FlowDefVersionId!.Value,resolutions);
             var result=await Complete(write,command,instance,value.InstanceVersion,value,new{actor.UserId,Scope=lease.Snapshot,record.Id,mask,Reason=edit?.Reason??send?.Comment},ct);
             await Final(actor,lease,ct);committing=true;await tx.CommitAsync(ct);db.ChangeTracker.Clear();return result;

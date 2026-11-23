@@ -70,15 +70,20 @@ public class ApproverResolver : IApproverResolver
     private async Task<ApproverResolveResult> DirectManagerAsync(ApproverRule rule, ApproverResolveContext ctx)
     {
         var levels = rule.Levels is int l && l >= 1 ? l : 1;
-        var current = await _db.Sys_Users.FirstOrDefaultAsync(u => u.Id == ctx.StarterUserId);
+        var current = await _db.Sys_Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == ctx.StarterUserId);
+        if (_exactConditions && current is not { Enable: true })
+            return ApproverResolveResult.UnverifiedOrganization("发起人的组织身份无法确认");
         if (current == null) return ApproverResolveResult.Unres("发起人不存在");
 
         Sys_User? manager = null;
+        var visited = _exactConditions ? new HashSet<Guid> { current.Id } : null;
         for (int i = 0; i < levels; i++)
         {
             if (current.ManagerId is not Guid mid) break;
-            var next = await _db.Sys_Users.FirstOrDefaultAsync(u => u.Id == mid && u.Enable);
-            if (next == null) break;
+            var next = await _db.Sys_Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == mid);
+            if (visited != null && (next == null || !visited.Add(mid)))
+                return ApproverResolveResult.UnverifiedOrganization("直属上级关系无法确认");
+            if (next is not { Enable: true }) break;
             manager = next;
             current = next;
         }
@@ -91,13 +96,17 @@ public class ApproverResolver : IApproverResolver
     private async Task<ApproverResolveResult> DeptLeaderAsync(ApproverResolveContext ctx)
     {
         var user = await _db.Sys_Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == ctx.StarterUserId);
+        if (_exactConditions && user is not { Enable: true })
+            return ApproverResolveResult.UnverifiedOrganization("发起人的组织身份无法确认");
         if (user?.DeptId is not Guid did) return ApproverResolveResult.Unres("发起人无部门");
 
         if(_db.Database.IsNpgsql())
         {
             if(!user.Enable)return ApproverResolveResult.Unres("发起人已停用");
             var all=await _db.Sys_Depts.AsNoTracking().ToDictionaryAsync(x=>x.Id);
-            if(!CP6.Core.Services.Sys.IamUserAdministrationV1.DepartmentAvailable(did,all))return ApproverResolveResult.Unres("部门依赖异常或停用，需人工指派");
+            if(!CP6.Core.Services.Sys.IamUserAdministrationV1.DepartmentAvailable(did,all))
+                return _exactConditions ? ApproverResolveResult.UnverifiedOrganization("发起人的部门来源无法确认")
+                    : ApproverResolveResult.Unres("部门依赖异常或停用，需人工指派");
             Guid? current=did;
             while(current!=null)
             {
@@ -215,6 +224,7 @@ public class ApproverResolver : IApproverResolver
         foreach (var m in rule.Members)
         {
             var r = await ResolveAsync(m, ctx);   // 成员自身 When/Filter 在此生效(T6 后)
+            if (r.OrganizationUnverified) return r;
             if (r.Resolved) ids.AddRange(r.ApproverIds);
         }
         return ids.Count > 0 ? ApproverResolveResult.Ok(ids.Distinct().ToArray()) : ApproverResolveResult.Unres("JSON 组无任何成员解析出审批人");

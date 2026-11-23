@@ -1,4 +1,5 @@
 using System.Text.Json;
+using CP6.Core.EFDbContext;
 using CP6.Core.Services.Oa;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,37 @@ internal sealed record PendingApproverSlotV2(Guid InstanceId,Guid TokenId,string
 public partial class FlowEngine
 {
     private readonly List<PendingApproverSlotV2> _pendingApproverSlots=[];
+    internal static Task<Wf_FlowToken?> ActiveResolutionToken(CP6Context db, PendingApproverSlotV2 slot, CancellationToken ct)
+        => db.Wf_FlowTokens.AsNoTracking().SingleOrDefaultAsync(t => t.Id == slot.TokenId && t.InstanceId == slot.InstanceId
+            && t.Status == FlowTokenStatus.Active && t.NodeId == slot.NodeId, ct);
+
+    internal static async Task<bool> RecoveryOrganizationAvailable(CP6Context db, FlowPublicationV2 publication,
+        Wf_FlowInstance instance, Wf_FlowToken token, PendingApproverSlotV2 slot)
+    {
+        var node = FindNode(Deserialize(publication.Fields["SchemaJson"]!), slot.NodeId);
+        if (node == null) return false;
+        var rule = BuildRule(node);
+        if (node.Stages is { Count: > 0 })
+        {
+            if (token.StagePlanJson == null) return false;
+            var stage = JsonSerializer.Deserialize<RuntimeApprovalStage[]>(token.StagePlanJson, JsonOpts)?
+                .SingleOrDefault(s => s.StageIndex == slot.StageIndex);
+            if (stage == null) return false;
+            rule = stage.Rule;
+        }
+        if (rule == null) return true;
+        var current = await new ApproverResolver(db, exactConditions: true).ResolveAsync(rule,
+            new() { StarterUserId = instance.StarterId, VarsJson = instance.VarsJson });
+        return !current.OrganizationUnverified;
+    }
+
+    internal static Task<Guid[]> RemainingResolutionIds(CP6Context db, Guid environment, Guid instance, Guid cycle, CancellationToken ct)
+        => db.Database.SqlQuery<Guid>($"""
+            SELECT id AS "Value" FROM cp6_native_tasks_v2.pending_resolutions
+            WHERE tenant_id={db.CurrentTenantId} AND environment_id={environment} AND instance_id={instance}
+                AND execution_cycle_id={cycle} AND state='PENDING' ORDER BY id
+            """).ToArrayAsync(ct);
+
     internal void SuspendApproverV2(Wf_FlowInstance instance,FlowNode node,Wf_FlowToken token,int stage,int round,
         string? stageCode,string countersign,ApproverRecoveryPolicyV2? policy,string reason)
     {

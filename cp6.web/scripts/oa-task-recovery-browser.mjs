@@ -46,7 +46,7 @@ try {
   expect(await page.evaluate(() => sessionStorage.getItem('cp6-returned-form-operation'))).not.toContain('Browser returned correction')
   const originalResponse = page.waitForResponse(r => new URL(r.url()).pathname.endsWith('/SFS_RETURNED_RESUBMIT/' + instance + '/' + lostCommand))
   await editor.getByRole('button', { name: '查询原结果', exact: true }).click(); const original = (await (await originalResponse).json()).data
-  expect(original.commandId).toBe(lostCommand); expect(original.result.instanceId).toBe(instance); expect(original.result.instanceStatus).toBe(0)
+  expect(original.commandId).toBe(lostCommand); expect(original.result.instanceId).toBe(instance); expect(original.result.instanceStatus).toBe('RUNNING')
   await inbox.getByRole('button', { name: '读取当前办理条件', exact: true }).click()
   const task = page.locator('.task-panel'); await task.locator('textarea').fill('Approve corrected returned form')
   await task.getByRole('button', { name: '同意', exact: true }).click(); await expect(inbox.getByRole('article')).toContainText('已通过')

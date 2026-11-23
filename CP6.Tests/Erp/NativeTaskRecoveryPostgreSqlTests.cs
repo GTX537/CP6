@@ -8,13 +8,22 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Tests.Erp;
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
-    private async Task<(PersonalFormOwnerV2 Owner,FlowAuthoringOwnerV2 Flow,Guid Instance)> NativeTaskGraph(Harness h,FlowSchema graph,string formSchema=FormAuthoringSchema)
+    private async Task<(PersonalFormOwnerV2 Owner,FlowAuthoringOwnerV2 Flow,Guid Instance)> NativeTaskGraph(Harness h,FlowSchema graph,string formSchema=FormAuthoringSchema,bool fromDraft=false)
     {
         var(owner,_,flow)=await PreparePersonal(h,formSchema);await NativeOperationPermissions(h);
         var saved=await flow.SaveAsync("operations",DependentCommand("personal",schema:JsonSerializer.Serialize(graph,PersonalFormOwnerV2.Json)));
         var published=(await flow.PublishAsync("operations",PublicationCommand(await Preview(flow,"operations",saved)))).Result!.Publication!;
         await flow.SetActivationAsync("operations",ActivationCommand((await flow.ActivationPreviewAsync("operations")).Current,published.VersionId));
-        var started=PersonalResult<PersonalFormSubmissionV2>(await owner.SubmitDirectAsync("personal",PersonalCommand(PersonalDirect(await owner.ContextAsync("personal")),"start")));
+        var context=await owner.ContextAsync("personal");
+        PersonalFormResultV2 submitted;
+        if(fromDraft)
+        {
+            var draft=PersonalResult<PersonalFormDraftV2>(await owner.CreateDraftAsync("personal",
+                PersonalCommand(new PersonalFormCreateV2(context.FormVersionId,PersonalData("""{"a":"初始内容"}"""),null))));
+            submitted=await owner.SubmitDraftAsync(draft.DraftId,PersonalCommand(PersonalSubmit(context),"start",draft.RowVersion));
+        }
+        else submitted=await owner.SubmitDirectAsync("personal",PersonalCommand(PersonalDirect(context),"start"));
+        var started=PersonalResult<PersonalFormSubmissionV2>(submitted);
         return(owner,flow,started.FlowInstanceId!.Value);
     }
     private static FlowSchema LinearNative(Guid user)=>new(){Start="s",Nodes=[new(){Id="s",Type="start"},new(){Id="a",ApproverStrategy="Specified",ApproverUserId=user},new(){Id="b",ApproverStrategy="Specified",ApproverUserId=user},new(){Id="e",Type="end"}],Edges=[new(){From="s",To="a"},new(){From="a",To="b"},new(){From="b",To="e"}]};
@@ -24,6 +33,39 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await DecideNative(owner,task,input);
     }
     private static byte[] ResolveCommand(PendingResolutionContextV2 c,Guid target,string id)=>PersonalCommand(new ResolveApproverInputV2(c.InstanceVersion,c.ExecutionCycleId,c.NodeId,c.TokenId,c.StageIndex,c.StageRound,[target],c.RoutePolicyRef,"manual assignment under published policy"),id,c.ResolutionVersion);
+
+    [CurrentPermissionPostgresFact]
+    public async Task NativeRecovery_returned_resubmit_captures_suspension_and_slot_in_the_new_cycle()
+    {
+        await using var h = await Seed();
+        var graph = LinearNative(h.User);
+        var vacant = EmptyRecoveryNode("vacant");
+        graph.Nodes.Add(vacant);
+        graph.Edges.Insert(0, new() { From = "s", To = vacant.Id, Condition = "a == 'pending'" });
+        graph.Edges.Add(new() { From = vacant.Id, To = "e" });
+        var flow = await NativeTaskGraph(h, graph);
+        var originalTask = (await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync()).Id;
+        var preview = await flow.Owner.SendBackPreviewAsync(originalTask, new("STARTER", null));
+        await flow.Owner.SendBackAsync(originalTask, SendBackCommand(preview));
+        var context = await flow.Owner.ReturnedFormAsync(flow.Instance);
+        var edit = new ReturnedFormEditV2(context.ReturnRevision, context.FormDataVersion, PersonalData("""{"a":"pending"}"""), null);
+        var saved = PersonalResult<ReturnedFormResultV2>(
+            await flow.Owner.EditReturnedAsync(flow.Instance, PersonalCommand(edit, "blocked-edit", context.InstanceVersion)));
+        var raw = PersonalCommand(new ReturnedFormResubmitV2(context.ReturnRevision, saved.FormDataVersion, null),
+            "blocked-resubmit", saved.InstanceVersion);
+        var result = await flow.Owner.ResubmitReturnedAsync(flow.Instance, raw);
+        var submitted = PersonalResult<ReturnedFormResultV2>(result);
+        var slot = Assert.Single(await flow.Owner.PendingResolutionsAsync(flow.Instance));
+        Assert.Equal(InstanceStatusV2.SUSPENDED, submitted.InstanceStatus);
+        Assert.Equal(slot.ResolutionId, Assert.Single(submitted.PendingResolutionIds));
+        Assert.Equal(submitted.ExecutionCycleId, slot.ExecutionCycleId);
+        Assert.NotEqual(context.ExecutionCycleId, slot.ExecutionCycleId);
+        Assert.Empty(submitted.TaskIds);
+        Assert.Equal(originalTask, (await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync()).Id);
+        Assert.Equal(FlowInstanceStatus.Suspended, (await h.Db.Wf_FlowInstances.AsNoTracking().SingleAsync()).Status);
+        Assert.Empty((await NativeInbox(h).DetailAsync(flow.Instance)).Votes);
+        Assert.Equal(ApprovalCanonicalV2.Bytes(result), ApprovalCanonicalV2.Bytes(await flow.Owner.ResubmitReturnedAsync(flow.Instance, raw)));
+    }
 
     [CurrentPermissionPostgresFact]
     public async Task NativeTask_pending_resolution_requires_pinned_manual_policy_and_keeps_each_parallel_slot()

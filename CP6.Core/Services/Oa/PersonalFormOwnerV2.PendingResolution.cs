@@ -44,9 +44,17 @@ public sealed partial class PersonalFormOwnerV2
         if(row.State!="PENDING")reasons.Add("RESOLUTION_ALREADY_COMPLETED");
         if(slot.Policy?.Mode!="MANUAL_ASSIGNMENT")reasons.Add("MANUAL_ASSIGNMENT_NOT_ALLOWED");
         if(reasons.Count==0)
+        {
+            var token=await FlowEngine.ActiveResolutionToken(db,slot,ct);
+            if(instance.Status!=FlowInstanceStatus.Suspended||instance.FlowDefVersionId!=slot.FlowVersionId||token==null)
+                reasons.Add("RESOLUTION_CONTEXT_CHANGED");
+            else if(!await FlowEngine.RecoveryOrganizationAvailable(db,Parse<FlowPublicationV2>(source.Publication),instance,token,slot))
+                reasons.Add("AUTHORITY_UNAVAILABLE");
+        }
+        if(reasons.Count==0)
             foreach(var user in await db.Sys_Users.AsNoTracking().Where(u=>u.Enable&&(u.LockedUntil==null||u.LockedUntil<=DateTime.Now)).Select(u=>new{u.Id,u.UserName}).ToArrayAsync(ct))
                 if(await ResolutionCandidate(source,slot,user.Id,ct))candidates.Add(new(user.Id,user.UserName));
-        if(candidates.Count==0)reasons.Add("NO_ELIGIBLE_APPROVER");
+        if(reasons.Count==0&&candidates.Count==0)reasons.Add("NO_ELIGIBLE_APPROVER");
         return new(row.Id,row.Version.ToString("D"),row.Instance,Convert.ToBase64String(instance.RowVersion!),row.Cycle,slot.NodeId,slot.TokenId,
             slot.StageIndex,slot.StageRound,slot.FlowVersionId,row.PolicyRef,slot.Reason,row.State,candidates.Select(u=>u.UserId).Order().ToArray(),reasons.Count==0,reasons.ToArray(),candidates.OrderBy(u=>u.Name).ThenBy(u=>u.UserId).ToArray());
     }
@@ -77,24 +85,29 @@ public sealed partial class PersonalFormOwnerV2
             if(old!=null){Match(old,command.Digest);await Final(actor,lease,ct,false);return Parse<PersonalFormResultV2>(old.Result);}
             await WriteReady(lease,ct);var slot=Parse<PendingApproverSlotV2>(row.Slot);var instance=await db.Wf_FlowInstances.SingleAsync(i=>i.Id==row.Instance,ct);
             if(row.State!="PENDING")throw Error("RESOLUTION_ALREADY_COMPLETED",409);
-            if(row.Version.ToString("D")!=command.Expected||Convert.ToBase64String(instance.RowVersion!)!=input.ExpectedInstanceVersion
+            var token=await FlowEngine.ActiveResolutionToken(db,slot,ct);
+            if(instance.Status!=FlowInstanceStatus.Suspended||row.Version.ToString("D")!=command.Expected||Convert.ToBase64String(instance.RowVersion!)!=input.ExpectedInstanceVersion
                 ||row.Cycle!=input.ExecutionCycleId||slot.NodeId!=input.NodeId||slot.TokenId!=input.TokenId||slot.StageIndex!=input.StageIndex||slot.StageRound!=input.StageRound
                 ||row.PolicyRef!=input.RoutePolicyRef||instance.FlowDefVersionId!=slot.FlowVersionId||await ExecutionCycle(row.Root,ct)!=row.Cycle
-                ||!await db.Wf_FlowTokens.AnyAsync(t=>t.Id==slot.TokenId&&t.Status==FlowTokenStatus.Active&&t.NodeId==slot.NodeId,ct))throw Error("RESOLUTION_CONTEXT_CHANGED",409);
+                ||token==null)throw Error("RESOLUTION_CONTEXT_CHANGED",409);
             if(slot.Policy?.Mode!="MANUAL_ASSIGNMENT")throw Error("MANUAL_ASSIGNMENT_NOT_ALLOWED",403);
+            var publication=Parse<FlowPublicationV2>(source.Publication);
+            if(!await FlowEngine.RecoveryOrganizationAvailable(db,publication,instance,token,slot))throw Error("AUTHORITY_UNAVAILABLE",503);
             foreach(var target in input.TargetPrincipalIds)if(!await ResolutionCandidate(source,slot,target,ct))throw Error("TARGET_INELIGIBLE",422);
             var write=Guid.NewGuid();await BeginCommand(write,actor.UserId,ResolveApprover,id.ToString("D"),command,null,source.Data,source.Root,null,ct);
             var engine=new FlowEngine(db,new ApproverResolver(db,exactConditions:true));
-            var assignments=await engine.StagePersonalResolveApproverV2(fence.EnvironmentId,source.Data,source.Root,Parse<FlowPublicationV2>(source.Publication),slot,input.TargetPrincipalIds,actor.UserId,input.Reason,ct);
+            var assignments=await engine.StagePersonalResolveApproverV2(fence.EnvironmentId,source.Data,source.Root,publication,slot,input.TargetPrincipalIds,actor.UserId,input.Reason,ct);
             var evidence=Encode(new{Actual=actor.UserId,Targets=input.TargetPrincipalIds,Tasks=assignments.Select(a=>a.TaskId).ToArray(),input.RoutePolicyRef,input.Reason,Scope=lease.Snapshot,Permission=actor.ActionKeys.Order().ToArray(),Occurred=Clock()});
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 UPDATE cp6_native_tasks_v2.pending_resolutions SET state='RESOLVED',resolution_kind='SFS_COMMAND',resolution_command={write},assignment_evidence={evidence}
                 WHERE id={id}
                 """,ct);
-            instance.Status=await db.Database.SqlQuery<bool>($"SELECT EXISTS(SELECT FROM cp6_native_tasks_v2.pending_resolutions WHERE instance_id={row.Instance} AND state='PENDING') AS \"Value\"").SingleAsync(ct)?FlowInstanceStatus.Suspended:FlowInstanceStatus.Running;
+            var remaining=await FlowEngine.RemainingResolutionIds(db,fence.EnvironmentId,row.Instance,row.Cycle,ct);
+            instance.Status=remaining.Length==0?FlowInstanceStatus.Running:FlowInstanceStatus.Suspended;
             await AssignmentNotifications(write,await engine.SavePersonalRuntime(write,ct),ct);await db.SaveChangesAsync(ct);
             var result=await Complete(write,command,id,(await Resolution(id,ct)).Version.ToString("D"),
-                new{ResolutionId=id,InstanceId=row.Instance,ExecutionCycleId=row.Cycle,InstanceStatus=instance.Status,InstanceVersion=Convert.ToBase64String(instance.RowVersion!),TaskIds=assignments.Select(a=>a.TaskId).Order().ToArray()},
+                new{ResolutionId=id,InstanceId=row.Instance,ExecutionCycleId=row.Cycle,InstanceStatus=instance.Status,InstanceVersion=Convert.ToBase64String(instance.RowVersion!),
+                    TaskIds=assignments.Select(a=>a.TaskId).Order().ToArray(),RemainingResolutionIds=remaining},
                 new{Assignment=evidence,SourceCommand=id,Actor=actor.UserId},ct);
             await Final(actor,lease,ct);committing=true;await tx.CommitAsync(ct);db.ChangeTracker.Clear();return result;
         }

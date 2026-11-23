@@ -58,6 +58,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(returned.InstanceId,resumed.InstanceId);Assert.Equal(pin.VersionId,resumed.FlowDefVersionId);
         var children=await h.Db.Wf_FlowInstances.AsNoTracking().Where(i=>i.ParentInstanceId==returned.InstanceId&&!oldChildren.Contains(i.Id)).ToArrayAsync();
         Assert.Equal(2,children.Length);Assert.All(children,i=>Assert.Equal(childPin.VersionId,i.FlowDefVersionId));
+        var childIds=children.Select(c=>c.Id).ToArray();
+        var newTasks=await h.Db.Wf_FlowTasks.AsNoTracking().Where(t=>childIds.Contains(t.InstanceId)).Select(t=>t.Id).ToArrayAsync();
+        Assert.Equal(newTasks.Order(),resumed.TaskIds.Order());
         for(var i=0;i<4;i++)await NativeApprove(owner,(await h.Db.Wf_FlowTasks.AsNoTracking().Where(t=>t.Status==0).OrderBy(t=>t.Id).FirstAsync()).Id);
         Assert.Equal(FlowInstanceStatus.Approved,(await h.Db.Wf_FlowInstances.AsNoTracking().SingleAsync(i=>i.Id==returned.InstanceId)).Status);
     }
