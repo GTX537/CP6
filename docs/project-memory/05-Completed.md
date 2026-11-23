@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP12-16 连接器外呼的本地准入与稳定effectKey](../development/evidence/WP12-16/DELIVERY.md)（DONE），核对时间 `2026-11-23T05:58:52.413105+00:00`。
+- [WP12-11 准确截止策略与超时worker竞争](../development/evidence/WP12-11/DELIVERY.md)（DONE），核对时间 `2026-11-23T07:14:09.885797+00:00`。
 
 ### 已关闭目标
 

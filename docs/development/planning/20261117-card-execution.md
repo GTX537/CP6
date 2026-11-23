@@ -647,3 +647,11 @@ WP12-16 完整 DONE。以 `c7d6a99b62a13d58c96eef87cac95f46894185a1` 领取，�
 按 [#409 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/61eba9e709cfdbbf3b3e4180032df55248b75ebe/handoffs/CP6-DEV-20261012/tasks/WP12-09/replies/20261123T043026Z-coord-acceptance-ack/MESSAGE.md) 对 [WP12-09 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/358af6cf99a37002d235f6a936e2faaff593d0ae/handoffs/CP6-DEV-20261012/tasks/WP12-09/messages/20261123T035053Z-exec-wp02-14b-delivery/MESSAGE.md) 的完整提交和路径查重，单次补记 307.799 秒至 2451.455 秒，原目标复核的 0.077 秒单列。加入本卡前计划累计 177633.929 秒。
 
 核销快照 `2026-11-23T05:58:52.413105+00:00`，本卡 2483.165 有效秒，目标复核另列 0.075 秒，计划累计 180117.169 秒。L 卡额度 28800 秒，43200 秒强制拆卡。本轮拆卡 0，原 48 小时检查点已登记。OA 完成 12/20，按图复算候选为 WP12-11（3）、WP12-17（3）、WP12-05（2）、WP12-14（2）、WP12-15（2）。正式派工归 COORD。
+
+## WP12-11 准确截止策略与超时 worker 竞争
+
+WP12-11 完整 DONE。以 `6e3d9d07ac92fb906027df1ecc6817755705a9d8` 领取，直接前置及余卡展开 28 项完整 DONE。实际 Main API、隔离 PostgreSQL、两个 hosted worker 和 OA 浏览器验证版本化日历、准确截止、独立重算及单一超时决定。OA-TASK-01 原 AC 25/46 通过，目标开放。 [正式派工 #412](https://github.com/GTX537/CP6.AI-Handoff/blob/cc532e6b153a44a65e0e3f9b64a02cfe45aa0dcc/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T061343Z-exec-wp02-14b-wp12-11/MESSAGE.md) · [唯一报告](../evidence/WP12-11/DELIVERY.md) · [Main PR](https://github.com/GTX537/CP6/pull/1315)
+
+按 [#411 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/7fe2544bcd4dca395253151f222892cb8f8dd90c/handoffs/CP6-DEV-20261012/tasks/WP12-16/replies/20261123T061113Z-coord-acceptance-ack/MESSAGE.md) 对 [WP12-16 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/d98aa9c450be2a1b7ef864583c7c63956a9085ea/handoffs/CP6-DEV-20261012/tasks/WP12-16/messages/20261123T060400Z-exec-wp02-14b-delivery/MESSAGE.md) 的完整提交和路径查重，单次补记 285.513 秒至 2768.678 秒，原目标复核 0.075 秒单列。加入本卡前计划累计 180402.682 秒。
+
+核销快照 `2026-11-23T07:14:09.885797+00:00`，本卡 3277.773 有效秒，目标复核另列 0.081 秒，计划累计 183680.536 秒。M 卡额度 14400 秒，21600 秒强制拆卡。本轮拆卡 0，原 48 小时检查点已登记。OA 完成 13/20，按图复算候选为 WP12-17（3）、WP12-05（2）、WP12-14（2）、WP12-15（2）、WP12-20（2）。正式派工归 COORD。
