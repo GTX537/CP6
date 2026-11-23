@@ -26,6 +26,9 @@ public sealed class ServiceTaskContext
     public required DateTime NowUtc { get; init; }
     public string? VarsJson { get; init; }           // 表单数据，供参数模板求值
     public string? ActionRefJson { get; init; }      // 固化动作绑定快照（§3.5）
+    internal string? ClaimWorker { get; init; }
+    internal DateTime? ClaimedAtUtc { get; init; }
+    internal CancellationToken ExecutionCancellation { get; init; }
     // executor 通过注入服务（DB/HttpClient）干活，不直接持有 FlowEngine
 }
 
@@ -34,6 +37,8 @@ public sealed class ServiceTaskResult
 {
     public bool Success { get; init; }
     public bool AdmissionBlocked { get; init; }
+    internal bool DispatchHeld { get; init; }
+    internal DateTime? CheckOriginalAfterUtc { get; init; }
     public string? Error { get; init; }
     public Dictionary<string, object?>? OutputVars { get; init; }   // §3.6 合并规则
 
@@ -43,4 +48,6 @@ public sealed class ServiceTaskResult
     public static ServiceTaskResult Fail(string error)
         => new() { Success = false, Error = error };
     public static ServiceTaskResult Blocked(string reason) => new() { AdmissionBlocked = true, Error = reason };
+    internal static ServiceTaskResult HoldDispatch(string state, DateTime? checkOriginalAfterUtc = null) =>
+        new() { DispatchHeld = true, Error = state, CheckOriginalAfterUtc = checkOriginalAfterUtc };
 }

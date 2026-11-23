@@ -1,4 +1,5 @@
 using CP6.Core.Services.Oa;
+using CP6.Tests.Platform;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Tests.Erp;
@@ -19,9 +20,28 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             RateLimitPolicy:"rate-v1",StarterAuthority:"isolated",StarterId:h.User));
         var tenantProfile = await ConnRegistration(h, "CONNECTOR", ConnFixture());
         var appProfile = await ConnRegistration(h, "CONNECTOR", ConnFixture("APP"));
+        var dispatchProfile = await ConnRegistration(h, "CONNECTOR", DispatchProfile());
+        Guid jobId;
+        await using (var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, ConnSettings()))
+        {
+            var maker = new ConnApi(host, await Login(host, h));
+            var checker = new ConnApi(host, await Login(host, "conn-reviewer", "Reviewer1!Test", h.Tenant.ToString("N")));
+            var connector = await ConnActivate(maker, checker,
+                await ConnCreate(maker, "CONNECTOR", new("browser-dispatch-history", "TENANT", dispatchProfile), "浏览器派发历史"));
+            var job = await DispatchJob(h, connector, "browser-dispatch-history");
+            jobId = job.Id;
+            await using var wire = await OaConnectorDispatchWireFixture.StartAsync();
+            using var http = DispatchHttp();
+            Assert.Equal(1, await DispatchWorker(h.Db, [DispatchParticipant(h, connector, wire, http)])
+                .ScanOnceAsync(DateTime.UtcNow, "browser-dispatch"));
+            Assert.Equal("HTTP_ACK", await DispatchLastError(h, job.Id));
+            await SetDispatchScope(maker, false);
+            await SetDispatchScope(maker, true);
+        }
         using var evidence=await BrowserScenario(h,reviewer,"oa-connector-control-browser.mjs","control-browser",ConnSettings(),
             new(){["CP6_CONN_PROFILE"]=profile.ToString(),["CP6_CONN_FLOW"]=flowVersion.ToString(),
-                ["CP6_CONN_TENANT_PROFILE"]=tenantProfile.ToString(),["CP6_CONN_APP_PROFILE"]=appProfile.ToString()});
+                ["CP6_CONN_TENANT_PROFILE"]=tenantProfile.ToString(),["CP6_CONN_APP_PROFILE"]=appProfile.ToString(),
+                ["CP6_CONN_DISPATCH_JOB"]=jobId.ToString("D")});
         var result=evidence.RootElement;
         var root=result.GetProperty("root").GetGuid();
         var version=result.GetProperty("version").GetGuid();
@@ -31,6 +51,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             """).SingleAsync();
         Assert.Equal(1,count);
         var connectors = result.GetProperty("connectors");
+        Assert.Equal(jobId, result.GetProperty("dispatch").GetGuid());
         var tenantRoot = connectors.GetProperty("TENANT").GetProperty("rootId").GetGuid();
         var appRoot = connectors.GetProperty("APP").GetProperty("rootId").GetGuid();
         Assert.NotEqual(tenantRoot, appRoot);

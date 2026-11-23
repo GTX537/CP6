@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { AUTH_EPOCH, AUTH_RECORD, IMPERSONATION, AUTH_EVENT, identityStamp } from '@/auth/identity'
-import { connectorControl as api, family, type Choices, type Control, type Impact, type Intent, type Kind,
+import { connectorControl as api, family, type Choices, type Control, type DispatchHistory, type Impact, type Intent, type Kind,
   type Approval, type Receipt, type Selection, type Subject, type Version } from '@/api/oa/connectorControl'
 
 const props = defineProps<{ kind: Kind }>()
 const captions: Record<Control, string> = { PUBLISH: '发布', ENABLE: '启用', ACTIVATE: '激活', DISABLE: '停用', RETIRE: '退役' }
+const dispatchCaptions: Record<string, string> = {
+  DISPATCH_ADMITTED: '已准入', CANCELLATION_REQUESTED: '已请求取消（外部效果仍待确认）',
+  SENT: '已发送', HTTP_ACK: '已收到运输确认', OUTCOME_UNKNOWN: '结果未知',
+  NOT_OBSERVED: '尚未查到原操作', ORIGINAL_OPERATION_OBSERVED: '已查到原操作',
+}
 const choices = ref<Choices>({ profiles: [], definitions: [], actions: [] })
 const rows = ref<Version[]>([]), subjects = ref<Subject[]>([]), selected = ref<Version>()
+const dispatchHistory = ref<DispatchHistory>()
 const operation = ref<Control>(props.kind === 'TRIGGER' ? 'PUBLISH' : 'ACTIVATE'), impact = ref<Impact>(), pending = ref<Intent>()
 const busy = ref(false), error = ref(''), notice = ref(''), editing = ref(false), revising = ref(false)
 const name = ref(''), label = ref(''), profileId = ref(''), flowId = ref(''), cron = ref(''), vars = ref('{}'), reason = ref('')
@@ -26,6 +32,7 @@ function clear() {
   generation++; controller.abort(); controller = new AbortController()
   choices.value = { profiles: [], definitions: [], actions: [] }; rows.value = []; subjects.value = []
   selected.value = undefined; impact.value = undefined; pending.value = undefined; editing.value = false
+  dispatchHistory.value = undefined
   name.value = label.value = profileId.value = flowId.value = reason.value = cron.value = ''; vars.value = '{}'
   legacyId.value = ''; busy.value = false; notice.value = ''; error.value = ''; page.value = reviewPage.value = 1
 }
@@ -51,13 +58,13 @@ async function refresh(check: Check, signal: AbortSignal, root?: string, version
   const list = await api.list(props.kind, page.value, signal)
   const queue = opt.actions.includes('conn.' + props.kind.toLowerCase() + '.review') ? await api.subjects(props.kind, reviewPage.value, signal) : []
   const item = root ? await api.context(props.kind, root, signal, version) : undefined
-  check(); choices.value = opt; rows.value = list; subjects.value = queue; selected.value = item
+  check(); choices.value = opt; rows.value = list; subjects.value = queue; selected.value = item; dispatchHistory.value = undefined
 }
 function reload() { return run((check, signal) => refresh(check, signal, selected.value?.rootId, selected.value?.versionId)) }
 function select(row: Version) {
   return run(async (check, signal) => {
     const r = await api.context(props.kind, row.rootId, signal, row.versionId); check()
-    selected.value = r; impact.value = undefined; editing.value = false; reason.value = ''
+    selected.value = r; impact.value = undefined; dispatchHistory.value = undefined; editing.value = false; reason.value = ''
     operation.value = props.kind === 'CONNECTOR' ? (r.state === 'ENABLED' ? 'DISABLE' : 'ACTIVATE')
       : (r.published ? (r.state === 'ENABLED' ? 'DISABLE' : 'ENABLE') : 'PUBLISH')
   })
@@ -141,6 +148,16 @@ function impactPage(page: number) {
   if (!id) return
   return run(async (check, signal) => { const value = await api.preview(id, signal, page); check(); impact.value = value })
 }
+function readDispatches(page: number) {
+  const row = selected.value
+  if (!row) return
+  dispatchHistory.value = undefined
+  return run(async (check, signal) => {
+    const history = await api.dispatches(row.rootId, row.versionId, page, signal)
+    check()
+    dispatchHistory.value = history
+  })
+}
 function openApproved(ref: Approval) {
   return run(async (check, signal) => {
     const preview = ref.impactRef ? await api.preview(ref.impactRef, signal) : undefined
@@ -198,6 +215,23 @@ onBeforeUnmount(() => { live = false; controller.abort(); window.removeEventList
         <option v-for="v in selected.versions" :key="v.id" :value="v.id">v{{ v.number }}</option>
       </select></label>
       <button v-if="has('write') && selected.versionId === selected.latest" :disabled="locked" @click="edit(true)">修订元数据</button>
+      <section v-if="kind === 'CONNECTOR' && has('control')">
+        <button :disabled="locked" @click="readDispatches(1)">读取派发记录</button>
+        <template v-if="dispatchHistory">
+          <p v-if="!dispatchHistory.entries.length">本页没有派发记录。</p>
+          <ul v-else>
+            <li v-for="item in dispatchHistory.entries" :key="item.jobId" :data-dispatch-state="item.state">
+              {{ item.jobId }} · {{ item.adoption }} · {{ dispatchCaptions[item.state] ?? item.state }}
+              · 运输 {{ dispatchCaptions[item.transportState] ?? item.transportState }}
+              <span v-if="item.originalQueryState"> · 查证 {{ dispatchCaptions[item.originalQueryState] ?? item.originalQueryState }}</span>
+            </li>
+          </ul>
+          <nav v-if="dispatchHistory.page > 1 || dispatchHistory.hasNext">
+            <button :disabled="locked || dispatchHistory.page === 1" @click="readDispatches(dispatchHistory.page - 1)">上一页派发</button>
+            <button :disabled="locked || !dispatchHistory.hasNext" @click="readDispatches(dispatchHistory.page + 1)">下一页派发</button>
+          </nav>
+        </template>
+      </section>
       <label>控制动作<select v-model="operation" :disabled="locked" @change="impact = undefined"><option v-for="a in actions" :key="a" :value="a">{{ captions[a] }}</option></select></label>
       <button v-if="operation !== 'PUBLISH' && canControl" :disabled="locked" @click="action('preview')">读取影响预览</button>
       <p v-if="impact">覆盖 {{ impact.coverage }} · Job {{ impact.manifest.jobs }} · 在途 {{ impact.manifest.inFlight }} · 实例 {{ impact.manifest.instances }} · 触发 {{ impact.manifest.invocations }} · 时隙 {{ impact.manifest.slots }}</p>

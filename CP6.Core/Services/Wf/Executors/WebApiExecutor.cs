@@ -52,10 +52,14 @@ public sealed class WebApiExecutor : IServiceTaskExecutor
         {
             if (_control == null || !string.IsNullOrEmpty(r.Path) || !string.IsNullOrEmpty(r.ParamsJson) ||
                 !string.IsNullOrEmpty(r.HttpMethod) || r.TimeoutSec != null) return ServiceTaskResult.Blocked("BLOCKED_CONNECTOR");
-            return await _control.Admit(pin,ctx,CancellationToken.None);
+            return await _control.Admit(pin,ctx,ctx.ExecutionCancellation);
         }
         if (string.IsNullOrEmpty(connectorName))
-            return ServiceTaskResult.Fail($"E-WF-018|{connectorName}");
+        {
+            var failure = ServiceTaskResult.Fail("E-WF-018|");
+            return _control == null || ctx.JobId == Guid.Empty ? failure :
+                await _control.LegacyCall("",ctx.JobId,() => Task.FromResult(failure),ctx.ExecutionCancellation);
+        }
 
         async Task<ServiceTaskResult> CallLegacy()
         {
@@ -63,6 +67,6 @@ public sealed class WebApiExecutor : IServiceTaskExecutor
             return connector == null ? ServiceTaskResult.Fail($"E-WF-018|{connectorName}")
                 : await connector.CallAsync(r.Path ?? "", r.ParamsJson, ctx);
         }
-        return _control == null ? await CallLegacy() : await _control.LegacyCall(connectorName,CallLegacy,CancellationToken.None);
+        return _control == null ? await CallLegacy() : await _control.LegacyCall(connectorName,ctx.JobId,CallLegacy,ctx.ExecutionCancellation);
     }
 }

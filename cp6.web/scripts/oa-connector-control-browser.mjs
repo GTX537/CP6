@@ -108,6 +108,14 @@ try {
   await reviewer.page.locator('#tab-connectors').click()
   panel = page.getByTestId('conn-CONNECTOR')
   reviewer.panel = reviewer.page.getByTestId('conn-CONNECTOR')
+  await button(panel, 'browser-dispatch-history · TENANT · v1').click()
+  await button(panel, '读取派发记录').click()
+  const dispatch = panel.locator('[data-dispatch-state="CANCELLATION_REQUESTED"]')
+  await expect(dispatch).toContainText(env.CP6_CONN_DISPATCH_JOB)
+  await expect(dispatch).toContainText('SIMULATED')
+  await expect(dispatch).toContainText('已收到运输确认')
+  await expect(dispatch).toContainText('外部效果仍待确认')
+  steps.push('原派发在页内显示取消请求与运输确认')
   const connectors = {}
   for (const [source, profile] of [['TENANT', env.CP6_CONN_TENANT_PROFILE], ['APP', env.CP6_CONN_APP_PROFILE]]) {
     const title = '浏览器连接器 ' + source
@@ -141,7 +149,8 @@ try {
   await button(panel, 'browser-same-connector · APP · v1').click()
   await expect(panel.getByRole('heading', { name: '浏览器连接器 APP · v1 · ENABLED' })).toBeVisible()
   steps.push('同名 TENANT、APP 分别激活，停用 TENANT 后 APP 仍为 ENABLED')
-  await writeFile(path.join(output, 'result.json'), JSON.stringify({ result: 'PASS', root, version, connectors, steps, requests }, null, 2))
+  await writeFile(path.join(output, 'result.json'), JSON.stringify({ result: 'PASS', root, version, connectors,
+    dispatch: env.CP6_CONN_DISPATCH_JOB, steps, requests }, null, 2))
 } catch (err) {
   for (const [i, p] of pages.entries()) {
     await p.screenshot({ path: path.join(output, 'error-' + i + '.png') }).catch(() => {})
