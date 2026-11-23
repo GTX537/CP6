@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP12-13 触发器与连接器不可变版本及控制审批](../development/evidence/WP12-13/DELIVERY.md)（DONE），核对时间 `2026-11-23T02:40:29.922293+00:00`。
+- [WP12-09 退回重送、转交加签和无人审批恢复](../development/evidence/WP12-09/DELIVERY.md)（DONE），核对时间 `2026-11-23T03:45:23.754165+00:00`。
 
 ### 已关闭目标
 

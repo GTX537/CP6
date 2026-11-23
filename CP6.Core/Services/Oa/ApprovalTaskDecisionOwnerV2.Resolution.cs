@@ -40,9 +40,17 @@ public sealed partial class ApprovalTaskDecisionOwnerV2
         var instance=await db.Wf_FlowInstances.AsNoTracking().SingleAsync(i=>i.Id==row.Instance,ct);var candidates=new List<NativeTaskCandidateV2>();var reasons=new List<string>();
         if(row.State!="PENDING")reasons.Add("RESOLUTION_ALREADY_COMPLETED");
         if(slot.Policy?.Mode!="MANUAL_ASSIGNMENT")reasons.Add("MANUAL_ASSIGNMENT_NOT_ALLOWED");
+        if(reasons.Count==0)
+        {
+            var token=await FlowEngine.ActiveResolutionToken(db,slot,ct);
+            if(instance.Status!=FlowInstanceStatus.Suspended||instance.FlowDefVersionId!=slot.FlowVersionId||token==null)
+                reasons.Add("RESOLUTION_CONTEXT_CHANGED");
+            else if(!await FlowEngine.RecoveryOrganizationAvailable(db,publication,instance,token,slot))
+                reasons.Add("AUTHORITY_UNAVAILABLE");
+        }
         if(reasons.Count==0)foreach(var user in await db.Sys_Users.AsNoTracking().Where(u=>u.Enable&&(u.LockedUntil==null||u.LockedUntil<=DateTime.Now)).Select(u=>new{u.Id,u.UserName}).ToArrayAsync(ct))
             if(await AppResolutionCandidate(original,publication,slot,user.Id,ct))candidates.Add(new(user.Id,user.UserName));
-        if(candidates.Count==0)reasons.Add("NO_ELIGIBLE_APPROVER");
+        if(reasons.Count==0&&candidates.Count==0)reasons.Add("NO_ELIGIBLE_APPROVER");
         return new(row.Id,row.Version.ToString("D"),row.Instance,Convert.ToBase64String(instance.RowVersion!),row.Cycle,slot.NodeId,slot.TokenId,
             slot.StageIndex,slot.StageRound,slot.FlowVersionId,row.PolicyRef,slot.Reason,row.State,candidates.Select(u=>u.UserId).Order().ToArray(),reasons.Count==0,reasons.ToArray(),candidates.OrderBy(u=>u.Name).ThenBy(u=>u.UserId).ToArray());
     }
@@ -76,21 +84,26 @@ public sealed partial class ApprovalTaskDecisionOwnerV2
             await scope.AcquireAsync(ct);await Ready(ct);
             var slot=Parse<PendingApproverSlotV2>(row.Slot);var instance=await db.Wf_FlowInstances.SingleAsync(i=>i.Id==row.Instance,ct);var publication=await ResolutionPublication(row,ct);
             if(row.State!="PENDING")throw Error("RESOLUTION_ALREADY_COMPLETED",409);
-            if(row.Version.ToString("D")!=command.Expected||Convert.ToBase64String(instance.RowVersion!)!=input.ExpectedInstanceVersion||row.Cycle!=input.ExecutionCycleId
+            var token=await FlowEngine.ActiveResolutionToken(db,slot,ct);
+            if(instance.Status!=FlowInstanceStatus.Suspended||instance.FlowDefVersionId!=slot.FlowVersionId||row.Cycle!=row.Root
+                ||row.Version.ToString("D")!=command.Expected||Convert.ToBase64String(instance.RowVersion!)!=input.ExpectedInstanceVersion||row.Cycle!=input.ExecutionCycleId
                 ||slot.NodeId!=input.NodeId||slot.TokenId!=input.TokenId||slot.StageIndex!=input.StageIndex||slot.StageRound!=input.StageRound||row.PolicyRef!=input.RoutePolicyRef
-                ||!await db.Wf_FlowTokens.AnyAsync(t=>t.Id==slot.TokenId&&t.Status==FlowTokenStatus.Active&&t.NodeId==slot.NodeId,ct))throw Error("RESOLUTION_CONTEXT_CHANGED",409);
+                ||token==null)throw Error("RESOLUTION_CONTEXT_CHANGED",409);
             if(slot.Policy?.Mode!="MANUAL_ASSIGNMENT")throw Error("MANUAL_ASSIGNMENT_NOT_ALLOWED",403);
+            if(!await FlowEngine.RecoveryOrganizationAvailable(db,publication,instance,token,slot))throw Error("AUTHORITY_UNAVAILABLE",503);
             foreach(var target in input.TargetPrincipalIds)if(!await AppResolutionCandidate(original,publication,slot,target,ct))throw Error("TARGET_INELIGIBLE",422);
             var write=Guid.NewGuid();await BeginOperation(write,actor,"OA_APPROVER_RESOLVE",id,row.Root,null,command,ct);
             var engine=new FlowEngine(db,new ApproverResolver(db,exactConditions:true));await engine.StageAppResolveApproverV2(publication,original,slot,input.TargetPrincipalIds,actor,input.Reason,ct);
             var evidence=Json(new{Actual=actor,Targets=input.TargetPrincipalIds,Tasks=engine.CreatedApprovalAssignments.Select(a=>a.TaskId).ToArray(),input.RoutePolicyRef,input.Reason,Scope=fence.Snapshot,Occurred=DateTimeOffset.UtcNow});
             await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_native_tasks_v2.pending_resolutions SET state='RESOLVED',resolution_kind='APP_OPERATION',resolution_command={write},assignment_evidence={evidence} WHERE id={id}",ct);
-            instance.Status=await db.Database.SqlQuery<bool>($"SELECT EXISTS(SELECT FROM cp6_native_tasks_v2.pending_resolutions WHERE instance_id={row.Instance} AND state='PENDING') AS \"Value\"").SingleAsync(ct)?FlowInstanceStatus.Suspended:FlowInstanceStatus.Running;
+            var remaining=await FlowEngine.RemainingResolutionIds(db,scope.EnvironmentId,row.Instance,row.Cycle,ct);
+            instance.Status=remaining.Length==0?FlowInstanceStatus.Running:FlowInstanceStatus.Suspended;
             await engine.SaveApprovalRuntime(ct);await db.SaveChangesAsync(ct);await engine.SaveApprovalAssignments(ct);
             foreach(var assignment in engine.CreatedApprovalAssignments)await OperationNotification(write,assignment.PrincipalId,assignment.InstanceId,assignment.TaskId,"TASK_ASSIGNED","您有新的恢复审批待办",ct);
             await db.SaveChangesAsync(ct);
             var result=await CompleteOperation(write,command,id,(await AppResolutionRow(id,ct)).Version.ToString("D"),
-                new{ResolutionId=id,InstanceId=row.Instance,ExecutionCycleId=row.Cycle,InstanceStatus=instance.Status,InstanceVersion=Convert.ToBase64String(instance.RowVersion!),TaskIds=engine.CreatedApprovalAssignments.Select(a=>a.TaskId).Order().ToArray()},new{Assignment=evidence},ct);
+                new{ResolutionId=id,InstanceId=row.Instance,ExecutionCycleId=row.Cycle,InstanceStatus=instance.Status,InstanceVersion=Convert.ToBase64String(instance.RowVersion!),
+                    TaskIds=engine.CreatedApprovalAssignments.Select(a=>a.TaskId).Order().ToArray(),RemainingResolutionIds=remaining},new{Assignment=evidence},ct);
             await AppResolutionAccess(original,actor,ct);foreach(var target in input.TargetPrincipalIds)if(!await AppResolutionCandidate(original,publication,slot,target,ct))throw Error("TARGET_INELIGIBLE",422);
             await scope.ValidateAsync(fence,ct);await Ready(ct);committing=true;await tx.CommitAsync(ct);db.ChangeTracker.Clear();return result;
         }

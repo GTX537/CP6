@@ -5,10 +5,14 @@ import { formObject, readFormJson, writeFormJson, schemaFields, type FormObject 
 import PersonalFormFields from '../catalog/PersonalFormFields.vue'
 import NativeOperationRecovery from './NativeOperationRecovery.vue'
 import { useNativeOperation } from './useNativeOperation'
-const props = defineProps<{ instanceId: string }>(), emit = defineEmits<{ completed: []; privateClear: [] }>()
+const props = defineProps<{ instanceId: string }>(), emit = defineEmits<{ completed: [notice?: string]; privateClear: [] }>()
 const context = ref<ReturnedContext>(), data = ref<FormObject>({}), reason = ref(''), valid = ref(true), loading = ref(false), baseline = ref('')
 let generation = 0
-const op = useNativeOperation('cp6-returned-form-operation', clear, () => emit('completed'), () => emit('privateClear'))
+const op = useNativeOperation('cp6-returned-form-operation', clear, receipt => {
+  const result = receipt.result
+  const status = result && typeof result === 'object' && 'instanceStatus' in result ? result.instanceStatus : undefined
+  emit('completed', status === 'SUSPENDED' || status === 4 ? '已重送，提交时待指定审批人。' : undefined)
+}, () => emit('privateClear'))
 const { pending, busy, canRetry, error, message, locked } = op
 const fields = computed(() => context.value ? schemaFields(context.value.schemaJson) : [])
 const dirty = computed(() => writeFormJson(data.value) !== baseline.value)

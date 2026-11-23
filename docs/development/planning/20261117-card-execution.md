@@ -631,3 +631,11 @@ OA-CONN-01 逐项复核 32 项原 AC，CONN-01、03、10、11、12 共 5 项通�
 按 #405 的原 DELIVERY 完整提交和路径查重，为 WP03-11b 单次补记 186.821 秒至 3698.098 秒，目标核对 1.124 秒已单列。补后累计 170997.052 秒。在 2026-11-23T02:07:52.216945+00:00 触及 172800.000 秒，WP12-13 当时计 1802.948 秒，处于执行中。登记卡 94/391，原号 DONE 与完整 DONE 均为 78/375，补充卡 6/6，目标 10/125。计划自起点关闭 55 卡、10 个目标、累计新增拆卡 10 次。相较 24 小时增加 29 张完成卡、0 个目标、3 次拆卡。缓冲累计 4703.009 秒，本卡等待 0 秒。 [签收 #405](https://github.com/GTX537/CP6.AI-Handoff/blob/a113d70ae789097199badcf0b80425e59de6ca7a/handoffs/CP6-DEV-20261012/tasks/WP03-11b/replies/20261123T012657Z-coord-acceptance-ack/MESSAGE.md)
 
 本卡候选 2026-11-23T02:40:29.922293+00:00，卡内 3747.318 秒，目标逐项复核另列 13.335 秒，计划累计 174757.705 秒。本卡未拆分。
+
+## WP12-09 退回重送、转交加签和无人审批恢复
+
+WP12-09 完整 DONE。以 `f64005bca2ebdbea4ea735581a2763eb90d6c295` 领取，直接前置展开 24 项完整 DONE。实际 Main API、OA 收件箱及 PostgreSQL 补证原实例新轮、非投票动作及同原政策恢复，复核 W282/W306。OA-TASK-01 的 46 项原 AC 核对结果为 11/46，目标开放。 [正式派工 #408](https://github.com/GTX537/CP6.AI-Handoff/blob/756f21c8b7517f5c7a05fe184fcd272d3d7a5eb0/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T025844Z-exec-wp02-14b-wp12-09/MESSAGE.md) · [唯一报告](../evidence/WP12-09/DELIVERY.md) · [Main PR](https://github.com/GTX537/CP6/pull/1313)
+
+按 [#407 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/0805999ce0c735a10d92e6f73f4d5dcca470a2fd/handoffs/CP6-DEV-20261012/tasks/WP12-13/replies/20261123T025622Z-coord-acceptance-ack/MESSAGE.md) 对 [WP12-13 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/68bcfaece7a4600ed0e1ac59fa571de0ce787fe0/handoffs/CP6-DEV-20261012/tasks/WP12-13/messages/20261123T024747Z-exec-wp02-14b-delivery/MESSAGE.md) 的完整提交和路径查重，单次补记 424.692 秒至 4172.010 秒，旧目标复核 13.335 秒单列。加入本卡前计划累计 175182.397 秒。
+
+核销快照 `2026-11-23T03:45:23.754165+00:00`，本卡 2143.656 有效秒，目标复核另列 0.077 秒，计划累计 177326.130 秒。L 卡上限 28800 秒，43200 秒强制拆卡。本轮拆卡 0，原 48 小时检查点已登记。OA 完成 11/20，按图复算候选为 WP12-16（4）、WP12-11（3）、WP12-05（2）、WP12-14（2）、WP12-15（2）。后续派工归 COORD。

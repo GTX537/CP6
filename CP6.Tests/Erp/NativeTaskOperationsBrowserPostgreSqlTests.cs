@@ -1,4 +1,5 @@
 using CP6.Core.Services.Oa;
+using CP6.Core.Services.Wf;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Tests.Erp;
@@ -29,5 +30,28 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(2,await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_personal_form_v2.execution_cycles WHERE root_id={f.Instance}").SingleAsync());
         Assert.Equal(1,await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_personal_form_v2.commands WHERE root_id={f.Instance} AND operation='SFS_RETURNED_RESUBMIT' AND completed").SingleAsync());
         Assert.Single((await NativeInbox(h).DetailAsync(f.Instance)).Votes);
+    }
+
+    [OaNativeBrowserPostgresFact]
+    public async Task NativeRecovery_browser_assigns_from_original_pinned_policy_and_recovers_after_reload()
+    {
+        await using var h = await Seed();
+        var f = await NativeTaskGraph(h, ParallelRecoveryGraph(EmptyRecoveryNode("first"), EmptyRecoveryNode("second")));
+        var target = await GrantDelegate(h, "recovery-reviewer");
+        await h.Db.Sys_Menus.Where(m => m.MenuKey == "oa-inbox")
+            .ExecuteUpdateAsync(s => s.SetProperty(m => m.RoutePath, "/oa/inbox"));
+        using var evidence = await BrowserScenario(h, h.User, "oa-approver-recovery-browser.mjs", "approver-recovery-browser",
+            new() { ["ScopeAuthorization__EnvironmentId"] = ScopeEnvironment.ToString("D") },
+            new() { ["CP6_TASK_INSTANCE"] = f.Instance.ToString("D") });
+
+        var receipt = evidence.RootElement.GetProperty("original").GetProperty("result");
+        var task = await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync();
+        Assert.Equal(task.Id, Assert.Single(receipt.GetProperty("taskIds").EnumerateArray()).GetGuid());
+        Assert.Equal(target, task.AssigneeId);
+        Assert.Equal(task.Id, (await h.Db.Wf_FlowFormTos.AsNoTracking().SingleAsync()).NativeTaskId);
+        var unresolved = Assert.Single(await f.Owner.PendingResolutionsAsync(f.Instance), slot => slot.State == "PENDING");
+        Assert.Equal(unresolved.ResolutionId, Assert.Single(receipt.GetProperty("remainingResolutionIds").EnumerateArray()).GetGuid());
+        Assert.Equal(FlowInstanceStatus.Suspended, (await h.Db.Wf_FlowInstances.AsNoTracking().SingleAsync()).Status);
+        Assert.Empty((await NativeInbox(h).DetailAsync(f.Instance)).Votes);
     }
 }

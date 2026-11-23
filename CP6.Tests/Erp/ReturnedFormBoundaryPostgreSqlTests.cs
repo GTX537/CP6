@@ -38,7 +38,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var formActivation=(await form.ActivationPreviewAsync("personal")).Current;
         await form.SetActivationAsync("personal",FormActivationCommand(formActivation,submitted.FormDefVersionId,false,"stop-new-forms"));
         var resumed=PersonalResult<ReturnedFormResultV2>(await owner.ResubmitReturnedAsync(root,PersonalCommand(new ReturnedFormResubmitV2(c.ReturnRevision,valid.FormDataVersion,null),"same-pin",valid.InstanceVersion)));
-        Assert.Equal(FlowInstanceStatus.Running,resumed.InstanceStatus);Assert.Equal(root,resumed.InstanceId);
+        Assert.Equal(InstanceStatusV2.RUNNING,resumed.InstanceStatus);Assert.Equal(root,resumed.InstanceId);
         Assert.Equal("RETURNED_CURRENT_CYCLE",(await NativeInbox(h).DetailAsync(root)).Form!.DataSource);
         Assert.Equal(data,await h.Db.Database.SqlQuery<string>($"SELECT snapshot_json AS \"Value\" FROM cp6_personal_form_v2.returns WHERE instance_id={root}").SingleAsync());
     }

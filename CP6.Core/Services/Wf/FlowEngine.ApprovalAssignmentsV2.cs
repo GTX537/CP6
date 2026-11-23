@@ -10,6 +10,15 @@ public partial class FlowEngine
     private readonly List<ApprovalTaskAssignmentV2> _approvalAssignments = [];
     internal IReadOnlyList<ApprovalTaskAssignmentV2> CreatedApprovalAssignments=>_approvalAssignments;
 
+    internal async Task<ApproverResolveResult> ResolveTaskApprovers(Wf_FlowInstance instance, ApproverRule rule)
+    {
+        var result = await _approver.ResolveAsync(rule,
+            new() { StarterUserId = instance.StarterId, VarsJson = instance.VarsJson });
+        if (_approvalOriginal is { } original && result.ApproverIds.Any(original.SeparationSubjectIds.Contains))
+            return ApproverResolveResult.Unres("审批职责与已冻结的业务主体冲突");
+        return result;
+    }
+
     internal void RecordApprovalAssignment(Wf_FlowInstance instance, Wf_FlowTask task,
         ApproverRule rule, IEnumerable<Guid> candidates, string? stageCode = null)
     {

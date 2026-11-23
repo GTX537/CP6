@@ -144284,8 +144284,20 @@
             "id": "OA-TASK-01::AC-T01-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-T01-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-09/DELIVERY.md",
+                "source_sha": "c6c6ccb189ad90845aec52693517d1b6988dfc55",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1313",
+                "observed_at": "2026-11-23T03:44:21.035521+00:00",
+                "environment": "Windows 固定 DEV-1，实际 Main Kestrel、现有 Vue 收件箱、Chrome、仅本地隔离 PostgreSQL 18.6",
+                "command": "dotnet vstest 的 verified、browser-final、adjacent、gates 筛选及 OA Vitest、vue-tsc，详见运行原件",
+                "result": "PASS",
+                "scope": "真实两人 all、any 与串签新轮只计当前票，部分通过或驳回继续等待。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/15/cases/4"
@@ -144317,8 +144329,20 @@
             "id": "OA-TASK-01::AC-T01-08",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-T01-08",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-09/DELIVERY.md",
+                "source_sha": "c6c6ccb189ad90845aec52693517d1b6988dfc55",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1313",
+                "observed_at": "2026-11-23T03:44:21.035521+00:00",
+                "environment": "Windows 固定 DEV-1，实际 Main Kestrel、现有 Vue 收件箱、Chrome、仅本地隔离 PostgreSQL 18.6",
+                "command": "dotnet vstest 的 verified、browser-final、adjacent、gates 筛选及 OA Vitest、vue-tsc，详见运行原件",
+                "result": "PASS",
+                "scope": "SFS 表单、任务、历史及原结果随故障回滚，APP 票、Recorder 原决定、证据、Outbox 与原命令同事务。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/15/cases/7"
@@ -144328,8 +144352,20 @@
             "id": "OA-TASK-01::AC-T02-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-T02-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-09/DELIVERY.md",
+                "source_sha": "c6c6ccb189ad90845aec52693517d1b6988dfc55",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1313",
+                "observed_at": "2026-11-23T03:44:21.035521+00:00",
+                "environment": "Windows 固定 DEV-1，实际 Main Kestrel、现有 Vue 收件箱、Chrome、仅本地隔离 PostgreSQL 18.6",
+                "command": "dotnet vstest 的 verified、browser-final、adjacent、gates 筛选及 OA Vitest、vue-tsc，详见运行原件",
+                "result": "PASS",
+                "scope": "兄弟支拒绝零写，同支保另一支及 FormTo，分叉前清理准确在途集合。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/15/cases/8"
@@ -144339,8 +144375,20 @@
             "id": "OA-TASK-01::AC-T02-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-T02-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-09/DELIVERY.md",
+                "source_sha": "c6c6ccb189ad90845aec52693517d1b6988dfc55",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1313",
+                "observed_at": "2026-11-23T03:44:21.035521+00:00",
+                "environment": "Windows 固定 DEV-1，实际 Main Kestrel、现有 Vue 收件箱、Chrome、仅本地隔离 PostgreSQL 18.6",
+                "command": "dotnet vstest 的 verified、browser-final、adjacent、gates 筛选及 OA Vitest、vue-tsc，详见运行原件",
+                "result": "PASS",
+                "scope": "首档拒绝，上一档保 token、作废本档在途并增加新轮。W306 两人 all/any 复跑。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/15/cases/9"
@@ -144350,8 +144398,20 @@
             "id": "OA-TASK-01::AC-T02-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-T02-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-09/DELIVERY.md",
+                "source_sha": "c6c6ccb189ad90845aec52693517d1b6988dfc55",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1313",
+                "observed_at": "2026-11-23T03:44:21.035521+00:00",
+                "environment": "Windows 固定 DEV-1，实际 Main Kestrel、现有 Vue 收件箱、Chrome、仅本地隔离 PostgreSQL 18.6",
+                "command": "dotnet vstest 的 verified、browser-final、adjacent、gates 筛选及 OA Vitest、vue-tsc，详见运行原件",
+                "result": "PASS",
+                "scope": "STARTER 原对象和双 pin，双 CAS，旧 Submitted 不复活，实际即刻完成和无人暂停均回原状态。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/15/cases/10"
@@ -144361,8 +144421,20 @@
             "id": "OA-TASK-01::AC-T02-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-T02-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-09/DELIVERY.md",
+                "source_sha": "c6c6ccb189ad90845aec52693517d1b6988dfc55",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1313",
+                "observed_at": "2026-11-23T03:44:21.035521+00:00",
+                "environment": "Windows 固定 DEV-1，实际 Main Kestrel、现有 Vue 收件箱、Chrome、仅本地隔离 PostgreSQL 18.6",
+                "command": "dotnet vstest 的 verified、browser-final、adjacent、gates 筛选及 OA Vitest、vue-tsc，详见运行原件",
+                "result": "PASS",
+                "scope": "Main HTTP 对账当前与创建职责、确切原 FormTo、期限、档轮、actor 及原表单数据。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/15/cases/11"
@@ -144372,8 +144444,20 @@
             "id": "OA-TASK-01::AC-T02-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-T02-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-09/DELIVERY.md",
+                "source_sha": "c6c6ccb189ad90845aec52693517d1b6988dfc55",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1313",
+                "observed_at": "2026-11-23T03:44:21.035521+00:00",
+                "environment": "Windows 固定 DEV-1，实际 Main Kestrel、现有 Vue 收件箱、Chrome、仅本地隔离 PostgreSQL 18.6",
+                "command": "dotnet vstest 的 verified、browser-final、adjacent、gates 筛选及 OA Vitest、vue-tsc，详见运行原件",
+                "result": "PASS",
+                "scope": "实际 APP 冻结主体职责冲突和 SFS 跨租户、停用、无资格、撤命令权拒绝。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/15/cases/12"
@@ -144383,8 +144467,20 @@
             "id": "OA-TASK-01::AC-T02-06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-T02-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-09/DELIVERY.md",
+                "source_sha": "c6c6ccb189ad90845aec52693517d1b6988dfc55",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1313",
+                "observed_at": "2026-11-23T03:44:21.035521+00:00",
+                "environment": "Windows 固定 DEV-1，实际 Main Kestrel、现有 Vue 收件箱、Chrome、仅本地隔离 PostgreSQL 18.6",
+                "command": "dotnet vstest 的 verified、browser-final、adjacent、gates 筛选及 OA Vitest、vue-tsc，详见运行原件",
+                "result": "PASS",
+                "scope": "实际浏览器恢复同一批次。PG 对账冻结任务名单、逐项拒绝和成功、排除预览后新增任务。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/15/cases/13"
@@ -144394,8 +144490,20 @@
             "id": "OA-TASK-01::AC-T02-07",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-T02-07",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-09/DELIVERY.md",
+                "source_sha": "c6c6ccb189ad90845aec52693517d1b6988dfc55",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1313",
+                "observed_at": "2026-11-23T03:44:21.035521+00:00",
+                "environment": "Windows 固定 DEV-1，实际 Main Kestrel、现有 Vue 收件箱、Chrome、仅本地隔离 PostgreSQL 18.6",
+                "command": "dotnet vstest 的 verified、browser-final、adjacent、gates 筛选及 OA Vitest、vue-tsc，详见运行原件",
+                "result": "PASS",
+                "scope": "两个连接竞争、原键与晚到查询不重办，任务、旧轮、记录和通知对账。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/15/cases/14"
@@ -144460,8 +144568,20 @@
             "id": "OA-TASK-01::AC-T03-06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-T03-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-09/DELIVERY.md",
+                "source_sha": "c6c6ccb189ad90845aec52693517d1b6988dfc55",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1313",
+                "observed_at": "2026-11-23T03:44:21.035521+00:00",
+                "environment": "Windows 固定 DEV-1，实际 Main Kestrel、现有 Vue 收件箱、Chrome、仅本地隔离 PostgreSQL 18.6",
+                "command": "dotnet vstest 的 verified、browser-final、adjacent、gates 筛选及 OA Vitest、vue-tsc，详见运行原件",
+                "result": "PASS",
+                "scope": "实际组织证据缺失、空路由和 APP 职责冲突暂停。原政策、双 CAS、当前资格、精确 FormTo 与剩余槽位，零人工票。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/15/cases/20"
@@ -144471,8 +144591,20 @@
             "id": "OA-TASK-01::AC-T03-07",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-T03-07",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-09/DELIVERY.md",
+                "source_sha": "c6c6ccb189ad90845aec52693517d1b6988dfc55",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1313",
+                "observed_at": "2026-11-23T03:44:21.035521+00:00",
+                "environment": "Windows 固定 DEV-1，实际 Main Kestrel、现有 Vue 收件箱、Chrome、仅本地隔离 PostgreSQL 18.6",
+                "command": "dotnet vstest 的 verified、browser-final、adjacent、gates 筛选及 OA Vitest、vue-tsc，详见运行原件",
+                "result": "PASS",
+                "scope": "本人和显式代理两连接只一票。APP 门内撤权 epoch 变化致旧动作回滚。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/15/cases/21"
@@ -144744,8 +144876,108 @@
           }
         ]
       },
-      "implementation_evidence": [],
-      "delivery_evidence": null
+      "implementation_evidence": [
+        {
+          "path": "docs/development/evidence/WP12-09/DELIVERY.md",
+          "source_sha": "c6c6ccb189ad90845aec52693517d1b6988dfc55",
+          "source_repository": "GTX537/CP6",
+          "pr_url": "https://github.com/GTX537/CP6/pull/1313",
+          "observed_at": "2026-11-23T03:44:21.035521+00:00",
+          "environment": "Windows 固定 DEV-1，实际 Main Kestrel、现有 Vue 收件箱、Chrome、仅本地隔离 PostgreSQL 18.6",
+          "command": "dotnet vstest 的 verified、browser-final、adjacent、gates 筛选及 OA Vitest、vue-tsc，详见运行原件",
+          "result": "PASS",
+          "scope": "原实例返回编辑与重送、非投票原动作及固定政策恢复。完整原断言及剩余见报告。"
+        }
+      ],
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "OPEN_GAPS",
+        "reviewed_at": "2026-11-23T03:45:23.754165+00:00",
+        "report": "docs/development/evidence/WP12-09/DELIVERY.md",
+        "original_cases_reviewed": 46,
+        "required_supplemental_cases": 0,
+        "required_revision_cases": 0,
+        "original_pass": 11,
+        "supplemental_pass": 0,
+        "runtime_pass": 0,
+        "coverage_cards": [
+          "WP12-08",
+          "WP12-09",
+          "WP12-10",
+          "WP12-11",
+          "WP12-20"
+        ],
+        "review_effective_seconds": 0.077,
+        "latest_review_effective_seconds": 0.077,
+        "gaps": [
+          {
+            "owner_task_id": "WP12-08",
+            "gap": "原卡已有动作上下文和处理证据。本次只核销 W306 已完整复核的新轮及同事务断言，余项供目标复核，含普通批量审批。",
+            "source_cases": [
+              "AC-T01-01",
+              "AC-T01-02",
+              "AC-T01-03",
+              "AC-T01-04",
+              "AC-T01-06",
+              "AC-T01-07"
+            ]
+          },
+          {
+            "owner_task_id": "WP12-10",
+            "gap": "按委派原卡、历史职责来源和相应原断言逐项复核。",
+            "source_cases": [
+              "AC-T03-01",
+              "AC-T03-02",
+              "AC-T03-03",
+              "AC-T03-04",
+              "AC-T03-05"
+            ]
+          },
+          {
+            "owner_task_id": "WP12-11",
+            "gap": "工作日历、UTC/地区规则、截止政策和超时 worker 的完成证据。",
+            "source_cases": [
+              "AC-T04-01",
+              "AC-T04-02",
+              "AC-T04-03",
+              "AC-T04-04",
+              "AC-T04-05",
+              "AC-T04-06",
+              "AC-T05-01",
+              "AC-T05-02",
+              "AC-T05-03",
+              "AC-T05-04",
+              "AC-T05-05",
+              "AC-T05-06",
+              "AC-T05-07",
+              "AC-T05-08"
+            ]
+          },
+          {
+            "owner_task_id": "WP12-20",
+            "gap": "通知偏好、投递、深链与已读水位完整验收。",
+            "source_cases": [
+              "AC-T06-01",
+              "AC-T06-02",
+              "AC-T06-03",
+              "AC-T06-04",
+              "AC-T06-05",
+              "AC-T06-06",
+              "AC-T06-07",
+              "AC-T06-08"
+            ]
+          },
+          {
+            "owner_task_id": "WP05-19",
+            "gap": "PLM 迭代派发及原键由 WP05-19 证明，技术验证和基线边界协同 WP05-20。",
+            "source_cases": [
+              "AC-T-H40-01",
+              "AC-T-H40-02"
+            ]
+          }
+        ],
+        "unassigned_source_cases": []
+      }
     },
     {
       "id": "OA-APP-01",
@@ -176464,6 +176696,11 @@
       "at": "2026-11-23T02:40:29.922293+00:00",
       "evidence": "docs/development/evidence/WP12-13/DELIVERY.md",
       "change": "WP12-13 完整 DONE，登记阶段 OA，5/32 原断言通过。48 小时截点登记卡完成 94、原号完整 78、目标关闭 10。截点后本卡完成。按 #405 单次补记 WP03-11b 186.821 秒。"
+    },
+    {
+      "at": "2026-11-23T03:45:23.754165+00:00",
+      "evidence": "docs/development/evidence/WP12-09/DELIVERY.md",
+      "change": "WP12-09 完整 DONE，OA-TASK-01 原断言 11/46 通过，目标开放。按 #407 单次补记 WP12-13 收尾 424.692 秒。"
     }
   ],
   "implementation_assessment": {
@@ -226552,14 +226789,55 @@
         "file:Main:CP6.Core/Services/Wf/ApprovalDispatcher.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP12.md",
       "card_anchor": "wp12-09",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "EXEC-WP02-14B",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp12-09",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-23T03:09:40.021387+00:00",
+        "baseline_sha": "f64005bca2ebdbea4ea735581a2763eb90d6c295",
+        "entry_evidence": "docs/development/planning/20261117-card-execution.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "delivery_report": "docs/development/evidence/WP12-09/DELIVERY.md",
+        "dispatch_scope": "WP12-09 原卡完整 scope",
+        "dispatch_decision_ref": {
+          "commit": "756f21c8b7517f5c7a05fe184fcd272d3d7a5eb0",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T025844Z-exec-wp02-14b-wp12-09/MESSAGE.md"
+        },
+        "actual_start_ref": {
+          "commit": "16b19a4c2809bb9b31829c91628d0308983a3d8f",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP12-09/messages/20261123T031021Z-exec-wp02-14b-start/MESSAGE.md",
+          "at": "2026-11-23T03:09:40.021387+00:00"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP12-09/DELIVERY.md",
+          "source_sha": "c6c6ccb189ad90845aec52693517d1b6988dfc55",
+          "source_repository": "GTX537/CP6",
+          "pr_url": "https://github.com/GTX537/CP6/pull/1313",
+          "observed_at": "2026-11-23T03:44:21.035521+00:00",
+          "environment": "Windows 固定 DEV-1，实际 Main Kestrel、现有 Vue 收件箱、Chrome、仅本地隔离 PostgreSQL 18.6",
+          "command": "dotnet vstest 的 verified、browser-final、adjacent、gates 筛选及 OA Vitest、vue-tsc，详见运行原件",
+          "result": "PASS",
+          "scope": "实际的 Main API、现有 OA 收件箱和隔离 PostgreSQL 退回、非投票动作与受控恢复。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP12-09/DELIVERY.md",
+        "scope": "报告固定领卡基线、产品提交与正常 Main PR。采用和正式席位释放沿原链交回。",
+        "source_sha": "c6c6ccb189ad90845aec52693517d1b6988dfc55",
+        "remote_main_sha": "f64005bca2ebdbea4ea735581a2763eb90d6c295",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1313"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
@@ -226578,6 +226856,49 @@
         "validation": "本地31项唯一相关后端行为通过，来源逐项列明，包含隔离PostgreSQL18实际迁移/Owner/HTTP、APP/SFS任务办理、准确FormTo与旧票隔离、返回编辑与双连接重送、当前授权/SOD、显式政策无人审批恢复、管理批量固定名单/部分结果/同实例版本链/断响应恢复及授权后500项上限。含2条真实Chrome→Vue→Main→PostgreSQL路径：退回编辑重送至通过、管理批量转交丢响应刷新恢复。18项前端组件行为与应用vue-tsc通过，四张截图已查看。复用未受后续改动影响的成功来源；失败日志保留，不把混合运行改称全绿。模拟用户、业务、政策和服务登记，产品Owner/HTTP/数据库/浏览器实际运行。无Actions、生产部署或既有数据库迁移。",
         "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态不变。WP12-09整卡保持原状态；期限/Worker原生采用留W283，完整字段/图诊断及纯FORM规则预览留W284，普通FORM实际文件准入与最终下载留W285，FLOW原竞争及legacy来源/旧caller处置留W286。",
         "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave282-final-verification.json"
+      },
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP12-09/DELIVERY.md",
+        "started_at": "2026-11-23T03:09:40.021387+00:00",
+        "official_started_at": "2026-11-23T03:09:40.021387+00:00",
+        "technical_verified_at": "2026-11-23T03:44:21.035521+00:00",
+        "verified_at": "2026-11-23T03:45:23.754165+00:00",
+        "effective_seconds": 2143.656,
+        "size": "L",
+        "budget_seconds": 28800,
+        "mandatory_split_seconds": 43200,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "S01-01",
+          "S01-02",
+          "S01-07",
+          "S01-09",
+          "S02-00",
+          "WP02-01",
+          "WP02-02",
+          "WP02-03",
+          "WP02-04",
+          "WP02-07",
+          "WP02-10",
+          "WP02-13",
+          "WP02-13b",
+          "WP02-14",
+          "WP02-14b",
+          "WP02-15",
+          "WP12-01",
+          "WP12-02",
+          "WP12-03",
+          "WP12-04",
+          "WP12-06",
+          "WP12-07",
+          "WP12-08",
+          "WP12-10"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 424.692,
+        "target_review_started_at": "2026-11-23T03:45:23.677067+00:00",
+        "target_review_seconds": 0.077
       }
     },
     {
@@ -226938,7 +227259,7 @@
         "official_started_at": "2026-11-23T01:37:49.268945+00:00",
         "technical_verified_at": "2026-11-23T02:40:15.447398+00:00",
         "verified_at": "2026-11-23T02:40:29.922293+00:00",
-        "effective_seconds": 3747.318,
+        "effective_seconds": 4172.01,
         "size": "L",
         "budget_seconds": 28800,
         "mandatory_split_seconds": 43200,
@@ -226964,7 +227285,15 @@
         "new_product_execution": true,
         "preceding_integration_seconds": 186.821,
         "target_review_started_at": "2026-11-23T02:40:16.5874836Z",
-        "target_review_seconds": 13.335
+        "target_review_seconds": 13.335,
+        "post_candidate_finalization_seconds": 424.692,
+        "official_finish": "2026-11-23T02:47:34.614166+00:00",
+        "finalization_decision_ref": {
+          "commit": "0805999ce0c735a10d92e6f73f4d5dcca470a2fd",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP12-13/replies/20261123T025622Z-coord-acceptance-ack/MESSAGE.md",
+          "receipt_commit": "68bcfaece7a4600ed0e1ac59fa571de0ce787fe0",
+          "receipt_path": "handoffs/CP6-DEV-20261012/tasks/WP12-13/messages/20261123T024747Z-exec-wp02-14b-delivery/MESSAGE.md"
+        }
       }
     },
     {
@@ -302977,7 +303306,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 174757.705,
+      "effective_seconds": 177326.13,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -303034,7 +303363,8 @@
         "WP03-07",
         "WP02-31",
         "WP03-11b",
-        "WP12-13"
+        "WP12-13",
+        "WP12-09"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -303131,7 +303461,7 @@
         }
       ],
       "current_stage": "OA",
-      "next_card": "WP12-09",
+      "next_card": "WP12-16",
       "no_module_freeze": true,
       "phases": {
         "A": [
@@ -303315,18 +303645,18 @@
       },
       "next_card_selection": {
         "rule": "按全图最长下游边数降序，同长保留 OA 阶段原序。",
-        "baseline_sha": "b2f3cb9f341f6e15a6cbc31dd3b3d721ec947be8",
+        "baseline_sha": "f64005bca2ebdbea4ea735581a2763eb90d6c295",
         "stage": "OA",
-        "after_card": "WP12-13",
-        "selected": "WP12-09",
+        "after_card": "WP12-09",
+        "selected": "WP12-16",
         "candidates": [
-          {
-            "task": "WP12-09",
-            "longest_downstream_edges": 4
-          },
           {
             "task": "WP12-16",
             "longest_downstream_edges": 4
+          },
+          {
+            "task": "WP12-11",
+            "longest_downstream_edges": 3
           },
           {
             "task": "WP12-05",
@@ -303342,9 +303672,8 @@
           }
         ],
         "dispatch_ref": {
-          "commit": "e0909fb191ff44c8faa7dc54984e6c2b2497c6c2",
-          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T013311Z-exec-wp02-14b-wp12-13/MESSAGE.md",
-          "registration_commit": "782561aa9d9aae519decfd94819c2ab8e8b2479f"
+          "commit": "756f21c8b7517f5c7a05fe184fcd272d3d7a5eb0",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T025844Z-exec-wp02-14b-wp12-09/MESSAGE.md"
         }
       },
       "phase0_user_confirmation": "2026-11-17 用户确认：先按证据核销或拆卡，列清缺口；完成阶段0核对后再按顺序实施剩余卡。",
@@ -303410,7 +303739,7 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 4005.739,
+      "target_review_effective_seconds": 4005.816,
       "last_checkpoint_counts": {
         "original_done": 78,
         "fully_done": 78,

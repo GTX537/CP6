@@ -68,6 +68,17 @@ it('assigns only the freshly selected frozen resolution slot and never expands i
   const w = setup(ResolutionPanel, { instanceId: instance }), s = state(w)
   vi.mocked(api.resolution).mockResolvedValue({ resolutionId: task, resolutionVersion: 'resolution-v', instanceId: instance, instanceVersion: 'instance-v', executionCycleId: 'cycle', nodeId: 'a', tokenId: 'token', stageIndex: 1, stageRound: 2, flowDefVersionId: 'flow', routePolicyRef: 'exact-policy', reason: 'missing approver', state: 'PENDING', candidatePrincipalIds: ['b', 'a'], candidates: [{ userId: 'a', name: '合格审批人甲' }, { userId: 'b', name: '合格审批人乙' }], canAssign: true, blockingReasons: [] })
   await s.load(task); await flushPromises(); expect(w.text()).toContain('合格审批人甲'); s.targets = ['outside']; s.reason = 'restore'; await s.assign(); expect(api.send).not.toHaveBeenCalled()
+  expect(w.text()).toContain('exact-policy')
   s.targets = ['b', 'a']; vi.mocked(api.send).mockRejectedValue({ response: { status: 503 } }); await s.assign()
   expect(JSON.parse(vi.mocked(api.send).mock.calls[0]![1])).toMatchObject({ expectedVersion: 'resolution-v', body: { targetPrincipalIds: ['a', 'b'], routePolicyRef: 'exact-policy', executionCycleId: 'cycle', tokenId: 'token', stageIndex: 1, stageRound: 2 } })
+})
+
+it('reports the original suspended resubmission as waiting for assignment', async () => {
+  const wrapper = setup(ReturnedPanel, { instanceId: instance })
+  const panel = state(wrapper)
+  const receipt = { outcome: 'SUCCEEDED' as const, result: { instanceStatus: 'SUSPENDED' } }
+  vi.mocked(api.send).mockImplementation(async intent => ({ ...receipt, commandId: intent.command }))
+  await panel.load()
+  await panel.resubmit()
+  expect(wrapper.emitted('completed')).toEqual([['已重送，提交时待指定审批人。']])
 })
