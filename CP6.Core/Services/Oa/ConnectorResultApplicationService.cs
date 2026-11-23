@@ -3,6 +3,7 @@ using System.Text.Json;
 using CP6.Core.Persistence;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
+using CP6.Entity.Contracts.Wire;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
 
@@ -46,7 +47,8 @@ public sealed partial class ConnectorControlRuntimeV1
         var identity = plan.Original.Identity;
         var source = await ReadAdmission(identity.JobId, ct)
             ?? throw new ScopeAuthorizationExceptionV1("RESULT_ADMISSION_REQUIRED");
-        var raw = result.Payload.Length is >= 1 and <= 65536 ? result.Payload.ToArray() : null;
+        var raw = result.Payload.Length is >= 1 and <= WorkflowCommandJsonV1.MaxDocumentBytes
+            ? result.Payload.ToArray() : null;
         var digest = raw == null
             ? Convert.ToHexString(SHA256.HashData(result.Payload.Span)).ToLowerInvariant() : Digest(raw);
         var mapping = (plan.Provider as IConnectorResultApplicationV1)?.OutputMapping(plan.Version);
@@ -65,13 +67,13 @@ public sealed partial class ConnectorControlRuntimeV1
 
         if (denial != null)
         {
-            // 异体与无效输入留在隔离表。当前应用沿首个有效原件定位。
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 INSERT INTO cp6_oa_conn_v1.result_quarantine(tenant_id,environment_id,job_id,payload_sha256,payload,reason)
                 VALUES({identity.TenantId},{identity.EnvironmentId},{identity.JobId},{digest},{raw},{denial})
                 ON CONFLICT DO NOTHING
                 """, ct);
-            return null;
+            // 隔离本次异体后，当前租约继续按原键处理已保存的首份有效结果。
+            return existing?.Id;
         }
         if (existing != null) return existing.Id;
 

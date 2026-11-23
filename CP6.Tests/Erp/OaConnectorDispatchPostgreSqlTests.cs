@@ -519,7 +519,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
 
     private static (Process Worker, string PidPath) StartDispatchProcess(Harness h, ConnResource root,
-        OaConnectorDispatchWireFixture wire, Guid job, bool result = false, bool pauseApply = false)
+        OaConnectorDispatchWireFixture wire, Guid job, bool result = false, bool pauseApply = false, string? testAssembly = null)
     {
         var pidPath = Path.Combine(Environment.GetEnvironmentVariable("CP6_PERMISSION_PG_ROOT")!, "dispatch-worker-" + Guid.NewGuid().ToString("N") + ".pid");
         var start = new ProcessStartInfo(Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet")
@@ -527,7 +527,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true,
         };
         start.ArgumentList.Add("vstest");
-        start.ArgumentList.Add(typeof(OaConnectorDispatchProcessTests).Assembly.Location);
+        start.ArgumentList.Add(testAssembly ?? typeof(OaConnectorDispatchProcessTests).Assembly.Location);
         start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName~OaConnectorDispatchProcessTests.RunScan");
         start.Environment["CP6_WP1216_SCAN_PID"] = pidPath;
         start.Environment["CP6_WP1216_SCAN_DB"] = h.Db.Database.GetConnectionString()!;

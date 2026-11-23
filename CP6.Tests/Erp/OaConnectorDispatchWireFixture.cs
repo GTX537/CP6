@@ -193,16 +193,18 @@ internal sealed class OaConnectorResultHttpParticipant(Guid tenant, Guid environ
     : OaConnectorDispatchHttpParticipant(tenant, environment, pin, origin, client), IConnectorResultApplicationV1
 {
     internal Func<CancellationToken, Task>? BeforeApply { get; init; }
+    internal int MaxMessageLength { get; set; } = 60;
+    internal bool AllowApply { get; set; } = true;
 
     public IReadOnlyList<ConnectorOutputFieldV1> OutputMapping(RegisteredConnectorVersionV1 version) =>
-        [new("message", "connectorMessage", ConnectorOutputKindV1.Text, MaxLength: 60),
+        [new("message", "connectorMessage", ConnectorOutputKindV1.Text, MaxLength: MaxMessageLength),
          new("amount", "connectorAmount", ConnectorOutputKindV1.Decimal, Precision: 12, Scale: 2)];
 
     public async Task<bool> MayApplyAsync(CP6Context db, RegisteredConnectorVersionV1 version,
         ConnectorOriginalOperationV1 original, ScopeAuthorizationSnapshotV1 authority, CancellationToken ct)
     {
         if (BeforeApply != null) await BeforeApply(ct);
-        return (await PostgreSqlPermissionReader.ReadAsync(db, original.StarterId, ct))
+        return AllowApply && (await PostgreSqlPermissionReader.ReadAsync(db, original.StarterId, ct))
             .ActionKeys.Contains("oa-flow-admin:conn.connector.activate");
     }
 }

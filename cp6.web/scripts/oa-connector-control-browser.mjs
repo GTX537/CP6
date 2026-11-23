@@ -110,7 +110,7 @@ try {
   reviewer.panel = reviewer.page.getByTestId('conn-CONNECTOR')
   await button(panel, 'browser-dispatch-history · TENANT · v1').click()
   await button(panel, '读取派发记录').click()
-  const dispatch = panel.locator('[data-dispatch-state="CANCELLATION_REQUESTED"]')
+  const dispatch = panel.locator('[data-dispatch-state="CANCELLATION_REQUESTED"]').filter({ hasText: env.CP6_CONN_DISPATCH_JOB })
   await expect(dispatch).toContainText(env.CP6_CONN_DISPATCH_JOB)
   await expect(dispatch).toContainText('SIMULATED')
   await expect(dispatch).toContainText('已收到运输确认')
@@ -118,11 +118,19 @@ try {
   steps.push('原派发在页内显示取消请求与运输确认')
   if (env.CP6_CONN_RESULT_JOB) {
     const resultRow = panel.locator('[data-dispatch-state="RESULT_RECEIVED"]').filter({ hasText: env.CP6_CONN_RESULT_JOB })
+    await expect(resultRow).toContainText('已接收结果')
+    await expect(resultRow).not.toContainText('RESULT_RECEIVED')
     await expect(resultRow.locator('[data-result-state="SUCCEEDED"]')).toContainText('外部结果 已成功')
     await expect(resultRow.locator('[data-workflow-resume="APPLIED"]')).toContainText('流程 已应用')
     await expect(resultRow.locator('[data-owner-application="UNPROVEN"]')).toContainText('业务应用 未证实')
     await expect(resultRow).not.toContainText('原结果')
     steps.push('已确认结果、流程应用和未证实业务应用在原派发页分别可见')
+  }
+  if (env.CP6_CONN_HELD_JOB) {
+    const heldRow = panel.locator('[data-dispatch-state]').filter({ hasText: env.CP6_CONN_HELD_JOB })
+    await expect(heldRow.locator('[data-workflow-resume="HELD"]')).toContainText('流程 待本地应用')
+    await expect(heldRow.locator('[data-result-state="SUCCEEDED"]')).toContainText('外部结果 已成功')
+    steps.push('结果已持久接收而流程受阻时，原 OA 页面显示待本地应用')
   }
   const connectors = {}
   for (const [source, profile] of [['TENANT', env.CP6_CONN_TENANT_PROFILE], ['APP', env.CP6_CONN_APP_PROFILE]]) {
@@ -158,7 +166,8 @@ try {
   await expect(panel.getByRole('heading', { name: '浏览器连接器 APP · v1 · ENABLED' })).toBeVisible()
   steps.push('同名 TENANT、APP 分别激活，停用 TENANT 后 APP 仍为 ENABLED')
   await writeFile(path.join(output, 'result.json'), JSON.stringify({ result: 'PASS', root, version, connectors,
-    dispatch: env.CP6_CONN_DISPATCH_JOB, resultJob: env.CP6_CONN_RESULT_JOB, steps, requests }, null, 2))
+    dispatch: env.CP6_CONN_DISPATCH_JOB, resultJob: env.CP6_CONN_RESULT_JOB,
+    heldJob: env.CP6_CONN_HELD_JOB, steps, requests }, null, 2))
 } catch (err) {
   for (const [i, p] of pages.entries()) {
     await p.screenshot({ path: path.join(output, 'error-' + i + '.png') }).catch(() => {})

@@ -33,7 +33,7 @@ public sealed partial class ConnectorVersionControlService
               coalesce(ap.state, CASE WHEN r.id IS NOT NULL THEN CASE WHEN
                   i."Id" IS NULL OR i."Status" IN ({FlowInstanceStatus.Approved},{FlowInstanceStatus.Rejected},{FlowInstanceStatus.Withdrawn}) OR
                   t."Id" IS NULL OR t."Status"<>{FlowTokenStatus.Active} OR t."InstanceId"<>a.instance_id OR t."NodeId"<>a.node_id
-                THEN 'STALE_TOKEN' ELSE 'HOLD' END END) AS "WorkflowResume",
+                THEN 'STALE_TOKEN' ELSE 'HELD' END END) AS "WorkflowResume",
               ap.receipt_id AS "ResumeReceiptId",
               coalesce(owner_receipt.state,'UNPROVEN') AS "BusinessOwnerApplication",
               owner_receipt.evidence AS "BusinessOwnerEvidence"

@@ -41,10 +41,13 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests(TenantManagement
         public ValueTask DisposeAsync() => Db.DisposeAsync();
     }
 
-    private async Task<Harness> Seed(params IInterceptor[] interceptors)
+    private Task<Harness> Seed(params IInterceptor[] interceptors)
+        => SeedForDatabase(TenantManagementPostgresFixture.Database, interceptors);
+
+    private async Task<Harness> SeedForDatabase(string database, params IInterceptor[] interceptors)
     {
         var tenant = Guid.NewGuid();
-        var db = server.Context(new TenantContext { CurrentTenantId = tenant }, null, interceptors);
+        var db = server.ContextForDatabase(database, new TenantContext { CurrentTenantId = tenant }, null, interceptors);
         var user = new Sys_User { UserName = "price-owner", Password = new BCryptPasswordHasher(4).Hash("Price1!Password"), RoleId = 72 };
         db.Sys_Tenants.Add(new() { Id = tenant, TenantCode = tenant.ToString("N"), TenantName = "owned" });
         db.Sys_Roles.Add(new() { RoleId = 72, RoleName = "price-correction" });

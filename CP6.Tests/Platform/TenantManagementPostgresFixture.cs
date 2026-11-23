@@ -4,6 +4,8 @@ using CP6.Core.Services.Common;
 using CP6.Core.Services.CrmIdentity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using CP6.Core.Services.Platform;
 using CP6.Core.Services.Sys;
 using CP6.Core.Utilities;
@@ -59,19 +61,19 @@ public sealed class TenantManagementPostgresFixture : IAsyncLifetime
         catch { await _server.DisposeAsync(); throw; }
     }
 
-    internal async Task<string> CreateIsolatedDatabaseAsync()
+    internal async Task<string> CreateIsolatedDatabaseAsync(string? targetMigration = null)
     {
         var database = "tenant_component_" + Guid.NewGuid().ToString("N");
-        await CreateDatabaseAsync(database);
+        await CreateDatabaseAsync(database, targetMigration);
         return database;
     }
 
-    private async Task CreateDatabaseAsync(string database)
+    private async Task CreateDatabaseAsync(string database, string? targetMigration = null)
     {
         await using (var owner = await _server.OpenOwnerAsync("postgres"))
             await CurrentPermissionPostgresFixture.Sql(owner, $"CREATE DATABASE {database}");
         await using var core = ContextForDatabase(database, new TenantContext());
-        await core.Database.MigrateAsync();
+        await core.GetService<IMigrator>().MigrateAsync(targetMigration);
         await using var priority = PriorityContext(database);
         await priority.Database.MigrateAsync();
     }

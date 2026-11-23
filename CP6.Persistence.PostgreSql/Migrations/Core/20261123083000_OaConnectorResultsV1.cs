@@ -23,7 +23,7 @@ public sealed class OaConnectorResultsV1 : Migration
         CREATE TABLE cp6_oa_conn_v1.result_inbox (
             tenant_id uuid NOT NULL, environment_id uuid NOT NULL, job_id uuid NOT NULL, id uuid NOT NULL,
             service_registration text NOT NULL, schema_ref text NOT NULL, proof_ref text NOT NULL,
-            payload bytea NOT NULL CHECK(octet_length(payload) BETWEEN 1 AND 65536),
+            payload bytea NOT NULL CHECK(octet_length(payload) BETWEEN 1 AND 1048576),
             payload_sha256 text NOT NULL CHECK(payload_sha256=encode(sha256(payload),'hex')),
             mapping_sha256 text NOT NULL CHECK(mapping_sha256 ~ '^[0-9a-f]{64}$'),
             received_attempt integer NOT NULL CHECK(received_attempt>0),
@@ -34,7 +34,7 @@ public sealed class OaConnectorResultsV1 : Migration
         CREATE TABLE cp6_oa_conn_v1.result_quarantine (
             tenant_id uuid NOT NULL, environment_id uuid NOT NULL, job_id uuid NOT NULL,
             payload_sha256 text NOT NULL CHECK(payload_sha256 ~ '^[0-9a-f]{64}$'),
-            payload bytea CHECK(octet_length(payload) BETWEEN 1 AND 65536 AND payload_sha256=encode(sha256(payload),'hex')),
+            payload bytea CHECK(octet_length(payload) BETWEEN 1 AND 1048576 AND payload_sha256=encode(sha256(payload),'hex')),
             reason text NOT NULL CHECK(reason IN('RESULT_IDENTITY_MISMATCH','RESULT_SCHEMA_INVALID','RESULT_CONFLICT','RESULT_SIZE_INVALID')),
             received_at timestamptz NOT NULL DEFAULT clock_timestamp(),
             PRIMARY KEY(tenant_id,environment_id,job_id,payload_sha256,reason),

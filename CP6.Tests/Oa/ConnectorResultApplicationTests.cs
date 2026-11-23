@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Text.Json;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Oa;
@@ -96,6 +97,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var receipt = await ResumeReceipt(h, job.Id);
         Assert.NotNull(receipt);
         var entry = await ResultDispatch(maker, root, job.Id);
+        Assert.Equal("RESULT_RECEIVED", entry.GetProperty("state").GetString());
         Assert.Equal("SUCCEEDED", entry.GetProperty("resultState").GetString());
         Assert.Equal("APPLIED", entry.GetProperty("workflowResume").GetString());
         Assert.Equal(receipt, entry.GetProperty("resumeReceiptId").GetGuid());
@@ -140,13 +142,15 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await using var newDb = server.Context(new TenantContext { CurrentTenantId = h.Tenant });
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(60));
         var participant = ResultParticipant(h, root, wire, http);
-        var old = DispatchWorker(oldDb, [participant]).ScanOnceAsync(DateTime.UtcNow, "result-old", timeout.Token);
+        var originalScan = DateTime.UtcNow;
+        var takeoverScan = originalScan + WfServiceJobService.LeaseDuration + TimeSpan.FromSeconds(1);
+        var old = DispatchWorker(oldDb, [participant]).ScanOnceAsync(originalScan, "result-old", timeout.Token);
         Task<int>? current = null;
         try
         {
             await wire.Arrived.Task.WaitAsync(timeout.Token);
-            await ExpireResultClaim(h, job.Id);
-            current = DispatchWorker(newDb, [participant]).ScanOnceAsync(DateTime.UtcNow, "result-current", timeout.Token);
+            // 由正常扫描的时钟推进触发到期回收，沿原 Job 接管。
+            current = DispatchWorker(newDb, [participant]).ScanOnceAsync(takeoverScan, "result-current", timeout.Token);
             await WaitForResult(() => Task.FromResult(!wire.Queries.IsEmpty));
             send.TrySetResult();
             Assert.Equal(0, await old);
@@ -166,15 +170,22 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal("RESULT_CONFLICT", await h.Db.Database.SqlQuery<string>($"""
             SELECT reason AS "Value" FROM cp6_oa_conn_v1.result_quarantine WHERE tenant_id={h.Tenant} AND job_id={job.Id}
             """).SingleAsync());
-        await MakeDispatchDue(h, job.Id);
-        Assert.Equal(1, await DispatchWorker(newDb, [participant]).ScanOnceAsync(DateTime.UtcNow, "result-retry"));
-        Assert.Equal(3, await h.Db.Database.SqlQuery<int>($"""
+        var receipt = await ResumeReceipt(h, job.Id);
+        Assert.NotNull(receipt);
+        Assert.Equal(0, await DispatchWorker(newDb, [participant]).ScanOnceAsync(takeoverScan.AddMinutes(10), "result-next-scan"));
+        Assert.Equal(receipt, await ResumeReceipt(h, job.Id));
+        Assert.Equal(2, await h.Db.Database.SqlQuery<int>($"""
             SELECT attempt AS "Value" FROM cp6_oa_conn_v1.result_applications WHERE tenant_id={h.Tenant} AND job_id={job.Id}
             """).SingleAsync());
         Assert.Equal(wire.ResultPayload, await ReadConnectorResult(h, job.Id));
-        Assert.Single(wire.Sends);
-        Assert.Single(wire.Queries);
-        output.WriteLine($"SIMULATED 旧租约留原事实，第二次观察异体隔离，第三次本地应用，Job={job.Id:D}，POST=1，GET=1。");
+        Assert.Equal(receipt, await h.Db.Database.SqlQuery<Guid>($"""
+            SELECT receipt_id AS "Value" FROM cp6_oa_conn_v1.result_outbox
+            WHERE tenant_id={h.Tenant} AND environment_id={ScopeEnvironment} AND job_id={job.Id}
+            """).SingleAsync());
+        var sent = Assert.Single(wire.Sends);
+        var probed = Assert.Single(wire.Queries);
+        Assert.Equal((sent.Effect, sent.Transport, sent.Digest), (probed.Effect, probed.Transport, probed.Digest));
+        output.WriteLine($"SIMULATED 正常扫描接管，同一轮隔离异体并应用首份原件，Job={job.Id:D}，ResumeReceipt={receipt:D}，POST=1，GET=1，后续扫描增量为零。");
     }
 
     [CurrentPermissionPostgresFact]
@@ -285,12 +296,88 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Null(await ResumeReceipt(h, job.Id));
         var held = await ResultDispatch(maker, root, job.Id);
         Assert.Equal("SUCCEEDED", held.GetProperty("resultState").GetString());
-        Assert.Equal("HOLD", held.GetProperty("workflowResume").GetString());
+        Assert.Equal("HELD", held.GetProperty("workflowResume").GetString());
         await EngineeringAction(h, "oa-flow-admin", "conn.connector.activate");
         await ExpireResultClaim(h, job.Id);
         Assert.Equal(1, await worker.ScanOnceAsync(DateTime.UtcNow, "current-authority"));
         Assert.NotNull(await ResumeReceipt(h, job.Id));
         Assert.Single(wire.Sends);
+        Assert.Empty(wire.Queries);
+    }
+
+    private static byte[] SizedConnectorResult(int size)
+    {
+        var prefix = "  {\"message\":\"原件-"u8;
+        var suffix = "\",\"amount\":17.20}\n"u8;
+        var raw = new byte[size];
+        prefix.CopyTo(raw);
+        raw.AsSpan(prefix.Length, size - prefix.Length - suffix.Length).Fill((byte)'x');
+        suffix.CopyTo(raw.AsSpan(size - suffix.Length));
+        return raw;
+    }
+
+    private sealed record ConnectorQuarantine(string Reason, string Digest, byte[]? Payload);
+
+    [CurrentPermissionPostgresFact]
+    public async Task OaConnResult_exact_utf8_bytes_and_digest_follow_one_MiB_boundary_in_inbox_and_quarantine()
+    {
+        const int limit = 1024 * 1024;
+        await using var h = await Seed();
+        await RegisterScope(h);
+        await ConnPeople(h);
+        await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, ConnSettings());
+        var maker = new ConnApi(host, await Login(host, h));
+        var root = await CreateResultConnector(h, maker, "result-byte-boundary");
+        await using var wire = await OaConnectorDispatchWireFixture.StartAsync();
+        using var http = DispatchHttp();
+        var participant = ResultParticipant(h, root, wire, http);
+        participant.MaxMessageLength = limit;
+        var worker = DispatchWorker(h.Db, [participant]);
+        foreach (var (length, schema, rejection) in new (int, string, string?)[]
+        {
+            (65_537, "response-v1", null),
+            (limit, "response-v1", null),
+            (limit, "wrong-schema", "RESULT_SCHEMA_INVALID"),
+            (limit + 1, "response-v1", "RESULT_SIZE_INVALID"),
+        })
+        {
+            var job = await DispatchJob(h, root, "result-byte-boundary");
+            var raw = SizedConnectorResult(length);
+            var digest = Convert.ToHexString(SHA256.HashData(raw)).ToLowerInvariant();
+            wire.ResultPayload = raw;
+            wire.ResultSchema = schema;
+            Assert.Equal(1, await worker.ScanOnceAsync(DateTime.UtcNow, "result-boundary"));
+            var entry = await ResultDispatch(maker, root, job.Id);
+            if (rejection == null)
+            {
+                Assert.Equal("RESULT_RECEIVED", entry.GetProperty("state").GetString());
+                Assert.Equal("APPLIED", entry.GetProperty("workflowResume").GetString());
+                Assert.Equal(raw, await ReadConnectorResult(h, job.Id));
+                var savedDigest = await h.Db.Database.SqlQuery<string>($"""
+                    SELECT payload_sha256 AS "Value" FROM cp6_oa_conn_v1.result_inbox
+                    WHERE tenant_id={h.Tenant} AND environment_id={ScopeEnvironment} AND job_id={job.Id}
+                    """).SingleAsync();
+                Assert.Equal(digest, savedDigest);
+                Assert.NotNull(await ResumeReceipt(h, job.Id));
+            }
+            else
+            {
+                Assert.Equal("QUARANTINED", entry.GetProperty("resultState").GetString());
+                var saved = await h.Db.Database.SqlQuery<ConnectorQuarantine>($"""
+                    SELECT reason AS "Reason",payload_sha256 AS "Digest",payload AS "Payload"
+                    FROM cp6_oa_conn_v1.result_quarantine
+                    WHERE tenant_id={h.Tenant} AND environment_id={ScopeEnvironment} AND job_id={job.Id}
+                    """).SingleAsync();
+                Assert.Equal((rejection, digest), (saved.Reason, saved.Digest));
+                if (length <= limit) Assert.Equal(raw, saved.Payload);
+                else Assert.Null(saved.Payload);
+                Assert.Null(await ReadConnectorResult(h, job.Id));
+                Assert.Null(await ResumeReceipt(h, job.Id));
+                await AssertOriginalTokenHeld(h, job);
+            }
+            output.WriteLine($"SIMULATED 原结果字节={length}，SHA-256={digest}，状态={rejection ?? "APPLIED"}，Job={job.Id:D}。");
+        }
+        Assert.Equal(4, wire.Sends.Count);
         Assert.Empty(wire.Queries);
     }
 }

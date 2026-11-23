@@ -42,7 +42,7 @@ internal static class ConnectorResultOutputV1
 
     private static bool Accept(ConnectorOutputFieldV1 field, JsonElement value) => field.Kind switch
     {
-        ConnectorOutputKindV1.Text => value.ValueKind == JsonValueKind.String && field.MaxLength is >= 1 and <= 65536
+        ConnectorOutputKindV1.Text => value.ValueKind == JsonValueKind.String && field.MaxLength is >= 1 and <= WorkflowCommandJsonV1.MaxDocumentBytes
             && value.GetString()!.Length <= field.MaxLength,
         ConnectorOutputKindV1.Boolean => value.ValueKind is JsonValueKind.True or JsonValueKind.False,
         ConnectorOutputKindV1.Integer => value.ValueKind == JsonValueKind.Number && value.TryGetInt64(out _),

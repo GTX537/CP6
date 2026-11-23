@@ -8,7 +8,7 @@ const props = defineProps<{ kind: Kind }>()
 const captions: Record<Control, string> = { PUBLISH: '发布', ENABLE: '启用', ACTIVATE: '激活', DISABLE: '停用', RETIRE: '退役' }
 const dispatchCaptions: Record<string, string> = {
   DISPATCH_ADMITTED: '已准入', CANCELLATION_REQUESTED: '已请求取消（外部效果仍待确认）',
-  SENT: '已发送', HTTP_ACK: '已收到运输确认', OUTCOME_UNKNOWN: '结果未知',
+  SENT: '已发送', HTTP_ACK: '已收到运输确认', OUTCOME_UNKNOWN: '结果未知', RESULT_RECEIVED: '已接收结果',
   NOT_OBSERVED: '尚未查到原操作', ORIGINAL_OPERATION_OBSERVED: '已查到原操作',
 }
 const choices = ref<Choices>({ profiles: [], definitions: [], actions: [] })
@@ -61,7 +61,7 @@ async function refresh(check: Check, signal: AbortSignal, root?: string, version
   check(); choices.value = opt; rows.value = list; subjects.value = queue; selected.value = item; dispatchHistory.value = undefined
 }
 const resultCaptions: Record<string, string> = {
-  SUCCEEDED: '已成功', QUARANTINED: '已隔离', HOLD: '待本地应用', APPLIED: '已应用', STALE_TOKEN: '已归档的迟到结果',
+  SUCCEEDED: '已成功', QUARANTINED: '已隔离', HELD: '待本地应用', APPLIED: '已应用', STALE_TOKEN: '已归档的迟到结果',
   UNPROVEN: '未证实', PENDING_GAP: '回执待补齐', STALE: '已过期', CONFLICT: '有冲突', BLOCKED: '受阻',
 }
 function reload() { return run((check, signal) => refresh(check, signal, selected.value?.rootId, selected.value?.versionId)) }
