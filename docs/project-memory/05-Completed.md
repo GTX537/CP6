@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP12-09 退回重送、转交加签和无人审批恢复](../development/evidence/WP12-09/DELIVERY.md)（DONE），核对时间 `2026-11-23T03:45:23.754165+00:00`。
+- [WP12-16 连接器外呼的本地准入与稳定effectKey](../development/evidence/WP12-16/DELIVERY.md)（DONE），核对时间 `2026-11-23T05:58:52.413105+00:00`。
 
 ### 已关闭目标
 

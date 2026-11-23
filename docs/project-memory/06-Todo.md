@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 下一卡
 
-台账指定的下一卡为 [WP12-16 连接器外呼的本地准入与稳定effectKey](../development/task-plans/WP12.md#wp12-16)。直接前置为 S01-02、S02-00、WP02-10、WP02-13、WP12-07、WP12-13。
+台账指定的下一卡为 [WP12-11 准确截止策略与超时worker竞争](../development/task-plans/WP12.md#wp12-11)。直接前置为 S01-02、S02-00、WP02-10、WP02-13、WP02-21、WP12-08、WP12-09。
 <!-- /cp6:roadmap -->
 
 2026-11-21 20:04 UTC，WP03-16b 完整 DONE。CRM-LEAD-01 原 AC 48/60、必需运行修订 6/12，保持开放。WP03-28、WP14-02、WP03-07 和 WP03-29 承接已登记余项。阶段 C 候选为 WP03-06b、WP03-11、WP03-28、WP03-29。WP03-06b 继续等待 C03 斜线权威原件或兼容合同，实际领取以独立派工为准。[当前核销](../development/planning/20261117-card-execution.md)

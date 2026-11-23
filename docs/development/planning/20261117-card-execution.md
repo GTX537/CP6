@@ -639,3 +639,11 @@ WP12-09 完整 DONE。以 `f64005bca2ebdbea4ea735581a2763eb90d6c295` 领取，�
 按 [#407 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/0805999ce0c735a10d92e6f73f4d5dcca470a2fd/handoffs/CP6-DEV-20261012/tasks/WP12-13/replies/20261123T025622Z-coord-acceptance-ack/MESSAGE.md) 对 [WP12-13 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/68bcfaece7a4600ed0e1ac59fa571de0ce787fe0/handoffs/CP6-DEV-20261012/tasks/WP12-13/messages/20261123T024747Z-exec-wp02-14b-delivery/MESSAGE.md) 的完整提交和路径查重，单次补记 424.692 秒至 4172.010 秒，旧目标复核 13.335 秒单列。加入本卡前计划累计 175182.397 秒。
 
 核销快照 `2026-11-23T03:45:23.754165+00:00`，本卡 2143.656 有效秒，目标复核另列 0.077 秒，计划累计 177326.130 秒。L 卡上限 28800 秒，43200 秒强制拆卡。本轮拆卡 0，原 48 小时检查点已登记。OA 完成 11/20，按图复算候选为 WP12-16（4）、WP12-11（3）、WP12-05（2）、WP12-14（2）、WP12-15（2）。后续派工归 COORD。
+
+## WP12-16 连接器外呼的本地准入与稳定 effectKey
+
+WP12-16 完整 DONE。以 `c7d6a99b62a13d58c96eef87cac95f46894185a1` 领取，直接前置及余卡展开 17 项完整 DONE。实际 Main API、worker、OA 浏览器与 PostgreSQL 运行证实当前资格、先提交后外呼、原键查证与旧入口隔离。提供方夹具为 SIMULATED，真实 Required/Provider 采用按证据为 UNPROVEN。OA-CONN-01 原 AC 10/32 通过，目标开放。 [正式派工 #410](https://github.com/GTX537/CP6.AI-Handoff/blob/4c033d8f86b88deea4e96384eb2d91ae417ceec3/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T043326Z-exec-wp02-14b-wp12-16/MESSAGE.md) · [唯一报告](../evidence/WP12-16/DELIVERY.md) · [Main PR](https://github.com/GTX537/CP6/pull/1314)
+
+按 [#409 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/61eba9e709cfdbbf3b3e4180032df55248b75ebe/handoffs/CP6-DEV-20261012/tasks/WP12-09/replies/20261123T043026Z-coord-acceptance-ack/MESSAGE.md) 对 [WP12-09 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/358af6cf99a37002d235f6a936e2faaff593d0ae/handoffs/CP6-DEV-20261012/tasks/WP12-09/messages/20261123T035053Z-exec-wp02-14b-delivery/MESSAGE.md) 的完整提交和路径查重，单次补记 307.799 秒至 2451.455 秒，原目标复核的 0.077 秒单列。加入本卡前计划累计 177633.929 秒。
+
+核销快照 `2026-11-23T05:58:52.413105+00:00`，本卡 2483.165 有效秒，目标复核另列 0.075 秒，计划累计 180117.169 秒。L 卡额度 28800 秒，43200 秒强制拆卡。本轮拆卡 0，原 48 小时检查点已登记。OA 完成 12/20，按图复算候选为 WP12-11（3）、WP12-17（3）、WP12-05（2）、WP12-14（2）、WP12-15（2）。正式派工归 COORD。
