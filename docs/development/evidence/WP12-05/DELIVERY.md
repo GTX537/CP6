@@ -98,3 +98,29 @@
 实际 Chrome 旧页验证第一、二页均为 22 条，真实新增同刻记录后刷新为 23 条，首末页合并顺序与预期一致。重置期间先等待 Main 完成，再延迟投递该真实响应；投递成功后旧结果、分页和日期均保持清空。目录、收藏、原生历史、文件下载及 Owner 回执边界通过受影响回归。浏览器 JSON 与截图位于本机 `permission-consumption-wp1205-return-chrome-e7702e62/catalog-history-browser`，汇总和重跑过滤条件在 `return-technical-summary.json`。
 
 本轮核对起点 `2026-11-23T12:41:20.3983272Z`，原 DEV-1 正常恢复于 `2026-11-23T12:45:01.7325330Z`。技术检查点 `2026-11-23T13:10:51.6180278+00:00`，本轮有效技术 **1771.220 秒**；草稿更新及交接的实际时间另列。正式验收和台账核销待总控。
+
+## 2026-11-23 同卡复验 · 旧流程逻辑恢复
+
+受验源码 `5a94627a9796459a840a35e84739842b7874f84e`，Git 树 `0fafa4472090f504b485158de5bd878867a8d82f`。Main 基线 `4d31801d0456064ae38cf367759d38000be286e2`，沿用 [草稿 #1317](https://github.com/GTX537/CP6/pull/1317) 和 [正式派工 #416](https://github.com/GTX537/CP6.AI-Handoff/blob/451a66f2ca73d725195a380edce9fb90c6d8951e/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T114542Z-cp6-exec-2-wp12-05/MESSAGE.md)。本节补 `AC-F06-01`、`AC-F06-05` 的数据库恢复证据。
+
+- 逻辑归档保留源库写入事务编号。目标库在本地事务快照中解释源编号会使已恢复的历史从查询中消失。首次查询读取目标库事务当前可见的存量。后续页仅用首次截点判断当前数据库代际的插入编号，保留当前权限、同一集合计数和同刻实例 ID 倒序。
+- 新迁移 `20261123132700_LegacyFormHistoryOriginV2` 保留旧行及其原事务编号。插入触发器用 PostgreSQL 集群系统标识、数据库 OID、表 OID 和存储文件节点记录当前来源及顶层插入事务，更新状态保留标记。更早存量和归档带入的源库标记按目标库存量处理。查询事务保持表代际稳定，续页遇到恢复前的数据库或表代际所签发的截点，或遇到缺少来源的旧截点时返回 `409 QUERY_SNAPSHOT_STALE`。页面清除已失效的分页并提示“查询截点已失效，请从第一页重新查询。”同库重建表存储也会触发该提示。
+- 实际 `pg_dump -Fc` 分别以 `pg_restore --exit-on-error --single-transaction` 还原至另一个全新集群的同名库、同集群的另一个库。归档包含原数据保护密钥环，旧令牌可解密后由来源复核拒绝。跨集群同名库的旧判定会漏掉全部 3 条合成记录。两个目标库首查均为 3 条，续页排除首次查询时仍未提交和翻页期间新增的记录，同刻次序及原截点稳定。新查询看到 5 条，旧 `/api/oa/query/search` 按原时间戳闭区间返回 4 条同刻记录。
+- 顺序前滚验证涵盖写入标记安装前的历史和上一草稿已记录事务编号的行。原业务数据、历史编号和更新行为保留，普通 PostgreSQL 角色能生成并读回当前来源和事务。首轮完整归档试验因隔离夹具的对象锁上限失败，本机夹具预留锁后同一命令两次均退出 0。
+
+### 受验运行
+
+`LAPTOP-3QQ44FJS` 的 `D:/CP6-worktrees/wave17-dispatch-20261018`，PostgreSQL 18.6、实际 Main HTTP 和 Chrome，仅用本机合成业务数据。后端定向和浏览器共 **34 项通过**，零失败或跳过。锁定还原构建及 `vue-tsc --build --force` 退出 0，Vitest 4 文件 23 项通过。
+
+| 本机证据 | 核对结果 |
+|---|---|
+| `restore-history-5a94627a.trx` | 6 通过，含实际逻辑恢复、迁移前滚及旧 HTTP。SHA-256 `17d7b5e9c051c2640aecf4f48f3093756797281c66acd205488b33f1f348ba09`。 |
+| `restore-chrome-5a94627a.trx` | 2 通过。实际页面初始 22 条，翻页仍 22 条，刷新后 23 条。表重写后旧令牌收到 409，能重查并继续分页，重置仍丢弃迟到响应。SHA-256 `6aef975d6a3445a9e96aed18b1900b34a572d6f600fdc540a53b2ed1f94b6613`。 |
+| `restore-boundaries-5a94627a.trx` | 26 通过，目录、收藏、原生历史、文件最终下载及 Owner 回执边界。SHA-256 `c6758404defc647dcb1a8d9e617c4b2b7bba882b0e5cc205109a17d7dc21ac7b`。 |
+| `build-restore-5a94627a.log`、`restore-assembly-5a94627a.json` | 构建退出 0。Core、PostgreSQL 迁移、WebApi、Tests 的版本和 SHA-256 对应受验源码。 |
+| `vue-tsc-restore-3e320b61.exit.json`、`vitest-restore-3e320b61.json` | 复用同轮 `3e320b61f22423f357fe0499d928166b6c2c250f` 的实测，`cp6.web` Git 树完全相同。Vitest JSON SHA-256 `20e74848a68405d70e9a750ab7149dddf023e809dfeba37cf0e89c679c546c0e`。 |
+| `restore-technical-summary.json`、`catalog-history-browser/result.json` | 汇总、归档退出、运行时间及校验值。Chrome JSON SHA-256 `977f563c9c3c8c95164e23151de578479d43b445ff4a071490886f1d837c794b`，`legacy-origin-stale.png` SHA-256 `a1b2e049593670d5e3ccbeaa4c43768d2fcab5148a09b419b86df2f775b1b808`。 |
+
+本机证据根 `C:/Users/tt/CP6-test-artifacts/WP12-05/20261123-wp1205`。三组定向数据库与跨集群目标均已停止。范围为逻辑归档恢复、表代际变动和本机应用行为，生产及物理时间点恢复未验证。原目录、披露和 Owner 证据继续沿其原运行记录。
+
+本轮核对起点 `2026-11-23T13:22:24.2431507Z`，原 DEV-1 恢复于 `2026-11-23T13:25:52.0873124Z`。技术检查点 `2026-11-23T13:48:55.8016872Z`，有效技术 **1591.559 秒**。并行验证按同一工作区间计一次。草稿更新及交接据本轮远端回读另计。DEV-1 保留供总控独立验收，正式采用和台账核销待总控决定。
