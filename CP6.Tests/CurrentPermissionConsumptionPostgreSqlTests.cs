@@ -106,6 +106,8 @@ public sealed class CurrentPermissionPostgresFixture : IAsyncLifetime
             listen_addresses = '127.0.0.1'
             port = {_port}
             max_connections = 40
+            # 给完整逻辑归档的单事务恢复预留对象锁。
+            max_locks_per_transaction = 256
             log_statement = 'none'
             log_min_error_statement = 'panic'
             log_parameter_max_length = 0
