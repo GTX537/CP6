@@ -53,6 +53,7 @@ public static class WorkCalendarConnectorPermissionSeed
         (FlowAdminMenuId, "conn.trigger.review", "复核触发器控制"),
         (FlowAdminMenuId, "conn.trigger.publish", "发布触发器版本"),
         (FlowAdminMenuId, "conn.trigger.control", "控制触发器版本"),
+        (FlowAdminMenuId, "conn.trigger.fire", "手动触发流程"),
         (FlowAdminMenuId, "conn.connector.write", "编辑连接器版本"),
         (FlowAdminMenuId, "conn.connector.review", "复核连接器控制"),
         (FlowAdminMenuId, "conn.connector.activate", "激活连接器版本"),

@@ -72,7 +72,7 @@ public class WorkCalendarConnectorPermissionSeedTests
                 .Where(x => x.TenantId == tid).Select(x => new ValueTuple<int, string>(x.MenuId, x.ActionCode)).ToHashSet();
             var raSet = db.Sys_RoleActions.IgnoreQueryFilters()
                 .Where(x => x.TenantId == tid && x.RoleId == 1).Select(x => new ValueTuple<int, string>(x.MenuId, x.ActionCode)).ToHashSet();
-            var control = new[] {"conn.read","conn.trigger.write","conn.trigger.review","conn.trigger.publish","conn.trigger.control",
+            var control = new[] {"conn.read","conn.trigger.write","conn.trigger.review","conn.trigger.publish","conn.trigger.control","conn.trigger.fire",
                 "conn.connector.write","conn.connector.review","conn.connector.activate","conn.connector.control"};
             Assert.Equal(expected.Concat(control.Select(code=>(734,code))).Append((743, "Calendar.Recalculate")).ToHashSet(), maSet);
             Assert.Equal(expected, raSet);
@@ -97,8 +97,8 @@ public class WorkCalendarConnectorPermissionSeedTests
         Assert.Equal(ma1, db.Sys_MenuActions.IgnoreQueryFilters().Count());
         Assert.Equal(ra1, db.Sys_RoleActions.IgnoreQueryFilters().Count());
 
-        // 每租户登记原四项、九项连接器控制动作及独立重算权限。
-        Assert.Equal(28, ma1);
+        // 每租户登记原四项、十项连接器动作及独立重算权限。
+        Assert.Equal(30, ma1);
         Assert.Equal(8, ra1);
     }
 

@@ -27744,7 +27744,111 @@
         "docs/development/assessments/20261011/implementation-assessment.json",
         "docs/design-handbook/modules/OA-CONN-01.md",
         "docs/development/assessments/20261011/catalogs/engineering-oa.json"
+      ],
+      "split_children": [
+        "WP12-14b"
+      ],
+      "split_delivered_scope": [
+        "仅登记 oa-flow-admin（734）的 conn.trigger.fire 词条。隔离 PostgreSQL 两租户首次及重复播种各一条，角色动作和菜单授权、Instance/Token、调用、命令回执及 Outbox 均零增量。35 项同源验证，九项原 AC 待验。"
       ]
+    },
+    {
+      "id": "WP12-14b",
+      "package_id": "WP12",
+      "title": "定时事件消息与手动触发真实实例余项",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "OA-CONN-01"
+      ],
+      "relative_size": "L",
+      "dependencies": [
+        "WP12-14",
+        "S01-02",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP02-21",
+        "WP12-04",
+        "WP12-13"
+      ],
+      "external_prerequisites": [
+        "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
+        "WP02：可靠Inbox/JOB、可信时区日历/DST和真实Main Uow引擎参加能力。",
+        "RP-CONN-01 PinnedWorkflowAdmission 为 UNPROVEN。先由已采用的新 Workflow 和实际效果 Owner 共同确认正式可触发 Flow、确切 publication/version、schema digest、依赖和 activation。有 FORM 时沿真实绑定及原提交合同。须证明 Trigger 专用 Main PostgreSQL Uow 按原键同事务持久化冻结 vars、TriggerVersion/Invocation、真实 Instance/起始 Token、调用或时隙结果、命令回执、Outbox 和审计，并按原键恢复同一结果。",
+        "RP-CONN-02 WorkflowAuthorityRegistration 为 UNPROVEN。先由 SYS-IAM、来源和业务 Owner 确认可采用的principal、登记及代次、封闭 schema、可信租户/环境、Trigger、当前 Starter 受托和变量权、实际效果 Owner 绑定。采用共同锁和最终 WF_AUTH 复核来源状态、当前资格及写者。撤回后保留原合法接收事实并阻断新实例。TIMER 沿已登记调度主体和时间合同，手动沿当前用户、独立 fire 与实际 Owner 门。"
+      ],
+      "scope": [
+        "TIMER固定slot/schedule/pins/vars及misfire；EVENT/MESSAGE注册来源/完整fingerprint/稳定event键",
+        "Inbox接收后当前发起准入，手动context→preview→原command只引用固定输入",
+        "Invocation/slot/真实Instance/Token/command/outbox同Main Uow，恢复原slot不重新解析latest",
+        "两项运行合同均有 Main 采用证据并经独立核实后，按 TIMER、EVENT/MESSAGE、手动的顺序验收。"
+      ],
+      "outputs": [
+        "定时事件消息与手动触发真实实例的服务/持久记录、既有OA页面或worker适配",
+        "定时事件消息与手动触发真实实例的定向PostgreSQL/合同/UI正反例与验证证据"
+      ],
+      "code_paths": [
+        "CP6.Core/Services/Wf/WfConnectorService.cs",
+        "CP6.Core/Services/Wf/Executors/WebApiExecutor.cs",
+        "CP6.Core/Services/Wf/ApprovalDispatcher.cs",
+        "CP6.Core/Services/Wf/FlowTriggerService.cs",
+        "CP6.Core/Services/Wf/WfTriggerBridgeHook.cs",
+        "CP6.Core/Services/Wf/WfCronHelper.cs"
+      ],
+      "new_paths": [
+        "CP6.Core/Services/Oa/WorkflowTriggerInvocationService.cs",
+        "CP6.Tests/Oa/WorkflowTriggerInvocationTests.cs"
+      ],
+      "acceptance_positive": [
+        "重复事件或原timer slot只一真实实例；nextDue已推进后崩溃仍恢复同slot",
+        "手动预览无效果，明确确认后才真实实例存在",
+        "CONN-02、04、05、06。发版后按原时隙恢复冻结 varsSnapshot、pins 与命令。两个实际 worker 竞争、事务回滚及提交后丢回执按原键恢复，实例唯一，nextDue 独立对账。LATEST_ONE_SKIP_MISSED 择一并保存跳过范围。核对原日历、时区、cron、DST 重复与缺失、UTC/offset/fold、旧预览失效和 RP-CONN-04 实际时间提供方。",
+        "CONN-07、08、09。认证登记的 EVENT/MESSAGE 按原 ID 与完整指纹持久接收，同键同体回原事实，同键异体按原合同 QUARANTINED/409。验证原 64 KiB、封闭 schema 和拒绝零实例。来源或 Starter 撤回时保留 Inbox，依最终门阻断新实例和业务效果。",
+        "CONN-13、14。context 与无副作用 preview 冻结原输入。仅旧 Edit 或 Starter 资格不符时确认拒绝，核对 403 与预览失效。实际确认、超时回查、重试和刷新按原 commandId/previewId 只产生一个真实实例，新意图重新通过效果 Owner 门。"
+      ],
+      "acceptance_negative": [
+        "ACK/nextDue更新不证明Instance已建；同event异体隔离",
+        "payload不得覆盖Scope/Starter；未注册producer/过时authority阻新准入",
+        "缺 RP-CONN-01/02 的采用和当前复核时，定时、事件、消息及手动真实启动均阻断。仅词条登记、配置、租约、接收事实或模拟外部传输不足以证明真实实例及效果。"
+      ],
+      "exclusive_resources": [
+        "Main:oa-trigger",
+        "Main:workflow-engine",
+        "file:Main:CP6.Core/Services/Wf/WfConnectorService.cs",
+        "file:Main:CP6.Core/Services/Wf/Executors/WebApiExecutor.cs",
+        "file:Main:CP6.Core/Services/Wf/ApprovalDispatcher.cs"
+      ],
+      "notes": [
+        "OA保持原oa.app/2.0和WFC封闭合同、原枚举/摘要，兼容入口逐项映射；审批通过、引擎终态、运输接收与业务Owner应用回执分轴。",
+        "初始受阻。先核对父卡词条的 Main 实际采用，再由总控核实运行前置和准确范围。沿原验收和旧历史证据。允许合成业务数据及标明的 SIMULATED 外部传输，实际 Main HTTP/worker、OA Chrome、PostgreSQL 事务和最终门须实测。CONN-21 随 WP12-18，生产 provider/Owner 为 UNPROVEN。"
+      ],
+      "prerequisite_bindings": [
+        {
+          "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
+          "task_ids": [
+            "WP02-10",
+            "WP02-13"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "该仓真实Owner写入前交付；不能以接口存在代替采用。"
+        },
+        {
+          "requirement": "本任务采用的共同服务/先行设计",
+          "task_ids": [
+            "WP02-21"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "按已交付准确合同和当前授权采用。"
+        }
+      ],
+      "source_refs": [
+        "docs/development/08-postgresql-baseline.md",
+        "docs/development/assessments/20261011/implementation-assessment.json",
+        "docs/design-handbook/modules/OA-CONN-01.md",
+        "docs/development/assessments/20261011/catalogs/engineering-oa.json"
+      ],
+      "split_parent": "WP12-14"
     },
     {
       "id": "WP12-15",

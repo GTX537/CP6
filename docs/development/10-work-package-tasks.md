@@ -15,7 +15,7 @@
 | WP09 质量管理 | 12 | 4 | [查看卡片](../../docs/development/task-plans/WP09.md) |
 | WP10 仓储与物流 | 52 | 25 | [查看卡片](../../docs/development/task-plans/WP10.md) |
 | WP11 财务核算与结算 | 66 | 13 | [查看卡片](../../docs/development/task-plans/WP11.md) |
-| WP12 流程与审批 | 20 | 5 | [查看卡片](../../docs/development/task-plans/WP12.md) |
+| WP12 流程与审批 | 21 | 5 | [查看卡片](../../docs/development/task-plans/WP12.md) |
 | WP13 空间设计与运营 | 17 | 8 | [查看卡片](../../docs/development/task-plans/WP13.md) |
 | WP14 全链集成与交付验证 | 10 | 0 | [查看卡片](../../docs/development/task-plans/WP14.md) |
 
@@ -141,7 +141,7 @@
 | FIN-BUD-01 | WP11-12, WP11-13, WP11-48 |
 | FIN-BANK-01 | WP11-11, WP11-49, WP11-50, WP11-51, WP11-64 |
 | FIN-ASSET-01 | WP11-52, WP11-53, WP11-54, WP11-55 |
-| OA-CONN-01 | WP12-13, WP12-14, WP12-15, WP12-16, WP12-17, WP12-18 |
+| OA-CONN-01 | WP12-13, WP12-14, WP12-14b, WP12-15, WP12-16, WP12-17, WP12-18 |
 | SPACE-MASTER-01 | WP13-01, WP13-03 |
 | SPACE-DES-01 | WP13-02, WP13-10, WP13-12 |
 | SPACE-IMPORT-01 | WP13-06, WP13-07 |
