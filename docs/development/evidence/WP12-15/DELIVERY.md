@@ -16,7 +16,7 @@
 |---|---|
 | 版本化草稿新建与修订 | 两条路径均接受 200 字符的合法五段表达式，逐个回读为未发布 DRAFT，原字符串完整保留。两条路径均以 `422 TIMER_CONFIG_INVALID` 拒绝合法语法的 201 字符、空输入、四段、六段及超范围分钟。拒绝请求的命令回执和运行记录增量为零。 |
 | 同一配置页 | Chrome 确认提示可见、输入框具备对应无障碍描述和 200 上限，实际 POST 原样提交 200 字符，HTTP 200 后由数据库回读为未发布 DRAFT。 |
-| 旧入口 | Main 的 `/api/oa/flow-triggers/cron-preview` 对合法的 201 字符表达式仍返回 200 和 `data.next[5]`，非法分钟返回 `400 E-WF-022`。旧 `/api/oa/forecast/preview` 对合成缺失流程仍返回 `400 E-WF-006`。原生预演回归仅核对 Main 既有行为。 |
+| 旧入口 | Main 的 `/api/oa/flow-triggers/cron-preview` 对合法的 201 字符表达式仍返回 200 及含 5 个时点的 `data.next` 数组，非法分钟返回 `400 E-WF-022`。旧 `/api/oa/forecast/preview` 对合成缺失流程仍返回 `400 E-WF-006`。原生预演回归仅核对 Main 既有行为。 |
 | IAM、排程和写集 | 成功新建和修订各产生一条配置命令回执，Chrome 另有一条草稿回执。角色菜单和动作绑定快照一致，实例、令牌、任务、服务作业、触发流水、运行成员及结果和启动 Outbox 增量为零。旧停用 TIMER 的配置、版本、`NextDueUtc` 和 `LastFiredUtc` 逐项不变。API 测试宿主关闭后台服务，Chrome 仅访问本机环回，流程定义的绑定前置使用合成资料。 |
 
 原始证据根目录为 `C:/Users/tt/CP6-test-artifacts/WP12-15/20261123-wp1215-exec3-r3`。从原 DEV-1 运行根目录的 `run-wp1215-pg.ps1 -Run <新名称> -Filter "FullyQualifiedName~OaConn_TimerDraft_|FullyQualifiedName~Simulation_actual_HTTP_exact_draft_precision_read_authority_and_no_business_effects|FullyQualifiedName~WfCronHelperTests" -Browser` 可复验。依赖以 `dotnet restore CP6.Tests/CP6.Tests.csproj --locked-mode --artifacts-path <证据根目录>/dotnet --disable-build-servers` 还原，脚本创建新的隔离 PG 目录并选用环回端口。
@@ -40,6 +40,6 @@
 
 ## 工时与席位
 
-本轮从 `2026-11-23T13:54:34.0000000-05:00` 原席位恢复至 `2026-11-23T19:07:07.6871522+00:00` 候选报告快照，实际增加 753.687 秒，累计 5015.095 秒。此前有效 4261.408 秒，领用前核对本轮 92.379 秒及此前 171.438 秒单列，等待裁决时间从有效账排除。快照后的实际收尾尾差以远端回读记录为准。DEV-1 继续由 CP6-EXEC-3 持有本卡等待总控。DEV-2 空闲。
+本轮从 `2026-11-23T18:54:34.5505900+00:00` 原席位恢复至 `2026-11-23T19:07:07.6871522+00:00` 候选报告快照，实际增加 753.137 秒，累计 5014.545 秒。此前有效 4261.408 秒，领用前核对本轮 92.379 秒及此前 171.438 秒单列，等待裁决时间从有效账排除。快照后的实际收尾尾差以远端回读记录为准。DEV-1 继续由 CP6-EXEC-3 持有本卡等待总控。DEV-2 空闲。
 
 WP12-14 的 754.861 秒继续待合资格 Main 台账 PR 按原 DELIVERY 单次结转。 [WP12-14 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/951c930a7e05ecd544a3e5ab03770798b7a52793/handoffs/CP6-DEV-20261012/tasks/WP12-14/messages/20261123T163520Z-cp6-exec-3-delivery-closeout/MESSAGE.md)
