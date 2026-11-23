@@ -26,6 +26,10 @@ public sealed class FlowAuthoringController(FlowAuthoringOwnerV2 owner, FormAuth
     public Task<IActionResult> Preview(string key, FlowPublicationPreviewInputV2 input, CancellationToken ct) => Run(async () => await owner.PreviewPublicationAsync(key, input, ct));
     [HttpPost("definitions/FLOW/{key}/simulate"), RequestSizeLimit(1024 * 1024)]
     public Task<IActionResult> Simulate(string key, CancellationToken ct) => Run(async () => await owner.SimulateAsync(key, await Raw(ct), ct));
+    [HttpPost("definitions/FLOW/{key}/forecast"), RequestSizeLimit(1024 * 1024)]
+    public Task<IActionResult> Forecast(string key, CancellationToken ct) => Run(async () => await owner.ForecastAsync(key, await Raw(ct), ct));
+    [HttpPost("definitions/FLOW/{key}/forecast/export"), RequestSizeLimit(1024 * 1024)]
+    public Task<IActionResult> ExportForecast(string key, CancellationToken ct) => Run(async () => await owner.ForecastAsync(key, await Raw(ct), ct));
     [HttpPost("definitions/FLOW/{key}/publish"), RequestSizeLimit(1024 * 1024)]
     public Task<IActionResult> Publish(string key, CancellationToken ct) => Run(async () => await owner.PublishAsync(key, await Raw(ct), ct));
     [HttpPost("definitions/FLOW/{key}/clone"), RequestSizeLimit(1024 * 1024)]

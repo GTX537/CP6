@@ -20,12 +20,26 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     public async Task NativeBrowser_actual_Vue_exact_draft_simulation_reaches_real_PostgreSQL_without_business_writes()
     {
         await using var h = await Seed(); var owner = await PrepareAuthoring(h); await EngineeringAction(h, "user", "query");
+        var userMenu = await h.Db.Sys_Menus.SingleAsync(m => m.MenuKey == "user");
+        if (!await h.Db.Sys_RoleMenus.AnyAsync(m => m.RoleId == 72 && m.MenuId == userMenu.MenuId))
+        {
+            h.Db.Sys_RoleMenus.Add(new() { RoleId = 72, MenuId = userMenu.MenuId });
+            await h.Db.SaveChangesAsync();
+            h.Db.ChangeTracker.Clear();
+        }
+        await CalendarPermissions(h);
+        await h.Db.Sys_Menus.Where(m => m.MenuKey == "oa-work-calendar")
+            .ExecuteUpdateAsync(rows => rows.SetProperty(m => m.RoutePath, "/oa/work-calendar"));
+        await TimeoutZone(h);
         await h.Db.Sys_Menus.Where(x => x.MenuKey == "oa-designer").ExecuteUpdateAsync(x => x.SetProperty(m => m.RoutePath, "/oa/designer"));
         var saved = (await owner.SaveAsync("simulation", AuthoringCommand(name: "Browser simulation", schema: SimulationSchema))).Result!;
         using var result = await BrowserScenario(h, h.User, "oa-simulation-browser.mjs", "simulation-browser", new() { ["ScopeAuthorization__EnvironmentId"] = ScopeEnvironment.ToString("D") });
         var high = result.RootElement.GetProperty("high");
-        Assert.Equal(saved.DraftId, high.GetProperty("draftVersionId").GetGuid());
-        Assert.Equal(saved.Version, high.GetProperty("expectedVersion").GetString());
+        Assert.Equal(saved.DraftId, high.GetProperty("versionId").GetGuid());
+        Assert.Equal(saved.Version, high.GetProperty("draftRevision").GetString());
+        var cron = result.RootElement.GetProperty("cron");
+        Assert.Equal(5, cron.GetProperty("points").GetArrayLength());
+        Assert.Equal("America/New_York", cron.GetProperty("timeZoneId").GetString());
         Assert.Equal(saved.Version, (await owner.ReadHeadAsync("simulation")).Version);
         Assert.Empty(await h.Db.Wf_FlowInstances.ToArrayAsync()); Assert.Empty(await h.Db.Wf_FlowTasks.ToArrayAsync());
         Assert.Empty(await h.Db.Wf_FormDatas.ToArrayAsync()); Assert.Empty(await h.Db.Wf_Notifications.ToArrayAsync());

@@ -8,6 +8,14 @@ export interface WorkCalendarYear {
   weekRule: string; items: WorkCalendarDay[]; timeZoneId: string | null; timeZoneRulesVersion: string | null
   timeZoneSource: string; timeZoneFailure: string | null; japaneseHolidays: HolidayPackage
 }
+export interface CronExplanation {
+  mode: 'EXPLANATION_ONLY'; isExecutionPermit: false; calendarId: string; calendarRevision: number
+  timeZoneId: string; timeZoneRulesVersion: string; afterUtc: string; workdaysOnly: boolean
+  missingLocalTimePolicy: 'SKIP_MISSING_CIVIL_TIME'; repeatedLocalTimePolicy: 'RETURN_BOTH_FOLDS'
+  coverage: 'FIVE_POINTS' | 'SEARCH_LIMIT'
+  points: { utc: string; local: string; offsetMinutes: number; fold: number }[]
+}
+
 export interface DeadlineEvidence {
   revision: number; occurrence: number; state: string; createdAt: string
   dueAt: string | null; nextDue: string | null; policy: NativeDeadlinePolicy
@@ -33,6 +41,9 @@ const unwrap = <T>(res: any): T => res?.data ?? res
 export const workCalendarApi = {
   list: async (year: number, revision?: number, signal?: AbortSignal) =>
     unwrap<WorkCalendarYear>(await http.get(root, { params: { year, revision }, signal })),
+  explainCron: async (calendar: WorkCalendarYear, cron: string, afterUtc: string, workdaysOnly: boolean, signal?: AbortSignal) =>
+    unwrap<CronExplanation>(await http.post(root + '/cron-explanations', { calendarId: calendar.calendarId, calendarRevision: calendar.revision,
+      timeZoneId: calendar.timeZoneId, timeZoneRulesVersion: calendar.timeZoneRulesVersion, cron, afterUtc, workdaysOnly }, { signal })),
   execute: async (intent: CalendarIntent, signal?: AbortSignal) =>
     unwrap<CalendarReceipt>(await http.post(root + '/' + intent.kind, intent.command, { signal })),
   preview: async (calendarId: string, expectedCalendarRevision: number, taskIds: string[], signal?: AbortSignal) =>
