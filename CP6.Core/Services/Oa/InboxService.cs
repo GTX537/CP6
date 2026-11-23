@@ -341,9 +341,8 @@ public partial class InboxService : IInboxService
             FormToId: f.Id, ActorEvidenceStatus: "LEGACY_ACTOR_INCOMPLETE")).ToList();
         var ccRows = ccs.Select(c => new CcRow(c.RecipientId, N(c.RecipientId) ?? "", c.AtNodeId, c.IsRead)).ToList();
 
-        IReadOnlyList<ForecastStep> forecast = inst.Status == FlowInstanceStatus.Running
-            && inst.FlowDefVersionId is Guid pinnedFlowId
-            ? (await _forecast.ForecastPinnedAsync(pinnedFlowId, inst.VarsJson, inst.StarterId, inst.CurrentNode)).Steps
+        IReadOnlyList<ForecastStep> forecast = inst.Status == FlowInstanceStatus.Running && flowVersion != null
+            ? (await _forecast.ForecastPinnedAsync(flowVersion.Id, inst.VarsJson, inst.StarterId, inst.CurrentNode)).Steps
             : Array.Empty<ForecastStep>();
 
         // ── 子流程互链（spec §4.5）：向上=父实例链接;向下=本实例名下子实例组（按停泊 token 的 NodeId 归组）──
@@ -404,10 +403,18 @@ public partial class InboxService : IInboxService
         var instanceDto = new InboxInstanceDto(inst.Id, inst.FlowKey, flowVersion?.FlowNameSnapshot,
             flowVersion?.Version, inst.Status, inst.CurrentNode, currentNodeName,
             new InboxUser(inst.StarterId, names.GetValueOrDefault(inst.StarterId, inst.StarterId.ToString())),
-            inst.CreateDate);
+            inst.CreateDate)
+        {
+            FlowVersionId = flowVersion?.Id,
+            VersionSource = LegacyFlowVersionSource(flowVersion?.Id, flowVersion?.Creator)
+        };
         return new InboxDetail(instanceDto, content, myTask, timeline, snapshots, forecast, ccRows,
             subFlowParent, childRows);
     }
+
+    private static string LegacyFlowVersionSource(Guid? versionId, string? creator) => versionId == null
+        ? "MISSING_VERSION_SNAPSHOT"
+        : LegacyDefinitionViewV2.Reconstructed(creator) ? "LEGACY_HEAD_BACKFILL" : "LEGACY_VERSION_SNAPSHOT";
 
     public async Task<FormQueryPage> QueryAsync(Guid effectiveUserId, FormQueryFilter f)
     {
@@ -427,16 +434,26 @@ public partial class InboxService : IInboxService
         var total = await q.CountAsync();
         var page = Math.Max(1, f.Page);
         var pageSize = Math.Clamp(f.PageSize, 1, 100);
-        var rows = await (from i in q
-                          join d in _db.Wf_FlowDefs on i.FlowKey equals d.FlowKey into dd
-                          from d in dd.DefaultIfEmpty()
+        var rows = await (from i in q.AsNoTracking()
+                          join v in _db.Wf_FlowDefVersions on i.FlowDefVersionId equals v.Id into versions
+                          from v in versions.DefaultIfEmpty()
                           join u in _db.Sys_Users on i.StarterId equals u.Id into uu
                           from u in uu.DefaultIfEmpty()
-                          orderby i.CreateDate descending
-                          select new { i, FlowName = d == null ? null : d.FlowName, Starter = u })
+                          orderby i.CreateDate descending, i.Id descending
+                          select new
+                          {
+                              Instance = i, Starter = u, FlowName = v == null ? null : v.FlowNameSnapshot,
+                              FlowVersion = v == null ? (int?)null : v.Version, FlowVersionId = v == null ? (Guid?)null : v.Id,
+                              VersionCreator = v == null ? null : v.Creator
+                          })
             .Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-        var items = rows.Select(x => new FormQueryItem(x.i.Id, x.i.FlowKey, x.FlowName, x.i.StarterId,
-            Name(x.Starter), x.i.Status, x.i.CurrentNode, x.i.CreateDate)).ToList();
+        var items = rows.Select(x => new FormQueryItem(x.Instance.Id, x.Instance.FlowKey, x.FlowName, x.Instance.StarterId,
+            Name(x.Starter), x.Instance.Status, x.Instance.CurrentNode, x.Instance.CreateDate)
+        {
+            FlowVersion = x.FlowVersion,
+            FlowVersionId = x.FlowVersionId,
+            VersionSource = LegacyFlowVersionSource(x.FlowVersionId, x.VersionCreator)
+        }).ToList();
         return new(items, total, page, pageSize);
     }
 

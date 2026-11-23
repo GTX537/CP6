@@ -14,7 +14,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     [CurrentPermissionPostgresFact]
     public async Task FormFiles_returned_current_cycle_replaces_reference_atomically_and_inbox_reads_current_field_authority()
     {
-        await using var h=await Seed();var(_,_,flow)=await PreparePersonal(h,FileFormSchema);await NativeOperationPermissions(h);
+        await using var h=await Seed();var(_,_,flow)=await PreparePersonal(h,FileFormSchema);await NativeOperationPermissions(h);await QueryPermission(h);
         var store=new ContentStore();var owner=PersonalForm(h,files:new(h.Db,store,new ContentInspector()));
         var saved=await flow.SaveAsync("file-flow",DependentCommand("personal",schema:JsonSerializer.Serialize(LinearNative(h.User),PersonalFormOwnerV2.Json)));
         var pub=(await flow.PublishAsync("file-flow",PublicationCommand(await Preview(flow,"file-flow",saved)))).Result!.Publication!;
@@ -28,6 +28,19 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var next=FormUpload(context,secondBytes) with{Scope=scope};var second=(await owner.UploadFileAsync(next,new MemoryStream(secondBytes))).Result!;
         var patched=PersonalResult<ReturnedFormResultV2>(await owner.EditReturnedAsync(root,PersonalCommand(new ReturnedFormEditV2(returned.ReturnRevision,returned.FormDataVersion,PersonalData(FileData(second.Reference)),"replace returned attachment"),"replace",returned.InstanceVersion)));
         Assert.Equal(secondBytes,(await inbox.DownloadFileAsync(root,new("files",second.Reference))).Bytes);
+        var fileRequest=new FormBoundFileReadV2("files",second.Reference);
+        var listed=await inbox.ReadQueryFileAsync(submit.FormDataId,fileRequest);
+        Assert.Equal("AVAILABLE",listed.Availability);
+        await EngineeringAction(h,"file-content","edit");
+        var fileMenu=await h.Db.Sys_Menus.SingleAsync(m=>m.MenuKey=="file-content");
+        h.Db.Sys_RoleMenus.Add(new(){RoleId=72,MenuId=fileMenu.MenuId});await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
+        var updatedScope=scope with{ExpectedVersion=patched.InstanceVersion,ExpectedDataVersion=patched.FormDataVersion};
+        var held=(await owner.ChangeFileAsync(new(Guid.NewGuid(),updatedScope,"files",second.Reference,listed.StateVersion,"HOLD","保留已绑定原件"))).Result!;
+        Assert.Equal("HELD",held.Availability);
+        Assert.Equal("FILE_CONTENT_NOT_AVAILABLE",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(
+            ()=>inbox.DownloadQueryFileAsync(submit.FormDataId,fileRequest))).Message);
+        await owner.ChangeFileAsync(new(Guid.NewGuid(),updatedScope,"files",second.Reference,held.StateVersion,"RELEASE","解除原件保留锁"));
+        Assert.Equal(secondBytes,(await inbox.DownloadQueryFileAsync(submit.FormDataId,fileRequest)).Bytes);
         Assert.Equal("FIELD_FILE_FORBIDDEN",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>inbox.DownloadFileAsync(root,new("files",file.Reference)))).Message);
         var snapshot=await h.Db.Database.SqlQuery<string>($"SELECT snapshot_json AS \"Value\" FROM cp6_personal_form_v2.returns WHERE instance_id={root}").SingleAsync();Assert.Contains(file.Reference,snapshot);Assert.DoesNotContain(second.Reference,snapshot);
         var resumed=await owner.ResubmitReturnedAsync(root,PersonalCommand(new ReturnedFormResubmitV2(returned.ReturnRevision,patched.FormDataVersion,null),"resubmit",patched.InstanceVersion));Assert.Equal("SUCCEEDED",resumed.Outcome);

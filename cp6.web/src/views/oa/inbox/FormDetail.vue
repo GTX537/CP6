@@ -11,6 +11,11 @@
 
     <!-- Content -->
     <template v-else>
+      <p v-if="detail.instance.versionSource">
+        {{ detail.instance.flowName || detail.instance.flowKey }}<span v-if="detail.instance.flowVersion != null"> · v{{ detail.instance.flowVersion }}</span>
+        <span v-if="detail.instance.versionSource === 'MISSING_VERSION_SNAPSHOT'"> · 缺少版本快照，历史版本未证</span>
+        <span v-else-if="detail.instance.versionSource === 'LEGACY_HEAD_BACKFILL'"> · 旧系统回填，历史版本未证</span>
+      </p>
       <el-row :gutter="16" class="detail-body">
         <!-- LEFT: read-only form (~55%) -->
         <el-col :xs="24" :sm="14" class="detail-left">

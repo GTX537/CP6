@@ -1,7 +1,7 @@
 import { createServer } from 'vite'
 import { chromium, expect } from '@playwright/test'
 import { mkdir, writeFile, realpath, readFile } from 'node:fs/promises'
-import { createHash } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 import path from 'node:path'
 const output = process.env.CP6_OA_BROWSER_RESULTS
 if (!output || !process.env.CP6_OA_BROWSER_API || !process.env.CP6_OA_BROWSER_TENANT) throw new Error('OWNED_BROWSER_ENVIRONMENT_REQUIRED')
@@ -60,7 +60,30 @@ try {
   const download = await downloading; expect(download.suggestedFilename()).toBe('模拟业务原件.txt')
   expect(await readFile(await download.path())).toEqual(bytes)
   await page.screenshot({ path: path.join(output, 'history-exact-original.png'), fullPage: true })
-  steps.push('current readonly history resolves the bound original and downloads exact bytes with original filename')
+  steps.push('当前只读历史通过实际下载入口取得准确原件和文件名')
+  const csrf = (await page.context().cookies()).find(cookie => cookie.name === 'cp6_csrf').value
+  const policyPath = origin + '/api/iam/personal-form-policies/personal'
+  const currentPolicy = await page.request.get(policyPath)
+  expect(currentPolicy.status()).toBe(200)
+  const { version, roles, ...policy } = (await currentPolicy.json()).data
+  const restricted = await page.request.post(policyPath, {
+    headers: { 'X-CSRF-Token': csrf },
+    data: { ...policy, operationId: randomUUID(), expectedVersion: version,
+      roles: roles.map(role => ({ ...role, fields: { ...role.fields, files: 'hidden' } })),
+      reason: '验收已打开的历史附件在当前字段授权撤回后拒绝下载' }
+  })
+  expect(restricted.status()).toBe(200)
+  let newDownloads = 0
+  page.on('download', () => { newDownloads++ })
+  const denied = page.waitForResponse(r => new URL(r.url()).pathname.endsWith('/files/download'))
+  await detail.getByRole('button', { name: '下载原件', exact: true }).click()
+  const deniedResponse = await denied
+  expect(deniedResponse.status()).toBe(403)
+  expect(deniedResponse.headers()['content-disposition']).toBeUndefined()
+  await expect(detail).toHaveCount(0)
+  await expect(query).not.toContainText('模拟业务原件.txt')
+  expect(newDownloads).toBe(0)
+  steps.push('正常角色收回附件字段授权后，仍打开的历史页下载被拒绝、旧详情被清除且无新下载')
   expect(errors).toEqual([]); expect(original.result.contentRef.digest).toBe(digest)
   await writeFile(path.join(output, 'result.json'), JSON.stringify({ result: 'PASS', steps, reference: original.result.reference, digest, responses, pageErrors: errors, internalApiMocked: false, injectedFailure: 'Drop first committed upload response; reload before querying original' }, null, 2))
   process.stdout.write(JSON.stringify({ result: 'PASS', steps }) + '\n')

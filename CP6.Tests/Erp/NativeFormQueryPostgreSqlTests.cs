@@ -2,6 +2,7 @@ using System.Net;
 using System.Text;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
+using CP6.Entity.DomainModels.Wf;
 using CP6.Tests.Platform;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,74 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         if (!await h.Db.Sys_RoleMenus.AnyAsync(m => m.RoleId == 72 && m.MenuId == menu.MenuId))
         { h.Db.Sys_RoleMenus.Add(new() { RoleId = 72, MenuId = menu.MenuId }); await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear(); }
     }
+    private const string LegacyQueryFlowKey = "wp1205-historical";
+
+    private static async Task<(Guid Pinned, Guid Missing, Guid Reconstructed, Guid Version)> LegacyQuerySamples(Harness h)
+    {
+        var head = new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = LegacyQueryFlowKey, FlowName = "只在当前定义的名称", Version = 3 };
+        var exact = new Wf_FlowDefVersion { Id = Guid.NewGuid(), FlowDefId = head.Id, Version = 1,
+            Status = WfDefinitionVersionStatus.Published, FlowNameSnapshot = "提交时的流程名称" };
+        var imported = new Wf_FlowDefVersion { Id = Guid.NewGuid(), FlowDefId = head.Id, Version = 2,
+            Status = WfDefinitionVersionStatus.Published, FlowNameSnapshot = "旧系统记录的名称", Creator = "legacy-runtime-backfill" };
+        h.Db.Wf_FlowDefs.Add(head);
+        h.Db.Wf_FlowDefVersions.AddRange(exact, imported);
+        await h.Db.SaveChangesAsync();
+        var at = new DateTime(2026, 11, 1, 8, 0, 0, DateTimeKind.Utc);
+        Wf_FlowInstance Row(Guid? version, int status) => new()
+        {
+            Id = Guid.NewGuid(), FlowKey = head.FlowKey, FlowDefVersionId = version, StarterId = h.User, CreateDate = at, Status = status
+        };
+        var pinned = Row(exact.Id, FlowInstanceStatus.Approved);
+        var missing = Row(null, FlowInstanceStatus.Running);
+        var reconstructed = Row(imported.Id, FlowInstanceStatus.Approved);
+        h.Db.Wf_FlowInstances.AddRange(pinned, missing, reconstructed);
+        await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
+        return (pinned.Id, missing.Id, reconstructed.Id, exact.Id);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task NativeQuery_legacy_HTTP_list_and_detail_use_recorded_versions_and_explain_missing_or_reconstructed_pins()
+    {
+        await using var h = await Seed(); await RegisterScope(h);
+        var sample = await LegacyQuerySamples(h);
+        var unrelated = await GrantDelegate(h, "wp1205-legacy-nonparticipant");
+        await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!,
+            new Dictionary<string, string> { ["ScopeAuthorization__EnvironmentId"] = ScopeEnvironment.ToString("D") });
+        var cookies = await Login(host, h);
+
+        async Task<FormQueryPage> Page(Dictionary<string, string> session, int number)
+        {
+            using var response = await host.Send(BoundRequest(session, "/api/oa/query/search",
+                new { flowKey = LegacyQueryFlowKey, page = number, pageSize = 2 }));
+            return await PersonalHttpResult<FormQueryPage>(response);
+        }
+
+        var first = await Page(cookies, 1); var second = await Page(cookies, 2);
+        Assert.Equal(3, first.Total); Assert.Equal(3, second.Total);
+        var rows = first.Items.Concat(second.Items).ToArray();
+        Assert.Equal(new[] { sample.Pinned, sample.Missing, sample.Reconstructed }.OrderByDescending(id => id),
+            rows.Select(r => r.InstanceId));
+        var pinned = Assert.Single(rows, row => row.InstanceId == sample.Pinned);
+        Assert.Equal("提交时的流程名称", pinned.FlowName);
+        Assert.Equal(sample.Version, pinned.FlowVersionId); Assert.Equal(1, pinned.FlowVersion);
+        Assert.Equal("LEGACY_VERSION_SNAPSHOT", pinned.VersionSource);
+        var missing = Assert.Single(rows, row => row.InstanceId == sample.Missing);
+        Assert.Null(missing.FlowName); Assert.Null(missing.FlowVersion); Assert.Null(missing.FlowVersionId);
+        Assert.Equal("MISSING_VERSION_SNAPSHOT", missing.VersionSource);
+        var reconstructed = Assert.Single(rows, row => row.InstanceId == sample.Reconstructed);
+        Assert.Equal("LEGACY_HEAD_BACKFILL", reconstructed.VersionSource);
+
+        foreach (var row in rows)
+        {
+            using var response = await host.Send(BoundRequest(cookies, "/api/oa/inbox/detail/" + row.InstanceId));
+            var detail = (await PersonalHttpResult<InboxDetail>(response)).Instance;
+            Assert.Equal(row.FlowName, detail.FlowName); Assert.Equal(row.FlowVersion, detail.FlowVersion);
+            Assert.Equal(row.FlowVersionId, detail.FlowVersionId); Assert.Equal(row.VersionSource, detail.VersionSource);
+        }
+        var other = await Page(await DocumentReviewerLogin(host, h, unrelated), 1);
+        Assert.Equal(0, other.Total); Assert.Empty(other.Items);
+    }
+
     [CurrentPermissionPostgresFact]
     public async Task NativeQuery_later_APP_start_does_not_enter_old_snapshot_and_new_names_do_not_rewrite_history()
     {
@@ -122,7 +191,12 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     {
         await using var h = await Seed(); var runtime = await NativeFormSetup(h); await QueryPermission(h);
         var inbox = NativeInbox(h, runtime.Owner);
-        var page = await inbox.SearchAsync(new(StarterId: h.User, HandlerId: h.User, FlowKey: "native-inbox", Status: 0, FormKey: "personal", HasInstance: true));
+        var record = Assert.Single((await inbox.SearchAsync(new())).Items);
+        var day = record.SubmittedAtUtc.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+        await h.Db.Sys_Tenants.Where(t => t.Id == h.Tenant).ExecuteUpdateAsync(s => s.SetProperty(t => t.TimeZoneId, "UTC"));
+        var page = await inbox.SearchAsync(new(StarterId: h.User, HandlerId: h.User, FlowKey: "native-inbox", Status: 0,
+            From: day, To: day, FormKey: "personal", HasInstance: true, TimeZoneId: "UTC"));
+        Assert.Equal(1, page.Total);
         Assert.Equal(runtime.Instance, Assert.Single(page.Items).InstanceId);
         Assert.Equal(0, (await inbox.SearchAsync(new(HandlerId: Guid.NewGuid()))).Total);
         var detail = await inbox.QueryInstanceAsync(runtime.Instance); Assert.Single(detail.Instance!.Tasks); Assert.False(detail.CanEdit);

@@ -82,7 +82,7 @@
         <el-form-item label="关键词">
           <el-input
             v-model="filter.keyword"
-            placeholder="单号/摘要"
+            placeholder="流程代码或业务编号"
             clearable
             style="width: 160px"
           />
@@ -106,7 +106,13 @@
         @row-click="onRowClick"
       >
         <el-table-column prop="instanceId" label="实例ID" width="220" show-overflow-tooltip />
-        <el-table-column prop="flowName"   label="流程类型" width="160" />
+        <el-table-column label="历史流程" min-width="200">
+          <template #default="{ row }">
+            {{ row.flowName || row.flowKey }}<span v-if="row.flowVersion != null"> · v{{ row.flowVersion }}</span>
+            <div v-if="row.versionSource === 'MISSING_VERSION_SNAPSHOT'">缺少版本快照，历史版本未证</div>
+            <div v-else-if="row.versionSource === 'LEGACY_HEAD_BACKFILL'">旧系统回填，历史版本未证</div>
+          </template>
+        </el-table-column>
         <el-table-column prop="starterName" label="发起人"  width="100" />
         <el-table-column prop="currentNode" label="当前节点" width="140" show-overflow-tooltip />
         <el-table-column label="状态" width="90">
@@ -125,7 +131,8 @@
           </template>
         </el-table-column>
       </el-table>
-      <CpEmpty v-if="!searching && rows.length === 0" text="暂无数据，请输入条件后查询" />
+      <p v-if="error" role="alert">{{ error }}</p>
+      <CpEmpty v-else-if="!searching && rows.length === 0" text="暂无数据，请输入条件后查询" />
       <el-pagination
         v-if="total > 0"
         v-model:current-page="filter.page"
@@ -151,7 +158,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { onBeforeUnmount, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { queryApi } from '@/api/oa/query'
 import { userApi } from '@/api/sys/user'
@@ -224,19 +231,31 @@ async function searchHandlerUsers(keyword: string) {
 const rows = ref<FormQueryItem[]>([])
 const total = ref(0)
 const searching = ref(false)
+const error = ref('')
+let searchGeneration = 0
+onBeforeUnmount(() => { searchGeneration++ })
 
 async function onSearch() {
   // 将日期区间展开到 from/to
   filter.from = dateRange.value?.[0] ?? undefined
   filter.to   = dateRange.value?.[1] ?? undefined
 
+  const request = ++searchGeneration
+  rows.value = []
+  total.value = 0
+  error.value = ''
   searching.value = true
   try {
     const res = await queryApi.search(filter)
+    if (request !== searchGeneration) return
     const page = (res as any).data as { items?: FormQueryItem[]; total?: number }
     rows.value = page?.items ?? []
     total.value = page?.total ?? 0
-  } catch { /* HTTP interceptor toasts */ } finally { searching.value = false }
+  } catch {
+    if (request === searchGeneration) error.value = '无法读取旧流程记录，请重新查询。'
+  } finally {
+    if (request === searchGeneration) searching.value = false
+  }
 }
 
 function onReset() {

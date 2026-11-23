@@ -18,12 +18,18 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await form.SetActivationAsync("personal", FormActivationCommand((await form.ActivationPreviewAsync("personal")).Current, published.VersionId, id: "second-active"));
         await ActiveDependencyFlow(flow, "history-flow", "personal");
         var bound = PersonalResult<PersonalFormSubmissionV2>(await owner.SubmitDirectAsync("personal", PersonalCommand(PersonalDirect(await owner.ContextAsync("personal"), "{\"a\":\"Bound current value\"}"), "bound-history")));
+        var legacy = await LegacyQuerySamples(h);
         foreach (var (menu, path) in new[] { ("oa-form-catalog", "/oa/form-catalog"), ("oa-form-search", "/oa/form-search"), ("oa-inbox", "/oa/inbox") })
             await h.Db.Sys_Menus.Where(m => m.MenuKey == menu).ExecuteUpdateAsync(s => s.SetProperty(m => m.RoutePath, path));
         using var result = await BrowserScenario(h, h.User, "oa-catalog-history-browser.mjs", "catalog-history-browser",
             new() { ["ScopeAuthorization__EnvironmentId"] = ScopeEnvironment.ToString("D") },
-            new() { ["CP6_HISTORY_UNBOUND"] = unbound.FormDataId.ToString("D"), ["CP6_HISTORY_BOUND"] = bound.FlowInstanceId!.Value.ToString("D"), ["CP6_HISTORY_FORM_PIN"] = original.FormVersionId.ToString("D") });
-        Assert.Equal(2, await h.Db.Wf_FormDatas.CountAsync()); Assert.Equal(1, await h.Db.Wf_FlowInstances.CountAsync());
+            new()
+            {
+                ["CP6_HISTORY_UNBOUND"] = unbound.FormDataId.ToString("D"), ["CP6_HISTORY_BOUND"] = bound.FlowInstanceId!.Value.ToString("D"),
+                ["CP6_HISTORY_FORM_PIN"] = original.FormVersionId.ToString("D"), ["CP6_HISTORY_CURRENT_PIN"] = published.VersionId.ToString("D"),
+                ["CP6_HISTORY_LEGACY_PINNED"] = legacy.Pinned.ToString("D"), ["CP6_HISTORY_LEGACY_MISSING"] = legacy.Missing.ToString("D")
+            });
+        Assert.Equal(2, await h.Db.Wf_FormDatas.CountAsync()); Assert.Equal(4, await h.Db.Wf_FlowInstances.CountAsync());
         Assert.Equal(0, await h.Db.Database.SqlQuery<int>($"SELECT count(*)::integer AS \"Value\" FROM cp6_personal_form_v2.favorites WHERE tenant_id={h.Tenant}").SingleAsync());
         Assert.Equal(2, await h.Db.Database.SqlQuery<int>($"SELECT count(*)::integer AS \"Value\" FROM cp6_personal_form_v2.commands WHERE tenant_id={h.Tenant} AND operation='FORM_FAVORITE_SET' AND completed").SingleAsync());
         Assert.Equal(original.FormVersionId, (await h.Db.Wf_FormDatas.AsNoTracking().SingleAsync(f => f.Id == unbound.FormDataId)).FormDefVersionId);

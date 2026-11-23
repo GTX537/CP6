@@ -115,8 +115,9 @@ export interface InboxDetail {
   instance: {
     id: string
     flowKey: string
-    flowName?: string
-    flowVersion?: number
+    flowName?: string | null
+    flowVersion?: number | null
+    versionSource?: string
     status: number
     currentNodeId: string
     currentNodeName?: string

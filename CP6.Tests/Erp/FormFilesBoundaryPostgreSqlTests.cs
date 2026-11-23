@@ -37,13 +37,33 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         using var direct=await host.Send(PersonalHttp(cookies,"/api/oa/v2/forms/personal/submissions",PersonalCommand(PersonalDirect(context,FileData(file.Reference)),"http-file-submit")));
         var submission=PersonalResult<PersonalFormSubmissionV2>(await PersonalHttpResult<PersonalFormResultV2>(direct));
         Assert.Equal(0,await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_personal_form_v2.drafts WHERE tenant_id={h.Tenant}").SingleAsync());
-        var url=$"/api/oa/v2/form-data/{submission.FormDataId}/files/download";var body=new FormBoundFileReadV2("files",file.Reference);
+        var path=$"/api/oa/v2/form-data/{submission.FormDataId}/files";var url=path+"/download";var body=new FormBoundFileReadV2("files",file.Reference);
+        using (var metadata=await host.Send(BoundRequest(cookies,path+"/read",body)))
+            Assert.Equal("AVAILABLE",(await PersonalHttpResult<FormFileViewV2>(metadata)).Availability);
         using var downloaded=await host.Send(BoundRequest(cookies,url,body));Assert.Equal(HttpStatusCode.OK,downloaded.StatusCode);Assert.Equal(bytes,await downloaded.Content.ReadAsByteArrayAsync());
         Assert.Equal("attachment",downloaded.Content.Headers.ContentDisposition?.DispositionType);Assert.Equal("nosniff",Assert.Single(downloaded.Headers.GetValues("X-Content-Type-Options")));
         Assert.Equal(input.Digest,Assert.Single(downloaded.Headers.GetValues("X-Content-SHA256")));Assert.True(downloaded.Headers.CacheControl?.NoStore);
         using var forged=await host.Send(BoundRequest(cookies,url,body with{Field="other"}));Assert.Equal(HttpStatusCode.Forbidden,forged.StatusCode);
+        var unrelated=await GrantDelegate(h,"wp1205-unrelated-file-reader");
+        using(var denied=await host.Send(BoundRequest(await DocumentReviewerLogin(host,h,unrelated),url,body)))
+            Assert.Equal(HttpStatusCode.NotFound,denied.StatusCode);
+        await using(var foreign=await Seed())
+        {
+            await PreparePersonal(foreign,FileFormSchema);await QueryPermission(foreign);
+            using var denied=await host.Send(BoundRequest(await Login(host,foreign),url,body));
+            Assert.Equal(HttpStatusCode.NotFound,denied.StatusCode);Assert.Null(denied.Content.Headers.ContentDisposition);
+        }
+        var queryMenu=await h.Db.Sys_Menus.SingleAsync(m=>m.MenuKey=="oa-form-search");
+        await h.Db.Sys_RoleActions.Where(a=>a.RoleId==72&&a.MenuId==queryMenu.MenuId&&a.ActionCode=="query").ExecuteDeleteAsync();
+        using(var revoked=await host.Send(BoundRequest(cookies,url,body)))
+        {
+            Assert.Equal(HttpStatusCode.Forbidden,revoked.StatusCode);Assert.Null(revoked.Content.Headers.ContentDisposition);
+            Assert.False(revoked.Headers.Contains("X-Content-SHA256"));
+        }
+        await QueryPermission(h);
         var policy=(await owner.PolicyAsync("personal"))!;await owner.ConfigureAsync("personal",new(Guid.NewGuid(),policy.Version.ToString("D"),true,true,[new(72,new(){{"files","hidden"}})],policy.RetentionPolicyRef,30,true,"revoke current HTTP attachment read"));
         using var hidden=await host.Send(BoundRequest(cookies,url,body));Assert.Equal(HttpStatusCode.Forbidden,hidden.StatusCode);Assert.DoesNotContain(file.Reference,await hidden.Content.ReadAsStringAsync());
+        Assert.Null(hidden.Content.Headers.ContentDisposition);Assert.False(hidden.Headers.Contains("X-Content-SHA256"));
         Assert.Equal(1,await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_form_files_v2.bindings WHERE tenant_id={h.Tenant}").SingleAsync());
     }
     [OaNativeBrowserPostgresFact]

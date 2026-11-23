@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using CP6.Core.Services.Sys;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Oa;
@@ -27,8 +28,10 @@ public sealed partial class PersonalFormOwnerV2
         Entry(); await using var tx = await db.Database.BeginTransactionAsync(ct); var lease = await ReadLease(ct);
         var actor = await Actor(ct); await Action(actor, "query", ct);
         var favorites = await Favorites(actor.UserId).ToArrayAsync(ct);
-        var available = await CatalogSource(actor).Where(x => favorites.Select(f => f.FormKey).Contains(x.FormKey)).ToDictionaryAsync(x => x.FormKey, StringComparer.Ordinal, ct);
-        // Only an actor's own saved key survives loss of current form visibility. No cached name/schema is stored.
+        // 暂停当前 Scope 时仍可读本人收藏键。只有当前目录可用时才披露发布信息。
+        Dictionary<string, PersonalFormCatalogItemV2> available = lease.Snapshot.Enabled && lease.Snapshot.WriterProfile == ScopeAuthorizationFenceV1.NativeWriterProfile
+            ? await CatalogSource(actor).Where(x => favorites.Select(f => f.FormKey).Contains(x.FormKey)).ToDictionaryAsync(x => x.FormKey, StringComparer.Ordinal, ct)
+            : new(StringComparer.Ordinal);
         var rows = favorites.Select(f => new PersonalFormFavoriteItemV2(f.FormKey, available.ContainsKey(f.FormKey), available.GetValueOrDefault(f.FormKey)))
             .Where(x => string.IsNullOrWhiteSpace(search) || x.FormKey.Contains(search, StringComparison.OrdinalIgnoreCase)
                 || x.Publication?.Name.Contains(search, StringComparison.OrdinalIgnoreCase) == true)

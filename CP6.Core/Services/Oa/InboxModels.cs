@@ -46,7 +46,11 @@ public record SubFlowChildRow(Guid InstanceId, int SubIndex, string FlowKey, str
 
 public record InboxUser(Guid Id, string Name);
 public record InboxInstanceDto(Guid Id, string FlowKey, string? FlowName, int? FlowVersion,
-    int Status, string CurrentNodeId, string? CurrentNodeName, InboxUser Starter, DateTime CreatedAtUtc);
+    int Status, string CurrentNodeId, string? CurrentNodeName, InboxUser Starter, DateTime CreatedAtUtc)
+{
+    public Guid? FlowVersionId { get; init; }
+    public string? VersionSource { get; init; }
+}
 public record InboxContentDto(string Kind, Guid? FormDataId, string? FormKey, int? FormVersion,
     string? SchemaJson, string? DataJson, IReadOnlyDictionary<string, string>? FieldMask,
     string? BizType, string? BizId);
