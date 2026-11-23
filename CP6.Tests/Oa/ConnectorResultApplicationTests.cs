@@ -189,6 +189,95 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
 
     [CurrentPermissionPostgresFact]
+    public async Task OaConnResult_late_verified_result_wakes_parked_job_on_normal_scan()
+    {
+        await using var h = await Seed();
+        await RegisterScope(h);
+        await ConnPeople(h);
+        await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, ConnSettings());
+        var maker = new ConnApi(host, await Login(host, h));
+        var root = await CreateResultConnector(h, maker, "result-late-queue");
+        var job = await DispatchJob(h, root, "result-late-queue");
+        await using var wire = await OaConnectorDispatchWireFixture.StartAsync();
+        wire.ResultPayload = OriginalConnectorResult();
+        wire.QueryResultPayload = """{"message":"精度非法","amount":17.201}"""u8.ToArray();
+        var reply = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        wire.HoldReply = reply.Task;
+        using var http = DispatchHttp();
+        await using var oldDb = server.Context(new TenantContext { CurrentTenantId = h.Tenant });
+        await using var waitingDb = server.Context(new TenantContext { CurrentTenantId = h.Tenant });
+        await using var recoveryDb = server.Context(new TenantContext { CurrentTenantId = h.Tenant });
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+        var participant = ResultParticipant(h, root, wire, http);
+        var firstScan = DateTime.UtcNow;
+        var old = DispatchWorker(oldDb, [participant]).ScanOnceAsync(firstScan, "late-old", timeout.Token);
+        var jobs = h.Db.Wf_ServiceJobs.AsNoTracking().Where(j => j.Id == job.Id);
+        try
+        {
+            await wire.Arrived.Task.WaitAsync(timeout.Token);
+            var takeover = firstScan + WfServiceJobService.LeaseDuration + TimeSpan.FromSeconds(1);
+            var waiting = DispatchWorker(waitingDb, [participant]);
+            Assert.Equal(1, await waiting.ScanOnceAsync(takeover, "late-wait", timeout.Token));
+            var before = await jobs.SingleAsync(timeout.Token);
+            Assert.Equal(ServiceJobStatus.Pending, before.Status);
+            Assert.Equal(2, before.AttemptCount);
+            Assert.Equal("RESULT_QUARANTINED", before.LastError);
+            Assert.Equal(DateTime.MaxValue, before.NextAttemptAtUtc);
+            Assert.Null(before.LockedBy);
+            Assert.Null(await ReadConnectorResult(h, job.Id));
+            Assert.Null(await ResumeReceipt(h, job.Id));
+            Assert.Equal("RESULT_SCHEMA_INVALID", await h.Db.Database.SqlQuery<string>($"""
+                SELECT reason AS "Value" FROM cp6_oa_conn_v1.result_quarantine
+                WHERE tenant_id={h.Tenant} AND environment_id={ScopeEnvironment} AND job_id={job.Id}
+                """).SingleAsync(timeout.Token));
+            Assert.Equal(0, await waiting.ScanOnceAsync(takeover.AddSeconds(1), "late-still-waiting", timeout.Token));
+
+            reply.SetResult();
+            Assert.Equal(0, await old);
+            var after = await jobs.SingleAsync(timeout.Token);
+            Assert.Equal((before.Status, before.AttemptCount, before.NextAttemptAtUtc, before.LastError),
+                (after.Status, after.AttemptCount, after.NextAttemptAtUtc, after.LastError));
+            Assert.Equal(before.RowVersion, after.RowVersion);
+            Assert.Null(after.LockedBy);
+            Assert.Null(after.CompletedAtUtc);
+            Assert.Equal(wire.ResultPayload, await ReadConnectorResult(h, job.Id));
+            Assert.Equal(1, await h.Db.Database.SqlQuery<int>($"""
+                SELECT received_attempt AS "Value" FROM cp6_oa_conn_v1.result_inbox
+                WHERE tenant_id={h.Tenant} AND environment_id={ScopeEnvironment} AND job_id={job.Id}
+                """).SingleAsync(timeout.Token));
+            Assert.Null(await ResumeReceipt(h, job.Id));
+            var held = await ResultDispatch(maker, root, job.Id);
+            Assert.Equal("SUCCEEDED", held.GetProperty("resultState").GetString());
+            Assert.Equal("HELD", held.GetProperty("workflowResume").GetString());
+
+            var sent = Assert.Single(wire.Sends);
+            var queried = Assert.Single(wire.Queries);
+            Assert.Equal((sent.Effect, sent.Transport, sent.Digest), (queried.Effect, queried.Transport, queried.Digest));
+            var recovery = DispatchWorker(recoveryDb, [participant]);
+            Assert.Equal(1, await recovery.ScanOnceAsync(DateTime.UtcNow, "late-recovery", timeout.Token));
+            var receipt = await ResumeReceipt(h, job.Id);
+            Assert.NotNull(receipt);
+            Assert.Equal(receipt, await h.Db.Database.SqlQuery<Guid>($"""
+                SELECT receipt_id AS "Value" FROM cp6_oa_conn_v1.result_outbox
+                WHERE tenant_id={h.Tenant} AND environment_id={ScopeEnvironment} AND job_id={job.Id}
+                """).SingleAsync(timeout.Token));
+            var completed = await jobs.SingleAsync(timeout.Token);
+            Assert.Equal((ServiceJobStatus.Succeeded, 3, "late-recovery"), (completed.Status, completed.AttemptCount, completed.LockedBy));
+            Assert.Equal("APPLIED", (await ResultDispatch(maker, root, job.Id)).GetProperty("workflowResume").GetString());
+            Assert.Equal(0, await recovery.ScanOnceAsync(DateTime.UtcNow, "late-repeat", timeout.Token));
+            Assert.Equal(receipt, await ResumeReceipt(h, job.Id));
+            Assert.Equal(sent, Assert.Single(wire.Sends));
+            Assert.Equal(queried, Assert.Single(wire.Queries));
+            output.WriteLine($"SIMULATED 晚到原件，Job={job.Id:D}，第 2 次尝试进入无期限等待；第 1 次尝试的晚回包只保留原件，下一轮正常扫描第 3 次尝试提交唯一 ResumeReceipt={receipt:D} 和 Outbox，入箱后 POST/GET 增量均为 0。");
+        }
+        finally
+        {
+            reply.TrySetResult();
+            await old;
+        }
+    }
+
+    [CurrentPermissionPostgresFact]
     public async Task OaConnResult_withdrawn_token_keeps_late_success_as_history()
     {
         await using var h = await Seed();

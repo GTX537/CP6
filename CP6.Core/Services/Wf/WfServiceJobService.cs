@@ -81,19 +81,15 @@ public sealed class WfServiceJobService : IWfServiceJobService
         }
         if (expired.Count > 0) await _db.SaveChangesAsync(ct);
 
-        // ② 取到期 Pending（reaper 之后查，刚回收的也可能纳入本轮）
-        var jobIds = await _db.Wf_ServiceJobs
-            .Where(j => j.Status == ServiceJobStatus.Pending && j.NextAttemptAtUtc <= nowUtc)
-            .OrderBy(j => j.NextAttemptAtUtc)
-            .Take(BatchSize)
-            .Select(j => j.Id)
-            .ToListAsync(ct);
+        // ② 常规到期与已入箱的原结果一同进入待领取队列，仍按可处理时刻排序。
+        var readyJobIds = ReadyJobIds(nowUtc);
+        var jobIds = await readyJobIds.Take(BatchSize).ToListAsync(ct);
 
         int processed = 0;
         foreach (var jobId in jobIds)
         {
             var job = await _db.Wf_ServiceJobs.SingleOrDefaultAsync(
-                j => j.Id == jobId && j.Status == ServiceJobStatus.Pending && j.NextAttemptAtUtc <= nowUtc, ct);
+                j => j.Id == jobId && readyJobIds.Contains(j.Id), ct);
             if (job is null) continue;
 
             // ③ lease 抢占：RowVersion 守（生产多 worker 并发，败方 DbUpdateConcurrencyException → reload + 跳过）
@@ -221,6 +217,23 @@ public sealed class WfServiceJobService : IWfServiceJobService
         }
 
         return processed;
+    }
+
+    private IQueryable<Guid> ReadyJobIds(DateTime nowUtc)
+    {
+        var pending = _db.Wf_ServiceJobs.Where(j => j.Status == ServiceJobStatus.Pending);
+        var due = pending.Where(j => j.NextAttemptAtUtc <= nowUtc)
+            .Select(j => new { j.Id, ReadyAt = j.NextAttemptAtUtc });
+        if (_db.Database.IsNpgsql() && _connectorResults?.PendingResultJobs() is { } results)
+        {
+            // 等待外部探查的原作业可以凭入箱事实领取本地应用，原等待时间仍留在作业记录上。
+            var received = from result in results
+                           join job in pending on result.JobId equals job.Id
+                           where job.NextAttemptAtUtc > nowUtc && result.ReceivedAt <= nowUtc
+                           select new { job.Id, ReadyAt = result.ReceivedAt };
+            due = due.Concat(received);
+        }
+        return due.OrderBy(j => j.ReadyAt).ThenBy(j => j.Id).Select(j => j.Id);
     }
 
     private async Task<bool> CommitClaimAsync(Wf_ServiceJob claimed, Func<Wf_ServiceJob, Task<bool>> complete,

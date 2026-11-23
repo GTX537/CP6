@@ -50,6 +50,12 @@ public sealed class OaConnectorResultsV1 : Migration
             FOREIGN KEY(tenant_id,environment_id,decision_id) REFERENCES cp6_approval_decision_v2.decisions,
             CHECK((state='APPLIED')=(receipt_id IS NOT NULL AND attempt IS NOT NULL AND output_vars IS NOT NULL AND jsonb_typeof(output_vars)='object')),
             CHECK(state='APPLIED' OR (receipt_id IS NULL AND decision_id IS NULL AND attempt IS NULL AND output_vars IS NULL)));
+        CREATE VIEW cp6_oa_conn_v1.pending_result_jobs WITH (security_invoker=true) AS
+            SELECT r.tenant_id,r.environment_id,r.job_id,r.received_at
+            FROM cp6_oa_conn_v1.result_inbox r
+            WHERE NOT EXISTS (
+                SELECT FROM cp6_oa_conn_v1.result_applications a
+                WHERE (a.tenant_id,a.environment_id,a.job_id)=(r.tenant_id,r.environment_id,r.job_id));
         CREATE INDEX approval_receipt_decision_projection ON cp6_approval_receipt_v2.streams(tenant_id,environment_id,decision_id);
         CREATE TABLE cp6_oa_conn_v1.result_outbox (
             tenant_id uuid NOT NULL, environment_id uuid NOT NULL, job_id uuid NOT NULL, receipt_id uuid NOT NULL,
@@ -91,7 +97,12 @@ public sealed class OaConnectorResultsV1 : Migration
                 RETURN before_attempt=after_attempt AND new_job->>'CompletedAtUtc' IS NULL
                   AND length(new_job->>'LockedBy')>0 AND (new_job->>'LockExpiresAtUtc')::timestamptz>current_at
                   AND (new_job->>'LockExpiresAtUtc')::timestamptz=(new_job->>'LockedAtUtc')::timestamptz+interval '300 seconds'
-                  AND (new_job->>'NextAttemptAtUtc')::timestamptz<=current_at
+                  AND ((new_job->>'NextAttemptAtUtc')::timestamptz<=current_at OR EXISTS (
+                    SELECT FROM cp6_oa_conn_v1.pending_result_jobs r
+                    JOIN cp6_approval_runtime_v2.instances i
+                      ON (i.tenant_id,i.environment_id)=(r.tenant_id,r.environment_id)
+                    WHERE r.tenant_id=(old_job->>'TenantId')::uuid AND r.job_id=(old_job->>'Id')::uuid
+                      AND i.instance_id=(old_job->>'InstanceId')::uuid AND r.received_at<=current_at))
                   AND (old_job->'NextAttemptAtUtc',old_job->'LastError') IS NOT DISTINCT FROM (new_job->'NextAttemptAtUtc',new_job->'LastError');
             ELSIF before_state=1 AND after_state=1 THEN
                 RETURN locks_same AND old_until>current_at AND after_attempt=before_attempt+1 AND new_job->>'CompletedAtUtc' IS NULL

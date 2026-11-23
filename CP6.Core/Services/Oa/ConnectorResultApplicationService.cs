@@ -12,6 +12,15 @@ namespace CP6.Core.Services.Oa;
 public sealed partial class ConnectorControlRuntimeV1
 {
     private sealed record StoredResult(Guid Id, string Service, string Schema, string Digest, string Mapping, byte[] Payload);
+    internal sealed record PendingResultJob(Guid JobId, DateTime ReceivedAt);
+
+    internal IQueryable<PendingResultJob>? PendingResultJobs() => fence.HasDeploymentEnvironment
+        ? db.Database.SqlQuery<PendingResultJob>($"""
+            SELECT job_id AS "JobId",received_at AS "ReceivedAt"
+            FROM cp6_oa_conn_v1.pending_result_jobs
+            WHERE tenant_id={db.CurrentTenantId} AND environment_id={fence.EnvironmentId}
+            """)
+        : null;
 
     private Task<OriginalRow?> ReadAdmission(Guid job, CancellationToken ct) => db.Database.SqlQuery<OriginalRow>($"""
         SELECT instance_id AS "InstanceId",token_id AS "TokenId",node_id AS "NodeId",flow_version_id AS "FlowVersionId",

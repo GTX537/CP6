@@ -55,6 +55,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         }
 
         var job = await h.Db.Wf_ServiceJobs.AsNoTracking().SingleAsync();
+        Assert.False(await AppResultAllowsParkedClaim(h, job.Id));
         await using var wire = await OaConnectorDispatchWireFixture.StartAsync();
         using var http = DispatchHttp();
         wire.ResultPayload = OriginalConnectorResult();
@@ -81,6 +82,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(FlowTokenStatus.Active, await h.Db.Wf_FlowTokens.AsNoTracking().Where(t => t.Id == job.TokenId).Select(t => t.Status).SingleAsync());
         Assert.Equal(ServiceJobStatus.Pending, await h.Db.Wf_ServiceJobs.AsNoTracking().Where(j => j.Id == job.Id).Select(j => j.Status).SingleAsync());
         Assert.Equal("APP_RESUME_DECISION_INCOMPLETE", await DispatchLastError(h, job.Id));
+        Assert.True(await AppResultAllowsParkedClaim(h, job.Id));
+        output.WriteLine("SIMULATED APP 队列守卫，原件入箱前拒绝等待中的领取，入箱后接受同 Scope 的领取。");
         Assert.Empty(await h.Db.Database.SqlQuery<Guid>($"""
             SELECT id AS "Value" FROM cp6_approval_decision_v2.decisions WHERE tenant_id={h.Tenant}
             """).ToArrayAsync());
@@ -135,4 +138,17 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Empty(wire.Queries);
         output.WriteLine($"SIMULATED 连接器应用，APP 决策 {fact.Decision.DecisionId:D} 与 ResumeReceipt {receipt:D} 同事务。原 Owner 第 2 条回执先到，补齐后投影到 {two.Application}，外部送出总数 1。");
     }
+
+    private static Task<bool> AppResultAllowsParkedClaim(Harness h, Guid job) => h.Db.Database.SqlQuery<bool>($"""
+        SELECT cp6_oa_conn_v1.app_job_transition(snapshot.parked,
+            snapshot.parked || jsonb_build_object(
+                'Status',1,'LockedBy','app-result-guard','LockedAtUtc',snapshot.at,
+                'LockExpiresAtUtc',snapshot.at+interval '300 seconds')) AS "Value"
+        FROM public."Wf_ServiceJob" j
+        CROSS JOIN LATERAL (
+            SELECT to_jsonb(j) || jsonb_build_object('NextAttemptAtUtc','infinity'::timestamptz) AS parked,
+                clock_timestamp() AS at
+        ) snapshot
+        WHERE j."TenantId"={h.Tenant} AND j."Id"={job}
+        """).SingleAsync();
 }
