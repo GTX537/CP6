@@ -27923,7 +27923,98 @@
         "docs/development/assessments/20261011/implementation-assessment.json",
         "docs/design-handbook/modules/OA-CONN-01.md",
         "docs/development/assessments/20261011/catalogs/engineering-oa.json"
+      ],
+      "split_children": [
+        "WP12-15b"
+      ],
+      "split_delivered_scope": [
+        "版本化 TIMER 草稿配置页的五段 Cron、1–200 字符提示和无障碍关联。200 长度与五段解析沿用现行 Main。原四项预演及导出 AC 待验。"
       ]
+    },
+    {
+      "id": "WP12-15b",
+      "package_id": "WP12",
+      "title": "流程预演、导出与 Cron 时点解释余项",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "OA-CONN-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP12-15",
+        "S01-02",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP12-13"
+      ],
+      "external_prerequisites": [
+        "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
+        "SYS-IAM 与 OA Connector Owner 尚缺已采用的 conn.forecast 正式菜单、当前租户与环境、资源及字段权绑定或严格等价映射。当前拒绝路径与合成正向样本只作候选证据。",
+        "RP-CONN-04 的时间解释仍待正式采用。先核对准确时区规则摘要和工作日历修订、Cron 语法与 DST 缺失或重复处置，再按现有读权复验五个以内规范时点及 nextDue 零变化。"
+      ],
+      "scope": [
+        "固定flow/form/dependency/input/Starter/knowledge cut，草稿预演明确DRAFT_SIMULATION",
+        "保条件TRUE/FALSE/UNKNOWN和人员解析证据、未支持/循环/超限unvisited",
+        "cron最多规范时点且不写nextDue；服务节点只诊断，coverage分级",
+        "CONN-15。固定当前可读的 Flow、FORM、依赖、模拟输入、Starter 与 knowledge cut。发布用准确 pin，已保存草稿用准确 revision 并标 DRAFT_SIMULATION。服务和子流程作只读图诊断。核对业务写入、真实实例、调用、通知与隐式草稿或预览均零。",
+        "CONN-16。按准确版本覆盖并行、TRUE/FALSE/UNKNOWN、循环、未支持节点、100 步和深度 8 边界。返回 PARTIAL、实际遍历和未遍历位置。",
+        "CONN-17。按当前权限分别展示 RESOLVED_AT_CUT、ARRIVAL_TIME 和 REDACTED，裁剪姓名和私有字段。",
+        "CONN-30。用真实 Main HTTP 与 OA Chrome 核对当前授权、跨 Scope、晚到响应、失权清缓存和导出重新核权。旧入口若接续，按正式兼容合同复核其独立读权。无执行许可、无私有字段、摘要或凭据越界。",
+        "RP-CONN-04 的时间解释仍待正式采用。先核对准确时区规则摘要和工作日历修订、Cron 语法与 DST 缺失或重复处置，再按现有读权复验五个以内规范时点及 nextDue 零变化。"
+      ],
+      "outputs": [
+        "流程预演与cron解释的无效果边界的服务/持久记录、既有OA页面或worker适配",
+        "流程预演与cron解释的无效果边界的定向PostgreSQL/合同/UI正反例与验证证据"
+      ],
+      "code_paths": [
+        "CP6.Core/Services/Wf/WfConnectorService.cs",
+        "CP6.Core/Services/Wf/Executors/WebApiExecutor.cs",
+        "CP6.Core/Services/Wf/ApprovalDispatcher.cs",
+        "CP6.Core/Services/Oa/ForecastService.cs"
+      ],
+      "new_paths": [
+        "CP6.Core/Services/Oa/WorkflowForecastService.cs",
+        "CP6.Tests/Oa/WorkflowForecastTests.cs"
+      ],
+      "acceptance_positive": [
+        "同准确输入可解释每步和部分覆盖，EXPLANATION_ONLY/isExecutionPermit=false可见",
+        "纯预演不创建Submission/Task/通知、不调用外部服务"
+      ],
+      "acceptance_negative": [
+        "未知分支不得按false隐去，PARTIAL不能称全图执行已验证",
+        "GET/预演不能lazy创建草稿或pin latest后冒固定预测"
+      ],
+      "exclusive_resources": [
+        "Main:oa-forecast",
+        "file:Main:CP6.Core/Services/Wf/WfConnectorService.cs",
+        "file:Main:CP6.Core/Services/Wf/Executors/WebApiExecutor.cs",
+        "file:Main:CP6.Core/Services/Wf/ApprovalDispatcher.cs"
+      ],
+      "notes": [
+        "OA保持原oa.app/2.0和WFC封闭合同、原枚举/摘要，兼容入口逐项映射；审批通过、引擎终态、运输接收与业务Owner应用回执分轴。",
+        "仅规划，NOT_RUN。原AC/补充R1应由总台账映射；新路径是拟定职责位置，PG迁移按S02-00实际布局实现，旧SQL Server历史证据保留。",
+        "初始 BLOCKED，四项原 AC 及真实新预演、导出、Cron 解释均需准确采用和独立验收。第二版保留为未通过的恢复证据。"
+      ],
+      "prerequisite_bindings": [
+        {
+          "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
+          "task_ids": [
+            "WP02-10",
+            "WP02-13"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "该仓真实Owner写入前交付；不能以接口存在代替采用。"
+        }
+      ],
+      "source_refs": [
+        "docs/development/08-postgresql-baseline.md",
+        "docs/development/assessments/20261011/implementation-assessment.json",
+        "docs/design-handbook/modules/OA-CONN-01.md",
+        "docs/development/assessments/20261011/catalogs/engineering-oa.json"
+      ],
+      "split_parent": "WP12-15"
     },
     {
       "id": "WP12-16",

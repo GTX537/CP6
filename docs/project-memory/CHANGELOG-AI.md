@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP12-15 流程预演与cron解释的无效果边界](../development/evidence/WP12-15/DELIVERY.md)（拆卡，余项 WP12-15b），核对时间 `2026-11-23T19:18:04.575363+00:00`。
 - [WP12-14 定时事件消息与手动触发真实实例](../development/evidence/WP12-14/DELIVERY.md)（拆卡，余项 WP12-14b），核对时间 `2026-11-23T16:10:33.327809+00:00`。
 - [WP12-05 表单目录收藏、历史查询和最终下载披露](../development/evidence/WP12-05/DELIVERY.md)（DONE），核对时间 `2026-11-23T14:07:09.731137+00:00`。
 - [WP12-17 外部结果持久接收与本地流程/Owner应用](../development/evidence/WP12-17/DELIVERY.md)（DONE），核对时间 `2026-11-23T11:08:39.877947+00:00`。

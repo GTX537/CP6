@@ -164302,7 +164302,7 @@
             ]
           },
           {
-            "owner_task_id": "WP12-15",
+            "owner_task_id": "WP12-15b",
             "gap": "只读预演、裁剪、失权与跨范围刷新，含导出边界",
             "source_cases": [
               "CONN-15",
@@ -177546,6 +177546,11 @@
       "at": "2026-11-23T16:10:33.327809+00:00",
       "evidence": "docs/development/evidence/WP12-14/DELIVERY.md",
       "change": "WP12-14 拆卡，词条交付，完整未完成。WP12-14b 受阻，原九项 AC 待验，OA-CONN-01 16/32。按 WP12-05 原回执单次结转 678.850 秒。"
+    },
+    {
+      "at": "2026-11-23T19:18:04.575363+00:00",
+      "evidence": "docs/development/evidence/WP12-15/DELIVERY.md",
+      "change": "WP12-15 拆卡登记 TIMER 草稿输入提示。WP12-15b 受阻，原四项未验，OA-CONN-01 16/32。按 WP12-14 原 DELIVERY 单次结转 754.861 秒。"
     }
   ],
   "implementation_assessment": {
@@ -228424,7 +228429,7 @@
         "official_started_at": "2026-11-23T14:36:48.102732+00:00",
         "technical_verified_at": "2026-11-23T15:30:19.203034+00:00",
         "verified_at": "2026-11-23T16:10:33.327809+00:00",
-        "effective_seconds": 2519.47,
+        "effective_seconds": 3274.331,
         "size": "L",
         "budget_seconds": 28800,
         "mandatory_split_seconds": 43200,
@@ -228464,6 +228469,14 @@
         "split_decision_ref": {
           "commit": "246c4b327e46b90511c003f25a67820b9aa3cf34",
           "path": "handoffs/CP6-DEV-20261012/tasks/WP12-14/replies/20261123T155134Z-coord3-split-decision/MESSAGE.md"
+        },
+        "post_candidate_finalization_seconds": 754.861,
+        "official_finish": "2026-11-23T16:32:31.2587570+00:00",
+        "finalization_decision_ref": {
+          "commit": "9a4e7d4e68e1d75125b1ee839f2d572dd7038737",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP12-14/replies/20261123T164556Z-coord3-split-acceptance-ack/MESSAGE.md",
+          "receipt_commit": "951c930a7e05ecd544a3e5ab03770798b7a52793",
+          "receipt_path": "handoffs/CP6-DEV-20261012/tasks/WP12-14/messages/20261123T163520Z-cp6-exec-3-delivery-closeout/MESSAGE.md"
         }
       }
     },
@@ -228521,8 +228534,8 @@
         "CONN-07、08、09。认证登记的 EVENT/MESSAGE 按原 ID 与完整指纹持久接收，同键同体回原事实，同键异体按原合同 QUARANTINED/409。验证原 64 KiB、封闭 schema 和拒绝零实例。来源或 Starter 撤回时保留 Inbox，依最终门阻断新实例和业务效果。",
         "CONN-13、14。context 与无副作用 preview 冻结原输入。仅旧 Edit 或 Starter 资格不符时确认拒绝，核对 403 与预览失效。实际确认、超时回查、重试和刷新按原 commandId/previewId 只产生一个真实实例，新意图重新通过效果 Owner 门。"
       ],
-      "card_budget_seconds": 26280.53,
-      "card_mandatory_split_seconds": 39420.795
+      "card_budget_seconds": 25525.669,
+      "card_mandatory_split_seconds": 38288.5035
     },
     {
       "id": "WP12-15",
@@ -228548,19 +228561,155 @@
         "file:Main:CP6.Core/Services/Wf/ApprovalDispatcher.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP12.md",
       "card_anchor": "wp12-15",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "CP6-EXEC-3",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp12-15",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-23T17:06:25.8964150+00:00",
+        "baseline_sha": "a52330b4ef243146e51560ae40d664c9b99d376e",
+        "entry_evidence": "docs/development/evidence/WP12-15/DELIVERY.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": false,
+        "delivery_report": "docs/development/evidence/WP12-15/DELIVERY.md",
+        "dispatch_scope": "版本化 TIMER 草稿配置页的五段 Cron、1–200 字符提示和无障碍关联。200 长度与五段解析沿用现行 Main。原四项预演及导出 AC 待验。",
+        "actual_start_ref": {
+          "commit": "08a951c3665b1cf5ad863cdd09c6d45ba273d0bb",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP12-15/messages/20261123T170838Z-cp6-exec-3-start/MESSAGE.md",
+          "at": "2026-11-23T17:08:38Z"
+        },
+        "dispatch_decision_ref": {
+          "commit": "f438891212b38396b3b90d58faea8a954bc09078",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T165911Z-coord3-wp12-15-dispatch/MESSAGE.md"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP12-15/DELIVERY.md",
+          "source_repository": "GTX537/CP6",
+          "source_sha": "9ad452dbdfe33fb8af967f432704660c6050aa33",
+          "pr_url": "https://github.com/GTX537/CP6/pull/1319",
+          "observed_at": "2026-11-23T14:15:52.7971254-05:00",
+          "environment": "LAPTOP-3QQ44FJS Windows，实际 Main HTTP、Chrome 和本机全新隔离 PostgreSQL 18.6，合成资料。",
+          "command": "用源码绑定的程序集在 INTEGRATION-1 对 OaConn_TimerDraft_、原生 Simulation 实际 HTTP 和 WfCronHelperTests 复跑 12 项。",
+          "scope": "版本化 TIMER 草稿配置页的五段 Cron、1–200 字符提示和无障碍关联。200 长度与五段解析沿用现行 Main。原四项预演及导出 AC 待验。 版本化 200/201、非法语法、旧入口、IAM 与运行写集均实际回读。",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP12-15/DELIVERY.md",
+        "source_sha": "9ad452dbdfe33fb8af967f432704660c6050aa33",
+        "remote_main_sha": "a52330b4ef243146e51560ae40d664c9b99d376e",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1319",
+        "scope": "独立 PASS 仅限输入提示切片。remote_main_sha 是已回读的候选基线。Main 实际采用、同树冒烟与席位释放按后续正式回执核实。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "card_execution": {
+        "result": "SPLIT",
+        "report": "docs/development/evidence/WP12-15/DELIVERY.md",
+        "started_at": "2026-11-23T17:06:25.8964150+00:00",
+        "official_started_at": "2026-11-23T17:06:25.8964150+00:00",
+        "technical_verified_at": "2026-11-23T14:15:52.7971254-05:00",
+        "verified_at": "2026-11-23T19:18:04.575363+00:00",
+        "effective_seconds": 5112.383,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [
+          "WP12-15b"
+        ],
+        "strict_prerequisites": [
+          "S01-01",
+          "S01-02",
+          "S01-07",
+          "S01-09",
+          "S02-00",
+          "WP02-01",
+          "WP02-02",
+          "WP02-03",
+          "WP02-07",
+          "WP02-10",
+          "WP02-13",
+          "WP02-13b",
+          "WP12-01",
+          "WP12-02",
+          "WP12-06",
+          "WP12-07",
+          "WP12-13"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 754.861,
+        "split_decision_ref": {
+          "commit": "89c5ced8826cda9d38b53cae7d6ab285becc30aa",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP12-15/replies/20261123T191804Z-coord3-split-independent-acceptance/MESSAGE.md"
+        }
+      }
+    },
+    {
+      "id": "WP12-15b",
+      "package_id": "WP12",
+      "title": "流程预演、导出与 Cron 时点解释余项",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "OA-CONN-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP12-15",
+        "S01-02",
+        "S02-00",
+        "WP02-10",
+        "WP02-13",
+        "WP12-13"
+      ],
+      "exclusive_resources": [
+        "Main:oa-forecast",
+        "file:Main:CP6.Core/Services/Wf/WfConnectorService.cs",
+        "file:Main:CP6.Core/Services/Wf/Executors/WebApiExecutor.cs",
+        "file:Main:CP6.Core/Services/Wf/ApprovalDispatcher.cs"
+      ],
+      "coverage_role": "IMPLEMENTATION",
+      "state": "BLOCKED",
+      "plan_path": "docs/development/task-plans/WP12.md",
+      "card_anchor": "wp12-15b",
+      "entry_gate": "NOT_CHECKED",
+      "assignment": null,
+      "blockers": [
+        "SYS-IAM 与 OA Connector Owner 尚缺已采用的 conn.forecast 正式菜单、当前租户与环境、资源及字段权绑定或严格等价映射。当前拒绝路径与合成正向样本只作候选证据。",
+        "RP-CONN-04 的时间解释仍待正式采用。先核对准确时区规则摘要和工作日历修订、Cron 语法与 DST 缺失或重复处置，再按现有读权复验五个以内规范时点及 nextDue 零变化。"
+      ],
+      "validation_evidence": [],
+      "delivery_evidence": null,
+      "entry_conditions": [
+        "核对父卡提示切片的实际 Main 采用及原五项直接前置与拆分余卡完整交付。",
+        "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
+        "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
+        "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。",
+        "SYS-IAM 与 OA Connector Owner 尚缺已采用的 conn.forecast 正式菜单、当前租户与环境、资源及字段权绑定或严格等价映射。当前拒绝路径与合成正向样本只作候选证据。",
+        "RP-CONN-04 的时间解释仍待正式采用。先核对准确时区规则摘要和工作日历修订、Cron 语法与 DST 缺失或重复处置，再按现有读权复验五个以内规范时点及 nextDue 零变化。"
+      ],
+      "split_parent": "WP12-15",
+      "remaining_scope": [
+        "CONN-15。固定当前可读的 Flow、FORM、依赖、模拟输入、Starter 与 knowledge cut。发布用准确 pin，已保存草稿用准确 revision 并标 DRAFT_SIMULATION。服务和子流程作只读图诊断。核对业务写入、真实实例、调用、通知与隐式草稿或预览均零。",
+        "CONN-16。按准确版本覆盖并行、TRUE/FALSE/UNKNOWN、循环、未支持节点、100 步和深度 8 边界。返回 PARTIAL、实际遍历和未遍历位置。",
+        "CONN-17。按当前权限分别展示 RESOLVED_AT_CUT、ARRIVAL_TIME 和 REDACTED，裁剪姓名和私有字段。",
+        "CONN-30。用真实 Main HTTP 与 OA Chrome 核对当前授权、跨 Scope、晚到响应、失权清缓存和导出重新核权。旧入口若接续，按正式兼容合同复核其独立读权。无执行许可、无私有字段、摘要或凭据越界。",
+        "RP-CONN-04 的时间解释仍待正式采用。先核对准确时区规则摘要和工作日历修订、Cron 语法与 DST 缺失或重复处置，再按现有读权复验五个以内规范时点及 nextDue 零变化。"
+      ],
+      "card_budget_seconds": 9287.617,
+      "card_mandatory_split_seconds": 13931.4255
     },
     {
       "id": "WP12-16",
@@ -232595,6 +232744,7 @@
         "WP12-14",
         "WP12-14b",
         "WP12-15",
+        "WP12-15b",
         "WP12-16",
         "WP12-17",
         "WP12-18"
@@ -304664,7 +304814,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 201893.991,
+      "effective_seconds": 207761.235,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -304727,7 +304877,8 @@
         "WP12-11",
         "WP12-17",
         "WP12-05",
-        "WP12-14"
+        "WP12-14",
+        "WP12-15"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -304830,6 +304981,14 @@
           ],
           "report": "docs/development/evidence/WP12-14/DELIVERY.md",
           "reason": "已验词条可局部交付。真实触发缺 RP-CONN-01/02 运行合同，原九项 AC 全部由受阻余卡保留。"
+        },
+        {
+          "parent": "WP12-15",
+          "children": [
+            "WP12-15b"
+          ],
+          "report": "docs/development/evidence/WP12-15/DELIVERY.md",
+          "reason": "已验输入提示可局部交付。正式 conn.forecast 权限采用与时间解释待证明，四项原 AC 归受阻余卡。"
         }
       ],
       "current_stage": "OA",
@@ -304913,6 +305072,7 @@
           "WP12-14",
           "WP12-14b",
           "WP12-15",
+          "WP12-15b",
           "WP12-16",
           "WP12-17",
           "WP12-18",
@@ -305017,28 +305177,15 @@
         }
       },
       "next_card_selection": {
-        "rule": "按全图最长下游边数降序，同长保留 OA 阶段原序。候选排序供 COORD 后续独立派工。",
-        "baseline_sha": "55667a87aea03405467dc47ec76ea938c320c69f",
+        "rule": "本轮仅完成 WP12-15 的局部拆分独立验收，下一张业务卡待单独决定。",
+        "baseline_sha": "a52330b4ef243146e51560ae40d664c9b99d376e",
         "stage": "OA",
-        "after_card": "WP12-14",
+        "after_card": "WP12-15",
         "selected": null,
-        "candidates": [
-          {
-            "task": "WP12-15",
-            "longest_downstream_edges": 2
-          },
-          {
-            "task": "WP12-18",
-            "longest_downstream_edges": 2
-          },
-          {
-            "task": "WP12-20",
-            "longest_downstream_edges": 2
-          }
-        ],
-        "dispatch_ref": {
-          "commit": "f1e9a3deee93a4c5dd9dd18f9cae7340c460f4d9",
-          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T143114Z-cp6-exec-2-wp12-14/MESSAGE.md"
+        "candidates": [],
+        "split_decision_ref": {
+          "commit": "89c5ced8826cda9d38b53cae7d6ab285becc30aa",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP12-15/replies/20261123T191804Z-coord3-split-independent-acceptance/MESSAGE.md"
         }
       },
       "phase0_user_confirmation": "2026-11-17 用户确认：先按证据核销或拆卡，列清缺口；完成阶段0核对后再按顺序实施剩余卡。",
