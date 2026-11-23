@@ -96,3 +96,37 @@ it('retains typed input for stale, invalid and temporary errors', async () => {
     expect(w.get('[role=alert]').text()).not.toBe('')
   }
 })
+
+it('clears a late export after an authoritative workspace policy change in the same session', async () => {
+  let complete!: (value: FlowForecast) => void
+  vi.mocked(api.forecast).mockImplementation(() => new Promise(resolve => { complete = resolve }))
+  const w = setup()
+  state(w).open()
+  state(w).varsJson = '{"memo":"临时预演数据"}'
+  const pending = state(w).simulate(true)
+  const signal = vi.mocked(api.forecast).mock.calls.at(-1)?.[2]
+  window.dispatchEvent(new Event('cp6-workspace-authority-changed'))
+  expect(signal?.aborted).toBe(true)
+  complete(prediction)
+  await pending
+  expect(state(w).result).toBeUndefined()
+  expect(state(w).varsJson).toBe('{}')
+  expect(w.text()).not.toContain('approval-private')
+})
+
+it.each([
+  [503, 'FORECAST_AUTHORITY_UNPROVEN', '预演权限映射尚未采用'],
+  [403, 'FORECAST_ACTION_FORBIDDEN', '当前没有流程预演权限'],
+])('shows the forecast block and keeps independent definition read on %s', async (status, code, message) => {
+  const w = setup()
+  state(w).open()
+  state(w).varsJson = '{"memo":"合成私有变量"}'
+  await state(w).simulate()
+  expect(w.text()).toContain('approval-private')
+  vi.mocked(api.forecast).mockRejectedValue({ response: { status, data: { code } } })
+  await state(w).simulate(true)
+  expect(w.get('[role=alert]').text()).toContain(message)
+  expect(w.text()).not.toContain('approval-private')
+  expect(state(w).varsJson).toBe('{}')
+  expect(w.emitted('privateClear')).toBeUndefined()
+})

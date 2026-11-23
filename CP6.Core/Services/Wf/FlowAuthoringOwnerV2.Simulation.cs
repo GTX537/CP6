@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using CP6.Entity.Contracts.Wire;
 using CP6.Entity.DomainModels.Wf;
@@ -64,11 +65,13 @@ public sealed partial class FlowAuthoringOwnerV2
     public async Task<FlowSimulationV2> SimulateAsync(string key, byte[] raw, CancellationToken ct = default)
     {
         var input = SimulationInput(raw);
-        Entry(); await using var tx = await db.Database.BeginTransactionAsync(ct); await Root(ct);
+        Entry();
+        await using var tx = await db.Database.BeginTransactionAsync(ct);
+        await fence.Root(ct);
         var actor = await Actor(ct);
+        await WorkflowForecastAuthorityV1.RequireAsync(db, actor, ct);
         var head = await Heads().SingleOrDefaultAsync(x => x.Key == key, ct) ?? throw Error("DEFINITION_NOT_FOUND", 404);
-        var fields = await Permission(actor, head, false, false, ct);
-        if (!fields.Fields["SchemaJson"].CanRead || !fields.Fields["FormKey"].CanRead) throw Error("FIELD_READ_FORBIDDEN", 403);
+        await ForecastReadPermission(actor, head, ct);
         if (head.Status != 0) throw Error("DRAFT_REQUIRED", 409);
         if (head.DraftId != input.DraftVersionId || head.Version.ToString("D") != input.ExpectedVersion)
             throw Error("DEFINITION_CHANGED", 409);
@@ -132,11 +135,14 @@ public sealed partial class FlowAuthoringOwnerV2
         var prediction = await FlowSimulationPlannerV2.Predict(schema, input.VarsJson, Resolve, diagnostics, ct);
         var finalActor = await Actor(ct);
         if (finalActor.UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401);
+        await WorkflowForecastAuthorityV1.RequireAsync(db, finalActor, ct);
+        await ForecastReadPermission(finalActor, head, ct);
         CompletionClock();
         // Read transaction is disposed without commit; no preview/receipt/audit rows are created.
         return new("EXPLANATION_ONLY", head.Id, head.DraftId, input.ExpectedVersion,
             ["CURRENT_ACTOR_AS_STARTER", "ALL_APPROVALS_ASSUMED_APPROVED", "MOCK_VARIABLES_UNCHANGED", "NO_EXECUTION_OR_BUSINESS_ADMISSION"],
-            prediction.Nodes, prediction.Edges, diagnostics.ToArray(), dependencies.Dependencies);
+            prediction.Nodes, prediction.Edges, diagnostics.ToArray(),
+            dependencies.Dependencies.Select(d => d.Kind == "SERVICE" ? d with { Reference = "", Version = null } : d).ToArray());
     }
 }
 

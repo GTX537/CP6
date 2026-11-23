@@ -8,6 +8,10 @@ export interface WorkCalendarYear {
   weekRule: string; items: WorkCalendarDay[]; timeZoneId: string | null; timeZoneRulesVersion: string | null
   timeZoneSource: string; timeZoneFailure: string | null; japaneseHolidays: HolidayPackage
 }
+export interface CronExplanationInput {
+  cron: string; calendarId: string; calendarRevision: number; timeZoneId: string
+  timeZoneRulesVersion: string; afterUtc: string; workdaysOnly: boolean
+}
 export interface CronExplanation {
   mode: 'EXPLANATION_ONLY'; isExecutionPermit: false; calendarId: string; calendarRevision: number
   timeZoneId: string; timeZoneRulesVersion: string; afterUtc: string; workdaysOnly: boolean

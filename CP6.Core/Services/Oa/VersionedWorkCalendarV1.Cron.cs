@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using CP6.Core.Services.Wf;
 using NCrontab;
 
 namespace CP6.Core.Services.Oa;
@@ -17,13 +18,14 @@ public sealed partial class VersionedWorkCalendarV1
 {
     public async Task<CronExplanationV1> ExplainCronAsync(CronExplanationInputV1 input, CancellationToken ct)
     {
-        if (input.CalendarId == Guid.Empty || input.CalendarRevision < 0 || input.AfterUtc.Offset != TimeSpan.Zero ||
+        await using var tx = await BeginReadAsync(ct, forecast: true);
+        if (input.CalendarId == Guid.Empty || input.CalendarRevision < 0 || input.AfterUtc == default ||
+            input.AfterUtc.Offset != TimeSpan.Zero ||
             string.IsNullOrWhiteSpace(input.TimeZoneId) || string.IsNullOrWhiteSpace(input.TimeZoneRulesVersion))
             throw Error("TIME_EXPLANATION_PIN_REQUIRED", 422);
-        var schedule = input.Cron is { Length: > 0 and <= 128 } ? CrontabSchedule.TryParse(input.Cron) : null;
+        var schedule = WfCronHelper.ParseInput(input.Cron);
         if (schedule == null) throw Error("CRON_EXPRESSION_INVALID", 422);
 
-        await using var tx = await BeginReadAsync(ct);
         var calendar = await SnapshotAsync(db, input.CalendarId, input.CalendarRevision, ct);
         var zone = await WorkflowDeadlineZoneV1.ResolveAsync(db, ct);
         if (zone.Rules == null) throw Error(zone.FailureCode ?? "TIME_CONTEXT_UNPROVEN", 503);
@@ -31,7 +33,7 @@ public sealed partial class VersionedWorkCalendarV1
             throw Error("TIMEZONE_VERSION_CHANGED", 412);
 
         var (points, complete) = CronPoints(schedule, input.AfterUtc, zone.Rules, calendar, input.WorkdaysOnly, ct);
-        await RequireActorAsync("Calendar.View", ct);
+        await RequireActorAsync("Calendar.View", ct, forecast: true);
         await tx.CommitAsync(ct);
         return new("EXPLANATION_ONLY", false, calendar.CalendarId, calendar.Revision, input.TimeZoneId, input.TimeZoneRulesVersion,
             input.AfterUtc, input.WorkdaysOnly, "SKIP_MISSING_CIVIL_TIME", "RETURN_BOTH_FOLDS", complete ? "FIVE_POINTS" : "SEARCH_LIMIT",

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using CP6.Core.Services.Oa;
+using CP6.Core.Services.Wf;
 using CP6.Entity.DomainModels.Wf;
 using CP6.Tests.Platform;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await using var h = await Seed();
         await RegisterScope(h);
         await CalendarPermissions(h, edit: true);
+        await ForecastActionFixture(h);
         await TimeoutZone(h);
         var due = new DateTime(2028, 9, 6, 11, 30, 0, DateTimeKind.Utc);
         var trigger = new Wf_FlowTrigger { FlowKey = "forecast-dormant-timer", StarterUserId = h.User, Enabled = false,
@@ -36,6 +38,29 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             new(cron, h.Tenant, revision, zone, version, DateTimeOffset.Parse(afterUtc), workdaysOnly);
 
         var before = await ForecastReadState(h);
+        var everyMinute = string.Join(",", Enumerable.Range(0, 60));
+        var longCron = everyMinute + " 0,1,2,3,4,5,6,7,10,11,12 * * *";
+        var over = everyMinute + " 0,1,2,3,4,5,6,10,11,12,13 * * *";
+        Assert.Equal(WfCronHelper.MaxExpressionLength, longCron.Length);
+        Assert.Equal(WfCronHelper.MaxExpressionLength + 1, over.Length);
+        Assert.True(WfCronHelper.IsValid(longCron));
+        Assert.NotNull(WfCronHelper.NextUtc(over, new DateTime(2027, 1, 1, 5, 0, 0, DateTimeKind.Utc)));
+        Assert.False(WfCronHelper.IsValid(over));
+        var longInput = Explain(longCron, "2027-11-07T04:00:00Z");
+        var explained = await api.Data(path, longInput);
+        Assert.Equal(5, explained.GetProperty("points").GetArrayLength());
+        Assert.Equal(DateTimeOffset.Parse("2027-11-07T04:01:00Z"), explained.GetProperty("points")[0].GetProperty("utc").GetDateTimeOffset());
+        var legacy = await api.Data(LegacyCronExplanationRoute, longInput);
+        Assert.Equal(5, legacy.GetProperty("next").GetArrayLength());
+        Assert.Equal(explained.GetRawText(), legacy.GetProperty("explanation").GetRawText());
+        foreach (var route in new[] { path, LegacyCronExplanationRoute })
+        {
+            await api.Reject(route, longInput with { Cron = over }, HttpStatusCode.UnprocessableEntity, "CRON_EXPRESSION_INVALID");
+            await api.Reject(route, longInput with { Cron = "* * * *" }, HttpStatusCode.UnprocessableEntity, "CRON_EXPRESSION_INVALID");
+            await api.Reject(route, longInput with { Cron = "    " }, HttpStatusCode.UnprocessableEntity, "CRON_EXPRESSION_INVALID");
+        }
+        await api.Reject(LegacyCronExplanationRoute, new { cron = longCron }, HttpStatusCode.UnprocessableEntity, "TIME_EXPLANATION_PIN_REQUIRED");
+
         var fallback = Explain("30 1 * * *", "2027-11-07T04:00:00Z");
         var repeated = await api.Data(path, fallback);
         Assert.Equal("EXPLANATION_ONLY", repeated.GetProperty("mode").GetString());

@@ -6,8 +6,13 @@ namespace CP6.Core.Services.Wf;
 /// 存储/比较一律 UTC。无 L 语义（映射表③：「每月末」预设按 28 日近似）。</summary>
 public static class WfCronHelper
 {
-    public static bool IsValid(string? cron)
-        => !string.IsNullOrWhiteSpace(cron) && CrontabSchedule.TryParse(cron) != null;
+    public const int MaxExpressionLength = 200;
+
+    internal static CrontabSchedule? ParseInput(string? cron) =>
+        cron is { Length: > 0 and <= MaxExpressionLength } && !string.IsNullOrWhiteSpace(cron)
+            ? CrontabSchedule.TryParse(cron) : null;
+
+    public static bool IsValid(string? cron) => ParseInput(cron) != null;
 
     /// <summary>afterUtc 之后（严格未来）的下一次到期（UTC）；cron 非法返回 null。
     /// 从「当前时刻」起算即天然实现 misfire 口径：宕机跨过的历史到期点直接跳过（spec §3.2）。</summary>

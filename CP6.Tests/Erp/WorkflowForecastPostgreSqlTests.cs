@@ -32,6 +32,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     {
         await using var h = await Seed();
         var (owner, form) = await PrepareDependencies(h);
+        await ForecastActionFixture(h);
         var originalForm = await ActiveDependencyForm(form, "forecast-form");
         var childPin = (await ActiveDependencyFlow(owner, "forecast-child")).VersionId;
         const string serviceSchema = """
@@ -93,6 +94,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     {
         await using var h = await Seed();
         var (owner, leaf) = await PrepareActivation(h, "depth-leaf");
+        await ForecastActionFixture(h);
         var version = leaf.Result!.Publication!.VersionId;
         var key = "depth-leaf";
         for (var i = 1; i <= SubFlowLimits.MaxDepth; i++)
@@ -125,6 +127,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     public async Task Forecast_service_registration_is_only_inspected_and_external_calls_stay_zero()
     {
         await using var h = await Seed();
+        await ForecastActionFixture(h);
         await PreparePublication(h);
         var connector = new SimulationConnector();
         var owner = Authoring(h, connectors: [connector]);
@@ -168,6 +171,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     public async Task Forecast_actual_Main_reports_parallel_unknown_and_bounded_traversal()
     {
         await using var h = await Seed();
+        await ForecastActionFixture(h);
         var owner = await PrepareAuthoring(h);
         const string graph = """
             {"start":"s","nodes":[{"id":"s","type":"start"},{"id":"fork","type":"parallelSplit"},{"id":"choose","type":"gateway"},
@@ -216,6 +220,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     public async Task Forecast_people_and_in_flight_export_use_current_scope_and_authority()
     {
         await using var h = await Seed();
+        await ForecastActionFixture(h);
         var owner = await PrepareAuthoring(h);
         await EngineeringAction(h, "user", "query");
         var userMenu = await h.Db.Sys_Menus.SingleAsync(x => x.MenuKey == "user");
@@ -253,6 +258,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 
         await using var other = await Seed();
         await PrepareAuthoring(other);
+        await ForecastActionFixture(other);
         using (var crossTenant = await host.Send(BoundRequest(await Login(host, other), path, input)))
         {
             Assert.Equal(HttpStatusCode.NotFound, crossTenant.StatusCode);

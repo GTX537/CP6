@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using CP6.Entity.Contracts.Wire;
 using CP6.Entity.DomainModels.Wf;
@@ -67,8 +68,9 @@ public sealed partial class FlowAuthoringOwnerV2
         var input = ReadForecast(raw);
         Entry();
         await using var tx = await db.Database.BeginTransactionAsync(ct);
-        await Root(ct);
+        await fence.Root(ct);
         var actor = await Actor(ct);
+        await WorkflowForecastAuthorityV1.RequireAsync(db, actor, ct);
         var head = await Heads().SingleOrDefaultAsync(x => x.Key == key, ct) ?? throw Error("DEFINITION_NOT_FOUND", 404);
         await ForecastReadPermission(actor, head, ct);
 
@@ -163,6 +165,7 @@ public sealed partial class FlowAuthoringOwnerV2
         var result = await WorkflowForecastPlanner.ExplainAsync(schema, input.VarsJson, People, diagnostics, ct);
         var current = await Actor(ct);
         if (current.UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401);
+        await WorkflowForecastAuthorityV1.RequireAsync(db, current, ct);
         await ForecastReadPermission(current, head, ct);
         foreach (var menu in approvedMenus)
             if (!await CanReadForecastPeople(current, menu, ct)) throw Error("ACTION_FORBIDDEN", 403);

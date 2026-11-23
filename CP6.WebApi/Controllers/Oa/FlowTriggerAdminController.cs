@@ -1,4 +1,5 @@
 using CP6.Core.Auth;
+using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
 using CP6.WebApi.Filters;
@@ -101,13 +102,25 @@ public class FlowTriggerAdminController : LocalizedControllerBase
     public async Task<IActionResult> Fires(Guid id, [FromQuery] int take, CancellationToken ct)
         => Ok2(await _admin.ListFiresAsync(id, take <= 0 ? 20 : take, ct));
 
-    [HttpPost("cron-preview")]
+    [HttpPost("cron-preview"), RequestSizeLimit(16 * 1024)]
     [RequirePermission("oa-flow-admin", "FlowTrigger.View")]
-    public IActionResult CronPreview([FromBody] CronPreviewReq r)
-        => WfCronHelper.IsValid(r.Cron)
-            ? Ok2(new { next = WfCronHelper.PreviewUtc(r.Cron, DateTime.UtcNow, 5) })
-            : BadRequest(new { code = 400, message = "E-WF-022" });
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public async Task<IActionResult> CronPreview([FromBody] CronPreviewReq r,
+        [FromServices] VersionedWorkCalendarV1 calendar, CancellationToken ct)
+    {
+        try
+        {
+            var result = await calendar.ExplainCronAsync(new(r.Cron, r.CalendarId ?? Guid.Empty, r.CalendarRevision ?? -1,
+                r.TimeZoneId ?? "", r.TimeZoneRulesVersion ?? "", r.AfterUtc ?? default, r.WorkdaysOnly), ct);
+            return Ok2(new { next = result.Points.Select(p => p.Utc), explanation = result });
+        }
+        catch (ScopeAuthorizationExceptionV1 e)
+        { return StatusCode(e.Status, new { code = e.Message, legacyCode = "E-WF-022" }); }
+        catch (Exception e) when (e is CurrentPermissionUnavailableException or Npgsql.NpgsqlException)
+        { return StatusCode(503, new { code = "AUTHORITY_FENCE_UNAVAILABLE" }); }
+    }
 
     public record EnableReq(bool Enabled);
-    public record CronPreviewReq(string Cron);
+    public record CronPreviewReq(string Cron, Guid? CalendarId = null, long? CalendarRevision = null, string? TimeZoneId = null,
+        string? TimeZoneRulesVersion = null, DateTimeOffset? AfterUtc = null, bool WorkdaysOnly = false);
 }

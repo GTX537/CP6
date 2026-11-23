@@ -91,7 +91,12 @@ async function simulate(download = false) {
     try {
       check()
       const status = e?.response?.status
-      if (status === 401 || status === 403 || status === 404) {
+      const code = e?.response?.data?.code
+      if (code === 'FORECAST_AUTHORITY_UNPROVEN' || code === 'FORECAST_ACTION_FORBIDDEN') {
+        clear()
+        error.value = code === 'FORECAST_AUTHORITY_UNPROVEN'
+          ? '预演权限映射尚未采用，当前已阻断。' : '当前没有流程预演权限，已清除预演内容。'
+      } else if (status === 401 || status === 403 || status === 404) {
         clear()
         emit('privateClear')
         error.value = '当前版本不可读取，已清除预演内容。'
@@ -102,13 +107,17 @@ async function simulate(download = false) {
   } finally { if (live && generation === request) busy.value = false }
 }
 function authorityChanged() { observedIdentity = identityStamp(); clear() }
-function storageChanged() { if (identityStamp() !== observedIdentity) authorityChanged() }
+function storageChanged(event: StorageEvent) {
+  if (event.key === 'menus' || identityStamp() !== observedIdentity) authorityChanged()
+}
 window.addEventListener(AUTH_EVENT, authorityChanged)
+window.addEventListener('cp6-workspace-authority-changed', authorityChanged)
 window.addEventListener('storage', storageChanged)
 onBeforeUnmount(() => {
   live = false
   invalidate()
   window.removeEventListener(AUTH_EVENT, authorityChanged)
+  window.removeEventListener('cp6-workspace-authority-changed', authorityChanged)
   window.removeEventListener('storage', storageChanged)
 })
 const peopleLabels = {

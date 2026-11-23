@@ -8,6 +8,7 @@ import CpPageShell from '@/components/templates/CpPageShell.vue'
 import CpTag from '@/components/base/CpTag.vue'
 import { workCalendarApi, type CalendarIntent, type CronExplanation, type RecalculationItem, type RecalculationPreview, type WorkCalendarYear } from '@/api/oa/workCalendar'
 import { toExceptionMap, stateForDate, dayTone, hasTag, type DayKind } from './workCalendarModel'
+import { CRON_EXPRESSION_MAX_LENGTH, hasCronInput } from './flowTriggerModel'
 
 const { t } = useI18n()
 const calDate = ref(new Date())
@@ -25,14 +26,24 @@ const taskIds = ref(''), reason = ref('')
 const preview = ref<RecalculationPreview>()
 const confirmed = ref<string[]>([])
 const cron = ref(''), afterUtc = ref(''), workdaysOnly = ref(false), cronBusy = ref(false), explanation = ref<CronExplanation>()
-const cronReady = computed(() => !locked.value && !!calendar.value?.timeZoneRulesVersion && !!cron.value.trim()
-  && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,7})?Z$/.test(afterUtc.value))
-let cronSequence = 0
-watch(() => [cron.value, afterUtc.value, workdaysOnly.value, calendar.value], () => {
+const cronError = ref('')
+const cronReady = computed(() => !locked.value && !!calendar.value?.timeZoneId && !!calendar.value.timeZoneRulesVersion
+  && hasCronInput(cron.value) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,7})?Z$/.test(afterUtc.value))
+let cronSequence = 0, cronRequest: AbortController | undefined
+
+function invalidateCron() {
   cronSequence++
+  cronRequest?.abort()
   explanation.value = undefined
   cronBusy.value = false
-}, { flush: 'sync' })
+  cronError.value = ''
+}
+function clearCron() {
+  invalidateCron()
+  cron.value = afterUtc.value = ''
+  workdaysOnly.value = false
+}
+watch(() => [cron.value, afterUtc.value, workdaysOnly.value, calendar.value], invalidateCron, { flush: 'sync' })
 const sessionKey = 'cp6-oa-work-calendar-v1'
 let readSequence = 0, generation = 0, controller = new AbortController()
 
@@ -49,8 +60,7 @@ function clearIdentity() {
   preview.value = undefined
   confirmed.value = []
   taskIds.value = reason.value = editDay.value = editNote.value = ''
-  cron.value = afterUtc.value = ''
-  workdaysOnly.value = false
+  clearCron()
   dialogVisible.value = loading.value = saving.value = false
   clearPending()
 }
@@ -60,6 +70,7 @@ function identityChanged() {
 }
 function storageChanged(event: StorageEvent) {
   if (!event.key || [AUTH_EPOCH, AUTH_RECORD, IMPERSONATION].includes(event.key)) identityChanged()
+  else if (event.key === 'menus') clearCron()
 }
 function handleError(e: any) {
   const status = e?.response?.status
@@ -75,11 +86,13 @@ async function explainCron() {
   if (!cronReady.value || cronBusy.value || !calendar.value) return
   const sequence = ++cronSequence, at = generation, stamp = identityStamp(), pinned = calendar.value
   const current = () => sequence === cronSequence && at === generation && stamp === identityStamp()
+  const request = new AbortController()
+  cronRequest = request
   cronBusy.value = true
   explanation.value = undefined
-  error.value = ''
+  cronError.value = ''
   try {
-    const value = await workCalendarApi.explainCron(pinned, cron.value.trim(), afterUtc.value, workdaysOnly.value, controller.signal)
+    const value = await workCalendarApi.explainCron(pinned, cron.value, afterUtc.value, workdaysOnly.value, request.signal)
     if (!current()) return
     if (value.mode !== 'EXPLANATION_ONLY' || value.isExecutionPermit !== false || value.calendarId !== pinned.calendarId ||
         value.calendarRevision !== pinned.revision || value.timeZoneId !== pinned.timeZoneId ||
@@ -87,9 +100,22 @@ async function explainCron() {
     explanation.value = value
   } catch (e: any) {
     if (!current()) return
-    if (e?.response?.status === 412) error.value = '时区或规则版本已变化，请刷新日历后重新解释。'
-    else handleError(e)
-  } finally { if (current()) cronBusy.value = false }
+    const status = e?.response?.status
+    const code = e?.response?.data?.code
+    if (code === 'FORECAST_AUTHORITY_UNPROVEN' || code === 'FORECAST_ACTION_FORBIDDEN') {
+      clearCron()
+      cronError.value = code === 'FORECAST_AUTHORITY_UNPROVEN'
+        ? '预演权限映射尚未采用，当前已阻断。' : '当前没有 Cron 解释权限，已清除解释内容。'
+    } else if (status === 412) cronError.value = '时区或规则版本已变化，请刷新日历后重新解释。'
+    else if (code === 'CRON_EXPRESSION_INVALID') cronError.value = '请输入合法的五段 Cron 表达式。'
+    else if (code === 'TENANT_TIMEZONE_REQUIRED' || code === 'TENANT_TIMEZONE_INVALID')
+      cronError.value = '当前租户的时区规则未证实，无法解释时间。'
+    else if (status === 401 || status === 403) handleError(e)
+    else cronError.value = '时间解释未完成，请重新读取日历后重试。'
+  } finally {
+    if (cronRequest === request) cronRequest = undefined
+    if (current()) cronBusy.value = false
+  }
 }
 
 async function reload() {
@@ -200,6 +226,7 @@ function confirmDeadline(item: RecalculationItem) {
 }
 onMounted(() => {
   window.addEventListener(AUTH_EVENT, identityChanged)
+  window.addEventListener('cp6-workspace-authority-changed', clearCron)
   window.addEventListener('storage', storageChanged)
   try {
     const saved = JSON.parse(sessionStorage.getItem(sessionKey) ?? 'null')
@@ -211,7 +238,9 @@ onMounted(() => {
 onBeforeUnmount(() => {
   generation++
   controller.abort()
+  invalidateCron()
   window.removeEventListener(AUTH_EVENT, identityChanged)
+  window.removeEventListener('cp6-workspace-authority-changed', clearCron)
   window.removeEventListener('storage', storageChanged)
 })
 </script>
@@ -243,9 +272,10 @@ onBeforeUnmount(() => {
       </section>
       <section aria-label="Cron 时间解释" class="wc-meta">
         <h3>Cron 时间解释</h3>
+        <p v-if="cronError" role="alert">{{ cronError }}</p>
         <p v-if="!calendar.timeZoneRulesVersion">当前租户的时区规则未证实，无法解释时间。</p>
         <template v-else>
-          <label>Cron（5 段） <input v-model="cron" maxlength="128" placeholder="30 1 * * *" :disabled="cronBusy" /></label>
+          <label>Cron（5 段） <input v-model="cron" :maxlength="CRON_EXPRESSION_MAX_LENGTH" placeholder="30 1 * * *" :disabled="cronBusy" /></label>
           <label>起算 UTC <input v-model.trim="afterUtc" placeholder="2027-11-07T04:00:00Z" :disabled="cronBusy" /></label>
           <label><input v-model="workdaysOnly" type="checkbox" :disabled="cronBusy" /> 仅采用当前版本标记的工作日</label>
           <el-button :disabled="!cronReady" :loading="cronBusy" @click="explainCron">解释未来时点</el-button>

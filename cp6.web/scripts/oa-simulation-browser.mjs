@@ -103,8 +103,46 @@ try {
   await expect(time.locator('tbody tr')).toHaveCount(5)
   await page.screenshot({ path: path.join(output, 'cron.png'), fullPage: true })
   steps.push('actual calendar view displays the five exact UTC and local points with both folds')
+  const cronInput = time.getByLabel('Cron（5 段）')
+  await expect(cronInput).toHaveAttribute('maxlength', '200')
+  const longCron = Array.from({ length: 60 }, (_, n) => n).join(',') + ' 0,1,2,3,4,5,6,7,10,11,12 * * *'
+  expect(longCron).toHaveLength(200)
+  await cronInput.fill(longCron)
+  const longResponse = page.waitForResponse(r => new URL(r.url()).pathname.endsWith('/cron-explanations'))
+  await time.getByRole('button', { name: '解释未来时点' }).click()
+  const longHttp = await longResponse
+  expect(longHttp.status()).toBe(200)
+  expect(longHttp.request().postDataJSON().cron).toBe(longCron)
+  const longEvidence = (await longHttp.json()).data
+  expect(longEvidence.points).toHaveLength(5)
+  expect(longEvidence.points[0].utc).toBe('2027-11-07T04:01:00+00:00')
+  steps.push('actual Calendar API receives the complete valid 200-character Cron')
+
+  let reachedCron, releaseCron, finishedCron
+  const cronUpstream = new Promise(resolve => { reachedCron = resolve })
+  const cronHold = new Promise(resolve => { releaseCron = resolve })
+  const cronSettled = new Promise(resolve => { finishedCron = resolve })
+  await page.route('**/cron-explanations', async route => {
+    try {
+      const actual = await route.fetch()
+      reachedCron(actual.status())
+      await cronHold
+      await route.fulfill({ response: actual }).catch(() => {})
+    } catch {
+      reachedCron(0)
+    } finally { finishedCron() }
+  }, { times: 1 })
+  await time.getByRole('button', { name: '解释未来时点' }).click()
+  try {
+    expect(await cronUpstream).toBe(200)
+    await page.evaluate(() => window.dispatchEvent(new Event('cp6-workspace-authority-changed')))
+    await expect(cronInput).toHaveValue('')
+  } finally { releaseCron() }
+  await cronSettled
+  await expect(time.locator('table')).toHaveCount(0)
+  steps.push('same-session workspace policy invalidation discards the delayed real Main Cron reply')
   expect(errors).toEqual([])
-  await writeFile(path.join(output, 'result.json'), JSON.stringify({ result: 'PASS', phase: 'EXPLANATION_ONLY', high, low, cron, steps, pageErrors: errors, responses, internalApiMocked: false, forecastResponseDelayed: true }, null, 2))
+  await writeFile(path.join(output, 'result.json'), JSON.stringify({ result: 'PASS', phase: 'EXPLANATION_ONLY', high, low, cron, longCronLength: longCron.length, longEvidence, steps, pageErrors: errors, responses, internalApiMocked: false, forecastResponseDelayed: true }, null, 2))
   process.stdout.write(JSON.stringify({ result: 'PASS', steps }) + '\n')
 } catch (error) {
   if (page) { await page.screenshot({ path: path.join(output, 'failure.png'), fullPage: true }); await writeFile(path.join(output, 'failure.txt'), await page.locator('body').innerText()) }

@@ -151,7 +151,7 @@ public sealed partial class ConnectorVersionControlService
         }
         if(source=="TIMER")
         {
-            if(config?.Cron is not { Length: >0 and <=200 } cron || !WfCronHelper.IsValid(cron) ||
+            if(config?.Cron is not { } cron || !WfCronHelper.IsValid(cron) ||
                 WfCronHelper.NextUtc(cron,DateTime.UtcNow)==null || config.VarsMap!=null ||
                 config.Vars is not { ValueKind:JsonValueKind.Object } vars || ContainsReserved(vars)) throw Error("TIMER_CONFIG_INVALID");
         }

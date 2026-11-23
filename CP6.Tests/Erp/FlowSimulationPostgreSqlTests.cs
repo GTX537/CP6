@@ -19,7 +19,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     [OaNativeBrowserPostgresFact]
     public async Task NativeBrowser_actual_Vue_exact_draft_simulation_reaches_real_PostgreSQL_without_business_writes()
     {
-        await using var h = await Seed(); var owner = await PrepareAuthoring(h); await EngineeringAction(h, "user", "query");
+        await using var h = await Seed(); await ForecastActionFixture(h); var owner = await PrepareAuthoring(h); await EngineeringAction(h, "user", "query");
         var userMenu = await h.Db.Sys_Menus.SingleAsync(m => m.MenuKey == "user");
         if (!await h.Db.Sys_RoleMenus.AnyAsync(m => m.RoleId == 72 && m.MenuId == userMenu.MenuId))
         {
@@ -51,7 +51,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     [CurrentPermissionPostgresFact]
     public async Task Simulation_actual_HTTP_exact_draft_precision_read_authority_and_no_business_effects()
     {
-        await using var h = await Seed(); var owner = await PrepareAuthoring(h);
+        await using var h = await Seed(); await ForecastActionFixture(h); var owner = await PrepareAuthoring(h);
         var saved = (await owner.SaveAsync("simulation", AuthoringCommand(schema: SimulationSchema))).Result!;
         // Preview does not require edit/publish or execution admission: it is a current-authority read.
         await h.Db.Sys_RoleActions.Where(x => x.ActionCode == "edit" || x.ActionCode == "add").ExecuteDeleteAsync();
@@ -87,7 +87,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     [CurrentPermissionPostgresFact]
     public async Task Simulation_current_IAM_read_resolves_real_actor_but_other_owner_and_tenant_stay_hidden()
     {
-        await using var h = await Seed(); var owner = await PrepareAuthoring(h); await EngineeringAction(h, "user", "query");
+        await using var h = await Seed(); await ForecastActionFixture(h); var owner = await PrepareAuthoring(h); await EngineeringAction(h, "user", "query");
         var saved = (await owner.SaveAsync("people", AuthoringCommand(schema: SimulationSchema))).Result!;
         var result = await owner.SimulateAsync("people", SimulationRequest(saved));
         var stage = Assert.Single(result.Nodes.Single(x => x.NodeId == "a").Stages);
@@ -104,7 +104,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         h.Db.Sys_Users.Add(other); await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
         h.Http.User = CurrentPermissionContextTests.Principal(other.Id, h.Tenant);
         Assert.Equal(404, (await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(() => Authoring(h, _ => Task.FromResult(other.Id)).SimulateAsync("people", SimulationRequest(saved)))).Status);
-        await using var foreign = await Seed(); var foreignOwner = await PrepareAuthoring(foreign);
+        await using var foreign = await Seed(); await ForecastActionFixture(foreign); var foreignOwner = await PrepareAuthoring(foreign);
         Assert.Equal(404, (await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(() => foreignOwner.SimulateAsync("people", SimulationRequest(saved)))).Status);
     }
 
@@ -119,7 +119,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     [CurrentPermissionPostgresFact]
     public async Task Simulation_service_registration_loss_is_explicit_and_never_calls_connector_or_creates_preview()
     {
-        await using var h = await Seed(); await PrepareAuthoring(h); var connector = new SimulationConnector();
+        await using var h = await Seed(); await ForecastActionFixture(h); await PrepareAuthoring(h); var connector = new SimulationConnector();
         var owner = Authoring(h, connectors: [connector]);
         const string schema = """
             {"start":"s","nodes":[{"id":"s","type":"start"},{"id":"service","type":"serviceTask","serviceKind":"webApi","serviceConnectorName":"simulation-only","servicePath":"/mock"},{"id":"e","type":"end"}],"edges":[{"from":"s","to":"service"},{"from":"service","to":"e"}]}

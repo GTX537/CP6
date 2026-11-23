@@ -22,7 +22,7 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="t('oa.flowtrigger.form.cron')">
-          <el-input v-model="form.cron" placeholder="0 9 * * *" />
+          <el-input v-model="form.cron" :maxlength="CRON_EXPRESSION_MAX_LENGTH" placeholder="0 9 * * *" />
           <router-link v-permission="'oa-work-calendar:Calendar.View'" to="/oa/work-calendar" class="cron-preview">
             按日历版本解释 Cron 时点
           </router-link>
@@ -71,7 +71,7 @@ import { reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { flowTriggerApi, type FlowTriggerItem } from '@/api/oa/flowTrigger'
-import { TRIGGER_TYPES, CRON_PRESETS, validateTriggerForm, buildConfigJson } from './flowTriggerModel'
+import { TRIGGER_TYPES, CRON_PRESETS, CRON_EXPRESSION_MAX_LENGTH, validateTriggerForm, buildConfigJson } from './flowTriggerModel'
 
 const props = defineProps<{ modelValue: boolean; editing: FlowTriggerItem | null }>()
 const emit = defineEmits<{ 'update:modelValue': [boolean]; saved: [string | null | undefined] }>()
