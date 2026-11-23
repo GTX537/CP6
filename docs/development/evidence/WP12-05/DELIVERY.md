@@ -1,6 +1,6 @@
 # WP12-05 表单目录收藏、历史查询和最终下载披露
 
-候选已在 Windows 本机完成验证，待总控独立验收。执行为 CP6-EXEC-2，主机 LAPTOP-3QQ44FJS，Main DEV-1 工作树 `D:/CP6-worktrees/wave17-dispatch-20261018`，任务分支 `codex/wp12-05`。领取基线 `4d31801d0456064ae38cf367759d38000be286e2`；受验源码 `e27faa22005fb657815ccd459db536da5f7d2b0f`，Git 树 `cf6c0a769d065c7bbb6d875bebc9ba5a4d1f7a7a`。按原定义复算 22 项严格前置完整 DONE。 [原卡](../../task-plans/WP12.md#wp12-05) · [正式 DECISION #416](https://github.com/GTX537/CP6.AI-Handoff/blob/451a66f2ca73d725195a380edce9fb90c6d8951e/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T114542Z-cp6-exec-2-wp12-05/MESSAGE.md) · [远端 START](https://github.com/GTX537/CP6.AI-Handoff/blob/03747b4d74086d545818ee790e09787b9118c65c/handoffs/CP6-DEV-20261012/tasks/WP12-05/messages/20261123T115557Z-cp6-exec-2-start/MESSAGE.md)
+旧流程日期与分页已补证，待总控复验。首轮证据保留如下，最新结果见文末同卡复验。执行为 CP6-EXEC-2，主机 LAPTOP-3QQ44FJS，Main DEV-1 工作树 `D:/CP6-worktrees/wave17-dispatch-20261018`，任务分支 `codex/wp12-05`。领取基线 `4d31801d0456064ae38cf367759d38000be286e2`；首轮受验源码 `e27faa22005fb657815ccd459db536da5f7d2b0f`，Git 树 `cf6c0a769d065c7bbb6d875bebc9ba5a4d1f7a7a`。按原定义复算 22 项严格前置完整 DONE。 [原卡](../../task-plans/WP12.md#wp12-05) · [正式 DECISION #416](https://github.com/GTX537/CP6.AI-Handoff/blob/451a66f2ca73d725195a380edce9fb90c6d8951e/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T114542Z-cp6-exec-2-wp12-05/MESSAGE.md) · [远端 START](https://github.com/GTX537/CP6.AI-Handoff/blob/03747b4d74086d545818ee790e09787b9118c65c/handoffs/CP6-DEV-20261012/tasks/WP12-05/messages/20261123T115557Z-cp6-exec-2-start/MESSAGE.md)
 
 ## 行为和边界
 
@@ -10,7 +10,7 @@
 
 ## 本机证据
 
-用户、租户、表单数据、WMS 和受控文档业务记录均为合成数据。PostgreSQL 18.6、Main Kestrel（net8.0）、Google Chrome 157.0.8103.78 和 Microsoft Defender 4.18.26100.4 实际运行。构建使用 SDK 10.0.302 的锁定还原；三份产品/测试程序集均带上述受验源码完整版本。各测试库使用独立 loopback 端口及数据目录，完成后已停库。仓内无本卡新增迁移。
+用户、租户、表单数据、WMS 和受控文档业务记录均为合成数据。PostgreSQL 18.6、Main Kestrel（net8.0）、Google Chrome 157.0.8103.78 和 Microsoft Defender 4.18.26100.4 实际运行。构建使用 SDK 10.0.302 的锁定还原；三份产品/测试程序集均带上述受验源码完整版本。各测试库使用独立 loopback 端口及数据目录，完成后已停库。首轮受验源码无新增迁移。
 
 本机证据根目录为 `C:/Users/tt/CP6-test-artifacts/WP12-05/20261123-wp1205`。`technical-summary.json` 保留各次运行的时间、合成环境、通过数与文件摘要。复跑使用该目录的 `run-pg.ps1 -Run <新运行名> -Filter <过滤条件>`，实际浏览器加 `-Browser`，FILE HTTP/浏览器按本机 `CP6_FILE_DEFENDER_EXE` 指向 Defender。构建为 `dotnet build CP6.Tests/CP6.Tests.csproj --artifacts-path <证据根目录>/dotnet -p:RestoreLockedMode=true -t:Rebuild -v quiet`。
 
@@ -62,11 +62,11 @@
 | AC-F05-03 | W275、W316 及本轮过时 token、原删除凭证、恢复与回滚回归。 |
 | AC-F05-04 | W285、W317/318 与本轮 FILE 保留及草稿删除用例，确认移除表单引用时原件保留、保留锁拒绝交付原件。 |
 | AC-F05-05 | 沿用 W316、W318 的实际 Chrome 删除取消/失败/刷新证据；本卡差异未触及该操作的输入。 |
-| AC-F06-01 | 隔离 PostgreSQL 的授权集内组合发起人、处理人、状态及日期，计数对应可见记录；另核 TASK 代理的参与范围和当前查询权撤回。 |
+| AC-F06-01 | 原生授权、TASK 代理及组合筛选证据保留；本轮实际旧流程 HTTP 组合发起人、处理人、状态与租户日历，核对总数与可见结果，Chrome 证实完整结束日。 |
 | AC-F06-02 | 实际 HTTP 和 Chrome 验证合法无实例记录、无审批状态和只读详情，并交叉验证 `hasInstance` 筛选。 |
 | AC-F06-03 | 原生历史保留改名前的固定发布版本；旧 HTTP 列表和详情一致展示固定快照名称，缺失时元数据为 null，回填标来源；实际 Chrome 验证缺失提示。 |
 | AC-F06-04 | 关键词验证限流程代码和业务编号，合成字段值不影响匹配；当前遮蔽字段及附件、不同租户 ID、无对象权账号均不能扩大历史/下载披露。 |
-| AC-F06-05 | 实际租户时区、UTC 半开日期边界、25 小时夏令时回拨日、带准确截点的翻页、延后写入，以及页大小 100 边界。旧列表同时间行按 ID 稳定排序。 |
+| AC-F06-05 | 原生 UTC 半开日界、稳定截点和页大小上限 100 证据保留。旧流程回归证明 25/23 小时日界、最末毫秒纳入、次日零点排除、稳定同刻顺序、首次截点屏蔽新增和晚提交，以及重置忽略延迟响应。 |
 | AC-F06-06 | 隔离库真实 APP 的批准保留未证；WMS 原回执有缺口时不提前采用，实际文档 Owner 的应用结果在原回执进入投影后才显示 `APPLIED` 和结果引用。Chrome 与组件核对状态分栏。 |
 
 ## 工时和交接
@@ -74,3 +74,27 @@
 - 领取起点 `2026-11-23T11:53:35.6254830Z`，技术检查点 `2026-11-23T12:28:16.0368353Z`，本机有效技术工时 **2080.411 秒**。并行本地用例与证据核对按同一连续时段计入一次。额度 14400 秒，强制拆卡 21600 秒。草稿准备及交接另据 Handoff 实际快照计时。
 - 已核本基线未出现 WP12-17 尾差源 `f90439b8cee0516d59ad2467908330e8f2db63cf`。其 **616.455 秒**在后续正常合资格 DONE/拆卡 PR 按同一完整 SHA 和原路径查重后单次结转。本草稿不写台账。 [前卡原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/f90439b8cee0516d59ad2467908330e8f2db63cf/handoffs/CP6-DEV-20261012/tasks/WP12-17/messages/20261123T112101Z-cp6-exec-2-delivery/MESSAGE.md)
 - Main DEV-1 保留本卡候选供总控审阅。正式远端采用、独立签收及 Main 席位释放待总控决定。生产运行与跨系统 Owner 采用未在本机验证。交接回执记录远端候选和报告回读。
+
+## 2026-11-23 同卡复验 · AC-F06-01、AC-F06-05
+
+受验源码 `e7702e62183f02b3f80d0780fc6ebbbf71e20c51`，Git 树 `7d590dc9a9b7dcbb9f55fda84d9fc875193dd5f2`。基线仍为 `4d31801d0456064ae38cf367759d38000be286e2`，原草稿 [#1317](https://github.com/GTX537/CP6/pull/1317) 待总控复验。上述首轮记录及文件摘要按其原源码保留。 [首轮 Handoff](https://github.com/GTX537/CP6.AI-Handoff/blob/42e506b60b0acd7fcb24c86f790e32337e78b4c1/handoffs/CP6-DEV-20261012/tasks/WP12-05/messages/20261123T123424Z-cp6-exec-2-delivery/MESSAGE.md)
+
+- 旧页通过 `/api/oa/query/history/context` 读取 `Sys_Tenant.TimeZoneId`，经 `/api/oa/query/history/search` 查询日历日期。服务端复用既有日界解析，将开始日和结束日次日的零点转换为 UTC 半开窗口。旧存储 `CreateDate` 仍是应用主机墙钟，按原来源时区解释后参加 UTC 比较和排序。旧记录未保存写入时偏移，历史主机时区曾变化的记录仍需原始来源证据。原 `/api/oa/query/search` 保留时间戳入参、包含 `To` 的比较规则及响应结构。
+- 每次请求按旧流程的当前可见范围和筛选条件，在同一个 PostgreSQL `REPEATABLE READ` 视图中计算总数与结果。首次截点随按租户、实际用户、代理身份和筛选条件绑定的令牌返回。新增行保存原始插入事务标识，截点之后插入或提交的行在后续页被排除。按 UTC 时间和实例 ID 倒序，同刻记录顺序固定。重置清除筛选、页码和截点，取消并忽略旧请求。
+- PostgreSQL 前向迁移 `20261123124500_LegacyFormHistorySnapshotV1` 在旧实例表添加插入事务标识。从 `20261123083000_OaConnectorResultsV1` 的隔离库录入存量后前滚，核对原 ID、墙钟时间、状态、流程标识及业务标识均保留。新行得到实际插入事务标识，后续业务更新保留该标识。
+
+本轮本机 **33 项隔离 PostgreSQL、HTTP 或 Chrome 用例通过**，含两条实际 Chrome 流程，零失败或跳过。受验程序集与源码 SHA 对应，锁定还原重建和 `vue-tsc --build --force` 均退出 0；Vitest 4 文件、23 项通过。环境沿首轮 Windows 本机、PostgreSQL 18.6 和合成普通账号/业务数据。各隔离库已停，原链接和原运行证据保留。
+
+| 本轮证据 | 结果 |
+|---|---|
+| `return-history-e7702e62.trx` | 5 通过，零失败及跳过。SHA-256 `342f29bd5558fd08017bb8fdca0d49a2cc75d279f9c9cddc99c9e6ce06b97948`。 |
+| `return-boundaries-e7702e62.trx` | 26 通过，零失败及跳过。SHA-256 `bc351764a179a785a79926efaecf53d543bd5c873f51489d36518f71fd9361c7`。 |
+| `return-chrome-e7702e62.trx` | 2 通过，零失败及跳过。SHA-256 `85d06f2110154b0854210adb7e8ce7b473e6cfa72e1c300e3ee425ced288fa63`。 |
+| `build-return-e7702e62.log`、`return-assembly-e7702e62.json` | 四份 Core、WebApi、测试与迁移程序集给出受验完整 SHA。 |
+| `vitest-return-e7702e62.json`、`vue-tsc-return-e7702e62.exit` | Vitest 23 项，类型检查退出 0。 |
+
+实际历史日历 HTTP 验证洛杉矶回拨日含结束日最后 1 毫秒，并在次日零点排除记录。窗口为 `2026-11-01T07:00Z` 至 `2026-11-02T08:00Z`，共 25 小时；春季变更日为 23 小时。无参与关系的普通账号记录不进入结果或总数。首次查询前尚未提交及首次响应后新增的记录在刷新时可见，两类记录均不进入原截点下一页。
+
+实际 Chrome 旧页验证第一、二页均为 22 条，真实新增同刻记录后刷新为 23 条，首末页合并顺序与预期一致。重置期间先等待 Main 完成，再延迟投递该真实响应；投递成功后旧结果、分页和日期均保持清空。目录、收藏、原生历史、文件下载及 Owner 回执边界通过受影响回归。浏览器 JSON 与截图位于本机 `permission-consumption-wp1205-return-chrome-e7702e62/catalog-history-browser`，汇总和重跑过滤条件在 `return-technical-summary.json`。
+
+本轮核对起点 `2026-11-23T12:41:20.3983272Z`，原 DEV-1 正常恢复于 `2026-11-23T12:45:01.7325330Z`。技术检查点 `2026-11-23T13:10:51.6180278+00:00`，本轮有效技术 **1771.220 秒**；草稿更新及交接的实际时间另列。正式验收和台账核销待总控。
