@@ -46,6 +46,12 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.True(WfCronHelper.IsValid(longCron));
         Assert.NotNull(WfCronHelper.NextUtc(over, new DateTime(2027, 1, 1, 5, 0, 0, DateTimeKind.Utc)));
         Assert.False(WfCronHelper.IsValid(over));
+        FlowTriggerSaveReq Timer(string expression) => new("forecast-dormant-timer", WfTriggerType.Timer,
+            JsonSerializer.Serialize(new { cron = expression }), Enabled: false, EventKey: null, StarterUserId: h.User);
+        var passesSyntax = await Assert.ThrowsAsync<InvalidOperationException>(() => FlowTriggerValidator.ValidateAsync(h.Db, Timer(longCron), default));
+        Assert.StartsWith("E-WF-023:", passesSyntax.Message); // 解析通过，继续校验本夹具特意留空的流程引用。
+        var lengthDenied = await Assert.ThrowsAsync<InvalidOperationException>(() => FlowTriggerValidator.ValidateAsync(h.Db, Timer(over), default));
+        Assert.StartsWith("E-WF-022:", lengthDenied.Message);
         var longInput = Explain(longCron, "2027-11-07T04:00:00Z");
         var explained = await api.Data(path, longInput);
         Assert.Equal(5, explained.GetProperty("points").GetArrayLength());

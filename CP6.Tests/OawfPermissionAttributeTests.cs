@@ -35,7 +35,6 @@ public class OawfPermissionAttributeTests
 
     private static readonly HashSet<string> ReadOnlyPostExemptions = new()
     {
-        "ForecastController.Preview",
         "QueryController.Search",
     };
 
@@ -46,6 +45,8 @@ public class OawfPermissionAttributeTests
         "ApprovalBindingController.Create", "ApprovalBindingController.Revise", "ApprovalBindingController.Disable",
         "DraftController.Create", "DraftController.Update", "DraftController.Rebase", "DraftController.Submit", "DraftController.Delete",
         "FlowAuthoringController.Preview", "FlowAuthoringController.Simulate", "FlowAuthoringController.Publish", "FlowAuthoringController.Clone", "FlowAuthoringController.Next", "FlowAuthoringController.Activate", "FlowAuthoringController.Save",
+        "FlowAuthoringController.Forecast", "FlowAuthoringController.ExportForecast",
+        "ForecastController.Preview", "WorkCalendarVersionsController.ExplainCron",
         "FlowAuthoringPolicyController.Save",
         "FlowPublicationPolicyController.Save",
         "FlowDraftController.Create",

@@ -47,13 +47,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     public async Task Forecast_authority_requires_exact_owner_registration_then_current_action_and_resource_reads()
     {
         await using var h = await Seed();
-        var owner = await PrepareAuthoring(h);
+        var owner = await PreparePublication(h);
         await CalendarPermissions(h);
         await TimeoutZone(h);
         // 在同一租户授予另一菜单下的同名动作，核对它不等价于连接器 Owner 的登记。
         await EngineeringAction(h, "oa-work-calendar", WorkflowForecastAuthorityV1.Action);
         await ForecastActionFixture(h, grant: null);
         var draft = (await owner.SaveAsync("forecast-authority", AuthoringCommand())).Result!;
+        var published = (await PublishForecastGraph(owner, "forecast-pinned-legacy", AuthoringSchema)).Result!.Publication!;
         var before = await ForecastReadState(h);
         await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, CalendarHostSettings());
         var cookies = await Login(host, h);
@@ -62,11 +63,13 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         const string definition = ForecastRoot + "forecast-authority";
         const string privateInput = "isolated-private-forecast-marker";
         var request = DraftForecast(draft, $$"""{"memo":"{{privateInput}}"}""");
+        const string standalone = "/api/oa/forecast/preview";
+        var exact = new { flowKey = "forecast-pinned-legacy", publishedVersionId = published.VersionId, varsJson = "{}" };
         var reads = new (string Route, object Input)[]
         {
             (definition + "/forecast", request), (definition + "/forecast/export", request),
             (definition + "/simulate", new { draftVersionId = draft.DraftId, expectedVersion = draft.Version, varsJson = "{}" }),
-            (CronExplanationRoute, cron), (LegacyCronExplanationRoute, cron),
+            (CronExplanationRoute, cron), (LegacyCronExplanationRoute, cron), (standalone, exact),
         };
         async Task RequireRejection(HttpStatusCode status, string code)
         {
@@ -79,6 +82,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
                 Assert.DoesNotContain(privateInput, response);
                 Assert.DoesNotContain(cron.TimeZoneRulesVersion, response);
                 Assert.DoesNotContain(draft.DraftId.ToString("D"), response);
+                Assert.DoesNotContain(published.VersionId.ToString("D"), response);
                 Assert.True(refused.Headers.CacheControl?.NoStore);
             }
         }
@@ -88,6 +92,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await RequireRejection(HttpStatusCode.Forbidden, "FORECAST_ACTION_FORBIDDEN");
         await ForecastActionFixture(h);
         Assert.Equal("DRAFT_SIMULATION", (await api.Data(definition + "/forecast", request)).GetProperty("source").GetString());
+        Assert.Equal(published.VersionId, (await api.Data(standalone, exact)).GetProperty("versionId").GetGuid());
+        await api.Reject(standalone, new { flowKey = "forecast-pinned-legacy", varsJson = "{}" },
+            HttpStatusCode.UnprocessableEntity, "FORECAST_PIN_REQUIRED");
         Assert.Equal(5, (await api.Data(CronExplanationRoute, cron)).GetProperty("points").GetArrayLength());
 
         h.Db.Sys_RoleFieldPerms.Add(new() { RoleId = 72, ResourceKey = FlowAuthoringOwnerV2.Resource, FieldName = "FormKey", Access = 3 });
@@ -96,12 +103,13 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await api.Reject(definition + "/forecast", request, HttpStatusCode.Forbidden, "FIELD_READ_FORBIDDEN");
         await api.Reject(definition + "/forecast/export", request, HttpStatusCode.Forbidden, "FIELD_READ_FORBIDDEN");
         await api.Reject(definition + "/simulate", reads[2].Input, HttpStatusCode.Forbidden, "FIELD_READ_FORBIDDEN");
+        await api.Reject(standalone, exact, HttpStatusCode.Forbidden, "FIELD_READ_FORBIDDEN");
 
         var calendarMenu = await h.Db.Sys_Menus.Where(m => m.MenuKey == "oa-work-calendar").Select(m => m.MenuId).SingleAsync();
         await h.Db.Sys_RoleActions.Where(x => x.MenuId == calendarMenu && x.RoleId == 72 && x.ActionCode == "Calendar.View").ExecuteDeleteAsync();
         await api.Reject(CronExplanationRoute, cron, HttpStatusCode.Forbidden, "ACTION_FORBIDDEN");
         Assert.Equal(before, await ForecastReadState(h));
-        output.WriteLine("实际 Main 两个预演入口、导出与两个 Cron 入口：仅设计器/日历/旧查看或别菜单同名均不放行。登记而未授予返回 403；确切动作不替代资源、字段读权。");
+        output.WriteLine("实际 Main 三个预演入口、导出与两个 Cron 入口：仅设计器/日历/旧查看或别菜单同名均不放行。登记而未授予返回 403；确切动作不替代资源、字段读权。");
     }
 
     [CurrentPermissionPostgresFact]
