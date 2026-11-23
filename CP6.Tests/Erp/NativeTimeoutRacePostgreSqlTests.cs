@@ -3,6 +3,7 @@ using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using CP6.Tests.Platform;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace CP6.Tests.Erp;
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
@@ -52,16 +53,47 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var due=await h.Db.Database.SqlQuery<DateTimeOffset>($"SELECT due_at AS \"Value\" FROM cp6_native_timeout_v2.deadlines WHERE task_id={f.Task}").SingleAsync();
         var worker=await TimeoutOwner(h,f.Owner,due.AddSeconds(1));var claim=Assert.Single(await worker.ClaimAsync());
         var c=await f.Owner.TaskContextAsync(f.Task);var vote=NativeVote(c,"concurrent human","approve");
-        var entered=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);var release=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        hook.Before=async command=>{if(command.CommandText.Contains("INSERT INTO cp6_personal_form_v2.outbox")){entered.TrySetResult();await release.Task;}};
-        var executing=worker.ExecuteAsync(claim);await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
-        await using var peer=server.Context(new TenantContext{CurrentTenantId=h.Tenant});var human=PersonalForm(h with{Db=peer});
-        var competing=Record.ExceptionAsync(()=>DecideNative(human,f.Task,vote));
-        try{await Task.Delay(100);Assert.False(competing.IsCompleted);}finally{release.TrySetResult();}
-        Assert.Equal("COMPLETED",(await executing).State);Assert.IsType<ScopeAuthorizationExceptionV1>(await competing);
+        await using var api=await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!,CalendarHostSettings());
+        var cookies=await Login(api,h);
+        var entered=new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        hook.Before=async command=>{
+            if(command.CommandText.Contains("INSERT INTO cp6_personal_form_v2.outbox")){
+                entered.TrySetResult(((NpgsqlConnection)command.Connection!).ProcessID);await release.Task;
+            }
+        };
+        var executing=worker.ExecuteAsync(claim);
+        var workerBackend=await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        using var request=TimeoutHumanDecision(cookies,f.Task,vote);
+        var competing=api.Send(request);
+        await using var observer=server.Context(new TenantContext{CurrentTenantId=h.Tenant});
+        try
+        {
+            var until=DateTimeOffset.UtcNow.AddSeconds(6);
+            while(!await observer.Database.SqlQuery<bool>($"""
+                SELECT EXISTS(SELECT FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock'
+                  AND query LIKE '%cp6_authentication_v1.acquire%' AND {workerBackend}=ANY(pg_blocking_pids(pid))) AS "Value"
+                """).SingleAsync())
+            {
+                Assert.False(competing.IsCompleted);
+                Assert.True(DateTimeOffset.UtcNow<until,"实际人工办理 HTTP 应等待持有共同根的 worker");
+                await Task.Delay(35);
+            }
+        }
+        finally{release.TrySetResult();}
+        Assert.Equal("COMPLETED",(await executing).State);
+        using var lost=await competing;
+        Assert.True((int)lost.StatusCode is 409 or 412,await OperationsFailure(lost));
         Assert.Equal(2,(await h.Db.Wf_FlowInstances.AsNoTracking().SingleAsync()).Status);
         Assert.Empty((await NativeInbox(h,f.Owner).DetailAsync(f.Instance)).Votes);
         Assert.Equal(1,await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_native_timeout_v2.results WHERE execution_id={claim.ExecutionId}").SingleAsync());
+    }
+    private static HttpRequestMessage TimeoutHumanDecision(Dictionary<string,string> cookies,Guid task,NativeVoteInput vote)
+    {
+        var request=OperationsRequest(cookies,HttpMethod.Post,$"api/oa/v2/tasks/{task:D}/decisions");
+        request.Content=new ByteArrayContent(NativeVoteCommand(task,vote));
+        request.Content.Headers.ContentType=new("application/json");
+        return request;
     }
     [CurrentPermissionPostgresFact]
     public async Task NativeTimeoutRace_expiry_at_final_boundary_rolls_back_task_notification_and_receipt()

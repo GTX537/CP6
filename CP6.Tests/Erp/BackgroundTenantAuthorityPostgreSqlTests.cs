@@ -129,9 +129,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(1, await a.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_personal_form_v2.outbox WHERE command_id={receipt.CommandId} AND kind='TIMEOUT_EXECUTED'").SingleAsync());
 
         await a.Db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_native_timeout_v2.registrations SET enabled=false WHERE tenant_id={a.Tenant} AND service_id={service}");
-        var serviceDenied = await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(() => aOwner.ExecuteAsync(aClaim));
+        // WP02-21b 独立保护已提交原结果的读取。查回原结果与领取新动作各自检查当前资格。
+        Assert.Equal(receipt, await aOwner.ExecuteAsync(aClaim));
+        var serviceDenied = await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(() => aOwner.ClaimAsync());
         Assert.Equal(403, serviceDenied.Status);
         Assert.Equal("TIMEOUT_SERVICE_NOT_AUTHORIZED", serviceDenied.Message);
+        await a.Db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_native_timeout_v2.registrations SET history_read=false WHERE tenant_id={a.Tenant} AND service_id={service}");
+        var historyDenied = await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(() => aOwner.ResolveOriginalAsync(aClaim));
+        Assert.Equal("TIMEOUT_HISTORY_DENIED", historyDenied.Message);
         Assert.Equal(bBefore, await TimeoutState(b, bClaim));
         var bInstance = await b.Db.Wf_FlowInstances.AsNoTracking().SingleAsync(i => i.Id == second.Instance);
         Assert.Equal(FlowInstanceStatus.Running, bInstance.Status);

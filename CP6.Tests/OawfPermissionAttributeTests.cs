@@ -29,7 +29,7 @@ public class OawfPermissionAttributeTests
         "form-save",
         "batch-transfer",
         "FlowTrigger.View", "FlowTrigger.Edit",
-        "Calendar.Edit", "Calendar.View",
+        "Calendar.Edit", "Calendar.View", "Calendar.Recalculate",
         "Connector.Edit", "Connector.View",
     };
 

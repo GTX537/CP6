@@ -26,7 +26,13 @@ public sealed partial class NativeTimeoutOwnerV2(CP6Context db, ScopeAuthorizati
     private void Entry()
     {if(!db.Database.IsNpgsql()||db.Database.CurrentTransaction!=null||db.ChangeTracker.HasChanges()||System.Transactions.Transaction.Current!=null)throw Error("TIMEOUT_TRANSACTION_REQUIRED",503);}
     private async Task Ready(CancellationToken ct)
-    {if(!await db.Database.SqlQueryRaw<bool>("SELECT (cp6_native_timeout_v2.ready() AND cp6_native_timeout_v2.run_evidence_ready()) AS \"Value\"").SingleAsync(ct))throw Error("TIMEOUT_WRITER_UNAVAILABLE",503);}
+    {
+        if (!await db.Database.SqlQueryRaw<bool>("""
+            SELECT (cp6_native_timeout_v2.ready() AND cp6_native_timeout_v2.run_evidence_ready() AND
+              cp6_native_timeout_v2.claim_versions_ready()) AS "Value"
+            """).SingleAsync(ct))
+            throw Error("TIMEOUT_WRITER_UNAVAILABLE",503);
+    }
     private sealed record Candidate(Guid Task,long Revision,long Occurrence);
     private IQueryable<NativeTimeoutClaimV2> Claims()=>db.Database.SqlQuery<NativeTimeoutClaimV2>($"""
         SELECT c.execution_id AS "ExecutionId",c.task_id AS "TaskId",c.revision AS "Revision",c.occurrence AS "Occurrence",
@@ -105,12 +111,18 @@ public sealed partial class NativeTimeoutOwnerV2(CP6Context db, ScopeAuthorizati
 
     private async Task SaveClaimAsync(NativeTimeoutClaimV2 claim, Guid runId, CancellationToken ct)
     {
-        await db.Database.ExecuteSqlInterpolatedAsync($"""
-            INSERT INTO cp6_native_timeout_v2.claims(execution_id,task_id,revision,occurrence,epoch,claim_id,service_id,registration_revision,lease_until)
-            VALUES({claim.ExecutionId},{claim.TaskId},{claim.Revision},{claim.Occurrence},{claim.Epoch},{claim.ClaimId},{claim.ServiceId},{claim.RegistrationRevision},{claim.LeaseUntil})
+        var saved=await db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO cp6_native_timeout_v2.claims(execution_id,task_id,revision,occurrence,epoch,claim_id,service_id,registration_revision,lease_until,
+              task_version,instance_version)
+            SELECT {claim.ExecutionId},{claim.TaskId},{claim.Revision},{claim.Occurrence},{claim.Epoch},{claim.ClaimId},{claim.ServiceId},
+              {claim.RegistrationRevision},{claim.LeaseUntil},t."ApprovalRowVersion",i."RowVersion"
+            FROM public."Wf_FlowTask" t JOIN public."Wf_FlowInstance" i ON i."Id"=t."InstanceId" AND i."TenantId"=t."TenantId"
+            WHERE t."Id"={claim.TaskId} AND t."TenantId"={db.CurrentTenantId}
             ON CONFLICT(task_id,revision,occurrence) DO UPDATE SET epoch=EXCLUDED.epoch,claim_id=EXCLUDED.claim_id,service_id=EXCLUDED.service_id,
-              registration_revision=EXCLUDED.registration_revision,lease_until=EXCLUDED.lease_until
+              registration_revision=EXCLUDED.registration_revision,lease_until=EXCLUDED.lease_until,
+              task_version=EXCLUDED.task_version,instance_version=EXCLUDED.instance_version
             """,ct);
+        if(saved!=1)throw Error("TIMEOUT_ORIGINAL_NOT_PENDING");
         await db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_native_timeout_v2.attempts(id,run_id,execution_id,epoch,registration_revision,input_digest)
             VALUES({claim.ClaimId},{runId},{claim.ExecutionId},{claim.Epoch},{claim.RegistrationRevision},{InputDigest(claim)})
@@ -131,11 +143,12 @@ public sealed partial class NativeTimeoutOwnerV2(CP6Context db, ScopeAuthorizati
     {
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var lease=await fence.AcquireAsync(ct);
         await Ready(ct);var service=await Service(ct);await EnsureDispatchEnabledAsync(ct);var now=await Clock(ct);await CheckClaim(claim,service,now,ct);
+        await RequireOriginalPendingAsync(claim,ct);
         var renewed=claim with{LeaseUntil=now.AddSeconds(60)};
         await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_native_timeout_v2.claims SET lease_until={renewed.LeaseUntil} WHERE execution_id={claim.ExecutionId} AND epoch={claim.Epoch} AND claim_id={claim.ClaimId}",ct);
         await fence.ValidateAsync(lease,ct);await tx.CommitAsync(ct);return renewed;
     }
-    private sealed record Deadline(string ContextKind,string Policy);
+    private sealed record Deadline(string ContextKind,string Policy,DateTimeOffset? DueAt);
     public async Task<NativeTimeoutResultV2> ExecuteAsync(NativeTimeoutClaimV2 claim,CancellationToken ct=default)
     {
         NativeTimeoutResultV2 result;
@@ -179,7 +192,7 @@ public sealed partial class NativeTimeoutOwnerV2(CP6Context db, ScopeAuthorizati
             await CheckClaim(claim,service,now,ct);
             await RequireOriginalPendingAsync(saved,ct);
             var row=await db.Database.SqlQuery<Deadline>($"""
-                SELECT context_kind AS "ContextKind",policy_json AS "Policy" FROM cp6_native_timeout_v2.deadlines
+                SELECT context_kind AS "ContextKind",policy_json AS "Policy",due_at AS "DueAt" FROM cp6_native_timeout_v2.deadlines
                 WHERE task_id={claim.TaskId} AND revision={claim.Revision} AND tenant_id={db.CurrentTenantId} AND environment_id={fence.EnvironmentId}
                 """).SingleAsync(ct);
             var policy=Parse<NativeDeadlinePolicyV2>(row.Policy);
@@ -202,7 +215,17 @@ public sealed partial class NativeTimeoutOwnerV2(CP6Context db, ScopeAuthorizati
             var result=new NativeTimeoutResultV2(claim.ExecutionId,claim.TaskId,claim.Revision,claim.Occurrence,
                 "SKIPPED_ALREADY_HANDLED",null,options.ServiceId,now,ClaimEpoch:claim.Epoch,
                 OriginalTaskVersion:taskVersion,OriginalInstanceVersion:instanceVersion);
-            if(running)result=row.ContextKind=="SFS"?await forms.ApplyTimeoutV2(result,policy,ct):await approvals.ApplyTimeoutV2(result,policy,ct);
+            if(running)
+            {
+                var dueAt=row.DueAt??throw Error("TIMEOUT_DEADLINE_EVIDENCE_MISSING");
+                // 领取时绑定办理版本。已完成任务仍可登记干净跳过，进行中的任务必须持有原双版本。
+                if (!await db.Database.SqlQuery<bool>($"""
+                    SELECT EXISTS(SELECT FROM cp6_native_timeout_v2.claims WHERE execution_id={claim.ExecutionId} AND epoch={claim.Epoch}
+                      AND task_version=decode({taskVersion},'base64') AND instance_version=decode({instanceVersion},'base64')) AS "Value"
+                    """).SingleAsync(ct))
+                    throw Error("TIMEOUT_CLAIM_VERSION_CHANGED", 412);
+                result=row.ContextKind=="SFS"?await forms.ApplyTimeoutV2(result,policy,dueAt,ct):await approvals.ApplyTimeoutV2(result,policy,dueAt,ct);
+            }
             result=result with{ClaimEpoch=claim.Epoch};
             // Current task/authority and epoch share the final Owner transaction. A
             // claimant which expired while staging cannot commit its effects.

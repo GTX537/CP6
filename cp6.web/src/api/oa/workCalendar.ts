@@ -1,34 +1,40 @@
 import http from '../http'
+import type { NativeDeadlinePolicy } from './nativeInbox'
 
-/** 年历某日例外行（后端 WorkCalendarDay 投影）。isWorkday=true 补班 / false 假日。 */
-export interface WorkCalendarDay {
-  date: string        // ISO yyyy-MM-ddT00:00:00
-  isWorkday: boolean
-  note?: string | null
-}
-
-/** GET /oa/work-calendar?year= 的响应体。isEmpty 驱动前端空态导入引导。 */
+export interface WorkCalendarDay { date: string; isWorkday: boolean; note?: string | null }
+export interface HolidayPackage { version: string; sha256: string; years: number[] }
 export interface WorkCalendarYear {
-  year: number
-  isEmpty: boolean
-  items: WorkCalendarDay[]
+  calendarId: string; revision: number; recordedAt: string | null; origin: string; year: number
+  weekRule: string; items: WorkCalendarDay[]; timeZoneId: string | null; timeZoneRulesVersion: string | null
+  timeZoneSource: string; timeZoneFailure: string | null; japaneseHolidays: HolidayPackage
 }
+export interface DeadlineEvidence {
+  revision: number; occurrence: number; state: string; createdAt: string
+  dueAt: string | null; nextDue: string | null; policy: NativeDeadlinePolicy
+}
+export interface RecalculationItem {
+  taskId: string; taskVersion: string; instanceVersion: string; before: DeadlineEvidence; after: DeadlineEvidence
+}
+export interface RecalculationPreview {
+  previewId: string; calendarId: string; calendarRevision: number; timeZoneRulesVersion: string
+  expiresAt: string; items: RecalculationItem[]
+}
+interface CalendarCommand { commandId: string; calendarId: string; expectedRevision: number }
+export type CalendarIntent =
+  | { kind: 'changes'; command: CalendarCommand & { date: string; isWorkday: boolean | null; note: string | null } }
+  | { kind: 'import-jp'; command: CalendarCommand & { year: number } }
+  | { kind: 'deadline-recalculations'; command: { commandId: string; previewId: string; taskId: string; reason: string
+    expectedDeadlineRevision: number; expectedTaskVersion: string; expectedInstanceVersion: string } }
+export interface CalendarReceipt { commandId: string; inserted?: string[]; skipped?: string[]; after?: DeadlineEvidence }
 
-const unwrap = (res: any) => res?.data ?? res
+const root = '/oa/work-calendar/versions'
+const unwrap = <T>(res: any): T => res?.data ?? res
 
 export const workCalendarApi = {
-  /** 列某年例外 + 空态标志（一次往返）。 */
-  list: async (year: number): Promise<WorkCalendarYear> =>
-    unwrap(await http.get('/oa/work-calendar', { params: { year } })),
-
-  /** 反转某日（补班/假日/备注 upsert）。date=yyyy-MM-dd。 */
-  toggle: (date: string, isWorkday: boolean, note?: string | null) =>
-    http.post('/oa/work-calendar/toggle', { date, isWorkday, note }),
-
-  /** 回归默认态（删例外行）。date=yyyy-MM-dd。 */
-  clear: (date: string) => http.delete(`/oa/work-calendar/${date}`),
-
-  /** 空态导入日本法定假日到当前租户（幂等）。返回本次新增行数。 */
-  importJp: async (): Promise<{ inserted: number }> =>
-    unwrap(await http.post('/oa/work-calendar/import-jp')),
+  list: async (year: number, revision?: number, signal?: AbortSignal) =>
+    unwrap<WorkCalendarYear>(await http.get(root, { params: { year, revision }, signal })),
+  execute: async (intent: CalendarIntent, signal?: AbortSignal) =>
+    unwrap<CalendarReceipt>(await http.post(root + '/' + intent.kind, intent.command, { signal })),
+  preview: async (calendarId: string, expectedCalendarRevision: number, taskIds: string[], signal?: AbortSignal) =>
+    unwrap<RecalculationPreview>(await http.post(root + '/deadline-previews', { calendarId, expectedCalendarRevision, taskIds }, { signal })),
 }

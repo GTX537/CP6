@@ -57,7 +57,7 @@ try {
   expect(again.timeout.runs.find(entry => entry.runId === run.runId)).toEqual(run)
   expect(responses.filter(entry => entry.path.endsWith('/instances/' + process.env.CP6_TASK_INSTANCE)).map(entry => entry.method)).toEqual(['GET', 'GET'])
   await writeFile(path.join(output, 'result.json'), JSON.stringify({ result: 'PASS', responses, detail, reloaded: again, pageErrors: errors, internalApiMocked: false,
-    simulation: 'Accepted task created two hours earlier in fixture; actual dedicated Host worker uses the database current clock, real registered service, tenant enumerator, lease, Owner, notification and original receipt; separate WebApi provides real HTTP reads.' }, null, 2))
+    simulation: '仅在夹具中将待办创建时间提前两小时。两个独立实际 Host 使用数据库当前时钟、各自已登记的服务身份、租户枚举、真实租约和 Owner。独立 WebApi 提供实际 HTTP 读回。' }, null, 2))
 } catch (e) {
   if (page) { await page.screenshot({ path: path.join(output, 'failure.png'), fullPage: true }); await writeFile(path.join(output, 'failure.txt'), await page.locator('body').innerText()) }
   await writeFile(path.join(output, 'failure.json'), JSON.stringify({ error: String(e), responses, pageErrors: errors }, null, 2)); throw e

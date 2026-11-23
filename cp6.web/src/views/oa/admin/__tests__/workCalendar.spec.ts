@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-// A-T4 年历管理页：反转态映射（model）+ 空态渲染 + 年切换（component）。
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+// 年历管理页的周规则、版本切换与原命令恢复。
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import ElementPlus from 'element-plus'
@@ -10,15 +10,12 @@ import {
 } from '../workCalendarModel'
 import type { WorkCalendarDay } from '@/api/oa/workCalendar'
 
-// ── 后端 api mock（可切换空态/非空态返回）──
 const listMock = vi.fn()
-const importMock = vi.fn()
+const executeMock = vi.fn()
 vi.mock('@/api/oa/workCalendar', () => ({
   workCalendarApi: {
     list: (...a: any[]) => listMock(...a),
-    importJp: (...a: any[]) => importMock(...a),
-    toggle: vi.fn(),
-    clear: vi.fn(),
+    execute: (...a: any[]) => executeMock(...a),
   },
 }))
 
@@ -28,10 +25,6 @@ const i18n = createI18n({ legacy: false, locale: 'zh', missingWarn: false, fallb
 
 function mountView() {
   return mount(WorkCalendar, { global: { plugins: [i18n, ElementPlus] } })
-}
-
-function state(w: ReturnType<typeof mountView>) {
-  return (w.vm as unknown as { $: { setupState: Record<string, any> } }).$.setupState
 }
 
 describe('workCalendarModel 反转态映射', () => {
@@ -65,48 +58,60 @@ describe('workCalendarModel 反转态映射', () => {
   })
 })
 
-describe('WorkCalendar.vue 空态渲染 + 年切换', () => {
+describe('WorkCalendar.vue 日历版本与原命令', () => {
+  const year = new Date().getFullYear()
+  const snapshot = {
+    calendarId: '8b62e78a-40aa-4ea1-b059-07d7a42ab4c6', revision: 0, year, items: [],
+    japaneseHolidays: { years: [year], version: '测试包/1', sha256: 'a'.repeat(64) },
+  }
   beforeEach(() => {
     listMock.mockReset()
-    importMock.mockReset()
+    executeMock.mockReset()
+    listMock.mockResolvedValue(snapshot)
   })
+  afterEach(() => sessionStorage.clear())
 
-  it('空态：渲染导入按钮，点击调 importJp', async () => {
-    listMock.mockResolvedValue({ year: 2026, isEmpty: true, items: [] })
-    importMock.mockResolvedValue({ inserted: 35 })
+  it('没有例外仍显示默认周历，导入丢响应后重放同一个命令', async () => {
+    executeMock.mockRejectedValueOnce(new Error('丢回包'))
+      .mockImplementationOnce(async intent => ({ commandId: intent.command.commandId, inserted: ['2026-01-01'] }))
     const w = mountView()
     await flushPromises()
 
-    expect(state(w).isEmpty).toBe(true)
+    expect(w.text()).toContain('默认周一至周五工作')
+    expect(w.findComponent({ name: 'ElCalendar' }).exists()).toBe(true)
     const btn = w.findAll('button').find(b => b.text().includes('oa.workcal.importJp'))
     expect(btn).toBeTruthy()
     await btn!.trigger('click')
     await flushPromises()
-    expect(importMock).toHaveBeenCalledOnce()
+    await w.findAll('button').find(b => b.text() === '按原命令重试')!.trigger('click')
+    await flushPromises()
+    expect(executeMock).toHaveBeenCalledTimes(2)
+    expect(executeMock.mock.calls[0]![0]).toMatchObject({ kind: 'import-jp', command: { year, expectedRevision: 0 } })
+    expect(executeMock.mock.calls[1]![0]).toStrictEqual(executeMock.mock.calls[0]![0])
+    w.unmount()
   })
 
-  it('非空态：不渲染空态，渲染年历', async () => {
-    listMock.mockResolvedValue({
-      year: 2026, isEmpty: false,
-      items: [{ date: '2026-01-01T00:00:00', isWorkday: false, note: '元日' }],
-    })
+  it('显示版本、租户时区与来源包', async () => {
+    listMock.mockResolvedValue({ ...snapshot, revision: 1, timeZoneId: 'Asia/Tokyo', timeZoneSource: 'TENANT_SYSTEM_RULES' })
     const w = mountView()
     await flushPromises()
-    expect(state(w).isEmpty).toBe(false)
-    expect(w.findComponent({ name: 'ElCalendar' }).exists()).toBe(true)
+    expect(w.text()).toContain('版本 1')
+    expect(w.text()).toContain('Asia/Tokyo')
+    expect(w.text()).toContain('测试包/1')
+    w.unmount()
   })
 
   it('年切换：calDate 跨年 → 以新年重新拉取', async () => {
-    listMock.mockResolvedValue({ year: 2026, isEmpty: false, items: [] })
     const w = mountView()
     await flushPromises()
-    expect(listMock).toHaveBeenLastCalledWith(new Date().getFullYear())
+    expect(listMock).toHaveBeenLastCalledWith(year, undefined, expect.any(AbortSignal))
 
     listMock.mockClear()
     // el-calendar v-model 发射新年份日期 → 经 v-model 更新 calDate ref → watch 触发跨年重拉
-    w.findComponent({ name: 'ElCalendar' }).vm.$emit('update:modelValue', new Date(2027, 0, 15))
+    w.findComponent({ name: 'ElCalendar' }).vm.$emit('update:modelValue', new Date(year + 1, 0, 15))
     await nextTick()
     await flushPromises()
-    expect(listMock).toHaveBeenCalledWith(2027)
+    expect(listMock).toHaveBeenCalledWith(year + 1, undefined, expect.any(AbortSignal))
+    w.unmount()
   })
 })

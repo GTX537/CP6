@@ -9,11 +9,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     private sealed record NativeVoteInput(Guid CommandId,string Decision,string Comment,string TaskRowVersion,string InstanceRowVersion,string FormDataVersion);
     private static NativeVoteInput NativeVote(PersonalFormTaskContextV2 c,string comment,string decision="approve")
         =>new(Guid.NewGuid(),decision,comment,c.Task.TaskRowVersion,c.Task.InstanceRowVersion,c.FormDataVersion);
+    private static byte[] NativeVoteCommand(Guid task,NativeVoteInput input)
+        =>PersonalCommand(new SfsTaskDecisionInputV2("SFS",task,input.Decision.ToUpperInvariant(),PersonalData("{}"),
+            input.TaskRowVersion,input.InstanceRowVersion,input.FormDataVersion,input.Comment),input.CommandId.ToString("D"),input.TaskRowVersion);
     private static async Task<PersonalFormTaskResultV2> DecideNative(PersonalFormOwnerV2 owner,Guid task,NativeVoteInput input,Guid? behalf=null)
-    {
-        var command=PersonalCommand(new SfsTaskDecisionInputV2("SFS",task,input.Decision.ToUpperInvariant(),PersonalData("{}"),input.TaskRowVersion,input.InstanceRowVersion,input.FormDataVersion,input.Comment),input.CommandId.ToString("D"),input.TaskRowVersion);
-        return NativeVoteResult(await owner.DecideSfsTaskAsync(task,command,behalf),task);
-    }
+        =>NativeVoteResult(await owner.DecideSfsTaskAsync(task,NativeVoteCommand(task,input),behalf),task);
     private static PersonalFormTaskResultV2 NativeVoteResult(PersonalFormResultV2 result,Guid task)
     {
         var value=result.Result?.Deserialize<SfsTaskDecisionResultV2>(PersonalFormOwnerV2.Json);

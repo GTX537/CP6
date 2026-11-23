@@ -21,6 +21,7 @@ const { t } = useI18n()
 function cloneNode(n: SchemaNode): SchemaNode {
   return {
     ...n,
+    timeoutWorkday: n.timeoutWorkday ? { ...n.timeoutWorkday } : undefined,
     ccUsers: n.ccUsers ? [...n.ccUsers] : [],
     stages: n.stages ? n.stages.map(s => ({ ...s, approverRecoveryPolicy: s.approverRecoveryPolicy ? { ...s.approverRecoveryPolicy, eligibleRoleIds: [...s.approverRecoveryPolicy.eligibleRoleIds] } : undefined })) : undefined,
     approverRecoveryPolicy: n.approverRecoveryPolicy ? { ...n.approverRecoveryPolicy, eligibleRoleIds: [...n.approverRecoveryPolicy.eligibleRoleIds] } : undefined,
@@ -129,6 +130,12 @@ const timeoutDays = computed({
   get: () => (local.value.timeoutHours != null ? local.value.timeoutHours / 24 : 0),
   set: (v: number | null) => {
     local.value.timeoutHours = v != null && v > 0 ? Math.round(v * 24) : undefined
+  },
+})
+const useWorkdayDeadline = computed({
+  get: () => !!local.value.timeoutWorkday,
+  set: (enabled: boolean) => {
+    local.value.timeoutWorkday = enabled ? { workdays: 1, localTime: '17:00:00' } : undefined
   },
 })
 
@@ -963,7 +970,25 @@ async function searchCcUsers(kw: string) {
               :step="1"
               style="width: 100%"
             />
+            <span v-if="local.timeoutWorkday && local.timeoutAction === 'remind'">此处设置重复提醒的 UTC 时长。</span>
           </el-form-item>
+
+          <el-form-item v-if="isApproval" label="按工作日计算首次截止">
+            <el-switch v-model="useWorkdayDeadline" />
+          </el-form-item>
+          <template v-if="isApproval && local.timeoutWorkday">
+            <el-form-item label="工作日数量">
+              <el-input-number :model-value="local.timeoutWorkday.workdays" :min="1" :max="366" :precision="0"
+                @update:model-value="(v: number | null | undefined) => { if (local.timeoutWorkday) local.timeoutWorkday.workdays = v ?? 1 }" />
+            </el-form-item>
+            <el-form-item label="目标当地时刻">
+              <el-time-picker v-model="local.timeoutWorkday.localTime" value-format="HH:mm:ss" format="HH:mm:ss" :clearable="false" />
+            </el-form-item>
+            <el-form-item label="重复时刻的 UTC 偏移分钟（选填）">
+              <el-input-number :model-value="local.timeoutWorkday.ambiguousOffsetMinutes ?? undefined" :min="-840" :max="840" :precision="0"
+                @update:model-value="(v: number | null | undefined) => { if (local.timeoutWorkday) local.timeoutWorkday.ambiguousOffsetMinutes = v ?? null }" />
+            </el-form-item>
+          </template>
 
           <el-form-item :label="t('oa.designer.allowReject')">
             <el-switch

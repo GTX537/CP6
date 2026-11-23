@@ -44,9 +44,10 @@ public static class WorkCalendarConnectorPermissionSeed
         (FlowAdminMenuId, "Connector.Edit", "连接器编辑"),
     };
 
-    // 新控制合同的读、编辑、复核和最终决定权由租户分别授予。
-    private static readonly (int MenuId, string Code, string Name)[] ControlActions =
+    // 期限重算和新连接器控制动作由租户独立授予。
+    private static readonly (int MenuId, string Code, string Name)[] OwnerActions =
     [
+        (CalendarMenuId, "Calendar.Recalculate", "工作日历期限重算"),
         (FlowAdminMenuId, "conn.read", "读取触发器与连接器版本"),
         (FlowAdminMenuId, "conn.trigger.write", "编辑触发器版本"),
         (FlowAdminMenuId, "conn.trigger.review", "复核触发器控制"),
@@ -89,7 +90,7 @@ public static class WorkCalendarConnectorPermissionSeed
         var tenantIds = db.Sys_Tenants.Select(t => t.Id).ToList();
         foreach (var tid in tenantIds)
         {
-            foreach (var (menuId, code, name) in Actions.Concat(ControlActions))
+            foreach (var (menuId, code, name) in Actions.Concat(OwnerActions))
             {
                 if (!db.Sys_MenuActions.IgnoreQueryFilters()
                         .Any(x => x.TenantId == tid && x.MenuId == menuId && x.ActionCode == code))
@@ -105,7 +106,7 @@ public static class WorkCalendarConnectorPermissionSeed
                     changed = true;
                 }
 
-                if (!code.StartsWith("conn.", StringComparison.Ordinal) && !db.Sys_RoleActions.IgnoreQueryFilters()
+                if (Actions.Any(action => action.MenuId == menuId && action.Code == code) && !db.Sys_RoleActions.IgnoreQueryFilters()
                         .Any(x => x.TenantId == tid && x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
                 {
                     db.Sys_RoleActions.Add(new Sys_RoleAction

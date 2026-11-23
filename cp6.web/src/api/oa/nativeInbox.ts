@@ -15,6 +15,13 @@ export interface NativeTimeoutRun {
     observations: { sequence: number; state: string; reason: string | null; observedAt: string }[]
   }[]
 }
+export interface NativeDeadlinePolicy {
+  flowVersionId: string; nodeId: string; hours: number | null; action: string | null; timeZoneId: string
+  offsetMinutes: number; basis: string; calendarRevision: string; escalationReset: string
+  calendarId?: string | null; localDueAt?: string | null; timeZoneRulesVersion?: string | null
+  timeZoneSource?: string | null; failureCode?: string | null
+  workday?: { workdays: number; localTime: string; ambiguousOffsetMinutes?: number | null } | null
+}
 export interface NativeDetail {
   instanceId: string; rootInstanceId: string; contextKind: 'SFS' | 'APP'; actualUserId: string; effectiveUserId: string
   graph: { instanceId: string; parentInstanceId: string | null; flowVersionId: string; formVersionId: string | null; flowKey: string; status: number; instanceRowVersion: string }[]
@@ -28,7 +35,7 @@ export interface NativeDetail {
     stages?: { layer: string; confirmed: boolean | null; observedAt: string | null }[]
     runs?: NativeTimeoutRun[]
     deadlines: { taskId: string; revision: number; createdAt: string; dueAt: string | null; state: string; occurrence: number; nextDue: string | null; claimEpoch: number | null; leaseUntil: string | null
-      policy: { flowVersionId: string; nodeId: string; hours: number | null; action: string | null; timeZoneId: string; offsetMinutes: number; basis: string; calendarRevision: string; escalationReset: string }
+      policy: NativeDeadlinePolicy
       lastResult: { executionId: string; state: string; reason: string | null; serviceId: string; occurredAt: string; commandId: string | null; originalTaskVersion: string | null; originalInstanceVersion: string | null } | null
     }[]
   }

@@ -63,9 +63,18 @@ const missedLabel: Record<string, string> = {
     </details>
     <ul><li v-for="deadline in value.deadlines" :key="`${deadline.taskId}:${deadline.revision}`">
       <p>任务 {{ deadline.taskId }}：{{ state(deadline.state) }}。截止 {{ deadline.dueAt || '未能计算' }}；动作：{{ action(deadline.policy.action) }}。</p>
-      <p>固定小时数 {{ deadline.policy.hours }}，按 UTC 时长计算；原租户时区 {{ deadline.policy.timeZoneId }}。当前次数 {{ deadline.occurrence }}；下次截止 {{ deadline.nextDue || '无' }}。</p>
+      <p v-if="deadline.policy.workday">从起始日之后计算 {{ deadline.policy.workday.workdays }} 个工作日，目标当地时间 {{ deadline.policy.workday.localTime }}。</p>
+      <p v-else>固定小时数 {{ deadline.policy.hours }}，按 UTC 时长计算。</p>
+      <p>原租户时区 {{ deadline.policy.timeZoneId || '无可信配置' }}。当前次数 {{ deadline.occurrence }}；下次截止 {{ deadline.nextDue || '无' }}。</p>
+      <p v-if="deadline.policy.failureCode" role="status">计算受阻（{{ deadline.policy.failureCode }}）。</p>
       <p v-if="deadline.lastResult">原执行结果：{{ state(deadline.lastResult.state) }}<span v-if="deadline.lastResult.reason">（{{ deadline.lastResult.reason }}）</span>，{{ deadline.lastResult.occurredAt }}。系统执行记录不计作人工审批票。</p>
-      <details><summary>查看采用的版本与执行记录</summary><p>流程版本 {{ deadline.policy.flowVersionId }}；截止版本 {{ deadline.revision }}；租约版本 {{ deadline.claimEpoch ?? '无活动领取' }}；租约期限 {{ deadline.leaseUntil || '无' }}。</p><p v-if="deadline.lastResult">执行编号 {{ deadline.lastResult.executionId }}；执行前任务版本 {{ deadline.lastResult.originalTaskVersion || '缺少原始记录' }}；执行前实例版本 {{ deadline.lastResult.originalInstanceVersion || '缺少原始记录' }}；服务身份 {{ deadline.lastResult.serviceId }}；原命令 {{ deadline.lastResult.commandId || '无业务写入' }}。</p></details>
+      <details>
+        <summary>查看采用的版本与执行记录</summary>
+        <p>流程版本 {{ deadline.policy.flowVersionId }}；节点 {{ deadline.policy.nodeId }}；截止版本 {{ deadline.revision }}；租约版本 {{ deadline.claimEpoch ?? '无活动领取' }}；租约期限 {{ deadline.leaseUntil || '无' }}。</p>
+        <p v-if="deadline.policy.calendarId">工作日历 {{ deadline.policy.calendarId }}；日历版本 {{ deadline.policy.calendarRevision }}。</p>
+        <p>时区规则版本 {{ deadline.policy.timeZoneRulesVersion || '缺少原始记录' }}<span v-if="deadline.policy.localDueAt">；当地截止 {{ deadline.policy.localDueAt }}；UTC 偏移 {{ deadline.policy.offsetMinutes }} 分钟</span>。</p>
+        <p v-if="deadline.lastResult">执行编号 {{ deadline.lastResult.executionId }}；执行前任务版本 {{ deadline.lastResult.originalTaskVersion || '缺少原始记录' }}；执行前实例版本 {{ deadline.lastResult.originalInstanceVersion || '缺少原始记录' }}；服务身份 {{ deadline.lastResult.serviceId }}；原命令 {{ deadline.lastResult.commandId || '无业务写入' }}。</p>
+      </details>
     </li></ul>
   </section>
 </template>

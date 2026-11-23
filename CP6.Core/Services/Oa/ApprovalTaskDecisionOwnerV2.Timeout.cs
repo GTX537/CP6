@@ -9,7 +9,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2
 {
     internal bool OwnsTimeoutContext(CP6.Core.EFDbContext.CP6Context context) => ReferenceEquals(db, context);
 
-    internal async Task<NativeTimeoutResultV2> ApplyTimeoutV2(NativeTimeoutResultV2 result,NativeDeadlinePolicyV2 policy,CancellationToken ct)
+    internal async Task<NativeTimeoutResultV2> ApplyTimeoutV2(NativeTimeoutResultV2 result,NativeDeadlinePolicyV2 policy,DateTimeOffset dueAt,CancellationToken ct)
     {
         var source=await ReadSource(result.TaskId,ct);var original=System.Text.Json.JsonSerializer.Deserialize<ApprovalSubmitCommandV2>(source.Payload,ApprovalBindingOwnerV2.Json)!;
         var assignment=await ApprovalTaskAssignmentsV2.Read(db,scope.EnvironmentId,result.TaskId,ct);
@@ -31,7 +31,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2
             // A legal error edge may still drain the business root. Without an adopted
             // system terminal contract it cannot replace the required human decision.
             await db.Database.CurrentTransaction!.CreateSavepointAsync("timeout_error_edge",ct);
-            var root=await engine.StageAppTimeoutErrorV2(Parse<FlowPublicationV2>(source.Publication),original,task.Id,result.ServiceId,ct);
+            var root=await engine.StageAppTimeoutErrorV2(Parse<FlowPublicationV2>(source.Publication),original,task.Id,result.ServiceId,dueAt,ct);
             if(root.Status is FlowInstanceStatus.Approved or FlowInstanceStatus.Rejected)
             {
                 await db.Database.CurrentTransaction.RollbackToSavepointAsync("timeout_error_edge",ct);db.ChangeTracker.Clear();

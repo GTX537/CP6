@@ -11,7 +11,7 @@ public sealed partial class PersonalFormOwnerV2
 
     // NativeTimeoutOwner owns service authorization, lease and commit. This participant
     // never borrows an interactive user or writes a human vote.
-    internal async Task<NativeTimeoutResultV2> ApplyTimeoutV2(NativeTimeoutResultV2 result,NativeDeadlinePolicyV2 policy,CancellationToken ct)
+    internal async Task<NativeTimeoutResultV2> ApplyTimeoutV2(NativeTimeoutResultV2 result,NativeDeadlinePolicyV2 policy,DateTimeOffset dueAt,CancellationToken ct)
     {
         var source=await TaskSourceAsync(result.TaskId,ct);var assignment=Parse<PersonalFormAssignmentV2>(source.Assignment);
         var task=await db.Wf_FlowTasks.SingleAsync(t=>t.Id==result.TaskId,ct);var instance=await db.Wf_FlowInstances.SingleAsync(i=>i.Id==task.InstanceId,ct);
@@ -49,7 +49,7 @@ public sealed partial class PersonalFormOwnerV2
             var publication=Parse<FlowPublicationV2>(source.Publication);
             if(policy.Action is "approve" or "reject")root=await engine.StagePersonalDecisionV2(fence.EnvironmentId,source.Data,source.Root,publication,
                 assignment,result.ServiceId,null,policy.Action=="approve","超时系统决定（SYSTEM_EXECUTION）",ct);
-            else if(policy.Action=="errorEdge")root=await engine.StagePersonalTimeoutErrorV2(fence.EnvironmentId,source.Data,source.Root,publication,task.Id,result.ServiceId,ct);
+            else if(policy.Action=="errorEdge")root=await engine.StagePersonalTimeoutErrorV2(fence.EnvironmentId,source.Data,source.Root,publication,task.Id,result.ServiceId,dueAt,ct);
             else throw Error("TIMEOUT_INVALID_POLICY",422);
             await AssignmentNotifications(write,await engine.SavePersonalRuntime(write,ct),ct);
             await Notification(write,"TIMEOUT_EXECUTED",instance.StarterId,WfNotificationType.TaskHandled,"超时政策已执行",instance.Id,task.Id,instance.FlowKey,ct);
