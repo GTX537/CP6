@@ -1,6 +1,6 @@
 # WP12-17 外部结果持久接收与本地流程/Owner 应用
 
-本报告对应 CP6-EXEC-2 的晚到结果同卡修复候选，等待 COORD 独立验收。Main 基线为 `42efc232798beff73a508883226241abfadd4e17`，本轮受验源码提交为 `c56c9e07d62e7f9af8bca544324aae9bf674e832`，树为 `697005a7ad32b82ecd1b362893457561f139e0f1`。从固定的 Main DEV-1 `D:/CP6-worktrees/wave17-dispatch-20261018` 与 `codex/wp12-17` 继续原草稿，18 项严格前置均完整 DONE。 [正式派工 #414](https://github.com/GTX537/CP6.AI-Handoff/blob/f2fffc16d1b870bfb6c7feb577b66c02d4070841/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T081303Z-cp6-exec-2-wp12-17/MESSAGE.md) · [唯一 START](https://github.com/GTX537/CP6.AI-Handoff/blob/31219e240aec5d6e95ce1d0d092ff8e1c9582332/handoffs/CP6-DEV-20261012/tasks/WP12-17/messages/20261123T082552Z-cp6-exec-2-start/MESSAGE.md)
+本报告对应 CP6-EXEC-2 的正式交付。COORD 已独立复核技术候选 `b00115ccc71106b60fe9240a21c0e73d7ce201fc`。Main 基线为 `42efc232798beff73a508883226241abfadd4e17`，本轮受验源码提交为 `c56c9e07d62e7f9af8bca544324aae9bf674e832`，树为 `697005a7ad32b82ecd1b362893457561f139e0f1`。从固定的 Main DEV-1 `D:/CP6-worktrees/wave17-dispatch-20261018` 与 `codex/wp12-17` 继续原草稿，18 项严格前置均完整 DONE。 [正式派工 #414](https://github.com/GTX537/CP6.AI-Handoff/blob/f2fffc16d1b870bfb6c7feb577b66c02d4070841/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T081303Z-cp6-exec-2-wp12-17/MESSAGE.md) · [唯一 START](https://github.com/GTX537/CP6.AI-Handoff/blob/31219e240aec5d6e95ce1d0d092ff8e1c9582332/handoffs/CP6-DEV-20261012/tasks/WP12-17/messages/20261123T082552Z-cp6-exec-2-start/MESSAGE.md)
 
 ## 实现
 
@@ -78,7 +78,7 @@
 
 本轮冲突恢复样本 Job `7c886338-f989-4ad2-9c37-4bddad51043d`，唯一 ResumeReceipt `5b525605-d381-4e05-8b11-6d8a2ed2e219`。跨进程回读原 Job `47c48df6-20af-4122-830e-7d5c1c466c5e` 和回执 `23c0dc68-ea89-49a8-8724-f298d0037e76`。APP 决定 `869dbc94-c1ce-475c-aca9-3755b0176f7c` 与回执 `29794cd3-ad36-4107-afc6-da73f0c6b6f4` 同事务。OA 页面“已应用”和“待本地应用”的 Job 分别为 `3a555cfa-6d1a-4d83-8eaf-1e4dad0217fd`、`27e00b16-9b5d-4ef8-9de4-6ffed98b844c`。
 
-生产提供方采用与生产业务 Owner 应用为 `UNPROVEN`。CONN-19、CONN-25 和 CONN-21 的失败恢复沿 WP12-18 核验。已采用台账上的 OA-CONN-01 为 10/32，目标开放。
+生产提供方采用与生产业务 Owner 应用为 `UNPROVEN`。CONN-19、CONN-25 和 CONN-21 的失败恢复沿 WP12-18 核验。本次 PR 核销 CONN-22、23、24、26、27、28 六项，OA-CONN-01 原 AC 为 16/32，目标开放。
 
 ## 工时和交接
 
@@ -86,8 +86,10 @@
 
 上轮修复于 `2026-11-23T09:40:51.3260840Z` 登记接续，技术证据截止 `2026-11-23T10:08:26.6845849Z`，用时 **1655.359 秒**。草稿回读到 `2026-11-23T10:11:12.2862997Z`，交接 **165.602 秒**，单列。
 
-本轮晚到结果修复于 `2026-11-23T10:20:29.4963730Z` 登记接续，技术证据截止 `2026-11-23T10:40:34.4595149Z`，用时 **1204.963 秒**。WP12-17 三段交付的技术工作合计 **6051.249 秒**，各轮独立审阅等待已扣除，草稿交接按实另记。额度为 28800 有效秒，43200 秒强制拆卡，本次保持一张卡。
+本轮晚到结果修复于 `2026-11-23T10:20:29.4963730Z` 登记接续，技术证据截止 `2026-11-23T10:40:34.4595149Z`，用时 **1204.963 秒**。该轮草稿回读至 `2026-11-23T10:42:50.6296432Z`，草稿交接 **136.170 秒**单列。WP12-17 三段交付的技术工作合计 **6051.249 秒**，各轮独立审阅等待已扣除，草稿交接按实另记。额度为 28800 有效秒，43200 秒强制拆卡，本次保持一张卡。
 
-在采用台账与本卡候选差异中以原 DELIVERY 完整提交 `c31f0beb9661f0304d9ea9d8d9348a22c6fc88ec`、路径 `handoffs/CP6-DEV-20261012/tasks/WP12-11/messages/20261123T072226Z-exec-wp02-14b-delivery/MESSAGE.md` 查重。WP12-11 当前卡内为 3277.773 秒，475.670 秒留待正常 Main DONE 或拆卡 PR 单次结转。届时 WP12-11 卡内为 3753.443 秒，原目标复核 0.081 秒单列，计入本卡前计划累计 184156.206 秒。 [签收 #413](https://github.com/GTX537/CP6.AI-Handoff/blob/714ed5fb37448f19f90f7627af6af0ea80c4f517/handoffs/CP6-DEV-20261012/tasks/WP12-11/replies/20261123T075623Z-coord-acceptance-ack/MESSAGE.md)
+在采用台账与本卡候选差异中以原 DELIVERY 完整提交 `c31f0beb9661f0304d9ea9d8d9348a22c6fc88ec`、路径 `handoffs/CP6-DEV-20261012/tasks/WP12-11/messages/20261123T072226Z-exec-wp02-14b-delivery/MESSAGE.md` 查重。本卡在原 Main DONE PR 单次结转 WP12-11 的 475.670 秒。WP12-11 卡内由 3277.773 秒更新为 3753.443 秒，原目标复核 0.081 秒单列，计入本卡前计划累计 184156.206 秒。 [签收 #413](https://github.com/GTX537/CP6.AI-Handoff/blob/714ed5fb37448f19f90f7627af6af0ea80c4f517/handoffs/CP6-DEV-20261012/tasks/WP12-11/replies/20261123T075623Z-coord-acceptance-ack/MESSAGE.md)
 
-Main DEV-1 由 CP6-EXEC-2 按 WP12-17 保持占用。执行提交实现与证据，COORD 独立验收，Dot 核对后转交。原分支和草稿供复审，Main 采用与席位释放待正式交付。普通 Actions 与部署记录为 `NOT_RUN`。 [草稿 PR #1316](https://github.com/GTX537/CP6/pull/1316)
+正式收尾从 `2026-11-23T11:02:25.737612+00:00` 至核销快照 `2026-11-23T11:08:39.877947+00:00`。本卡入账 **6911.850 秒**，由技术 **6051.249 秒**、已测三次草稿交接 **486.545 秒**及正式收尾至快照 **374.056 秒**组成，目标复核 **0.084 秒**另列。计划累计 **191068.140 秒**。快照之后的采用、同树冒烟及席位释放按实际回执另记。
+
+正式合并提交、远端回读、同树冒烟和 DEV-1 释放以唯一 Main PR 及后续 DELIVERY 回执为准。执行提交采用证据，Dot 核对转交，COORD 独立签收。普通 Actions 与部署记录为 `NOT_RUN`。 [Main PR #1316](https://github.com/GTX537/CP6/pull/1316)
