@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.DataProtection;
+
 namespace CP6.Core.Services.Oa;
 
 /// <summary>电子表单信箱读模型服务（umbrella §4.3）。读 L1，写动作经 L0 引擎。T5~T8 增量。</summary>
@@ -24,6 +26,9 @@ public interface IInboxService
     Task<InboxStats> StatsAsync(Guid userId);
     // ── 表單查詢（Phase C）──
     Task<FormQueryPage> QueryAsync(Guid effectiveUserId, FormQueryFilter filter);
+    Task<NativeQueryContextV2> LegacyHistoryContextAsync(CancellationToken ct);
+    Task<LegacyFormHistoryPage> LegacyHistoryAsync(Guid actualUserId, Guid effectiveUserId, LegacyFormHistoryFilter filter,
+        IDataProtectionProvider protection, CancellationToken ct);
     // ── 在途批量转单（wfs-inbox-ux §3）── actorId=操作者（管理员本人）；PostgreSQL 逐条经当前权限事务提交。
     Task<BatchTransferReport> BatchTransferAsync(Guid actorId, Guid fromUserId, Guid toUserId, string? comment,
         BatchTransferFilter? filter = null, Func<Func<Task>, Task>? commitItem = null);

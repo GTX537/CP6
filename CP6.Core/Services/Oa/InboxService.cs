@@ -416,39 +416,55 @@ public partial class InboxService : IInboxService
         ? "MISSING_VERSION_SNAPSHOT"
         : LegacyDefinitionViewV2.Reconstructed(creator) ? "LEGACY_HEAD_BACKFILL" : "LEGACY_VERSION_SNAPSHOT";
 
-    public async Task<FormQueryPage> QueryAsync(Guid effectiveUserId, FormQueryFilter f)
+    private IQueryable<Wf_FlowInstance> LegacyQueryCandidates(Guid effectiveUserId, FormQueryFilter f)
     {
         var visible = _access.VisibleInstanceIds(effectiveUserId);
         var q = LegacyInstances().Where(x => visible.Contains(x.Id));
         if (f.StarterId is { } s) q = q.Where(i => i.StarterId == s);
         if (!string.IsNullOrWhiteSpace(f.FlowKey)) q = q.Where(i => i.FlowKey == f.FlowKey);
         if (f.Status is { } st) q = q.Where(i => i.Status == st);
-        if (f.From is { } fr) q = q.Where(i => i.CreateDate >= fr);
-        if (f.To is { } to) q = q.Where(i => i.CreateDate <= to);
         if (f.HandlerId is { } h)   // 处理人：我办过/正办该实例
             q = q.Where(i => _db.Wf_FlowFormTos.Any(ft => ft.InstanceId == i.Id
                 && (ft.ExpectedHandlerId == h || ft.ActualHandlerId == h)));
         if (!string.IsNullOrWhiteSpace(f.Keyword))
             q = q.Where(i => i.FlowKey.Contains(f.Keyword!) || (i.BizId != null && i.BizId.Contains(f.Keyword!)));
 
-        var total = await q.CountAsync();
-        var page = Math.Max(1, f.Page);
-        var pageSize = Math.Clamp(f.PageSize, 1, 100);
-        var rows = await (from i in q.AsNoTracking()
-                          join v in _db.Wf_FlowDefVersions on i.FlowDefVersionId equals v.Id into versions
+        return q.AsNoTracking();
+    }
+
+    public Task<FormQueryPage> QueryAsync(Guid effectiveUserId, FormQueryFilter f)
+    {
+        var q = LegacyQueryCandidates(effectiveUserId, f);
+        if (f.From is { } fr) q = q.Where(i => i.CreateDate >= fr);
+        if (f.To is { } to) q = q.Where(i => i.CreateDate <= to);
+        return LegacyQueryPage(q.Select(i => new LegacyQueryEntry { Instance = i, CreatedAt = i.CreateDate }),
+            Math.Max(1, f.Page), Math.Clamp(f.PageSize, 1, 100), default);
+    }
+
+    private sealed class LegacyQueryEntry
+    {
+        public required Wf_FlowInstance Instance { get; init; }
+        public required DateTime CreatedAt { get; init; }
+    }
+
+    private async Task<FormQueryPage> LegacyQueryPage(IQueryable<LegacyQueryEntry> q, int page, int pageSize, CancellationToken ct)
+    {
+        var total = await q.CountAsync(ct);
+        var rows = await (from entry in q
+                          join v in _db.Wf_FlowDefVersions on entry.Instance.FlowDefVersionId equals v.Id into versions
                           from v in versions.DefaultIfEmpty()
-                          join u in _db.Sys_Users on i.StarterId equals u.Id into uu
+                          join u in _db.Sys_Users on entry.Instance.StarterId equals u.Id into uu
                           from u in uu.DefaultIfEmpty()
-                          orderby i.CreateDate descending, i.Id descending
+                          orderby entry.CreatedAt descending, entry.Instance.Id descending
                           select new
                           {
-                              Instance = i, Starter = u, FlowName = v == null ? null : v.FlowNameSnapshot,
+                              entry.Instance, entry.CreatedAt, Starter = u, FlowName = v == null ? null : v.FlowNameSnapshot,
                               FlowVersion = v == null ? (int?)null : v.Version, FlowVersionId = v == null ? (Guid?)null : v.Id,
                               VersionCreator = v == null ? null : v.Creator
                           })
-            .Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            .Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(ct);
         var items = rows.Select(x => new FormQueryItem(x.Instance.Id, x.Instance.FlowKey, x.FlowName, x.Instance.StarterId,
-            Name(x.Starter), x.Instance.Status, x.Instance.CurrentNode, x.Instance.CreateDate)
+            Name(x.Starter), x.Instance.Status, x.Instance.CurrentNode, x.CreatedAt)
         {
             FlowVersion = x.FlowVersion,
             FlowVersionId = x.FlowVersionId,

@@ -1,6 +1,6 @@
 import { createServer } from 'vite'
 import { chromium, expect } from '@playwright/test'
-import { mkdir, writeFile, realpath } from 'node:fs/promises'
+import { access, mkdir, writeFile, realpath } from 'node:fs/promises'
 import path from 'node:path'
 const output = process.env.CP6_OA_BROWSER_RESULTS
 if (!output || !process.env.CP6_OA_BROWSER_API || !process.env.CP6_OA_BROWSER_TENANT) throw new Error('OWNED_BROWSER_ENVIRONMENT_REQUIRED')
@@ -51,7 +51,7 @@ try {
   await page.goto(origin + '/oa/form-search')
   const query = page.getByRole('region', { name: '提交与流程查询', exact: true })
   await expect(query).toContainText('共 2 条当前可见记录')
-  await expect(query).toContainText('America/New_York')
+  await expect(query).toContainText(process.env.CP6_HISTORY_TIMEZONE)
   await query.getByLabel('审批关联', { exact: true }).selectOption('no')
   const searched = page.waitForResponse(r => new URL(r.url()).pathname === '/api/oa/v2/query/search')
   await query.getByRole('button', { name: '查询', exact: true }).click(); const result = (await (await searched).json()).data
@@ -79,7 +79,11 @@ try {
   steps.push('实际统一查询区分有无审批实例，显示准确版本及只读历史内容')
   await page.getByRole('tab', { name: '旧流程记录', exact: true }).click()
   const oldQuery = page.locator('.form-query')
-  await oldQuery.getByRole('button', { name: '查询', exact: true }).click()
+  await expect(oldQuery).toContainText(process.env.CP6_HISTORY_TIMEZONE)
+  const flowKey = oldQuery.getByPlaceholder('可选，输入历史流程标识')
+  const searchHistory = oldQuery.getByRole('button', { name: '查询', exact: true })
+  await flowKey.fill('wp1205-historical')
+  await searchHistory.click()
   const known = oldQuery.getByRole('row').filter({ hasText: process.env.CP6_HISTORY_LEGACY_PINNED })
   const missing = oldQuery.getByRole('row').filter({ hasText: process.env.CP6_HISTORY_LEGACY_MISSING })
   await expect(known).toContainText('提交时的流程名称')
@@ -90,9 +94,84 @@ try {
   await expect(page.getByRole('dialog')).toContainText('缺少版本快照，历史版本未证')
   await page.screenshot({ path: path.join(output, 'legacy-missing-pin.png'), fullPage: true })
   steps.push('旧流程列表和详情显示实际快照来源，缺 pin 与回填明确标记')
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  await flowKey.fill(process.env.CP6_HISTORY_CALENDAR_FLOW)
+  const startDate = oldQuery.getByPlaceholder('开始日期', { exact: true })
+  const endDate = oldQuery.getByPlaceholder('结束日期', { exact: true })
+  await startDate.fill('2026-11-01')
+  await startDate.press('Tab')
+  await endDate.fill('2026-11-01')
+  await endDate.press('Enter')
+  const historyPath = '/api/oa/query/history/search'
+  const readPage = async click => {
+    const response = page.waitForResponse(r => new URL(r.url()).pathname === historyPath)
+    await click()
+    const actual = await response
+    expect(actual.status()).toBe(200)
+    return { request: actual.request().postDataJSON(), result: (await actual.json()).data }
+  }
+  const firstPage = await readPage(() => searchHistory.click())
+  expect(firstPage.request).toMatchObject({ from: '2026-11-01', to: '2026-11-01',
+    timeZoneId: process.env.CP6_HISTORY_TIMEZONE, page: 1, pageSize: 20 })
+  const expected = process.env.CP6_HISTORY_ORDERED_IDS.split(',')
+  expect(firstPage.result.total).toBe(expected.length)
+  expect(firstPage.result.items.map(row => row.instanceId)).toEqual(expected.slice(0, 20))
+  expect(Date.parse(firstPage.result.window.toExclusiveUtc) - Date.parse(firstPage.result.window.fromInclusiveUtc)).toBe(25 * 3600000)
+  await expect(oldQuery).toContainText(expected[0])
+  await page.screenshot({ path: path.join(output, 'legacy-calendar-page-one.png'), fullPage: true })
+
+  await writeFile(path.join(output, 'legacy-page-one.ready'), 'first real response read')
+  await expect.poll(() => access(path.join(output, 'legacy-page-one.inserted')).then(() => true, () => false)).toBe(true)
+  const secondPage = await readPage(() => oldQuery.locator('.el-pagination .btn-next').click())
+  expect(secondPage.request.snapshotToken).toBe(firstPage.result.snapshotToken)
+  expect(secondPage.result.snapshotAsOf).toBe(firstPage.result.snapshotAsOf)
+  expect(secondPage.result.total).toBe(expected.length)
+  expect(secondPage.result.items.map(row => row.instanceId)).toEqual(expected.slice(20))
+  await expect(oldQuery).toContainText(expected.at(-1))
+  await page.screenshot({ path: path.join(output, 'legacy-calendar-page-two.png'), fullPage: true })
+  const refreshed = await readPage(() => searchHistory.click())
+  expect(refreshed.request.page).toBe(1)
+  expect(refreshed.request.snapshotToken).toBeUndefined()
+  expect(refreshed.result.total).toBe(expected.length + 1)
+  expect(refreshed.result.snapshotAsOf).not.toBe(firstPage.result.snapshotAsOf)
+
+  let observed, release, finished
+  const hasResponse = new Promise(resolve => { observed = resolve })
+  const allowReply = new Promise(resolve => { release = resolve })
+  const handled = new Promise(resolve => { finished = resolve })
+  await page.route('**' + historyPath, async route => {
+    const actual = await route.fetch()
+    observed(actual.status())
+    await allowReply
+    try {
+      await route.fulfill({ response: actual })
+      finished('fulfilled')
+    } catch (error) {
+      if (!/cancel|abort|handled|Invalid InterceptionId/i.test(String(error))) throw error
+      finished('aborted')
+    }
+  }, { times: 1 })
+  await searchHistory.click()
+  expect(await hasResponse).toBe(200)
+  await oldQuery.getByRole('button', { name: '重置', exact: true }).click()
+  release()
+  const delayedReply = await handled
+  await expect(flowKey).toHaveValue('')
+  await expect(startDate).toHaveValue('')
+  await expect(endDate).toHaveValue('')
+  await expect(oldQuery.locator('.el-pagination')).toHaveCount(0)
+  await expect(oldQuery).toContainText('暂无数据，请输入条件后查询')
+  await expect(oldQuery).not.toContainText(expected[0])
+  const legacyCalendar = { elapsedHours: 25, firstTotal: firstPage.result.total, secondTotal: secondPage.result.total,
+    refreshedTotal: refreshed.result.total, sameSnapshot: true, stableIdOrder: true, delayedReply, resetCleared: true }
+  steps.push('旧页面按可信租户时区纳入完整结束日，夏令时回拨日为 25 小时')
+  steps.push('翻页期间真实新增同刻记录，旧截点总数和顺序稳定，刷新可见新增')
+  steps.push('重置后忽略已经完成但尚未送达的真实响应')
   expect(errors).toEqual([])
   expect(responses.filter(r => r.path.startsWith('/api/oa/v2/') && r.method !== 'GET' && r.path !== '/api/oa/v2/query/search').every(r => r.path.endsWith('/favorite'))).toBe(true)
-  await writeFile(path.join(output, 'result.json'), JSON.stringify({ result: 'PASS', steps, responses, receipts, pageErrors: errors, internalApiMocked: false, injectedFailure: 'Drop first committed favorite response' }, null, 2))
+  await writeFile(path.join(output, 'result.json'), JSON.stringify({ result: 'PASS', steps, responses, receipts, legacyCalendar, pageErrors: errors, internalApiMocked: false,
+    injectedFailure: '收藏提交后丢失响应，旧流程重置时延迟投递真实查询响应' }, null, 2))
   process.stdout.write(JSON.stringify({ result: 'PASS', steps }) + '\n')
 } catch (error) {
   if (page) { await page.screenshot({ path: path.join(output, 'failure.png'), fullPage: true }); await writeFile(path.join(output, 'failure.txt'), await page.locator('body').innerText()) }
