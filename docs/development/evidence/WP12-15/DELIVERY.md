@@ -43,3 +43,11 @@
 本轮从 `2026-11-23T18:54:34.5505900+00:00` 原席位恢复至 `2026-11-23T19:07:07.6871522+00:00` 候选报告快照，实际增加 753.137 秒，累计 5014.545 秒。此前有效 4261.408 秒，领用前核对本轮 92.379 秒及此前 171.438 秒单列，等待裁决时间从有效账排除。快照后的实际收尾尾差以远端回读记录为准。DEV-1 继续由 CP6-EXEC-3 持有本卡等待总控。DEV-2 空闲。
 
 WP12-14 的 754.861 秒继续待合资格 Main 台账 PR 按原 DELIVERY 单次结转。 [WP12-14 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/951c930a7e05ecd544a3e5ab03770798b7a52793/handoffs/CP6-DEV-20261012/tasks/WP12-14/messages/20261123T163520Z-cp6-exec-3-delivery-closeout/MESSAGE.md)
+
+## 总控第 10 回合独立验收与拆分台账
+
+技术头 `8b9f2d6c3015c4e9282b24916f2eadae08ef45be`、基线 `a52330b4ef243146e51560ae40d664c9b99d376e`、受验源码 `9ad452dbdfe33fb8af967f432704660c6050aa33` 已独立核对。唯一产品改动为 TIMER 草稿页输入说明及无障碍关联。INTEGRATION-1 分离在精确候选，使用同源程序集、实际前端、合成租户与新隔离 PostgreSQL 18.6。独立 **12/12**，零失败或跳过，含实际 Main HTTP 与 Chrome。版本化新建与修订 200 原样通过，201 和非法语法拒绝。旧 201 预览、旧错误返回及 OA 原生预演沿 Main。确认两条配置回执和 Chrome 一条配置回执，角色授权、排程、NextDueUtc 和所核对的运行写集零变化。SQL Server NOT_RUN。 [独立验收决定](https://github.com/GTX537/CP6.AI-Handoff/blob/89c5ced8826cda9d38b53cae7d6ab285becc30aa/handoffs/CP6-DEV-20261012/tasks/WP12-15/replies/20261123T191804Z-coord3-split-independent-acceptance/MESSAGE.md) · [执行原证据快照](https://github.com/GTX537/CP6/blob/8b9f2d6c3015c4e9282b24916f2eadae08ef45be/docs/development/evidence/WP12-15/DELIVERY.md)
+
+本机独立 TRX 为 `C:/Users/tt/CP6-test-artifacts/WP12-15/20261123-wp1215-coord3-r10/wp1215-r10-independent.trx`，SHA-256 `72cdaa0159b78244c8d0e5857a61b22650d461323b1b7681c59b4e066f2b10db`。实际 Chrome JSON SHA-256 `30c46a4f4a7773254e57af89acd3bf281f427568f9842bca40793e8546d81e77`。第二版仍为候选祖先，原报告及两项原件哈希已复核。
+
+同一 PR 的拆分候选按 DONE/SPLIT 登记局部，full_task_completed=false。WP12-15b BLOCKED，准确 conn.forecast 映射待正式采用。CONN-15/16/17/30 均 NOT_RUN，OA-CONN-01 16/32。WP12-14b 仍 BLOCKED，四路真实触发、原九项和 RP-CONN-01/02 保持原阻断。执行累计 5112.383 秒，余卡额度 9287.617 秒，等待与预检另列。按 [WP12-14 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/951c930a7e05ecd544a3e5ab03770798b7a52793/handoffs/CP6-DEV-20261012/tasks/WP12-14/messages/20261123T163520Z-cp6-exec-3-delivery-closeout/MESSAGE.md) 单次结转 754.861 秒至 3274.331 秒。实际 Main 采用及席位收尾另按 #1319 正式回执。

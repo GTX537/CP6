@@ -683,3 +683,13 @@ WP12-14 拆卡，词条交付，完整未完成。以 Main `55667a87aea03405467d
 按 [WP12-05 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/5e9325efea02ff603691ef3369a4a70ed90f5555/handoffs/CP6-DEV-20261012/tasks/WP12-05/messages/20261123T141959Z-cp6-exec-2-delivery-closeout/MESSAGE.md) 的完整提交和路径查重，单次补记该卡尾差 678.850 秒至 7568.334 秒，WP12-17 既有结转保持。计划累计 198695.671 → 199374.521 → 201893.991 秒。
 
 候选原号 DONE 85/375，完整 DONE 84/375，登记卡 101/392，已关闭目标 11/125。本轮新增拆卡 1 张，OA 原号完整完成 15/20。阶段排序可开工项为 WP12-15（2）、WP12-18（2）、WP12-20（2），后续派工归总控。
+
+## WP12-15 版本化 TIMER 草稿输入提示拆卡候选
+
+WP12-15 的局部交付只含版本化 TIMER 草稿页的输入说明与无障碍关联。现有五段、1–200 字符边界及原写入合同均沿 Main。候选基线 `a52330b4ef243146e51560ae40d664c9b99d376e`，总控复验技术头 `8b9f2d6c3015c4e9282b24916f2eadae08ef45be`、受验源码 `9ad452dbdfe33fb8af967f432704660c6050aa33` 及原五项直接前置和展开后 17 项完整 DONE。新隔离 PostgreSQL 18.6、实际 Main HTTP、Chrome 定向 12/12，SQL Server NOT_RUN。 [独立验收决定](https://github.com/GTX537/CP6.AI-Handoff/blob/89c5ced8826cda9d38b53cae7d6ab285becc30aa/handoffs/CP6-DEV-20261012/tasks/WP12-15/replies/20261123T191804Z-coord3-split-independent-acceptance/MESSAGE.md) · [唯一报告](../evidence/WP12-15/DELIVERY.md) · [原草稿 PR](https://github.com/GTX537/CP6/pull/1319)
+
+原号 DONE/SPLIT，完整仍未完成。WP12-15b 紧接原号且 BLOCKED，待 SYS-IAM 与 OA Connector Owner 提供正式 conn.forecast 映射及准确授权出口。四项 CONN-15、16、17、30 保持 NOT_RUN，OA-CONN-01 16/32，三个原下游继续等待。WP12-14b 与 RP-CONN-01/02、四路真实触发和原九项状态保留。 [余卡](../task-plans/WP12.md#wp12-15b)
+
+按 [WP12-14 正式 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/951c930a7e05ecd544a3e5ab03770798b7a52793/handoffs/CP6-DEV-20261012/tasks/WP12-14/messages/20261123T163520Z-cp6-exec-3-delivery-closeout/MESSAGE.md) 完整提交及仓内路径查重为零，候选单次结转 754.861 秒至 WP12-14，累计 3274.331 秒。WP12-14b 余 25525.669 秒，150% 为 38288.5035 秒。WP12-05 的既有结转保留。计划消耗 201893.991 → 202648.852 → 207761.235 秒。 [原签收](https://github.com/GTX537/CP6.AI-Handoff/blob/9a4e7d4e68e1d75125b1ee839f2d572dd7038737/handoffs/CP6-DEV-20261012/tasks/WP12-14/replies/20261123T164556Z-coord3-split-acceptance-ack/MESSAGE.md)
+
+规范快照计本卡执行 5112.383 秒。M 档 14400 秒，强制拆分线 21600 秒，余卡 9287.617 秒，150% 为 13931.4255 秒。领取前核对和独立验收等待另列，正式收尾尾差凭实际回执处理。候选原号 DONE 86/375，完整 DONE 84/375，登记卡 DONE 102/393，目标 11/125，卡池 2052 小时守恒。下一卡尚未登记。实际采用、同树冒烟和席位释放以 #1319 后续回执为准。
