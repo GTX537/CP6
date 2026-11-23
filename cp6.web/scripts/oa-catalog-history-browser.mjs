@@ -136,6 +136,28 @@ try {
   expect(refreshed.result.total).toBe(expected.length + 1)
   expect(refreshed.result.snapshotAsOf).not.toBe(firstPage.result.snapshotAsOf)
 
+  await writeFile(path.join(output, 'legacy-origin-rewrite.ready'), 'fresh page has a token')
+  await expect.poll(() => access(path.join(output, 'legacy-origin-rewrite.done')).then(() => true, () => false)).toBe(true)
+  const staleRequest = page.waitForResponse(r => new URL(r.url()).pathname === historyPath)
+  await oldQuery.locator('.el-pagination .btn-next').click()
+  const stale = await staleRequest
+  expect(stale.status()).toBe(409)
+  expect(stale.request().postDataJSON().snapshotToken).toBe(refreshed.result.snapshotToken)
+  expect((await stale.json()).code).toBe('QUERY_SNAPSHOT_STALE')
+  await expect(oldQuery).toContainText('查询截点已失效，请从第一页重新查询。')
+  await expect(oldQuery.locator('.el-pagination')).toHaveCount(0)
+  await page.screenshot({ path: path.join(output, 'legacy-origin-stale.png'), fullPage: true })
+
+  const restarted = await readPage(() => searchHistory.click())
+  expect(restarted.request.page).toBe(1)
+  expect(restarted.request.snapshotToken).toBeUndefined()
+  expect(restarted.result.total).toBe(expected.length + 1)
+  const restartedSecond = await readPage(() => oldQuery.locator('.el-pagination .btn-next').click())
+  expect(restartedSecond.request.snapshotToken).toBe(restarted.result.snapshotToken)
+  expect(restartedSecond.result.total).toBe(expected.length + 1)
+  expect([...restarted.result.items, ...restartedSecond.result.items].map(row => row.instanceId).sort())
+    .toEqual([...expected, process.env.CP6_HISTORY_INSERTED_ID].sort())
+
   let observed, release, finished
   const hasResponse = new Promise(resolve => { observed = resolve })
   const allowReply = new Promise(resolve => { release = resolve })
@@ -164,9 +186,11 @@ try {
   await expect(oldQuery).toContainText('暂无数据，请输入条件后查询')
   await expect(oldQuery).not.toContainText(expected[0])
   const legacyCalendar = { elapsedHours: 25, firstTotal: firstPage.result.total, secondTotal: secondPage.result.total,
-    refreshedTotal: refreshed.result.total, sameSnapshot: true, stableIdOrder: true, delayedReply, resetCleared: true }
+    refreshedTotal: refreshed.result.total, sameSnapshot: true, stableIdOrder: true, delayedReply, resetCleared: true,
+    staleStatus: stale.status(), restartedTotal: restartedSecond.result.total }
   steps.push('旧页面按可信租户时区纳入完整结束日，夏令时回拨日为 25 小时')
   steps.push('翻页期间真实新增同刻记录，旧截点总数和顺序稳定，刷新可见新增')
+  steps.push('同库表代际更换后提示从第一页重新查询，重新分页覆盖全部记录')
   steps.push('重置后忽略已经完成但尚未送达的真实响应')
   expect(errors).toEqual([])
   expect(responses.filter(r => r.path.startsWith('/api/oa/v2/') && r.method !== 'GET' && r.path !== '/api/oa/v2/query/search').every(r => r.path.endsWith('/favorite'))).toBe(true)

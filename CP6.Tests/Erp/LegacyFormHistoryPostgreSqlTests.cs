@@ -135,7 +135,19 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         db.Wf_FlowInstances.Add(existing);
         await db.SaveChangesAsync();
 
-        await db.GetService<IMigrator>().MigrateAsync();
+        var migrations = db.GetService<IMigrator>();
+        await migrations.MigrateAsync("20261123124500_LegacyFormHistorySnapshotV1");
+        var fromPreviousCandidate = CalendarLegacyRow(starter, LegacyFallStart, "已有事务编号");
+        db.Wf_FlowInstances.Add(fromPreviousCandidate);
+        await db.SaveChangesAsync();
+        async Task<string> InsertionIdentity(Guid id) => await db.Database.SqlQuery<string>($"""
+            SELECT legacy_query_insert_xid::text AS "Value" FROM public."Wf_FlowInstance"
+            WHERE "TenantId"={tenant} AND "Id"={id}
+            """).SingleAsync();
+        var previousBirth = await InsertionIdentity(fromPreviousCandidate.Id);
+        Assert.NotEqual("0", previousBirth);
+
+        await migrations.MigrateAsync();
         db.ChangeTracker.Clear();
         var after = await db.Wf_FlowInstances.AsNoTracking().SingleAsync(i => i.Id == existing.Id);
         Assert.Equal(existing.CreateDate, after.CreateDate);
@@ -148,14 +160,20 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var inserted = CalendarLegacyRow(starter, LegacyFallStart, "前滚后新记录");
         db.Wf_FlowInstances.Add(inserted);
         await db.SaveChangesAsync();
-        async Task<string> InsertionIdentity(Guid id) => await db.Database.SqlQuery<string>($"""
-            SELECT legacy_query_insert_xid::text AS "Value" FROM public."Wf_FlowInstance"
+        async Task<string?> InsertionOrigin(Guid id) => await db.Database.SqlQuery<string?>($"""
+            SELECT legacy_query_insert_origin AS "Value" FROM public."Wf_FlowInstance"
             WHERE "TenantId"={tenant} AND "Id"={id}
             """).SingleAsync();
         Assert.Equal("0", await InsertionIdentity(existing.Id));
+        Assert.Equal(previousBirth, await InsertionIdentity(fromPreviousCandidate.Id));
+        Assert.Null(await InsertionOrigin(existing.Id));
+        Assert.Null(await InsertionOrigin(fromPreviousCandidate.Id));
+        var origin = await ReadLegacyOrigin(db);
+        Assert.Equal(origin, await InsertionOrigin(inserted.Id));
         var birth = await InsertionIdentity(inserted.Id);
         Assert.NotEqual("0", birth);
         await db.Wf_FlowInstances.Where(i => i.Id == inserted.Id).ExecuteUpdateAsync(s => s.SetProperty(i => i.Status, FlowInstanceStatus.Rejected));
         Assert.Equal(birth, await InsertionIdentity(inserted.Id));
+        Assert.Equal(origin, await InsertionOrigin(inserted.Id));
     }
 }

@@ -18,7 +18,7 @@ public sealed record LegacyFormHistoryPage(IReadOnlyList<FormQueryItem> Items, i
 
 public partial class InboxService
 {
-    private sealed record LegacyHistoryDatabaseCut(string Visibility, DateTimeOffset AsOf);
+    private sealed record LegacyHistoryDatabaseCut(string Visibility, DateTimeOffset AsOf, string? DatabaseOrigin = null);
     private sealed record LegacyHistorySnapshot(LegacyHistoryDatabaseCut Cut, LegacyFormHistoryFilter Filter);
     private sealed record LegacyHistoryTime(Guid Id, DateTime CreatedAt);
 
@@ -70,6 +70,8 @@ public partial class InboxService
             _db.CurrentTenantId.ToString("D"), actualUserId.ToString("D"), effectiveUserId.ToString("D"), storageZone);
         var inputs = filter with { Page = 1, SnapshotToken = null };
         await using var tx = await _db.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead, ct);
+        // 读取截点、计数和页面期间，保持旧流程表的存储代际一致。
+        await _db.Database.ExecuteSqlRawAsync("""LOCK TABLE public."Wf_FlowInstance" IN ACCESS SHARE MODE""", ct);
         NativeQueryDateWindowV2 window = new(null, null);
         string? tenantZone = null;
         if (filter.From != null || filter.To != null)
@@ -80,17 +82,26 @@ public partial class InboxService
             window = NativeQueryDatesV2.Window(zone, filter.From, filter.To);
         }
 
+        var cut = await _db.Database.SqlQueryRaw<LegacyHistoryDatabaseCut>("""
+            SELECT pg_current_snapshot()::text AS "Visibility", clock_timestamp() AS "AsOf",
+                   public.legacy_form_history_origin_v2() AS "DatabaseOrigin"
+            """).SingleAsync(ct);
+        if (cut.DatabaseOrigin is null) throw new InvalidOperationException("无法确认旧流程查询的数据库来源。");
+
         var snapshot = filter.SnapshotToken is { } token
             ? ReadLegacySnapshot(protector, token, inputs)
-            : new LegacyHistorySnapshot(await _db.Database.SqlQueryRaw<LegacyHistoryDatabaseCut>(
-                """SELECT pg_current_snapshot()::text AS "Visibility", clock_timestamp() AS "AsOf" """).SingleAsync(ct), inputs);
-        // 每次都按当前权限读取。首次数据库截点只冻结记录的入库资格，保护翻页免受新增或晚提交影响。
+            : new LegacyHistorySnapshot(cut, inputs);
+        if (snapshot.Cut.DatabaseOrigin != cut.DatabaseOrigin)
+            throw new ScopeAuthorizationExceptionV1("QUERY_SNAPSHOT_STALE", 409);
+
+        // 首查使用当前事务可见的存量。续页只解释本数据库代际的写入编号，仍按当前权限读取。
         var timestamps = _db.Database.SqlQuery<LegacyHistoryTime>($"""
             SELECT "Id", timezone({storageZone}, "CreateDate") AS "CreatedAt"
             FROM public."Wf_FlowInstance"
             WHERE "TenantId" = {_db.CurrentTenantId}
-              AND (legacy_query_insert_xid = '0'::xid8
-                   OR pg_visible_in_snapshot(legacy_query_insert_xid, {snapshot.Cut.Visibility}::pg_snapshot))
+              AND CASE WHEN {filter.SnapshotToken is not null} AND legacy_query_insert_origin = {cut.DatabaseOrigin}
+                       THEN pg_visible_in_snapshot(legacy_query_insert_xid, {snapshot.Cut.Visibility}::pg_snapshot)
+                       ELSE TRUE END
             """);
         var candidates = LegacyQueryCandidates(effectiveUserId,
             new(filter.StarterId, filter.HandlerId, filter.FlowKey, filter.Keyword, filter.Status, null, null));

@@ -290,6 +290,8 @@ async function loadPage(filters: QueryFilters, page: number, token?: string) {
     if (cause?.response?.data?.code === 'QUERY_TIMEZONE_CHANGED') {
       error.value = '租户时区已变化，请确认日期后重新查询。'
       void loadTimeZone()
+    } else if (['QUERY_SNAPSHOT_STALE', 'QUERY_SNAPSHOT_INVALID'].includes(cause?.response?.data?.code)) {
+      error.value = '查询截点已失效，请从第一页重新查询。'
     } else {
       error.value = '无法读取旧流程记录，请重新查询。'
     }

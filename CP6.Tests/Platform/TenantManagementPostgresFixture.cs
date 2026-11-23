@@ -48,6 +48,7 @@ internal sealed class TenantManagementPostgresTheoryAttribute : TheoryAttribute
 public sealed class TenantManagementPostgresFixture : IAsyncLifetime
 {
     private readonly CurrentPermissionPostgresFixture _server = new();
+    internal CurrentPermissionPostgresFixture LocalCluster => _server;
     internal const string Database = "tenant_management_component";
 
     public async Task InitializeAsync()

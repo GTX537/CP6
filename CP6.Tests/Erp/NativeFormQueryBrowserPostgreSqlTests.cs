@@ -35,7 +35,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             await h.Db.Sys_Menus.Where(m => m.MenuKey == menu).ExecuteUpdateAsync(s => s.SetProperty(m => m.RoutePath, path));
         using var stop = new CancellationTokenSource(TimeSpan.FromMinutes(4));
         var browserOutput = Path.Combine(Environment.GetEnvironmentVariable("CP6_PERMISSION_PG_ROOT")!, "catalog-history-browser");
-        async Task InsertAfterFirstPage()
+        async Task ChangeHistoryDuringPaging()
         {
             var ready = Path.Combine(browserOutput, "legacy-page-one.ready");
             while (!File.Exists(ready)) await Task.Delay(50, stop.Token);
@@ -43,8 +43,18 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             peer.Wf_FlowInstances.Add(added);
             await peer.SaveChangesAsync(stop.Token);
             await File.WriteAllTextAsync(Path.Combine(browserOutput, "legacy-page-one.inserted"), "committed", stop.Token);
+
+            var rewrite = Path.Combine(browserOutput, "legacy-origin-rewrite.ready");
+            while (!File.Exists(rewrite)) await Task.Delay(50, stop.Token);
+            // 在同一隔离数据库保留数据并更换表存储代际，验证页面对过期截点的处理。
+            var before = await ReadLegacyOrigin(peer);
+            await peer.Database.ExecuteSqlRawAsync("""VACUUM FULL public."Wf_FlowInstance" """, stop.Token);
+            var after = await ReadLegacyOrigin(peer);
+            Assert.Equal(before[..before.LastIndexOf('/')], after[..after.LastIndexOf('/')]);
+            Assert.NotEqual(before, after);
+            await File.WriteAllTextAsync(Path.Combine(browserOutput, "legacy-origin-rewrite.done"), "generation changed", stop.Token);
         }
-        var insert = InsertAfterFirstPage();
+        var changes = ChangeHistoryDuringPaging();
         try
         {
             using var result = await BrowserScenario(h, h.User, "oa-catalog-history-browser.mjs", "catalog-history-browser",
@@ -57,12 +67,12 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
                     ["CP6_HISTORY_TIMEZONE"] = LegacyCalendarZone, ["CP6_HISTORY_CALENDAR_FLOW"] = LegacyCalendarFlow,
                     ["CP6_HISTORY_ORDERED_IDS"] = string.Join(",", ordered), ["CP6_HISTORY_INSERTED_ID"] = added.Id.ToString("D")
                 });
-            await insert;
+            await changes;
         }
         finally
         {
             await stop.CancelAsync();
-            try { await insert; }
+            try { await changes; }
             catch (OperationCanceledException) when (stop.IsCancellationRequested) { }
         }
         Assert.Equal(2, await h.Db.Wf_FormDatas.CountAsync());
