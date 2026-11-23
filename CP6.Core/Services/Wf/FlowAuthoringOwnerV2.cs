@@ -132,9 +132,11 @@ public sealed partial class FlowAuthoringOwnerV2
         }
         return await FieldAccess(write, ct);
     }
-    private async Task<FieldPermissionDecisionV1> FieldAccess(bool write, CancellationToken ct)
+    private async Task<FieldPermissionDecisionV1> FieldAccess(bool write, CancellationToken ct, Guid? reviewedSubject = null)
     {
-        var source = await new CurrentFieldPermissionSourceReaderV1(db, http, catalog).ReadAsync(Resource, ct);
+        var reader = new CurrentFieldPermissionSourceReaderV1(db, http, catalog);
+        var source = reviewedSubject is Guid subject ? await reader.ReadTrustedSubjectAsync(Resource, subject, ct)
+            : await reader.ReadAsync(Resource, ct);
         if (!source.Fields.Order().SequenceEqual(Fields.Order())) throw Error("FIELD_CATALOG_UNAVAILABLE");
         var uses = new[] { FieldPermissionUseV1.Read, FieldPermissionUseV1.Write };
         var maps = Fields.SelectMany(f => uses.Select(u => new FieldPermissionMappingV1(f, u, "draft." + f, true, [])));

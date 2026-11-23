@@ -210,8 +210,12 @@ public sealed partial class ConnectorVersionControlService
         return new(id,version,new {revision,number,state="DRAFT"});
     }
     private static Content VersionContent(Version version) => JsonSerializer.Deserialize<Content>(version.Content,Json)!;
-    private Task<bool> CanReadSource(Version version,UserPermissionContext actor,CancellationToken ct) =>
-        VersionContent(version).DefinitionId is Guid id ? flows.CanReadBindingSource(actor,id,ct) : Task.FromResult(true);
+    private Task<bool> CanReadSource(Version version,UserPermissionContext actor,CancellationToken ct)
+    {
+        var content=VersionContent(version);
+        return content.DefinitionId is Guid id && content.Selection.FlowVersionId is Guid pin
+            ? flows.CanReadBindingSource(actor,id,pin,ct) : Task.FromResult(content.DefinitionId==null);
+    }
 
     private async Task<object> Context(Head root,Version v,CancellationToken ct)
     {

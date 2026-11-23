@@ -6,6 +6,15 @@ namespace CP6.Core.Services.Wf;
 
 public sealed partial class FormAuthoringOwnerV2
 {
+    internal async Task<bool> CanReadPublishedBinding(UserPermissionContext actor,string key,Guid version,CancellationToken ct)
+    {
+        fence.RequireTransaction();
+        var head=await Heads().SingleOrDefaultAsync(x=>x.Key==key,ct);
+        if(head==null || !await Visible(actor,head,ct) || await Published(head.Id,version,ct)==null) return false;
+        var access=await FieldAccess(false,ct,actor.UserId);
+        return Fields.All(f=>access.Fields[f].CanRead);
+    }
+
     // Called inside the FLOW Owner's existing tenant/authorization transaction.
     // A null actor is the existing registered-service TxS consumer, already authorized by its binding Owner.
     internal async Task<FormPublicationV2> ReadDependencyAsync(UserPermissionContext? actor, string key, Guid? version,
