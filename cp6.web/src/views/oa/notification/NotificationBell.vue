@@ -20,14 +20,16 @@
       <!-- 头部 -->
       <div class="notify-panel-header">
         <span class="notify-panel-title">{{ t('oa.notify.title') }}</span>
-        <el-button v-permission="'oa-inbox:read'" link size="small" :disabled="unreadCount === 0" @click="handleReadAll">
+        <el-button v-permission="'oa-inbox:read'" link size="small" :disabled="unreadCount === 0 || !watermark || loading" @click="handleReadAll">
           {{ t('oa.notify.markAllRead') }}
         </el-button>
       </div>
       <el-divider style="margin: 8px 0" />
 
+      <p v-if="error" role="alert">{{ error }}</p>
+
       <!-- 空状态 -->
-      <div v-if="!loading && notifications.length === 0" class="notify-empty">
+      <div v-if="!error && !loading && notifications.length === 0" class="notify-empty">
         <el-icon :size="28" class="notify-empty-icon"><Bell /></el-icon>
         <span>{{ t('oa.notify.empty') }}</span>
       </div>
@@ -42,14 +44,18 @@
         <li
           v-for="item in notifications"
           :key="item.id"
+          :data-notification-id="item.id"
           class="notify-item"
           :class="{ 'is-unread': !item.isRead }"
+          tabindex="0"
           @click="handleItemClick(item)"
+          @keydown.enter.prevent="handleItemClick(item)"
         >
           <div class="notify-item-dot" v-if="!item.isRead" />
           <div class="notify-item-body">
             <div class="notify-item-title">{{ item.title }}</div>
             <div class="notify-item-time">{{ relativeTime(item.createDate) }}</div>
+            <small v-if="emailStatus(item.emailDelivery)">{{ emailStatus(item.emailDelivery) }}</small>
           </div>
         </li>
       </ul>
@@ -64,89 +70,137 @@ import { useI18n } from 'vue-i18n'
 import { Bell, Loading } from '@element-plus/icons-vue'
 import { ElNotification } from 'element-plus'
 import { notificationApi } from '@/api/oa/notification'
+import { AUTH_EPOCH, AUTH_EVENT, AUTH_RECORD, IMPERSONATION, identityStamp } from '@/auth/identity'
 import type { NotificationItem } from '@/types/oa/notification'
 import { getConnection } from '@/utils/signalr'
 
 const { t } = useI18n()
 const router = useRouter()
-
 const unreadCount = ref(0)
-const popoverOpen  = ref(false)
+const popoverOpen = ref(false)
 const notifications = ref<NotificationItem[]>([])
+const watermark = ref('')
 const loading = ref(false)
+const error = ref('')
+let controller = new AbortController()
+let sequence = 0
+let countSequence = 0
+let pollTimer: ReturnType<typeof setInterval> | undefined
 
-// ── 数据刷新 ──────────────────────────────────────────────────────────
+function clear() {
+  controller.abort()
+  controller = new AbortController()
+  sequence++
+  countSequence++
+  notifications.value = []
+  watermark.value = ''
+  unreadCount.value = 0
+  loading.value = false
+}
+
+function identityChanged() {
+  clear()
+  popoverOpen.value = false
+  error.value = ''
+  void refreshUnread()
+}
+
+function storageChanged(event: StorageEvent) {
+  if (!event.key || [AUTH_EPOCH, AUTH_RECORD, IMPERSONATION].includes(event.key)) identityChanged()
+}
+
+function active(stamp: string, signal: AbortSignal) {
+  return !signal.aborted && stamp === identityStamp()
+}
 
 async function refreshUnread() {
+  const stamp = identityStamp(), signal = controller.signal, at = ++countSequence
   try {
-    const res = await notificationApi.unreadCount()
-    // 后端返回 { code, message, data: { count } }；http 拦截器已解到 body，
-    // 故未读数在 res.data.count（不是 res.data 本身——那是对象，直接绑到 :value 会渲染 [object Object]）
-    const count = (res as any)?.data?.count
-    unreadCount.value = typeof count === 'number' ? count : 0
+    const count = await notificationApi.count(signal)
+    if (active(stamp, signal) && at === countSequence) unreadCount.value = count
   } catch {
-    // best-effort，网络失败静默忽略
+    if (active(stamp, signal) && at === countSequence) unreadCount.value = 0
   }
 }
 
 async function refreshList() {
+  const stamp = identityStamp(), signal = controller.signal, at = ++sequence
   loading.value = true
+  error.value = ''
   try {
-    const res = await notificationApi.list(false, 1, 10)
-    notifications.value = (res as any)?.data ?? (res as unknown as NotificationItem[]) ?? []
+    const page = await notificationApi.page(10, signal)
+    if (!active(stamp, signal) || at !== sequence) return
+    notifications.value = page.items
+    watermark.value = page.watermark
   } catch {
-    // best-effort
+    if (!active(stamp, signal) || at !== sequence) return
+    notifications.value = []
+    watermark.value = ''
+    error.value = '当前通知不可读取。'
   } finally {
-    loading.value = false
+    if (active(stamp, signal) && at === sequence) loading.value = false
   }
 }
 
-// Popover 打开时拉最新列表
 async function onPopoverShow() {
+  notifications.value = []
+  watermark.value = ''
   await refreshList()
 }
 
-// ── 用户操作 ──────────────────────────────────────────────────────────
-
 async function handleItemClick(item: NotificationItem) {
-  popoverOpen.value = false
-  if (!item.isRead) {
+  const stamp = identityStamp(), signal = controller.signal
+  if (item.taskId) {
     try {
-      await notificationApi.read(item.id)
-      item.isRead = true
-      if (unreadCount.value > 0) unreadCount.value--
+      const context = await notificationApi.openTask(item.taskId, signal)
+      if (!active(stamp, signal)) return
+      popoverOpen.value = false
+      const query = context.contextKind === 'APP' ? { appTask: item.taskId } : { personalTask: item.taskId }
+      await router.push({ path: '/oa/inbox', query })
     } catch {
-      // 标记失败不阻断导航
+      if (!active(stamp, signal)) return
+      clear()
+      error.value = '此通知关联的任务当前不可查看。'
+      const current = router.currentRoute.value
+      if (current.path === '/oa/inbox' &&
+          (current.query.appTask === item.taskId || current.query.personalTask === item.taskId)) {
+        await router.replace({ path: '/oa/inbox' })
+      }
+      void refreshUnread()
+      return
     }
   }
-  // 跳转到信箱（若有 instanceId 可带，按 inbox 路由实际支持）
-  if (item.instanceId) {
-    router.push({ path: '/oa/inbox', query: { instanceId: item.instanceId } })
-  } else {
-    router.push('/oa/inbox')
+  try {
+    if (!item.isRead && active(stamp, signal)) await notificationApi.mark(item.id, signal)
+    if (active(stamp, signal)) await Promise.all([refreshUnread(), refreshList()])
+  } catch {
+    if (!active(stamp, signal)) return
+    clear()
+    error.value = '当前通知的已读状态未确认。'
+    void refreshUnread()
   }
 }
 
 async function handleReadAll() {
+  const stamp = identityStamp(), signal = controller.signal, observed = watermark.value
+  if (!observed) return
   try {
-    await notificationApi.readAll()
-    unreadCount.value = 0
-    notifications.value = notifications.value.map(n => ({ ...n, isRead: true }))
+    await notificationApi.readThrough(observed, signal)
+    if (active(stamp, signal)) await Promise.all([refreshUnread(), refreshList()])
   } catch {
-    // best-effort
+    if (!active(stamp, signal)) return
+    notifications.value = []
+    watermark.value = ''
+    error.value = '请重新读取通知后再标记已读。'
   }
 }
 
-// ── SignalR 接线 ───────────────────────────────────────────────────────
-// 保留 handler 引用，卸载时 off() 移除，防止内存泄漏
-
-const wfNotificationHandler = () => {
-  // 不依赖客户端 userId 过滤——后端已按 auth scope 推送到本人
-  refreshUnread()
-  if (popoverOpen.value) {
-    refreshList()
-  }
-  // 轻量弹窗提示（可选）
+function refreshNotifications() {
+  void refreshUnread()
+  if (popoverOpen.value) void refreshList()
+}
+function wfNotificationHandler() {
+  refreshNotifications()
   ElNotification({
     title: t('oa.notify.title'),
     message: t('oa.notify.newArrived'),
@@ -156,34 +210,41 @@ const wfNotificationHandler = () => {
   })
 }
 
-// ── 60s 轮询兜底（防 SignalR 掉线后角标失效）────────────────────────────
-let pollTimer: ReturnType<typeof setInterval> | null = null
-
-// ── 相对时间格式化 ─────────────────────────────────────────────────────
-
 function relativeTime(dateStr: string): string {
-  const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000)
-  if (diff < 0)    return ''
-  if (diff < 60)   return `${diff}s`
-  if (diff < 3600) return `${Math.floor(diff / 60)}m`
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h`
-  return `${Math.floor(diff / 86400)}d`
+  const minutes = Math.max(0, Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000))
+  if (minutes < 1) return '刚刚'
+  if (minutes < 60) return minutes + ' 分钟前'
+  if (minutes < 1440) return Math.floor(minutes / 60) + ' 小时前'
+  return Math.floor(minutes / 1440) + ' 天前'
 }
 
-// ── 生命周期 ──────────────────────────────────────────────────────────
+function emailStatus(value?: string | null): string {
+  switch (value) {
+    case 'ACCEPTED_BY_PROVIDER': return '邮件已获传输确认'
+    case 'BLOCKED_ADDRESS': return '邮件缺少可用地址'
+    case 'UNKNOWN': return '邮件结果待确认'
+    case 'RETRYABLE_FAILED': return '邮件暂未接收'
+    case 'SUPPRESSED': return '邮件已停止投递'
+    case 'IN_FLIGHT':
+    case 'PENDING': return '邮件待投递'
+    default: return ''
+  }
+}
 
 onMounted(() => {
-  refreshUnread()
+  void refreshUnread()
+  window.addEventListener(AUTH_EVENT, identityChanged)
+  window.addEventListener('storage', storageChanged)
   getConnection().on('WfNotification', wfNotificationHandler)
-  pollTimer = setInterval(refreshUnread, 60_000)
+  pollTimer = setInterval(refreshNotifications, 60_000)
 })
 
 onUnmounted(() => {
+  controller.abort()
+  window.removeEventListener(AUTH_EVENT, identityChanged)
+  window.removeEventListener('storage', storageChanged)
   getConnection().off('WfNotification', wfNotificationHandler)
-  if (pollTimer !== null) {
-    clearInterval(pollTimer)
-    pollTimer = null
-  }
+  if (pollTimer !== undefined) clearInterval(pollTimer)
 })
 </script>
 

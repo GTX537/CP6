@@ -135,9 +135,10 @@ public sealed partial class PersonalFormOwnerV2
         instance.Status==FlowInstanceStatus.Approved?"您的申请已通过":"您的申请被驳回",instance.Id,null,instance.FlowKey,ct);
     private async Task Notification(Guid command,string kind,Guid recipient,int type,string title,Guid? instance,Guid? task,string? flow,CancellationToken ct)
     {
-        var matrix=NotifyMatrix.Rows().Single(x=>x.TypeValue==type);var prefs=new PrefService(db);
-        var inApp=matrix.InAppSupported && await prefs.IsEnabledAsync(recipient,matrix.TypeKey,NotifyMatrix.ChannelInApp);
-        var email=matrix.EmailSupported && await prefs.IsEnabledAsync(recipient,matrix.TypeKey,NotifyMatrix.ChannelEmail);
+        var matrix=NotifyMatrix.Rows().Single(x=>x.TypeValue==type);
+        var preference=await WorkflowNotificationPreferencesV1.SnapshotAsync(db,recipient,ct);
+        var inApp=matrix.InAppSupported && NotifyMatrix.IsEnabled(preference.PrefsJson,matrix.TypeKey,NotifyMatrix.ChannelInApp);
+        var email=matrix.EmailSupported && NotifyMatrix.IsEnabled(preference.PrefsJson,matrix.TypeKey,NotifyMatrix.ChannelEmail);
         var id=Guid.NewGuid();var notification=new Wf_Notification
         {
             Id=id,UserId=recipient,Type=type,Title=title,Body=title,InstanceId=instance,TaskId=task,FlowKey=flow,
@@ -146,8 +147,8 @@ public sealed partial class PersonalFormOwnerV2
         };
         db.Wf_Notifications.Add(notification);
         await db.Database.ExecuteSqlInterpolatedAsync($"""
-            INSERT INTO cp6_personal_form_v2.outbox(id,command_id,kind,recipient_id,task_id,body,notification_id)
-            VALUES({id},{command},{kind},{recipient},{task},{Encode(new{type,title,instance,task,flow,inApp,email})},{id})
+            INSERT INTO cp6_personal_form_v2.outbox(id,command_id,kind,recipient_id,task_id,body,notification_id,preference_version)
+            VALUES({id},{command},{kind},{recipient},{task},{Encode(new{type,title,instance,task,flow,inApp,email})},{id},{preference.Version})
             """,ct);
     }
 }

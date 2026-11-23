@@ -73,11 +73,15 @@
               </template>
             </el-table-column>
           </el-table>
+          <p v-if="notifyReadState === 'LegacyInvalidDefaulted'" role="status">旧偏好中无法解析的设置按默认开启。读取不会修改已存偏好。</p>
+          <p v-if="notifyIssue" role="status">{{ notifyIssue }}</p>
           <div class="matrix-actions">
-            <el-button v-permission="'oa-settings:edit'" type="primary" :loading="notifySaving" @click="saveNotifyMatrix">
+            <el-button v-permission="'oa-settings:edit'" type="primary" :loading="notifySaving" :disabled="!notificationVersion || !!pendingPreference" @click="saveNotifyMatrix">
               {{ t('common.save') }}
             </el-button>
-            <el-button v-permission="'oa-settings:edit'" @click="resetNotifyMatrix">{{ t('oa.notify.matrix.reset') }}</el-button>
+            <el-button v-permission="'oa-settings:edit'" :disabled="!notificationVersion || !!pendingPreference || notifySaving" @click="resetNotifyMatrix">{{ t('oa.notify.matrix.reset') }}</el-button>
+            <el-button v-if="pendingPreference" :disabled="notifySaving" @click="finishNotificationSave(true)">查询保存结果</el-button>
+            <el-button v-if="pendingPreference" :disabled="notifySaving" @click="finishNotificationSave()">按原命令重试</el-button>
           </div>
         </el-card>
       </el-tab-pane>
@@ -146,7 +150,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import TaskDelegationPanel from './TaskDelegationPanel.vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -154,7 +158,8 @@ import { delegateApi } from '@/api/oa/delegate'
 import { prefApi } from '@/api/oa/pref'
 import { userApi } from '@/api/sys/user'
 import type { DelegateItem } from '@/types/oa/advanced'
-import { buildMatrixState, toNotifyPatch, type MatrixState, type NotifyMatrixRow } from './notifyMatrixModel'
+import { AUTH_EVENT, identityStamp } from '@/auth/identity'
+import type { NotificationPreferenceCells, NotificationPreferenceCommand, NotificationPreferenceView, NotificationPreferenceRow } from '@/types/oa/notification'
 
 const { t } = useI18n()
 
@@ -282,50 +287,120 @@ const prefs = ref<Prefs>({ pageSize: 20, hideCancelled: false, showSummary: true
 const prefSaving = ref(false)
 
 // ─── Notify matrix tab ───────────────────────────────────────────────────────
-const matrixRows = ref<NotifyMatrixRow[]>([])
-const matrixState = ref<MatrixState>({})
+const matrixRows = ref<NotificationPreferenceRow[]>([])
+const matrixState = ref<NotificationPreferenceCells>({})
 const notifySaving = ref(false)
+const notificationVersion = ref('')
+const notifyReadState = ref('')
+const notifyIssue = ref('')
+const pendingKey = 'cp6-oa-notification-pref-pending'
+const pendingPreference = ref<{ identity: string; command: NotificationPreferenceCommand }>()
+let currentIdentity = identityStamp()
+let notificationLoad = 0
 
-async function loadNotifyMatrix(prefsJson: string) {
+function applyNotification(view: NotificationPreferenceView) {
+  notificationVersion.value = view.version
+  notifyReadState.value = view.readState
+  matrixRows.value = view.support
+  matrixState.value = view.effectivePrefs
+}
+
+async function loadNotificationPreferences() {
+  const stamp = identityStamp(), at = ++notificationLoad
   try {
-    const res = await prefApi.notifyMatrix()
-    matrixRows.value = (((res as any).data as NotifyMatrixRow[]) || [])
-    matrixState.value = buildMatrixState(prefsJson, matrixRows.value)
+    const view = await prefApi.notificationPreferences()
+    if (stamp === identityStamp() && at === notificationLoad) applyNotification(view)
   } catch {
-    // HTTP interceptor auto-toasts
+    if (stamp !== identityStamp() || at !== notificationLoad) return
+    matrixRows.value = []
+    matrixState.value = {}
+    notificationVersion.value = ''
+    notifyReadState.value = ''
+    notifyIssue.value = '当前通知偏好不可读取。'
   }
 }
 
-async function saveNotifyMatrix() {
+function clearPending() {
+  pendingPreference.value = undefined
+  sessionStorage.removeItem(pendingKey)
+}
+
+function onNotificationIdentity() {
+  const current = identityStamp()
+  if (current === currentIdentity) return
+  currentIdentity = current
+  notificationLoad++
+  clearPending()
+  notificationVersion.value = ''
+  matrixRows.value = []
+  matrixState.value = {}
+  notifyIssue.value = ''
+  notifyReadState.value = ''
+  void loadNotificationPreferences()
+}
+
+async function finishNotificationSave(queryOnly = false, reset = false) {
+  const pending = pendingPreference.value
+  if (!pending || pending.identity !== identityStamp() || notifySaving.value) return
   notifySaving.value = true
+  notifyIssue.value = ''
   try {
-    await prefApi.saveMerge(toNotifyPatch(matrixState.value))   // 服务端合并：保 pageSize/rowMode 等他键
-    ElMessage.success(t('oa.notify.matrix.saveOk'))
-    await loadPref()
+    const receipt = queryOnly ? await prefApi.notificationPreferenceOriginal(pending.command.commandId)
+      : await prefApi.saveNotificationPreferences(pending.command)
+    if (pending.identity !== identityStamp()) return
+    if (receipt.commandId !== pending.command.commandId) throw new Error('通知偏好回执未确认。')
+    clearPending()
+    applyNotification(receipt.result)
+    ElMessage.success(t(reset ? 'oa.notify.matrix.resetOk' : 'oa.notify.matrix.saveOk'))
+    await loadNotificationPreferences()
+  } catch (cause) {
+    if (pending.identity !== identityStamp()) return
+    const status = (cause as { response?: { status?: number } })?.response?.status
+    if (status === 409 || status === 412 || status === 422 || status === 400) {
+      clearPending()
+      notifyIssue.value = '保存未应用，请核对当前偏好后重试。'
+      await loadNotificationPreferences()
+    } else if (status === 401 || status === 403) {
+      clearPending()
+      notificationVersion.value = ''
+      matrixRows.value = []
+      matrixState.value = {}
+      notifyReadState.value = ''
+      notifyIssue.value = '当前通知偏好权限不可用。'
+    } else {
+      notifyIssue.value = '保存结果待确认，可查询或按原命令重试。'
+    }
   } finally {
     notifySaving.value = false
   }
 }
 
-async function resetNotifyMatrix() {
-  try {
-    await prefApi.saveMerge('{"notify":null}')                  // 删键 = 恢复默认全开（三态坍缩）
-    ElMessage.success(t('oa.notify.matrix.resetOk'))
-    await loadPref()
-  } catch {
-    // HTTP interceptor auto-toasts
+function saveNotification(notify: NotificationPreferenceCells | null) {
+  if (!notificationVersion.value || pendingPreference.value || notifySaving.value) return
+  const expectedVersion = notificationVersion.value
+  const command: NotificationPreferenceCommand = {
+    commandId: crypto.randomUUID(),
+    expectedVersion,
+    body: { expectedPreferenceVersion: expectedVersion, patchMode: 'TOP_LEVEL_MERGE', patch: { notify } },
   }
+  const first = { identity: identityStamp(), command }
+  pendingPreference.value = first
+  sessionStorage.setItem(pendingKey, JSON.stringify(first))
+  void finishNotificationSave(false, notify === null)
 }
+
+function saveNotifyMatrix() {
+  saveNotification(Object.fromEntries(Object.entries(matrixState.value).map(([type, cell]) => [type, { ...cell }])))
+}
+function resetNotifyMatrix() { saveNotification(null) }
 
 async function loadPref() {
   try {
     const res = await prefApi.get()
-    // Backend returns Ok2(new { prefsJson = "..." }) → envelope { code, data: { prefsJson } }
-    // http interceptor returns response.data (the envelope body), so:
-    const prefsJson: string | undefined = (res as any).data?.prefsJson
-    if (prefsJson) {
-      const parsed = JSON.parse(prefsJson) as Record<string, any>
-      // Keep the full raw object so partial saves can always merge into it
+    const prefsJson = (res as any).data?.prefsJson
+    if (!prefsJson) return
+    const parsed = JSON.parse(prefsJson) as Record<string, any>
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
       storedRaw.value = parsed
       prefs.value = {
         pageSize: parsed.pageSize ?? 20,
@@ -333,11 +408,7 @@ async function loadPref() {
         showSummary: parsed.showSummary ?? true,
       }
     }
-    // 矩阵行始终渲染（无 prefsJson 时传 '{}' 走三态坍缩全开）
-    await loadNotifyMatrix(prefsJson ?? '{}')
-  } catch {
-    // use defaults silently
-  }
+  } catch { /* 显示偏好保留当前默认。 */ }
 }
 
 async function savePref() {
@@ -360,6 +431,21 @@ async function savePref() {
 onMounted(() => {
   loadDelegates()
   loadPref()
+  try {
+    const stored = JSON.parse(sessionStorage.getItem(pendingKey) ?? 'null')
+    if (stored?.identity === identityStamp() && typeof stored.command?.commandId === 'string') {
+      pendingPreference.value = stored
+      notifyIssue.value = '有一笔通知偏好保存待确认。'
+    } else clearPending()
+  } catch { clearPending() }
+  void loadNotificationPreferences()
+  window.addEventListener(AUTH_EVENT, onNotificationIdentity)
+  window.addEventListener('storage', onNotificationIdentity)
+})
+onUnmounted(() => {
+  notificationLoad++
+  window.removeEventListener(AUTH_EVENT, onNotificationIdentity)
+  window.removeEventListener('storage', onNotificationIdentity)
 })
 </script>
 
