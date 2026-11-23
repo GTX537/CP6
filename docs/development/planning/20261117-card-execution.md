@@ -611,3 +611,13 @@ WP02-31 完整 DONE，作为 CRM-CON-01 FOUNDATION。经 Main 真实 TLS 与隔�
 WP02-15 拨入 13102.913 秒，WP02-23 拨入 1297.087 秒。本卡原额度 14400 秒，21600 秒强制拆卡。按 #401 原 DELIVERY 完整提交与路径查重，单次补记 WP03-07 收尾 187.323 秒至 3197.740 秒，目标核对 2.820 秒单列。计入本卡前计划累计 164839.254 秒。核销快照 `2026-11-22T16:05:38.360019+00:00`，卡内 2125.703 秒，目标核对 0.000 秒，计划累计 166964.957 秒。本次快照低于 48 小时检查点。[#401 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/0b5590dab6d2550abdbf05d0e078ec83d015b93c/handoffs/CP6-DEV-20261012/tasks/WP03-07/replies/20261122T152012Z-coord-acceptance-ack/MESSAGE.md) · [原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/b6219fa3d08ec085b77aad6bc985d38430a08770/handoffs/CP6-DEV-20261012/tasks/WP03-07/messages/20261122T151309Z-exec-wp02-14b-delivery/MESSAGE.md)
 
 阶段 C 下一候选 WP03-11b 有 2 条下游边。实际领取以 COORD 独立派工为准。
+
+## WP03-11b 联系人历史正式 Owner 采用及原断言余项
+
+WP03-11b 完整 DONE。CRM 采用提交 `2179c6831b107f65550796e22f31df834829f0c4`，受验源码 `caabeaa135533950c510e3eb9135d91f1a9d50cc`。实际 CRM、Main TLS、隔离 PostgreSQL 和 Next/Chrome 验收七项原断言。CRM 同树冒烟 4/4，DEV-2 释放后 Main 核销同一卡。 [#404 派工](https://github.com/GTX537/CP6.AI-Handoff/blob/721d2f87e043ac8b90b8a47cb6342a93e8a639a8/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261122T165020Z-exec-wp02-14b-wp03-11b/MESSAGE.md) · [唯一交付报告](https://github.com/GTX537/CP6.CRM/blob/2179c6831b107f65550796e22f31df834829f0c4/docs/development/evidence/WP03-11b/DELIVERY.md) · [CRM PR](https://github.com/GTX537/CP6.CRM/pull/261)
+
+逐项复核 CRM-CON-01 的 49 原 AC、26 必需补充和 2 必需运行修订，结果为 **47/49、26/26、2/2**，目标继续开放。C22 的停用和 H39 工程组合归 WP03-20，C47 的原 ACT Note、更正或 Void 组合归 WP03-18。
+
+按 #403 的原 DELIVERY 完整 SHA 与路径查重，单次补记 WP02-31 收尾 **332.873 秒**，该卡累计 **2458.576 秒**，该卡目标核对为 0.000 秒。WP03-11b 快照 `2026-11-23T01:19:16.569856+00:00`，卡内 **3511.277 秒**，本次目标复核另列 **1.124 秒**，计划累计 **170810.231 秒**。新增拆卡 0。距 48 小时检查点还有 1989.769 秒。 [#403 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/a499ebe68a7db75356ccd11c5d29cf22035440f0/handoffs/CP6-DEV-20261012/tasks/WP02-31/replies/20261122T164725Z-coord-acceptance-ack/MESSAGE.md)
+
+阶段 C 的 30 张登记卡均完整 DONE，阶段内已无可开工候选。后续阶段由 COORD 独立派工。WP02-29 沿用原暂缓裁决。
