@@ -60,6 +60,10 @@ async function refresh(check: Check, signal: AbortSignal, root?: string, version
   const item = root ? await api.context(props.kind, root, signal, version) : undefined
   check(); choices.value = opt; rows.value = list; subjects.value = queue; selected.value = item; dispatchHistory.value = undefined
 }
+const resultCaptions: Record<string, string> = {
+  SUCCEEDED: '已成功', QUARANTINED: '已隔离', HOLD: '待本地应用', APPLIED: '已应用', STALE_TOKEN: '已归档的迟到结果',
+  UNPROVEN: '未证实', PENDING_GAP: '回执待补齐', STALE: '已过期', CONFLICT: '有冲突', BLOCKED: '受阻',
+}
 function reload() { return run((check, signal) => refresh(check, signal, selected.value?.rootId, selected.value?.versionId)) }
 function select(row: Version) {
   return run(async (check, signal) => {
@@ -224,6 +228,12 @@ onBeforeUnmount(() => { live = false; controller.abort(); window.removeEventList
               {{ item.jobId }} · {{ item.adoption }} · {{ dispatchCaptions[item.state] ?? item.state }}
               · 运输 {{ dispatchCaptions[item.transportState] ?? item.transportState }}
               <span v-if="item.originalQueryState"> · 查证 {{ dispatchCaptions[item.originalQueryState] ?? item.originalQueryState }}</span>
+              <span v-if="item.resultState" :data-result-state="item.resultState"> · 外部结果 {{ resultCaptions[item.resultState] ?? item.resultState }}</span>
+              <span v-if="item.workflowResume" :data-workflow-resume="item.workflowResume"> · 流程 {{ resultCaptions[item.workflowResume] ?? item.workflowResume }}</span>
+              <span v-if="item.businessOwnerApplication" :data-owner-application="item.businessOwnerApplication">
+                · 业务应用 {{ resultCaptions[item.businessOwnerApplication] ?? item.businessOwnerApplication }}
+                <template v-if="item.businessOwnerEvidence">（{{ item.businessOwnerEvidence }}）</template>
+              </span>
             </li>
           </ul>
           <nav v-if="dispatchHistory.page > 1 || dispatchHistory.hasNext">

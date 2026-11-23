@@ -87,5 +87,8 @@ public sealed partial class ConnectorControlRuntimeV1(CP6Context db,ScopeAuthori
         new(pin,spec.Implementation!,spec.ImplementationVersion!,spec.DestinationPolicy!,spec.EndpointProfile!,spec.InputSchema!,
             spec.OutputSchema!,spec.DisclosurePolicy!,spec.CredentialLocator,spec.CredentialGeneration,spec.EffectClass!,
             spec.MaxCallDurationSec!.Value,simulated,tenant,environment,profile,evidence,spec.ParameterMapping!,
-            spec.IdempotencyContract,spec.ResultQueryContract,spec.AdmissionBasis,spec.RequiresCurrentAuthorizationAtApply);
+            spec.IdempotencyContract,spec.ResultQueryContract,spec.AdmissionBasis,spec.RequiresCurrentAuthorizationAtApply)
+        {
+            ResponseMapping = spec.ResponseMapping
+        };
 }

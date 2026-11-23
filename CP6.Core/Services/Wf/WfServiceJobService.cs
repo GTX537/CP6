@@ -1,6 +1,7 @@
 using System.Data;
 using CP6.Core.EFDbContext;
 using CP6.Core.Persistence;
+using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
@@ -46,15 +47,20 @@ public sealed class WfServiceJobService : IWfServiceJobService
     private readonly FlowEngine _engine;
     private readonly IReadOnlyDictionary<string, IServiceTaskExecutor> _executors;
     private readonly ILogger<WfServiceJobService>? _logger;
+    private readonly ConnectorControlRuntimeV1? _connectorResults;
+    private readonly ApprovalTaskDecisionOwnerV2? _appRecorder;
 
     public WfServiceJobService(CP6Context db, FlowEngine engine, IEnumerable<IServiceTaskExecutor> executors,
-        ILogger<WfServiceJobService>? logger = null)
+        ILogger<WfServiceJobService>? logger = null, ConnectorControlRuntimeV1? connectorResults = null,
+        ApprovalTaskDecisionOwnerV2? appRecorder = null)
     {
         _db = db;
         _engine = engine;
         _executors = (executors ?? Array.Empty<IServiceTaskExecutor>())
             .ToDictionary(e => e.Key, StringComparer.OrdinalIgnoreCase);
         _logger = logger;
+        _connectorResults = connectorResults;
+        _appRecorder = appRecorder;
     }
 
     public async Task<int> ScanOnceAsync(DateTime nowUtc, string workerId, CancellationToken ct = default)
@@ -180,6 +186,28 @@ public sealed class WfServiceJobService : IWfServiceJobService
                     catch (Exception ex) { result = ServiceTaskResult.Fail(ex.Message); }
                 }
 
+                if (result.ConnectorResultId is Guid resultId)
+                {
+                    try
+                    {
+                        var applications = _connectorResults ?? throw new ScopeAuthorizationExceptionV1("RESULT_APPLICATION_UNAVAILABLE");
+                        if (await applications.ApplyResultAsync(job, resultId, _engine, _appRecorder, ct)) processed++;
+                    }
+                    catch (Npgsql.PostgresException error) when (
+                        error.SqlState == Npgsql.PostgresErrorCodes.CheckViolation &&
+                        error.MessageText is "APP_RESUME_DECISION_INCOMPLETE" or "CONNECTOR_RESUME_INCOMPLETE")
+                    {
+                        // 已明确回滚，释放当前租约供下一轮按原件本地重试。
+                        var held = ServiceTaskResult.HoldDispatch(error.MessageText, nowUtc);
+                        await CommitClaimAsync(job, current => CompleteAsync(current, held, nowUtc, ct), ct);
+                    }
+                    catch (ScopeAuthorizationExceptionV1 error)
+                    {
+                        // 原件已提交。当前门或 Recorder 不可用时保留原租约供本地恢复。
+                        _logger?.LogWarning("连接器结果应用受阻，Job {JobId}，状态 {Status}", job.Id, error.Status);
+                    }
+                    continue;
+                }
                 if (await CommitClaimAsync(job, current => CompleteAsync(current, result, nowUtc, ct), ct))
                     processed++;
             }

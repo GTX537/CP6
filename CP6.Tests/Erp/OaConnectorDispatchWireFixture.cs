@@ -23,6 +23,11 @@ internal sealed class OaConnectorDispatchWireFixture : IAsyncDisposable
     internal readonly TaskCompletionSource<Call> Arrived = new(TaskCreationOptions.RunContinuationsAsynchronously);
     internal Func<Call, Task>? BeforeEffect { get; set; }
     internal Task? HoldReply { get; set; }
+    internal Task? HoldQueryReply { get; set; }
+    internal byte[]? ResultPayload { get; set; }
+    internal byte[]? QueryResultPayload { get; set; }
+    internal string ResultSchema { get; set; } = "response-v1";
+    internal string ResultService { get; set; } = "simulated-service/1";
     internal bool LoseReply { get; set; }
     internal bool FirstQueryNotObserved { get; set; }
     internal bool SecondQueryWrongDigest { get; set; }
@@ -64,7 +69,7 @@ internal sealed class OaConnectorDispatchWireFixture : IAsyncDisposable
         }
         if (HoldReply != null) await HoldReply.WaitAsync(context.RequestAborted);
         if (LoseReply) { context.Abort(); return; }
-        await context.Response.WriteAsJsonAsync(Reply(call, "ACK"));
+        await context.Response.WriteAsJsonAsync(Reply(call, "ACK", payload: ResultPayload));
     }
 
     private async Task Query(HttpContext context)
@@ -80,15 +85,24 @@ internal sealed class OaConnectorDispatchWireFixture : IAsyncDisposable
         Assert.Equal((original.Effect, original.Transport, original.Digest), (call.Effect, call.Transport, call.Digest));
         if (SecondQueryWrongDigest && Queries.Count == 2)
             original = original with { Digest = new string('0', 64) };
-        await context.Response.WriteAsJsonAsync(Reply(original, "ORIGINAL", "simulated-provider-receipt/1"));
+        if (HoldQueryReply != null) await HoldQueryReply.WaitAsync(context.RequestAborted);
+        await context.Response.WriteAsJsonAsync(Reply(original, "ORIGINAL", "simulated-provider-receipt/1", QueryResultPayload ?? ResultPayload));
     }
 
     private static Call Read(HttpRequest request, byte[] body) =>
         new(request.Headers["CP6-Effect-Key"].ToString(), request.Headers["Idempotency-Key"].ToString(),
             request.Headers["CP6-Input-SHA256"].ToString(), body);
 
-    private static object Reply(Call call, string state, string? proof = null) =>
-        new { state, effectKey = call.Effect, transportKey = call.Transport, inputSha256 = call.Digest, originalProofRef = proof };
+    private object Reply(Call call, string state, string? proof = null, byte[]? payload = null) =>
+        new
+        {
+            state, effectKey = call.Effect, transportKey = call.Transport, inputSha256 = call.Digest, originalProofRef = proof,
+            result = payload == null ? null : new
+            {
+                payload, schema = ResultSchema, service = ResultService,
+                fingerprint = Convert.ToHexString(SHA256.HashData(payload)).ToLowerInvariant()
+            }
+        };
 
     public async ValueTask DisposeAsync()
     {
@@ -97,7 +111,7 @@ internal sealed class OaConnectorDispatchWireFixture : IAsyncDisposable
     }
 }
 
-internal sealed class OaConnectorDispatchHttpParticipant(Guid tenant, Guid environment, ConnectorPinV1 pin, Uri origin, HttpClient client)
+internal class OaConnectorDispatchHttpParticipant(Guid tenant, Guid environment, ConnectorPinV1 pin, Uri origin, HttpClient client)
     : IConnectorDispatchAdmissionV1
 {
     internal int Preparations { get; private set; }
@@ -105,7 +119,8 @@ internal sealed class OaConnectorDispatchHttpParticipant(Guid tenant, Guid envir
     public bool Matches(RegisteredConnectorVersionV1 v) => v.TenantId == tenant && v.EnvironmentId == environment &&
         v.Pin == pin && v.Implementation == "wp1216-http-fixture" && v.ImplementationVersion == "1.0" &&
         v.DestinationPolicy == "local-read-policy-v1" && v.EndpointProfile == "isolated-test-v1" &&
-        v.ParameterMapping == "params-v1" && v.InputSchema == "request-v1" && v.OutputSchema == "response-v1" &&
+        v.ParameterMapping == "params-v1" && v.ResponseMapping == "result-v1" &&
+        v.InputSchema == "request-v1" && v.OutputSchema == "response-v1" &&
         v.DisclosurePolicy == "scope-v1" && v.CredentialLocator == "opaque-binding" &&
         v.CredentialGeneration == "generation-1" && v.AdoptionEvidence == "isolated-contract-fixture";
 
@@ -121,7 +136,8 @@ internal sealed class OaConnectorDispatchHttpParticipant(Guid tenant, Guid envir
         if (!access.ActionKeys.Contains("oa-flow-admin:conn.connector.activate") ||
             version.AdmissionBasis != "simulated-owner-admission/1") return null;
         using var vars = JsonDocument.Parse(source.VarsJson);
-        var subject = vars.RootElement.GetProperty("subject").GetString()!;
+        var subject = vars.RootElement.TryGetProperty("subject", out var value) ? value.GetString()!
+            : vars.RootElement.GetProperty("purpose").GetString()!;
         return new("simulated-service/1", "simulated-disclosure/1", "simulated-owner/1", true,
             JsonSerializer.SerializeToUtf8Bytes(new { subject }));
     }
@@ -137,7 +153,9 @@ internal sealed class OaConnectorDispatchHttpParticipant(Guid tenant, Guid envir
         ConnectorOriginalOperationV1 original, CancellationToken ct) =>
         Call(HttpMethod.Get, "operations/" + original.EffectKey, original, null, ct);
 
-    private sealed record WireObservation(string State, string EffectKey, string TransportKey, string InputSha256, string? OriginalProofRef);
+    private sealed record WireResult(byte[] Payload, string Schema, string Service, string Fingerprint);
+    private sealed record WireObservation(string State, string EffectKey, string TransportKey, string InputSha256,
+        string? OriginalProofRef, WireResult? Result);
 
     private async Task<ConnectorTransportObservationV1> Call(HttpMethod method, string path, ConnectorOriginalOperationV1 o,
         byte[]? body, CancellationToken ct)
@@ -162,6 +180,29 @@ internal sealed class OaConnectorDispatchHttpParticipant(Guid tenant, Guid envir
             "ORIGINAL" => ConnectorTransportStateV1.OriginalOperationObserved,
             _ => ConnectorTransportStateV1.Unknown,
         };
-        return new(state, observed.EffectKey, observed.TransportKey, observed.InputSha256, observed.OriginalProofRef);
+        return new(state, observed.EffectKey, observed.TransportKey, observed.InputSha256, observed.OriginalProofRef)
+        {
+            SuccessfulResult = observed.Result is { } result
+                ? new(o, result.Service, result.Schema, result.Fingerprint, "simulated-original-result/1", result.Payload)
+                : null
+        };
+    }
+}
+
+internal sealed class OaConnectorResultHttpParticipant(Guid tenant, Guid environment, ConnectorPinV1 pin, Uri origin, HttpClient client)
+    : OaConnectorDispatchHttpParticipant(tenant, environment, pin, origin, client), IConnectorResultApplicationV1
+{
+    internal Func<CancellationToken, Task>? BeforeApply { get; init; }
+
+    public IReadOnlyList<ConnectorOutputFieldV1> OutputMapping(RegisteredConnectorVersionV1 version) =>
+        [new("message", "connectorMessage", ConnectorOutputKindV1.Text, MaxLength: 60),
+         new("amount", "connectorAmount", ConnectorOutputKindV1.Decimal, Precision: 12, Scale: 2)];
+
+    public async Task<bool> MayApplyAsync(CP6Context db, RegisteredConnectorVersionV1 version,
+        ConnectorOriginalOperationV1 original, ScopeAuthorizationSnapshotV1 authority, CancellationToken ct)
+    {
+        if (BeforeApply != null) await BeforeApply(ct);
+        return (await PostgreSqlPermissionReader.ReadAsync(db, original.StarterId, ct))
+            .ActionKeys.Contains("oa-flow-admin:conn.connector.activate");
     }
 }

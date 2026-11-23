@@ -21,7 +21,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var tenantProfile = await ConnRegistration(h, "CONNECTOR", ConnFixture());
         var appProfile = await ConnRegistration(h, "CONNECTOR", ConnFixture("APP"));
         var dispatchProfile = await ConnRegistration(h, "CONNECTOR", DispatchProfile());
-        Guid jobId;
+        Guid jobId, resultJobId;
         await using (var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, ConnSettings()))
         {
             var maker = new ConnApi(host, await Login(host, h));
@@ -35,13 +35,19 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             Assert.Equal(1, await DispatchWorker(h.Db, [DispatchParticipant(h, connector, wire, http)])
                 .ScanOnceAsync(DateTime.UtcNow, "browser-dispatch"));
             Assert.Equal("HTTP_ACK", await DispatchLastError(h, job.Id));
+            var resultJob = await DispatchJob(h, connector, "browser-dispatch-history");
+            resultJobId = resultJob.Id;
+            wire.ResultPayload = OriginalConnectorResult();
+            Assert.Equal(1, await DispatchWorker(h.Db, [ResultParticipant(h, connector, wire, http)])
+                .ScanOnceAsync(DateTime.UtcNow, "browser-result"));
+            Assert.NotNull(await ResumeReceipt(h, resultJobId));
             await SetDispatchScope(maker, false);
             await SetDispatchScope(maker, true);
         }
         using var evidence=await BrowserScenario(h,reviewer,"oa-connector-control-browser.mjs","control-browser",ConnSettings(),
             new(){["CP6_CONN_PROFILE"]=profile.ToString(),["CP6_CONN_FLOW"]=flowVersion.ToString(),
                 ["CP6_CONN_TENANT_PROFILE"]=tenantProfile.ToString(),["CP6_CONN_APP_PROFILE"]=appProfile.ToString(),
-                ["CP6_CONN_DISPATCH_JOB"]=jobId.ToString("D")});
+                ["CP6_CONN_DISPATCH_JOB"]=jobId.ToString("D"),["CP6_CONN_RESULT_JOB"]=resultJobId.ToString("D")});
         var result=evidence.RootElement;
         var root=result.GetProperty("root").GetGuid();
         var version=result.GetProperty("version").GetGuid();
@@ -52,6 +58,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(1,count);
         var connectors = result.GetProperty("connectors");
         Assert.Equal(jobId, result.GetProperty("dispatch").GetGuid());
+        Assert.Equal(resultJobId, result.GetProperty("resultJob").GetGuid());
         var tenantRoot = connectors.GetProperty("TENANT").GetProperty("rootId").GetGuid();
         var appRoot = connectors.GetProperty("APP").GetProperty("rootId").GetGuid();
         Assert.NotEqual(tenantRoot, appRoot);

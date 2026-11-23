@@ -12,10 +12,12 @@ public sealed partial class ConnectorControlRuntimeV1
 {
     private sealed record OriginalRow(Guid InstanceId, Guid TokenId, string NodeId, Guid FlowVersionId, Guid RootId,
         Guid VersionId, string SourceKind, string Operation, Guid ProfileId, Guid StarterId,
-        string EffectKey, string TransportKey, string InputSha256, DateTime? QueryUntil);
+        string EffectKey, string TransportKey, string InputSha256, DateTime? QueryUntil, string ServiceRegistration);
 
     private sealed record DispatchPlan(IConnectorDispatchAdmissionV1 Provider, RegisteredConnectorVersionV1 Version,
         ConnectorOriginalOperationV1 Original, ConnectorDispatchRequestV1? Send, DateTime DeadlineUtc, DateTime? QueryUntil);
+
+    private sealed record DispatchObservation(string State, string? ProofRef, ConnectorSuccessfulResultV1? Result = null);
 
     internal async Task<ServiceTaskResult> Admit(ConnectorPinV1 pin, ServiceTaskContext job, CancellationToken ct)
     {
@@ -26,6 +28,8 @@ public sealed partial class ConnectorControlRuntimeV1
         string? denial;
         try
         {
+            if (await ReadResult(job.JobId, ct) is { } saved)
+                return ServiceTaskResult.ApplyConnectorResult(saved.Id);
             (plan, denial) = await CommitPlan(pin, job, ct);
         }
         catch (ScopeAuthorizationExceptionV1 error)
@@ -37,14 +41,21 @@ public sealed partial class ConnectorControlRuntimeV1
         {
             return ServiceTaskResult.Blocked("DISPATCH_AUTHORITY_UNAVAILABLE");
         }
-        if (plan == null) return ServiceTaskResult.Blocked(denial!);
+        if (plan == null)
+        {
+            if (await ReadResult(job.JobId, ct) is { } saved)
+                return ServiceTaskResult.ApplyConnectorResult(saved.Id);
+            return ServiceTaskResult.Blocked(denial!);
+        }
 
         // CommitPlan 已提交并离开 PostgreSQL 事务。先提交的准入只有此处可首次发送，重领租约只读原操作。
         var observation = await Observe(plan, ct);
-        await RecordObservation(plan, job, observation, ct);
+        var result = await RecordObservation(plan, job, observation, ct);
+        if (result is Guid id) return ServiceTaskResult.ApplyConnectorResult(id);
+        if (observation.Result != null) return ServiceTaskResult.HoldDispatch("RESULT_QUARANTINED");
         var retryAt = DateTime.UtcNow.AddSeconds(30);
-        return ServiceTaskResult.HoldDispatch(observation.State,
-            observation.State != "ORIGINAL_OPERATION_OBSERVED" && retryAt < plan.QueryUntil ? retryAt : null);
+        var checkOriginal = observation.State != "ORIGINAL_OPERATION_OBSERVED" || plan.Provider is IConnectorResultApplicationV1;
+        return ServiceTaskResult.HoldDispatch(observation.State, checkOriginal && retryAt < plan.QueryUntil ? retryAt : null);
     }
 
     private async Task<(DispatchPlan? Plan, string? Denial)> CommitPlan(ConnectorPinV1 pin, ServiceTaskContext job, CancellationToken ct)
@@ -59,13 +70,8 @@ public sealed partial class ConnectorControlRuntimeV1
         if (!await db.Database.SqlQuery<bool>($"""
             SELECT pg_try_advisory_xact_lock(cp6_oa_conn_v1.job_lock({tenant},{job.JobId})) AS "Value"
             """).SingleAsync(ct)) return (null, "LEGACY_CALL_IN_FLIGHT");
-        var prior = await db.Database.SqlQuery<OriginalRow>($"""
-            SELECT instance_id AS "InstanceId",token_id AS "TokenId",node_id AS "NodeId",flow_version_id AS "FlowVersionId",
-              root_id AS "RootId",version_id AS "VersionId",source_kind AS "SourceKind",operation AS "Operation",
-              profile_id AS "ProfileId",starter_id AS "StarterId",effect_key AS "EffectKey",
-              transport_key AS "TransportKey",input_sha256 AS "InputSha256",query_until AS "QueryUntil"
-            FROM cp6_oa_conn_v1.dispatch_admissions WHERE tenant_id={tenant} AND environment_id={environment} AND job_id={job.JobId}
-            """).SingleOrDefaultAsync(ct);
+        var prior = await ReadAdmission(job.JobId, ct);
+        if (prior != null && await ReadResult(job.JobId, ct) != null) return (null, "RESULT_RECEIVED");
         var selection = await ReadVersion(pin, prior != null, ct);
         if (selection == null) return (null, "BLOCKED_CONNECTOR");
         var version = selection.Version;
@@ -97,6 +103,8 @@ public sealed partial class ConnectorControlRuntimeV1
         var participants = dispatchers.Where(d => d.IsSimulation == version.Simulated && d.Matches(version)).Take(2).ToArray();
         if (participants.Length != 1) return (null, "DISPATCH_PARTICIPANT_UNPROVEN");
         var provider = participants[0];
+        if (provider is IConnectorResultApplicationV1 && !await ResultStoreReady(ct))
+            return (null, "RESULT_STORE_UNAVAILABLE");
         var guarantees = provider.Guarantees(version);
         var deadline = claim.LockExpiresAtUtc!.Value;
         ConnectorOriginalOperationV1 original;
@@ -112,7 +120,7 @@ public sealed partial class ConnectorControlRuntimeV1
             if (prior.QueryUntil is not DateTime expiry || now >= expiry ||
                 guarantees.OriginalQueryRetention is not { Ticks: > 0 } || string.IsNullOrWhiteSpace(version.ResultQueryContract))
                 return (null, "DISPATCH_RECOVERY_REQUIRED");
-            if (await db.Database.SqlQuery<bool>($"""
+            if (provider is not IConnectorResultApplicationV1 && await db.Database.SqlQuery<bool>($"""
                 SELECT EXISTS(SELECT FROM cp6_oa_conn_v1.dispatch_observations WHERE tenant_id={tenant} AND environment_id={environment}
                   AND job_id={claim.Id} AND state='ORIGINAL_OPERATION_OBSERVED') AS "Value"
                 """).SingleAsync(ct)) return (null, "ORIGINAL_OPERATION_OBSERVED");
@@ -196,11 +204,11 @@ public sealed partial class ConnectorControlRuntimeV1
             """, ct);
     }
 
-    private static async Task<(string State, string? ProofRef)> Observe(DispatchPlan plan, CancellationToken ct)
+    private static async Task<DispatchObservation> Observe(DispatchPlan plan, CancellationToken ct)
     {
         var deadline = plan.Send == null && plan.QueryUntil < plan.DeadlineUtc ? plan.QueryUntil!.Value : plan.DeadlineUtc;
         var remaining = deadline - DateTime.UtcNow;
-        if (remaining <= TimeSpan.Zero) return ("OUTCOME_UNKNOWN", null);
+        if (remaining <= TimeSpan.Zero) return new("OUTCOME_UNKNOWN", null);
         using var budget = CancellationTokenSource.CreateLinkedTokenSource(ct);
         var max = TimeSpan.FromSeconds(plan.Version.MaxCallDurationSec);
         budget.CancelAfter(remaining < max ? remaining : max);
@@ -216,22 +224,23 @@ public sealed partial class ConnectorControlRuntimeV1
                 observed.InputSha256 == original.InputSha256;
             return observed.State switch
             {
-                ConnectorTransportStateV1.Acknowledged when plan.Send != null && exact => ("HTTP_ACK", null),
-                ConnectorTransportStateV1.NotObserved when plan.Send == null && exact => ("NOT_OBSERVED", null),
+                ConnectorTransportStateV1.Acknowledged when plan.Send != null && exact =>
+                    new("HTTP_ACK", null, observed.SuccessfulResult),
+                ConnectorTransportStateV1.NotObserved when plan.Send == null && exact => new("NOT_OBSERVED", null),
                 ConnectorTransportStateV1.OriginalOperationObserved when plan.Send == null && exact && IsReference(observed.OriginalProofRef)
-                    => ("ORIGINAL_OPERATION_OBSERVED", observed.OriginalProofRef),
-                _ => ("OUTCOME_UNKNOWN", null),
+                    => new("ORIGINAL_OPERATION_OBSERVED", observed.OriginalProofRef, observed.SuccessfulResult),
+                _ => new("OUTCOME_UNKNOWN", null),
             };
         }
         catch (Exception error) when (error is HttpRequestException or IOException or TimeoutException ||
             error is OperationCanceledException && !ct.IsCancellationRequested)
         {
-            return ("OUTCOME_UNKNOWN", null);
+            return new("OUTCOME_UNKNOWN", null);
         }
     }
 
-    private async Task RecordObservation(DispatchPlan plan, ServiceTaskContext job,
-        (string State, string? ProofRef) observation, CancellationToken ct)
+    private async Task<Guid?> RecordObservation(DispatchPlan plan, ServiceTaskContext job,
+        DispatchObservation observation, CancellationToken ct)
     {
         var i = plan.Original.Identity;
         var source = plan.Send == null ? "ORIGINAL_QUERY" : "SEND";
@@ -248,6 +257,9 @@ public sealed partial class ConnectorControlRuntimeV1
                 WHERE tenant_id={i.TenantId} AND environment_id={i.EnvironmentId} AND root_id={i.Pin.RootId}
                   AND kind='DISPATCH' AND id={i.JobId} AND state='DISPATCH_ADMITTED'
                 """, ct);
+        var result = observation.Result is { } originalResult
+            ? await ReceiveResult(plan, originalResult, job.AttemptNo, ct) : null;
         await tx.CommitAsync(ct);
+        return result;
     }
 }

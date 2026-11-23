@@ -203,7 +203,8 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
     }
 
     private async Task<Guid> Terminal(ApprovalSubmitCommandV2 original, ApprovalSubmissionAckV2 ack,
-        Wf_FlowInstance instance, ApprovalVoteV2 terminal, ApprovalBusinessDecisionProofV2 policy, CancellationToken ct)
+        Wf_FlowInstance instance, ApprovalVoteV2? terminal, ApprovalBusinessDecisionProofV2 policy, CancellationToken ct,
+        ConnectorResumeEvidence? resume = null)
     {
         var stored = await db.Database.SqlQuery<StoredVote>($"""
             SELECT body AS "Body" FROM cp6_approval_decision_v2.votes
@@ -251,21 +252,28 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
         if (approved && policyVotes.Select(v => v.Authority.PrincipalId).Distinct().Count() < policy.RequiredHumanApprovals)
             throw Error("DECISION_EVIDENCE_INCOMPLETE", 422);
         if (!approved && !votes.Any(v => !v.Approved)) throw Error("DECISION_EVIDENCE_INCOMPLETE", 422);
+        terminal ??= (approved ? policyVotes : votes.Where(v => !v.Approved)).LastOrDefault()
+            ?? throw Error("DECISION_EVIDENCE_INCOMPLETE", 422);
         var requirements = policyVotes.Select(v => v.RequirementId).Distinct().Order(StringComparer.Ordinal).ToList();
         requirements.Add(approved ? policy.RequirementPrefix+".human-approvals/"+policy.RequiredHumanApprovals : policy.RequirementPrefix+".explicit-rejection/1");
         requirements.AddRange(await Business.Requirements(original,policy,policyVotes,approved,ct));
         var decision = Guid.NewGuid(); var eventId = Guid.NewGuid();
         var decided = await db.Database.SqlQueryRaw<DateTimeOffset>("SELECT date_trunc('milliseconds',clock_timestamp()) AS \"Value\"").SingleAsync(ct);
-        if (decided < terminal.OccurredAt) throw Error("APP_CLOCK_REGRESSION", 409);
-        var evidence = Json(new { profile = "oa.app.decision-evidence/2.0", decisionId = decision,
+        if (decided < terminal.OccurredAt || resume != null && decided < resume.OccurredAt) throw Error("APP_CLOCK_REGRESSION", 409);
+        var evidenceNode = JsonSerializer.SerializeToNode(new { profile = "oa.app.decision-evidence/2.0", decisionId = decision,
             decisionPolicyVersion = original.Policy, frozenPolicy = policy.FrozenPolicy, votes, satisfiedRequirementIds = requirements,
-            dutyMapping = "wf.pinned-routing-duty/1", terminalState = instance.Status });
+            dutyMapping = "wf.pinned-routing-duty/1", terminalState = instance.Status }, ApprovalBindingOwnerV2.Json)!.AsObject();
+        if (resume != null) evidenceNode["resume"] = JsonSerializer.SerializeToNode(resume, ApprovalBindingOwnerV2.Json);
+        var evidence = Json(evidenceNode);
         var proof = terminal.Authority;
-        var actor = new { kind = "HUMAN_TASK", taskId = terminal.TaskId, roleKey = terminal.RoleKey,
+        object actor = resume == null ? new { kind = "HUMAN_TASK", taskId = terminal.TaskId, roleKey = terminal.RoleKey,
             decisionPrincipalId = proof.PrincipalId, actualHandlerId = proof.ActualHandlerId, onBehalfOfId = proof.OnBehalfOfId,
             grantId = proof.GrantId, grantRevision = proof.GrantRevision,
             permissionEvidenceRef = new ApprovalRefV2("Main Workflow", terminal.Id.ToString(), "permission/1"),
-            sodEvidenceRef = new ApprovalRefV2("Main Workflow", terminal.Id.ToString(), "sod/1"), occurredAt = terminal.OccurredAt };
+            sodEvidenceRef = new ApprovalRefV2("Main Workflow", terminal.Id.ToString(), "sod/1"), occurredAt = terminal.OccurredAt }
+            : new { kind = "SYSTEM_EXECUTION", serviceId = ConnectorResumeService, executionId = resume.ExecutionId, trigger = "RESUME",
+                executionAuthorizationRef = new ApprovalRefV2("Main Workflow", resume.ExecutionId.ToString(), "connector-resume/1"),
+                policyRef = original.Policy.Ref, occurredAt = resume.OccurredAt };
         var wire = new { schema = "oa.app/2.0", scope = original.Scope, eventId, decisionId = decision,
             streamId = original.SubmissionId, sequence = "1", producerOwner = "Main Workflow", consumerOwner = original.Subject.BusinessOwner,
             submissionId = original.SubmissionId, instanceId = instance.Id, subject = original.Subject, policy = original.Policy,
@@ -279,8 +287,9 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
         node["payloadDigest"] = JsonSerializer.SerializeToNode(ApprovalCanonicalV2.Digest(ApprovalCanonicalV2.Bytes(wire)), ApprovalBindingOwnerV2.Json);
         var payload = ApprovalCanonicalV2.Bytes(node); var payloadDigest = ApprovalCanonicalV2.Hash(payload);
         await db.Database.ExecuteSqlInterpolatedAsync($"""
-            INSERT INTO cp6_approval_decision_v2.decisions(tenant_id,environment_id,id,command_id,instance_id,submission_id,event_id,decision,evidence_json,evidence_digest,payload,payload_digest)
-            VALUES({db.CurrentTenantId},{scope.EnvironmentId},{decision},{terminal.CommandId},{instance.Id},{original.SubmissionId},{eventId},
+            INSERT INTO cp6_approval_decision_v2.decisions(tenant_id,environment_id,id,command_id,resume_command_id,instance_id,submission_id,event_id,decision,evidence_json,evidence_digest,payload,payload_digest)
+            VALUES({db.CurrentTenantId},{scope.EnvironmentId},{decision},{(resume == null ? terminal.CommandId : (Guid?)null)},
+              {resume?.ExecutionId},{instance.Id},{original.SubmissionId},{eventId},
               {(approved ? "APPROVED" : "REJECTED")},{evidence},{ApprovalCanonicalV2.Hash(Encoding.UTF8.GetBytes(evidence))},{payload},{payloadDigest});
             INSERT INTO cp6_approval_decision_v2.outbox(tenant_id,environment_id,id,decision_id,submission_id,consumer_owner,sequence,payload,payload_digest)
             VALUES({db.CurrentTenantId},{scope.EnvironmentId},{eventId},{decision},{original.SubmissionId},{original.Subject.BusinessOwner},1,{payload},{payloadDigest});

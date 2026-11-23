@@ -23,8 +23,13 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var a = DecisionActor(h, first); await Vote(a, await DecisionInput(a, approve ? "approve" : "reject"));
         if (approve) { var b = DecisionActor(h, second); await Vote(b, await DecisionInput(b)); }
         var payload = await h.Db.Database.SqlQuery<byte[]>($"SELECT payload AS \"Value\" FROM cp6_approval_decision_v2.outbox WHERE tenant_id={h.Tenant}").SingleAsync();
-        var decision = JsonSerializer.Deserialize<ApprovalDecisionEnvelopeV2>(payload, ApprovalBindingOwnerV2.Json)!;
-        // The Workflow producer has its own registration; the original Tool intake client grants nothing here.
+        return await FactForDecision(h, intake, payload);
+    }
+
+    private static async Task<FactFixture> FactForDecision(Harness h, IntakeFixture intake, byte[] payload)
+    {
+        var decision = ApprovalDecisionWireV2.Parse(payload).Value;
+        // Workflow 使用独立的服务登记。Tool 送审主体没有回执入口的权限。
         var service = new IntakeAuthority(intake.Authority.Identity with { Principal = Guid.NewGuid(), Client = "workflow-producer" });
         await h.Db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_tool_approval_fact_v2.registrations(environment_id,tenant_id,principal_id,revision,enabled,can_receive,can_query,evidence_mode)

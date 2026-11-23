@@ -28,7 +28,11 @@ export interface Impact {
 }
 export interface DispatchHistory {
   page: number; hasNext: boolean
-  entries: { jobId: string; state: string; transportState: string; originalQueryState?: string; adoption: string }[]
+  entries: {
+    jobId: string; state: string; transportState: string; originalQueryState?: string; adoption: string
+    resultState?: string; workflowResume?: string; resumeReceiptId?: string
+    businessOwnerApplication?: string; businessOwnerEvidence?: string
+  }[]
 }
 export interface Subject { subjectRef: string; kind: string; rootId: string; versionId: string; revision: string; target: Version; impact?: Impact; canDecide: boolean }
 export interface Intent { path: string; command: { commandId: string; expectedVersion: string; body: unknown } }

@@ -361,10 +361,17 @@ public partial class FlowEngine : IFlowEngine
         if (ManagedRuntime)
         {
             if (++_approvalTransitions > 1000) throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1(_personalFormRuntime ? "FORM_TRANSITION_LIMIT" : "APP_START_TRANSITION_LIMIT", 422);
-            // Automatic business/service effects need their own adopted Owner protocol. Preserve the
-            // actual token and reason; neither execute the legacy side effect nor manufacture approval.
             if (type == "servicetask")
-            { if (_personalFormRuntime) throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("FORM_SERVICE_OWNER_REQUIRED",422); Suspend(inst, node, "APP_NODE_OWNER_REQUIRED"); return; }
+            {
+                // APP 只允许精确 pin 的异步派发。当前授权、外呼和本地应用由原 Job 独立核验。
+                if (_personalFormRuntime)
+                    throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("FORM_SERVICE_OWNER_REQUIRED", 422);
+                if (node.ServiceKind != ServiceKind.WebApi || node.ServiceConnectorPin == null)
+                {
+                    Suspend(inst, node, "APP_NODE_OWNER_REQUIRED");
+                    return;
+                }
+            }
             if (type == "end")
             {
                 ConsumeToken(token);
@@ -428,15 +435,7 @@ public partial class FlowEngine : IFlowEngine
 
                 var schema = await LoadSchemaAsync(inst);
 
-                if (outputVars is { Count: > 0 })
-                {
-                    var res = ServiceVarsHelper.MergeOutputVars(inst.VarsJson, outputVars);
-                    inst.VarsJson = res.VarsJson;
-                    AddHistory(inst.Id, nodeId, inst.StarterId, "serviceVars",
-                        $"merged: [{string.Join(",", res.MergedKeys)}]; skipped: [{string.Join(",", res.SkippedKeys)}]");
-                }
-
-                await AdvanceToken(inst, schema, token);   // 沿成功边（跳 IsError）
+                await StageServiceSuccess(inst, token, schema, outputVars);
                 await DispatchIfFinishedAsync(inst, inst.StarterId, null, ApprovalCompletionOrigin.Continuation);
                 await _db.SaveChangesAsync();
                 await FastPathSubFlowResumeAsync();   // ★ 子流程 fast path（服务任务恢复触达子终态时收敛；内部吞并发冲突不触外层重试）
@@ -448,6 +447,19 @@ public partial class FlowEngine : IFlowEngine
                 foreach (var e in _db.ChangeTracker.Entries().ToList()) await e.ReloadAsync();
             }
         }
+    }
+
+    private async Task StageServiceSuccess(Wf_FlowInstance instance, Wf_FlowToken token, FlowSchema schema,
+        Dictionary<string, object?>? output)
+    {
+        if (output is { Count: > 0 })
+        {
+            var result = ServiceVarsHelper.MergeOutputVars(instance.VarsJson, output);
+            instance.VarsJson = result.VarsJson;
+            AddHistory(instance.Id, token.NodeId, ManagedRuntime ? Guid.Empty : instance.StarterId, "serviceVars",
+                $"merged: [{string.Join(",", result.MergedKeys)}]; skipped: [{string.Join(",", result.SkippedKeys)}]");
+        }
+        await AdvanceToken(instance, schema, token);
     }
 
     /// <summary>

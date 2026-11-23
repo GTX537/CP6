@@ -17,12 +17,15 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
     private sealed record IntakeFixture(ApprovalIntakeOwnerV2 Owner,IntakeAuthority Authority,byte[] Payload,
         ApprovalBindingOwnerV2 Binding,ApprovalBindingResultV2 Bound,FlowAuthoringOwnerV2 Flows,Guid Version,DateTimeOffset ReceiveAt);
-    private async Task<IntakeFixture> IntakeSetup(Harness h,ApprovalBindingRuleV2[]? rules=null,string[]? extraActions=null)
+    private async Task<IntakeFixture> IntakeSetup(Harness h,ApprovalBindingRuleV2[]? rules=null,string[]? extraActions=null,
+        Func<Task>? beforeFreeze=null)
     {
         var id=await MaintenanceSetup(h);
         foreach(var action in new[]{"dispose","dispose-policy","dispose-submit"}.Concat(extraActions??[]))await EngineeringAction(h,"wms-plate-mold",action);
         await DispositionRequest(Disposition(h),id);await DispositionBlock(Disposition(h),id);
-        var(binding,flows,version)=await PrepareBinding(h);var principal=Guid.NewGuid();
+        var(binding,flows,version)=await PrepareBinding(h);
+        if(beforeFreeze!=null)await beforeFreeze();
+        var principal=Guid.NewGuid();
         await h.Db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_approval_binding_v2.registrations(tenant_id,environment_id,biz_type,subject_kind,owner,revision,snapshot_schema,snapshot_fields,enabled,service_principal,audience,fixed_route,evidence_mode)
             VALUES({h.Tenant},{ScopeEnvironment},'WMS_TOOL_DISCARD','TOOL_DISPOSITION_REQUEST','Main.Wms.ToolDisposition.v1',{Guid.NewGuid()},'Main.Wms.ToolDisposition.snapshot/1','["purpose","reasonCode"]',true,{principal},'CP6.Services','/internal/wms/approval-results/v2','DEMO')
