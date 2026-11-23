@@ -112,6 +112,10 @@ public class FlowTriggerService : IFlowTriggerService
     {
         // ① Enabled 检查（spec §3.1 顺序：先于幂等闸）
         if (!trigger.Enabled) return TriggerFireResult.Fail("触发器已停用");
+        if (_db.Database.IsNpgsql() && await _db.Database.SqlQuery<bool>($"""
+            SELECT EXISTS(SELECT FROM cp6_oa_conn_v1.roots WHERE tenant_id={_db.CurrentTenantId} AND id={trigger.Id}
+                AND kind='TRIGGER' AND environment_id IN (SELECT environment_id FROM cp6_scope_authorization_v1.environment WHERE singleton)) AS "Value"
+            """).SingleAsync(ct)) return TriggerFireResult.Fail("TRUSTED_CONN_V1_REQUIRED");
 
         // ② 幂等闸：先查既有流水（Local + 库，防同 context 二次调用漏变更追踪器）
         var fire = _db.Wf_TriggerFires.Local

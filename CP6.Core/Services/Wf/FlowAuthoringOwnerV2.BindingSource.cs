@@ -41,6 +41,15 @@ public sealed partial class FlowAuthoringOwnerV2
         }
         return result.ToArray();
     }
+    // 控制历史可以在流程停用后读取，但仍须具备当前原文的数据和字段读权。
+    internal async Task<bool> CanReadBindingSource(UserPermissionContext actor, Guid definition, CancellationToken ct)
+    {
+        fence.RequireTransaction();
+        var head = await Heads().SingleOrDefaultAsync(h => h.Id == definition, ct);
+        if (head == null || !actor.MenuKeys.Contains(AdminMenu) || !await Visible(actor, head, ct)) return false;
+        var permissions = await Permission(actor, head, false, false, ct, AdminMenu);
+        return Fields.All(f => permissions.Fields[f].CanRead);
+    }
     internal async Task<FlowPublicationV2> BindingSource(UserPermissionContext actor, string key, Guid? version, CancellationToken ct)
     {
         fence.RequireTransaction(); await ActivationReady(ct);

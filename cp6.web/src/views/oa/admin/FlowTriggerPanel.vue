@@ -1,5 +1,6 @@
 <template>
   <div class="flow-trigger-panel">
+    <ConnectorControlPanel kind="TRIGGER" />
     <div class="panel-actions">
       <el-button v-permission="'oa-flow-admin:FlowTrigger.Edit'" type="primary" @click="openCreate">{{ t('oa.flowtrigger.new') }}</el-button>
       <el-button :icon="Refresh" circle @click="reload" />
@@ -73,6 +74,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Refresh } from '@element-plus/icons-vue'
 import CpTag from '@/components/base/CpTag.vue'
 import FlowTriggerDialog from './FlowTriggerDialog.vue'
+import ConnectorControlPanel from './ConnectorControlPanel.vue'
 import { flowTriggerApi, type FlowTriggerItem, type TriggerFireItem } from '@/api/oa/flowTrigger'
 import { typeTone, TRIGGER_TYPES } from './flowTriggerModel'
 import { formatDateTime } from '@/utils/format'

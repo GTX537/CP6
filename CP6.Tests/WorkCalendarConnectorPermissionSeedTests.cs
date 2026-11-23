@@ -58,7 +58,7 @@ public class WorkCalendarConnectorPermissionSeedTests
     }
 
     [Fact]
-    public void EnsureSeeded_SeedsExactly4TuplesPerTenant_ForBothMenuAndRoleAction()
+    public void EnsureSeeded_RegistersGovernedActionsButKeepsAdministratorGrantsSeparate()
     {
         using var db = NewDb();
         SeedTenantsAndMenus(db);
@@ -72,7 +72,9 @@ public class WorkCalendarConnectorPermissionSeedTests
                 .Where(x => x.TenantId == tid).Select(x => new ValueTuple<int, string>(x.MenuId, x.ActionCode)).ToHashSet();
             var raSet = db.Sys_RoleActions.IgnoreQueryFilters()
                 .Where(x => x.TenantId == tid && x.RoleId == 1).Select(x => new ValueTuple<int, string>(x.MenuId, x.ActionCode)).ToHashSet();
-            Assert.Equal(expected, maSet);
+            var control = new[] {"conn.read","conn.trigger.write","conn.trigger.review","conn.trigger.publish","conn.trigger.control",
+                "conn.connector.write","conn.connector.review","conn.connector.activate","conn.connector.control"};
+            Assert.Equal(expected.Concat(control.Select(code=>(734,code))).ToHashSet(), maSet);
             Assert.Equal(expected, raSet);
         }
     }
@@ -95,8 +97,8 @@ public class WorkCalendarConnectorPermissionSeedTests
         Assert.Equal(ma1, db.Sys_MenuActions.IgnoreQueryFilters().Count());
         Assert.Equal(ra1, db.Sys_RoleActions.IgnoreQueryFilters().Count());
 
-        // 2 租户 × 4 元组 = 8。
-        Assert.Equal(8, ma1);
+        // 每租户登记原四项与九项控制动作，管理员只沿用原四项。
+        Assert.Equal(26, ma1);
         Assert.Equal(8, ra1);
     }
 

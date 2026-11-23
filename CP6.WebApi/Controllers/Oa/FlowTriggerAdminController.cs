@@ -21,6 +21,7 @@ namespace CP6.WebApi.Controllers.Oa;
 [ApiController]
 [Route("api/oa/flow-triggers")]
 [Authorize]
+[GovernedOaConfiguration("TRIGGER")]
 public class FlowTriggerAdminController : LocalizedControllerBase
 {
     private readonly IFlowTriggerAdminService _admin;

@@ -5,6 +5,7 @@
 -->
 <template>
   <div class="wf-connector-panel">
+    <ConnectorControlPanel kind="CONNECTOR" />
     <div class="panel-actions">
       <el-button v-permission="'oa-flow-admin:Connector.Edit'" type="primary" @click="openCreate">{{ t('oa.connector.new') }}</el-button>
       <el-button :icon="Refresh" circle @click="reload" />
@@ -47,6 +48,7 @@ import { useI18n } from 'vue-i18n'
 import { Refresh } from '@element-plus/icons-vue'
 import CpTag from '@/components/base/CpTag.vue'
 import WfConnectorDialog from './WfConnectorDialog.vue'
+import ConnectorControlPanel from './ConnectorControlPanel.vue'
 import { wfConnectorApi, type WfConnectorItem } from '@/api/oa/wfConnector'
 
 const { t } = useI18n()

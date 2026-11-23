@@ -27,6 +27,9 @@ public record ServiceTaskActionRef
     [JsonPropertyName("connectorName")]
     public string? ConnectorName { get; init; }
 
+    [JsonPropertyName("connectorPin")]
+    public CP6.Core.Services.Oa.ConnectorPinV1? ConnectorPin { get; init; }
+
     /// <summary>webApi 相对路径模板(可含 {var} 占位)。</summary>
     [JsonPropertyName("path")]
     public string? Path { get; init; }
@@ -73,7 +76,7 @@ public record ServiceTaskActionRef
         if (sk == "timer")
         {
             // timer 节点:先确定 actionKind,再填 timer config
-            if (!string.IsNullOrEmpty(node.ServiceConnectorName))
+            if (node.ServiceConnectorPin!=null || !string.IsNullOrEmpty(node.ServiceConnectorName))
                 actionKind = "webApi";
             else if (!string.IsNullOrEmpty(node.ServiceActionName))
                 actionKind = "dataWriteback";
@@ -98,6 +101,7 @@ public record ServiceTaskActionRef
             ActionKind    = actionKind,
             ActionName    = node.ServiceActionName,
             ConnectorName = node.ServiceConnectorName,
+            ConnectorPin  = node.ServiceConnectorPin,
             Path          = node.ServicePath,
             ParamsJson    = node.ServiceParamsJson,
             HttpMethod    = node.ServiceHttpMethod,   // E-T1 节点级覆盖固化(null→WhenWritingNull 省略)

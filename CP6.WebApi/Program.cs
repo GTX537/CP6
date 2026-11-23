@@ -328,6 +328,18 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IApproverMapService, CP6.Core.Se
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFormService, CP6.Core.Services.Wf.FormService>();           // 章02 表单引擎（JSON 列 + 服务端 schema 复核）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IDefinitionVersionResolver, CP6.Core.Services.Wf.DefinitionVersionResolver>();
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowFormCompatibilityValidator, CP6.Core.Services.Wf.FlowFormCompatibilityValidator>();
+builder.Services.Configure<CP6.Core.Services.Oa.OaConnectorControlOptionsV1>(builder.Configuration.GetSection("OaConnectorControl"));
+builder.Services.AddScoped(sp => new CP6.Core.Services.Oa.ConnectorVersionControlService(
+    sp.GetRequiredService<CP6Context>(), sp.GetRequiredService<IHttpContextAccessor>(),
+    sp.GetRequiredService<CP6.Core.Services.Sys.ScopeAuthorizationFenceV1>(),
+    sp.GetRequiredService<CP6.Core.Services.Wf.FlowAuthoringOwnerV2>(),
+    async ct =>
+    {
+        try { return await CP6.WebApi.Services.IamAdministrationHttpV1.CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext!, ct); }
+        catch (CP6.Core.Services.Sys.IamAdministrationExceptionV1 e)
+        { throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1(e.Message,e.Status,e); }
+    },sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<CP6.Core.Services.Oa.OaConnectorControlOptionsV1>>(),
+    sp.GetServices<CP6.Core.Services.Oa.IConnectorDispatchAdmissionV1>(),sp.GetServices<CP6.Core.Services.Oa.ITriggerRegistrationAuthorityV1>()));
 builder.Services.AddScoped<CP6.Core.Services.Wf.FlowEngine>();                                                // 章03 流程引擎状态机（会签/条件/幂等）；WfServiceJobService ctor 注入具体类型（internal Resume/FailServiceTokenAsync 不在接口上）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowEngine>(sp => sp.GetRequiredService<CP6.Core.Services.Wf.FlowEngine>()); // 接口与具体类共享同一 scoped 实例
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowTriggerService, CP6.Core.Services.Wf.FlowTriggerService>(); // 事件触发 start：三入口单一出口（D2）
@@ -405,6 +417,7 @@ builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfServiceJobClea
 // C-T1 服务任务执行器 + 连接器（IHttpClientFactory 已由下方 AddHttpClient("sso") 注册，真连接器可直接注入）
 // D-T1 解析改造：WebApiExecutor 注入 TenantConnectorResolver（先租户表 Wf_Connector Enabled 行 → DbWfConnector，
 //   未命中回落 app 级 IWfConnector 字典）。app 级注册（EchoConnector 等）零改动，进 resolver 兜底字典。
+builder.Services.AddScoped<CP6.Core.Services.Oa.ConnectorControlRuntimeV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wf.Executors.TenantConnectorResolver>(sp =>
     new CP6.Core.Services.Wf.Executors.TenantConnectorResolver(
         sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
@@ -413,7 +426,8 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.Executors.TenantConnectorResolve
         sp.GetRequiredService<System.Net.Http.IHttpClientFactory>()));
 builder.Services.AddScoped<CP6.Core.Services.Wf.IServiceTaskExecutor>(sp =>
     new CP6.Core.Services.Wf.Executors.WebApiExecutor(
-        sp.GetRequiredService<CP6.Core.Services.Wf.Executors.TenantConnectorResolver>())); // D-T1 webApi 执行器（租户优先 app 兜底，不自做 HTTP，D4 安全边界）
+        sp.GetRequiredService<CP6.Core.Services.Wf.Executors.TenantConnectorResolver>(),
+        sp.GetRequiredService<CP6.Core.Services.Oa.ConnectorControlRuntimeV1>()));
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfConnector, CP6.Core.Services.Wf.Executors.EchoConnector>();          // C-T1 样例 erpEcho 连接器（QA/demo echo，真实 HTTP 连接器按需追加）
 // D-T1 连接器管理服务（DataProtection 加密写 purpose="Wfs.Connector.Auth" + 掩码读 + E-WF-028；租约与 WfServiceJobService 同源）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfConnectorService>(sp =>

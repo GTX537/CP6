@@ -112,7 +112,11 @@ public static class FlowSchemaValidator
             bool bad =
                 !KnownServiceKinds.Contains(kind)
                 || (kind == ServiceKind.DataWriteback && string.IsNullOrWhiteSpace(n.ServiceActionName))
-                || (kind == ServiceKind.WebApi && (string.IsNullOrWhiteSpace(n.ServiceConnectorName) || string.IsNullOrWhiteSpace(n.ServicePath)))
+                || (kind == ServiceKind.WebApi && n.ServiceConnectorPin==null && (string.IsNullOrWhiteSpace(n.ServiceConnectorName) || string.IsNullOrWhiteSpace(n.ServicePath)))
+                || (n.ServiceConnectorPin is { } pin && (kind is not (ServiceKind.WebApi or ServiceKind.Timer) ||
+                    pin.SourceKind is not ("TENANT" or "APP") || pin.RootId==Guid.Empty || pin.VersionId==Guid.Empty ||
+                    string.IsNullOrWhiteSpace(pin.Operation) || !string.IsNullOrEmpty(n.ServicePath) ||
+                    !string.IsNullOrEmpty(n.ServiceHttpMethod) || !string.IsNullOrEmpty(n.ServiceParamsJson) || n.ServiceTimeoutSec!=null))
                 || (kind == ServiceKind.Timer && (string.IsNullOrWhiteSpace(n.ServiceDelayMode) || string.IsNullOrWhiteSpace(n.ServiceDelayValue)))
                 || (!string.IsNullOrWhiteSpace(n.ServiceMode) && !KnownServiceModes.Contains(n.ServiceMode.Trim()))  // 票5：ServiceMode 值域(sync|async)
                 || ServiceVarsHelper.ContainsUnsupportedSubscript(n.ServicePath)         // 票4：路径模板不得含数组下标

@@ -240,11 +240,11 @@ public sealed partial class FlowAuthoringOwnerV2
                 if (kind is not (ServiceKind.DataWriteback or ServiceKind.WebApi or ServiceKind.Timer)
                     || !string.IsNullOrWhiteSpace(mode) && mode is not (ServiceMode.Sync or ServiceMode.Async)
                     || kind == ServiceKind.Timer && (string.IsNullOrWhiteSpace(node.ServiceDelayMode) || string.IsNullOrWhiteSpace(node.ServiceDelayValue))
-                    || kind == ServiceKind.WebApi && string.IsNullOrWhiteSpace(node.ServicePath)
+                    || kind == ServiceKind.WebApi && node.ServiceConnectorPin==null && string.IsNullOrWhiteSpace(node.ServicePath)
                     || ServiceVarsHelper.ContainsUnsupportedSubscript(node.ServicePath) || ServiceVarsHelper.ContainsUnsupportedSubscript(node.ServiceParamsJson))
                     throw DefinitionDiagnosticsV2.Error("SCHEMA_EXECUTION_INVALID",new DefinitionDiagnosticV2($"$.nodes[{schema.Nodes.IndexOf(node)}]","SCHEMA_EXECUTION_INVALID",NodeId:node.Id));
                 if (kind == ServiceKind.DataWriteback && !executors.Any(e => e.Kind == ServiceKind.DataWriteback && string.Equals(e.Key, node.ServiceActionName, StringComparison.OrdinalIgnoreCase))
-                    || kind == ServiceKind.WebApi && !connectors.Any(c => string.Equals(c.Name, node.ServiceConnectorName, StringComparison.OrdinalIgnoreCase)))
+                    || kind == ServiceKind.WebApi && node.ServiceConnectorPin==null && !connectors.Any(c => string.Equals(c.Name, node.ServiceConnectorName, StringComparison.OrdinalIgnoreCase)))
                     throw DefinitionDiagnosticsV2.Error("SERVICE_REFERENCE_INVALID",new DefinitionDiagnosticV2($"$.nodes[{schema.Nodes.IndexOf(node)}]"+(kind==ServiceKind.DataWriteback?".serviceActionName":".serviceConnectorName"),"SERVICE_REFERENCE_INVALID",NodeId:node.Id));
                 if (node.ServiceTimeoutSec is int seconds && seconds >= WfServiceJobService.LeaseDuration.TotalSeconds)
                     throw DefinitionDiagnosticsV2.Error("SERVICE_TIMEOUT_INVALID",new DefinitionDiagnosticV2($"$.nodes[{schema.Nodes.IndexOf(node)}].serviceTimeoutSec","SERVICE_TIMEOUT_INVALID",NodeId:node.Id));

@@ -44,7 +44,21 @@ public static class WorkCalendarConnectorPermissionSeed
         (FlowAdminMenuId, "Connector.Edit", "连接器编辑"),
     };
 
-    /// <summary>逐租户幂等播种年历菜单 + Calendar/Connector 权限点 + 授管理员（RoleId=1）。须在 OawfPermissionSeed 之后调用。</summary>
+    // 新控制合同的读、编辑、复核和最终决定权由租户分别授予。
+    private static readonly (int MenuId, string Code, string Name)[] ControlActions =
+    [
+        (FlowAdminMenuId, "conn.read", "读取触发器与连接器版本"),
+        (FlowAdminMenuId, "conn.trigger.write", "编辑触发器版本"),
+        (FlowAdminMenuId, "conn.trigger.review", "复核触发器控制"),
+        (FlowAdminMenuId, "conn.trigger.publish", "发布触发器版本"),
+        (FlowAdminMenuId, "conn.trigger.control", "控制触发器版本"),
+        (FlowAdminMenuId, "conn.connector.write", "编辑连接器版本"),
+        (FlowAdminMenuId, "conn.connector.review", "复核连接器控制"),
+        (FlowAdminMenuId, "conn.connector.activate", "激活连接器版本"),
+        (FlowAdminMenuId, "conn.connector.control", "控制连接器版本"),
+    ];
+
+    /// <summary>逐租户登记动作。原菜单沿用既有管理员授权。</summary>
     public static void EnsureSeeded(CP6Context db)
     {
         var changed = false;
@@ -75,7 +89,7 @@ public static class WorkCalendarConnectorPermissionSeed
         var tenantIds = db.Sys_Tenants.Select(t => t.Id).ToList();
         foreach (var tid in tenantIds)
         {
-            foreach (var (menuId, code, name) in Actions)
+            foreach (var (menuId, code, name) in Actions.Concat(ControlActions))
             {
                 if (!db.Sys_MenuActions.IgnoreQueryFilters()
                         .Any(x => x.TenantId == tid && x.MenuId == menuId && x.ActionCode == code))
@@ -91,7 +105,7 @@ public static class WorkCalendarConnectorPermissionSeed
                     changed = true;
                 }
 
-                if (!db.Sys_RoleActions.IgnoreQueryFilters()
+                if (!code.StartsWith("conn.", StringComparison.Ordinal) && !db.Sys_RoleActions.IgnoreQueryFilters()
                         .Any(x => x.TenantId == tid && x.RoleId == 1 && x.MenuId == menuId && x.ActionCode == code))
                 {
                     db.Sys_RoleActions.Add(new Sys_RoleAction

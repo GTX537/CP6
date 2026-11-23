@@ -21,6 +21,7 @@ namespace CP6.WebApi.Controllers.Oa;
 [ApiController]
 [Route("api/oa/wf-connector")]
 [Authorize]
+[CP6.WebApi.Filters.GovernedOaConfiguration("CONNECTOR")]
 public class WfConnectorController : LocalizedControllerBase
 {
     private readonly IWfConnectorService _svc;
