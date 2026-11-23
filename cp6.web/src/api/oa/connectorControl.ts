@@ -26,6 +26,10 @@ export interface Impact {
   manifest: { invocations: number; slots: number; jobs: number; instances: number; inFlight: number }
   page: number; total: number; entries: {locator: string; kind: string; state: string}[]
 }
+export interface DispatchHistory {
+  page: number; hasNext: boolean
+  entries: { jobId: string; state: string; transportState: string; originalQueryState?: string; adoption: string }[]
+}
 export interface Subject { subjectRef: string; kind: string; rootId: string; versionId: string; revision: string; target: Version; impact?: Impact; canDecide: boolean }
 export interface Intent { path: string; command: { commandId: string; expectedVersion: string; body: unknown } }
 export interface Receipt {
@@ -52,5 +56,7 @@ export const connectorControl = {
     post<{expectedVersion: string}>('creation-contexts?kind=' + kind, selection, signal),
   execute: (intent: Intent, signal?: AbortSignal) => post<Receipt>(intent.path, intent.command, signal),
   preview: (id: string, signal?: AbortSignal, page = 1) => get<Impact>('control-impact-previews/' + encodeURIComponent(id) + '?page=' + page, signal),
+  dispatches: (root: string, version: string, page: number, signal?: AbortSignal) =>
+    get<DispatchHistory>('connectors/' + encodeURIComponent(root) + '/versions/' + encodeURIComponent(version) + '/dispatches?page=' + page, signal),
   original: (id: string, signal?: AbortSignal) => get<Receipt>('commands/' + encodeURIComponent(id), signal),
 }

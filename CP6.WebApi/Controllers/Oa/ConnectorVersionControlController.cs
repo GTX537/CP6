@@ -27,6 +27,10 @@ public sealed class ConnectorVersionControlController(ConnectorVersionControlSer
     public Task<IActionResult> Context(string family,Guid id,Guid? version,CancellationToken ct) =>
         Run(()=>owner.ContextAsync(Kind(family),id,version,ct));
 
+    [HttpGet("connectors/{id:guid}/versions/{version:guid}/dispatches")]
+    public Task<IActionResult> Dispatches(Guid id, Guid version, [FromQuery] int page = 1, CancellationToken ct = default) =>
+        Run(() => owner.DispatchesAsync(id, version, page, ct));
+
     [HttpGet("commands/{commandId}")]
     public Task<IActionResult> Command(string commandId,CancellationToken ct) => Run(()=>owner.CommandAsync(commandId,ct));
 

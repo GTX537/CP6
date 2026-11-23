@@ -19,7 +19,8 @@ public sealed record ConnProfileV1(
     string? CredentialLocator = null, string? CredentialGeneration = null, string? AdmissionBasis = null,
     string? Registration = null, string? Schema = null, string? VarsSchema = null, string? RateLimitPolicy = null,
     string? SourceModule = null, string? HookName = null, string? TimeZone = null, string? TimeRules = null,
-    string? Calendar = null, string? StarterAuthority = null, Guid? StarterId = null, Guid? LegacyCredentialOwnerRef = null);
+    string? Calendar = null, string? StarterAuthority = null, Guid? StarterId = null, Guid? LegacyCredentialOwnerRef = null,
+    bool? RequiresCurrentAuthorizationAtApply = null);
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record ConnSelectionV1(string Name, string SourceKind, Guid ProfileId, string? FlowKey = null,

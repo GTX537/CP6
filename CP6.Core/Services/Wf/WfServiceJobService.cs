@@ -137,7 +137,12 @@ public sealed class WfServiceJobService : IWfServiceJobService
                 ServiceTaskResult result;
                 var actionRef = ServiceTaskActionRef.Parse(job.ActionRefJson ?? "{}");
                 var key = ServiceTaskActionRef.ResolveExecutorKey(actionRef);
-                if (key is null)
+                if (job.Kind is (ServiceKind.WebApi or WfJobKind.DeferredWebApiStart) && key != ServiceKind.WebApi)
+                {
+                    // 旧 WebAPI 作业缺可信动作快照，保留原节点等待核证。
+                    result = ServiceTaskResult.Blocked("UNVERIFIED_LEGACY");
+                }
+                else if (key is null)
                 {
                     result = ServiceTaskResult.Ok();   // none = 纯等待 timer，无 executor 直接推进
                 }
@@ -160,9 +165,18 @@ public sealed class WfServiceJobService : IWfServiceJobService
                         NowUtc = deferredStart ? job.DueAtUtc : nowUtc,
                         VarsJson = inst.VarsJson,
                         ActionRefJson = job.ActionRefJson,
+                        ClaimWorker = job.LockedBy,
+                        ClaimedAtUtc = job.LockedAtUtc,
+                        ExecutionCancellation = ct,
                     };
                     try { result = await exec.ExecuteAsync(sctx); }
                     catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+                    catch (Exception ex) when (actionRef.ConnectorPin != null)
+                    {
+                        // 原派发可能已经提交。仅让同一 Job 重新判断原操作，不能沿业务失败边推进。
+                        _logger?.LogWarning("连接器派发状态待核对，Job {JobId}，错误类型 {ErrorType}", job.Id, ex.GetType().Name);
+                        result = ServiceTaskResult.HoldDispatch("DISPATCH_CHECK_REQUIRED", nowUtc.AddSeconds(30));
+                    }
                     catch (Exception ex) { result = ServiceTaskResult.Fail(ex.Message); }
                 }
 
@@ -204,12 +218,10 @@ public sealed class WfServiceJobService : IWfServiceJobService
                 return false;
 
             var job = await LockJobAsync(_db, claimed.Id, ct);
-            // PostgreSQL stores timestamps to microsecond precision.
-            if (job is null || job.Status != ServiceJobStatus.Running || job.LockedBy != claimed.LockedBy
-                || job.LockedAtUtc?.Ticks / 10 != claimed.LockedAtUtc?.Ticks / 10
-                || job.AttemptCount != claimed.AttemptCount || job.LockExpiresAtUtc is not DateTime deadline
-                || deadline <= await DatabaseUtcClock.ReadUtcNowAsync(_db, ct))
+            var now = await DatabaseUtcClock.ReadUtcNowAsync(_db, ct);
+            if (job is null || !CurrentClaim(job, claimed.LockedBy, claimed.LockedAtUtc, claimed.AttemptCount, now))
                 return false;
+            var deadline = job.LockExpiresAtUtc!.Value;
 
             if (!await complete(job)) return false;
             await _db.SaveChangesAsync(ct);
@@ -224,11 +236,20 @@ public sealed class WfServiceJobService : IWfServiceJobService
         }
     }
 
-    internal static Task<Wf_ServiceJob?> LockJobAsync(CP6Context db, Guid jobId, CancellationToken ct) =>
+    internal static bool CurrentClaim(Wf_ServiceJob job, string? worker, DateTime? claimedAt, int attempt, DateTime now) =>
+        job.Status == ServiceJobStatus.Running && worker != null && job.LockedBy == worker &&
+        // PostgreSQL 时间戳为微秒精度。
+        claimedAt != null && job.LockedAtUtc?.Ticks / 10 == claimedAt.Value.Ticks / 10 &&
+        job.AttemptCount == attempt && job.LockExpiresAtUtc > now;
+
+    internal static IQueryable<Wf_ServiceJob> LockJob(CP6Context db, Guid jobId) =>
         db.Wf_ServiceJobs.FromSqlInterpolated($"""
             SELECT j.* FROM public."Wf_ServiceJob" AS j
             WHERE j."TenantId" = {db.CurrentTenantId} AND j."Id" = {jobId} FOR UPDATE
-            """).SingleOrDefaultAsync(ct);
+            """);
+
+    internal static Task<Wf_ServiceJob?> LockJobAsync(CP6Context db, Guid jobId, CancellationToken ct) =>
+        LockJob(db, jobId).SingleOrDefaultAsync(ct);
 
     private async Task<bool> CompleteAsync(Wf_ServiceJob job, ServiceTaskResult? result, DateTime nowUtc, CancellationToken ct)
     {
@@ -245,13 +266,13 @@ public sealed class WfServiceJobService : IWfServiceJobService
             // A claim from an outdated pre-execution read can be reaped and executed by the next scan.
             return false;
         }
-        else if (result.AdmissionBlocked)
+        else if (result.AdmissionBlocked || result.DispatchHeld)
         {
             // 原 Job 与 token 均保留，准入失败没有外呼或错误边推进。新准入由恢复路径独立判断。
             job.Status = ServiceJobStatus.Pending;
             job.LastError = result.Error;
-            job.NextAttemptAtUtc = DateTime.SpecifyKind(DateTime.MaxValue, DateTimeKind.Utc);
-            job.AttemptCount--;
+            job.NextAttemptAtUtc = result.CheckOriginalAfterUtc ?? DateTime.SpecifyKind(DateTime.MaxValue, DateTimeKind.Utc);
+            if (result.AdmissionBlocked) job.AttemptCount--;
             job.LockedBy = null;
             job.LockedAtUtc = null;
             job.LockExpiresAtUtc = null;

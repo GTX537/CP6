@@ -548,6 +548,15 @@ public partial class FlowEngine : IFlowEngine
         return await LoadLegacySchemaAsync(_db, instance, ct);
     }
 
+    internal static async Task<FlowSchema> LoadOriginalDispatchSchemaAsync(
+        CP6Context db, Guid environment, Wf_FlowInstance instance, CancellationToken ct)
+    {
+        if (instance.Creator is not (ApprovalRuntimeV2 or PersonalFormRuntimeV2))
+            return await LoadLegacySchemaAsync(db, instance, ct);
+        var publication = await ReadRuntimePublication(db, environment, instance.FlowDefVersionId!.Value, ct);
+        return Deserialize(publication.Fields["SchemaJson"]!);
+    }
+
     internal static async Task<FlowSchema> LoadLegacySchemaAsync(CP6Context db, Wf_FlowInstance instance, CancellationToken ct)
     {
         RequireLegacyRuntime(instance);

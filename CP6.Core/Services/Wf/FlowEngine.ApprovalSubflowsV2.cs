@@ -16,13 +16,18 @@ public partial class FlowEngine
     private async Task<FlowPublicationV2> ApprovalPublication(Guid version, CancellationToken ct = default)
     {
         if (_approvalPublications.TryGetValue(version, out var known)) return known;
-        var environment = ManagedEnvironment;
-        var json = await _db.Database.SqlQuery<string>($"""
-            SELECT snapshot_json AS "Value" FROM cp6_workflow_authoring_v2.versions
-            WHERE tenant_id={_db.CurrentTenantId} AND environment_id={environment} AND id={version}
-            """).SingleOrDefaultAsync(ct) ?? throw new ScopeAuthorizationExceptionV1("FLOW_VERSION_UNAVAILABLE");
-        var publication = JsonSerializer.Deserialize<FlowPublicationV2>(json, ApprovalBindingOwnerV2.Json)!;
+        var publication = await ReadRuntimePublication(_db, ManagedEnvironment, version, ct);
         _approvalPublications.Add(version, publication); return publication;
+    }
+
+    private static async Task<FlowPublicationV2> ReadRuntimePublication(CP6.Core.EFDbContext.CP6Context db,
+        Guid environment, Guid version, CancellationToken ct)
+    {
+        var json = await db.Database.SqlQuery<string>($"""
+            SELECT snapshot_json AS "Value" FROM cp6_workflow_authoring_v2.versions
+            WHERE tenant_id={db.CurrentTenantId} AND environment_id={environment} AND id={version}
+            """).SingleOrDefaultAsync(ct) ?? throw new ScopeAuthorizationExceptionV1("FLOW_VERSION_UNAVAILABLE");
+        return JsonSerializer.Deserialize<FlowPublicationV2>(json, ApprovalBindingOwnerV2.Json)!;
     }
 
     private static Guid? ApprovalFormPin(FlowPublicationV2 publication)

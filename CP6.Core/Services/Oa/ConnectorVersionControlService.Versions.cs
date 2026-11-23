@@ -26,7 +26,7 @@ public sealed partial class ConnectorVersionControlService
         if(p.Adoption!="ADOPTED" || string.IsNullOrWhiteSpace(p.Evidence)) return "UNPROVEN";
         if(p.Kind!="CONNECTOR") return triggerAuthorities.Count(a=>a.Supports(Tenant,Environment,p.Id,p.Kind,spec,p.Evidence))==1 ? "ADOPTED":"UNPROVEN";
         if(pin==null || spec.MaxCallDurationSec is not >0) return "UNPROVEN";
-        var registered=ConnectorControlRuntimeV1.Describe(pin,spec,false);
+        var registered=ConnectorControlRuntimeV1.Describe(pin,spec,false,Tenant,Environment,p.Id,p.Evidence);
         return providers.Count(a=>!a.IsSimulation && a.Matches(registered))==1?"ADOPTED":"UNPROVEN";
     }
 
