@@ -11,14 +11,28 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     [CurrentPermissionPostgresFact]
     public async Task OaConn_real_tenant_seed_registers_actions_without_granting_review_or_activation()
     {
-        await using var h=await Seed();
-        CP6.WebApi.Seed.OawfMenuSeed.EnsureSeeded(h.Db);
-        CP6.WebApi.Seed.WorkCalendarConnectorPermissionSeed.EnsureSeeded(h.Db);
-        CP6.WebApi.Seed.WorkCalendarConnectorPermissionSeed.EnsureSeeded(h.Db);
-        var codes=await h.Db.Sys_MenuActions.Where(a=>a.MenuId==734 && a.ActionCode.StartsWith("conn."))
-            .Select(a=>a.ActionCode).ToArrayAsync();
-        Assert.Equal(ConnActions.Order(),codes.Order());
-        Assert.False(await h.Db.Sys_RoleActions.AnyAsync(a=>a.MenuId==734 && a.ActionCode.StartsWith("conn.")));
+        var database = await server.CreateIsolatedDatabaseAsync();
+        var tenantId = Guid.NewGuid();
+        var secondTenantId = Guid.NewGuid();
+        await using var db = server.ContextForDatabase(database,
+            new CP6.Core.Services.Common.TenantContext { CurrentTenantId = tenantId });
+        foreach (var id in new[] { tenantId, secondTenantId })
+            db.Sys_Tenants.Add(new() { Id = id, TenantCode = id.ToString("N"), TenantName = "连接器合同验收" });
+        await db.SaveChangesAsync();
+
+        CP6.WebApi.Seed.OawfMenuSeed.EnsureSeeded(db);
+        CP6.WebApi.Seed.WorkCalendarConnectorPermissionSeed.EnsureSeeded(db);
+        CP6.WebApi.Seed.WorkCalendarConnectorPermissionSeed.EnsureSeeded(db);
+
+        foreach (var id in new[] { tenantId, secondTenantId })
+        {
+            var codes = await db.Sys_MenuActions.IgnoreQueryFilters()
+                .Where(a => a.TenantId == id && a.MenuId == 734 && a.ActionCode.StartsWith("conn."))
+                .Select(a => a.ActionCode).ToArrayAsync();
+            Assert.Equal(ConnActions.Order(), codes.Order());
+            Assert.False(await db.Sys_RoleActions.IgnoreQueryFilters()
+                .AnyAsync(a => a.TenantId == id && a.MenuId == 734 && a.ActionCode.StartsWith("conn.")));
+        }
     }
 
     [CurrentPermissionPostgresFact]
