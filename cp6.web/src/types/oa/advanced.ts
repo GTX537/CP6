@@ -28,7 +28,9 @@ export interface FormQueryFilter {
 export interface FormQueryItem {
   instanceId: string
   flowKey: string
-  flowName?: string
+  flowName?: string | null
+  flowVersion?: number | null
+  versionSource?: string
   starterId: string
   starterName: string
   status: number

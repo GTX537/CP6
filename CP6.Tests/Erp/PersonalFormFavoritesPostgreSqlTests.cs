@@ -29,6 +29,17 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         using (var same = await Set(true, "same-desire")) Assert.Equal(HttpStatusCode.OK, same.StatusCode);
         Assert.Equal(1, await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_personal_form_v2.favorites WHERE tenant_id={h.Tenant}").SingleAsync());
         using (var conflict = await Set(false, "on")) Assert.Equal(HttpStatusCode.Conflict, conflict.StatusCode);
+        var scope = ScopeAdmin(h);
+        var disabled = await scope.RegisterAsync(new(Guid.NewGuid(), (await scope.ContextAsync()).Version, false, "暂停表单发起 Scope"));
+        using (var favorites = await host.Send(BoundRequest(cookies, "/api/oa/v2/catalog/favorites")))
+        {
+            var item = Assert.Single((await PersonalHttpResult<PersonalFormFavoritesPageV2>(favorites)).Items);
+            Assert.Equal("personal", item.FormKey); Assert.False(item.Available); Assert.Null(item.Publication);
+        }
+        Assert.Equal("SCOPE_MAPPING_DISABLED", (await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(() => owner.ContextAsync("personal"))).Message);
+        await scope.RegisterAsync(new(Guid.NewGuid(), disabled.Mapping.RowVersion.ToString("D"), true, "恢复表单发起 Scope"));
+        using (var favorites = await host.Send(BoundRequest(cookies, "/api/oa/v2/catalog/favorites")))
+            Assert.Equal(context.FormVersionId, Assert.Single((await PersonalHttpResult<PersonalFormFavoritesPageV2>(favorites)).Items).Publication!.FormVersionId);
         await form.SetActivationAsync("personal", FormActivationCommand((await form.ActivationPreviewAsync("personal")).Current, context.FormVersionId, false, "disabled"));
         using (var favorites = await host.Send(BoundRequest(cookies, "/api/oa/v2/catalog/favorites")))
         {

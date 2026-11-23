@@ -77,7 +77,11 @@ async function principal() {
   changed(); await Promise.all([load(true), context(), grants()])
 }
 const statuses = ['进行中', '已通过', '已驳回', '已撤回', '挂起', '退回待重填']
-function status(row: QueryItem) { return row.submissionState === 'SubmittedUnbound' ? '已提交，未启动审批' : statuses[row.instanceStatus!] ?? '未知状态' }
+function submission(row: QueryItem) { return row.formDataId ? '表单已提交' : '业务申请已提交' }
+function approval(row: QueryItem) {
+  if (row.submissionState === 'SubmittedUnbound') return '未启动审批'
+  return row.instanceStatus == null ? '未知状态' : statuses[row.instanceStatus] ?? '未知状态'
+}
 function application(row: QueryItem) { return ({ UNPROVEN: '业务应用未证', APPLIED: '业务已应用', BLOCKED: '业务应用受阻', NOT_APPLIED: '业务尚未应用' } as Record<string, string>)[row.applicationSummary?.applicationState ?? ''] ?? row.applicationSummary?.applicationState }
 window.addEventListener(AUTH_EVENT, changed); window.addEventListener('storage', changed)
 onMounted(async () => {
@@ -107,15 +111,18 @@ onBeforeUnmount(() => { live = false; clear(); contextGeneration++; principalGen
     <p v-if="error" role="alert">{{ error }}</p><p v-if="busy" role="status">正在查询</p>
     <template v-if="rows">
       <p>共 {{ rows.total }} 条当前可见记录。翻页沿用首次查询截点，重新查询可查看最新提交。</p><p v-if="!rows.items.length">没有符合条件的记录。</p>
-      <table v-else aria-label="提交与流程记录"><thead><tr><th>表单与流程</th><th>提交时间（UTC）</th><th>状态</th><th>操作</th></tr></thead><tbody>
+      <table v-else aria-label="提交与流程记录"><thead><tr><th>表单与流程</th><th>提交时间（UTC）</th><th>提交状态</th><th>审批状态</th><th>业务应用</th><th>操作</th></tr></thead><tbody>
         <tr v-for="row in rows.items" :key="row.id"><td><p>{{ row.formName || row.formKey || '无普通表单' }}<span v-if="row.formVersion"> · v{{ row.formVersion }}</span></p><p>{{ row.flowName || row.flowKey || '未关联流程' }}<span v-if="row.flowVersion"> · v{{ row.flowVersion }}</span></p><p v-if="row.title">{{ row.title }}</p></td>
-          <td>{{ row.submittedAtUtc }}</td><td>{{ status(row) }}<p v-if="row.applicationSummary">{{ application(row) }}<span v-if="row.applicationSummary.pendingReceiptGap">；回执尚有缺口</span></p></td><td><button @click="open(row)">查看记录</button></td></tr>
+          <td>{{ row.submittedAtUtc }}</td><td>{{ submission(row) }}</td><td>{{ approval(row) }}</td>
+          <td>{{ application(row) ?? '—' }}<span v-if="row.applicationSummary?.pendingReceiptGap">。回执尚有缺口</span></td>
+          <td><button @click="open(row)">查看记录</button></td></tr>
       </tbody></table>
       <nav aria-label="查询分页"><button :disabled="busy || page === 1" @click="page--; load()">上一页</button><span>第 {{ page }} 页</span><button :disabled="busy || page * rows.pageSize >= rows.total" @click="page++; load()">下一页</button></nav>
     </template>
     <p v-if="detailBusy" role="status">正在读取详情</p>
     <article v-if="detail" aria-label="提交记录详情">
-      <h3>{{ detail.item.formName || detail.item.flowName || '提交记录' }}</h3><p>{{ status(detail.item) }}。此处仅供查看。</p>
+      <h3>{{ detail.item.formName || detail.item.flowName || '提交记录' }}</h3>
+      <p>{{ submission(detail.item) }}，{{ approval(detail.item) }}。此处仅供查看。</p>
       <p v-if="detail.form">表单版本 {{ detail.item.formVersion }}；内容来自此次提交的固定版本。</p>
       <PersonalFormFields v-if="detail.form" :fields="fields" :model-value="values" :mask="detail.form.fieldMask" :file-context="{ queryDataId: detail.form.formDataId }" disabled @forbidden="clear" />
       <section v-if="detail.item.applicationSummary"><h4>业务应用</h4><p>{{ application(detail.item) }}</p><p v-if="detail.item.applicationSummary.pendingReceiptGap">回执链仍有缺口，当前显示已连续确认的结果。</p>

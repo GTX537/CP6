@@ -54,13 +54,23 @@ public sealed class CurrentPermissionPostgresFixture : IAsyncLifetime
         System.Globalization.CultureInfo.InvariantCulture);
     internal const string Database = "permission_component";
     private readonly string _ownerPassword = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+    private readonly string? _peerRoot;
+    private readonly int _port = Port;
     private string _root = "", _bin = "", _data = "";
     private bool _started;
+
+    public CurrentPermissionPostgresFixture() { }
+
+    private CurrentPermissionPostgresFixture(string root, int port)
+    {
+        _peerRoot = root;
+        _port = port;
+    }
 
     public async Task InitializeAsync()
     {
         if (!CurrentPermissionPostgresFactAttribute.Selected) return;
-        var requestedRoot = Environment.GetEnvironmentVariable(CurrentPermissionPostgresFactAttribute.RootVariable);
+        var requestedRoot = _peerRoot ?? Environment.GetEnvironmentVariable(CurrentPermissionPostgresFactAttribute.RootVariable);
         _bin = Environment.GetEnvironmentVariable(CurrentPermissionPostgresFactAttribute.BinVariable) ?? "";
         if (string.IsNullOrWhiteSpace(requestedRoot) || !Path.IsPathFullyQualified(requestedRoot)
             || !Path.IsPathFullyQualified(_bin) || !File.Exists(Binary("initdb")))
@@ -72,7 +82,7 @@ public sealed class CurrentPermissionPostgresFixture : IAsyncLifetime
         for (var ancestor = Directory.GetParent(_root); ancestor is not null; ancestor = ancestor.Parent)
             if (ancestor.Exists && ancestor.Attributes.HasFlag(FileAttributes.ReparsePoint))
                 throw new InvalidOperationException("PostgreSQL owner root must not traverse a reparse point.");
-        var listener = new TcpListener(IPAddress.Loopback, Port);
+        var listener = new TcpListener(IPAddress.Loopback, _port);
         listener.Start();
         listener.Stop();
         Directory.CreateDirectory(_root);
@@ -88,14 +98,16 @@ public sealed class CurrentPermissionPostgresFixture : IAsyncLifetime
         _data = Path.Combine(_root, "data");
         var passwordFile = Path.Combine(_root, "owner-password.private");
         await File.WriteAllTextAsync(passwordFile, _ownerPassword);
-        await File.WriteAllTextAsync(Path.Combine(_root, "ownership.txt"), $"{_root}\n{_data}\n{Port}\n");
+        await File.WriteAllTextAsync(Path.Combine(_root, "ownership.txt"), $"{_root}\n{_data}\n{_port}\n");
         await RunAsync("initdb", ["-D", _data, "-U", "fixture_owner", "--pwfile", passwordFile,
             "--auth-host=scram-sha-256", "--auth-local=scram-sha-256", "--no-locale", "-E", "UTF8"]);
         await File.AppendAllTextAsync(Path.Combine(_data, "postgresql.conf"), $"""
 
             listen_addresses = '127.0.0.1'
-            port = {Port}
+            port = {_port}
             max_connections = 40
+            # 给完整逻辑归档的单事务恢复预留对象锁。
+            max_locks_per_transaction = 256
             log_statement = 'none'
             log_min_error_statement = 'panic'
             log_parameter_max_length = 0
@@ -128,7 +140,7 @@ public sealed class CurrentPermissionPostgresFixture : IAsyncLifetime
     {
         var connection = new NpgsqlConnection(new NpgsqlConnectionStringBuilder
         {
-            Host = "127.0.0.1", Port = Port, Database = database, Username = username, Password = password,
+            Host = "127.0.0.1", Port = _port, Database = database, Username = username, Password = password,
             Pooling = false, SearchPath = searchPath, SslMode = SslMode.Disable, Enlist = false,
             IncludeErrorDetail = false, Timeout = 5, CommandTimeout = 5, Options = " "
         }.ConnectionString);
@@ -160,7 +172,7 @@ public sealed class CurrentPermissionPostgresFixture : IAsyncLifetime
         }
         var pidLines = await File.ReadAllLinesAsync(Path.Combine(_data, "postmaster.pid"));
         if (pidLines.Length < 4 || !string.Equals(Path.GetFullPath(pidLines[1]), _data, StringComparison.OrdinalIgnoreCase)
-            || pidLines[3] != Port.ToString() || !File.Exists(Path.Combine(_root, "ownership.txt")))
+            || pidLines[3] != _port.ToString() || !File.Exists(Path.Combine(_root, "ownership.txt")))
             throw new InvalidOperationException("Refusing PostgreSQL stop without matching owner and postmaster identity.");
         await RunAsync("pg_ctl", ["-D", _data, "-m", "fast", "-w", "stop"]);
         _started = false;
@@ -171,7 +183,7 @@ public sealed class CurrentPermissionPostgresFixture : IAsyncLifetime
     {
         var connection = new NpgsqlConnectionStringBuilder
         {
-            Host = "127.0.0.1", Port = Port, Database = databaseName, Username = "fixture_owner", Password = _ownerPassword,
+            Host = "127.0.0.1", Port = _port, Database = databaseName, Username = "fixture_owner", Password = _ownerPassword,
             Pooling = false, SearchPath = "public", IncludeErrorDetail = false
         };
         var options = DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6Context>(),
@@ -198,8 +210,36 @@ public sealed class CurrentPermissionPostgresFixture : IAsyncLifetime
         return databaseName;
     }
 
+    internal async Task<CurrentPermissionPostgresFixture> StartRestorePeerAsync()
+    {
+        var socket = new TcpListener(IPAddress.Loopback, 0);
+        socket.Start();
+        var port = ((IPEndPoint)socket.LocalEndpoint).Port;
+        socket.Stop();
+        var peer = new CurrentPermissionPostgresFixture(Path.Combine(_root, "permission-consumption-restore-peer"), port);
+        await peer.InitializeAsync();
+        return peer;
+    }
+
+    internal async Task<string> DumpForRestoreAsync(string database)
+    {
+        var archive = Path.Combine(_root, "restore-source.dump");
+        await RunAsync("pg_dump", ["-w", "-h", "127.0.0.1", "-p", _port.ToString(), "-U", "fixture_owner",
+            "-Fc", "--file", archive, "--dbname", database], authenticate: true);
+        return archive;
+    }
+
+    internal async Task RestoreIntoNewDatabaseAsync(string database, string archive)
+    {
+        using var names = new NpgsqlCommandBuilder();
+        await using (var owner = await OpenOwnerAsync("postgres"))
+            await Sql(owner, $"CREATE DATABASE {names.QuoteIdentifier(database)}");
+        await RunAsync("pg_restore", ["-w", "-h", "127.0.0.1", "-p", _port.ToString(), "-U", "fixture_owner",
+            "--exit-on-error", "--single-transaction", "--dbname", database, archive], authenticate: true);
+    }
+
     private string Binary(string name) => Path.Combine(_bin, name + (OperatingSystem.IsWindows() ? ".exe" : ""));
-    private async Task RunAsync(string executable, string[] arguments)
+    private async Task RunAsync(string executable, string[] arguments, bool authenticate = false)
     {
         // On Windows postgres inherits pg_ctl's redirected pipe handles even with -l. Waiting for
         // ReadToEnd after pg_ctl exits would wait for the server's lifetime, not for startup.
@@ -209,6 +249,7 @@ public sealed class CurrentPermissionPostgresFixture : IAsyncLifetime
             UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = capture, RedirectStandardError = capture
         };
         foreach (var argument in arguments) info.ArgumentList.Add(argument);
+        if (authenticate) info.Environment["PGPASSWORD"] = _ownerPassword;
         using var process = Process.Start(info) ?? throw new InvalidOperationException("PostgreSQL fixture tool did not start.");
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(45));
         var stdout = capture ? process.StandardOutput.ReadToEndAsync(timeout.Token) : Task.FromResult("");

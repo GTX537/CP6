@@ -3,12 +3,13 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP12-17 外部结果持久接收与本地流程/Owner应用](../development/evidence/WP12-17/DELIVERY.md)（DONE），核对时间 `2026-11-23T11:08:39.877947+00:00`。
+- [WP12-05 表单目录收藏、历史查询和最终下载披露](../development/evidence/WP12-05/DELIVERY.md)（DONE），核对时间 `2026-11-23T14:07:09.731137+00:00`。
 
 ### 已关闭目标
 
 - [CRM-INQ-01 公开询盘与受理](../development/evidence/WP03-04/DELIVERY.md)
 - [OA-DEF-01 流程和表单定义](../development/evidence/TARGET-REVIEW-20261117/OA-DEF-01.md)
+- [OA-FORM-01 表单发起与查询](../development/evidence/WP12-05/DELIVERY.md)
 - [SYS-WORKSPACE-01 菜单与业务工作台](../development/evidence/WP02-18/DELIVERY.md)
 - [SYS-LANG-01 字典与多语言](../development/evidence/WP02-17/DELIVERY.md)
 - [SYS-AUD-01 操作、安全与字段审计](../development/evidence/WP02-13b/DELIVERY.md)

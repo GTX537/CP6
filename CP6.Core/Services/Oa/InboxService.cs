@@ -341,9 +341,8 @@ public partial class InboxService : IInboxService
             FormToId: f.Id, ActorEvidenceStatus: "LEGACY_ACTOR_INCOMPLETE")).ToList();
         var ccRows = ccs.Select(c => new CcRow(c.RecipientId, N(c.RecipientId) ?? "", c.AtNodeId, c.IsRead)).ToList();
 
-        IReadOnlyList<ForecastStep> forecast = inst.Status == FlowInstanceStatus.Running
-            && inst.FlowDefVersionId is Guid pinnedFlowId
-            ? (await _forecast.ForecastPinnedAsync(pinnedFlowId, inst.VarsJson, inst.StarterId, inst.CurrentNode)).Steps
+        IReadOnlyList<ForecastStep> forecast = inst.Status == FlowInstanceStatus.Running && flowVersion != null
+            ? (await _forecast.ForecastPinnedAsync(flowVersion.Id, inst.VarsJson, inst.StarterId, inst.CurrentNode)).Steps
             : Array.Empty<ForecastStep>();
 
         // ── 子流程互链（spec §4.5）：向上=父实例链接;向下=本实例名下子实例组（按停泊 token 的 NodeId 归组）──
@@ -404,39 +403,73 @@ public partial class InboxService : IInboxService
         var instanceDto = new InboxInstanceDto(inst.Id, inst.FlowKey, flowVersion?.FlowNameSnapshot,
             flowVersion?.Version, inst.Status, inst.CurrentNode, currentNodeName,
             new InboxUser(inst.StarterId, names.GetValueOrDefault(inst.StarterId, inst.StarterId.ToString())),
-            inst.CreateDate);
+            inst.CreateDate)
+        {
+            FlowVersionId = flowVersion?.Id,
+            VersionSource = LegacyFlowVersionSource(flowVersion?.Id, flowVersion?.Creator)
+        };
         return new InboxDetail(instanceDto, content, myTask, timeline, snapshots, forecast, ccRows,
             subFlowParent, childRows);
     }
 
-    public async Task<FormQueryPage> QueryAsync(Guid effectiveUserId, FormQueryFilter f)
+    private static string LegacyFlowVersionSource(Guid? versionId, string? creator) => versionId == null
+        ? "MISSING_VERSION_SNAPSHOT"
+        : LegacyDefinitionViewV2.Reconstructed(creator) ? "LEGACY_HEAD_BACKFILL" : "LEGACY_VERSION_SNAPSHOT";
+
+    private IQueryable<Wf_FlowInstance> LegacyQueryCandidates(Guid effectiveUserId, FormQueryFilter f)
     {
         var visible = _access.VisibleInstanceIds(effectiveUserId);
         var q = LegacyInstances().Where(x => visible.Contains(x.Id));
         if (f.StarterId is { } s) q = q.Where(i => i.StarterId == s);
         if (!string.IsNullOrWhiteSpace(f.FlowKey)) q = q.Where(i => i.FlowKey == f.FlowKey);
         if (f.Status is { } st) q = q.Where(i => i.Status == st);
-        if (f.From is { } fr) q = q.Where(i => i.CreateDate >= fr);
-        if (f.To is { } to) q = q.Where(i => i.CreateDate <= to);
         if (f.HandlerId is { } h)   // 处理人：我办过/正办该实例
             q = q.Where(i => _db.Wf_FlowFormTos.Any(ft => ft.InstanceId == i.Id
                 && (ft.ExpectedHandlerId == h || ft.ActualHandlerId == h)));
         if (!string.IsNullOrWhiteSpace(f.Keyword))
             q = q.Where(i => i.FlowKey.Contains(f.Keyword!) || (i.BizId != null && i.BizId.Contains(f.Keyword!)));
 
-        var total = await q.CountAsync();
-        var page = Math.Max(1, f.Page);
-        var pageSize = Math.Clamp(f.PageSize, 1, 100);
-        var rows = await (from i in q
-                          join d in _db.Wf_FlowDefs on i.FlowKey equals d.FlowKey into dd
-                          from d in dd.DefaultIfEmpty()
-                          join u in _db.Sys_Users on i.StarterId equals u.Id into uu
+        return q.AsNoTracking();
+    }
+
+    public Task<FormQueryPage> QueryAsync(Guid effectiveUserId, FormQueryFilter f)
+    {
+        var q = LegacyQueryCandidates(effectiveUserId, f);
+        if (f.From is { } fr) q = q.Where(i => i.CreateDate >= fr);
+        if (f.To is { } to) q = q.Where(i => i.CreateDate <= to);
+        return LegacyQueryPage(q.Select(i => new LegacyQueryEntry { Instance = i, CreatedAt = i.CreateDate }),
+            Math.Max(1, f.Page), Math.Clamp(f.PageSize, 1, 100), default);
+    }
+
+    private sealed class LegacyQueryEntry
+    {
+        public required Wf_FlowInstance Instance { get; init; }
+        public required DateTime CreatedAt { get; init; }
+    }
+
+    private async Task<FormQueryPage> LegacyQueryPage(IQueryable<LegacyQueryEntry> q, int page, int pageSize, CancellationToken ct)
+    {
+        var total = await q.CountAsync(ct);
+        var rows = await (from entry in q
+                          join v in _db.Wf_FlowDefVersions on entry.Instance.FlowDefVersionId equals v.Id into versions
+                          from v in versions.DefaultIfEmpty()
+                          join u in _db.Sys_Users on entry.Instance.StarterId equals u.Id into uu
                           from u in uu.DefaultIfEmpty()
-                          orderby i.CreateDate descending
-                          select new { i, FlowName = d == null ? null : d.FlowName, Starter = u })
-            .Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-        var items = rows.Select(x => new FormQueryItem(x.i.Id, x.i.FlowKey, x.FlowName, x.i.StarterId,
-            Name(x.Starter), x.i.Status, x.i.CurrentNode, x.i.CreateDate)).ToList();
+                          orderby entry.CreatedAt descending, entry.Instance.Id descending
+                          select new
+                          {
+                              entry.Instance, entry.CreatedAt, Starter = u, FlowName = v == null ? null : v.FlowNameSnapshot,
+                              FlowVersion = v == null ? (int?)null : v.Version, FlowVersionId = v == null ? (Guid?)null : v.Id,
+                              VersionCreator = v == null ? null : v.Creator
+                          })
+            .Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(ct);
+        var items = rows.Select(x => new FormQueryItem(x.Instance.Id, x.Instance.FlowKey, x.FlowName, x.Instance.StarterId,
+            Name(x.Starter), x.Instance.Status, x.Instance.CurrentNode, x.CreatedAt)
+        {
+            FlowVersion = x.FlowVersion,
+            FlowVersionId = x.FlowVersionId,
+            VersionSource = LegacyFlowVersionSource(x.FlowVersionId, x.VersionCreator)
+        }).ToList();
         return new(items, total, page, pageSize);
     }
 

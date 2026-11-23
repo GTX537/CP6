@@ -2,7 +2,7 @@
   <div class="form-query">
     <!-- 条件区 -->
     <el-card class="query-filter-card" shadow="never">
-      <el-form :model="filter" inline label-width="72px" class="query-filter-form">
+      <el-form :model="filter" inline label-width="72px" class="query-filter-form" @submit.prevent="onSearch">
         <!-- 发起人 -->
         <el-form-item label="发起人">
           <el-select
@@ -74,6 +74,7 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             value-format="YYYY-MM-DD"
+            :disabled="!timeZone"
             style="width: 240px"
           />
         </el-form-item>
@@ -82,17 +83,19 @@
         <el-form-item label="关键词">
           <el-input
             v-model="filter.keyword"
-            placeholder="单号/摘要"
+            placeholder="流程代码或业务编号"
             clearable
             style="width: 160px"
           />
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" :loading="searching" @click="onSearch">查询</el-button>
+          <el-button type="primary" native-type="submit" :loading="searching">查询</el-button>
           <el-button @click="onReset">重置</el-button>
         </el-form-item>
       </el-form>
+      <p v-if="timeZone">日期按租户时区 {{ timeZone }} 计算，包含选择的结束日。</p>
+      <p v-if="zoneError" role="alert">{{ zoneError }} <button type="button" @click="loadTimeZone">重新读取时区</button></p>
     </el-card>
 
     <!-- 结果表 -->
@@ -106,7 +109,13 @@
         @row-click="onRowClick"
       >
         <el-table-column prop="instanceId" label="实例ID" width="220" show-overflow-tooltip />
-        <el-table-column prop="flowName"   label="流程类型" width="160" />
+        <el-table-column label="历史流程" min-width="200">
+          <template #default="{ row }">
+            {{ row.flowName || row.flowKey }}<span v-if="row.flowVersion != null"> · v{{ row.flowVersion }}</span>
+            <div v-if="row.versionSource === 'MISSING_VERSION_SNAPSHOT'">缺少版本快照，历史版本未证</div>
+            <div v-else-if="row.versionSource === 'LEGACY_HEAD_BACKFILL'">旧系统回填，历史版本未证</div>
+          </template>
+        </el-table-column>
         <el-table-column prop="starterName" label="发起人"  width="100" />
         <el-table-column prop="currentNode" label="当前节点" width="140" show-overflow-tooltip />
         <el-table-column label="状态" width="90">
@@ -116,7 +125,7 @@
             </CpTag>
           </template>
         </el-table-column>
-        <el-table-column prop="createDate" label="发起时间" min-width="180" :formatter="formatDateTimeCell" show-overflow-tooltip />
+        <el-table-column prop="createDate" label="发起时间（UTC）" min-width="180" show-overflow-tooltip />
         <el-table-column label="操作" width="80" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link size="small" @click.stop="openDetail(row.instanceId)">
@@ -125,15 +134,17 @@
           </template>
         </el-table-column>
       </el-table>
-      <CpEmpty v-if="!searching && rows.length === 0" text="暂无数据，请输入条件后查询" />
+      <p v-if="error" role="alert">{{ error }}</p>
+      <CpEmpty v-else-if="!searching && rows.length === 0" text="暂无数据，请输入条件后查询" />
       <el-pagination
         v-if="total > 0"
-        v-model:current-page="filter.page"
-        v-model:page-size="filter.pageSize"
+        :current-page="currentPage"
+        :page-size="pageSize"
         :total="total"
+        :disabled="searching"
         :page-sizes="[20, 50, 100]"
         layout="total, sizes, prev, pager, next"
-        @current-change="onSearch"
+        @current-change="onPageChange"
         @size-change="onPageSizeChange"
       />
     </el-card>
@@ -151,16 +162,15 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { queryApi } from '@/api/oa/query'
+import { queryApi, type LegacyFormHistoryFilter } from '@/api/oa/query'
 import { userApi } from '@/api/sys/user'
 import { instanceStatusText } from '@/views/oa/inbox/inboxModel'
 import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import CpEmpty from '@/components/base/CpEmpty.vue'
 import FormDetail from '@/views/oa/inbox/FormDetail.vue'
-import type { FormQueryFilter, FormQueryItem } from '@/types/oa/advanced'
-import { formatDateTimeCell } from '@/utils/format'
+import type { FormQueryItem } from '@/types/oa/advanced'
 
 const { t } = useI18n()
 
@@ -170,16 +180,13 @@ function instanceStatusTone(s: number): Tone {
 }
 
 // ── 条件 ─────────────────────────────────────────────────────────
-const filter = reactive<FormQueryFilter>({
+type QueryFilters = Omit<LegacyFormHistoryFilter, 'page' | 'snapshotToken'>
+const filter = reactive<Pick<QueryFilters, 'starterId' | 'handlerId' | 'flowKey' | 'keyword' | 'status'>>({
   starterId: undefined,
   handlerId: undefined,
-  flowKey:   undefined,
-  keyword:   undefined,
-  status:    undefined,
-  from:      undefined,
-  to:        undefined,
-  page:      1,
-  pageSize:  20,
+  flowKey: undefined,
+  keyword: undefined,
+  status: undefined,
 })
 
 /** daterange picker 双向绑定 [from, to] */
@@ -223,41 +230,116 @@ async function searchHandlerUsers(keyword: string) {
 // ── 查询 ──────────────────────────────────────────────────────────
 const rows = ref<FormQueryItem[]>([])
 const total = ref(0)
+const currentPage = ref(1)
+const pageSize = ref(20)
 const searching = ref(false)
+const error = ref('')
+const timeZone = ref('')
+const zoneError = ref('')
+let searchGeneration = 0
+let searchRequest: AbortController | undefined
+let zoneRequest: AbortController | undefined
+let activeFilters: QueryFilters | undefined
+let snapshotToken: string | undefined
 
-async function onSearch() {
-  // 将日期区间展开到 from/to
-  filter.from = dateRange.value?.[0] ?? undefined
-  filter.to   = dateRange.value?.[1] ?? undefined
+async function loadTimeZone() {
+  zoneRequest?.abort()
+  const request = new AbortController()
+  zoneRequest = request
+  timeZone.value = ''; zoneError.value = ''
+  try {
+    const context = await queryApi.historyContext(request.signal)
+    if (!request.signal.aborted) timeZone.value = context.timeZoneId
+  } catch {
+    if (!request.signal.aborted) zoneError.value = '未能取得租户时区，暂不能按日期筛选。'
+  }
+}
 
+function clearResults() {
+  searchGeneration++
+  searchRequest?.abort()
+  activeFilters = undefined
+  snapshotToken = undefined
+  currentPage.value = 1
+  rows.value = []
+  total.value = 0
+  error.value = ''
+  searching.value = false
+  drawerVisible.value = false
+  drawerInstanceId.value = ''
+}
+
+async function loadPage(filters: QueryFilters, page: number, token?: string) {
+  const request = ++searchGeneration
+  searchRequest?.abort()
+  searchRequest = new AbortController()
+  rows.value = []
+  error.value = ''
   searching.value = true
   try {
-    const res = await queryApi.search(filter)
-    const page = (res as any).data as { items?: FormQueryItem[]; total?: number }
-    rows.value = page?.items ?? []
-    total.value = page?.total ?? 0
-  } catch { /* HTTP interceptor toasts */ } finally { searching.value = false }
+    const result = await queryApi.history({ ...filters, page, snapshotToken: token }, searchRequest.signal)
+    if (request !== searchGeneration) return
+    rows.value = result.items
+    total.value = result.total
+    currentPage.value = result.page
+    snapshotToken = result.snapshotToken
+  } catch (cause: any) {
+    if (request !== searchGeneration) return
+    total.value = 0
+    snapshotToken = undefined
+    if (cause?.response?.data?.code === 'QUERY_TIMEZONE_CHANGED') {
+      error.value = '租户时区已变化，请确认日期后重新查询。'
+      void loadTimeZone()
+    } else if (['QUERY_SNAPSHOT_STALE', 'QUERY_SNAPSHOT_INVALID'].includes(cause?.response?.data?.code)) {
+      error.value = '查询截点已失效，请从第一页重新查询。'
+    } else {
+      error.value = '无法读取旧流程记录，请重新查询。'
+    }
+  } finally {
+    if (request === searchGeneration) searching.value = false
+  }
+}
+
+function startSearch(filters: QueryFilters) {
+  clearResults()
+  activeFilters = filters
+  void loadPage(filters, 1)
+}
+
+function onSearch() {
+  startSearch({ ...filter, from: dateRange.value?.[0], to: dateRange.value?.[1],
+    timeZoneId: timeZone.value || undefined, pageSize: pageSize.value })
+}
+
+function onPageChange(page: number) {
+  if (!searching.value && activeFilters && snapshotToken && page !== currentPage.value)
+    void loadPage(activeFilters, page, snapshotToken)
+}
+
+function onPageSizeChange(size: number) {
+  if (searching.value || size === pageSize.value) return
+  pageSize.value = size
+  if (activeFilters) startSearch({ ...activeFilters, pageSize: size })
 }
 
 function onReset() {
+  clearResults()
   filter.starterId = undefined
   filter.handlerId = undefined
-  filter.flowKey   = undefined
-  filter.keyword   = undefined
-  filter.status    = undefined
-  filter.from      = undefined
-  filter.to        = undefined
-  dateRange.value  = null
+  filter.flowKey = undefined
+  filter.keyword = undefined
+  filter.status = undefined
+  dateRange.value = null
   starterOptions.value = []
   handlerOptions.value = []
-  rows.value = []
-  total.value = 0
 }
 
-function onPageSizeChange() {
-  filter.page = 1
-  void onSearch()
-}
+onMounted(() => void loadTimeZone())
+onBeforeUnmount(() => {
+  searchGeneration++
+  searchRequest?.abort()
+  zoneRequest?.abort()
+})
 
 // ── 详情抽屉 ──────────────────────────────────────────────────────
 const drawerVisible    = ref(false)

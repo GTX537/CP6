@@ -21,7 +21,11 @@ async function render() { const w = mount(Query, options); wrappers.push(w); awa
 async function click(w: ReturnType<typeof mount>, text: string) { await w.findAll('button').find(b => b.text() === text)!.trigger('click'); await flushPromises() }
 it('keeps unbound submissions visible and opens their exact readonly form data', async () => {
   vi.mocked(api.form).mockResolvedValue({ item: row, form: { formDataId: 'data-one', formVersionId: 'exact-one', title: null, schemaJson: '{"fields":[{"name":"a","type":"input"}]}', dataJson: '{"a":"historical value"}', fieldMask: { a: 'readonly' }, dataSource: 'UNBOUND_SUBMISSION' }, instance: null, canEdit: false })
-  const w = await render(); expect(w.text()).toContain('已提交，未启动审批'); await click(w, '查看记录')
+  const w = await render()
+  expect(w.get('tbody').text()).toContain('表单已提交')
+  expect(w.get('tbody').text()).toContain('未启动审批')
+  await click(w, '查看记录')
+  expect(w.get('article').text()).toContain('表单已提交，未启动审批')
   expect(api.form).toHaveBeenCalledWith('data-one', expect.any(AbortSignal)); expect(api.instance).not.toHaveBeenCalled()
   expect(w.get('article').text()).toContain('historical value'); expect(w.get('article').text()).toContain('仅供查看'); expect(w.get('article').find('button').exists()).toBe(false)
 })
@@ -49,6 +53,11 @@ it('clears visible data immediately and ignores a late detail after identity cha
   expect(w.find('article').exists()).toBe(false)
 })
 it('keeps approval and application separate and never infers applied from an approved instance', async () => {
-  vi.mocked(api.search).mockResolvedValue({ ...page, items: [{ ...row, instanceId: 'instance', instanceStatus: 1, submissionState: 'SubmittedWithInstance', applicationSummary: { owner: 'owner', businessType: 'B', subjectKind: 'item', subjectId: 'object', businessRevision: '1', submissionId: 'submission', detailRoute: null, applicationState: 'UNPROVEN', applicationReceiptId: null, receiptRevision: null, businessResultRef: null, pendingReceiptGap: true } }] })
-  const w = await render(); expect(w.text()).toContain('已通过'); expect(w.text()).toContain('业务应用未证'); expect(w.text()).toContain('回执尚有缺口'); expect(w.text()).not.toContain('业务已应用')
+  vi.mocked(api.search).mockResolvedValue({ ...page, items: [{ ...row, formDataId: null, instanceId: 'instance', instanceStatus: 1, submissionState: 'SubmittedWithInstance', applicationSummary: { owner: 'owner', businessType: 'B', subjectKind: 'item', subjectId: 'object', businessRevision: '1', submissionId: 'submission', detailRoute: null, applicationState: 'UNPROVEN', applicationReceiptId: null, receiptRevision: null, businessResultRef: null, pendingReceiptGap: true } }] })
+  const w = await render()
+  const headers = w.findAll('thead th').map(cell => cell.text())
+  const cells = w.findAll('tbody td').map(cell => cell.text())
+  expect(cells[headers.indexOf('提交状态')]).toBe('业务申请已提交')
+  expect(cells[headers.indexOf('审批状态')]).toBe('已通过')
+  expect(cells[headers.indexOf('业务应用')]).toBe('业务应用未证。回执尚有缺口')
 })
