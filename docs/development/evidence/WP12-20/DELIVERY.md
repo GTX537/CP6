@@ -1,47 +1,35 @@
-# WP12-20 通知偏好、投递和已读水位候选
+# WP12-20 通知偏好、投递和已读水位修订候选
 
-Main 基线 `f0739befada77bcd98b56d448a8f89ed6564be7e`，受验源码 `ede9289d250303b6b665ffb6ef79a30b71eb90f9`，源码树 `cc00bd66f34470b2f7163a7b74037f8afcd5965e`。WP12-20 在 `LAPTOP-3QQ44FJS` 的原 DEV-1 实施。七项直接前置及 30 项展开前置均完整 DONE。由总控独立复核本候选，现行 Main 仍为 `PLANNED`，OA-TASK-01 保持 **25/46**。 [派工 #426](https://github.com/GTX537/CP6.AI-Handoff/blob/823dae77832fba814c2846819f74d89ae8b6e800/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T200227Z-coord3-wp12-20-dispatch/MESSAGE.md) · [START](https://github.com/GTX537/CP6.AI-Handoff/blob/5a93d04890eec1cd361a813156c0ffbdf24b1929/handoffs/CP6-DEV-20261012/tasks/WP12-20/messages/20261123T201443Z-cp6-exec-3-start/MESSAGE.md)
+Main 为 f0739befada77bcd98b56d448a8f89ed6564be7e，修订前 Draft 为 6144f3352bf1a57d61627848fd4391005291a4a3，本轮受验源码为 b69f2e9a8a27cfb098aa3d19bb2449defa70279b，源码树为 4c042fae3ed983450799d28874c99445a9d774b0。原 DEV-1 的 WP12-20 交同一 Draft #1320 独立复验。 [正式 REVISE #427](https://github.com/GTX537/CP6.AI-Handoff/blob/a3a565ebd51c29da13f32fe6fa0b2419bf5deb7b/handoffs/CP6-DEV-20261012/tasks/WP12-20/replies/20261123T211202Z-coord3-candidate-review-r1/MESSAGE.md) · [首版原证据](https://github.com/GTX537/CP6/blob/6144f3352bf1a57d61627848fd4391005291a4a3/docs/development/evidence/WP12-20/DELIVERY.md)
 
-## 候选范围与证据
+## 本轮修订
 
-原 `OA-TASK-01-DEVELOPER-SPEC-R2` SHA-256 `9f9920ffe400ba982834f2d02276535e5a5654ae6b64236fd366247418084b8d`，第 174–197 行。以下为候选实测边界，原 AC 状态仍为 `NOT_RUN`。 [设计手册](../../../design-handbook/modules/OA-TASK-01.md)
+- **现有站内投递。** 期限重算沿原日历 Owner、截止版本、原命令和已提交回执绑定可信租户、环境、任务和通知。站内保留“待办期限已重算”，点击复核原任务权限。旧通用引擎通知的新写入只在原事件键、写入时已登记环境及提交后的真实资源匹配时入队。消费仍走现有后台生命周期及逐租户 Scope，SignalR 只发送本人、租户、环境绑定的刷新提示。
+- **历史及重试。** 可证明来源、从未尝试且已到期的站内记录走当前接收资格及偏好，并以同一通知通道键持久记录一次。保留原已知站内完成，旧未确定结果记录 UNKNOWN，历史写集和 ReadAt 保持原值。无可信归属或环境的旧通知仅保留本人收件中的最小历史摘要。通用旧引擎的邮件保留未采用状态。实际邮件、Required 和生产运维原键重送继续等 Owner 采用。 [同卡 QUESTION](https://github.com/GTX537/CP6.AI-Handoff/blob/330504be45ba928527adc0dc503dfc698d3c18b2/handoffs/CP6-DEV-20261012/tasks/WP12-20/messages/20261123T202654Z-cp6-exec-3-question/MESSAGE.md)
+- **旧一键已读。** 旧列表保留 data 数组，外层返回该次列表的受保护 watermark。旧 read-all 请求明确提交页面持有的 watermark，缺水位得到 428，提示重新读取。浏览器共享观察 Cookie 已移除。v2 使用原 Scope 绑定和按 PostgreSQL 提交可见性判断的快照。同一登录两个观察分别提交，晚于各自观察的消息保持未读，重放不写第二次 ReadAt。
+- **深链。** Chrome 合成用户验证真实 FORM 与 APP 当前任务动作上下文。旧 APP 接收人仍能读取本人最小历史摘要，点击失权通知时看到安全状态并退出失权任务。实际 APP 投票为零。
 
-| 原 AC | 候选验证边界 |
+## 定向验证
+
+本机隔离 PostgreSQL 18.6、Kestrel 和 Chrome 合成资料 **65/65**；Vue 应用类型检查通过，通知矩阵和任务面板 Vitest **23/23**，台账结构与生成视图检查通过。SQL Server 未运行。SQLite 两项旧用例的排序规则错误沿用精确 Main 对照证据。实际邮件、短信、Slack 及部署为零。
+
+| 原验收维度 | 候选原件覆盖 |
 |---|---|
-| AC-T06-01 | 实际 HTTP 回读旧扁平和矩阵偏好，保留 `rowMode` 和 `pageSize`。`notify:null` 恢复默认。旧坏 JSON 只读标为 `LegacyInvalidDefaulted`，零修改。 |
-| AC-T06-02 | 矩阵由后端类型和 producer 支持生成。`timeout` 两格不可用，真实原生合成 remind 仍写 `TodoCreated` 事实。 |
-| AC-T06-03 | 当前本人和 `oa-settings:edit` 下使用原 WFC 命令及版本 CAS。同一版本两个请求只出一条回执，原重放可读，改同键正文 409，旧版本 412。非法结构、布尔、通道、JSON 和超限零新增回执。 |
-| AC-T06-04 | 实际 FORM 新建及审批、APP 转交以原 Owner 事务写通知、Outbox 和当时偏好版本。事务内故障一起回滚，同命令并发与重放保留原事实。投递失败独立于已完成业务决定。 |
-| AC-T06-05 | 站内持久与模拟邮件按 `notificationId/channel/recipientVersion` 独立。无地址 `BLOCKED_ADDRESS`，已知未接收 `RETRYABLE_FAILED`，含不确定尝试 `UNKNOWN`。可查询的模拟 provider 同原键恢复，未知且缺查询时保持待处置。已接收通道无重复发送。真实 provider、正式 Required 策略和人工运维重送待采用。 |
-| AC-T06-06 | 派送前复核当前源、可信租户与环境、本人收件资格、有效账号、通道选择及联系方式。偏好关闭、当前读权撤销后可选投递抑制。已发生的审批和已确认通道记录保持。正式 Required 待采用。 |
-| AC-T06-07 | 稳定分页和水位绑定当前本人、租户与环境，晚提交的回填通知保留未读。单条和水位读写幂等，原 `ReadAt` 保持。旧 bodyless `read-all` 使用既有 GET 列表返回的观察 Cookie。 |
-| AC-T06-08 | 两个合成租户、明确代理资格及撤权以实际 Main HTTP 与 Chrome 核对。收件按实际用户，历史详情只给最小摘要。链接复核当前 FORM/APP 任务。在 Chrome 实测 FORM 从收件箱草稿页正确打开当前任务，失权链接清空缓存并退出该任务。APP 同事务迁移由原 Owner 定向用例覆盖，APP 深链未单独跑浏览器。代理不读取 grantor 私人收件列表。 |
+| AC-T06-01/02/03 | 旧偏好及顶层合并、通知矩阵、原 remind、实际本人 WFC CAS 与同原回执。 |
+| AC-T06-04/05/06 | FORM/APP 原事务样本，期限重算原回执和重复扫描，两个租户的实时分组，历史站内已确认/未知/缺证，合成邮件去重、未知恢复与抑制。真实 provider、Required 和正式运维仍未验。 |
+| AC-T06-07 | v2 与旧入口，本人两次观察、到达时序、幂等重放、无水位安全响应。 |
+| AC-T06-08 | FORM/APP 实际页面深链重查、当前及历史通知、失权清理、合法代理和租户内隔离。 |
 
-新增 PostgreSQL 前向迁移沿已交付的 FORM 与 APP Outbox 读取已完成来源，业务事件和原审批仍使用原 Owner。站内 SignalR 仅按可信租户、环境和本人发送刷新提示。缺来源或环境证明的旧通知只保留本人历史，不重新投递。现有邮件 sender 合同缺原键和查询能力，候选没有注册真实邮件适配器。 [同卡 QUESTION](https://github.com/GTX537/CP6.AI-Handoff/blob/330504be45ba928527adc0dc503dfc698d3c18b2/handoffs/CP6-DEV-20261012/tasks/WP12-20/messages/20261123T202654Z-cp6-exec-3-question/MESSAGE.md)
-
-### 数据库与原命令证据
-
-- 偏好并发复用同一预期版本，HTTP 200 和 412 各 1 次；重放读回同一回执，异载荷为 409。非法或超限请求后回执仍为 1 条，明确恢复默认后共 2 条，旧坏 JSON 保持原字节。Chrome 实际保存的 commandId 与响应一致，原件留有合成 commandId。
-- FORM 首次成功有 2 条通知，每条测试中被核对的通知对应 1 条 Owner 来源。原事务失败没有遗留目标通知或 Outbox。受验通道共有 2 次既定站内刷新，此后同一邮件键 2 次尝试和 1 次原键查询，站内刷新仍为 2。邮件结果从确认未接收转为未知，再由合成原键查询确认接受。任务在尝试期间仍待办。
-- FORM 完成原命令并发返回同一结果，终态通知对应 1 条来源；模拟邮件未知时审批仍为 Approved、决定表决记录为 1，缺查询的模拟 provider 只收 1 次新发送，0 次查询。APP 原转办重放回执逐字节相同，对应接收人的来源只有 1 条。
-- 地址缺失或随后消失保持 BLOCKED_ADDRESS；第三组明确撤销读权后两选用通道均 SUPPRESSED。该组共 3 个审批均仍 Running。站内列表保留已持久的发生时通知摘要，抑制发生在尚未发出的当前通道派送。
-- 观察水位首次更新 2，重放更新 0，已有 ReadAt 原值不变。观察后新增以及在观察时尚未提交的通知仍未读，另一合成租户的水位被拒绝。
-
-## 本机验证
-
-- 隔离 PostgreSQL 18.6，实际 Kestrel、Chrome 和合成用户。定向 .NET **63/63**。实验的站内与邮件结果、业务审批、首次已读分开记。SQL Server `NOT_RUN`，本机服务存在，采用的新 Scope 和迁移依赖 PostgreSQL。未启用实际邮件、短信或 Slack 投递。
-- Vue 类型检查 通过，遗留矩阵 Vitest 7/7。旧 SQLite 通知 Outbox 两项在当前扩展试跑及 Main 同源旧程序集均于建表阶段同样失败，缺 `Latin1_General_100_BIN2`，另存对照原件。这两项与实际 PostgreSQL 事务证据分列。
-- 范围、差异和生成台账结构检查 通过。Main 无记账变更。WP12-15 尾差 **714.019 秒**已按原 DELIVERY 完整提交和路径查重，待下一资格 Main 台账单次结转。WP12-14 尾差已入 Main。 [WP12-15 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/37c1eb25397baa8f8fe51cf75e870f23f3c045be/handoffs/CP6-DEV-20261012/tasks/WP12-15/messages/20261123T194905Z-cp6-exec-3-delivery-closeout/MESSAGE.md)
-
-原件目录 `C:/Users/tt/CP6-test-artifacts/WP12-20/20261123-wp1220-exec3`。采用 `PostgreSQL 18.6` 本机环回和独立目录。按 `restore.log` 绑定依赖，复跑命令及输入与 `source-bind.json` 同目录。关键摘要如下。
+原件位于 C:/Users/tt/CP6-test-artifacts/WP12-20/20261123-wp1220-exec3-r2。source-bind.json 包含相对 Main 的逐文件 Git blob、测试命令和原件摘要；独立 PostgreSQL 实例已停止。两个 SignalR 分组各收到 3 和 2 次刷新，包含各自的原始待办与本轮合格通知；并发或重扫不增加重复提示。该历史处置回归的替身发送、查询、无来源派送和审批投票均为 0。原记录在 TRX 和 raw-focus-test-output.json。混合版本的真实切换未演练，仍待正式部署流程。
 
 | 原件 | SHA-256 |
 |---|---|
-| `wp1220-final.trx` | `8a6df660b0e0f4e677003df059bd3213a73b707d678665b031ca612a6ce943a3` |
-| `permission-consumption-wp1220-final/workflow-notification-browser/result.json` | `e2de8c6ff60eabac64ebfa9b10269c80af9d8d7758b433bcf1bfcfe2edaca826` |
-| `wp1220-baseline-legacy.trx` | `bddbec8dd121689375cf3e864716686857906ab2341367a15c695a8e7db27458` |
-| `roadmap-structure.json` | `d887ac74bc59034d4c9c72b9e036ead7bfafc655b022293ba890f683a2324f5c` |
+| wp1220-r2-first.trx | a483dd32b1111cce021d913e014dca4b4c200bb8a5b356030df0ab6dc3073f7e |
+| permission-consumption-wp1220-r2-first/workflow-notification-browser/result.json | 86d8b37b5dbe7cf9d1c46ca717a728a92c1ea8818676f91e728df0aa04260bcb |
+| roadmap-structure.json | d887ac74bc59034d4c9c72b9e036ead7bfafc655b022293ba890f683a2324f5c |
 
-## 工时与留存
+## 台账和工位
 
-领取 `2026-11-23T20:12:56.412384+00:00` 至候选快照 `2026-11-23T21:00:27.7466206+00:00`，有效 **2851.334 秒**，领取前核对 **316.775 秒**另列。M 卡额度 14400 秒，21600 秒停在安全点拆分。原 DEV-1 留给 WP12-20 继续独立复核，DEV-2 通信后释放。指定技能未在本机提供，本次使用 CP6 规程。
+Main 台账为 PLANNED，原 AC-T06-01 至 AC-T06-08 全为 NOT_RUN，OA-TASK-01 25/46。本候选没有台账或权限词条/授予变更。WP12-15 的 **714.019 秒**按原 DELIVERY 提交与路径查重，下一合资格 Main 台账单次结转。WP12-14 已入 Main。 [WP12-15 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/37c1eb25397baa8f8fe51cf75e870f23f3c045be/handoffs/CP6-DEV-20261012/tasks/WP12-15/messages/20261123T194905Z-cp6-exec-3-delivery-closeout/MESSAGE.md)
+
+快照 2026-11-23T21:36:34.0137578+00:00。本轮有效 1125.114 秒，首轮最终快照有效 2975.939 秒，合计 4101.053 秒。两轮间等待 916.548 秒、首次领取前核对 316.775 秒单列。DEV-1 保留本卡，DEV-2 正式通信后释放。两项指定技能在本机未找到，已依授权继续使用 CP6 规程。
