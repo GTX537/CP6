@@ -38,6 +38,7 @@ export interface SchemaNode {
   code?: string                                        // 状态编号（对应后端 FlowNode.Code）
   approverStrategy?: string; approverLevels?: number; approverRoleId?: number; approverUserId?: string
   countersign?: string; timeoutHours?: number; timeoutAction?: string
+  timeoutWorkday?: { workdays: number; localTime: string; ambiguousOffsetMinutes?: number | null }
   allowReject?: boolean                                // 允许退回
   ccUsers?: string[]; ccRoleId?: number
   stages?: ApprovalStageDto[]                          // 串簽多档审批配置

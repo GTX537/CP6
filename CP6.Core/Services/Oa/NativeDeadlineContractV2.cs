@@ -2,7 +2,9 @@ namespace CP6.Core.Services.Oa;
 
 public sealed record NativeDeadlinePolicyV2(Guid FlowVersionId, string NodeId, int? Hours, string? Action,
     Guid? EscalateTo, string EscalationReset, string Basis, string CalendarRevision, string TimeZoneId, int OffsetMinutes,
-    string ClockSource = "POSTGRESQL_CLOCK_TIMESTAMP");
+    string ClockSource = "POSTGRESQL_CLOCK_TIMESTAMP", Guid? CalendarId = null, DateTime? LocalDueAt = null,
+    string? TimeZoneRulesVersion = null, string? TimeZoneSource = null, string? FailureCode = null,
+    WorkflowWorkdayDeadlineV1? Workday = null);
 public sealed record NativeTimeoutClaimV2(Guid ExecutionId, Guid TaskId, long Revision, long Occurrence,
     long Epoch, Guid ClaimId, Guid ServiceId, Guid RegistrationRevision, DateTimeOffset LeaseUntil);
 public sealed record NativeTimeoutResultV2(Guid ExecutionId, Guid TaskId, long Revision, long Occurrence,

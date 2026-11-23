@@ -39,6 +39,9 @@ public class FlowNode
     /// <summary>超时小时数（建待办后多久到期）；空=不限时</summary>
     public int? TimeoutHours { get; set; }
 
+    /// <summary>按原租户日历计算首次截止。提醒的后续间隔仍使用 TimeoutHours。</summary>
+    public CP6.Core.Services.Oa.WorkflowWorkdayDeadlineV1? TimeoutWorkday { get; set; }
+
     /// <summary>超时动作：remind(软,催办可重复) / approve / reject / escalate(升级给 EscalateTo)</summary>
     public string? TimeoutAction { get; set; }
 

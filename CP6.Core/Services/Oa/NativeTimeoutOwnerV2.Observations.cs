@@ -160,7 +160,8 @@ public sealed partial class NativeTimeoutOwnerV2
         {
             if (declared.Message == "TIMEOUT_OUTCOME_UNKNOWN") return NativeTimeoutFailureKindV2.Unknown;
             if (declared.Status == 503) return NativeTimeoutFailureKindV2.AuthorityUnavailable;
-            if (declared.Status is 401 or 403 || declared.Message == "TIMEOUT_LEASE_LOST") return NativeTimeoutFailureKindV2.Denied;
+            if (declared.Status is 401 or 403 || declared.Message is "TIMEOUT_LEASE_LOST" or "TIMEOUT_CLAIM_VERSION_CHANGED" or "TIMEOUT_ORIGINAL_NOT_PENDING")
+                return NativeTimeoutFailureKindV2.Denied;
             return NativeTimeoutFailureKindV2.Permanent;
         }
         var storage = error is DbUpdateException update ? update.InnerException : error;

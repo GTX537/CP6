@@ -1,4 +1,5 @@
 using System.Text.Json;
+using CP6.Core.Services.Common;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
@@ -80,8 +81,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var due=await h.Db.Database.SqlQuery<DateTimeOffset>($"SELECT due_at AS \"Value\" FROM cp6_native_timeout_v2.deadlines WHERE task_id={f.Task}").SingleAsync();
         var worker=await TimeoutOwner(h,f.Owner,due.AddSeconds(1));var claim=Assert.Single(await worker.ClaimAsync());fault.Armed=true;
         Assert.Equal("TIMEOUT_OUTCOME_UNKNOWN",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>worker.ExecuteAsync(claim))).Message);
-        var original=await worker.ExecuteAsync(claim);Assert.Equal("COMPLETED",original.State);Assert.Equal(claim.ExecutionId,original.ExecutionId);
-        Assert.Equal(original,await worker.ExecuteAsync(claim));
+        await using var recoveredDb=server.Context(new TenantContext{CurrentTenantId=h.Tenant});var recovered=h with{Db=recoveredDb};
+        var newOwner=new NativeTimeoutOwnerV2(recoveredDb,ScopeFence(recovered),
+            new(){Enabled=true,ServiceId=claim.ServiceId,HostKey="isolated-postgres-test-host"},PersonalForm(recovered),Decisions(recovered));
+        var original=await newOwner.ExecuteAsync(claim);Assert.Equal("COMPLETED",original.State);Assert.Equal(claim.ExecutionId,original.ExecutionId);
+        Assert.Equal(original,await newOwner.ExecuteAsync(claim));
         Assert.Equal(1,await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_personal_form_v2.outbox WHERE kind='TIMEOUT_REMINDER' AND task_id={f.Task}").SingleAsync());
         var diagnostics=(await NativeInbox(h,f.Owner).DetailAsync(f.Instance)).Timeout!;
         Assert.Equal("OBSERVED_RUNNING",diagnostics.RuntimeState);Assert.Equal(original,Assert.Single(diagnostics.Deadlines).LastResult);
@@ -149,7 +153,10 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var due=await h.Db.Database.SqlQuery<DateTimeOffset>($"SELECT due_at AS \"Value\" FROM cp6_native_timeout_v2.deadlines WHERE task_id={f.Task}").SingleAsync();
         var worker=await TimeoutOwner(h,f.Owner,due.AddSeconds(1));var claim=Assert.Single(await worker.ClaimAsync());
         var c=await f.Owner.TaskContextAsync(f.Task);var vote=NativeVote(c,"human winner","approve");
-        await DecideNative(f.Owner,f.Task,vote);
+        await using var api=await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!,CalendarHostSettings());
+        using var request=TimeoutHumanDecision(await Login(api,h),f.Task,vote);
+        using var human=await api.Send(request);
+        Assert.True(human.IsSuccessStatusCode,await OperationsFailure(human));
         var result=await worker.ExecuteAsync(claim);Assert.Equal("SKIPPED_ALREADY_HANDLED",result.State);Assert.Null(result.CommandId);
         Assert.Equal(1,(await NativeInbox(h,f.Owner).DetailAsync(f.Instance)).Votes.Length);Assert.Equal(result,await worker.ExecuteAsync(claim));
     }

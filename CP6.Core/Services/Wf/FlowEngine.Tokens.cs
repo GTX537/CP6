@@ -221,7 +221,7 @@ public partial class FlowEngine
         try { await TimeoutErrorKernel(taskId, actorId, ct); }
         finally { DeferSynchronousWebApi = defer; }
     }
-    private async Task TimeoutErrorKernel(Guid taskId, Guid actorId, CancellationToken ct)
+    private async Task TimeoutErrorKernel(Guid taskId, Guid actorId, CancellationToken ct, DateTimeOffset? originalDeadline = null)
     {
         var task = await _db.Wf_FlowTasks.FirstOrDefaultAsync(t => t.Id == taskId, ct);
         if (task is null || task.Status != FlowTaskStatus.Pending) return;
@@ -250,7 +250,7 @@ public partial class FlowEngine
         // ② 注入错误变量（口径同 serviceTask 失败：结构化 key）
         inst.VarsJson = ServiceVarsHelper.MergeOutputVars(inst.VarsJson, new Dictionary<string, object?>
         {
-            ["timeoutError"] = new { nodeId = task.NodeId, dueAt = task.DueAt },
+            ["timeoutError"] = new { nodeId = task.NodeId, dueAt = originalDeadline?.UtcDateTime ?? task.DueAt },
         }).VarsJson;
         AddHistory(inst.Id, task.NodeId, actorId, "timeoutErrorEdge", $"审批超时走失败边（node={task.NodeId}）");
 

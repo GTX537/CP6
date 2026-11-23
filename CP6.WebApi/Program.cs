@@ -444,6 +444,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IWorkdayCalculator, CP6.Core.Ser
 builder.Services.AddScoped<CP6.Core.Services.Wf.ITenantClock, CP6.Core.Services.Wf.TenantClock>(); // E-T2 租户时区源（workdays/untilDate 本地时刻解释；Sys_Tenant.TimeZoneId→Wfs:DefaultTimeZone→服务器本地）
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWorkCalendarService, CP6.Core.Services.Wf.WorkCalendarService>(); // A-T4 年历管理页后端（例外表 CRUD/空态导入日本假日）
+builder.Services.AddScoped<CP6.Core.Services.Oa.VersionedWorkCalendarV1>();
 
 // 4.0d OA 电子表单信箱（Phase B，消费 Wf 引擎）
 builder.Services.AddScoped<CP6.Core.Services.Oa.IForecastService, CP6.Core.Services.Oa.ForecastService>();

@@ -55,6 +55,32 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.False((await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync()).TimeoutHandled);
         Assert.Equal(1,await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_personal_form_v2.outbox WHERE command_id={claim.ExecutionId} AND kind='TIMEOUT_BLOCKED'").SingleAsync());
     }
+
+    [CurrentPermissionPostgresFact]
+    public async Task NativeTimeoutPolicy_APP_escalation_preserves_original_assignment_when_target_conflicts_with_frozen_subject()
+    {
+        await using var h = await Seed();
+        await TimeoutZone(h);
+        var schema = StartSchema.Replace("\"countersign\":\"all\"",
+            $"\"countersign\":\"all\",\"timeoutHours\":1,\"timeoutAction\":\"escalate\",\"escalateTo\":\"{h.User:D}\"");
+        var (_, reviewer) = await StartSetup(h, schema);
+        await Starter(h).RunAsync(h.Tenant);
+        h.Db.ChangeTracker.Clear();
+        var task = await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync();
+        var due = await h.Db.Database.SqlQuery<DateTimeOffset>($"SELECT due_at AS \"Value\" FROM cp6_native_timeout_v2.deadlines WHERE task_id={task.Id}").SingleAsync();
+        var worker = await TimeoutOwner(h, PersonalForm(h), due.AddSeconds(1));
+        var claim = Assert.Single(await worker.ClaimAsync());
+        var result = await worker.ExecuteAsync(claim);
+        Assert.Equal("BLOCKED_TARGET", result.State);
+        Assert.Equal("SOD_VIOLATION", result.Reason);
+        Assert.Equal(result, await worker.ExecuteAsync(claim));
+        var assignment = await ApprovalTaskAssignmentsV2.Read(h.Db, ScopeEnvironment, task.Id, default);
+        Assert.Equal(reviewer, assignment.PrincipalId);
+        Assert.Equal(reviewer, assignment.CreatedPrincipalId ?? assignment.PrincipalId);
+        Assert.Equal(0, (await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync()).Status);
+        Assert.Equal(0, await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_native_tasks_v2.app_assignment_changes WHERE task_id={task.Id}").SingleAsync());
+        Assert.Equal(1, await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_native_tasks_v2.notification_outbox WHERE command_id={claim.ExecutionId} AND kind='TIMEOUT_BLOCKED'").SingleAsync());
+    }
     [CurrentPermissionPostgresFact]
     public async Task NativeTimeoutPolicy_missing_writer_guard_rejects_claim_without_producing_effect()
     {
