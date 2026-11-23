@@ -143811,7 +143811,7 @@
           "scope": "OA-FORM-01: fixed Main/CRM/Platform/candidate evidence; known implementation delta, not exhaustive runtime conformance. Actual per-file source SHA is in the report."
         }
       ],
-      "delivery_state": "PLANNED",
+      "delivery_state": "DONE",
       "blockers": [],
       "runtime_case_ids": [],
       "original_acceptance_inventory": {
@@ -143825,8 +143825,21 @@
             "id": "OA-FORM-01::AC-F01-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F01-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+                "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+                "observed_at": "2026-11-23T13:48:55.8016872Z",
+                "result": "PASS",
+                "environment": "LAPTOP-3QQ44FJS Windows、真实 Main HTTP 和 OA Chrome、本机隔离 PostgreSQL 18.6 与合成普通业务数据。",
+                "command": "本机 dotnet vstest 执行 restore-history、restore-boundaries、restore-chrome，原命令、日志和 SHA-256 见唯一报告。Vue 类型检查和 Vitest 复用相同前端树。",
+                "scope": "隔离 PostgreSQL 的目录用例确认发布已选版本、启用及角色准入都在计数和搜索之前。实际 Chrome 从目录进入时发起新请求并核对最新发布 GUID。",
+                "evidence_mode": "EXECUTION_AND_REUSED_EXECUTION"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/0"
@@ -143836,8 +143849,21 @@
             "id": "OA-FORM-01::AC-F01-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F01-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+                "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+                "observed_at": "2026-11-23T13:48:55.8016872Z",
+                "result": "PASS",
+                "environment": "LAPTOP-3QQ44FJS Windows、真实 Main HTTP 和 OA Chrome、本机隔离 PostgreSQL 18.6 与合成普通业务数据。",
+                "command": "本机 dotnet vstest 执行 restore-history、restore-boundaries、restore-chrome，原命令、日志和 SHA-256 见唯一报告。Vue 类型检查和 Vitest 复用相同前端树。",
+                "scope": "收藏双连接赋值汇聚为一条记录，重放保持原结果。不同实际用户与租户使用同一表单键各自隔离。",
+                "evidence_mode": "EXECUTION_AND_REUSED_EXECUTION"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/1"
@@ -143847,8 +143873,21 @@
             "id": "OA-FORM-01::AC-F01-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F01-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+                "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+                "observed_at": "2026-11-23T13:48:55.8016872Z",
+                "result": "PASS",
+                "environment": "LAPTOP-3QQ44FJS Windows、真实 Main HTTP 和 OA Chrome、本机隔离 PostgreSQL 18.6 与合成普通业务数据。",
+                "command": "本机 dotnet vstest 执行 restore-history、restore-boundaries、restore-chrome，原命令、日志和 SHA-256 见唯一报告。Vue 类型检查和 Vitest 复用相同前端树。",
+                "scope": "停用发布和暂停当前 Scope 后，实际 HTTP 收藏只返回本人保存的键及空发布信息；发起上下文拒绝。字段和附件继续按当前权限读取。",
+                "evidence_mode": "EXECUTION_AND_REUSED_EXECUTION"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/2"
@@ -143858,8 +143897,21 @@
             "id": "OA-FORM-01::AC-F01-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F01-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+                "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+                "observed_at": "2026-11-23T13:48:55.8016872Z",
+                "result": "PASS",
+                "environment": "LAPTOP-3QQ44FJS Windows、真实 Main HTTP 和 OA Chrome、本机隔离 PostgreSQL 18.6 与合成普通业务数据。",
+                "command": "本机 dotnet vstest 执行 restore-history、restore-boundaries、restore-chrome，原命令、日志和 SHA-256 见唯一报告。Vue 类型检查和 Vitest 复用相同前端树。",
+                "scope": "实际 HTTP 对失效收藏连续取消成功；Chrome 验证断响应按原命令恢复再取消，组件验证身份变更清屏并丢弃迟到响应。",
+                "evidence_mode": "EXECUTION_AND_REUSED_EXECUTION"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/3"
@@ -143869,8 +143921,20 @@
             "id": "OA-FORM-01::AC-F02-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F02-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W275/W278本人Active、准确pin、原命令仅一草稿且无实例任务；W316旧Create共用该Owner。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/4"
@@ -143880,8 +143944,20 @@
             "id": "OA-FORM-01::AC-F02-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F02-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W275 partial类型/形状/未知字段；W285真实FILE、W287选项；BUG756满额UTF8/深度/精确数值补齐，W316旧HTTP完整限额回归。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/5"
@@ -143891,8 +143967,20 @@
             "id": "OA-FORM-01::AC-F02-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F02-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W275 Owned/tenant/currentActor；W316旧入口不接受替人；W318实际HTTP另一用户404、不披露旧内容。TASK代理不授草稿编辑。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/6"
@@ -143902,8 +143990,20 @@
             "id": "OA-FORM-01::AC-F02-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F02-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W275双连接保存CAS和W278页面；W316失败保行/原意图，当前Save按原pin合并并保隐藏值。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/7"
@@ -143913,8 +144013,32 @@
             "id": "OA-FORM-01::AC-F02-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F02-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "当前DraftsAsync仅本人Active、updatedUTC/id稳定序和摘要；W316旧List不返回DataJson；W285详情/原件下载当前授权。W318旧目录内容另按准确当前映射授权。"
+              },
+              {
+                "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+                "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+                "observed_at": "2026-11-23T13:48:55.8016872Z",
+                "result": "PASS",
+                "environment": "LAPTOP-3QQ44FJS Windows、真实 Main HTTP 和 OA Chrome、本机隔离 PostgreSQL 18.6 与合成普通业务数据。",
+                "command": "本机 dotnet vstest 执行 restore-history、restore-boundaries、restore-chrome，原命令、日志和 SHA-256 见唯一报告。Vue 类型检查和 Vitest 复用相同前端树。",
+                "scope": "W319 已采用草稿摘要和 W318 旧内容当前读权。本轮 HTTP 检查历史投影、字段遮蔽、同租户非参与者、跨租户及下载拒绝；Chrome 验证撤权清除旧详情。",
+                "evidence_mode": "EXECUTION_AND_REUSED_EXECUTION"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/8"
@@ -143924,8 +144048,20 @@
             "id": "OA-FORM-01::AC-F02-06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F02-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W275停用/上下文变化；当前Save直接采用原Publication和当前mask，不用最新Schema；Submit需当前activation。W282退回实例独立，未复活Submitted草稿。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/9"
@@ -143935,8 +144071,20 @@
             "id": "OA-FORM-01::AC-F03-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F03-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W275/W278准确bound FormData/instance/pin；W304真实两连接不同命令争同draft仅一提交，W316旧提交同Owner。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/10"
@@ -143946,8 +144094,20 @@
             "id": "OA-FORM-01::AC-F03-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F03-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W275原槽同输入重放/异输入拒绝；W316实际旧SubmissionKey固定映射、原hash/原bytes和所有ID恢复。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/11"
@@ -143957,8 +144117,20 @@
             "id": "OA-FORM-01::AC-F03-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F03-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W304 DIRECT/DRAFT五项expected分别不等均拒绝、保Active/原data/token；W316旧请求缺准确前驱必须新GET，封闭DTO不静默接替换Data。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/12"
@@ -143968,8 +144140,20 @@
             "id": "OA-FORM-01::AC-F03-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F03-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W304首真实人工任务CHECK失败整组回滚、同意图恢复；W275通知/最终授权失败及确定延迟COMMIT拒绝。当前FormData、runtime、draft、history、receipt/Outbox仍同事务。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/13"
@@ -143979,8 +144163,32 @@
             "id": "OA-FORM-01::AC-F03-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F03-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W275/W316合法unbound只有FormData且instance=null；当前policy显式allowsUnbound，无绑定本身不授许可，页面区分未启动审批。"
+              },
+              {
+                "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+                "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+                "observed_at": "2026-11-23T13:48:55.8016872Z",
+                "result": "PASS",
+                "environment": "LAPTOP-3QQ44FJS Windows、真实 Main HTTP 和 OA Chrome、本机隔离 PostgreSQL 18.6 与合成普通业务数据。",
+                "command": "本机 dotnet vstest 执行 restore-history、restore-boundaries、restore-chrome，原命令、日志和 SHA-256 见唯一报告。Vue 类型检查和 Vitest 复用相同前端树。",
+                "scope": "W275、W316 及本轮 `SubmittedUnbound` HTTP 和 Chrome 验证显示表单已提交、未启动审批，准确版本只读。",
+                "evidence_mode": "EXECUTION_AND_REUSED_EXECUTION"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/14"
@@ -143990,8 +144198,20 @@
             "id": "OA-FORM-01::AC-F03-06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F03-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W275原槽actual/tenant/environment/operation/resource；W316另一actual相同旧SubmissionKey不认领历史或他人原结果，当前read/字段/FILE再次投影。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/15"
@@ -144001,8 +144221,32 @@
             "id": "OA-FORM-01::AC-F03-07",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F03-07",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W275真实commit后故障与W278页面丢答；W316旧同原键恢复和W304异新键不假报胜者成功，W318原键恢复未破坏旧链。"
+              },
+              {
+                "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+                "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+                "observed_at": "2026-11-23T13:48:55.8016872Z",
+                "result": "PASS",
+                "environment": "LAPTOP-3QQ44FJS Windows、真实 Main HTTP 和 OA Chrome、本机隔离 PostgreSQL 18.6 与合成普通业务数据。",
+                "command": "本机 dotnet vstest 执行 restore-history、restore-boundaries、restore-chrome，原命令、日志和 SHA-256 见唯一报告。Vue 类型检查和 Vitest 复用相同前端树。",
+                "scope": "W275、W278、W304、W316 的原键/断响应/单实例证据；本轮真实 HTTP 撤销写权保留当前读权时查原提交结果，以及隔离提交回归。",
+                "evidence_mode": "EXECUTION_AND_REUSED_EXECUTION"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/16"
@@ -144012,8 +144256,32 @@
             "id": "OA-FORM-01::AC-F03-08",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F03-08",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W275 native runtime guard、W282 APP/SFS分流；普通FORM不写Owner冻结Subject，APP应用仍由真实业务Owner负责。"
+              },
+              {
+                "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+                "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+                "observed_at": "2026-11-23T13:48:55.8016872Z",
+                "result": "PASS",
+                "environment": "LAPTOP-3QQ44FJS Windows、真实 Main HTTP 和 OA Chrome、本机隔离 PostgreSQL 18.6 与合成普通业务数据。",
+                "command": "本机 dotnet vstest 执行 restore-history、restore-boundaries、restore-chrome，原命令、日志和 SHA-256 见唯一报告。Vue 类型检查和 Vitest 复用相同前端树。",
+                "scope": "W275、W282 的 FORM/APP 边界及本轮统一 APP 正常任务入口回归拒绝表单 patch。实际业务 Owner 产生的应用回执单独接收并呈现。",
+                "evidence_mode": "EXECUTION_AND_REUSED_EXECUTION"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/17"
@@ -144023,8 +144291,20 @@
             "id": "OA-FORM-01::AC-F04-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F04-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W293精确source/target/digest、可见path分类/default；W303补隐藏处置消费，PersonalFormRebaseV2内核相对该交付未变。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/18"
@@ -144034,8 +144314,20 @@
             "id": "OA-FORM-01::AC-F04-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F04-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W293/W275准确preview与明确可见损失确认；W303隐藏有值损失必须独立真实处置Ref，盲confirm拒绝。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/19"
@@ -144045,8 +144337,20 @@
             "id": "OA-FORM-01::AC-F04-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F04-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W293 table逐列/逐行诊断，MaxRows缩小保所有原行并阻Submit；W302/303实际HTTP/Chrome无临时越权、不泄路径或值。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/20"
@@ -144056,8 +144360,20 @@
             "id": "OA-FORM-01::AC-F04-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F04-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W275预览过期，W293准确source/target；W303原源/当前政策/后发目标/处置期限改变拒绝；当前RebasePlan门内重算摘要。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/21"
@@ -144067,8 +144383,20 @@
             "id": "OA-FORM-01::AC-F04-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F04-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W293 requiredAfterRebase/动态规则及逐行诊断；重基后可留Active，Submit按准确新schema完整复算/验证。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/22"
@@ -144078,8 +144406,20 @@
             "id": "OA-FORM-01::AC-F04-06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F04-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W275/W303原重基命令保同token/receipt且处置只消费一次；原§6独立恢复要求由W317精确before快照→新draft和两次动作链补齐，当前原生恢复/FILE/未知回归在W318再验证。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/23"
@@ -144089,8 +144429,20 @@
             "id": "OA-FORM-01::AC-F05-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F05-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W275仅本人Active可删、Submitted不可删；W316旧DELETE共用ChangeDeleted墓碑，不再由HTTP调用物理Remove。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/24"
@@ -144100,8 +144452,20 @@
             "id": "OA-FORM-01::AC-F05-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F05-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W275真实submit/delete竞争仅一合法终态；W304不同submit竞争是补证，未冒称替代原竞争。共同IAM门和同draft控制仍适用。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/25"
@@ -144111,8 +144475,20 @@
             "id": "OA-FORM-01::AC-F05-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F05-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W275删除原键/CAS；W316旧If-Match无损映射和原结果，404不伪装已删。当前restore有准确留存/政策Ref及最终到期检查。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/26"
@@ -144122,8 +144498,20 @@
             "id": "OA-FORM-01::AC-F05-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F05-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W285真实FILE原件/hold/已删draft资格及不连带删字节；W317/318恢复只绑定真实合法原件；purge保持独立授权，不把保留当擦除。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/27"
@@ -144133,8 +144521,20 @@
             "id": "OA-FORM-01::AC-F05-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F05-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/W319-01/DELIVERY.md",
+                "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+                "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+                "result": "PASS",
+                "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+                "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+                "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+                "new_product_execution": false,
+                "scope": "W316实际Chrome取消零请求、失败保行、成功删除后刷新不复活；W318重新执行该旧适配Chrome，结果通过。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/28"
@@ -144144,8 +144544,21 @@
             "id": "OA-FORM-01::AC-F06-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F06-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+                "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+                "observed_at": "2026-11-23T13:48:55.8016872Z",
+                "result": "PASS",
+                "environment": "LAPTOP-3QQ44FJS Windows、真实 Main HTTP 和 OA Chrome、本机隔离 PostgreSQL 18.6 与合成普通业务数据。",
+                "command": "本机 dotnet vstest 执行 restore-history、restore-boundaries、restore-chrome，原命令、日志和 SHA-256 见唯一报告。Vue 类型检查和 Vitest 复用相同前端树。",
+                "scope": "原生授权、TASK 代理及组合筛选证据保留；本轮实际旧流程 HTTP 组合发起人、处理人、状态与租户日历，核对总数与可见结果，Chrome 证实完整结束日。",
+                "evidence_mode": "EXECUTION_AND_REUSED_EXECUTION"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/29"
@@ -144155,8 +144568,21 @@
             "id": "OA-FORM-01::AC-F06-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F06-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+                "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+                "observed_at": "2026-11-23T13:48:55.8016872Z",
+                "result": "PASS",
+                "environment": "LAPTOP-3QQ44FJS Windows、真实 Main HTTP 和 OA Chrome、本机隔离 PostgreSQL 18.6 与合成普通业务数据。",
+                "command": "本机 dotnet vstest 执行 restore-history、restore-boundaries、restore-chrome，原命令、日志和 SHA-256 见唯一报告。Vue 类型检查和 Vitest 复用相同前端树。",
+                "scope": "实际 HTTP 和 Chrome 验证合法无实例记录、无审批状态和只读详情，并交叉验证 `hasInstance` 筛选。",
+                "evidence_mode": "EXECUTION_AND_REUSED_EXECUTION"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/30"
@@ -144166,8 +144592,21 @@
             "id": "OA-FORM-01::AC-F06-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F06-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+                "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+                "observed_at": "2026-11-23T13:48:55.8016872Z",
+                "result": "PASS",
+                "environment": "LAPTOP-3QQ44FJS Windows、真实 Main HTTP 和 OA Chrome、本机隔离 PostgreSQL 18.6 与合成普通业务数据。",
+                "command": "本机 dotnet vstest 执行 restore-history、restore-boundaries、restore-chrome，原命令、日志和 SHA-256 见唯一报告。Vue 类型检查和 Vitest 复用相同前端树。",
+                "scope": "原生历史保留改名前的固定发布版本；旧 HTTP 列表和详情一致展示固定快照名称，缺失时元数据为 null，回填标来源；实际 Chrome 验证缺失提示。",
+                "evidence_mode": "EXECUTION_AND_REUSED_EXECUTION"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/31"
@@ -144177,8 +144616,21 @@
             "id": "OA-FORM-01::AC-F06-04",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F06-04",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+                "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+                "observed_at": "2026-11-23T13:48:55.8016872Z",
+                "result": "PASS",
+                "environment": "LAPTOP-3QQ44FJS Windows、真实 Main HTTP 和 OA Chrome、本机隔离 PostgreSQL 18.6 与合成普通业务数据。",
+                "command": "本机 dotnet vstest 执行 restore-history、restore-boundaries、restore-chrome，原命令、日志和 SHA-256 见唯一报告。Vue 类型检查和 Vitest 复用相同前端树。",
+                "scope": "关键词验证限流程代码和业务编号，合成字段值不影响匹配；当前遮蔽字段及附件、不同租户 ID、无对象权账号均不能扩大历史/下载披露。",
+                "evidence_mode": "EXECUTION_AND_REUSED_EXECUTION"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/32"
@@ -144188,8 +144640,21 @@
             "id": "OA-FORM-01::AC-F06-05",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F06-05",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+                "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+                "observed_at": "2026-11-23T13:48:55.8016872Z",
+                "result": "PASS",
+                "environment": "LAPTOP-3QQ44FJS Windows、真实 Main HTTP 和 OA Chrome、本机隔离 PostgreSQL 18.6 与合成普通业务数据。",
+                "command": "本机 dotnet vstest 执行 restore-history、restore-boundaries、restore-chrome，原命令、日志和 SHA-256 见唯一报告。Vue 类型检查和 Vitest 复用相同前端树。",
+                "scope": "原生 UTC 半开日界、稳定截点和页大小上限 100 证据保留。旧流程回归证明 25/23 小时日界、最末毫秒纳入、次日零点排除、稳定同刻顺序、首次截点屏蔽新增和晚提交，以及重置忽略延迟响应。",
+                "evidence_mode": "EXECUTION_AND_REUSED_EXECUTION"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/33"
@@ -144199,8 +144664,21 @@
             "id": "OA-FORM-01::AC-F06-06",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-F06-06",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+                "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+                "observed_at": "2026-11-23T13:48:55.8016872Z",
+                "result": "PASS",
+                "environment": "LAPTOP-3QQ44FJS Windows、真实 Main HTTP 和 OA Chrome、本机隔离 PostgreSQL 18.6 与合成普通业务数据。",
+                "command": "本机 dotnet vstest 执行 restore-history、restore-boundaries、restore-chrome，原命令、日志和 SHA-256 见唯一报告。Vue 类型检查和 Vitest 复用相同前端树。",
+                "scope": "隔离库真实 APP 的批准保留未证；WMS 原回执有缺口时不提前采用，实际文档 Owner 的应用结果在原回执进入投影后才显示 `APPLIED` 和结果引用。Chrome 与组件核对状态分栏。",
+                "evidence_mode": "EXECUTION_AND_REUSED_EXECUTION"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/14/cases/34"
@@ -144208,8 +144686,60 @@
           }
         ]
       },
-      "implementation_evidence": [],
-      "delivery_evidence": null
+      "implementation_evidence": [
+        {
+          "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+          "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+          "source_repository": "GTX537/CP6",
+          "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+          "observed_at": "2026-11-23T13:48:55.8016872Z",
+          "result": "PASS",
+          "environment": "LAPTOP-3QQ44FJS Windows、真实 Main HTTP 和 OA Chrome、本机隔离 PostgreSQL 18.6 与合成普通业务数据。",
+          "command": "本机 dotnet vstest 执行 restore-history、restore-boundaries、restore-chrome，原命令、日志和 SHA-256 见唯一报告。Vue 类型检查和 Vitest 复用相同前端树。",
+          "scope": "本卡目录、收藏、授权历史、恢复后旧流程分页、最终披露及 Owner 状态分离。"
+        },
+        {
+          "path": "docs/development/evidence/W319-01/DELIVERY.md",
+          "source_sha": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+          "observed_at": "2026-11-23T14:02:47.9054703+00:00",
+          "result": "PASS",
+          "command": "复用 W319 逐原 AC 核对的历史运行与关联报告，原执行命令和环境按各 W 报告。本时点为本次核对。",
+          "environment": "原隔离 PostgreSQL、实际 Main HTTP、Chrome、组件及 FILE，细节和模拟范围见 W319 所引用的报告。",
+          "evidence_mode": "REUSED_EXECUTION_AND_CURRENT_SCOPE_REVIEW",
+          "new_product_execution": false,
+          "scope": "WP12-03/04 已采用的 F02 至 F05 25 条逐项历史证据。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+        "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+        "remote_main_sha": "4d31801d0456064ae38cf367759d38000be286e2",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+        "scope": "本字段是核销前已回读的 Main 基线。实际远端采用、同树冒烟及席位释放按 #1317 和正式收尾回执核实。",
+        "observed_at": "2026-11-23T14:07:09.731137+00:00"
+      },
+      "completion_audit": {
+        "result": "DONE",
+        "reviewed_at": "2026-11-23T14:02:47.9054703+00:00",
+        "report": "docs/development/evidence/WP12-05/DELIVERY.md",
+        "classification": "BUSINESS",
+        "original_cases_reviewed": 35,
+        "original_pass": 35,
+        "required_supplemental_cases": 0,
+        "supplemental_pass": 0,
+        "required_revision_cases": 0,
+        "runtime_pass": 0,
+        "coverage_cards": [
+          "WP12-03",
+          "WP12-04",
+          "WP12-05"
+        ],
+        "gaps": [],
+        "unassigned_source_cases": [],
+        "review_effective_seconds": 121.592,
+        "latest_review_effective_seconds": 121.592,
+        "new_product_execution": false
+      }
     },
     {
       "id": "OA-TASK-01",
@@ -177006,6 +177536,11 @@
       "at": "2026-11-23T11:08:39.877947+00:00",
       "evidence": "docs/development/evidence/WP12-17/DELIVERY.md",
       "change": "WP12-17 完整 DONE，OA-CONN-01 原 AC 16/32 通过，目标开放。CONN-21 随 WP12-18 合验。按 #413 单次补记 WP12-11 收尾 475.670 秒。"
+    },
+    {
+      "at": "2026-11-23T14:07:09.731137+00:00",
+      "evidence": "docs/development/evidence/WP12-05/DELIVERY.md",
+      "change": "WP12-05 完整 DONE，OA-FORM-01 原 AC 35/35 通过并关目标。按 #415 单次补记 WP12-17 收尾 616.455 秒，CONN-21 仍随 WP12-18 合验。"
     }
   ],
   "implementation_assessment": {
@@ -226042,14 +226577,55 @@
         "file:Main:CP6.Core/Services/Oa/TaskDecisionService.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP12.md",
       "card_anchor": "wp12-05",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "CP6-EXEC-2",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp12-05",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-23T11:53:35.625483+00:00",
+        "baseline_sha": "4d31801d0456064ae38cf367759d38000be286e2",
+        "entry_evidence": "docs/development/planning/20261117-card-execution.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "delivery_report": "docs/development/evidence/WP12-05/DELIVERY.md",
+        "dispatch_scope": "WP12-05 原目录、收藏、历史查询与最终披露范围",
+        "dispatch_decision_ref": {
+          "commit": "451a66f2ca73d725195a380edce9fb90c6d8951e",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T114542Z-cp6-exec-2-wp12-05/MESSAGE.md"
+        },
+        "actual_start_ref": {
+          "commit": "03747b4d74086d545818ee790e09787b9118c65c",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP12-05/messages/20261123T115557Z-cp6-exec-2-start/MESSAGE.md",
+          "at": "2026-11-23T11:53:35.625483+00:00"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+          "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+          "source_repository": "GTX537/CP6",
+          "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+          "observed_at": "2026-11-23T13:48:55.8016872Z",
+          "result": "PASS",
+          "environment": "LAPTOP-3QQ44FJS Windows、真实 Main HTTP 和 OA Chrome、本机隔离 PostgreSQL 18.6 与合成普通业务数据。",
+          "command": "本机 dotnet vstest 执行 restore-history、restore-boundaries、restore-chrome，原命令、日志和 SHA-256 见唯一报告。Vue 类型检查和 Vitest 复用相同前端树。",
+          "scope": "实测 PostgreSQL、HTTP、Chrome 34 项，迁移和真实逻辑恢复，前端 23 项及类型检查。此前通过证据按原源码复用。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP12-05/DELIVERY.md",
+        "source_sha": "5a94627a9796459a840a35e84739842b7874f84e",
+        "remote_main_sha": "4d31801d0456064ae38cf367759d38000be286e2",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1317",
+        "scope": "本字段是核销前已回读的 Main 基线。实际远端采用、同树冒烟及席位释放按 #1317 和正式收尾回执核实。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
@@ -226081,6 +226657,47 @@
         "validation": "11项唯一相关PostgreSQL/HTTP行为和1条实际Chrome→Vue→Main→PostgreSQL/Defender链通过，0跳过；42项相关Vue行为及vue-tsc --build通过。覆盖同事务绑定与整事务回滚、未知原操作与当前撤权、并发认领、退回替换、隐藏值保留/重基、扫描/保留/损坏状态、当前对象字段授权、精确原件下载及刷新恢复不重传。",
         "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态不变。WP12-03/05及WP02-14整卡不关闭；全Owner引用图/物理清理、部门文件管理、历史任意快照附件与外部选项范围未覆盖；W286定义原竞争和legacy来源/完整旧caller接续。",
         "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave285-final-verification.json"
+      },
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP12-05/DELIVERY.md",
+        "started_at": "2026-11-23T11:53:35.625483+00:00",
+        "official_started_at": "2026-11-23T11:53:35.625483+00:00",
+        "technical_verified_at": "2026-11-23T13:48:55.8016872Z",
+        "verified_at": "2026-11-23T14:07:09.731137+00:00",
+        "effective_seconds": 6889.484,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "S01-01",
+          "S01-02",
+          "S01-07",
+          "S01-09",
+          "S02-00",
+          "WP02-01",
+          "WP02-02",
+          "WP02-03",
+          "WP02-04",
+          "WP02-07",
+          "WP02-10",
+          "WP02-13",
+          "WP02-13b",
+          "WP02-14",
+          "WP02-14b",
+          "WP02-15",
+          "WP12-01",
+          "WP12-02",
+          "WP12-03",
+          "WP12-04",
+          "WP12-06",
+          "WP12-07"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 616.455,
+        "target_review_started_at": "2026-11-23T14:00:46.3139097+00:00",
+        "target_review_seconds": 121.592
       }
     },
     {
@@ -227998,7 +228615,7 @@
         "official_started_at": "2026-11-23T08:24:02.247475+00:00",
         "technical_verified_at": "2026-11-23T10:40:34.4595149Z",
         "verified_at": "2026-11-23T11:08:39.877947+00:00",
-        "effective_seconds": 6911.85,
+        "effective_seconds": 7528.305,
         "size": "L",
         "budget_seconds": 28800,
         "mandatory_split_seconds": 43200,
@@ -228026,7 +228643,15 @@
         "new_product_execution": true,
         "preceding_integration_seconds": 475.67,
         "target_review_started_at": "2026-11-23T11:08:39.794371+00:00",
-        "target_review_seconds": 0.084
+        "target_review_seconds": 0.084,
+        "post_candidate_finalization_seconds": 616.455,
+        "official_finish": "2026-11-23T11:18:56.333077+00:00",
+        "finalization_decision_ref": {
+          "commit": "454d6e6c82b80c357e22ef315d3112e2e1d2395d",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP12-17/replies/20261123T112816Z-coord-acceptance-ack/MESSAGE.md",
+          "receipt_commit": "f90439b8cee0516d59ad2467908330e8f2db63cf",
+          "receipt_path": "handoffs/CP6-DEV-20261012/tasks/WP12-17/messages/20261123T112101Z-cp6-exec-2-delivery/MESSAGE.md"
+        }
       }
     },
     {
@@ -303878,7 +304503,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 191068.14,
+      "effective_seconds": 198695.671,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -303939,7 +304564,8 @@
         "WP12-09",
         "WP12-16",
         "WP12-11",
-        "WP12-17"
+        "WP12-17",
+        "WP12-05"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -303951,7 +304577,8 @@
         "SYS-JOB-01",
         "SYS-CLIENT-01",
         "SYS-WORKSPACE-01",
-        "SYS-LANG-01"
+        "SYS-LANG-01",
+        "OA-FORM-01"
       ],
       "new_splits": [
         {
@@ -304220,15 +304847,11 @@
       },
       "next_card_selection": {
         "rule": "按全图最长下游边数降序，同长保留 OA 阶段原序。候选排序供 COORD 后续独立派工。",
-        "baseline_sha": "42efc232798beff73a508883226241abfadd4e17",
+        "baseline_sha": "4d31801d0456064ae38cf367759d38000be286e2",
         "stage": "OA",
-        "after_card": "WP12-17",
+        "after_card": "WP12-05",
         "selected": null,
         "candidates": [
-          {
-            "task": "WP12-05",
-            "longest_downstream_edges": 2
-          },
           {
             "task": "WP12-14",
             "longest_downstream_edges": 2
@@ -304247,8 +304870,8 @@
           }
         ],
         "dispatch_ref": {
-          "commit": "f2fffc16d1b870bfb6c7feb577b66c02d4070841",
-          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T081303Z-cp6-exec-2-wp12-17/MESSAGE.md"
+          "commit": "451a66f2ca73d725195a380edce9fb90c6d8951e",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T114542Z-cp6-exec-2-wp12-05/MESSAGE.md"
         }
       },
       "phase0_user_confirmation": "2026-11-17 用户确认：先按证据核销或拆卡，列清缺口；完成阶段0核对后再按顺序实施剩余卡。",
@@ -304314,7 +304937,7 @@
         "finished_at": "2026-11-17T14:03:03.512026+00:00",
         "finish_record": "D:/CP6-test-artifacts/TARGET-REVIEW-20261117/finish.json"
       },
-      "target_review_effective_seconds": 4006.056,
+      "target_review_effective_seconds": 4127.648,
       "last_checkpoint_counts": {
         "original_done": 78,
         "fully_done": 78,

@@ -663,3 +663,11 @@ WP12-17 完整 DONE。以 `42efc232798beff73a508883226241abfadd4e17` 领取，18
 按 [#413 签收](https://github.com/GTX537/CP6.AI-Handoff/blob/714ed5fb37448f19f90f7627af6af0ea80c4f517/handoffs/CP6-DEV-20261012/tasks/WP12-11/replies/20261123T075623Z-coord-acceptance-ack/MESSAGE.md) 对 [WP12-11 原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/c31f0beb9661f0304d9ea9d8d9348a22c6fc88ec/handoffs/CP6-DEV-20261012/tasks/WP12-11/messages/20261123T072226Z-exec-wp02-14b-delivery/MESSAGE.md) 的完整提交和路径查重，单次补记 475.670 秒至 3753.443 秒，原目标复核 0.081 秒单列。计入本卡前计划累计 184156.206 秒。
 
 核销快照 `2026-11-23T11:08:39.877947+00:00`，本卡技术 6051.249 秒，三次草稿交接合计 486.545 秒，本轮正式收尾至快照计 374.056 秒。本卡计 6911.850 有效秒，目标复核另列 0.084 秒，计划累计 191068.140 秒。L 卡额度 28800 秒，43200 秒强制拆卡。本轮拆卡 0，原 48 小时检查点已登记。OA 完成 14/20，复算候选为 WP12-05（2）、WP12-14（2）、WP12-15（2）、WP12-18（2）、WP12-20（2）。下一卡待 COORD 独立派工。
+
+## WP12-05 表单目录收藏、历史查询和最终下载披露
+
+WP12-05 完整 DONE。按 Main `4d31801d0456064ae38cf367759d38000be286e2` 领取，22 项严格前置与余卡完整 DONE。总控已验收技术候选 `73e492bf8de0a0bbdbf63a589ed3d167a4eee9ab`，实际受验源码 `5a94627a9796459a840a35e84739842b7874f84e`。复核本卡原目录、收藏、历史、最终披露与 WP12-03/04 已采用证据，OA-FORM-01 原 AC 35/35、必需修订运行场景 0，随 #1317 实际采用核销。生产采用及物理恢复/PITR 保持 `UNPROVEN`。 [原派工 #416](https://github.com/GTX537/CP6.AI-Handoff/blob/451a66f2ca73d725195a380edce9fb90c6d8951e/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T114542Z-cp6-exec-2-wp12-05/MESSAGE.md) · [唯一报告](../evidence/WP12-05/DELIVERY.md) · [Main PR](https://github.com/GTX537/CP6/pull/1317)
+
+以原 DELIVERY 完整提交及仓内路径查重，按总控签收 #415 单次补记 WP12-17 收尾 616.455 秒，该卡入账 7528.305 秒。OA-CONN-01 原 AC 16/32 保留，CONN-21 随 WP12-18 合验。结转后计划起点 191684.595 秒。 [原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/f90439b8cee0516d59ad2467908330e8f2db63cf/handoffs/CP6-DEV-20261012/tasks/WP12-17/messages/20261123T112101Z-cp6-exec-2-delivery/MESSAGE.md) · [签收 #415](https://github.com/GTX537/CP6.AI-Handoff/blob/454d6e6c82b80c357e22ef315d3112e2e1d2395d/handoffs/CP6-DEV-20261012/tasks/WP12-17/replies/20261123T112816Z-coord-acceptance-ack/MESSAGE.md)
+
+核销快照 `2026-11-23T14:07:09.731137+00:00`，本卡既有技术 5443.190 秒、草稿交接 1029.149 秒，新增正式收尾 417.145 秒，入账 6889.484 秒。目标复核另计 121.592 秒，计划累计 198695.671 秒。M 卡额度 14400 秒，21600 秒强制拆卡。本轮拆卡 0，原 48 小时检查点保留。OA 完成 15/20。图上可开工排序为 WP12-14（2）、WP12-15（2）、WP12-18（2）、WP12-20（2），正式派工归 COORD。

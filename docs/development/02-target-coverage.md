@@ -77,7 +77,7 @@
 | [FIN-INV-01](../../docs/design-handbook/modules/FIN-INV-01.md) | 库存计价与业务对账 | WP11 | CHANGE_REQUIRED | 待安排 | 18 |
 | [FIN-FX-01](../../docs/design-handbook/modules/FIN-FX-01.md) | 汇率与外币重估 | WP11 | CHANGE_REQUIRED | 待安排 | 4 |
 | [OA-DEF-01](../../docs/design-handbook/modules/OA-DEF-01.md) | 流程和表单定义 | WP12 | CHANGE_REQUIRED | 已交付 | 0 |
-| [OA-FORM-01](../../docs/design-handbook/modules/OA-FORM-01.md) | 表单发起与查询 | WP12 | CHANGE_REQUIRED | 待安排 | 0 |
+| [OA-FORM-01](../../docs/design-handbook/modules/OA-FORM-01.md) | 表单发起与查询 | WP12 | CHANGE_REQUIRED | 已交付 | 0 |
 | [OA-TASK-01](../../docs/design-handbook/modules/OA-TASK-01.md) | 待办、代理与时限 | WP12 | CHANGE_REQUIRED | 待安排 | 0 |
 | [OA-APP-01](../../docs/design-handbook/modules/OA-APP-01.md) | 业务审批绑定与回调 | WP12 | CHANGE_REQUIRED | 待安排 | 4 |
 | [SYS-WORKSPACE-01](../../docs/design-handbook/modules/SYS-WORKSPACE-01.md) | 菜单与业务工作台 | WP02 | CHANGE_REQUIRED | 已交付 | 0 |
