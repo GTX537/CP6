@@ -2,6 +2,7 @@ using System.Net;
 using System.Text;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
+using CP6.Core.Services.Wf;
 using CP6.Entity.DomainModels.Wf;
 using CP6.Tests.Platform;
 using Microsoft.EntityFrameworkCore;
@@ -118,6 +119,49 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.False(actual.PendingReceiptGap); Assert.Equal(fixture.Receipts[1].BusinessResultRef, actual.BusinessResultRef);
         await ApplicationCounts(h, 2); // Reading never executes Owner application again.
     }
+    [CurrentPermissionPostgresFact]
+    public async Task NativeQuery_HTTP_APPLIED_requires_the_actual_Owner_result_to_reach_the_query_projection()
+    {
+        await using var h = await Seed(); var fixture = await DocumentApplicationSetup(h); await QueryPermission(h);
+        var document = fixture.Document;
+        var owner = DocumentReviews(h, document.Files);
+        await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!, await DocumentHostSettings(document.Files));
+        var cookies = await Login(host, h);
+        var url = "/api/oa/v2/query/instances/" + fixture.Decision.InstanceId;
+        async Task<NativeFormQueryItemV2> Read()
+        {
+            using var response = await host.Send(BoundRequest(cookies, url));
+            return (await PersonalHttpResult<NativeFormQueryDetailV2>(response)).Item;
+        }
+
+        var approved = await Read();
+        Assert.Equal(FlowInstanceStatus.Approved, approved.InstanceStatus);
+        Assert.Equal("UNPROVEN", approved.ApplicationSummary!.ApplicationState);
+        Assert.Null(approved.ApplicationSummary.BusinessResultRef);
+        var ack = FactAck(await fixture.Receiver.ReceiveAsync(fixture.Payload));
+        Assert.Equal("NOT_APPLIED", ack.Application);
+        var ready = await owner.SubmissionAsync(document.Document, document.Submission);
+        var result = await owner.ApplyAsync(document.Document, ready.Application.Etag,
+            new(Guid.NewGuid(), document.Submission, null, "应用本地合成文档的准确审批结果"));
+        Assert.Equal("APPLIED", result.Receipt.Application);
+        Assert.Equal("UNPROVEN", (await Read()).ApplicationSummary!.ApplicationState);
+
+        var authority = fixture.Authority.Identity;
+        await h.Db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO cp6_approval_receipt_v2.registrations(environment_id,tenant_id,principal_id,owner,revision,enabled,can_receive,can_query,evidence_mode)
+            VALUES({ScopeEnvironment},{h.Tenant},{authority.Principal},{result.Receipt.Subject.BusinessOwner},{Guid.NewGuid()},true,true,true,'DEMO');
+            INSERT INTO cp6_approval_receipt_v2.subject_grants(environment_id,tenant_id,principal_id,submission_id,owner,revision,enabled,can_receive,can_query)
+            VALUES({ScopeEnvironment},{h.Tenant},{authority.Principal},{document.Submission},{result.Receipt.Subject.BusinessOwner},{Guid.NewGuid()},true,true,true);
+            """);
+        await ReceiptReceiver(h, fixture.Authority).ReceiveAsync(ReceiptBytes(result.Receipt));
+        var applied = await Read();
+        Assert.Equal(approved.InstanceStatus, applied.InstanceStatus);
+        Assert.Equal("APPLIED", applied.ApplicationSummary!.ApplicationState);
+        Assert.Equal(result.Receipt.ReceiptId, applied.ApplicationSummary.ApplicationReceiptId);
+        Assert.NotNull(applied.ApplicationSummary.BusinessResultRef);
+        Assert.Equal(result.Receipt.BusinessResultRef, applied.ApplicationSummary.BusinessResultRef);
+    }
+
     [CurrentPermissionPostgresFact]
     public async Task NativeQuery_unbound_history_uses_exact_publication_current_mask_and_authorized_totals()
     {
