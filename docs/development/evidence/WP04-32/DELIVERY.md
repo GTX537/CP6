@@ -1,5 +1,40 @@
 # WP04-32 交付记录
 
+## EXEC5 R2 独立复核整改
+
+固定复核为 COORD5 R3。R2 在 `LAPTOP-3QQ44FJS` 的原 DEV-1 和 #1325 同一分支交付。总控复核前整卡仍是 `HOLD`，产品 PR 保持 Draft。[固定复核](https://github.com/GTX537/CP6.AI-Handoff/blob/a2add888c4b486ae57c0cffc62b419e8bbfb2e1e/handoffs/CP6-DEV-20261012/tasks/WP04-32/replies/20261124T100858Z-coord5-r3-draft-review/MESSAGE.md) · [原单卡决议](https://github.com/GTX537/CP6.AI-Handoff/blob/2f002a3d4fe0c162a69dbf823cc455ef88aa0f94/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261124T091143Z-coord5-wp04-32-decision/MESSAGE.md)
+
+| 对象 | 提交 | Git 树 |
+| --- | --- | --- |
+| 精确 Main / base | `671629ff46a4f781de3e94749250ca3beae354b8` | `78f10d44825a4a48c3725795af0f29c473a6ed4b` |
+| R1 草稿，独立复核锚点 | `9681ed34a225434368eb88604dcea598e23ef9a7` | `a9eea8844c7399ee6ba269f0954608fc3a62763e` |
+| R2 构建和测试的产品提交 | `fbaa6cf837eb40d2e4dc4b448f71e1472f9b1976` | `3359588dfffad3d9d07c0f53817433e2d94f22a4` |
+
+包含本节的最终 Draft 精确 head 和 tree 记录在 PR 描述及本机 `draft-readback.json`。产品提交至最终 Draft 的唯一差异为本报告。
+
+### H32 本地当前门
+
+- 复用同一订单与血缘事务锁，从不可变原操作读取 H32。按准确订单、行、交期、血缘、动作集合及 UTC 生效点判定 `BLOCK` 和 `TERMINATE`。实测 `SHIP/BLOCK` 在生效前尚未阻断 SHIP，达到生效点后为 `FENCED`。同一控制的 PLAN 当前结果为 `STALE`，另一独立 PLAN 控制仍可生效。精度超出本地 UTC 表示范围的控制证据为 `UNPROVEN`。
+- 水位已推进的旧 H10 保留发布围栏。精确且可核的当前 H32 可以提交给本地发布判断，预定生效的时间保留原值。此判断与业务动作是否已经受控分别给出。
+- 对 `RELEASE_OWN_REASON` 比较既存 BLOCK 的 Owner、原因、原订单范围、完整动作集合、可见前版及时间。不同 Owner、原因或动作集合保持原阻断。即使这些坐标对齐，当前也缺少把 `predecessor` 的 OwnerRef 绑定到原控制原件及其解除授权的权威提供者。解除仍为 `UNPROVEN`，原阻断和其它 Owner 的原因保留。TERMINATE 保留其原有效阻断。
+- 新用例逐份复核已保存 H10/H32 body、Envelope 与原回执，旧原件仍按原键读取。R1 索引列出的 17 件证据长度和 SHA-256 均重算一致。
+
+### 既有欠交关闭入口
+
+- 实际 Main WebApi 通过现有登录与权限路径调用 `POST /api/backorder/{webOrderNo}/{detailNo}/close-remaining`。正常关闭为 HTTP `200`，原响应含原订单号、原行号、关闭量 `1`、剩余量 `0`。同一行重复关闭为 `400`，未找到的合成订单为 `404`。
+- 试验在既有服务的提交点前中止。调用方事务内可同时读到原行关闭效果及 `Backorder.BeforeClose`、`Backorder.Close` 两个版本。第二连接在提交前和回滚后均只见初始行，目录没有这两条原件。正常 HTTP 关闭后，仍是同一原行，两个原件和关闭效果同时持久可读。提取的原件事务号为中止 `1055`、提交 `1065`，业务行的提交子事务 `1067` 保留原值。
+- 另一个合成样例中，关闭前本地 H10 来源为 `CURRENT`。关闭后原回执和原字节保持可回查，该来源当前供给为 `UNPROVEN`。旧关闭字段保留原语义。
+
+### R2 验证和未证范围
+
+隔离 PostgreSQL **18.6** 使用回环连接与合成数据。固定提交的构建与测试退出码均为 `0`，**12 通过、0 失败、0 跳过**，其中四个新增用例，另重跑 R1 的八个用例。PG 与实际 HTTP 夹具均已退出，已回读本任务监听和进程为 0。首次核对记录保留了 EF 保存点的不同 XID，最终用独立连接可见性和实际回滚结果验证共同事务。
+
+本机根目录为 `D:/CP6-test-artifacts/WP04-32/exec5-r2/`。原始 `results/wp04-32-r2-candidate.trx` 的 SHA-256 为 `c90716bb8e1f3a1e2586cfd862711de076c00067f56625b33f1edc2fe4db1841`。 `candidate-proof/` 下保留 H32 时点、原因和逐份原字节，欠交提交及回滚的前后原件、实际 HTTP 响应以及原回执与当前状态。 `candidate-run.json`、`candidate-assemblies.json` 和 `candidate-cleanup.json` 记录精确运行与清理条件。
+
+解除前驱权威、正式历史 Schedule 和 ReleaseLineage、实际 Confirm/Release/Control 调用方以及 Planning/WMS 采用仍为 `UNPROVEN`。真实消息投递和新增 HTTP/UI 路径为 `NOT_RUN`。旧欠交 HTTP 合同已按上述三个实际响应验证。
+
+## EXEC5 R1 初稿记录
+
 EXEC5 R1 · CP6-EXEC-5 · LAPTOP-3QQ44FJS · 固定 DEV-1 · `codex/wp04-32`。本机定向验证已通过，候选交 COORD5 独立验收。产品 PR 停在 Draft，关卡状态由总控按正式流程处理。[正式决议](https://github.com/GTX537/CP6.AI-Handoff/blob/2f002a3d4fe0c162a69dbf823cc455ef88aa0f94/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261124T091143Z-coord5-wp04-32-decision/MESSAGE.md)
 
 ## 验证锚点
