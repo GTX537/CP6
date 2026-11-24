@@ -150,6 +150,7 @@ public sealed partial class OrderWriteOwnerV1
                 if (string.IsNullOrWhiteSpace(number)) throw new OrderPriceCorrectionException("ORDER_WRITE_INVALID",400);
                 await LockGraph(number,ct);
                 await RequireObject(authority,number,false,ct);
+                await OrderSourceFacts.Capture(db, number, "Order.BeforeWrite", ct, new { action, authority.Source.SubjectId });
             }
             var inheritance=action=="cancel"?new StockTransactionInheritanceV1(db,authority.Source.SubjectId,
                 authority.Actor.UserName,"order","cancel",await StandaloneDepartmentScopeV1.Version(db,ct)):null;
@@ -164,6 +165,11 @@ public sealed partial class OrderWriteOwnerV1
             // Checks persisted proposed department and all effects as well as the old graph.
             // Scope1/5 retain their established self/tenant meaning; department scopes never infer a mapping.
             await RequireObject(final,saved,action=="del",ct);
+            var writer = action switch
+            {
+                "add" => "Order.Create", "edit" => "Order.Edit", "del" => "Order.Delete", _ => "Order.Cancel"
+            };
+            await OrderSourceFacts.Capture(db, saved, writer, ct, new { authority.Source.SubjectId });
             if (await currentActor(ct)!=authority.Source.SubjectId) throw new OrderPriceCorrectionException("REAUTH_REQUIRED",401);
             if (final.Source.TenantExpiresAt<=DateTime.Now) throw new OrderPriceCorrectionException("AUTHORITY_CHANGED",403);
             ct.ThrowIfCancellationRequested(); committing=true;

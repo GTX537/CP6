@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 namespace CP6.Core.Services.ErpIntegration;
 
 internal sealed record ErpOrderOrigin(Guid TenantId, Guid OpportunityId, Guid AccountId, Guid RequestId,
-    int RequestVersion, Guid QuotationId, string InputSha256, string Currency);
+    int RequestVersion, Guid QuotationId, string QuotationVersion, string InputSha256, string Currency);
 
 /// <summary>Creates actual ERP order rows from a locked, accepted ERP quotation and approved master snapshots.</summary>
 internal sealed class ErpQuotationOrderFactory(CP6Context db, OrderService orders, TimeProvider clock,
@@ -131,7 +131,7 @@ internal sealed class ErpQuotationOrderFactory(CP6Context db, OrderService order
             dto.Details.Add(detail);
         }
         var origin = new ErpOrderOrigin(request.TenantId, request.OpportunityId, request.AccountId, request.RequestId,
-            request.RequestVersion, quotation.Id, inputHash, quotation.CurrencyCd!);
+            request.RequestVersion, quotation.Id, request.QuotationVersion, inputHash, quotation.CurrencyCd!);
         var key = await orders.CreateForIntegrationAsync(dto, origin);
         if (use is not null) await RecordUseAuditAsync(request, key, use, ct);
         return (key, quotation.TotalAmount!.Value);
