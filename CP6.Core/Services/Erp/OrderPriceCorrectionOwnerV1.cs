@@ -283,7 +283,14 @@ public sealed partial class OrderPriceCorrectionOwnerV1
                     result.WfRequestedCount++;
                 }
             }
+            var sourceOrders = affected.Select(row => row.WebOrderNo).Distinct(StringComparer.Ordinal)
+                .Order(StringComparer.Ordinal).ToArray();
+            foreach (var number in sourceOrders)
+                await OrderSourceFacts.Capture(db, number, "Order.BeforePriceCorrection", ct);
             await db.SaveChangesAsync(ct);
+            foreach (var number in sourceOrders)
+                await OrderSourceFacts.Capture(db, number, "Order.PriceCorrection", ct,
+                    new { OperationId = operation, BatchId = batch, authority.Source.SubjectId });
             if(operation is Guid operationId)
                 await journal.Store(OperationOwner,CommandContract,operationId,authority.Source.SubjectId,commandInput,
                     result,affected.Select(r=>r.Id).Order().ToArray(),

@@ -159,7 +159,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
 
     private static ErpRequestHandler UseHandler(Harness h, UseQueue queue, IDataProtectionProvider protection,
-        Func<string, CancellationToken, Task>? observe = null, IErpOrderPartnerUseSource? source = null)
+        Func<string, CancellationToken, Task>? observe = null, IErpOrderPartnerUseSource? source = null,
+        Action<CP6Context>? orderContext = null)
     {
         var options = new ErpIntegrationOptions
         {
@@ -167,8 +168,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             DaprAppToken = new('x', 32), DaprApiToken = new('y', 32)
         };
         var validator = new ErpEventValidator(Cp6ContractBundle.Load(Path.Combine(AppContext.BaseDirectory, "contracts/events/erp")));
-        return new(queue, new(options, validator), db => new OrderService(db, h.Workflow, new NoOpWmsBridgeHook(),
-            fxRate: new FxRateService(db)), observeStage: observe) { PartnerProtection = protection, PartnerUseSource = source };
+        return new(queue, new(options, validator), db =>
+        {
+            orderContext?.Invoke(db);
+            return new OrderService(db, h.Workflow, new NoOpWmsBridgeHook(), fxRate: new FxRateService(db));
+        }, observeStage: observe) { PartnerProtection = protection, PartnerUseSource = source };
     }
 
     private static async Task<ErpOrderRequested> PrepareUseOrder(Harness h, (Guid Id, string Code) partner, string baseCd = "BPA",
@@ -301,14 +305,24 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var queue = await PrepareC03Queue(h);
         var request = await PrepareUseOrder(h, partner);
         var envelope = UseOrderEnvelope(request);
-        var ready = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var ready = new TaskCompletionSource<SalesWriterEvidence>(TaskCreationOptions.RunContinuationsAsynchronously);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        CP6Context? writerContext = null;
         var handler = UseHandler(h, queue, protection, async (stage, ct) =>
         {
-            Assert.Equal("order-staged", stage);
-            ready.TrySetResult();
+            try
+            {
+                Assert.Equal("order-staged", stage);
+                Assert.NotNull(writerContext?.Database.CurrentTransaction);
+                ready.SetResult(await ReadC03SalesWriter(writerContext!, request, ct));
+            }
+            catch (Exception error)
+            {
+                ready.TrySetException(error);
+                throw;
+            }
             await release.Task.WaitAsync(TimeSpan.FromSeconds(14), ct);
-        }, new UseMapping());
+        }, new UseMapping(), db => writerContext = db);
 
         await using var writer = server.Context(new TenantContext { CurrentTenantId = h.Tenant });
         var ws = UseWorkspace(h, writer, protection);
@@ -319,9 +333,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             """).SingleAsync();
         var consume = ConsumeUseOrder(handler, envelope);
         Task<BusinessPartnerWorkspaceV1.HttpResult>? freeze = null;
+        SalesWriterEvidence stagedSource;
         try
         {
-            await ready.Task.WaitAsync(TimeSpan.FromSeconds(12));
+            stagedSource = await ready.Task.WaitAsync(TimeSpan.FromSeconds(12));
+            Assert.Null(await OrderSourceFacts.ReadOriginal(h.Db, stagedSource.Snapshot.Id, null, default));
             freeze = ApplyUseStatus(ws, status, Guid.NewGuid());
             await WaitForUseLock(h.Db, h.Tenant, "ExclusiveLock");
             Assert.False(freeze.IsCompleted);
@@ -337,11 +353,27 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(Cp6InboxDisposition.Applied, (await consume).Disposition);
         var xids = await UseEffectXids(h.Db, request);
         Assert.Equal(7, xids.Length);
-        var outer = await UseOuterCommit(h.Db, beforeLsn, xids);
+        var committedSource = await ReadC03SalesWriter(h.Db, request);
+        AssertSameSalesWriter(stagedSource, committedSource);
+        var outer = await UseOuterCommit(h.Db, beforeLsn, [..xids, committedSource.Row.Xid]);
+        await using (var resultDb = queue.CreateDbContext())
+        {
+            var stored = await resultDb.Requests.AsNoTracking()
+                .SingleAsync(row => row.TenantId == h.Tenant && row.RequestId == request.RequestId);
+            Assert.True(stored.Succeeded);
+            Assert.Equal(ErpEventContracts.OrderCreated, stored.ResultType);
+            var result = JsonSerializer.Deserialize<ErpOrderCreated>(stored.ResultDataJson, UseJson)!;
+            Assert.Equal(request.RequestId, result.RequestId);
+            Assert.Equal(request.RequestVersion, result.RequestVersion);
+            Assert.Equal(stored.ResultVersion, result.ResultVersion);
+            Assert.Equal(request.QuotationKey, result.QuotationKey);
+            Assert.Equal(committedSource.Snapshot.Number.TrimEnd(), result.OrderKey);
+        }
         var partnerState = await h.Db.BusinessPartners.AsNoTracking().SingleAsync(row => row.Id == partner.Id);
         Assert.True(partnerState.IsFrozen);
         Assert.Equal(Cp6InboxDisposition.Duplicate, (await ConsumeUseOrder(handler, envelope)).Disposition);
         Assert.Equal(xids.Order(), (await UseEffectXids(h.Db, request)).Order());
+        AssertSameSalesWriter(committedSource, await ReadC03SalesWriter(h.Db, request));
         var intent = DirectUse(h, partner) with
         {
             AccountId = request.AccountId, UseKey = request.RequestId, Actor = "crm-integration",
@@ -381,6 +413,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             .Single(field => field.GetProperty("field").GetString() == "bpRevision").GetProperty("value").GetString());
         Assert.Equal(1, await UseReceiptCount(h));
         output.WriteLine($"消费先提交。伙伴={partner.Id:D}，原键={request.RequestId:D}，外层 COMMIT={outer}，行事务={string.Join(',', xids)}。");
+        output.WriteLine(JsonSerializer.Serialize(new
+        {
+            scenario = "c03-sales-commit", request.RequestId, request.RequestVersion, request.QuotationVersion,
+            outerCommit = outer, oldEffectXids = xids, original = committedSource
+        }));
     }
 
     [CurrentPermissionPostgresFact]
@@ -430,16 +467,31 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var partner = await CreateUsePartner(h, protection);
         var queue = await PrepareC03Queue(h);
         var request = await PrepareUseOrder(h, partner);
-        var staged = false;
-        var rolledBack = UseHandler(h, queue, protection, (_, _) =>
+        CP6Context? writerContext = null;
+        SalesWriterEvidence? stagedSource = null;
+        var isolationObserved = false;
+        var rolledBack = UseHandler(h, queue, protection, async (stage, ct) =>
         {
-            staged = true;
+            Assert.Equal("order-staged", stage);
+            Assert.NotNull(writerContext?.Database.CurrentTransaction);
+            stagedSource = await ReadC03SalesWriter(writerContext!, request, ct);
+            Assert.Null(await OrderSourceFacts.ReadOriginal(h.Db, stagedSource.Snapshot.Id, null, ct));
+            Assert.Empty(await UseEffectXids(h.Db, request));
+            isolationObserved = true;
             throw new InvalidOperationException("模拟成功写集已暂存后的外层故障");
-        }, new UseMapping());
+        }, new UseMapping(), db => writerContext = db);
         await ConsumeUseOrder(rolledBack, UseOrderEnvelope(request));
-        Assert.True(staged);
+        Assert.True(isolationObserved);
+        Assert.NotNull(stagedSource);
+        Assert.Null(await OrderSourceFacts.ReadOriginal(h.Db, stagedSource.Snapshot.Id, null, default));
         Assert.Empty(await UseEffectXids(h.Db, request));
-        Assert.Equal("C03_ERP_UNAVAILABLE", await UseFailure(queue, request.RequestId));
+        var rejection = await UseFailure(queue, request.RequestId);
+        Assert.Equal("C03_ERP_UNAVAILABLE", rejection);
+        output.WriteLine(JsonSerializer.Serialize(new
+        {
+            scenario = "c03-sales-rollback", request.RequestId, request.RequestVersion, request.QuotationVersion,
+            isolationObserved, result = rejection, original = stagedSource
+        }));
 
         var rejected = (await PrepareUseOrder(h, partner)) with { ExpectedAmount = 27m };
         await ConsumeUseOrder(UseHandler(h, queue, protection, source: new UseMapping()), UseOrderEnvelope(rejected));

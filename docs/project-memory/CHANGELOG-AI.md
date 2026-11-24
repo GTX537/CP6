@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP04-32 Sales稳定来源目录、原结果与H10 H32发布参加](../development/evidence/WP04-32/DELIVERY.md)（DONE），核对时间 `2026-11-24T12:11:45Z`。
 - [WP05-04 旧版模写入口的版本与原事务兼容](../development/evidence/WP05-04/DELIVERY.md)（DONE），核对时间 `2026-11-24T04:11:19Z`。
 - [WP12-20 通知偏好、投递和已读水位](../development/evidence/WP12-20/DELIVERY.md)（拆卡，余项 WP12-20b），核对时间 `2026-11-24T01:14:49.410334+00:00`。
 - [WP12-15 流程预演与cron解释的无效果边界](../development/evidence/WP12-15/DELIVERY.md)（拆卡，余项 WP12-15b），核对时间 `2026-11-23T19:18:04.575363+00:00`。

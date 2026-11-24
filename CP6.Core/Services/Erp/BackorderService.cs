@@ -122,10 +122,14 @@ public class BackorderService : IBackorderService
         ValidateReason(request);
         await using var tx = await _db.Database.BeginTransactionAsync(ct);
 
-        var (_, detail, remainingQty) = await LoadOpenDetailAsync(webOrderNo, detailNo, ct);
+        var (order, detail, remainingQty) = await LoadOpenDetailAsync(webOrderNo, detailNo, ct);
+        if (_db.Database.IsNpgsql())
+            await OrderSourceFacts.Capture(_db, order.WebOrderNo, "Backorder.BeforeClose", ct);
         MarkParentDetailClosed(detail, remainingQty, request.Reason!, userName);
 
         await _db.SaveChangesAsync(ct);
+        if (_db.Database.IsNpgsql())
+            await OrderSourceFacts.Capture(_db, order.WebOrderNo, "Backorder.Close", ct, new { SourceLineId = detail.Id });
         await tx.CommitAsync(ct);
 
         return new BackorderActionResultDto
@@ -151,11 +155,24 @@ public class BackorderService : IBackorderService
         var newWebOrderNo = (await DocNumber.NextAsync(_db, "ORD")).No;
         var now = DateTime.Now;
 
-        _db.Orders.Add(CloneOrderForBackorder(order, detail, newWebOrderNo, remainingQty, request.Reason!, userName, now));
-        _db.OrderDetails.Add(CloneDetailForBackorder(detail, newWebOrderNo, remainingQty, userName, now));
+        var successorOrder = CloneOrderForBackorder(order, detail, newWebOrderNo, remainingQty, request.Reason!, userName, now);
+        var successorLine = CloneDetailForBackorder(detail, newWebOrderNo, remainingQty, userName, now);
+        var capture = _db.Database.IsNpgsql();
+        long? originalRevision = capture
+            ? await OrderSourceFacts.Capture(_db, order.WebOrderNo, "Backorder.BeforeSplit", ct)
+            : null;
+        _db.Orders.Add(successorOrder);
+        _db.OrderDetails.Add(successorLine);
         MarkParentDetailClosed(detail, remainingQty, request.Reason!, userName);
 
         await _db.SaveChangesAsync(ct);
+        if (capture)
+        {
+            var origin = new { SourceOrderId = order.Id, SourceLineId = detail.Id, OriginalRevision = originalRevision,
+                SuccessorOrderId = successorOrder.Id, SuccessorLineId = successorLine.Id };
+            await OrderSourceFacts.Capture(_db, order.WebOrderNo, "Backorder.SplitParent", ct, origin);
+            await OrderSourceFacts.Capture(_db, newWebOrderNo, "Backorder.SplitSuccessor", ct, origin);
+        }
         await tx.CommitAsync(ct);
 
         return new BackorderActionResultDto
