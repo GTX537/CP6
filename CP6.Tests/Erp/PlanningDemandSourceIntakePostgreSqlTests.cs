@@ -18,7 +18,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     [CurrentPermissionPostgresFact]
     public async Task Planning_source_accepts_exact_sales_initial_release_and_replays_the_original()
     {
-        await using var h = await SeedPlanning();
+        await using var h = await SeedPlanning(grantResultRead: false);
         var sales = new OrderSourceParticipant(h.Db);
         var release = await SeedSalesRelease(h, sales);
         var receiver = PlanningReceiver(h);
@@ -33,6 +33,13 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal("1", historical.GetProperty("sourceVersion").GetString());
         Assert.Equal("1", historical.GetProperty("demandVersion").GetString());
         Assert.Equal("2", historical.GetProperty("acceptedTarget").GetProperty("standardQuantity").GetProperty("value").GetString());
+
+        // 正常首次接收只需接收能力。回执恢复阶段由隔离夹具明确授予读取能力。
+        var serviceMenu = await h.Db.Sys_Menus.Where(menu => menu.MenuKey == "service")
+            .Select(menu => menu.MenuId).SingleAsync();
+        h.Db.Sys_RoleActions.Add(new() { MenuId = serviceMenu, ActionCode = DemandSourceIntake.ResultReadCapability, RoleId = 72 });
+        await h.Db.SaveChangesAsync();
+        h.Db.ChangeTracker.Clear();
 
         var alias = SalesEnvelope(h.Tenant, release.Receipt.LineageId, "normal-transport-redelivery", release.Body);
         await using (var tx = await h.Db.Database.BeginTransactionAsync())
@@ -284,7 +291,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(schedule, confirmed.Schedule);
         Assert.Null(await sales.ReadOperation(SalesProducer, key, default));
         var pending = await Assert.ThrowsAsync<DemandSourceIntakeException>(() => receiver.ReceiveAsync(body));
-        Assert.Equal("PLANNING_SOURCE_UNPROVEN", pending.Message);
+        Assert.Equal("ACCESS_DENIED", pending.Message);
         var missing = await receiver.ReadResultAsync(query);
         AssertUnknown(missing);
         var writes = await ReadPlanningWrites(h.Db);
@@ -293,7 +300,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             tenant = h.Tenant, scope, query, draft, native.Lifecycle, confirmed, pending = pending.Message, missing, writes }));
     }
 
-    private async Task<Harness> SeedPlanning()
+    private async Task<Harness> SeedPlanning(bool grantResultRead = true)
     {
         var h = await Seed();
         try
@@ -308,7 +315,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             foreach (var action in new[] { DemandSourceIntake.ReceiveCapability, DemandSourceIntake.ResultReadCapability })
             {
                 h.Db.Sys_MenuActions.Add(new() { MenuId = menu.MenuId, ActionCode = action, ActionName = action });
-                h.Db.Sys_RoleActions.Add(new() { MenuId = menu.MenuId, ActionCode = action, RoleId = 72 });
+                if (grantResultRead || action == DemandSourceIntake.ReceiveCapability)
+                    h.Db.Sys_RoleActions.Add(new() { MenuId = menu.MenuId, ActionCode = action, RoleId = 72 });
             }
             await h.Db.SaveChangesAsync();
             h.Db.ChangeTracker.Clear();

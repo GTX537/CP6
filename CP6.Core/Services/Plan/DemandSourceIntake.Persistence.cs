@@ -17,7 +17,7 @@ internal sealed partial class DemandSourceIntake
             OrderId == scope.OrderId && LineId == scope.LineId && ScheduleId == scope.ScheduleId;
     }
 
-    private sealed class SalesSource
+    internal sealed class SalesSource
     {
         public Guid ActorId { get; init; }
         public Guid OrderId { get; init; }
@@ -32,7 +32,7 @@ internal sealed partial class DemandSourceIntake
             LineageId == query.ReleaseLineageId && SourceVersion == version && SourceDigest == query.SourceDigest;
     }
 
-    private sealed class Inbox
+    internal sealed class Inbox
     {
         public string LineageId { get; init; } = "";
         public long SourceVersion { get; init; }

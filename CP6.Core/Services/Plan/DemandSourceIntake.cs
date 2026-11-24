@@ -65,25 +65,19 @@ internal sealed partial class DemandSourceIntake(CP6Context db, OrderReadOwnerV1
         var query = input.Query;
 
         await using var tx = await Begin(query, ct);
-        var prior = await FindInbox(query.OperationKey, ct);
-        var action = prior is null ? ReceiveCapability : ResultReadCapability;
-        var access = await RequireCapability(action, ct);
-        var origin = await FindSalesOrigin(query.OperationKey, ct);
-        if (origin is null)
-            throw prior is null ? Unproven() : AccessDenied();
-
-        await OrderSourceFacts.LockNative(db, origin.OrderId, ct);
-        if (!await CanDisclose(access, origin, ct)) throw AccessDenied();
-        if (!origin.Matches(query, input.Version)) throw Conflict();
+        var (action, access, origin, prior, canReadResult) = await InspectAuthorizedReceive(query, input.Version, FindCapability,
+            (authority, token) => FindVisibleOrigin(query.OperationKey, authority, token),
+            token => FindInbox(query.OperationKey, token), ct);
 
         if (prior is not null)
         {
-            if (prior.ActorId != access.SubjectId) throw AccessDenied();
             var replay = await ReadOriginal(prior, query, body, ct);
             await RequireFinalAccess(action, access, origin, ct);
             return replay.Result;
         }
-        if (await ObservedVersion(query.ReleaseLineageId, input.Version, ct)) throw Conflict();
+        // 接收侧只检查自然键占用，原回执须另有读取能力。
+        if (await ObservedVersion(query.ReleaseLineageId, input.Version, ct))
+            throw canReadResult ? Conflict() : AccessDenied();
 
         var sales = new OrderSourceParticipant(db, clock);
         var original = await sales.ReadOperation(Producer, query.OperationKey, ct) ?? throw Unproven();
@@ -160,22 +154,18 @@ internal sealed partial class DemandSourceIntake(CP6Context db, OrderReadOwnerV1
         var version = Validate(query);
         await using var tx = await Begin(query, ct);
         var access = await RequireCapability(ResultReadCapability, ct);
-        var origin = await FindSalesOrigin(query.OperationKey, ct);
+        var origin = await FindVisibleOrigin(query.OperationKey, access, ct);
         var now = Now();
         if (origin is not null)
         {
-            await OrderSourceFacts.LockNative(db, origin.OrderId, ct);
-            if (await CanDisclose(access, origin, ct))
+            if (!origin.Matches(query, version)) throw Conflict();
+            var inbox = await FindInbox(query.OperationKey, ct);
+            if (inbox is not null && inbox.ActorId == access.SubjectId)
             {
-                if (!origin.Matches(query, version)) throw Conflict();
-                var inbox = await FindInbox(query.OperationKey, ct);
-                if (inbox is not null && inbox.ActorId == access.SubjectId)
-                {
-                    var original = await ReadOriginal(inbox, query, null, ct);
-                    var current = await ReadCurrent(query.ReleaseLineageId, tx, now, ct);
-                    await RequireFinalAccess(ResultReadCapability, access, origin, ct);
-                    return new("FOUND", JsonSerializer.Deserialize<JsonElement>(original.Result), current, false, null);
-                }
+                var original = await ReadOriginal(inbox, query, null, ct);
+                var current = await ReadCurrent(query.ReleaseLineageId, tx, now, ct);
+                await RequireFinalAccess(ResultReadCapability, access, origin, ct);
+                return new("FOUND", JsonSerializer.Deserialize<JsonElement>(original.Result), current, false, null);
             }
         }
 
