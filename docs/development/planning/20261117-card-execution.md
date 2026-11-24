@@ -693,3 +693,13 @@ WP12-15 的局部交付只含版本化 TIMER 草稿页的输入说明与无障�
 按 [WP12-14 正式 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/951c930a7e05ecd544a3e5ab03770798b7a52793/handoffs/CP6-DEV-20261012/tasks/WP12-14/messages/20261123T163520Z-cp6-exec-3-delivery-closeout/MESSAGE.md) 完整提交及仓内路径查重为零，候选单次结转 754.861 秒至 WP12-14，累计 3274.331 秒。WP12-14b 余 25525.669 秒，150% 为 38288.5035 秒。WP12-05 的既有结转保留。计划消耗 201893.991 → 202648.852 → 207761.235 秒。 [原签收](https://github.com/GTX537/CP6.AI-Handoff/blob/9a4e7d4e68e1d75125b1ee839f2d572dd7038737/handoffs/CP6-DEV-20261012/tasks/WP12-14/replies/20261123T164556Z-coord3-split-acceptance-ack/MESSAGE.md)
 
 规范快照计本卡执行 5112.383 秒。M 档 14400 秒，强制拆分线 21600 秒，余卡 9287.617 秒，150% 为 13931.4255 秒。领取前核对和独立验收等待另列，正式收尾尾差凭实际回执处理。候选原号 DONE 86/375，完整 DONE 84/375，登记卡 DONE 102/393，目标 11/125，卡池 2052 小时守恒。下一卡尚未登记。实际采用、同树冒烟和席位释放以 #1319 后续回执为准。
+
+## WP12-20 通知偏好与观察水位拆分候选
+
+正式裁决 #429 对受验源码 829c4472f6a5354009b4a5ff7af6a842868b1f69 确认本人偏好和水位、FORM/APP 深链及共用 Main 原领取的局部证据。原号候选 DONE/SPLIT，fully_done(WP12-20)=false。WP12-20b 初始 BLOCKED，逐通道投递、派送前当前资格与偏好复核、真实邮件、Required、正式运维原键重送及相关披露和切换出站证据归余卡。WP14-07、WP14-08、WP14-09 按现有依赖继续等待完整交付。 [独立裁决 #429](https://github.com/GTX537/CP6.AI-Handoff/blob/16954d7291e2f375c127792ff176398b2b5773dd/handoffs/CP6-DEV-20261012/tasks/WP12-20/replies/20261124T010152Z-coord3-candidate-review-r3/MESSAGE.md) · [候选报告](../evidence/WP12-20/DELIVERY.md)
+
+按裁决候选登记 AC-T06-01、02、03、07 为 PASS，AC-T06-04、05、06、08 为 NOT_RUN。OA-TASK-01 候选 29/46，目标仍开放。Main 当前 WP12-20 PLANNED、原八项 NOT_RUN，OA-TASK-01 25/46。台账变更随 #1320 的后续精确独立核对及受保护采用生效。CP6 当前使用 PostgreSQL。WP12-20 不补做 SQL Server。后续仅有明确旧库兼容或迁移依赖的卡验证 SQL Server，旧代码与数据库保留。
+
+按 [WP12-15 正式 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/37c1eb25397baa8f8fe51cf75e870f23f3c045be/handoffs/CP6-DEV-20261012/tasks/WP12-15/messages/20261123T194905Z-cp6-exec-3-delivery-closeout/MESSAGE.md) 完整提交及仓内路径在精确 Main 查重为零，候选单次结转 714.019 秒。该卡累计 5826.402 秒，WP12-15b 余 8573.598 秒，150% 为 12860.397 秒。WP12-14 尾数已在 Main。计划累计 207761.235 → 208475.254 → 214765.667 秒。
+
+快照 2026-11-24T01:14:49.410334+00:00，WP12-20 已用 6290.413 有效秒，其中本轮 430.208 秒。原额度 14400 秒，强制拆分线 21600 秒。WP12-20b 额度 8109.587 秒，150% 为 12164.3805 秒。原号 DONE 87/375、完整 DONE 84/375、登记卡 DONE 103/394、目标 11/125 均为候选统计。卡池 2052 小时守恒，后续派工归 COORD。

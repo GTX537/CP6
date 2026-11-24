@@ -28413,7 +28413,114 @@
         "docs/development/assessments/20261011/implementation-assessment.json",
         "docs/design-handbook/modules/OA-TASK-01.md",
         "docs/development/assessments/20261011/catalogs/engineering-oa.json"
+      ],
+      "split_children": [
+        "WP12-20b"
+      ],
+      "split_delivered_scope": [
+        "AC-T06-01、02、03。旧偏好兼容、TOP_LEVEL_MERGE、能力矩阵与原生 remind、本人 WFC CAS 和原回执。",
+        "AC-T06-07。v2 与保持原列表 data 数组的显式水位接口，两个页面各自观察，晚到保持未读，重放保留原 ReadAt；无水位返回 428，旧 Web 需升级至配套版本。",
+        "AC-T06-04 的局部证据。FORM/APP 原事务、期限重算原回执、共用 Main 原 worker 的 PostgreSQL 前向领取保护与原键重启。",
+        "AC-T06-05、06 的局部证据。原账已确认与未知状态保留，八个原键各一次；旧账状态 1 仅表示原账确认。",
+        "AC-T06-08 的局部证据。当前本人、合成租户和明确代理收件范围，FORM/APP 深链实时复核及失权清理。"
       ]
+    },
+    {
+      "id": "WP12-20b",
+      "package_id": "WP12",
+      "title": "逐通道通知投递与正式运维余项",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "OA-TASK-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP12-20",
+        "S01-02",
+        "S02-00",
+        "WP02-10",
+        "WP02-12",
+        "WP02-13",
+        "WP12-08",
+        "WP12-11"
+      ],
+      "external_prerequisites": [
+        "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
+        "WP02：持久JOB/通知传输及当前披露权限，通知provider不可用明确保失败/未知。",
+        "OA 通知和传输 Owner 尚未采用真实邮件 provider、Required 政策或正式运维原键重送，缺实际通道身份、原键结果、状态查询或受控对账合同。",
+        "逐通道账本及 worker、派送前当前收件资格和偏好复核、逐通道最小披露和版本交接尚未交付。先核父卡 Main 实际采用，再按准确候选及正式 Owner 边界验收。"
+      ],
+      "scope": [
+        "AC-T06-04。逐通道投递与旧新 worker 实际交接，复核真实审批/任务、通知、Outbox 的原事务及失败后按原键恢复。既有审批事实、已确认结果及已读保持独立。",
+        "AC-T06-05。采用逐通道账本和 worker，验证每通道原键、无地址 BLOCKED_ADDRESS、UNKNOWN、已成功通道免重送、未知被保留，以及正式运维按原键重送与回执。",
+        "AC-T06-06。派送前核可信租户、环境、角色及实际收件资格、当前联系方式和收件偏好，采用真实邮件 provider 和正式 Required 规则，验证撤权及偏好关闭时抑制未发可选通道。",
+        "AC-T06-08。补逐通道实际收件与最小披露隔离，核验准确的服务权限与两版本交接。保留本人收件、授权代理及失权清理原用例。",
+        "正式切换核验完整 API/Web 镜像配套、滚动与兼容回退，证明只有一个获准投递路径，并沿用显式观察水位。生产操作及真实外送仅在正式准入和后续明确授权后处理。"
+      ],
+      "outputs": [
+        "正式逐通道投递账本、当前收件资格及偏好复核、原键与结果恢复",
+        "Owner 采用、兼容滚动与回退、实际投递及 UI 对应验收原件"
+      ],
+      "code_paths": [
+        "CP6.Core/Services/Oa/TaskDecisionService.cs",
+        "CP6.Core/Services/Wf/WfTimeoutService.cs",
+        "CP6.Core/Services/Wf/ApprovalDispatcher.cs",
+        "CP6.Core/Services/Oa/NotificationService.cs",
+        "CP6.Core/Services/Oa/PrefService.cs",
+        "cp6.web/src/views/oa/notification/NotificationBell.vue",
+        "cp6.web/src/views/oa/settings/InboxSettings.vue"
+      ],
+      "new_paths": [
+        "CP6.Core/Services/Oa/WorkflowNotificationDeliveryService.cs",
+        "CP6.Tests/Oa/WorkflowNotificationDeliveryTests.cs"
+      ],
+      "acceptance_positive": [
+        "站内与邮件各有原键和明确回执，已成功通道在另通道故障时不重复；真实 provider、Required 及运维重送按正式采用逐项核对。",
+        "派送前核当前收件资格、联系方式和偏好。审批事实、业务 Owner 应用、通道结果与已读分轴。"
+      ],
+      "acceptance_negative": [
+        "历史在途未知不擅自重送，无地址不认作送达，旧新 worker 并存不双领。",
+        "撤权或关闭后抑制未发可选通道，跨租户、代理或已失权的任何缓存及深链不泄露。"
+      ],
+      "exclusive_resources": [
+        "Main:oa-notification",
+        "file:Main:CP6.Core/Services/Oa/TaskDecisionService.cs",
+        "file:Main:CP6.Core/Services/Wf/WfTimeoutService.cs",
+        "file:Main:CP6.Core/Services/Wf/ApprovalDispatcher.cs"
+      ],
+      "notes": [
+        "OA保持原oa.app/2.0和WFC封闭合同、原枚举/摘要，兼容入口逐项映射；审批通过、引擎终态、运输接收与业务Owner应用回执分轴。",
+        "仅规划，NOT_RUN。原AC/补充R1应由总台账映射；新路径是拟定职责位置，PG迁移按S02-00实际布局实现，旧SQL Server历史证据保留。",
+        "初始 BLOCKED。AC-T06-04、05、06、08 的整项状态维持 NOT_RUN。",
+        "CP6 当前使用 PostgreSQL。WP12-20 不补做 SQL Server。后续仅有明确旧库兼容或迁移依赖的卡验证 SQL Server，旧代码与数据库保留。"
+      ],
+      "prerequisite_bindings": [
+        {
+          "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
+          "task_ids": [
+            "WP02-10",
+            "WP02-13"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "该仓真实Owner写入前交付；不能以接口存在代替采用。"
+        },
+        {
+          "requirement": "本任务采用的共同服务/先行设计",
+          "task_ids": [
+            "WP02-12"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "按已交付准确合同和当前授权采用。"
+        }
+      ],
+      "source_refs": [
+        "docs/development/08-postgresql-baseline.md",
+        "docs/development/assessments/20261011/implementation-assessment.json",
+        "docs/design-handbook/modules/OA-TASK-01.md",
+        "docs/development/assessments/20261011/catalogs/engineering-oa.json"
+      ],
+      "split_parent": "WP12-20"
     },
     {
       "id": "WP13-01",
