@@ -1,5 +1,13 @@
 # WP06-13 交付记录
 
+## R10 本机关卡候选
+
+仅本机候选。台账及生成页的 DONE 和计数为拟采用状态，需 COORD 独立复核和原 #1326 受保护合入后才生效。远端草稿仍为 PLANNED。verified_at 记录本机技术核对时间。独立签收与实际 Main 采用待记录。OA 暂停，next_card=null。
+
+原远端 Draft 为 `28c7f6114f02578e3f1c4cbe33e0227541e41b40`，Main 基线为 `ada8cd1f0a9a42fd61777e4c0bc9f455863274ed`。本机关卡候选只更新台账、本报告和对应生成页，受测产品仍为 `e34acbdbc911556b84cc714e42d784994470186e`。
+
+使用三轮可复算工作窗上界 **4409.716 秒**预填 M 卡记录，上限 14,400 秒，拆分线 21,600 秒。R9／R10 使用转达复核标识的时间戳作为工作窗上界的起点。各轮间等待剔除，未来独立验收、合并和席位收尾按实际结算。拟累计从 226420.710 秒到 230830.426 秒。详情见本机 local-closure-time-basis.json。
+
 ## EXEC5 R10 先授权再查询原操作
 
 依据转达的 COORD R14，在 LAPTOP-3QQ44FJS 原 DEV-1 更新同一 Draft #1326。Main 台账 WP06-13 保持 `PLANNED`，OA 暂停且 `next_card=null`。 [Draft #1326](https://github.com/GTX537/CP6/pull/1326)
