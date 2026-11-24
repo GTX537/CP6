@@ -6,6 +6,7 @@ using CP6.Core.Services.Common;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.Plan;
 using CP6.Entity.DomainModels.Erp;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -17,10 +18,10 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     [CurrentPermissionPostgresFact]
     public async Task Planning_source_accepts_exact_sales_initial_release_and_replays_the_original()
     {
-        await using var h = await Seed();
+        await using var h = await SeedPlanning();
         var sales = new OrderSourceParticipant(h.Db);
         var release = await SeedSalesRelease(h, sales);
-        var receiver = new DemandSourceIntake(h.Db);
+        var receiver = PlanningReceiver(h);
         AssertWrites(await ReadPlanningWrites(h.Db), 0, 0, 0);
 
         var result = await receiver.ReceiveAsync(release.Body);
@@ -74,14 +75,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     [CurrentPermissionPostgresFact]
     public async Task Planning_source_overlapping_delivery_creates_one_demand_and_one_receipt()
     {
-        await using var h = await Seed();
+        await using var h = await SeedPlanning();
         var release = await SeedSalesRelease(h, new OrderSourceParticipant(h.Db));
         var overlap = new PlanningConcurrentDelivery();
         await using var first = server.Context(new TenantContext { CurrentTenantId = h.Tenant }, null, overlap);
         await using var next = server.Context(new TenantContext { CurrentTenantId = h.Tenant }, null, overlap);
 
-        var receipts = await Task.WhenAll(new DemandSourceIntake(first).ReceiveAsync(release.Body),
-            new DemandSourceIntake(next).ReceiveAsync(release.Body));
+        var receipts = await Task.WhenAll(PlanningReceiver(h, first).ReceiveAsync(release.Body),
+            PlanningReceiver(h, next).ReceiveAsync(release.Body));
         Assert.Equal(2, overlap.Started);
         Assert.Equal(receipts[0], receipts[1]);
         var writes = await ReadPlanningWrites(h.Db);
@@ -95,11 +96,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     [CurrentPermissionPostgresFact]
     public async Task Planning_source_h32_wins_before_h10_at_exact_planning_effective_time()
     {
-        await using var h = await Seed();
+        await using var h = await SeedPlanning();
         var boundary = new DateTimeOffset(2026, 11, 24, 13, 0, 0, TimeSpan.Zero).AddTicks(9);
         var clock = new SalesControlClock(boundary.AddTicks(-1));
         var sales = new OrderSourceParticipant(h.Db, clock);
-        var receiver = new DemandSourceIntake(h.Db, clock);
+        var receiver = PlanningReceiver(h, clock: clock);
         var release = await SeedSalesRelease(h, sales);
         var stop = await StageSalesControl(h, sales, release, 2, "stop-before-planning",
             ControlFact(release.Receipt.Scope, release.Receipt.LineageId, SalesProducer, "shipping-window", 1, "BLOCK",
@@ -150,11 +151,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     [CurrentPermissionPostgresFact]
     public async Task Planning_source_control_retains_the_original_acceptance_with_separate_current_effectivity()
     {
-        await using var h = await Seed();
+        await using var h = await SeedPlanning();
         var now = new DateTimeOffset(2026, 11, 24, 14, 0, 0, TimeSpan.Zero);
         var clock = new SalesControlClock(now);
         var sales = new OrderSourceParticipant(h.Db, clock);
-        var receiver = new DemandSourceIntake(h.Db, clock);
+        var receiver = PlanningReceiver(h, clock: clock);
         var release = await SeedSalesRelease(h, sales);
         var original = await receiver.ReceiveAsync(release.Body);
         var before = await receiver.ReadResultAsync(PlanningQuery(release));
@@ -185,10 +186,10 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     [CurrentPermissionPostgresFact]
     public async Task Planning_source_rolls_back_pending_writes_and_recovers_a_committed_result_after_confirmation_loss()
     {
-        await using var h = await Seed();
+        await using var h = await SeedPlanning();
         var release = await SeedSalesRelease(h, new OrderSourceParticipant(h.Db));
         var query = PlanningQuery(release);
-        var before = await new DemandSourceIntake(h.Db).ReadResultAsync(query);
+        var before = await PlanningReceiver(h).ReadResultAsync(query);
         AssertUnknown(before);
         var rollback = new PlanningCommitProbe(h.Tenant, async () =>
         {
@@ -196,23 +197,23 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             AssertWrites(await ReadPlanningWrites(separate), 0, 0, 0);
         });
         await using (var failed = server.Context(new TenantContext { CurrentTenantId = h.Tenant }, null, rollback))
-            await Assert.ThrowsAsync<IOException>(() => new DemandSourceIntake(failed).ReceiveAsync(release.Body));
+            await Assert.ThrowsAsync<IOException>(() => PlanningReceiver(h, failed).ReceiveAsync(release.Body));
         Assert.False(rollback.Committed);
         Assert.NotNull(rollback.Staged);
         Assert.Equal(new long[] { 1, 1, 1, 1, 1, 1 }, rollback.Staged!.Writes);
-        var afterRollback = await new DemandSourceIntake(h.Db).ReadResultAsync(query);
+        var afterRollback = await PlanningReceiver(h).ReadResultAsync(query);
         AssertUnknown(afterRollback);
         AssertWrites(await ReadPlanningWrites(h.Db), 0, 0, 0);
 
         var lost = new PlanningCommitProbe(h.Tenant);
         await using (var sender = server.Context(new TenantContext { CurrentTenantId = h.Tenant }, null, lost))
-            await Assert.ThrowsAsync<IOException>(() => new DemandSourceIntake(sender).ReceiveAsync(release.Body));
+            await Assert.ThrowsAsync<IOException>(() => PlanningReceiver(h, sender).ReceiveAsync(release.Body));
         Assert.True(lost.Committed);
         Assert.NotNull(lost.Staged);
         Assert.Equal(new long[] { 1, 1, 1, 1, 1, 1 }, lost.Staged!.Writes);
 
         await using var reconnect = SalesContext(h.Tenant);
-        var receiver = new DemandSourceIntake(reconnect);
+        var receiver = PlanningReceiver(h, reconnect);
         var recovered = await receiver.ReadResultAsync(query);
         var saved = await ReadPlanningOriginal(reconnect, query.OperationKey);
         Assert.Equal("FOUND", recovered.Knowledge);
@@ -226,17 +227,25 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(lost.Staged.Transaction, saved.JournalTransaction);
         Assert.Equal(lost.Staged.Transaction, saved.InboxTransaction);
         Assert.NotEqual(rollback.Staged.Transaction, lost.Staged.Transaction);
+
+        // 这一步只保留读取能力，原键重试仍取得原件。
+        var removed = await h.Db.Sys_RoleActions.Where(x => x.RoleId == 72 &&
+            x.ActionCode == DemandSourceIntake.ReceiveCapability).ExecuteDeleteAsync();
+        Assert.Equal(1, removed);
+        var readOnly = await receiver.ReadResultAsync(query);
+        Assert.Equal(recovered.Historical.Value.GetRawText(), readOnly.Historical!.Value.GetRawText());
+        Assert.Equal(saved.Result, await receiver.ReceiveAsync(release.Body));
         var writes = await ReadPlanningWrites(reconnect);
         AssertWrites(writes, 1, 1, 0);
         output.WriteLine(JsonSerializer.Serialize(new { caseName = "rollback and committed response loss",
             tenant = h.Tenant, release.Receipt, before, rolledBack = rollback.Staged, afterRollback,
-            committed = lost.Staged, recovered, writes, saved }));
+            committed = lost.Staged, recovered, receiveGrantRemoved = removed, readOnlyReplay = readOnly, writes, saved }));
     }
 
     [CurrentPermissionPostgresFact]
     public async Task Planning_source_keeps_draft_and_confirm_only_orders_out_of_demand()
     {
-        await using var h = await Seed();
+        await using var h = await SeedPlanning();
         var order = await h.Db.Orders.SingleAsync(x => x.WebOrderNo == h.Number);
         order.OrderStatus = "DRAFT"; // Synthetic draft state before formal Sales confirmation.
         await h.Db.SaveChangesAsync();
@@ -249,7 +258,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var body = SalesBody(scope, lineage, key, 1);
         using var proposed = JsonDocument.Parse(body);
         var query = new DemandSourceIntake.SourceResultQuery(key, lineage, "1", proposed.RootElement.GetProperty("sourceDigest").GetString()!);
-        var receiver = new DemandSourceIntake(h.Db);
+        var receiver = PlanningReceiver(h);
         var draft = await receiver.ReadResultAsync(query);
         AssertUnknown(draft);
         AssertWrites(await ReadPlanningWrites(h.Db), 0, 0, 0);
@@ -282,6 +291,46 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         AssertWrites(writes, 0, 0, 0);
         output.WriteLine(JsonSerializer.Serialize(new { caseName = "draft and confirmed without Sales release",
             tenant = h.Tenant, scope, query, draft, native.Lifecycle, confirmed, pending = pending.Message, missing, writes }));
+    }
+
+    private async Task<Harness> SeedPlanning()
+    {
+        var h = await Seed();
+        try
+        {
+            // 隔离测试为登记的主体提供两项原合同能力。产品启动不写入此授权。
+            var menu = await h.Db.Sys_Menus.SingleOrDefaultAsync(x => x.MenuKey == "service");
+            if (menu is null)
+            {
+                menu = new() { MenuId = 32613, MenuKey = "service", MenuName = "合成服务能力", Enable = true };
+                h.Db.Sys_Menus.Add(menu);
+            }
+            foreach (var action in new[] { DemandSourceIntake.ReceiveCapability, DemandSourceIntake.ResultReadCapability })
+            {
+                h.Db.Sys_MenuActions.Add(new() { MenuId = menu.MenuId, ActionCode = action, ActionName = action });
+                h.Db.Sys_RoleActions.Add(new() { MenuId = menu.MenuId, ActionCode = action, RoleId = 72 });
+            }
+            await h.Db.SaveChangesAsync();
+            h.Db.ChangeTracker.Clear();
+            return h;
+        }
+        catch
+        {
+            await h.DisposeAsync();
+            throw;
+        }
+    }
+
+    private sealed class PlanningFixtureSession(HttpContext context) : IHttpContextAccessor
+    {
+        public HttpContext? HttpContext { get; set; } = context;
+    }
+
+    private static DemandSourceIntake PlanningReceiver(Harness h, CP6Context? db = null, TimeProvider? clock = null)
+    {
+        db ??= h.Db;
+        var orderRead = new OrderReadOwnerV1(db, new PlanningFixtureSession(h.Http), _ => Task.FromResult(h.User), h.Catalog.Capture);
+        return new(db, orderRead, clock);
     }
 
     private static DemandSourceIntake.SourceResultQuery PlanningQuery(SalesEvent source) =>

@@ -18,9 +18,8 @@ internal sealed class DemandSourceIntakeException(string code, int status) : Inv
     internal int Status { get; } = status;
 }
 
-// Main-internal ORD-DEM-SOURCE/1 receiver. The authenticated tenant and the
-// persisted Sales owner operation supply authority; a caller cannot name a producer.
-internal sealed partial class DemandSourceIntake(CP6Context db, TimeProvider? clock = null)
+// Main 进程内 ORD-DEM-SOURCE/1 接收者。当前授权与 Sales 持久原件都须成立。
+internal sealed partial class DemandSourceIntake(CP6Context db, OrderReadOwnerV1 orderRead, TimeProvider? clock = null)
 {
     internal const string Owner = "Main.Planning";
     private const string Producer = "Main.Sales";
@@ -67,7 +66,23 @@ internal sealed partial class DemandSourceIntake(CP6Context db, TimeProvider? cl
 
         await using var tx = await Begin(query, ct);
         var prior = await FindInbox(query.OperationKey, ct);
-        if (prior is not null) return (await ReadOriginal(prior, query, body, ct)).Result;
+        var action = prior is null ? ReceiveCapability : ResultReadCapability;
+        var access = await RequireCapability(action, ct);
+        var origin = await FindSalesOrigin(query.OperationKey, ct);
+        if (origin is null)
+            throw prior is null ? Unproven() : AccessDenied();
+
+        await OrderSourceFacts.LockNative(db, origin.OrderId, ct);
+        if (!await CanDisclose(access, origin, ct)) throw AccessDenied();
+        if (!origin.Matches(query, input.Version)) throw Conflict();
+
+        if (prior is not null)
+        {
+            if (prior.ActorId != access.SubjectId) throw AccessDenied();
+            var replay = await ReadOriginal(prior, query, body, ct);
+            await RequireFinalAccess(action, access, origin, ct);
+            return replay.Result;
+        }
         if (await ObservedVersion(query.ReleaseLineageId, input.Version, ct)) throw Conflict();
 
         var sales = new OrderSourceParticipant(db, clock);
@@ -77,7 +92,7 @@ internal sealed partial class DemandSourceIntake(CP6Context db, TimeProvider? cl
             source.OperationKey != query.OperationKey || source.LineageId != query.ReleaseLineageId ||
             source.SourceVersion != input.Version || source.SourceDigest != query.SourceDigest)
             throw Conflict();
-        if (original.ActorId == Guid.Empty || source.State != "LOCAL_REQUEST") throw Unproven();
+        if (original.ActorId != origin.ActorId || source.Scope != origin.Scope || source.State != "LOCAL_REQUEST") throw Unproven();
 
         var lineage = await FindLineage(source.LineageId, ct);
         if (lineage is not null && !lineage.Matches(source.Scope)) throw Conflict();
@@ -126,37 +141,52 @@ internal sealed partial class DemandSourceIntake(CP6Context db, TimeProvider? cl
         // Reuse the Main owner original/audit transaction. The inbox keeps the
         // opaque transport key and resolves it to this stable journal identity.
         var journal = new MainOwnerOperationJournalV1(db);
-        await journal.Store(Owner, Contract, receipt.ResultId, original.ActorId, body, result,
+        await journal.Store(Owner, Contract, receipt.ResultId, access.SubjectId, body, result,
             demand is Guid id ? [id] : [],
             new { producer = Producer, source.OperationKey, source.LineageId, source.SourceVersion,
                 source.Scope, source.SourceDigest, source.BodySha256, source.EnvelopeSha256,
-                receipt.Outcome, receipt.ReasonCodes, authority = "MAIN_SALES_PERSISTED_ORIGINAL" }, ct);
+                receipt.Outcome, receipt.ReasonCodes, sourceActor = original.ActorId,
+                capability = CapabilityMenu + ":" + action, access.ReadScopeVersion }, ct);
         await AddInbox(source, original, receipt.ResultId, ct);
         if (demand is Guid demandId) await AddDemand(source, demandId, input.Target, now, ct);
         await AddControls(source, controlFacts, ct);
-        await RequireActiveTenant(ct);
+        await RequireFinalAccess(action, access, origin, ct);
         await tx.CommitAsync(ct);
         return MainOwnerOperationJournalV1.Encode(result);
     }
 
     internal async Task<SourceResultRead> ReadResultAsync(SourceResultQuery query, CancellationToken ct = default)
     {
-        _ = Validate(query);
+        var version = Validate(query);
         await using var tx = await Begin(query, ct);
-        var inbox = await FindInbox(query.OperationKey, ct);
+        var access = await RequireCapability(ResultReadCapability, ct);
+        var origin = await FindSalesOrigin(query.OperationKey, ct);
         var now = Now();
-        if (inbox is null)
-            return new("NOT_OBSERVED", null, Unknown(query.ReleaseLineageId, now), false, null);
+        if (origin is not null)
+        {
+            await OrderSourceFacts.LockNative(db, origin.OrderId, ct);
+            if (await CanDisclose(access, origin, ct))
+            {
+                if (!origin.Matches(query, version)) throw Conflict();
+                var inbox = await FindInbox(query.OperationKey, ct);
+                if (inbox is not null && inbox.ActorId == access.SubjectId)
+                {
+                    var original = await ReadOriginal(inbox, query, null, ct);
+                    var current = await ReadCurrent(query.ReleaseLineageId, tx, now, ct);
+                    await RequireFinalAccess(ResultReadCapability, access, origin, ct);
+                    return new("FOUND", JsonSerializer.Deserialize<JsonElement>(original.Result), current, false, null);
+                }
+            }
+        }
 
-        var original = await ReadOriginal(inbox, query, null, ct);
-        var current = await ReadCurrent(query.ReleaseLineageId, tx, now, ct);
-        // Keep the JSON backed by the original result bytes. Current effectivity is a separate read.
-        return new("FOUND", JsonSerializer.Deserialize<JsonElement>(original.Result), current, false, null);
+        // 不可披露与未观察的对象统一为未知，且不读取原回执。
+        await RequireFinalAccess(ResultReadCapability, access, null, ct);
+        return new("NOT_OBSERVED", null, Unknown(query.ReleaseLineageId, now), false, null);
     }
 
     private async Task<IDbContextTransaction> Begin(SourceResultQuery query, CancellationToken ct)
     {
-        if (!db.Database.IsNpgsql() || db.CurrentTenantId == Guid.Empty ||
+        if (!orderRead.Owns(db) || !db.Database.IsNpgsql() || db.CurrentTenantId == Guid.Empty ||
             db.Database.CurrentTransaction is not null || System.Transactions.Transaction.Current is not null)
             throw Unproven();
         var tx = await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);

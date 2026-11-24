@@ -17,6 +17,21 @@ internal sealed partial class DemandSourceIntake
             OrderId == scope.OrderId && LineId == scope.LineId && ScheduleId == scope.ScheduleId;
     }
 
+    private sealed class SalesSource
+    {
+        public Guid ActorId { get; init; }
+        public Guid OrderId { get; init; }
+        public Guid LineId { get; init; }
+        public string OrderVersion { get; init; } = "";
+        public string ScheduleId { get; init; } = "";
+        public string LineageId { get; init; } = "";
+        public long SourceVersion { get; init; }
+        public string SourceDigest { get; init; } = "";
+        internal OrderSourceScope Scope => new(OrderId, LineId, OrderVersion, ScheduleId);
+        internal bool Matches(SourceResultQuery query, long version) =>
+            LineageId == query.ReleaseLineageId && SourceVersion == version && SourceDigest == query.SourceDigest;
+    }
+
     private sealed class Inbox
     {
         public string LineageId { get; init; } = "";
@@ -24,6 +39,7 @@ internal sealed partial class DemandSourceIntake
         public string SourceDigest { get; init; } = "";
         public string BodySha256 { get; init; } = "";
         public Guid ResultId { get; init; }
+        public Guid ActorId { get; init; }
     }
 
     private sealed class Demand
@@ -67,12 +83,23 @@ internal sealed partial class DemandSourceIntake
             WHERE tenant_id={db.CurrentTenantId} AND producer={Producer} AND lineage_id={lineage}
             """).SingleOrDefaultAsync(ct);
 
+    // 披露授权前只读取固定 Sales 来源的作用域坐标。
+    private Task<SalesSource?> FindSalesOrigin(string operation, CancellationToken ct) =>
+        db.Database.SqlQuery<SalesSource>($"""
+            SELECT actor_id AS "ActorId",order_id AS "OrderId",line_id AS "LineId",order_version AS "OrderVersion",
+                schedule_id AS "ScheduleId",lineage_id AS "LineageId",source_version AS "SourceVersion",source_digest AS "SourceDigest"
+            FROM cp6_sales_order_source_v1.operations
+            WHERE tenant_id={db.CurrentTenantId} AND producer={Producer} AND operation_key={operation}
+            """).SingleOrDefaultAsync(ct);
+
     private Task<Inbox?> FindInbox(string operation, CancellationToken ct) =>
         db.Database.SqlQuery<Inbox>($"""
-            SELECT lineage_id AS "LineageId",source_version AS "SourceVersion",source_digest AS "SourceDigest",
-                body_sha256 AS "BodySha256",result_id AS "ResultId"
-            FROM cp6_planning_demand_source_v1.inbox
-            WHERE tenant_id={db.CurrentTenantId} AND producer={Producer} AND operation_key={operation}
+            SELECT inbox.lineage_id AS "LineageId",inbox.source_version AS "SourceVersion",inbox.source_digest AS "SourceDigest",
+                inbox.body_sha256 AS "BodySha256",inbox.result_id AS "ResultId",original.actor_id AS "ActorId"
+            FROM cp6_planning_demand_source_v1.inbox inbox
+            JOIN cp6_main_owner_v1.operations original
+              ON (original.tenant_id,original.owner,original.operation_id)=(inbox.tenant_id,inbox.result_owner,inbox.result_id)
+            WHERE inbox.tenant_id={db.CurrentTenantId} AND inbox.producer={Producer} AND inbox.operation_key={operation}
             """).SingleOrDefaultAsync(ct);
 
     private Task<bool> ObservedVersion(string lineage, long version, CancellationToken ct) =>
@@ -89,7 +116,8 @@ internal sealed partial class DemandSourceIntake
             inbox.SourceDigest != query.SourceDigest) throw Conflict();
         var original = await new MainOwnerOperationJournalV1(db).Read(Owner, inbox.ResultId, ct);
         if (original is not { Contract: Contract, State: "COMMITTED", Input: not null } ||
-            original.Digest != inbox.BodySha256 || MainOwnerOperationJournalV1.Digest(original.Input) != inbox.BodySha256)
+            original.Actor != inbox.ActorId || original.Digest != inbox.BodySha256 ||
+            MainOwnerOperationJournalV1.Digest(original.Input) != inbox.BodySha256)
             throw Unproven();
         if (input is not null && !original.Input.AsSpan().SequenceEqual(input)) throw Conflict();
         return original;
