@@ -12,6 +12,9 @@ assert.equal(backend.hostname, '127.0.0.1')
 assert.equal(backend.protocol, 'http:')
 const dist = resolve(input.dist)
 const requests = []
+let historyHold
+let deletePath
+let upstreamDeleteStatus
 const api = '/api/plate-molds'
 const mime = new Map([
   ['.html', 'text/html; charset=utf-8'], ['.js', 'text/javascript; charset=utf-8'],
@@ -29,8 +32,24 @@ const server = createServer((req, res) => {
     const upstream = request(target, { method: req.method, headers: req.headers }, response => {
       if (url.pathname.startsWith(api) || url.pathname === '/api/auth/login')
         requests.push({ method: req.method, path: url.pathname + url.search, status: response.statusCode })
-      res.writeHead(response.statusCode, response.headers)
-      response.pipe(res)
+      if (req.method === 'DELETE' && url.pathname === deletePath && response.statusCode === 200) {
+        // 原事务已成功。故障点只丢弃这次成功应答，让旧页由原键确认。
+        upstreamDeleteStatus = response.statusCode
+        response.resume()
+        res.writeHead(503, { Connection: 'close' }).end()
+        return
+      }
+      const respond = () => {
+        res.writeHead(response.statusCode, response.headers)
+        response.pipe(res)
+      }
+      if (req.method === 'GET' && url.pathname === historyHold?.path) {
+        const hold = historyHold
+        historyHold = undefined
+        void hold.ready.then(respond)
+        return
+      }
+      respond()
     })
     upstream.on('error', () => { if (!res.headersSent) res.writeHead(502); res.end() })
     req.pipe(upstream)
@@ -60,7 +79,7 @@ let browser, page
 try {
   browser = await chromium.launch({ executablePath: input.chrome, headless: true, args: ['--disable-background-networking'] })
   const context = await browser.newContext({ locale: 'zh-CN', viewport: { width: 1440, height: 1000 }, serviceWorkers: 'block' })
-  await context.route('**/*', route => new URL(route.request().url()).origin === origin ? route.continue() : route.abort())
+  await context.route(url => url.origin !== origin, route => route.abort())
   page = await context.newPage()
   page.setDefaultTimeout(12000)
   await page.addInitScript(() => localStorage.setItem('lang', 'zh-CN'))
@@ -205,26 +224,26 @@ try {
 
   const deleteMode = /^(删除|削除|sales\.op\.delete)$/
   let releaseHistory
-  const historyReady = new Promise(resolve => { releaseHistory = resolve })
-  await page.route('**' + exact + '/history', async queued => {
-    await historyReady
-    await queued.fallback()
-  }, { times: 1 })
+  historyHold = {
+    path: exact + '/history',
+    ready: new Promise(resolve => { releaseHistory = resolve })
+  }
   await openEditor(editorPath(number, 2))
   await expect(editor.locator('.el-radio-button').filter({ hasText: deleteMode }).locator('input[type="radio"]')).toBeDisabled()
   releaseHistory()
   await mode(deleteMode)
   await reason.fill('合成逻辑删除后模拟应答丢失')
-  let deleteCommit
-  await page.route('**' + exact + '/2', async route => {
-    if (route.request().method() !== 'DELETE') return route.fallback()
-    const result = await route.fetch({ maxRetries: 0 })
-    deleteCommit = { status: result.status(), operationId: route.request().postDataJSON().operationId }
-    await route.abort()
-  })
+  deletePath = exact + '/2'
+  const deleted = page.waitForResponse(matches('DELETE', deletePath))
   await button(footer, /^(删除执行|削除実行|sales\.btn\.delete)$/).click()
+  const deleteResponse = await deleted
   await expect(footer.getByRole('alert')).toContainText('结果暂未确认')
-  assert.equal(deleteCommit?.status, 200)
+  assert.equal(upstreamDeleteStatus, 200)
+  assert.equal(deleteResponse.status(), 503)
+  const deleteCommit = {
+    status: upstreamDeleteStatus, browserStatus: deleteResponse.status(),
+    operationId: deleteResponse.request().postDataJSON().operationId
+  }
   assert.deepEqual(await pending(page), { kind: 'DELETE', operationId: deleteCommit.operationId })
   const writesAfterDelete = countWrites()
 
