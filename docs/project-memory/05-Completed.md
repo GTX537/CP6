@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP04-32 Sales稳定来源目录、原结果与H10 H32发布参加](../development/evidence/WP04-32/DELIVERY.md)（DONE），核对时间 `2026-11-24T12:11:45Z`。
+- [WP06-13 Planning H10原生接收槽与源控制最终门](../development/evidence/WP06-13/DELIVERY.md)（DONE），核对时间 `2026-11-24T17:09:02.5658485Z`。
 
 ### 已关闭目标
 

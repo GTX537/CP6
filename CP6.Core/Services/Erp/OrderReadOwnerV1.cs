@@ -45,7 +45,8 @@ public sealed partial class OrderReadOwnerV1
     private sealed record Authority(UserPermissionContext Actor, FieldPermissionSourceV1 Source,
         FieldPermissionDecisionV1 Decision, int Scope, string OrganizationVersion);
 
-    private async Task<Authority> AuthorityAsync(string menu, FieldPermissionUseV1 use, CancellationToken ct)
+    private async Task<Authority> AuthorityAsync(string menu, FieldPermissionUseV1 use, CancellationToken ct,
+        string? disclosureAction = null)
     {
         var authenticated = await currentActor(ct);
         var definition = catalog();
@@ -60,23 +61,47 @@ public sealed partial class OrderReadOwnerV1
             throw new CurrentPermissionUnavailableException();
         var actions = await (from a in db.Sys_MenuActions.AsNoTracking()
                              join m in db.Sys_Menus.AsNoTracking() on a.MenuId equals m.MenuId
-                             where m.Enable && m.MenuKey == menu select a.ActionCode).ToArrayAsync(ct);
-        bool Can(string action) => actor.ActionKeys.Contains(menu + ":" + action) && actions.Contains(action, StringComparer.Ordinal);
+                             where m.Enable && m.MenuKey == menu select new { m.MenuKey, a.ActionCode }).ToArrayAsync(ct);
+        var declared = actions.Where(entry => entry.MenuKey == menu).Select(entry => entry.ActionCode).ToArray();
+        bool Can(string action) => HasDeclaredAction(actor.ActionKeys, menu, action, declared);
         string Action(FieldPermissionUseV1 value) => value switch
         { FieldPermissionUseV1.Read => "query", FieldPermissionUseV1.Export => "export", FieldPermissionUseV1.Download => "download", _ => "" };
-        if (!Can("query") || !Can(Action(use))) throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
+        bool Allows(FieldPermissionUseV1 value) => disclosureAction is null
+            ? Can("query") && Can(Action(value))
+            : value == FieldPermissionUseV1.Read && Can(disclosureAction);
+        if (!Allows(use)) throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
         var type = actor.DataScopes.GetValueOrDefault("order", scope.Default);
         if (!scope.Supports.Contains(type) || type is < 1 or > 5 || type is 2 or 3 && actor.DeptId == null)
             throw new OrderPriceCorrectionException("OWNER_SCOPE_MAPPING_UNAVAILABLE", 503);
         var constraints = source.Fields.SelectMany(f => new[] { FieldPermissionUseV1.Read, FieldPermissionUseV1.Export, FieldPermissionUseV1.Download }
             .Select(u => new FieldPermissionConstraintsV1(f, u,
-                Can("query") && Can(Action(u)) ? FieldPermissionCheckV1.Allowed : FieldPermissionCheckV1.Denied,
+                Allows(u) ? FieldPermissionCheckV1.Allowed : FieldPermissionCheckV1.Denied,
                 FieldPermissionCheckV1.Allowed, FieldPermissionCheckV1.Allowed, FieldPermissionCheckV1.NotApplicable,
                 FieldPermissionCheckV1.NotApplicable, FieldPermissionCheckV1.NotApplicable, FieldPermissionCheckV1.Allowed)));
         var decision = source.Evaluate(source.Versions(MappingVersion), MappingVersion, Mappings, constraints);
         if (!decision.IsAvailable) throw new CurrentPermissionUnavailableException();
         return new(actor, source, decision, type, await OrderDepartmentScopeV1.Version(db, ct));
     }
+
+    internal static bool HasDeclaredAction(IReadOnlySet<string> grants, string menu, string action,
+        IReadOnlyCollection<string> declarations) =>
+        grants.Contains(menu + ":" + action) && declarations.Contains(action, StringComparer.Ordinal);
+
+    // 由持有 Main IAM 根的 Owner 在同一事务内消费指定能力与订单披露范围。
+    // 本参加方法不创建事务，也不授予普通订单查询或写入。
+    internal async Task<Access> ParticipateDisclosureAsync(string menu, string action, CancellationToken ct)
+    {
+        OrderSourceFacts.RequireTransaction(db);
+        var authority = await AuthorityAsync(menu, FieldPermissionUseV1.Read, ct, action);
+        return Disclosure(authority, FieldPermissionUseV1.Read, includeDeleted: true);
+    }
+
+    private Access Disclosure(Authority authority, FieldPermissionUseV1 use, bool includeDeleted) => new(
+        OrderDepartmentScopeV1.Query(db, authority.Actor, authority.Scope, includeDeleted: includeDeleted, readLocks: true).AsNoTracking(),
+        OrderDepartmentScopeV1.Headers(db, authority.Actor, authority.Scope, includeDeleted).AsNoTracking(),
+        authority.Decision.Fields["UnitPrice"].Uses[use].Allowed,
+        authority.Decision.Fields["Amount"].Uses[use].Allowed, authority.Source.SubjectId,
+        authority.Source.SourcePermissionVersion + "/" + authority.OrganizationVersion);
 
     internal async Task<T> ReadAsync<T>(string menu, FieldPermissionUseV1 use, bool includeDeleted,
         Func<Access, CancellationToken, Task<T>> body, CancellationToken ct = default)
@@ -91,12 +116,7 @@ public sealed partial class OrderReadOwnerV1
             await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
             await AuthenticationCompletionGateV1.AcquireAsync(db, ct);
             var authority = await AuthorityAsync(menu, use, ct);
-            var result = await body(new(
-                OrderDepartmentScopeV1.Query(db, authority.Actor, authority.Scope, includeDeleted: includeDeleted, readLocks: true).AsNoTracking(),
-                OrderDepartmentScopeV1.Headers(db, authority.Actor, authority.Scope, includeDeleted).AsNoTracking(),
-                authority.Decision.Fields["UnitPrice"].Uses[use].Allowed,
-                authority.Decision.Fields["Amount"].Uses[use].Allowed, authority.Source.SubjectId,
-                authority.Source.SourcePermissionVersion + "/" + authority.OrganizationVersion), ct);
+            var result = await body(Disclosure(authority, use, includeDeleted), ct);
             var final = await AuthorityAsync(menu, use, ct);
             if (final.Source.SourcePermissionVersion != authority.Source.SourcePermissionVersion
                 || final.Source.RegistryVersion != authority.Source.RegistryVersion

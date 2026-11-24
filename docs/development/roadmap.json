@@ -177622,6 +177622,11 @@
       "at": "2026-11-24T14:34:13.048524+00:00",
       "evidence": "docs/development/evidence/WP04-32/DELIVERY.md",
       "change": "WP04-32 依 R7 合成签收及 R9 卡内技术结论登记同 PR DONE 候选，附原件与未证出口。实际关卡待原 #1325 受保护采用，ERP-ORD-01 保持开放，OA 暂停且无下一卡。"
+    },
+    {
+      "at": "2026-11-24T17:13:25.448991+00:00",
+      "evidence": "docs/development/evidence/WP06-13/DELIVERY.md",
+      "change": "WP06-13 仅本机拟核销文件。R10 技术证据已固定，独立复核和 #1326 受保护采用待完成。OA 暂停，下一卡仍未指定。"
     }
   ],
   "implementation_assessment": {
@@ -214181,18 +214186,84 @@
         "file:Main:CP6.Tests/MrpControllerTests.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP06.md",
       "card_anchor": "wp06-13",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "CP6-EXEC-5",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp06-13",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-24T15:56:52.690982+00:00",
+        "baseline_sha": "ada8cd1f0a9a42fd61777e4c0bc9f455863274ed",
+        "entry_evidence": "docs/development/evidence/WP06-13/DELIVERY.md",
+        "worker_start_received": true,
+        "delivery_report": "docs/development/evidence/WP06-13/DELIVERY.md",
+        "dispatch_scope": "原 WP06-13 Planning H10/H32 本机接收、授权、原键回查及隔离合成验收。",
+        "dispatch_decision_ref": {
+          "commit": "77b103601cbfaa94fc14e3b06164b54b1197f46a",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261124T154435Z-coord5-wp06-13-decision/MESSAGE.md"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP06-13/DELIVERY.md",
+          "source_sha": "e34acbdbc911556b84cc714e42d784994470186e",
+          "observed_at": "2026-11-24T17:09:02.5658485Z",
+          "environment": "LAPTOP-3QQ44FJS，隔离回环 PostgreSQL 18.6，仅合成数据和身份。",
+          "command": "固定 R10 产品执行 dotnet build/test CP6.Tests。精确命令、筛选和 41 条原始结果见交付报告及 candidate-run.json。",
+          "result": "PASS",
+          "scope": "R10 本机技术验证。18 项授权单元用例，6 个 Planning、15 个 Sales、2 个订单披露 PostgreSQL 场景。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP06-13/DELIVERY.md",
+        "source_sha": "e34acbdbc911556b84cc714e42d784994470186e",
+        "remote_main_sha": "ada8cd1f0a9a42fd61777e4c0bc9f455863274ed",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1326",
+        "scope": "仅本机条件投影。R10 隔离合成测试结果已验，COORD 独立复核和受保护采用待完成。remote_main_sha 是实查 Main 开工基线。真实调用、生产授权、历史迁移及完整下游继续未证。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP06-13/DELIVERY.md",
+        "started_at": "2026-11-24T15:56:52.690982+00:00",
+        "official_started_at": "2026-11-24T15:56:52.690982+00:00",
+        "technical_verified_at": "2026-11-24T17:09:02.5658485Z",
+        "verified_at": "2026-11-24T17:09:02.5658485Z",
+        "ledger_candidate_at": "2026-11-24T17:13:25.448991+00:00",
+        "effective_seconds": 4409.716,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "S01-01",
+          "S01-02",
+          "S01-09",
+          "S02-00",
+          "WP02-01",
+          "WP02-02",
+          "WP02-03",
+          "WP02-07",
+          "WP02-10",
+          "WP02-13",
+          "WP02-13b",
+          "WP02-22",
+          "WP04-01",
+          "WP04-02",
+          "WP11-01",
+          "WP11-65",
+          "WP04-32"
+        ],
+        "new_product_execution": true
+      }
     },
     {
       "id": "WP07-01",
@@ -305212,7 +305283,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 226420.71,
+      "effective_seconds": 230830.426,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -305279,7 +305350,8 @@
         "WP12-15",
         "WP12-20",
         "WP05-04",
-        "WP04-32"
+        "WP04-32",
+        "WP06-13"
       ],
       "closed_targets": [
         "OA-DEF-01",

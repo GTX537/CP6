@@ -2,13 +2,13 @@
 
 台账日期：2026-11-24。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 394 项，已交付 105 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 394 项，已交付 106 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)。按[单卡串行计划](planning/20261117-card-execution.md)核对完整前置并选择下一卡。
 
 原 375 卡及其全部出口保留；已登记 13 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。
 
-原号 DONE 89/375；完整 DONE 86/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 6/6，沿用原卡池内划拨。
+原号 DONE 90/375；完整 DONE 87/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 6/6，沿用原卡池内划拨。
 
 ## WP01 现有实现与设计对照
 
@@ -219,7 +219,7 @@
 | [WP06-10 CP22计划单来源份额、委托与转换意图](../../docs/development/task-plans/WP06.md#wp06-10) | Main | 待安排 | S01-02, S01-05, S02-00, WP02-10, WP02-13, WP06-09 | CODE / L | 未领取 |
 | [WP06-11 CP22真实PR、WO与调拨转单并替换Stub](../../docs/development/task-plans/WP06.md#wp06-11) | Main | 待安排 | S01-02, S01-05, S02-00, WP02-10, WP02-13, WP06-10, WP07-01, WP08-03, WP10-10 | CODE / L | 未领取 |
 | [WP06-12 CP12缺料异常、完整影响图与有证重算协调](../../docs/development/task-plans/WP06.md#wp06-12) | Main | 待安排 | S01-02, S01-05, S02-00, WP02-10, WP02-13, WP06-03, WP06-05, WP06-09, WP06-11, WP08-13 | CODE / L | 未领取 |
-| [WP06-13 Planning H10原生接收槽与源控制最终门](../../docs/development/task-plans/WP06.md#wp06-13) | Main | 待安排 | WP02-10, WP02-13, WP04-32 | CODE / M | 未领取 |
+| [WP06-13 Planning H10原生接收槽与源控制最终门](../../docs/development/task-plans/WP06.md#wp06-13) | Main | 已交付 | WP02-10, WP02-13, WP04-32 | CODE / M | CP6-EXEC-5 |
 
 ## WP07 采购执行
 
