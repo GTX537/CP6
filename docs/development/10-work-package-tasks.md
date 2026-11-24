@@ -15,7 +15,7 @@
 | WP09 质量管理 | 12 | 4 | [查看卡片](../../docs/development/task-plans/WP09.md) |
 | WP10 仓储与物流 | 52 | 25 | [查看卡片](../../docs/development/task-plans/WP10.md) |
 | WP11 财务核算与结算 | 66 | 13 | [查看卡片](../../docs/development/task-plans/WP11.md) |
-| WP12 流程与审批 | 22 | 5 | [查看卡片](../../docs/development/task-plans/WP12.md) |
+| WP12 流程与审批 | 23 | 5 | [查看卡片](../../docs/development/task-plans/WP12.md) |
 | WP13 空间设计与运营 | 17 | 8 | [查看卡片](../../docs/development/task-plans/WP13.md) |
 | WP14 全链集成与交付验证 | 10 | 0 | [查看卡片](../../docs/development/task-plans/WP14.md) |
 
@@ -99,7 +99,7 @@
 | FIN-FX-01 | WP11-09, WP11-10, WP11-46, WP11-47, WP11-64 |
 | OA-DEF-01 | WP12-01, WP12-02 |
 | OA-FORM-01 | WP12-03, WP12-04, WP12-05 |
-| OA-TASK-01 | WP12-08, WP12-09, WP12-10, WP12-11, WP12-20 |
+| OA-TASK-01 | WP12-08, WP12-09, WP12-10, WP12-11, WP12-20, WP12-20b |
 | OA-APP-01 | WP12-06, WP12-07, WP12-12, WP12-19 |
 | SYS-WORKSPACE-01 | WP02-18 |
 | SYS-LANG-01 | WP02-17 |

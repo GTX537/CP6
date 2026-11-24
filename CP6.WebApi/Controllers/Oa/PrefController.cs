@@ -11,6 +11,7 @@ namespace CP6.WebApi.Controllers.Oa;
 /// </summary>
 [ApiController]
 [Route("api/oa/pref")]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 [Authorize]
 public class PrefController : LocalizedControllerBase
 {
@@ -23,7 +24,12 @@ public class PrefController : LocalizedControllerBase
         _ctx = ctx;
     }
 
-    private async Task<Guid> CurrentUserIdAsync() => (await _ctx.GetAsync()).UserId;
+    private async Task<Guid> CurrentUserIdAsync()
+    {
+        if (User.HasClaim(x => x.Type == "impersonator_id"))
+            throw new ScopeAuthorizationExceptionV1("REAUTH_REQUIRED", 401);
+        return (await _ctx.GetAsync()).UserId;
+    }
     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
 
@@ -32,9 +38,12 @@ public class PrefController : LocalizedControllerBase
     [HttpGet("get")]
     public async Task<IActionResult> Get()
     {
-        var me = await CurrentUserIdAsync();
-        var prefsJson = await _pref.GetAsync(me);
-        return Ok2(new { prefsJson });
+        try
+        {
+            var me = await CurrentUserIdAsync();
+            return Ok2(new { prefsJson = await _pref.GetAsync(me) });
+        }
+        catch (ScopeAuthorizationExceptionV1 e) { return StatusCode(e.Status, new { code = e.Message }); }
     }
 
     // ── 保存偏好 ──
@@ -50,10 +59,12 @@ public class PrefController : LocalizedControllerBase
         try
         {
             var me = await CurrentUserIdAsync();
+            NotifyMatrix.ValidatePreferenceWrite(r.PrefsJson);
             if (r.Merge) await _pref.SaveMergeAsync(me, r.PrefsJson);
             else await _pref.SaveAsync(me, r.PrefsJson);
             return Ok2();
         }
+        catch (ScopeAuthorizationExceptionV1 e) when (e.Status == 401) { return StatusCode(e.Status, new { code = e.Message }); }
         catch (InvalidOperationException e) { return Err(e); }
     }
 

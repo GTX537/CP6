@@ -35,12 +35,13 @@ public sealed partial class ApprovalTaskDecisionOwnerV2
     }
     private async Task OperationNotification(Guid command,Guid actor,Guid instance,Guid? task,string kind,string title,CancellationToken ct)
     {
-        var matrix=NotifyMatrix.Rows().Single(x=>x.TypeValue==WfNotificationType.TodoCreated);var prefs=new PrefService(db);
-        var inApp=matrix.InAppSupported&&await prefs.IsEnabledAsync(actor,matrix.TypeKey,NotifyMatrix.ChannelInApp);
-        var email=matrix.EmailSupported&&await prefs.IsEnabledAsync(actor,matrix.TypeKey,NotifyMatrix.ChannelEmail);
+        var matrix=NotifyMatrix.Rows().Single(x=>x.TypeValue==WfNotificationType.TodoCreated);
+        var preference=await WorkflowNotificationPreferencesV1.SnapshotAsync(db,actor,ct);
+        var inApp=matrix.InAppSupported&&NotifyMatrix.IsEnabled(preference.PrefsJson,matrix.TypeKey,NotifyMatrix.ChannelInApp);
+        var email=matrix.EmailSupported&&NotifyMatrix.IsEnabled(preference.PrefsJson,matrix.TypeKey,NotifyMatrix.ChannelEmail);
         var id=Guid.NewGuid();db.Wf_Notifications.Add(new(){Id=id,UserId=actor,InstanceId=instance,TaskId=task,Type=WfNotificationType.TodoCreated,
             Title=title,Body=title,EventKey="native-task:"+id.ToString("N"),InAppRequested=inApp,EmailRequested=email,DispatchStatus=0,NextAttemptAtUtc=DateTime.UtcNow});
-        await db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO cp6_native_tasks_v2.notification_outbox(id,command_id,recipient_id,instance_id,task_id,kind) VALUES({id},{command},{actor},{instance},{task},{kind})",ct);
+        await db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO cp6_native_tasks_v2.notification_outbox(id,command_id,recipient_id,instance_id,task_id,kind,preference_version) VALUES({id},{command},{actor},{instance},{task},{kind},{preference.Version})",ct);
     }
     private static void OperationReason(string? reason)
     {if(string.IsNullOrWhiteSpace(reason)||reason.EnumerateRunes().Count()>1000)throw Error("REASON_INVALID",422);}

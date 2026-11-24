@@ -1,4 +1,7 @@
 using System.Reflection;
+using System.Text;
+using CP6.Core.Services.Sys;
+using CP6.Entity.Contracts.Wire;
 using System.Text.Json;
 using CP6.Entity.DomainModels.Wf;
 
@@ -16,6 +19,7 @@ public record NotifyMatrixRow(string TypeKey, int TypeValue, bool InAppSupported
 /// </summary>
 public static class NotifyMatrix
 {
+    public const int MaxPreferenceBytes = 32768;
     public const string ChannelInApp = "inApp";
     public const string ChannelEmail = "email";
 
@@ -50,7 +54,8 @@ public static class NotifyMatrix
         try
         {
             using var doc = JsonDocument.Parse(prefsJson);
-            if (!doc.RootElement.TryGetProperty("notify", out var notify) || notify.ValueKind != JsonValueKind.Object)
+            if (doc.RootElement.ValueKind != JsonValueKind.Object ||
+                !doc.RootElement.TryGetProperty("notify", out var notify) || notify.ValueKind != JsonValueKind.Object)
                 return true;                                                      // 无 notify 键 → 默认开
 
             if (notify.TryGetProperty(type, out var typeEl) && typeEl.ValueKind == JsonValueKind.Object)
@@ -70,6 +75,76 @@ public static class NotifyMatrix
         {
             return true;                                                          // 畸形 JSON → 默认开（与 ParseNotifyPrefs 一致）
         }
+    }
+
+    public static void ValidatePreferenceWrite(string json)
+    {
+        if (string.IsNullOrWhiteSpace(json) || Encoding.UTF8.GetByteCount(json) > MaxPreferenceBytes)
+            throw new ScopeAuthorizationExceptionV1("NOTIFICATION_PREFERENCE_JSON_INVALID", 422);
+        try
+        {
+            using var document = WorkflowCommandJsonV1.Parse(Encoding.UTF8.GetBytes(json), MaxPreferenceBytes);
+            if (document.RootElement.ValueKind != JsonValueKind.Object)
+                throw new JsonException();
+            if (document.RootElement.TryGetProperty("notify", out var notify))
+                ValidateNotify(notify);
+        }
+        catch (JsonException)
+        {
+            throw new ScopeAuthorizationExceptionV1("NOTIFICATION_PREFERENCE_JSON_INVALID", 422);
+        }
+    }
+
+    internal static void ValidateNotify(JsonElement notify)
+    {
+        if (!ValidNotify(notify))
+            throw new ScopeAuthorizationExceptionV1("NOTIFICATION_PREFERENCE_MATRIX_INVALID", 422);
+    }
+
+    internal static string ReadState(string json)
+    {
+        try
+        {
+            using var document = JsonDocument.Parse(json);
+            return document.RootElement.ValueKind == JsonValueKind.Object &&
+                (!document.RootElement.TryGetProperty("notify", out var notify) || ValidNotify(notify))
+                ? "Valid" : "LegacyInvalidDefaulted";
+        }
+        catch (JsonException) { return "LegacyInvalidDefaulted"; }
+    }
+
+    public static string Summary(int type) => type switch
+    {
+        WfNotificationType.TodoCreated => "您有新的待办",
+        WfNotificationType.FlowApproved => "您的申请已通过",
+        WfNotificationType.FlowRejected => "您的申请被驳回",
+        WfNotificationType.BranchPruned => "流程分支已终止",
+        WfNotificationType.Timeout => "待办期限提醒",
+        WfNotificationType.FormSubmitted => "表单已提交",
+        WfNotificationType.TaskHandled => "任务已处理",
+        _ => "流程通知"
+    };
+
+    private static bool ValidNotify(JsonElement notify)
+    {
+        if (notify.ValueKind == JsonValueKind.Null) return true;
+        if (notify.ValueKind != JsonValueKind.Object) return false;
+        var known = Rows().Select(x => x.TypeKey).ToHashSet(StringComparer.Ordinal);
+        foreach (var property in notify.EnumerateObject())
+        {
+            if (property.Value.ValueKind is JsonValueKind.True or JsonValueKind.False)
+            {
+                if (property.Name != ChannelEmail && !LegacyKeyMap.Values.Contains(property.Name)) return false;
+                continue;
+            }
+            if (!known.Contains(property.Name) || property.Value.ValueKind != JsonValueKind.Object)
+                return false;
+            if (property.Value.EnumerateObject().Any(cell =>
+                    (cell.Name is not (ChannelInApp or ChannelEmail)) ||
+                    (cell.Value.ValueKind is not (JsonValueKind.True or JsonValueKind.False))))
+                return false;
+        }
+        return true;
     }
 
     /// <summary>类型轴 = 反射 WfNotificationType 全部 public const int（BranchPruned 合入即自动长出）。</summary>

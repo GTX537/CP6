@@ -23,6 +23,7 @@ public class NotificationService : INotificationService
 
         var rows = await q
             .OrderByDescending(n => n.CreateDate)
+            .ThenByDescending(n => n.Id)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
@@ -43,7 +44,7 @@ public class NotificationService : INotificationService
     public async Task MarkReadAsync(Guid userId, Guid id)
     {
         var n = await _db.Wf_Notifications
-            .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId);
+            .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId && x.InAppRequested);
         if (n is null) return;          // 他人 id 或不存在 → 静默跳过
 
         if (!n.IsRead)                  // 幂等：已读不重置 ReadAt
@@ -59,7 +60,7 @@ public class NotificationService : INotificationService
     public async Task MarkAllReadAsync(Guid userId)
     {
         var unread = await _db.Wf_Notifications
-            .Where(n => n.UserId == userId && !n.IsRead)
+            .Where(n => n.UserId == userId && n.InAppRequested && !n.IsRead)
             .ToListAsync();
 
         if (unread.Count == 0) return;

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "baseline_id": "CP6-DEV-ROADMAP-20261011/R1",
-  "as_of": "2026-11-23",
+  "as_of": "2026-11-24",
   "scope": "125已接受设计目标的全量大任务计划与进度登记。247仅为修订运行场景；原模块验收需继续盘点。不是125目标实现已完成的证明。",
   "main_baseline_sha": "90ea752e9029d171e6a0307fcda06c66c3e04a69",
   "sources": [
@@ -145466,8 +145466,20 @@
             "id": "OA-TASK-01::AC-T06-01",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-T06-01",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-20/DELIVERY.md",
+                "source_sha": "829c4472f6a5354009b4a5ff7af6a842868b1f69",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1320",
+                "observed_at": "2026-11-23T20:01:10.8689992-05:00",
+                "environment": "LAPTOP-3QQ44FJS，本机隔离 PostgreSQL 18.6，合成租户，真实 Kestrel/HTTP 与 Chrome 原件。",
+                "command": "同源独立复跑 dotnet vstest 定向 64/64，回读同源执行 TRX 65/65 与 FORM/APP Chrome 原件，见 #429 和唯一报告。",
+                "result": "PASS",
+                "scope": "原扁平和矩阵的逐位兼容，TOP_LEVEL_MERGE 保其他顶层键，notify:null 明确恢复缺省。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/15/cases/36"
@@ -145477,8 +145489,20 @@
             "id": "OA-TASK-01::AC-T06-02",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-T06-02",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-20/DELIVERY.md",
+                "source_sha": "829c4472f6a5354009b4a5ff7af6a842868b1f69",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1320",
+                "observed_at": "2026-11-23T20:01:10.8689992-05:00",
+                "environment": "LAPTOP-3QQ44FJS，本机隔离 PostgreSQL 18.6，合成租户，真实 Kestrel/HTTP 与 Chrome 原件。",
+                "command": "同源独立复跑 dotnet vstest 定向 64/64，回读同源执行 TRX 65/65 与 FORM/APP Chrome 原件，见 #429 和唯一报告。",
+                "result": "PASS",
+                "scope": "候选与实际 Chrome 均证 timeout 无独立 producer 且两通道 unsupported，原生 remind 仍保持 TodoCreated。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/15/cases/37"
@@ -145488,8 +145512,20 @@
             "id": "OA-TASK-01::AC-T06-03",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-T06-03",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-20/DELIVERY.md",
+                "source_sha": "829c4472f6a5354009b4a5ff7af6a842868b1f69",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1320",
+                "observed_at": "2026-11-23T20:01:10.8689992-05:00",
+                "environment": "LAPTOP-3QQ44FJS，本机隔离 PostgreSQL 18.6，合成租户，真实 Kestrel/HTTP 与 Chrome 原件。",
+                "command": "同源独立复跑 dotnet vstest 定向 64/64，回读同源执行 TRX 65/65 与 FORM/APP Chrome 原件，见 #429 和唯一报告。",
+                "result": "PASS",
+                "scope": "本人 WFC 原命令 CAS 并发只有一个提交，原回执可重放，冲突和非法/超限 JSON 不新写，保无关顶层键。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/15/cases/38"
@@ -145532,8 +145568,20 @@
             "id": "OA-TASK-01::AC-T06-07",
             "kind": "ORIGINAL_AC",
             "source_case_id": "AC-T06-07",
-            "state": "NOT_RUN",
-            "evidence": [],
+            "state": "PASS",
+            "evidence": [
+              {
+                "path": "docs/development/evidence/WP12-20/DELIVERY.md",
+                "source_sha": "829c4472f6a5354009b4a5ff7af6a842868b1f69",
+                "source_repository": "GTX537/CP6",
+                "pr_url": "https://github.com/GTX537/CP6/pull/1320",
+                "observed_at": "2026-11-23T20:01:10.8689992-05:00",
+                "environment": "LAPTOP-3QQ44FJS，本机隔离 PostgreSQL 18.6，合成租户，真实 Kestrel/HTTP 与 Chrome 原件。",
+                "command": "同源独立复跑 dotnet vstest 定向 64/64，回读同源执行 TRX 65/65 与 FORM/APP Chrome 原件，见 #429 和唯一报告。",
+                "result": "PASS",
+                "scope": "同一实际用户两个页面分别按显式水位写入，晚提交未读，旧原 ReadAt 保留，无水位以 428 安全拒绝。"
+              }
+            ],
             "definition_ref": {
               "path": "docs/development/assessments/20261011/catalogs/engineering-oa.json",
               "json_pointer": "/targets/15/cases/42"
@@ -145596,17 +145644,28 @@
           "command": "dotnet vstest 实跑 WorkflowDeadlineCalendar_、NativeTimeout、实际 hosted worker 与 OA 浏览器、PGT011/PGT017 和 JobRemainder 原行为，另以 vue-tsc 与 Vitest 检查前端。",
           "result": "PASS",
           "scope": "工作日历版本、静态包原键、准确的当地及 UTC 截止、单独授权重算和原生系统执行竞争。"
+        },
+        {
+          "path": "docs/development/evidence/WP12-20/DELIVERY.md",
+          "source_sha": "829c4472f6a5354009b4a5ff7af6a842868b1f69",
+          "source_repository": "GTX537/CP6",
+          "pr_url": "https://github.com/GTX537/CP6/pull/1320",
+          "observed_at": "2026-11-23T20:01:10.8689992-05:00",
+          "environment": "LAPTOP-3QQ44FJS，本机隔离 PostgreSQL 18.6，合成租户，真实 Kestrel/HTTP 与 Chrome 原件。",
+          "command": "同源独立复跑 dotnet vstest 定向 64/64，回读同源执行 TRX 65/65 与 FORM/APP Chrome 原件，见 #429 和唯一报告。",
+          "result": "PASS",
+          "scope": "独立验收局部范围。本人偏好、观察水位、FORM/APP 深链、两租户期限重算、共用原领取的前向迁移和重启。逐通道余项未验。"
         }
       ],
       "delivery_evidence": null,
       "completion_audit": {
         "result": "OPEN_GAPS",
-        "reviewed_at": "2026-11-23T07:14:09.885797+00:00",
-        "report": "docs/development/evidence/WP12-11/DELIVERY.md",
+        "reviewed_at": "2026-11-24T01:01:52+00:00",
+        "report": "docs/development/evidence/WP12-20/DELIVERY.md",
         "original_cases_reviewed": 46,
         "required_supplemental_cases": 0,
         "required_revision_cases": 0,
-        "original_pass": 25,
+        "original_pass": 29,
         "supplemental_pass": 0,
         "runtime_pass": 0,
         "coverage_cards": [
@@ -145614,10 +145673,11 @@
           "WP12-09",
           "WP12-10",
           "WP12-11",
-          "WP12-20"
+          "WP12-20",
+          "WP12-20b"
         ],
         "review_effective_seconds": 0.158,
-        "latest_review_effective_seconds": 0.081,
+        "latest_review_effective_seconds": 0.0,
         "gaps": [
           {
             "owner_task_id": "WP12-08",
@@ -145643,16 +145703,12 @@
             ]
           },
           {
-            "owner_task_id": "WP12-20",
-            "gap": "通知偏好、投递、深链与已读水位完整验收。",
+            "owner_task_id": "WP12-20b",
+            "gap": "逐通道投递、派送前当前收件资格及偏好复核、真实邮件、Required 与正式运维原键重送仍待采用。覆盖 AC-T06-04/08 剩余的运行及披露验证。",
             "source_cases": [
-              "AC-T06-01",
-              "AC-T06-02",
-              "AC-T06-03",
               "AC-T06-04",
               "AC-T06-05",
               "AC-T06-06",
-              "AC-T06-07",
               "AC-T06-08"
             ]
           },
@@ -177551,6 +177607,11 @@
       "at": "2026-11-23T19:18:04.575363+00:00",
       "evidence": "docs/development/evidence/WP12-15/DELIVERY.md",
       "change": "WP12-15 拆卡登记 TIMER 草稿输入提示。WP12-15b 受阻，原四项未验，OA-CONN-01 16/32。按 WP12-14 原 DELIVERY 单次结转 754.861 秒。"
+    },
+    {
+      "at": "2026-11-24T01:14:49.410334+00:00",
+      "evidence": "docs/development/evidence/WP12-20/DELIVERY.md",
+      "change": "WP12-20 局部 DONE/SPLIT 候选，WP12-20b BLOCKED，四项完整证据候选 PASS、四项 NOT_RUN，OA-TASK-01 候选 29/46。按 WP12-15 原 DELIVERY 单次拟结转 714.019 秒。"
     }
   ],
   "implementation_assessment": {
@@ -228622,7 +228683,7 @@
         "official_started_at": "2026-11-23T17:06:25.8964150+00:00",
         "technical_verified_at": "2026-11-23T14:15:52.7971254-05:00",
         "verified_at": "2026-11-23T19:18:04.575363+00:00",
-        "effective_seconds": 5112.383,
+        "effective_seconds": 5826.402,
         "size": "M",
         "budget_seconds": 14400,
         "mandatory_split_seconds": 21600,
@@ -228653,6 +228714,14 @@
         "split_decision_ref": {
           "commit": "89c5ced8826cda9d38b53cae7d6ab285becc30aa",
           "path": "handoffs/CP6-DEV-20261012/tasks/WP12-15/replies/20261123T191804Z-coord3-split-independent-acceptance/MESSAGE.md"
+        },
+        "post_candidate_finalization_seconds": 714.019,
+        "official_finish": "2026-11-23T19:48:28.7832770+00:00",
+        "finalization_decision_ref": {
+          "commit": "c9ff21ce30e355262b9d8251d30130e96fd42c29",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP12-15/replies/20261123T195253Z-coord3-split-closeout-ack/MESSAGE.md",
+          "receipt_commit": "37c1eb25397baa8f8fe51cf75e870f23f3c045be",
+          "receipt_path": "handoffs/CP6-DEV-20261012/tasks/WP12-15/messages/20261123T194905Z-cp6-exec-3-delivery-closeout/MESSAGE.md"
         }
       }
     },
@@ -228708,8 +228777,8 @@
         "CONN-30。用真实 Main HTTP 与 OA Chrome 核对当前授权、跨 Scope、晚到响应、失权清缓存和导出重新核权。旧入口若接续，按正式兼容合同复核其独立读权。无执行许可、无私有字段、摘要或凭据越界。",
         "RP-CONN-04 的时间解释仍待正式采用。先核对准确时区规则摘要和工作日历修订、Cron 语法与 DST 缺失或重复处置，再按现有读权复验五个以内规范时点及 nextDue 零变化。"
       ],
-      "card_budget_seconds": 9287.617,
-      "card_mandatory_split_seconds": 13931.4255
+      "card_budget_seconds": 8573.598,
+      "card_mandatory_split_seconds": 12860.397
     },
     {
       "id": "WP12-16",
@@ -229383,20 +229452,172 @@
         "file:Main:CP6.Core/Services/Wf/ApprovalDispatcher.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP12.md",
       "card_anchor": "wp12-20",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "CP6-EXEC-3",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp12-20",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-23T20:12:56.412384+00:00",
+        "baseline_sha": "f0739befada77bcd98b56d448a8f89ed6564be7e",
+        "entry_evidence": "docs/development/evidence/WP12-20/DELIVERY.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": false,
+        "delivery_report": "docs/development/evidence/WP12-20/DELIVERY.md",
+        "dispatch_scope": "AC-T06-01、02、03。旧偏好兼容、TOP_LEVEL_MERGE、能力矩阵与原生 remind、本人 WFC CAS 和原回执。；AC-T06-07。v2 与保持原列表 data 数组的显式水位接口，两个页面各自观察，晚到保持未读，重放保留原 ReadAt；无水位返回 428，旧 Web 需升级至配套版本。；AC-T06-04 的局部证据。FORM/APP 原事务、期限重算原回执、共用 Main 原 worker 的 PostgreSQL 前向领取保护与原键重启。；AC-T06-05、06 的局部证据。原账已确认与未知状态保留，八个原键各一次；旧账状态 1 仅表示原账确认。；AC-T06-08 的局部证据。当前本人、合成租户和明确代理收件范围，FORM/APP 深链实时复核及失权清理。",
+        "actual_start_ref": {
+          "commit": "5a93d04890eec1cd361a813156c0ffbdf24b1929",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP12-20/messages/20261123T201443Z-cp6-exec-3-start/MESSAGE.md",
+          "at": "2026-11-23T20:14:43Z"
+        },
+        "dispatch_decision_ref": {
+          "commit": "823dae77832fba814c2846819f74d89ae8b6e800",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261123T200227Z-coord3-wp12-20-dispatch/MESSAGE.md"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP12-20/DELIVERY.md",
+          "source_sha": "829c4472f6a5354009b4a5ff7af6a842868b1f69",
+          "source_repository": "GTX537/CP6",
+          "pr_url": "https://github.com/GTX537/CP6/pull/1320",
+          "observed_at": "2026-11-23T20:01:10.8689992-05:00",
+          "environment": "LAPTOP-3QQ44FJS，本机隔离 PostgreSQL 18.6，合成租户，真实 Kestrel/HTTP 与 Chrome 原件。",
+          "command": "同源独立复跑 dotnet vstest 定向 64/64，回读同源执行 TRX 65/65 与 FORM/APP Chrome 原件，见 #429 和唯一报告。",
+          "result": "PASS",
+          "scope": "独立验收局部范围。本人偏好、观察水位、FORM/APP 深链、两租户期限重算、共用原领取的前向迁移和重启。逐通道余项未验。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP12-20/DELIVERY.md",
+        "source_sha": "829c4472f6a5354009b4a5ff7af6a842868b1f69",
+        "remote_main_sha": "f0739befada77bcd98b56d448a8f89ed6564be7e",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1320",
+        "scope": "#429 的独立局部结论及候选基线。台账、实际 Main 采用、同树和席位收尾仍待受保护 PR 的后续确认。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
         "WP02：持久JOB/通知传输及当前披露权限，通知provider不可用明确保失败/未知。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "card_execution": {
+        "result": "SPLIT",
+        "report": "docs/development/evidence/WP12-20/DELIVERY.md",
+        "started_at": "2026-11-23T20:12:56.412384+00:00",
+        "official_started_at": "2026-11-23T20:12:56.412384+00:00",
+        "technical_verified_at": "2026-11-23T20:01:10.8689992-05:00",
+        "verified_at": "2026-11-24T01:14:49.410334+00:00",
+        "effective_seconds": 6290.413,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [
+          "WP12-20b"
+        ],
+        "strict_prerequisites": [
+          "S01-01",
+          "S01-02",
+          "S01-07",
+          "S01-09",
+          "S02-00",
+          "WP02-01",
+          "WP02-02",
+          "WP02-03",
+          "WP02-04",
+          "WP02-07",
+          "WP02-08",
+          "WP02-10",
+          "WP02-12",
+          "WP02-13",
+          "WP02-13b",
+          "WP02-14",
+          "WP02-14b",
+          "WP02-15",
+          "WP02-21",
+          "WP02-21b",
+          "WP12-01",
+          "WP12-02",
+          "WP12-03",
+          "WP12-04",
+          "WP12-06",
+          "WP12-07",
+          "WP12-08",
+          "WP12-09",
+          "WP12-10",
+          "WP12-11"
+        ],
+        "new_product_execution": true,
+        "preceding_integration_seconds": 714.019,
+        "split_decision_ref": {
+          "commit": "16954d7291e2f375c127792ff176398b2b5773dd",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP12-20/replies/20261124T010152Z-coord3-candidate-review-r3/MESSAGE.md"
+        }
+      }
+    },
+    {
+      "id": "WP12-20b",
+      "package_id": "WP12",
+      "title": "逐通道通知投递与正式运维余项",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "OA-TASK-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP12-20",
+        "S01-02",
+        "S02-00",
+        "WP02-10",
+        "WP02-12",
+        "WP02-13",
+        "WP12-08",
+        "WP12-11"
+      ],
+      "exclusive_resources": [
+        "Main:oa-notification",
+        "file:Main:CP6.Core/Services/Oa/TaskDecisionService.cs",
+        "file:Main:CP6.Core/Services/Wf/WfTimeoutService.cs",
+        "file:Main:CP6.Core/Services/Wf/ApprovalDispatcher.cs"
+      ],
+      "coverage_role": "IMPLEMENTATION",
+      "state": "BLOCKED",
+      "plan_path": "docs/development/task-plans/WP12.md",
+      "card_anchor": "wp12-20b",
+      "entry_gate": "NOT_CHECKED",
+      "assignment": null,
+      "blockers": [
+        "OA 通知和传输 Owner 尚未采用真实邮件 provider、Required 政策或正式运维原键重送，缺实际通道身份、原键结果、状态查询或受控对账合同。",
+        "逐通道账本及 worker、派送前当前收件资格和偏好复核、逐通道最小披露和版本交接尚未交付。先核父卡 Main 实际采用，再按准确候选及正式 Owner 边界验收。"
+      ],
+      "validation_evidence": [],
+      "delivery_evidence": null,
+      "entry_conditions": [
+        "核对父卡的实际 Main 采用及七项直接前置和展开前置全部达成。",
+        "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
+        "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
+        "WP02：持久JOB/通知传输及当前披露权限，通知provider不可用明确保失败/未知。",
+        "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。",
+        "OA 通知和传输 Owner 尚未采用真实邮件 provider、Required 政策或正式运维原键重送，缺实际通道身份、原键结果、状态查询或受控对账合同。",
+        "逐通道账本及 worker、派送前当前收件资格和偏好复核、逐通道最小披露和版本交接尚未交付。先核父卡 Main 实际采用，再按准确候选及正式 Owner 边界验收。"
+      ],
+      "split_parent": "WP12-20",
+      "remaining_scope": [
+        "AC-T06-04。逐通道投递与旧新 worker 实际交接，复核真实审批/任务、通知、Outbox 的原事务及失败后按原键恢复。既有审批事实、已确认结果及已读保持独立。",
+        "AC-T06-05。采用逐通道账本和 worker，验证每通道原键、无地址 BLOCKED_ADDRESS、UNKNOWN、已成功通道免重送、未知被保留，以及正式运维按原键重送与回执。",
+        "AC-T06-06。派送前核可信租户、环境、角色及实际收件资格、当前联系方式和收件偏好，采用真实邮件 provider 和正式 Required 规则，验证撤权及偏好关闭时抑制未发可选通道。",
+        "AC-T06-08。补逐通道实际收件与最小披露隔离，核验准确的服务权限与两版本交接。保留本人收件、授权代理及失权清理原用例。",
+        "正式切换核验完整 API/Web 镜像配套、滚动与兼容回退，证明只有一个获准投递路径，并沿用显式观察水位。生产操作及真实外送仅在正式准入和后续明确授权后处理。"
+      ],
+      "card_budget_seconds": 8109.587,
+      "card_mandatory_split_seconds": 12164.3805
     },
     {
       "id": "WP13-01",
@@ -232434,7 +232655,8 @@
         "WP12-09",
         "WP12-10",
         "WP12-11",
-        "WP12-20"
+        "WP12-20",
+        "WP12-20b"
       ]
     },
     {
@@ -304814,7 +305036,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 207761.235,
+      "effective_seconds": 214765.667,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -304878,7 +305100,8 @@
         "WP12-17",
         "WP12-05",
         "WP12-14",
-        "WP12-15"
+        "WP12-15",
+        "WP12-20"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -304989,6 +305212,14 @@
           ],
           "report": "docs/development/evidence/WP12-15/DELIVERY.md",
           "reason": "已验输入提示可局部交付。正式 conn.forecast 权限采用与时间解释待证明，四项原 AC 归受阻余卡。"
+        },
+        {
+          "parent": "WP12-20",
+          "children": [
+            "WP12-20b"
+          ],
+          "report": "docs/development/evidence/WP12-20/DELIVERY.md",
+          "reason": "已验通知偏好、水位、深链与原领取保护局部交付。逐通道投递、当前资格及偏好复核和正式 Owner 采用归受阻余卡。"
         }
       ],
       "current_stage": "OA",
@@ -305077,7 +305308,8 @@
           "WP12-17",
           "WP12-18",
           "WP12-19",
-          "WP12-20"
+          "WP12-20",
+          "WP12-20b"
         ]
       },
       "phase0_final_card": "WP01-01",
@@ -305177,15 +305409,15 @@
         }
       },
       "next_card_selection": {
-        "rule": "本轮仅完成 WP12-15 的局部拆分独立验收，下一张业务卡待单独决定。",
-        "baseline_sha": "a52330b4ef243146e51560ae40d664c9b99d376e",
+        "rule": "当前仅登记 WP12-20 局部拆分候选，后续业务卡由 COORD 独立决定。",
+        "baseline_sha": "f0739befada77bcd98b56d448a8f89ed6564be7e",
         "stage": "OA",
-        "after_card": "WP12-15",
+        "after_card": "WP12-20",
         "selected": null,
         "candidates": [],
         "split_decision_ref": {
-          "commit": "89c5ced8826cda9d38b53cae7d6ab285becc30aa",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP12-15/replies/20261123T191804Z-coord3-split-independent-acceptance/MESSAGE.md"
+          "commit": "16954d7291e2f375c127792ff176398b2b5773dd",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP12-20/replies/20261124T010152Z-coord3-candidate-review-r3/MESSAGE.md"
         }
       },
       "phase0_user_confirmation": "2026-11-17 用户确认：先按证据核销或拆卡，列清缺口；完成阶段0核对后再按顺序实施剩余卡。",
