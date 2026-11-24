@@ -9,13 +9,14 @@
           <span v-if="store.dto.wdPtnNo" class="key">{{ t('sales.pm.no') }}: {{ store.dto.wdPtnNo }} / {{ t('sales.term.rev') }} {{ store.dto.wdRev }}</span>
           <CpTag v-else-if="store.isRegister" tone="info">{{ t('sales.status.autoNumber') }}</CpTag>
           <CpTag v-if="store.dto.status === 9" tone="ok">{{ t('sales.status.transferred') }}</CpTag>
+          <CpTag v-if="store.dto.isDeleted" tone="info">已逻辑删除</CpTag>
         </div>
         <div class="header-right">
-          <el-radio-group v-model="opModel" size="small" :disabled="saving || loading || !!pending">
+          <el-radio-group v-model="opModel" size="small" :disabled="operationLocked">
             <el-radio-button :value="PlateMoldOperationType.Register">{{ t('sales.op.register') }}</el-radio-button>
             <el-radio-button :value="PlateMoldOperationType.Revise">{{ t('sales.op.revise') }}</el-radio-button>
             <el-radio-button :value="PlateMoldOperationType.Edit">{{ t('sales.op.edit') }}</el-radio-button>
-            <el-radio-button :value="PlateMoldOperationType.Delete" :disabled="!store.canDelete">{{ t('sales.op.delete') }}</el-radio-button>
+            <el-radio-button :value="PlateMoldOperationType.Delete" :disabled="operationLocked || !store.canDelete">{{ t('sales.op.delete') }}</el-radio-button>
             <el-radio-button :value="PlateMoldOperationType.View">{{ t('sales.op.view') }}</el-radio-button>
           </el-radio-group>
         </div>
@@ -155,7 +156,11 @@
 
         <el-tab-pane v-if="!store.isRegister" :label="`${t('sales.section.history')} (${store.history.length})`" name="history">
           <el-table :data="store.history" border size="small" style="width: 100%">
+            <el-table-column prop="baseCd" :label="t('sales.term.base')" min-width="160" />
             <el-table-column prop="wdRev" :label="t('sales.term.rev')" width="80" align="center" />
+            <el-table-column label="删除状态" width="110">
+              <template #default="{ row }">{{ row.isDeleted ? '已逻辑删除' : '未删除' }}</template>
+            </el-table-column>
             <el-table-column prop="stDate" :label="t('sales.pm.applyStartDate')" width="120" />
             <el-table-column prop="endDate" :label="t('sales.pm.applyEndDate')" width="120" />
             <el-table-column prop="supplierCd" :label="t('sales.term.supplier')" width="120" />
@@ -174,7 +179,7 @@
       <p>原记录 Rev 与传输状态独立保留；技术批准未证实，实物资格未知，PE 未执行。</p>
       <p v-if="store.dto.expectedNativeRowVersion">当前原记录版本：{{ store.dto.expectedNativeRowVersion }}；技术控制版本：{{ store.dto.expectedTechnicalControl?.version }}（{{ store.dto.expectedTechnicalControl?.knowledge === 'TECHNICAL_SPECIFICATION_DRAFT' ? '专业规格草稿，尚未批准或冻结' : '原观察，专业技术控制未证明' }}）</p>
       <p v-if="error" role="alert">{{ error }}</p><p v-if="notice" role="status">{{ notice }}</p>
-      <el-button v-if="completed" :disabled="saving || loading" @click="onLoadByNo">重新载入已确认原记录</el-button>
+      <el-button v-if="completed && searchNo" :disabled="saving || loading" @click="onLoadByNo">重新载入已确认原记录</el-button>
       <div v-if="pending"><p>存在待确认操作，请先查询原结果。</p>
         <el-button :disabled="saving || loading" @click="recover(false)">查询原操作</el-button>
         <el-button :disabled="saving || loading" @click="recover(true)">结束未提交操作</el-button></div>
@@ -205,7 +210,8 @@ import CpTag from '@/components/base/CpTag.vue'
 import { usePermissionStore } from '@/stores/permission'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { plateMoldWriterApi, type ToolWriterScope, type ToolWriteOperation, type ToolWriteKind } from '@/api/erp/plateMoldWriter'
-import { pendingToolWrite, saveToolWrite, resolveToolWrite, writerResponse, type PendingToolWrite } from '@/auth/plateMoldWriteRecovery'
+import { isToolWriteStorageEvent, pendingToolWrite, resolveToolWrite, saveToolWrite, toolWriteNotice,
+  writerResponse, type PendingToolWrite } from '@/auth/plateMoldWriteRecovery'
 
 const { t } = useI18n()
 const store = usePlateMoldStore(), route = useRoute(), permissions = usePermissionStore()
@@ -216,8 +222,15 @@ const searchEstimate = ref('')
 const loading = ref(false)
 const saving = ref(false), error = ref(''), notice = ref(''), completed = ref(false)
 const scope = ref<ToolWriterScope | null>(null), pending = ref<PendingToolWrite | null>(null)
+const operationLocked = computed(() => loading.value || saving.value || !!pending.value)
 const savePermission = computed(() => `erp-plate-mold:${store.isRegister ? 'add' : store.isDelete ? 'del' : 'edit'}`)
-const canSave = computed(() => !!scope.value && !pending.value && !completed.value && !loading.value && !saving.value && !store.isView && permissions.has(savePermission.value))
+const canSave = computed(() => {
+  const dto = store.dto
+  const selected = store.isRegister || (dto.wdPtnNo === searchNo.value && dto.wdRev === searchRev.value)
+  return selected && !!dto.expectedNativeRowVersion && !!dto.expectedTechnicalControl && !dto.isDeleted &&
+    !!scope.value && !completed.value && !operationLocked.value &&
+    !store.isView && permissions.has(savePermission.value)
+})
 let live = true, generation = 0
 function guard(stamp: string, current: number) { requireIdentity(stamp); if (!live || current !== generation) throw new Error('页面已变化。') }
 function clearPrivate() { store.reset(); scope.value = null; pending.value = null; notice.value = ''; completed.value = false; searchNo.value = ''; searchRev.value = undefined; searchEstimate.value = '' }
@@ -230,7 +243,9 @@ async function run(write: boolean, action: (check: () => void) => Promise<void>)
   catch (failure: any) { try { check()
     if ([401, 403].includes(failure?.response?.status)) { generation++; clearPrivate(); error.value = '当前权限无法确认，请重新载入。' }
     else error.value = failure?.response?.status === 412 ? '版本已变化，输入和原版本已保留；请查询或结束原操作，再明确重新载入。'
-      : failure?.response?.status === 409 ? '原关联或操作冲突，请查询原操作；不会自动重建订单。' : failure?.message || '结果暂未确认，请查询原操作。'
+      : failure?.response?.status === 409 ? '原关联或操作冲突，请查询原操作；不会自动重建订单。'
+      : write && (failure?.response?.status === 503 || (failure?.isAxiosError && !failure.response)) ? '结果暂未确认，请查询原操作。'
+      : failure?.message || '结果暂未确认，请查询原操作。'
   } catch { /* Ignore responses from a previous identity or route. */ } }
   finally { try { check(); if (scope.value) pending.value = pendingToolWrite(scope.value) } catch { /* Keep durable recovery IDs. */ }
     if (current === generation || !scope.value) { saving.value = false; loading.value = false } }
@@ -241,8 +256,10 @@ function showOperation(value: ToolWriteOperation) {
   if (value.state === 'COMMITTED' && value.result) {
     completed.value = true; const r = value.result
     searchNo.value = r.number; searchRev.value = r.revision
-    notice.value = `原操作已提交：${r.number} / Rev ${r.revision}。${r.commercialState === 'REQUESTED' ? '原订单请求已受理，尚未应用。' : '原订单已创建。'} PE 未执行。请明确重新载入后继续。`
-  } else notice.value = value.state === 'CLOSED' ? '未提交操作已结束，输入和原版本保留。' : '结果仍未知，请继续查询或结束未提交操作。'
+    notice.value = toolWriteNotice(value) + ' 请明确重新载入后继续。'
+  } else {
+    notice.value = value.state === 'CLOSED' ? '未提交操作已结束，输入和原版本保留。' : toolWriteNotice(value)
+  }
 }
 async function recover(close: boolean) { const current = scope.value; if (!current) return
   await run(true, async check => { const value = await resolveToolWrite(current, close, check); check(); showOperation(value) })
@@ -251,7 +268,7 @@ async function recover(close: boolean) { const current = scope.value; if (!curre
 const opModel = computed({
   get: () => store.operationType,
   set: v => {
-    if (pending.value || loading.value || saving.value) return
+    if (operationLocked.value) return
     store.setOperationType(v)
     if (v === PlateMoldOperationType.Register) { store.reset(); completed.value = false; newDraft() }
   },
@@ -279,16 +296,35 @@ async function onLoadByEstimate() {
   const estimate = searchEstimate.value
   await run(false, async check => { await currentScope(check); if (pending.value) return
     const response = await plateMoldApi.getByEstimateCalc(estimate); check()
-    if (response.code === 0 && response.data) { store.loadFromDto(response.data); completed.value = false; newDraft() }
-    else error.value = t('sales.err.E10008')
+    if (response.code !== 0 || !response.data || response.data.decisionEstimateNo !== estimate) {
+      error.value = t('sales.err.E10008')
+      return
+    }
+    const { decisionEstimateNo, vrsnName, customerCd, customerName, stDate, endDate } = response.data
+    Object.assign(store.dto, { decisionEstimateNo, vrsnName, customerCd, customerName,
+      stDate: stDate.slice(0, 10), endDate: endDate.slice(0, 10) })
+    completed.value = false
+    newDraft()
   })
 }
 async function readExact(number: string, revision: number | undefined, check: () => void) {
   const r = await plateMoldApi.getByNo(number, revision); check()
-  if (r.code !== 0 || !r.data) { error.value = t('sales.err.E10008'); return }
-  if (r.data.wdPtnNo !== number || revision !== undefined && r.data.wdRev !== revision || !r.data.expectedNativeRowVersion || !r.data.expectedTechnicalControl) throw new Error('无法核对原记录版本。')
-  store.loadFromDto(r.data); completed.value = false; store.history = []
-  if (store.isRegister) store.setOperationType(PlateMoldOperationType.View)
+  if (r.code !== 0 || !r.data) {
+    store.clearRecord()
+    completed.value = false
+    error.value = revision === undefined ? t('sales.err.E10008') : '未找到指定原修订。'
+    return
+  }
+  if (r.data.wdPtnNo !== number || (revision !== undefined && r.data.wdRev !== revision)
+      || !r.data.expectedNativeRowVersion || !r.data.expectedTechnicalControl) {
+    store.clearRecord()
+    throw new Error('无法核对原记录版本。')
+  }
+  searchRev.value = r.data.wdRev
+  store.loadFromDto(r.data)
+  completed.value = false
+  store.history = []
+  if (store.isRegister || r.data.isDeleted) store.setOperationType(PlateMoldOperationType.View)
   const h = await plateMoldApi.history(number); check(); if (h.code === 0) store.history = h.data || []
 }
 async function onLoadByNo() {
@@ -323,9 +359,26 @@ async function initialize() { await run(false, async check => {
   } else { store.reset(); newDraft() }
 }) }
 function identityChanged() { generation++; clearPrivate(); error.value = ''; loading.value = false; saving.value = false }
+function storageChanged(event: StorageEvent) {
+  if (!isToolWriteStorageEvent(event)) {
+    identityChanged()
+    return
+  }
+  if (!scope.value) return
+  try {
+    const next = pendingToolWrite(scope.value)
+    if (pending.value && !next) {
+      completed.value = true
+      notice.value = '原操作已在另一页面处理。请重新载入原记录或清除当前草稿。'
+    }
+    pending.value = next
+  } catch {
+    error.value = '无法核对原操作记录，请保留记录。'
+  }
+}
 watch(() => [route.query.wdPtnNo, route.query.rev], () => { identityChanged(); void initialize() })
-onMounted(() => { store.reset(); window.addEventListener(AUTH_EVENT, identityChanged); window.addEventListener('storage', identityChanged); void initialize() })
-onBeforeUnmount(() => { live = false; generation++; clearPrivate(); window.removeEventListener(AUTH_EVENT, identityChanged); window.removeEventListener('storage', identityChanged) })
+onMounted(() => { store.reset(); window.addEventListener(AUTH_EVENT, identityChanged); window.addEventListener('storage', storageChanged); void initialize() })
+onBeforeUnmount(() => { live = false; generation++; clearPrivate(); window.removeEventListener(AUTH_EVENT, identityChanged); window.removeEventListener('storage', storageChanged) })
 
 async function onIssueLabel() {
   if (!store.dto.wdPtnNo) return

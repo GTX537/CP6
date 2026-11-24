@@ -177612,6 +177612,11 @@
       "at": "2026-11-24T01:14:49.410334+00:00",
       "evidence": "docs/development/evidence/WP12-20/DELIVERY.md",
       "change": "WP12-20 局部 DONE/SPLIT 候选，WP12-20b BLOCKED，四项完整证据候选 PASS、四项 NOT_RUN，OA-TASK-01 候选 29/46。按 WP12-15 原 DELIVERY 单次拟结转 714.019 秒。"
+    },
+    {
+      "at": "2026-11-24T04:26:14.122299+00:00",
+      "evidence": "docs/development/evidence/WP05-04/DELIVERY.md",
+      "change": "WP05-04 按正式独立 PASS 登记同卡 DONE 候选，保留原目标与用例状态。按原 DELIVERY 单次拟结转 WP12-20 尾差并重算余卡预算。Draft 待总控复核。"
     }
   ],
   "implementation_assessment": {
@@ -210480,14 +210485,61 @@
         "file:Main:cp6.web/src/views/erp/PlateMoldListView.vue"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP05.md",
       "card_anchor": "wp05-04",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "CP6-EXEC-4",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp05-04",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-24T03:26:57.329478+00:00",
+        "baseline_sha": "a6b4ea9303cab654bf5368e3c1a9666d0ccd1f32",
+        "entry_evidence": "docs/development/evidence/WP05-04/DELIVERY.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "delivery_report": "docs/development/evidence/WP05-04/DELIVERY.md",
+        "dispatch_scope": "四个 ERP 版模旧写者、两旧页、估算草稿后显式保存、双版本、旧有效区间、逻辑删除历史和原键恢复。原断言仅登记本卡责任。",
+        "dispatch_decision_ref": {
+          "commit": "63346f1ef08f794211576ac7802aa48cc364c4bb",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261124T031850Z-coord4-wp05-04-decision/MESSAGE.md"
+        }
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP05-04/DELIVERY.md",
+          "source_sha": "0c2d5016104ba1ba8a8424c0760acb8547b947db",
+          "source_repository": "GTX537/CP6",
+          "pr_url": "https://github.com/GTX537/CP6/pull/1321",
+          "observed_at": "2026-11-24T04:11:19Z",
+          "environment": "LAPTOP-3QQ44FJS，本机隔离 PostgreSQL 18.6，合成数据，实际 Main HTTP 与 Chrome。",
+          "command": "总控按精确候选独立核对 Git、13 件原件 SHA-256、PG/HTTP 29 项、Chrome 1 项、Vitest 50 项和 Vite 原件。",
+          "result": "PASS",
+          "scope": "正式独立 PASS 覆盖 AC-E01/E04、AC-E03、AC-E16 原键和 AC-E13 兼容副作用中的本卡责任。"
+        },
+        {
+          "path": "docs/development/evidence/WP05-04/TYPECHECK.json",
+          "source_sha": "8afb202a52b21fc722211813f0da39ea37012cf2",
+          "source_repository": "GTX537/CP6",
+          "pr_url": "https://github.com/GTX537/CP6/pull/1321",
+          "observed_at": "2026-11-24T04:22:04.6135785+00:00",
+          "environment": "LAPTOP-3QQ44FJS 固定 DEV-1，本机 Node、vue-tsc 和 TypeScript。",
+          "command": "node node_modules/vue-tsc/bin/vue-tsc.js --build --force --pretty false",
+          "result": "PASS",
+          "scope": "在获验 head 上强制重跑类型检查，记录真实锁文件、配置、工具版本、起止、退出码和输出摘要。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP05-04/DELIVERY.md",
+        "source_sha": "0c2d5016104ba1ba8a8424c0760acb8547b947db",
+        "remote_main_sha": "a6b4ea9303cab654bf5368e3c1a9666d0ccd1f32",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1321",
+        "scope": "R2 的 DONE 台账候选。此处为已核实的远端基线及独立验收的产品范围，Draft 待总控精确复核与受保护采用。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL租户存储/迁移与可信上下文；当前动作/读取授权和共同最终授权fence；Main Owner事务、原键结果及审计能力。",
@@ -210618,6 +210670,45 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
+      },
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP05-04/DELIVERY.md",
+        "started_at": "2026-11-24T03:26:57.329478+00:00",
+        "official_started_at": "2026-11-24T03:26:57.329478+00:00",
+        "technical_verified_at": "2026-11-24T04:02:01.2985034+00:00",
+        "verified_at": "2026-11-24T04:11:19Z",
+        "ledger_candidate_at": "2026-11-24T04:26:14.122299+00:00",
+        "effective_seconds": 2636.14,
+        "r1_effective_seconds": 2103.969,
+        "r2_effective_seconds": 532.171,
+        "independent_review_wait_seconds": 920.653,
+        "size": "L",
+        "budget_seconds": 28800,
+        "mandatory_split_seconds": 43200,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "S01-01",
+          "S01-02",
+          "S01-07",
+          "S01-09",
+          "S02-00",
+          "WP02-01",
+          "WP02-02",
+          "WP02-03",
+          "WP02-07",
+          "WP02-10",
+          "WP02-13",
+          "WP02-13b"
+        ],
+        "new_product_execution": true,
+        "acceptance_decision_ref": {
+          "commit": "1ffb7e4ff503df036867e2259892f97a6155b56e",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP05-04/replies/20261124T041119Z-coord4-independent-acceptance/MESSAGE.md",
+          "accepted_head": "8afb202a52b21fc722211813f0da39ea37012cf2",
+          "accepted_tree": "72551de21070f00e737027c7f5cdc9072878b9dd",
+          "base": "a6b4ea9303cab654bf5368e3c1a9666d0ccd1f32"
+        }
       }
     },
     {
@@ -229514,7 +229605,7 @@
         "official_started_at": "2026-11-23T20:12:56.412384+00:00",
         "technical_verified_at": "2026-11-23T20:01:10.8689992-05:00",
         "verified_at": "2026-11-24T01:14:49.410334+00:00",
-        "effective_seconds": 6290.413,
+        "effective_seconds": 7465.735,
         "size": "M",
         "budget_seconds": 14400,
         "mandatory_split_seconds": 21600,
@@ -229558,6 +229649,14 @@
         "split_decision_ref": {
           "commit": "16954d7291e2f375c127792ff176398b2b5773dd",
           "path": "handoffs/CP6-DEV-20261012/tasks/WP12-20/replies/20261124T010152Z-coord3-candidate-review-r3/MESSAGE.md"
+        },
+        "post_candidate_finalization_seconds": 1175.322,
+        "official_finish": "2026-11-24T01:48:01.1716340+00:00",
+        "finalization_decision_ref": {
+          "commit": "1ffb7e4ff503df036867e2259892f97a6155b56e",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP05-04/replies/20261124T041119Z-coord4-independent-acceptance/MESSAGE.md",
+          "receipt_commit": "1c9466cfba8b365ab4361b9aeea945f02a9e4ec5",
+          "receipt_path": "handoffs/CP6-DEV-20261012/tasks/WP12-20/messages/20261124T014830Z-cp6-exec-3-delivery-closeout/MESSAGE.md"
         }
       }
     },
@@ -229616,8 +229715,8 @@
         "AC-T06-08。补逐通道实际收件与最小披露隔离，核验准确的服务权限与两版本交接。保留本人收件、授权代理及失权清理原用例。",
         "正式切换核验完整 API/Web 镜像配套、滚动与兼容回退，证明只有一个获准投递路径，并沿用显式观察水位。生产操作及真实外送仅在正式准入和后续明确授权后处理。"
       ],
-      "card_budget_seconds": 8109.587,
-      "card_mandatory_split_seconds": 12164.3805
+      "card_budget_seconds": 6934.265,
+      "card_mandatory_split_seconds": 10401.3975
     },
     {
       "id": "WP13-01",
@@ -305036,7 +305135,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 214765.667,
+      "effective_seconds": 218577.129,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -305101,7 +305200,8 @@
         "WP12-05",
         "WP12-14",
         "WP12-15",
-        "WP12-20"
+        "WP12-20",
+        "WP05-04"
       ],
       "closed_targets": [
         "OA-DEF-01",

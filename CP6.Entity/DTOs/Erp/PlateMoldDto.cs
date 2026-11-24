@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace CP6.Entity.DTOs.Erp;
 
 /// <summary>PA140 操作種別（5 種）</summary>
@@ -26,6 +28,10 @@ public class PlateMoldDto
     public string? OrderDepartment { get; set; }
     public string? WdPtnNo { get; set; }
     public int WdRev { get; set; } = 1;
+
+    // 仅历史读取返回删除标志，保持原命令的输入序列化不变。
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool IsDeleted { get; set; }
 
     public string BaseCd { get; set; } = string.Empty;
     public string? BaseName { get; set; }
@@ -142,6 +148,8 @@ public sealed record PlateMoldOrderPreconditionV1(Guid OrderId, Guid LineId, str
 
 public class PlateMoldHistoryItemDto
 {
+    public string BaseCd { get; set; } = string.Empty;
+    public bool IsDeleted { get; set; }
     public string WdPtnNo { get; set; } = string.Empty;
     public int WdRev { get; set; }
     public DateTime StDate { get; set; }
@@ -207,6 +215,7 @@ public class PlateMoldListItemDto
     public int RowNo { get; set; }
     /// <summary>UI: 発行☑</summary>
     public bool Issue { get; set; }
+    public string BaseCd { get; set; } = string.Empty;
     public string WdPtnNo { get; set; } = string.Empty;
     public string? VrsnName { get; set; }
     public int WdRev { get; set; }

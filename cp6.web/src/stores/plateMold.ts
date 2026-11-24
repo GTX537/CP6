@@ -45,18 +45,21 @@ export const usePlateMoldStore = defineStore('plateMold', () => {
   const isEdit     = computed(() => operationType.value === PlateMoldOperationType.Edit)
   const isDelete   = computed(() => operationType.value === PlateMoldOperationType.Delete)
   const isView     = computed(() => operationType.value === PlateMoldOperationType.View)
-  const isPageReadOnly = computed(() => isView.value || isDelete.value)
-  const canEdit    = computed(() => isRegister.value || isRevise.value || isEdit.value)
+  const isPageReadOnly = computed(() => isView.value || isDelete.value || !!dto.value.isDeleted)
+  const canEdit = computed(() => !isPageReadOnly.value)
   /** 仕様書 §10：版型名は登録/訂正で R、改定では RO */
-  const canEditVrsnName = computed(() => isRegister.value || isEdit.value)
+  const canEditVrsnName = computed(() => canEdit.value && (isRegister.value || isEdit.value))
 
   function setOperationType(op: PlateMoldOperationType) { operationType.value = op }
   function loadFromDto(d: PlateMoldDto) { dto.value = { ...emptyDto(), ...d }; isDirty.value = false }
-  function reset() {
-    operationType.value = PlateMoldOperationType.Register
+  function clearRecord() {
     dto.value = emptyDto()
     history.value = []
     isDirty.value = false
+  }
+  function reset() {
+    operationType.value = PlateMoldOperationType.Register
+    clearRecord()
   }
   function markDirty() { isDirty.value = true }
   /** 工程→版型分類の自動セット（仕様書 §5） */
@@ -75,7 +78,7 @@ export const usePlateMoldStore = defineStore('plateMold', () => {
     isRegister, isRevise, isEdit, isDelete, isView,
     isPageReadOnly, canEdit, canEditVrsnName,
     // actions
-    setOperationType, loadFromDto, reset, markDirty,
+    setOperationType, loadFromDto, clearRecord, reset, markDirty,
     autoTypeClassFromProcess,
   }
 })

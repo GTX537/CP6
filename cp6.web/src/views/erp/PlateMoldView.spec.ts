@@ -31,7 +31,9 @@ async function render() {
   view = mount(View, { global: { plugins: [pinia], directives: { permission: () => {} }, stubs: { RouterLink: slots, CpTag: slots,
     ElCard: slots, ElForm: slots, ElFormItem: slots, ElTabs: slots, ElTabPane: slots, ElTag: slots, ElRow: slots, ElCol: slots,
     ElRadioGroup: slots, ElRadioButton: true, ElTable: slots, ElTableColumn: true, ElSelect: slots, ElOption: true,
-    ElInput: true, ElInputNumber: true, ElDatePicker: true, ElCheckbox: true,
+    ElInput: { props: ['modelValue'], emits: ['update:modelValue'],
+      template: '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />' },
+    ElInputNumber: true, ElDatePicker: true, ElCheckbox: true,
     ElButton: { props: ['disabled'], template: '<button :disabled="disabled"><slot /></button>' } } } }); await flushPromises()
 }
 async function click(text: string) { const button = view!.findAll('button').find(x => x.text() === text)!; await button.trigger('click'); await flushPromises() }
@@ -117,4 +119,53 @@ it('ignores an exact revision read arriving after identity changes', async () =>
 })
 it('uses current delete permission and does not manufacture an admin role', async () => {
   api.allowed = false; await render(); expect(store.canDelete).toBe(false); draft(); await click('sales.btn.register'); expect(api.create).not.toHaveBeenCalled()
+})
+
+it('imports only estimate draft values and sends them through the explicit CREATE with both controls', async () => {
+  await render()
+  Object.assign(store.dto, { baseCd: 'FULL-BASE', supplierCd: 'SUPPLIER', operationReason: 'Explicit reason',
+    representativeProductCd: 'PRODUCT-A', decisionAmount: 87.6543 })
+  api.getByEstimateCalc.mockResolvedValue(ok({ decisionEstimateNo: '91234567-01', vrsnName: 'Imported name',
+    customerCd: 'CUSTOMER-A', stDate: '2026-04-01T00:00:00', endDate: '2027-04-01T00:00:00',
+    baseCd: 'ignored', wdPtnNo: 'ignored', expectedNativeRowVersion: 'ignored', operationId: id }))
+  await view!.get('.header-card input').setValue('91234567-01')
+  await click('sales.btn.import')
+  expect(api.getByEstimateCalc).toHaveBeenCalledWith('91234567-01')
+  expect(api.create).not.toHaveBeenCalled()
+  expect(pendingToolWrite(scope)).toBeNull()
+  expect(store.dto).toMatchObject({ baseCd: 'FULL-BASE', supplierCd: 'SUPPLIER', decisionAmount: 87.6543,
+    vrsnName: 'Imported name', customerCd: 'CUSTOMER-A', stDate: '2026-04-01', endDate: '2027-04-01' })
+  expect(store.dto.wdPtnNo).toBeUndefined()
+  expect(store.dto.operationId).toBeUndefined()
+  await click('sales.btn.register')
+  expect(api.create).toHaveBeenCalledWith(expect.objectContaining({ decisionEstimateNo: '91234567-01',
+    operationReason: 'Explicit reason', expectedNativeRowVersion: 'absent', expectedTechnicalControl: scope.newTechnicalControl }))
+})
+
+it('reports the absent requested revision and does not submit the previously selected revision', async () => {
+  route.query = { wdPtnNo: 'FULL-ORIGINAL-TOOL', rev: '7' }
+  await render()
+  api.getByNo.mockResolvedValueOnce(ok(null))
+  route.query = { wdPtnNo: 'FULL-ORIGINAL-TOOL', rev: '8' }
+  await flushPromises()
+  expect(api.getByNo).toHaveBeenLastCalledWith('FULL-ORIGINAL-TOOL', 8)
+  expect(view!.text()).toContain('未找到指定原修订')
+  expect(store.dto.wdPtnNo).toBeUndefined()
+  store.setOperationType(PlateMoldOperationType.Edit)
+  await flushPromises()
+  await click('sales.btn.register')
+  expect(api.update).not.toHaveBeenCalled()
+})
+
+it('shows the exact logically deleted revision and keeps the old write controls disabled', async () => {
+  route.query = { wdPtnNo: 'FULL-ORIGINAL-TOOL', rev: '7' }
+  api.getByNo.mockResolvedValue(ok({ ...current(), isDeleted: true }))
+  await render()
+  expect(view!.text()).toContain('已逻辑删除')
+  expect(store.isPageReadOnly).toBe(true)
+  store.setOperationType(PlateMoldOperationType.Delete)
+  await flushPromises()
+  await click('sales.btn.delete')
+  expect(api.remove).not.toHaveBeenCalled()
+  expect(pendingToolWrite(scope)).toBeNull()
 })

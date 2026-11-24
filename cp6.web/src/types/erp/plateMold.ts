@@ -20,6 +20,7 @@ export interface PlateMoldDto {
   orderDepartment?: string
   wdPtnNo?: string
   wdRev: number
+  isDeleted?: boolean
 
   baseCd: string
   baseName?: string
@@ -127,6 +128,8 @@ export interface PlateMoldDto {
 }
 
 export interface PlateMoldHistoryItemDto {
+  baseCd?: string
+  isDeleted?: boolean
   wdPtnNo: string
   wdRev: number
   stDate: string
@@ -183,6 +186,7 @@ export interface PlateMoldQueryDto {
 export interface PlateMoldListItemDto {
   rowNo: number
   issue?: boolean
+  baseCd?: string
   wdPtnNo: string
   vrsnName?: string
   wdRev: number

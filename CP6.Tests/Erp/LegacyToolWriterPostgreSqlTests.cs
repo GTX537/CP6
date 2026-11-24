@@ -204,34 +204,224 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     [CurrentPermissionPostgresFact]
     public async Task Legacy_tool_writer_actual_HTTP_all_four_old_routes_require_versions_csrf_and_recover_real_results()
     {
-        await using var h=await Seed();var(o,s)=await GrantLegacyTool(h);var input=await NewLegacyTool(o);
-        await using var host=await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!);var cookies=await Login(host,h);
-        async Task<HttpResponseMessage> Send(HttpMethod method,string path,object? body=null,bool csrf=true)
+        await using var h = await Seed();
+        var (owner, service) = await GrantLegacyTool(h);
+        var input = await NewLegacyTool(owner);
+        h.Db.PlateMoldStocks.Add(new()
         {
-            var req=new HttpRequestMessage(method,path);if(body!=null)req.Content=JsonContent.Create(body);
-            req.Headers.Add("Cookie",string.Join("; ",cookies.Select(x=>x.Key+"="+x.Value)));if(csrf)req.Headers.Add("X-CSRF-Token",cookies["cp6_csrf"]);
-            return await host.Send(req);
+            PlateNo = "WP05-04-PHYSICAL",
+            CustomerCd = input.CustomerCd,
+            ProductCd = input.RepresentativeProductCd,
+            UsedShots = 151,
+            Status = 1
+        });
+        await h.Db.SaveChangesAsync();
+        var physical = await h.Db.PlateMoldStocks.AsNoTracking().SingleAsync();
+        h.Db.ChangeTracker.Clear();
+
+        await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!);
+        var cookies = await Login(host, h);
+        async Task<HttpResponseMessage> Send(HttpMethod method, string path, object? body = null, bool csrf = true)
+        {
+            using var request = new HttpRequestMessage(method, path);
+            if (body != null) request.Content = JsonContent.Create(body);
+            request.Headers.Add("Cookie", string.Join("; ", cookies.Select(x => x.Key + "=" + x.Value)));
+            if (csrf) request.Headers.Add("X-CSRF-Token", cookies["cp6_csrf"]);
+            return await host.Send(request);
         }
-        using(var denied=await Send(HttpMethod.Post,"/api/plate-molds",input,false))Assert.Equal(HttpStatusCode.Forbidden,denied.StatusCode);
-        using(var created=await Send(HttpMethod.Post,"/api/plate-molds",input))Assert.True(created.IsSuccessStatusCode,await created.Content.ReadAsStringAsync());
-        var first=(await o.OperationAsync(input.OperationId!.Value,false)).Result!;
-        var original=Command((await s.GetByNoAsync(first.Number,1))!);original.ExpectedNativeRowVersion=null;
-        foreach(var(method,path) in new[]{(HttpMethod.Put,$"/api/plate-molds/{first.Number}/revise"),(HttpMethod.Put,$"/api/plate-molds/{first.Number}/1"),(HttpMethod.Delete,$"/api/plate-molds/{first.Number}/1")})
-        {using var missing=await Send(method,path,original);Assert.Equal(HttpStatusCode.BadRequest,missing.StatusCode);Assert.Contains("VERSION_REQUIRED",await missing.Content.ReadAsStringAsync());}
-        original=Command((await s.GetByNoAsync(first.Number,1))!);original.DecisionAmount=5m;
-        using(var changed=await Send(HttpMethod.Put,$"/api/plate-molds/{first.Number}/1",original))Assert.True(changed.IsSuccessStatusCode,await changed.Content.ReadAsStringAsync());
-        using(var receipt=await Send(HttpMethod.Get,$"/api/plate-molds/write-owner-v1/operations/{original.OperationId}"))
-        {Assert.True(receipt.IsSuccessStatusCode,await receipt.Content.ReadAsStringAsync());Assert.True(receipt.Headers.CacheControl?.NoStore);Assert.Contains("REQUESTED",await receipt.Content.ReadAsStringAsync());}
-        var stale=Command(OperationsOwnerV1.Freeze(original));
-        using(var conflict=await Send(HttpMethod.Put,$"/api/plate-molds/{first.Number}/1",stale))Assert.Equal(HttpStatusCode.PreconditionFailed,conflict.StatusCode);
-        var revise=Command((await s.GetByNoAsync(first.Number,1))!);revise.StDate=new DateTime(2026,6,1);
-        using(var revised=await Send(HttpMethod.Put,$"/api/plate-molds/{first.Number}/revise",revise))Assert.True(revised.IsSuccessStatusCode,await revised.Content.ReadAsStringAsync());
-        var delete=Command((await s.GetByNoAsync(first.Number,2))!);
-        using(var deleted=await Send(HttpMethod.Delete,$"/api/plate-molds/{first.Number}/2",delete))Assert.True(deleted.IsSuccessStatusCode,await deleted.Content.ReadAsStringAsync());
-        Assert.Equal("CANCEL_REQUEST",(await o.OperationAsync(delete.OperationId!.Value,false)).Result!.Intent!.Kind);
-        Assert.Equal(3,await h.Db.Orders.CountAsync());Assert.All(await h.Db.Orders.AsNoTracking().ToArrayAsync(),x=>Assert.False(x.IsDeleted));
-        await h.Db.Sys_RoleActions.Where(x=>x.MenuId==215 && x.ActionCode=="query").ExecuteDeleteAsync();
-        using(var denied=await Send(HttpMethod.Get,$"/api/plate-molds/{first.Number}?rev=1"))Assert.Equal(HttpStatusCode.Forbidden,denied.StatusCode);
-        using(var denied=await Send(HttpMethod.Get,$"/api/plate-molds/write-owner-v1/operations/{original.OperationId}"))Assert.Equal(HttpStatusCode.Forbidden,denied.StatusCode);
+
+        async Task ExpectError(HttpMethod method, string path, PlateMoldDto command, HttpStatusCode status, string error)
+        {
+            using var response = await Send(method, path, command);
+            var body = await response.Content.ReadAsStringAsync();
+            Assert.True(response.StatusCode == status, body);
+            Assert.Contains(error, body);
+        }
+
+        const string route = "/api/plate-molds";
+        using (var denied = await Send(HttpMethod.Post, route, input, csrf: false))
+            Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+
+        var createMissingNative = OperationsOwnerV1.Freeze(input);
+        createMissingNative.ExpectedNativeRowVersion = null;
+        await ExpectError(HttpMethod.Post, route, createMissingNative, HttpStatusCode.BadRequest, "VERSION_REQUIRED");
+        var createMissingControl = OperationsOwnerV1.Freeze(input);
+        createMissingControl.ExpectedTechnicalControl = null;
+        await ExpectError(HttpMethod.Post, route, createMissingControl, HttpStatusCode.BadRequest, "VERSION_REQUIRED");
+        createMissingNative.ExpectedNativeRowVersion = "AQ==";
+        await ExpectError(HttpMethod.Post, route, createMissingNative, HttpStatusCode.BadRequest, "TOOL_CREATE_PRECONDITION_INVALID");
+        createMissingControl.ExpectedTechnicalControl = input.ExpectedTechnicalControl! with { Version = "1" };
+        await ExpectError(HttpMethod.Post, route, createMissingControl, HttpStatusCode.BadRequest, "TOOL_CREATE_PRECONDITION_INVALID");
+        Assert.Equal((0, 1, 0), await LegacyWriteCounts(h));
+
+        using (var created = await Send(HttpMethod.Post, route, input))
+            Assert.True(created.IsSuccessStatusCode, await created.Content.ReadAsStringAsync());
+        var first = (await owner.OperationAsync(input.OperationId!.Value, false)).Result!;
+        var exactPath = route + "/" + first.Number;
+        var old = (await service.GetByNoAsync(first.Number, 1))!;
+        var original = Command(OperationsOwnerV1.Freeze(old));
+        original.DecisionAmount = 5m;
+        original.SheetWidth = 123.4567m;
+        using (var changed = await Send(HttpMethod.Put, exactPath + "/1", original))
+            Assert.True(changed.IsSuccessStatusCode, await changed.Content.ReadAsStringAsync());
+        var receiptPath = route + "/write-owner-v1/operations/";
+        using (var receipt = await Send(HttpMethod.Get, receiptPath + original.OperationId))
+        {
+            Assert.True(receipt.IsSuccessStatusCode, await receipt.Content.ReadAsStringAsync());
+            Assert.True(receipt.Headers.CacheControl?.NoStore);
+            Assert.Contains("REQUESTED", await receipt.Content.ReadAsStringAsync());
+        }
+
+        var current = (await service.GetByNoAsync(first.Number, 1))!;
+        Assert.NotEqual(old.ExpectedNativeRowVersion, current.ExpectedNativeRowVersion);
+        Assert.NotEqual(old.ExpectedTechnicalControl, current.ExpectedTechnicalControl);
+        var beforeRejected = await LegacyWriteCounts(h);
+        foreach (var (method, path) in new[]
+        {
+            (HttpMethod.Put, exactPath + "/revise"),
+            (HttpMethod.Put, exactPath + "/1"),
+            (HttpMethod.Delete, exactPath + "/1"),
+        })
+        {
+            var missingNative = Command(OperationsOwnerV1.Freeze(current));
+            missingNative.ExpectedNativeRowVersion = null;
+            await ExpectError(method, path, missingNative, HttpStatusCode.BadRequest, "VERSION_REQUIRED");
+            var missingControl = Command(OperationsOwnerV1.Freeze(current));
+            missingControl.ExpectedTechnicalControl = null;
+            await ExpectError(method, path, missingControl, HttpStatusCode.BadRequest, "VERSION_REQUIRED");
+            var staleNative = Command(OperationsOwnerV1.Freeze(current));
+            staleNative.ExpectedNativeRowVersion = old.ExpectedNativeRowVersion;
+            staleNative.RowVersion = null;
+            await ExpectError(method, path, staleNative, HttpStatusCode.PreconditionFailed, "TOOL_NATIVE_VERSION_CHANGED");
+            var staleControl = Command(OperationsOwnerV1.Freeze(current));
+            staleControl.ExpectedTechnicalControl = old.ExpectedTechnicalControl;
+            await ExpectError(method, path, staleControl, HttpStatusCode.PreconditionFailed, "TECHNICAL_CONTROL_CHANGED");
+        }
+        Assert.Equal(beforeRejected, await LegacyWriteCounts(h));
+
+        var revise = Command(current);
+        revise.StDate = new DateTime(2026, 6, 1);
+        using (var revised = await Send(HttpMethod.Put, exactPath + "/revise", revise))
+            Assert.True(revised.IsSuccessStatusCode, await revised.Content.ReadAsStringAsync());
+
+        var next = (await service.GetByNoAsync(first.Number, 2))!;
+        var invalidCorrection = Command(OperationsOwnerV1.Freeze(next));
+        invalidCorrection.StDate = revise.StDate.AddDays(-1);
+        var beforeOverlap = await LegacyWriteCounts(h);
+        await ExpectError(HttpMethod.Put, exactPath + "/2", invalidCorrection, HttpStatusCode.BadRequest, "TOOL_EFFECTIVITY_INVALID");
+        Assert.Equal(beforeOverlap, await LegacyWriteCounts(h));
+
+        var delete = Command(next);
+        var beforeDelete = await LegacyWriteCounts(h);
+        using (var deleted = await Send(HttpMethod.Delete, exactPath + "/2", delete))
+            Assert.True(deleted.IsSuccessStatusCode, await deleted.Content.ReadAsStringAsync());
+        var cancel = (await owner.OperationAsync(delete.OperationId!.Value, false)).Result!;
+        Assert.Equal("CANCEL_REQUEST", cancel.Intent!.Kind);
+        Assert.Equal("REQUESTED", cancel.CommercialState);
+        Assert.Equal("CONFIRMED", cancel.Intent.OriginalLifecycle);
+        Assert.Equal("NOT_EXECUTED", cancel.PeState);
+        var afterDelete = await LegacyWriteCounts(h);
+        Assert.Equal((2, 3, 4), afterDelete);
+        Assert.Equal(beforeDelete.Writes + 1, afterDelete.Writes);
+        using (var replayed = await Send(HttpMethod.Delete, exactPath + "/2", delete))
+            Assert.True(replayed.IsSuccessStatusCode, await replayed.Content.ReadAsStringAsync());
+        Assert.Equal(cancel, (await owner.OperationAsync(delete.OperationId.Value, false)).Result);
+        Assert.Equal(afterDelete, await LegacyWriteCounts(h));
+
+        using (var exact = await Send(HttpMethod.Get, exactPath + "?rev=2"))
+        {
+            Assert.True(exact.IsSuccessStatusCode, await exact.Content.ReadAsStringAsync());
+            using var json = JsonDocument.Parse(await exact.Content.ReadAsStringAsync());
+            var item = json.RootElement.GetProperty("data");
+            Assert.Equal(first.Number, item.GetProperty("wdPtnNo").GetString());
+            Assert.Equal(input.BaseCd, item.GetProperty("baseCd").GetString());
+            Assert.True(item.GetProperty("isDeleted").GetBoolean());
+        }
+        using (var missing = await Send(HttpMethod.Get, exactPath + "?rev=999"))
+        {
+            Assert.Equal(HttpStatusCode.OK, missing.StatusCode);
+            using var json = JsonDocument.Parse(await missing.Content.ReadAsStringAsync());
+            Assert.Equal(JsonValueKind.Null, json.RootElement.GetProperty("data").ValueKind);
+        }
+
+        var history = await service.GetHistoryAsync(first.Number);
+        Assert.Equal(new[] { 1, 2 }, history.Select(item => item.WdRev));
+        Assert.All(history, item => Assert.Equal(input.BaseCd, item.BaseCd));
+        Assert.Equal(revise.StDate.AddDays(-1), history[0].EndDate);
+        Assert.Equal(revise.StDate, history[1].StDate);
+        Assert.False(history[0].IsDeleted);
+        Assert.True(history[1].IsDeleted);
+        Assert.All(await h.Db.Orders.AsNoTracking().ToArrayAsync(), row => Assert.False(row.IsDeleted));
+        var order = await h.Db.Orders.AsNoTracking().SingleAsync(row => row.Id == cancel.Order.OrderId);
+        var line = await h.Db.OrderDetails.AsNoTracking().SingleAsync(row => row.Id == cancel.Order.LineId);
+        Assert.Equal(cancel.Order.OrderRowVersion, Convert.ToBase64String(order.RowVersion));
+        Assert.Equal(cancel.Order.LineRowVersion, Convert.ToBase64String(line.RowVersion));
+        Assert.False(line.IsDeleted);
+        var afterPhysical = await h.Db.PlateMoldStocks.AsNoTracking().SingleAsync();
+        Assert.Equal(physical.Id, afterPhysical.Id);
+        Assert.Equal(physical.RowVersion, afterPhysical.RowVersion);
+        Assert.Equal(physical.Status, afterPhysical.Status);
+        Assert.Equal(physical.UsedShots, afterPhysical.UsedShots);
+        Assert.False(afterPhysical.IsDeleted);
+
+        await h.Db.Sys_RoleActions.Where(row => row.MenuId == 215 && row.ActionCode == "query").ExecuteDeleteAsync();
+        using (var denied = await Send(HttpMethod.Get, exactPath + "?rev=1"))
+            Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+        using (var denied = await Send(HttpMethod.Get, receiptPath + original.OperationId))
+            Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task Legacy_tool_writer_revision_lost_commit_ack_preserves_both_intervals_and_original_receipt()
+    {
+        var fault = new CommitFault();
+        await using var h = await Seed(fault);
+        var (owner, service) = await GrantLegacyTool(h);
+        var first = await owner.ExecuteAsync("CREATE", null, 1, await NewLegacyTool(owner));
+        var command = Command((await service.GetByNoAsync(first.Number, 1))!);
+        command.StDate = new DateTime(2026, 6, 1);
+        var operation = command.OperationId!.Value;
+        Assert.Equal("UNKNOWN", (await owner.OperationAsync(operation, false)).State);
+        var before = await LegacyWriteCounts(h);
+        Assert.Equal((1, 2, 1), before);
+
+        fault.Armed = true;
+        var unknown = await Assert.ThrowsAsync<OrderPriceCorrectionException>(
+            () => owner.ExecuteAsync("REVISE", first.Number, 1, command));
+        Assert.Equal("OPERATIONS_OUTCOME_UNKNOWN", unknown.Message);
+        var recovered = await owner.OperationAsync(operation, false);
+        Assert.Equal("COMMITTED", recovered.State);
+        var result = Assert.IsType<PlateMoldWriteResultV1>(recovered.Result);
+        Assert.Equal(2, result.Revision);
+        Assert.Equal(first.Number, result.Number);
+        var intervals = await service.GetHistoryAsync(first.Number);
+        Assert.Equal(command.StDate.AddDays(-1), intervals[0].EndDate);
+        Assert.Equal(command.StDate, intervals[1].StDate);
+        var after = await LegacyWriteCounts(h);
+        Assert.Equal((2, 3, 2), after);
+        Assert.Equal(result, await owner.ExecuteAsync("REVISE", first.Number, 1, command));
+        Assert.Equal(first, (await owner.OperationAsync(first.OperationId, false)).Result);
+        Assert.Equal(after, await LegacyWriteCounts(h));
+        await DeviceEvidence("wp05-04-lost-commit-ack.json", new
+        {
+            operation,
+            before = new { before.Tools, before.Orders, before.Writes },
+            after = new { after.Tools, after.Orders, after.Writes },
+            original = new { result.Number, result.Revision, result.Source, result.CommercialState },
+            intervals = intervals.Select(row => new { row.BaseCd, row.WdPtnNo, row.WdRev, row.StDate, row.EndDate }),
+            originalKeyReplay = true,
+            preSubmitState = "UNKNOWN",
+            recovered.State
+        });
+    }
+
+    private static async Task<(int Tools, int Orders, int Writes)> LegacyWriteCounts(Harness h)
+    {
+        var writes = await h.Db.Database.SqlQuery<int>($"""
+            SELECT count(*)::integer AS "Value" FROM cp6_main_owner_v1.operations
+            WHERE tenant_id={h.Tenant} AND owner='Main.Erp.PlateMoldWrite.v1'
+              AND state='COMMITTED' AND audit_json->>'action'='legacy-tool-command'
+            """).SingleAsync();
+        return (await h.Db.PlateMolds.CountAsync(), await h.Db.Orders.CountAsync(), writes);
     }
 }
