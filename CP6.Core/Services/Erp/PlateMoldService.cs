@@ -86,19 +86,24 @@ public partial class PlateMoldService : IPlateMoldService
     }
 
     public Task<List<PlateMoldHistoryItemDto>> GetHistoryAsync(string wdPtnNo)
-        => _db.Database.IsNpgsql() ? WriteOwner.ReadNative((rows,ct)=>HistoryCoreAsync(wdPtnNo,rows)) : HistoryCoreAsync(wdPtnNo,_db.PlateMolds.AsNoTracking());
+        => _db.Database.IsNpgsql()
+            ? WriteOwner.ReadNative((rows, ct) => HistoryCoreAsync(wdPtnNo, rows, includeDeleted: true, ct: ct))
+            : HistoryCoreAsync(wdPtnNo, _db.PlateMolds.AsNoTracking());
 
-    private async Task<List<PlateMoldHistoryItemDto>> HistoryCoreAsync(string wdPtnNo,IQueryable<PlateMold> scoped)
+    private async Task<List<PlateMoldHistoryItemDto>> HistoryCoreAsync(string wdPtnNo, IQueryable<PlateMold> scoped,
+        bool includeDeleted = false, CancellationToken ct = default)
     {
         var rows = await scoped
-            .Where(x => x.WdPtnNo == wdPtnNo && !x.IsDeleted)
+            .Where(x => x.WdPtnNo == wdPtnNo && (includeDeleted || !x.IsDeleted))
             .OrderBy(x => x.WdRev)
-            .ToListAsync();
+            .ToListAsync(ct);
         var supplierMap = await _db.BusinessPartners.AsNoTracking()
             .Where(b => !b.IsDeleted && b.SupplierFlg)
-            .ToDictionaryAsync(b => b.BpCd, b => b.BpName);
+            .ToDictionaryAsync(b => b.BpCd, b => b.BpName, ct);
         return rows.Select(r => new PlateMoldHistoryItemDto
         {
+            BaseCd = r.BaseCd,
+            IsDeleted = r.IsDeleted,
             WdPtnNo = r.WdPtnNo,
             WdRev = r.WdRev,
             StDate = r.StDate, EndDate = r.EndDate,
@@ -425,6 +430,7 @@ public partial class PlateMoldService : IPlateMoldService
             var item = new PlateMoldListItemDto
             {
                 RowNo = (query.Page - 1) * query.PageSize + i + 1,
+                BaseCd = r.BaseCd,
                 WdPtnNo = r.WdPtnNo, WdRev = r.WdRev,
                 VrsnName = r.VrsnName,
                 TypeClass = r.TypeClass,

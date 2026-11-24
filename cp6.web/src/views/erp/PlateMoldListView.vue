@@ -1,6 +1,12 @@
 <template>
   <div class="plate-mold-list">
     <router-link v-permission="'erp-plate-mold:query'" to="/erp/plate-mold-sources">版型工具原来源与观察历史</router-link>
+    <div v-if="pending || recoveryNotice || recoveryError" class="search-card">
+      <p v-if="recoveryError" role="alert">{{ recoveryError }}</p>
+      <p v-if="pending || recoveryNotice" role="status">{{ recoveryNotice || '存在待确认的版模操作。' }}</p>
+      <el-button v-if="pending" :loading="recovering" @click="recoverOriginal">查询原操作</el-button>
+      <el-button v-if="recovered" @click="goView(recovered)">打开原修订</el-button>
+    </div>
     <el-card shadow="never" class="search-card">
       <el-form :model="query" label-width="120px" size="small" inline>
         <el-form-item :label="t('sales.term.base')">
@@ -76,6 +82,7 @@
         </el-table-column>
         <el-table-column prop="wdPtnNo" :label="t('sales.pm.no')" width="160" fixed="left" sortable="custom" />
         <el-table-column prop="vrsnName" :label="t('sales.pm.name')" min-width="160" fixed="left" sortable="custom" />
+        <el-table-column prop="baseCd" :label="t('sales.term.base')" min-width="160" />
         <el-table-column prop="wdRev" :label="t('sales.term.rev')" width="60" align="center" sortable="custom" />
         <el-table-column prop="typeClass" :label="t('sales.pm.class')" width="100" sortable="custom" />
         <el-table-column prop="customerCd" :label="t('sales.term.customer')" width="100" sortable="custom" />
@@ -145,6 +152,8 @@ import { ElMessage } from 'element-plus'
 import { Download } from '@element-plus/icons-vue'
 import CpTag from '@/components/base/CpTag.vue'
 import { plateMoldApi } from '@/api/erp/plateMold'
+import { plateMoldWriterApi, type ToolWriterScope } from '@/api/erp/plateMoldWriter'
+import { isToolWriteStorageEvent, pendingToolWrite, resolveToolWrite, toolWriteNotice, writerResponse } from '@/auth/plateMoldWriteRecovery'
 import type { PlateMoldQueryDto, PlateMoldListItemDto } from '@/types/erp/plateMold'
 
 const { t } = useI18n()
@@ -162,13 +171,87 @@ const loading = ref(false)
 const exporting = ref(false)
 const issuing = ref(false)
 const selectedRow = ref<PlateMoldListItemDto | null>(null)
+type ExactRevision = Pick<PlateMoldListItemDto, 'wdPtnNo' | 'wdRev'>
+const pending = ref(false)
+const recovered = ref<ExactRevision | null>(null)
+const recovering = ref(false)
+const recoveryNotice = ref('')
+const recoveryError = ref('')
+let writerScope: ToolWriterScope | null = null
 
 let live = true, generation = 0, searchGeneration = 0
-function clearPrivate() { generation++; searchGeneration++; rows.value = []; total.value = 0; selectedRow.value = null; resetQuery(); loading.value = false; exporting.value = false; issuing.value = false }
+function clearPrivate() {
+  generation++
+  rows.value = []
+  total.value = 0
+  resetQuery()
+  loading.value = false
+  exporting.value = false
+  issuing.value = false
+  writerScope = null
+  pending.value = false
+  recovered.value = null
+  recovering.value = false
+  recoveryNotice.value = ''
+  recoveryError.value = ''
+}
 function check(stamp: string, current: number) { requireIdentity(stamp); if (!live || current !== generation) throw new Error('页面已变化。') }
 function deny(error: any) { if ([401, 403].includes(error?.response?.status)) clearPrivate() }
-onMounted(() => { window.addEventListener(AUTH_EVENT, clearPrivate); window.addEventListener('storage', clearPrivate) })
-onBeforeUnmount(() => { live = false; clearPrivate(); window.removeEventListener(AUTH_EVENT, clearPrivate); window.removeEventListener('storage', clearPrivate) })
+
+function refreshPending() {
+  if (!writerScope) return
+  try {
+    pending.value = !!pendingToolWrite(writerScope)
+  } catch {
+    recoveryError.value = '无法核对原操作记录，请保留记录。'
+  }
+}
+async function loadWriterScope() {
+  const stamp = identityStamp(), current = generation
+  try {
+    const scope = writerResponse(await plateMoldWriterApi.scope())
+    check(stamp, current)
+    writerScope = scope
+    refreshPending()
+  } catch (failure) {
+    if (current === generation) deny(failure)
+  }
+}
+async function recoverOriginal() {
+  const scope = writerScope
+  if (!scope || !pending.value || recovering.value) return
+  const stamp = identityStamp(), current = generation, guard = () => check(stamp, current)
+  recovering.value = true
+  recoveryError.value = ''
+  try {
+    const value = await resolveToolWrite(scope, false, guard)
+    guard()
+    recoveryNotice.value = toolWriteNotice(value)
+    recovered.value = value.result ? { wdPtnNo: value.result.number, wdRev: value.result.revision } : null
+    refreshPending()
+  } catch (failure) {
+    if (current !== generation) return
+    deny(failure)
+    if (current === generation) recoveryError.value = '原操作暂未确认，请再次查询。'
+  } finally {
+    if (current === generation) recovering.value = false
+  }
+}
+function storageChanged(event: StorageEvent) {
+  if (isToolWriteStorageEvent(event)) refreshPending()
+  else clearPrivate()
+}
+onMounted(() => {
+  window.addEventListener(AUTH_EVENT, clearPrivate)
+  window.addEventListener('storage', storageChanged)
+  void loadWriterScope()
+})
+onBeforeUnmount(() => {
+  live = false
+  clearPrivate()
+  window.removeEventListener(AUTH_EVENT, clearPrivate)
+  window.removeEventListener('storage', storageChanged)
+})
 const isPickerMode = computed(() => route.query.picker === '1')
 const checkedCount = computed(() => rows.value.filter(r => r.issue).length)
 
@@ -256,7 +339,7 @@ function onPick() {
   router.push({ path: '/plate-mold', query: { wdPtnNo: selectedRow.value.wdPtnNo, rev: selectedRow.value.wdRev } })
 }
 
-function goView(row: PlateMoldListItemDto) {
+function goView(row: ExactRevision) {
   router.push({ path: '/plate-mold', query: { wdPtnNo: row.wdPtnNo, rev: row.wdRev, mode: 'view' } })
 }
 </script>

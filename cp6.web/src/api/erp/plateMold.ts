@@ -16,6 +16,8 @@ export interface PlateMoldSaveResult {
   peApi: PlateMoldPeApiResultDto
 }
 
+type EstimateDraft = Pick<PlateMoldDto, 'decisionEstimateNo' | 'vrsnName' | 'customerCd' | 'customerName' | 'stDate' | 'endDate'>
+
 export const plateMoldApi = {
   // ─── PA140 ───
 
@@ -23,7 +25,7 @@ export const plateMoldApi = {
     return http.get<any, ApiResult<{ sequence: string }>>('/plate-molds/next-seq')
   },
   getByEstimateCalc(calcNo: string) {
-    return http.get<any, ApiResult<PlateMoldDto>>(
+    return http.get<any, ApiResult<EstimateDraft>>(
       `/plate-molds/by-estimate-calc/${encodeURIComponent(calcNo)}`
     )
   },

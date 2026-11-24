@@ -4,13 +4,26 @@ export interface PendingToolWrite { operationId: string; kind: ToolWriteKind }
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const digest = /^[0-9a-f]{64}$/
 const kinds = ['CREATE', 'REVISE', 'UPDATE', 'DELETE']
+const keyPrefix = 'cp6_tool_write_v1:'
+
+export function isToolWriteStorageEvent(event: StorageEvent) {
+  return event.key?.startsWith(keyPrefix) ?? false
+}
+
+export function toolWriteNotice(value: ToolWriteOperation) {
+  if (value.state === 'UNKNOWN') return '结果仍未知，请继续查询原操作。'
+  if (value.state === 'CLOSED') return '未提交操作已结束。'
+  const result = value.result!
+  const order = result.commercialState === 'REQUESTED' ? '原订单请求已受理，尚未应用。' : '原订单已创建。'
+  return '原操作已提交：' + result.number + ' / Rev ' + result.revision + '。' + order + ' PE 未执行。'
+}
 export function writerResponse<T>(r: { code: number; data?: T | null }): T {
   if (r?.code !== 0 || r.data == null) throw new Error('无法确认原操作结果。')
   return r.data
 }
 function channel(scope: ToolWriterScope) {
   if (!uuid.test(scope.tenantId) || !uuid.test(scope.actorId)) throw new Error('无法确认当前身份。')
-  return `cp6_tool_write_v1:${scope.tenantId.toLowerCase()}:${scope.actorId.toLowerCase()}`
+  return `${keyPrefix}${scope.tenantId.toLowerCase()}:${scope.actorId.toLowerCase()}`
 }
 export function pendingToolWrite(scope: ToolWriterScope): PendingToolWrite | null {
   const raw = localStorage.getItem(channel(scope)); if (raw === null) return null

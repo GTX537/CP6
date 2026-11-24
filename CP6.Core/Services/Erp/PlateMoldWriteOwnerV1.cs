@@ -42,7 +42,10 @@ public sealed class PlateMoldWriteOwnerV1(CP6Context db,OperationsOwnerV1 owner,
             rows=revision==null?rows.Where(p=>!p.IsDeleted):rows.Where(p=>p.WdRev==revision.Value);
             var native=await rows.OrderByDescending(p=>p.WdRev).FirstOrDefaultAsync(token);if(native==null)return null;
             var(query,store)=await Source(a,token);var source=await store.Read(query,native.Id,null,token);
-            var dto=PlateMoldService.NativeDto(native);dto.ExpectedNativeRowVersion=source.CurrentNativeRowVersion;dto.ExpectedTechnicalControl=await ToolSpecificationStoreV1.LegacyControl(db,source.Reference,token);
+            var dto = PlateMoldService.NativeDto(native);
+            dto.IsDeleted = native.IsDeleted;
+            dto.ExpectedNativeRowVersion = source.CurrentNativeRowVersion;
+            dto.ExpectedTechnicalControl = await ToolSpecificationStoreV1.LegacyControl(db, source.Reference, token);
             if(!string.IsNullOrWhiteSpace(native.ArrangeNo))
             {var original=await OriginalOrder(a,native,token);dto.ExpectedOrder=new(original.OrderId,original.LineId,original.OrderRowVersion,original.LineRowVersion);}
             return dto;
@@ -102,8 +105,16 @@ public sealed class PlateMoldWriteOwnerV1(CP6Context db,OperationsOwnerV1 owner,
                     native.EndDate=frozen.StDate.AddDays(-1);native.Modifier=a.Actor;native.ModifyDate=DateTime.Now;
                     next.Creator=a.Actor;next.CreateDate=DateTime.Now;next.Status=0;next.McTransferFlg=false;db.PlateMolds.Add(next);native=next;
                 }
-                else if(kind=="UPDATE")PlateMoldService.NativeApply(frozen,native);
-                else native.IsDeleted=true;
+                else if (kind == "UPDATE")
+                {
+                    // 改动现行修订起始日时保留早期有效区间。其他纠正保留原有历史日期。
+                    if (frozen.StDate.Date != native.StDate.Date && await db.PlateMolds.AnyAsync(
+                            p => p.WdPtnNo == number && p.WdRev < revision && !p.IsDeleted
+                                && p.EndDate >= frozen.StDate.Date, token))
+                        throw Error("TOOL_EFFECTIVITY_INVALID", 400);
+                    PlateMoldService.NativeApply(frozen, native);
+                }
+                else native.IsDeleted = true;
             }
             native.Modifier=a.Actor;native.ModifyDate=DateTime.Now;await db.SaveChangesAsync(token);
             var id=native.Id;
