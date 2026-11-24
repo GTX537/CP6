@@ -1,5 +1,24 @@
 # WP04-32 交付记录
 
+## EXEC5 R6 同 PR 关卡候选
+
+本机 `LAPTOP-3QQ44FJS` 原 DEV-1 的关卡记录供 COORD 独立复核。台账和生成页的 `DONE` 是原 #1325 的卡级候选状态，随受保护合入后生效。当前远端 Draft 为 `cb69a277f428b64628af3899760012ff23667706`，正式采用与席位收尾待合并后回读。台账 `remote_main_sha` 记录已核实的开工 Main `671629ff46a4f781de3e94749250ca3beae354b8`。本候选的精确提交和树由本机回读记录定位。[原 #1325](https://github.com/GTX537/CP6/pull/1325) · [R7 固定签收](https://github.com/GTX537/CP6.AI-Handoff/blob/c39bc804de222fba89061102bab2ecd5a913e39e/handoffs/CP6-DEV-20261012/tasks/WP04-32/replies/20261124T121145Z-coord5-r7-synthetic-acceptance/MESSAGE.md)
+
+### 固定证据与验收范围
+
+- R7 签收的受测提交为 `9142534c8d34e9e117a9cb5d6566f5417b825c44`，Git 树为 `7951cee0806745d97e5303b5675d239aafc8ea66`。隔离回环 PostgreSQL 18.6 为 **15 通过、0 失败、0 跳过**，包括原回归和两个合成补验。原始 TRX 仍在 `D:/CP6-test-artifacts/WP04-32/exec5-r4/results/wp04-32-r4-candidate.trx`，SHA-256 为 `0324bad553dc9c61ee093284a4f90ef202a3f2fe236ebc0dd98e0b640afcd5f3`。原构建选项、过滤和程序集在同目录的 `candidate-run.json`、`candidate-assemblies.json` 和 `draft-readback.json`。
+- 从原 Draft 继续仅更新台账、本报告及对应生成页。受测产品、测试、迁移与构建配置按 Git 对象逐路径比对，沿用固定结果。技术通过范围限本卡提供者及本机合成读写。总控 R9 确认卡内技术验收完成，待完成本机关卡候选复核及受保护采用。
+- 严格前置按原决议复核 16 项，含 WP02-13b。Main 和 Platform 分别按固定主线与实际采用祖先核对。记录本卡 M 预算 14,400 秒，强制拆分线 21,600 秒。预算记入可复算工作窗上界 **7843.581 秒**，轮次之间的等待剔除，累计 **226420.710 秒**。各窗的依据和起止见 `D:/CP6-test-artifacts/WP04-32/exec5-r6/time-basis.json`。此时点之后的受保护合并与工作区处置按实际时间回读。[原派工及采用清单](https://github.com/GTX537/CP6.AI-Handoff/blob/2f002a3d4fe0c162a69dbf823cc455ef88aa0f94/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261124T091143Z-coord5-wp04-32-decision/MESSAGE.md)
+
+| 原验收范围 | 本卡本机结论 |
+| --- | --- |
+| ORD R01 003、005、006、035 | `PASS（合成）`。原 ID、版本和旧事实、具合成映射的原 Schedule／H10、同 SKU 排除行、缺证和未知均有原件。真实历史覆盖与迁移仍为 `UNPROVEN`。 |
+| ORD R01 009、011、012、015 | `PASS（合成）`。原键重试、事务共同提交或回滚、原 H10/H32 回执和水位、仅改价保留原供给语义。当前旧写者含 C03、版模、欠交及取消。 |
+| ORD R01 013、014、032、OD-R02-TC-084、OD-R03-AC-066、OD-R04-TC-005 | `PASS（合成）`。本地发布／动作门、已有控制与有效时间、独立原因及缺证保守行为。H32 生产解除授权、跨 Owner 的实际接入维持 `UNPROVEN`。 |
+| ORD R01 031 | `PASS（合成）`。既有当前授权、对象范围、原结果读取。新增 HTTP/UI 为 `NOT_RUN`。 |
+
+ERP-ORD-01 继续开放。实际 Confirm／Release／Control 归 WP04-16／17／18，Planning 归 WP06-13，实际 WMS 发运归 WP10-19，均为 `UNPROVEN`。真实投递为 `NOT_RUN`。OA 保持暂停，下一卡继续未指定。
+
 ## EXEC5 R4 历史来源与 H32 解除合成补验
 
 在 `LAPTOP-3QQ44FJS` 原 DEV-1 使用本机回环 PostgreSQL 及完全合成的租户、身份和业务数据。COORD5 独立复核本轮固定候选。整卡状态为 `HOLD`。[R6 固定决议](https://github.com/GTX537/CP6.AI-Handoff/blob/3fcdf9b30a5b9ceaad748b2005c22537ca685d92/handoffs/CP6-DEV-20261012/tasks/WP04-32/replies/20261124T113410Z-coord5-r6-synthetic-verification-decision/MESSAGE.md)

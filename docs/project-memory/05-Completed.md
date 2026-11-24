@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP05-04 旧版模写入口的版本与原事务兼容](../development/evidence/WP05-04/DELIVERY.md)（DONE），核对时间 `2026-11-24T04:11:19Z`。
+- [WP04-32 Sales稳定来源目录、原结果与H10 H32发布参加](../development/evidence/WP04-32/DELIVERY.md)（DONE），核对时间 `2026-11-24T12:11:45Z`。
 
 ### 已关闭目标
 
