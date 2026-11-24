@@ -1,5 +1,35 @@
 # WP06-13 交付记录
 
+## EXEC5 R9 当前调用授权
+
+依据转达的 COORD5 R13 复核，在 LAPTOP-3QQ44FJS 的原 DEV-1 修正同一 [Draft #1326](https://github.com/GTX537/CP6/pull/1326)。Main 台账的 WP06-13 为 `PLANNED`，OA 暂停且 `next_card=null`。本轮结果交 COORD 独立复核。
+
+| 对象 | 精确提交 | Git 树 |
+| --- | --- | --- |
+| Main 基线 | `ada8cd1f0a9a42fd61777e4c0bc9f455863274ed` | `16a79bd5b9b12ab71e7b9577ad42ddd879062468` |
+| R8 Draft 锚点 | `d0f17ff4d772bab196e56a8f5b61fe02c0e7805d` | `d94659fc8b08eab01e38ac82dcaadd08db2146f1` |
+| R9 固定受测产品 | `b6e8ce06f8441e05d57b888304e5859c1cc79992` | `4ab8be79e7cef5b652964142b8dadc9fbe035065` |
+
+R9 固定受测产品到更新后的 Draft 仅差本报告。Draft 当前 SHA 与 Git 树见 PR 描述及本机 `draft-readback.json`。
+
+### 当前权威与披露
+
+- 进程内 Planning 接收依赖同一 `CP6Context` 的 Main 当前授权。通过现有会话原件验证、可信租户、PostgreSQL 权限和订单所有者的披露参加端口验证。首次接收需要明确登记并已授权的 `service:planning.source.receive`。原键重试与结果回查需要独立的 `service:planning.source.result.read`。能力缺失时拒绝。 [正式合同](https://github.com/GTX537/CP6/blob/ada8cd1f0a9a42fd61777e4c0bc9f455863274ed/docs/design-handbook/remediation/02-commercial-physical-contracts.md#L28)
+- 读取原回执前，先核对持久 `Main.Sales` 来源与原操作的主体、原单和原行的当前可见范围、完整披露权限以及原谱系／源版／摘要。授权不足的对象和未观察对象在回查中都只返回未知，无原件披露，也无未执行证明。返回回执前和首次接收提交前复核当前授权。新增审计字段记录本次能力与当前披露依据，原结果字节及既有事务语义保留。
+- 合成隔离夹具提供本机主体与两项角色能力，消费真实 Main 权限表和对象披露查询。夹具的主体验证回调仅在测试中使用。生产启动沿用既有 Main 当前会话重核，未登记生产角色、服务身份或权限。实际服务 Producer／环境／epoch 和生产外部授权绑定仍为 `UNPROVEN`。
+
+### 固定验证
+
+在 .NET SDK 10.0.302 和隔离回环 PostgreSQL 18.6 构建及测试。**34 通过、0 失败、0 跳过**，包含 11 个新授权单元用例、6 个 Planning PostgreSQL 场景、15 个 WP04-32 Sales 回归和 2 个既有订单范围／字段披露回归。构建与测试退出码均为 0。测试使用新实现和合成数据。
+
+原本机业务场景继续通过，包括同源同版去重、H32 优先、Draft／Confirm 无 Demand、实际提交确认丢失后回查。事务 `1637` 回滚，事务 `1639` 实际提交并按原键恢复。夹具撤销接收授权后，保留读取能力的正常回查和原键重试仍返回相同原回执，最终 Demand／Version／Binding 各一份。
+
+本机证据根为 `D:/CP6-test-artifacts/WP06-13/exec5-r9/`。原始 `results/wp06-13-r9-candidate.trx` 的 SHA-256 为 `e6407000fc2f783233a7528e25d745dac30787ad9db08d7af03e17a9446fab4c`。`candidate-proof/index.json` 索引 31 份原件及前后状态。`candidate-run.json`、`candidate-assemblies.json`、`candidate-scope.json` 和 `candidate-cleanup.json` 记录运行、构建身份、覆盖及回环实例清理。工作树干净，任务 PostgreSQL／HTTP 监听及进程均已停止，DEV-1 保留登记供 COORD 复核。
+
+真实 Sales 调用、生产服务绑定、生产 H32 解除授权、真实历史迁移和完整下游采用保持 `UNPROVEN`。外部投递、新增 HTTP／UI、生产迁移与部署为 `NOT_RUN`。
+
+## EXEC5 R8 原草稿交付记录
+
 CP6-EXEC-5 R8 在 LAPTOP-3QQ44FJS 的 DEV-1 实施 Planning 原生来源接收。Main 与 Platform 的 17 项递归前置已核对为 DONE，采用提交在各自固定远端 Main 的祖先链上。DEV-1 于 2026-11-24 15:56:52 UTC 单独登记。本轮交付至 Draft，卡级采用待 COORD 独立复核。 [固定派工](https://github.com/GTX537/CP6.AI-Handoff/blob/77b103601cbfaa94fc14e3b06164b54b1197f46a/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261124T154435Z-coord5-wp06-13-decision/MESSAGE.md) · [原卡](https://github.com/GTX537/CP6/blob/ada8cd1f0a9a42fd61777e4c0bc9f455863274ed/docs/development/task-plans/WP06.md#wp06-13)
 
 | 对象 | 精确提交 | Git 树 |
