@@ -1,5 +1,26 @@
 # WP06-13 交付记录
 
+## EXEC5 R10 先授权再查询原操作
+
+依据转达的 COORD R14，在 LAPTOP-3QQ44FJS 原 DEV-1 更新同一 Draft #1326。Main 台账 WP06-13 保持 `PLANNED`，OA 暂停且 `next_card=null`。 [Draft #1326](https://github.com/GTX537/CP6/pull/1326)
+
+| 对象 | 精确提交 | Git 树 |
+| --- | --- | --- |
+| Main 基线 | `ada8cd1f0a9a42fd61777e4c0bc9f455863274ed` | `16a79bd5b9b12ab71e7b9577ad42ddd879062468` |
+| R9 Draft 锚点 | `0716b8ad616d3825c941292a86f9096c51c06dbc` | `39fc0a2aa903e9af0230b22b5e73e4562a77abc0` |
+| R10 固定受测产品 | `e34acbdbc911556b84cc714e42d784994470186e` | `78f1737ee02f20450d0b0ba5a3cdabd2f477806c` |
+
+R10 固定受测产品到本轮 Draft 的唯一差异为本报告。Draft 的精确 SHA 和树见 PR 描述及本机 `draft-readback.json`。
+
+- `ReceiveAsync` 在同一事务内先核对当前可信主体、适用能力和持久 Sales 原件的对象披露范围。原操作查询只有在独立的结果读取能力与对象授权成立后才执行。仅有接收能力时可以完成首次接收，该路径检查自然键占用以保持事务内幂等。 [正式授权与恢复合同](https://github.com/GTX537/CP6/blob/ada8cd1f0a9a42fd61777e4c0bc9f455863274ed/docs/design-handbook/remediation/02-commercial-physical-contracts.md#L28)
+- 接收入口将缺失和不可见来源统一为 `ACCESS_DENIED`，回查在同一可见范围规则下统一返回 `NOT_OBSERVED`。两者保留中性响应。合法原键恢复返回同一原回执，发出结果或提交业务前复核当前授权。
+- 固定产品使用 .NET SDK 10.0.302 和隔离回环 PostgreSQL 18.6。**41 通过、0 失败、0 跳过**，含 18 个授权单元用例、6 个 Planning PG、15 个 Sales PG 和 2 个订单披露 PG。新增 7 个单元用例用替身核对能力和对象检查先于历史查询。正常合成业务验证仅接收能力可首次接收，仅结果读取能力可恢复原回执。
+- 原事务语义保持。隔离回归中的事务 `1640` 回滚，事务 `1642` 实际提交，从新连接按原键取回同一回执。H32 优先、同源同版去重、历史与当前效力分列均已复验。新增授权用例和业务回归均在本轮固定产品执行。
+
+本机 `D:/CP6-test-artifacts/WP06-13/exec5-r10/` 保留原始 `results/wp06-13-r10-candidate.trx`，SHA-256 为 `f804f322ab24b7ea01586ba0cd468a5bd06a5440f8d93f0e06ac1d19129d18ed`。同根 `candidate-proof/index.json` 索引 31 份原件和状态，`candidate-run.json`、`candidate-assemblies.json`、`strict-prerequisites.json` 和 `candidate-cleanup.json` 保存受测身份、17 项前置以及本机清理记录。回环 PostgreSQL 和旧 HTTP 回归监听均已停止。
+
+整卡待 COORD 独立复核。生产服务身份及授权接入、真实 Sales 调用、H32 生产解除授权、历史迁移及下游采用保持 `UNPROVEN`。外部投递、新增 HTTP／UI、生产迁移和部署为 `NOT_RUN`。
+
 ## EXEC5 R9 当前调用授权
 
 依据转达的 COORD5 R13 复核，在 LAPTOP-3QQ44FJS 的原 DEV-1 修正同一 [Draft #1326](https://github.com/GTX537/CP6/pull/1326)。Main 台账的 WP06-13 为 `PLANNED`，OA 暂停且 `next_card=null`。本轮结果交 COORD 独立复核。
