@@ -17,10 +17,19 @@ public sealed record OrderSourceScope(Guid OrderId, Guid LineId, string OrderVer
 public sealed record OrderSourceReceipt(string Producer, string OperationKey, OrderSourceScope Scope, string LineageId,
     long SourceVersion, string? ReleaseId, string? ReleaseLineId,
     string SourceDigest, string BodySha256, string EnvelopeSha256, string Handoff, string State);
-public sealed record OrderSourceGate(string State, long? CurrentSourceVersion);
+public sealed record OrderSourceGate(string State, long? CurrentSourceVersion)
+{
+    internal OrderControlEvidenceGap? ControlGap { get; init; }
+
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? ControlEvidence => ControlGap is null ? null : "UNPROVEN";
+}
+
+internal enum OrderSourceAction { Plan, Convert, Release, Manufacture, Ship }
+internal enum OrderControlEvidenceGap { History, Scope, EffectiveTime, OriginalReason, Predecessor }
 
 // 仅参加已获授权的调用方事务。此端口的结果表示本地记录，业务决定和对端结果分别由其 Owner 持有。
-internal sealed class OrderSourceParticipant(CP6Context db)
+internal sealed partial class OrderSourceParticipant(CP6Context db, TimeProvider? clock = null)
 {
     private const int MaxBytes = 2 * 1024 * 1024;
     internal const string SourceContract = "ORD-DEM-SOURCE/1";
@@ -205,16 +214,23 @@ internal sealed class OrderSourceParticipant(CP6Context db)
 
     internal Task<OrderSourceGate> CheckCurrentSource(DbTransaction caller, OrderSourceScope scope,
         string lineageId, long sourceVersion, string digest, CancellationToken ct = default) =>
-        CheckCurrent(caller, scope, lineageId, sourceVersion, digest, publishControl: false, ct);
+        CheckCurrentSource(caller, scope, lineageId, sourceVersion, digest, OrderSourceAction.Ship, ct);
+
+    internal Task<OrderSourceGate> CheckCurrentSource(DbTransaction caller, OrderSourceScope scope,
+        string lineageId, long sourceVersion, string digest, OrderSourceAction action, CancellationToken ct = default)
+    {
+        if (!Enum.IsDefined(action)) throw Error("SCHEMA_INVALID", 400);
+        return CheckCurrent(caller, scope, lineageId, sourceVersion, digest, action, publishControl: false, ct);
+    }
 
     internal Task<OrderSourceGate> CheckCurrentPublication(DbTransaction caller, OrderSourceReceipt expected,
         CancellationToken ct = default) =>
         CheckCurrent(caller, expected.Scope, expected.LineageId, expected.SourceVersion, expected.SourceDigest,
-            publishControl: expected.Handoff == "H32", ct);
+            action: null, publishControl: expected.Handoff == "H32", ct);
 
-    // 发布和发运调用方共用此门。调用方在同一事务内使用结论，本门只证明 Sales 当前来源。
+    // 发布和业务动作共用同一来源锁。控制的发布资格和业务生效时点分别核对。
     private async Task<OrderSourceGate> CheckCurrent(DbTransaction caller, OrderSourceScope scope,
-        string lineageId, long sourceVersion, string digest, bool publishControl, CancellationToken ct)
+        string lineageId, long sourceVersion, string digest, OrderSourceAction? action, bool publishControl, CancellationToken ct)
     {
         RequireTransaction(db, caller);
         ValidateScope(scope);
@@ -227,17 +243,32 @@ internal sealed class OrderSourceParticipant(CP6Context db)
             || head.Scope.ScheduleId != scope.ScheduleId)
             return new("UNPROVEN", null);
         var exact = head.Scope == scope && head.SourceVersion == sourceVersion && head.SourceDigest == digest;
+        ControlAssessment? control = null;
         if (head.Handoff == "H32")
         {
-            if (exact && publishControl && await ConfirmedScope(scope, ct) is not null)
-                return new("CURRENT", head.SourceVersion);
-            return new("FENCED", head.SourceVersion);
+            // 水位已推进时，任何历史发布均保持围栏，包括尚未生效的控制。
+            if (action is null && (!exact || !publishControl)) return new("FENCED", head.SourceVersion);
+            control = await AssessControls(head, scope, action, ct);
+            if (action is null)
+            {
+                var canPublish = control.Gap is null && await ConfirmedScope(scope, ct) is not null;
+                return new(canPublish ? "CURRENT" : "UNPROVEN", head.SourceVersion) { ControlGap = control.Gap };
+            }
+            if (control.Blocked) return new("FENCED", head.SourceVersion) { ControlGap = control.Gap };
         }
-        if (!exact || publishControl) return new("STALE", head.SourceVersion);
+        else if (!exact || publishControl) return new("STALE", head.SourceVersion);
+
         var order = await ReadNative(db, scope.OrderId, ct);
         var line = order?.Lines.SingleOrDefault(x => x.Id == scope.LineId);
-        if (order is null || line is null) return new("UNPROVEN", head.SourceVersion);
-        if (!Active(order, line)) return new("FENCED", head.SourceVersion);
+        if (order is null || line is null) return new("UNPROVEN", head.SourceVersion) { ControlGap = control?.Gap };
+        if (!Active(order, line)) return new("FENCED", head.SourceVersion) { ControlGap = control?.Gap };
+        if (control is not null)
+        {
+            // 包含 H32 的发布水位不恢复历史 H10 的效力，也不产生新的有效 Release。
+            return new(exact || control.Gap is not null ? "UNPROVEN" : "STALE", head.SourceVersion)
+                { ControlGap = control.Gap };
+        }
+
         var proof = await ConfirmedScope(scope, ct);
         return new(proof is not null && await CurrentSupply(order, line, proof, ct) ? "CURRENT" : "UNPROVEN",
             head.SourceVersion);

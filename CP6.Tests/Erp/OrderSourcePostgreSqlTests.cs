@@ -279,22 +279,24 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             baseline = (object?)null, configuration = (object?)null, applicability = Array.Empty<object>() },
         supplyMode = "STOCK", purposeEvidence = Array.Empty<object>() };
 
-    private static byte[] SalesBody(OrderSourceScope scope, string lineage, string key, int version)
+    private static byte[] SalesBody(OrderSourceScope scope, string lineage, string key, int version,
+        object[]? originalControls = null)
     {
-        object[] controls = version == 1 ? [] :
+        object[] controls = originalControls ?? (version == 1 ? [] :
         [
             new { controlId = "synthetic-control", controlVersion = "1", owner = SalesProducer, reasonId = "fixture-hold",
                 scope = new { order = SalesOrderRef(scope), releaseLineageId = lineage, actionSet = new[] { "SHIP" } },
                 effectiveAt = "2026-11-24T09:30:00.000Z", disposition = "BLOCK", authority = TestEvidence(SalesProducer),
                 predecessor = (object?)null }
-        ];
+        ]);
         var node = JsonSerializer.SerializeToNode(new
         {
             schemaVersion = OrderSourceParticipant.SourceContract, operationKey = key,
             kind = version == 1 ? "INITIAL_RELEASE" : "CONTROL_SOURCE", order = SalesOrderRef(scope),
             salesReleaseId = "synthetic-release", salesReleaseLineId = "synthetic-release-line", releaseLineageId = lineage,
             sourceVersion = version.ToString(CultureInfo.InvariantCulture),
-            expectedAcceptedSourceVersion = (string?)null, previousIssuedSourceVersion = version == 1 ? null : "1",
+            expectedAcceptedSourceVersion = (string?)null,
+            previousIssuedSourceVersion = version == 1 ? null : (version - 1).ToString(CultureInfo.InvariantCulture),
             interveningFinalResults = Array.Empty<object>(), target = version == 1 ? TestTarget() : null,
             controls, approvalBindings = Array.Empty<object>(), cancelAllocation = (object?)null, activationManifest = (object?)null
         })!.AsObject();
