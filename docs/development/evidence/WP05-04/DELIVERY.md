@@ -65,3 +65,20 @@ PostgreSQL 18.6 运行在本机独立实例，Main Kestrel 与浏览器代理只
 ## 工时结转
 
 按 Handoff #433，对精确 Main 的 `docs/development/roadmap.json` 分别查找原 DELIVERY 的完整 SHA `1c9466cfba8b365ab4361b9aeea945f02a9e4ec5` 与路径 `handoffs/CP6-DEV-20261012/tasks/WP12-20/messages/20261124T014830Z-cp6-exec-3-delivery-closeout/MESSAGE.md`，均为零。WP12-20 的 1175.322 秒待合资格 Main 台账 PR 再次查重后单次结转。当前 Draft 待独立验收，台账尚未入账。既有 WP12-15 的 714.019 秒及 WP12-14 的 754.861 秒沿用。[原 DELIVERY](https://github.com/GTX537/CP6.AI-Handoff/blob/1c9466cfba8b365ab4361b9aeea945f02a9e4ec5/handoffs/CP6-DEV-20261012/tasks/WP12-20/messages/20261124T014830Z-cp6-exec-3-delivery-closeout/MESSAGE.md)
+
+## R2 台账候选与类型检查
+
+总控于 `2026-11-24T04:11:19Z` 独立签收 #1321 的 head `8afb202a52b21fc722211813f0da39ea37012cf2`、tree `72551de21070f00e737027c7f5cdc9072878b9dd`、base `a6b4ea9303cab654bf5368e3c1a9666d0ccd1f32`。R2 台账按获验的旧版模范围拟记 WP05-04 为 `DONE`。`ENG-TOOL-01` 的目标状态、原用例和上文 `NOT_RUN` 沿用。Draft 待总控复核本轮的新台账候选。[正式 PASS](https://github.com/GTX537/CP6.AI-Handoff/blob/1ffb7e4ff503df036867e2259892f97a6155b56e/handoffs/CP6-DEV-20261012/tasks/WP05-04/replies/20261124T041119Z-coord4-independent-acceptance/MESSAGE.md)
+
+在获验 head 上执行 `node node_modules/vue-tsc/bin/vue-tsc.js --build --force --pretty false`，退出码 `0`。执行区间为 `2026-11-24T04:21:30.4760606+00:00` 至 `2026-11-24T04:22:04.6135785+00:00`，使用 Node `v20.19.0`、vue-tsc `3.2.6`、TypeScript `6.0.2`。结构化记录固定实际 `package-lock.json` 和 TypeScript 配置的 Git blob，并保留执行日志 SHA-256、stdout 和 stderr。PG、HTTP、Chrome、组件与构建沿用 R1 的获验原件。[类型检查](TYPECHECK.json)
+
+| 台账核对 | 已采用 Main | R2 候选 |
+| --- | --- | --- |
+| WP12-20 原 DELIVERY 完整 SHA 命中 | 0 | 1 |
+| WP12-20 原 DELIVERY 路径命中 | 0 | 1 |
+| WP12-20 有效秒 | 6290.413 | 7465.735 |
+| WP12-20b 预算秒及 150% 阈值 | 8109.587 / 12164.3805 | 6934.265 / 10401.3975 |
+
+查重以 Main `a6b4ea9303cab654bf5368e3c1a9666d0ccd1f32` 的台账 blob `d54197aa1292885ea1c32b185b16d00e923a40bc` 为输入，获验 head 的台账为同一 blob。两键对应 R1 所述原 DELIVERY，1175.322 秒归 WP12-20 一次。WP12-14、WP12-15 的记录逐项一致。R1 实际执行 `2103.969` 秒，R2 至 `2026-11-24T04:26:14.122299+00:00` 实际执行 `532.171` 秒，合计 `2636.140` 秒。独立复核等待 `920.653` 秒单列。候选计划累计 `218577.129` 秒。
+
+本机 R2 原件根 `C:/Users/tt/CP6-test-artifacts/WP05-04/20261124T041721Z-exec4-r2`，包含 `resume.json`、`verified-typecheck/` 和 `ledger-dedup.json`。本轮差异限台账、其生成视图和本卡证据。DEV-1 保持原任务登记待总控复核。

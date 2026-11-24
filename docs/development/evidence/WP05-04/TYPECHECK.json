@@ -1,0 +1,56 @@
+{
+  "task": "WP05-04",
+  "round": "R2",
+  "host": "LAPTOP-3QQ44FJS",
+  "working_directory": "D:/CP6-worktrees/wave17-dispatch-20261018/cp6.web",
+  "command": "node node_modules/vue-tsc/bin/vue-tsc.js --build --force --pretty false",
+  "accepted_head": "8afb202a52b21fc722211813f0da39ea37012cf2",
+  "accepted_tree": "72551de21070f00e737027c7f5cdc9072878b9dd",
+  "base": "a6b4ea9303cab654bf5368e3c1a9666d0ccd1f32",
+  "toolchain": {
+    "node": "v20.19.0",
+    "vue_tsc": "3.2.6",
+    "typescript": "6.0.2"
+  },
+  "started_utc": "2026-11-24T04:21:30.4760606+00:00",
+  "finished_utc": "2026-11-24T04:22:04.6135785+00:00",
+  "elapsed_ms": 34137.518,
+  "exit_code": 0,
+  "tracked_files_clean_after": true,
+  "result": "PASS",
+  "inputs": [
+    {
+      "path": "cp6.web/package.json",
+      "git_blob": "959939c43f9f353193f7fd1033e82d79d5b87c06"
+    },
+    {
+      "path": "cp6.web/package-lock.json",
+      "git_blob": "3c33c317c238a450c779fad80d987e1dea73c19c"
+    },
+    {
+      "path": "cp6.web/tsconfig.app.json",
+      "git_blob": "c0f2d86707ed70f0480f90c09cf057468efabd1a"
+    },
+    {
+      "path": "cp6.web/tsconfig.json",
+      "git_blob": "66b5e5703e83c352671ce094731e9e861ada6924"
+    },
+    {
+      "path": "cp6.web/tsconfig.node.json",
+      "git_blob": "c9b2badc953654f6e4ff7778bf4c744282ba0cda"
+    }
+  ],
+  "outputs": [
+    {
+      "file": "stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "execution_log_sha256": "8f6bb709cea0714bf73b5b0bb13d72780cb58864b023e2472e230b2cb07e2d7b"
+}
