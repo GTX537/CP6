@@ -41,12 +41,19 @@ public sealed class CurrencyPolicyOwnerV1(CP6Context db, OperationsOwnerV1 owner
     {
         if (id == Guid.Empty) throw Error("CURRENCY_IDENTITY_INVALID", 400);
         var selected = version == null ? (long?)null : Revision(version);
-        return Authority.ExecuteAsync(OperationsOwnerV1.CurrencyPolicy, "query", false, async (access, token) =>
-        {
-            var store = new CurrencyPolicyStoreV1(db); await store.Fence(false, token);
-            await access.RequireCurrencyPolicy(id, token); access.AtCommit(last => access.RequireCurrencyPolicy(id, last));
-            return await store.Read(id, selected, token);
-        }, ct);
+        return Authority.ExecuteAsync(OperationsOwnerV1.CurrencyPolicy, "query", false,
+            (access, token) => ReadOwnedAsync(db, access, id, selected, token), ct);
+    }
+
+    internal static async Task<CurrencyPolicyVersionV1> ReadOwnedAsync(CP6Context db,
+        OperationsAccessV1 access, Guid id, long? version, CancellationToken ct)
+    {
+        access.RequireCurrencySourceAccess(db);
+        var store = new CurrencyPolicyStoreV1(db);
+        await store.Fence(false, ct);
+        await access.RequireCurrencyPolicy(id, ct);
+        access.AtCommit(last => access.RequireCurrencyPolicy(id, last));
+        return await store.Read(id, version, ct);
     }
 
     // Caller must already hold the actual currency-store fence in its own Main Owner transaction.

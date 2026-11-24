@@ -31,13 +31,13 @@ public sealed class EngineeringProductMappingService(CP6Context db, OperationsOw
         return Authority.ExecuteAsync(OperationsOwnerV1.EngineeringProduct, "query", false, async (access, token) =>
         {
             var product = await access.SourceAsync(OperationsOwnerV1.Product, token);
-            var rows = await product.Products().Where(row => row.ProductCd.Contains(search)).OrderBy(row => row.ProductCd)
-                .Take(50).Select(row => new { row.Id, row.ProductCd }).ToArrayAsync(token);
+            var rows = await MasterDataService.FilterProductKeyword(product.Products(), search).OrderBy(row => row.ProductCd)
+                .Take(50).Select(row => new { row.Id, row.SetProductName }).ToArrayAsync(token);
             var result = new List<EngineeringBusinessChoiceV1>();
             foreach (var row in rows)
             {
                 var source = await CommercialProductIdentityReader.ReadOwnedAsync(db, product, row.Id, null, token);
-                result.Add(new(new(BusinessOwner, row.Id, source.Version, source.Digest), row.ProductCd));
+                result.Add(new(source.Reference, source.ProductCode, row.SetProductName, source.MaterialKey));
                 access.AtCommit(last => RequireBusiness(product, row.Id, last));
             }
             return result.ToArray();
@@ -128,12 +128,34 @@ public sealed class EngineeringProductMappingService(CP6Context db, OperationsOw
             return await Observe(db, access, store, await store.ReadMapping(id, revision, token), token);
         }, ct);
     }
+    internal static async Task<EngineeringMappingVersionV1> ReadProductMappingAsync(CP6Context db,
+        OperationsAccessV1 productAccess, EngineeringMappingRefV1 reference, EngineeringSourceRefV1 product,
+        CancellationToken ct)
+    {
+        productAccess.RequireProductSourceAccess(db);
+        var version = MappingRevision(reference);
+        var engineering = await productAccess.SourceAsync(OperationsOwnerV1.EngineeringProduct, ct);
+        var store = new EngineeringProductStoreV1(db);
+        await store.Fence(false, ct);
+        var value = await Observe(db, engineering, store, await store.ReadMapping(reference.Id, version, ct), ct);
+        if (value.Reference != reference) throw Error("ENGINEERING_MAPPING_CHANGED", 412);
+        if (value.Candidate.BusinessRef != product) throw Error("ENGINEERING_BUSINESS_SOURCE_CHANGED", 412);
+        return value;
+    }
+
+    private static long MappingRevision(EngineeringMappingRefV1 reference)
+    {
+        if (reference == null || reference.Owner != MappingOwner || reference.Id == Guid.Empty || !ValidDigest(reference.Digest))
+            throw Error("ENGINEERING_MAPPING_REFERENCE_INVALID", 400);
+        return Revision(reference.Version);
+    }
+
     internal static async Task<EngineeringMappingVersionV1> CurrentExact(OperationsAccessV1 access, EngineeringProductStoreV1 store,
         EngineeringMappingRefV1 reference, CancellationToken ct)
     {
         access.RequireEngineeringSourceAccess(store.Context);
-        if (reference == null || reference.Owner != MappingOwner || reference.Id == Guid.Empty || !ValidDigest(reference.Digest)) throw Error("ENGINEERING_MAPPING_REFERENCE_INVALID", 400);
-        Revision(reference.Version); var current = await store.ReadMapping(reference.Id, null, ct);
+        MappingRevision(reference);
+        var current = await store.ReadMapping(reference.Id, null, ct);
         await RequireRead(store.Context, access, current, ct);
         if (current.Reference != reference) throw Error("ENGINEERING_MAPPING_CHANGED", 412);
         if (current.State != "CONFIRMED") throw Error("ENGINEERING_MAPPING_NOT_CONFIRMED");
