@@ -1,5 +1,6 @@
 using System.Text;
 using CP6.Core.EFDbContext;
+using CP6.Entity;
 using CP6.Entity.DomainModels;
 using CP6.Entity.DTOs;
 using Microsoft.EntityFrameworkCore;
@@ -290,7 +291,6 @@ public class ProductService : IProductService
         entity.Modifier = userName;
         entity.ModifyDate = DateTime.Now;
 
-        // 子表も同時 soft-delete
         await SoftDeleteChildrenAsync(productCd, userName);
 
         await _db.SaveChangesAsync();
@@ -499,26 +499,20 @@ public class ProductService : IProductService
 
     private async Task SoftDeleteChildrenAsync(string productCd, string? userName)
     {
-        await _db.ProductProcesses.Where(x => x.ProductCd == productCd && !x.IsDeleted)
-            .ExecuteUpdateAsync(s => s
-                .SetProperty(x => x.IsDeleted, true)
-                .SetProperty(x => x.Modifier, userName)
-                .SetProperty(x => x.ModifyDate, DateTime.Now));
-        await _db.ProductMaterials.Where(x => x.ProductCd == productCd && !x.IsDeleted)
-            .ExecuteUpdateAsync(s => s
-                .SetProperty(x => x.IsDeleted, true)
-                .SetProperty(x => x.Modifier, userName)
-                .SetProperty(x => x.ModifyDate, DateTime.Now));
-        await _db.ProductLotPrices.Where(x => x.ProductCd == productCd && !x.IsDeleted)
-            .ExecuteUpdateAsync(s => s
-                .SetProperty(x => x.IsDeleted, true)
-                .SetProperty(x => x.Modifier, userName)
-                .SetProperty(x => x.ModifyDate, DateTime.Now));
-        await _db.ProductCoProducts.Where(x => x.ProductCd == productCd && !x.IsDeleted)
-            .ExecuteUpdateAsync(s => s
-                .SetProperty(x => x.IsDeleted, true)
-                .SetProperty(x => x.Modifier, userName)
-                .SetProperty(x => x.ModifyDate, DateTime.Now));
+        // 子表和原主账由同一次保存提交。主账并发失败时，子表和资格版本一起回滚。
+        var children = new List<BaseBizEntity>();
+        children.AddRange(await _db.ProductProcesses.Where(x => x.ProductCd == productCd && !x.IsDeleted).ToListAsync());
+        children.AddRange(await _db.ProductMaterials.Where(x => x.ProductCd == productCd && !x.IsDeleted).ToListAsync());
+        children.AddRange(await _db.ProductLotPrices.Where(x => x.ProductCd == productCd && !x.IsDeleted).ToListAsync());
+        children.AddRange(await _db.ProductCoProducts.Where(x => x.ProductCd == productCd && !x.IsDeleted).ToListAsync());
+
+        var now = DateTime.Now;
+        foreach (var row in children)
+        {
+            row.IsDeleted = true;
+            row.Modifier = userName;
+            row.ModifyDate = now;
+        }
     }
 
     private void AddProcesses(string productCd, List<ProductProcessDto> list, string? userName)
