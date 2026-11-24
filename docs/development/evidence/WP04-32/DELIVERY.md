@@ -1,5 +1,37 @@
 # WP04-32 交付记录
 
+## EXEC5 R4 历史来源与 H32 解除合成补验
+
+在 `LAPTOP-3QQ44FJS` 原 DEV-1 使用本机回环 PostgreSQL 及完全合成的租户、身份和业务数据。COORD5 独立复核本轮固定候选。整卡状态为 `HOLD`。[R6 固定决议](https://github.com/GTX537/CP6.AI-Handoff/blob/3fcdf9b30a5b9ceaad748b2005c22537ca685d92/handoffs/CP6-DEV-20261012/tasks/WP04-32/replies/20261124T113410Z-coord5-r6-synthetic-verification-decision/MESSAGE.md)
+
+| 对象 | 精确提交 | Git 树 |
+| --- | --- | --- |
+| Main / base | `671629ff46a4f781de3e94749250ca3beae354b8` | `78f10d44825a4a48c3725795af0f29c473a6ed4b` |
+| R3 Draft 锚点 | `527bce5331fd3f501d2172ad85910e0b916717ab` | `ba8999b0ed072b87a28f89a3c2d18ade1f5143ed` |
+| R4 固定受测提交 | `9142534c8d34e9e117a9cb5d6566f5417b825c44` | `7951cee0806745d97e5303b5675d239aafc8ea66` |
+
+最终 Draft 的 head 和 tree 可见于 PR 描述及本机 `draft-readback.json`。固定受测提交至最终 Draft 的唯一差异为本节。
+
+### 旧订单历史来源
+
+- **PASS（合成）。** 同 SKU 的两个旧行使用各自稳定 GUID 和原生 RowVersion。合成映射记录固定原订单／行及快照修订、商业订单版、Schedule ID 和原件摘要，绑定明确的 ReleaseLineage／SourceVersion、原 Release／ReleaseLine、来源摘要及操作原键。用现有 `EnlistConfirm` 与初次 `EnlistRelease` 准备原件。
+- `ReadLegacyAsync` 核对两条旧行和原快照，`ReadScheduleAsync` 返回 `ORIGINAL_FOUND` 的精确 Schedule，`ReadResultAsync` 返回 `FOUND` 的 H10 `LOCAL_REQUEST` 原回执。核对完整确认、Schedule、H10 body／Envelope 及回执原字节。排除行保持旧事实可读，Schedule／当前源为 `UNPROVEN`，错行原键或未见操作为 `UNKNOWN`，整单 `ScheduleCoverage` 为 `UNPROVEN`。
+- 纳入／排除和区间 `[2026-11-24T09:00:00Z, 2026-11-24T10:00:00Z)` 属于测试夹具。时段外夹具覆盖返回 `UNPROVEN`，现有读入口仍可按原键读回历史原件。合成准备回滚时，第二连接只见初始写集，提交后才见旧快照、确认、H10、Outbox 与水位 1。读回前后 PostgreSQL 原生行身份、版本、各原件及本库转移 Demand 行计数均一致。
+
+### H32 同原因解除
+
+- **PASS（合成）。** 独立夹具目录按同租户和完整六元 OwnerRef 定位原 `SourceControl` 与测试专用授权正文，逐份核对摘要、类型、原控制 ID／版本、作用域和授权内容。共享 Sales 规则比较持久来源版、原控制版、Owner、原因、订单版／行／Schedule／谱系与完整动作集合。
+- 正向入口为从 PostgreSQL 读回原件后的内部共用规则。时钟在 `12:00:00Z` 生效前未阻断，到点阻断。到 `12:30:00Z` 解除生效，同一原因退出。另有已生效的 QA 同动作原因时，SHIP 仍受阻，原 Sales 原因限定的 RELEASE 动作阻断退出。发布规则在有据场景无控制证据缺口，动作效力另列。
+- 缺前驱或解除授权的夹具解析无法提供有据输入。真实默认当前门仍返回动作 `FENCED` 和该解除发布 `UNPROVEN`，旧 H10 发布为 `FENCED`，H32 回执仍可按原键取得。合成回滚的水位由事务内 3 回到持久 2，原键为 `UNKNOWN`。提交后水位 3，原 H10/H32 body、Envelope 与回执原字节可读，无本库转移 Demand 新增。生产入口没有解除授权绑定，本轮的范围是内部规则及默认门的缺证行为。
+
+### 原始结果与未证范围
+
+固定提交使用 PostgreSQL **18.6** 和 .NET SDK **10.0.302**。构建、测试退出码均为 0，**15 通过、0 失败、0 跳过**。原 13 个用例全部复跑，新增两项定向合成用例。历史夹具首跑遇到原生 SKU 键约束，改为在插入时指定同 SKU 后，两项定向用例复跑通过。工作树干净，本任务 PG／HTTP 临时进程和监听均为 0。
+
+本机根目录 `D:/CP6-test-artifacts/WP04-32/exec5-r4/`。原始 `results/wp04-32-r4-candidate.trx` SHA-256 为 `0324bad553dc9c61ee093284a4f90ef202a3f2fe236ebc0dd98e0b640afcd5f3`。`candidate-proof/` 保存合成映射、原始 Schedule／确认及 H10/H32 body／Envelope／回执、合成完整授权和读回前后结果。`candidate-run.json`、`candidate-assemblies.json`、`candidate-cleanup.json`、`draft-readback.json` 保存固定运行和回读索引。
+
+真实历史映射、迁移和覆盖、H32 生产解除授权、实际 Confirm／Release／Control（WP04-16／17／18）、Planning 接收（WP06-13）及 WMS 发运（WP10-19）为 `UNPROVEN`。WP04-14 的新稳定行和交期依原卡。真实投递与新增 HTTP/UI 为 `NOT_RUN`。
+
 ## EXEC5 R3 C03 与版模建单来源补证
 
 在 `LAPTOP-3QQ44FJS` 原 DEV-1 补齐两条旧建单入口的 Sales 来源原件断言。R3 提交包含两处测试及本交付记录，交 COORD5 独立复核。整卡状态为 `HOLD`。[固定签收](https://github.com/GTX537/CP6.AI-Handoff/blob/f9aaa3d2621f65df2ae956b38fce98f6ff5f2427/handoffs/CP6-DEV-20261012/tasks/WP04-32/replies/20261124T104845Z-coord5-r4-r2-review/MESSAGE.md)
