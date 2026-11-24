@@ -8,10 +8,12 @@ namespace CP6.Core.Services.Erp;
 
 internal sealed partial class OrderSourceParticipant
 {
-    private sealed record ControlAssessment(bool Blocked, OrderControlEvidenceGap? Gap);
+    internal sealed record ControlAssessment(bool Blocked, OrderControlEvidenceGap? Gap);
+    internal sealed record ResolvedControlRelease(long OriginalSourceVersion, string OriginalControl,
+        long ReleaseSourceVersion, string ReleaseControl);
 
     private sealed record SourceControl(OrderSourceScope Scope, long SourceVersion, string Owner, string ReasonId,
-        long Version, string Disposition, string[] Actions, DateTimeOffset? EffectiveAt);
+        long Version, string Disposition, string[] Actions, DateTimeOffset? EffectiveAt, string Original, bool HasPredecessor);
 
     private static readonly string[] EffectiveTimeFormats =
         ["yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ss.FFFFFFF'Z'"];
@@ -28,10 +30,17 @@ internal sealed partial class OrderSourceParticipant
             ORDER BY op.source_version
             """).ToArrayAsync(ct);
 
-        var now = (clock ?? TimeProvider.System).GetUtcNow();
+        // 当前入口还没有可解析原控制及解除授权的提供者。
+        return AssessOriginalControls(originals, head, scope, action, (clock ?? TimeProvider.System).GetUtcNow(), []);
+    }
+
+    // 已解析的解除凭据必须对应两个准确的持久原件。此评估不写入或发布业务结果。
+    internal static ControlAssessment AssessOriginalControls(Saved[] originals, OrderSourceReceipt head,
+        OrderSourceScope scope, OrderSourceAction? action, DateTimeOffset now,
+        IReadOnlyList<ResolvedControlRelease> resolvedReleases)
+    {
         var actionCode = action?.ToString().ToUpperInvariant();
-        var prior = new List<SourceControl>();
-        var blocked = false;
+        var active = new List<SourceControl>();
         OrderControlEvidenceGap? gap = originals.LongLength == head.SourceVersion ? null : OrderControlEvidenceGap.History;
 
         foreach (var original in originals)
@@ -84,20 +93,28 @@ internal sealed partial class OrderSourceParticipant
 
                 if (control.Disposition != "RELEASE_OWN_REASON")
                 {
-                    prior.Add(control);
-                    blocked |= action is not null && control.EffectiveAt <= now;
+                    active.Add(control);
                     continue;
                 }
 
                 if (!relevant || action is not null && control.EffectiveAt > now) continue;
-                // 原原因的业务坐标有明文合同。解除还要核对该原版的 OwnerRef 前驱。
-                // 当前本仓缺少将前驱凭据绑定到原控制及其授权的提供者，保留原阻断。
-                gap = prior.Any(originalBlock => SameOriginalReason(originalBlock, control))
+                if (control.HasPredecessor && resolvedReleases.Count > 0)
+                {
+                    var resolved = active.FindIndex(originalBlock => SameOriginalReason(originalBlock, control)
+                        && resolvedReleases.Contains(new ResolvedControlRelease(originalBlock.SourceVersion,
+                            originalBlock.Original, control.SourceVersion, control.Original)));
+                    if (resolved >= 0)
+                    {
+                        active.RemoveAt(resolved);
+                        continue;
+                    }
+                }
+                gap = active.Any(originalBlock => SameOriginalReason(originalBlock, control))
                     ? OrderControlEvidenceGap.Predecessor
                     : OrderControlEvidenceGap.OriginalReason;
             }
         }
-        return new(blocked, gap);
+        return new(action is not null && active.Any(control => control.EffectiveAt <= now), gap);
     }
 
     private static bool SameOriginalReason(SourceControl previous, SourceControl release) =>
@@ -120,7 +137,7 @@ internal sealed partial class OrderSourceParticipant
         return new(receipt.Scope, receipt.SourceVersion, String(control, "owner"), String(control, "reasonId"),
             Revision(control.GetProperty("controlVersion")), String(control, "disposition"),
             control.GetProperty("scope").GetProperty("actionSet").EnumerateArray().Select(a => a.GetString()!).ToArray(),
-            effective);
+            effective, control.GetRawText(), predecessor.ValueKind != JsonValueKind.Null);
     }
 
     private static void RequireControlReference(JsonElement reference)
