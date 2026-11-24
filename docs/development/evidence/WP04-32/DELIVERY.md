@@ -1,5 +1,26 @@
 # WP04-32 交付记录
 
+## EXEC5 R3 C03 与版模建单来源补证
+
+在 `LAPTOP-3QQ44FJS` 原 DEV-1 补齐两条旧建单入口的 Sales 来源原件断言。R3 提交包含两处测试及本交付记录，交 COORD5 独立复核。整卡状态为 `HOLD`。[固定签收](https://github.com/GTX537/CP6.AI-Handoff/blob/f9aaa3d2621f65df2ae956b38fce98f6ff5f2427/handoffs/CP6-DEV-20261012/tasks/WP04-32/replies/20261124T104845Z-coord5-r4-r2-review/MESSAGE.md)
+
+| 对象 | 提交 | Git 树 |
+| --- | --- | --- |
+| Main / base | `671629ff46a4f781de3e94749250ca3beae354b8` | `78f10d44825a4a48c3725795af0f29c473a6ed4b` |
+| R2 Draft 锚点 | `a4bdeb0caede2146eadabea5f503cc710683c92b` | `b65c0cbaa1afed35a4ec79c3e0e9a9a35a63ce03` |
+| R3 固定受测提交 | `a9f4967834826dd0194c2edf309c8a39b17fe3bf` | `0ef143bc7f4414920907e6897142ec119895a81e` |
+
+最终 Draft 的 head 和 tree 记录在 PR 描述及本机 `draft-readback.json`。固定受测提交至最终 Draft 的唯一差异为本节。
+
+- **C03 报价转草稿。** 在 `order-staged` 用同一 PostgreSQL 事务逐份核对 `Order.C03QuotationDraft` 原件、原订单和行 GUID、原生 RowVersion、原报价 ID／版本和请求 ID／版本及输入指纹。独立连接在提交前看不到来源原件。正常提交的 Sales 原件、原订单和行、伙伴使用回执、审计、桥接、旧成功结果与 Outbox 同属外层 WAL COMMIT `1393`。同键重投保留初次原字节及旧 `ErpOrderCreated` 结果。合成中止后来源原件和原成功写集均无持久记录，旧失败结果为 `C03_ERP_UNAVAILABLE`。
+- **版模建单。** 通过 `ToolOrderLinkOwnerV1.CreateOrLinkAsync` 验证 `Tool.OrderCreate` 原件的原生订单和行 GUID／版本及新旧版模来源版本。绑定、旧回执、业务行、版模原生连接和 Sales 记录同属外层 WAL COMMIT `1455`。同键重试保留相同原字节与 `ORDER_CREATED`、`NATIVE_ORDER_LINK_ONLY`、`NOT_EXECUTED` 原结果。合成提交前中止同时撤销订单、行、版模连接、旧回执和来源原件，原操作回查为 `UNKNOWN`。
+
+隔离 PostgreSQL **18.6** 使用回环连接及合成数据。固定提交构建退出码 `0`，测试退出码 `0`，**13 通过、0 失败、0 跳过**。原有 12 个用例全部复跑，其中 C03 两个用例加入新断言，另新增一个版模建单用例。清理后本任务 PG／HTTP 监听与进程均为 0。
+
+本机原始 `D:/CP6-test-artifacts/WP04-32/exec5-r3/results/wp04-32-r3-candidate.trx` 的 SHA-256 为 `79c4da2576be9919ded6e94748461fa554c2ca68fa4965dd0ed2460e28291952`。同根 `candidate-proof/` 保存两入口共四份来自 TRX 的原件及其原始来源字节，摘要与数据库记录逐份匹配。`candidate-run.json`、`candidate-assemblies.json`、`candidate-cleanup.json` 和 `draft-readback.json` 保存运行、程序集、清理及 Draft 回读信息。
+
+历史正式 Schedule／ReleaseLineage 及旧行映射、H32 正式解除权威、实际 Confirm／Release／Control 调用与 Planning、WMS 采用继续标为 `UNPROVEN`。真实消息投递及新增 HTTP/UI 为 `NOT_RUN`。
+
 ## EXEC5 R2 独立复核整改
 
 固定复核为 COORD5 R3。R2 在 `LAPTOP-3QQ44FJS` 的原 DEV-1 和 #1325 同一分支交付。总控复核前整卡仍是 `HOLD`，产品 PR 保持 Draft。[固定复核](https://github.com/GTX537/CP6.AI-Handoff/blob/a2add888c4b486ae57c0cffc62b419e8bbfb2e1e/handoffs/CP6-DEV-20261012/tasks/WP04-32/replies/20261124T100858Z-coord5-r3-draft-review/MESSAGE.md) · [原单卡决议](https://github.com/GTX537/CP6.AI-Handoff/blob/2f002a3d4fe0c162a69dbf823cc455ef88aa0f94/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261124T091143Z-coord5-wp04-32-decision/MESSAGE.md)
