@@ -50,24 +50,6 @@ public sealed class WorkflowNotificationsV1 : Migration
             FROM cp6_native_tasks_v2.notification_outbox o JOIN cp6_native_tasks_v2.commands c ON c.id=o.command_id
             WHERE c.completed AND NOT c.closed;
 
-        CREATE TABLE cp6_oa_notification_v1.deliveries(
-            tenant_id uuid NOT NULL,
-            environment_id uuid NOT NULL,
-            notification_id uuid NOT NULL REFERENCES public."Wf_Notification"("Id"),
-            recipient_id uuid NOT NULL,
-            channel text COLLATE "C" NOT NULL CHECK(channel IN ('IN_APP','EMAIL')),
-            recipient_version text COLLATE "C" NOT NULL,
-            state text COLLATE "C" NOT NULL CHECK(state IN ('PENDING','IN_FLIGHT','ACCEPTED_BY_PROVIDER',
-                'UNKNOWN','RETRYABLE_FAILED','BLOCKED_ADDRESS','SUPPRESSED')),
-            reason text COLLATE "C",
-            attempt_id uuid,
-            attempts integer NOT NULL DEFAULT 0,
-            next_attempt_at timestamptz,
-            updated_at timestamptz NOT NULL DEFAULT clock_timestamp(),
-            PRIMARY KEY(tenant_id,environment_id,notification_id,channel,recipient_version)
-        );
-        CREATE INDEX oa_notification_deliveries_owner
-            ON cp6_oa_notification_v1.deliveries(tenant_id,environment_id,recipient_id,notification_id);
         """);
 
     protected override void Down(MigrationBuilder migration)

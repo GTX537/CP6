@@ -1,7 +1,7 @@
 /**
  * WfNotificationType — 对齐后端 WfNotificationType 常量
  * SignalR 事件名："WfNotification"
- * SignalR 只通知刷新，持久收件由当前本人列表读取。
+ * 新版铃铛收到 SignalR 后刷新当前本人列表。
  */
 export const NotificationType = {
   TodoCreated:  1,
@@ -23,8 +23,6 @@ export interface NotificationItem {
   instanceId?: string
   taskId?:     string
   flowKey?:    string
-  inAppDelivery?: string | null
-  emailDelivery?: string | null
   readAt?: string | null
   isRead:      boolean
   createDate:  string

@@ -55,7 +55,7 @@
           <div class="notify-item-body">
             <div class="notify-item-title">{{ item.title }}</div>
             <div class="notify-item-time">{{ relativeTime(item.createDate) }}</div>
-            <small v-if="emailStatus(item.emailDelivery)">{{ emailStatus(item.emailDelivery) }}</small>
+
           </div>
         </li>
       </ul>
@@ -216,19 +216,6 @@ function relativeTime(dateStr: string): string {
   if (minutes < 60) return minutes + ' 分钟前'
   if (minutes < 1440) return Math.floor(minutes / 60) + ' 小时前'
   return Math.floor(minutes / 1440) + ' 天前'
-}
-
-function emailStatus(value?: string | null): string {
-  switch (value) {
-    case 'ACCEPTED_BY_PROVIDER': return '邮件已获传输确认'
-    case 'BLOCKED_ADDRESS': return '邮件缺少可用地址'
-    case 'UNKNOWN': return '邮件结果待确认'
-    case 'RETRYABLE_FAILED': return '邮件暂未接收'
-    case 'SUPPRESSED': return '邮件已停止投递'
-    case 'IN_FLIGHT':
-    case 'PENDING': return '邮件待投递'
-    default: return ''
-  }
 }
 
 onMounted(() => {

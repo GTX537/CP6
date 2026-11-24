@@ -1,7 +1,4 @@
-using CP6.Core.Services.Common;
-using CP6.Core.Services.Sys;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.SignalR;
 
 namespace CP6.WebApi.Hubs;
@@ -22,37 +19,16 @@ namespace CP6.WebApi.Hubs;
 public class NotifyHub : Hub
 {
     private readonly ILogger<NotifyHub> _logger;
-    private readonly ITenantContext _tenant;
-    private readonly ICurrentPermissionContext _actor;
-    private readonly ScopeAuthorizationOptionsV1 _scope;
 
-    public NotifyHub(ILogger<NotifyHub> logger, ITenantContext tenant, ICurrentPermissionContext actor,
-        IOptions<ScopeAuthorizationOptionsV1> scope)
+    public NotifyHub(ILogger<NotifyHub> logger)
     {
         _logger = logger;
-        _tenant = tenant;
-        _actor = actor;
-        _scope = scope.Value;
     }
 
-    internal static string WorkflowRecipientGroup(Guid tenant, Guid environment, Guid user)
-        => $"oa-notification:{tenant:N}:{environment:N}:{user:N}";
-
-    public override async Task OnConnectedAsync()
+    public override Task OnConnectedAsync()
     {
         _logger.LogInformation("客户端连接: {ConnectionId}", Context.ConnectionId);
-        if (_tenant.CurrentTenantId != Guid.Empty && _scope.EnvironmentId != Guid.Empty &&
-            Context.User?.HasClaim(x => x.Type == "impersonator_id") == false)
-        {
-            try
-            {
-                var current = await _actor.GetAsync();
-                await Groups.AddToGroupAsync(Context.ConnectionId,
-                    WorkflowRecipientGroup(_tenant.CurrentTenantId, _scope.EnvironmentId, current.UserId), Context.ConnectionAborted);
-            }
-            catch (CurrentPermissionUnavailableException) { /* 本人范围缺证时不加入通知刷新组。 */ }
-        }
-        await base.OnConnectedAsync();
+        return base.OnConnectedAsync();
     }
 
     public override Task OnDisconnectedAsync(Exception? exception)

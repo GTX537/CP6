@@ -464,7 +464,6 @@ builder.Services.AddScoped<CP6.Core.Services.Oa.ICatalogService, CP6.Core.Servic
 builder.Services.AddScoped<CP6.Core.Services.Oa.IPrefService, CP6.Core.Services.Oa.PrefService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.WorkflowNotificationPreferencesV1>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.WorkflowNotificationInboxV1>();
-builder.Services.AddScoped<CP6.Core.Services.Oa.WorkflowNotificationDeliveryService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.INotificationService, CP6.Core.Services.Oa.NotificationService>(); // Phase D-1 N-T2 站内通知服务（PersistentWfNotifier + NotificationController 依赖）
 
 // 4.0f OA 流程设计器（Phase C′）

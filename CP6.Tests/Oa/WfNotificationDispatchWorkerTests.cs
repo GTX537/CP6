@@ -1,7 +1,5 @@
 using System.Reflection;
 using CP6.Core.EFDbContext;
-using CP6.Core.Services.Common;
-using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Wf;
 using CP6.WebApi.BackgroundServices;
@@ -12,7 +10,6 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
 
 namespace CP6.Tests.Oa;
 
@@ -25,7 +22,7 @@ public sealed class WfNotificationDispatchWorkerTests
     }
 
     [Fact]
-    public async Task Legacy_rows_without_trusted_scope_never_enter_the_delivery_lane()
+    public async Task Dispatch_targets_only_the_notification_recipient()
     {
         await using var connection = new SqliteConnection("Data Source=:memory:");
         await connection.OpenAsync();
@@ -76,11 +73,8 @@ public sealed class WfNotificationDispatchWorkerTests
         var hub = new RecordingHub();
         var services = new ServiceCollection()
             .AddSingleton(db)
-            .AddSingleton<ITenantEnumerator>(new FixedTenant(db.CurrentTenantId))
-            .AddScoped<ITenantContext, TenantContext>()
-            .AddScoped(_ => new ScopeAuthorizationFenceV1(db, Options.Create(new ScopeAuthorizationOptionsV1())))
-            .AddScoped<WorkflowNotificationDeliveryService>()
             .AddSingleton<IHubContext<NotifyHub>>(hub)
+            .AddSingleton<IEmailSender, NoopEmailSender>()
             .BuildServiceProvider();
         await using (services)
         {
@@ -91,14 +85,13 @@ public sealed class WfNotificationDispatchWorkerTests
             await worker.DispatchBatchAsync(CancellationToken.None);
         }
 
-        Assert.Empty(hub.ClientsImpl.UserIds);
+        Assert.Equal(userId.ToString(), Assert.Single(hub.ClientsImpl.UserIds));
         Assert.Equal(0, hub.ClientsImpl.AllAccessCount);
     }
 
-    private sealed class FixedTenant(Guid id) : ITenantEnumerator
+    private sealed class NoopEmailSender : IEmailSender
     {
-        public Task<IReadOnlyList<Guid>> ListActiveAsync(CancellationToken ct = default)
-            => Task.FromResult<IReadOnlyList<Guid>>([id]);
+        public Task SendAsync(string to, string subject, string body) => Task.CompletedTask;
     }
 
     private sealed class RecordingClientProxy : IClientProxy

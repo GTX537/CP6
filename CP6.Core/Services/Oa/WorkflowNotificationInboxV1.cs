@@ -10,11 +10,9 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Core.Services.Oa;
 
 public sealed record WorkflowNotificationItemV1(Guid Id, int Type, string Title, string Body, Guid? InstanceId,
-    Guid? TaskId, string? FlowKey, bool IsRead, DateTime? ReadAt, DateTime CreateDate, string? InAppDelivery, string? EmailDelivery);
+    Guid? TaskId, string? FlowKey, bool IsRead, DateTime? ReadAt, DateTime CreateDate);
 public sealed record WorkflowNotificationPageV1(IReadOnlyList<WorkflowNotificationItemV1> Items, string AsOf,
     string Watermark, string? NextCursor);
-public sealed record WorkflowNotificationDeliveryViewV1(Guid NotificationId, string Channel, string State, string? Reason);
-
 public sealed class WorkflowNotificationInboxV1(CP6Context db, ScopeAuthorizationFenceV1 scope, IHttpContextAccessor http,
     IDataProtectionProvider protection)
 {
@@ -41,17 +39,9 @@ public sealed class WorkflowNotificationInboxV1(CP6Context db, ScopeAuthorizatio
         var rows = await db.Database.SqlQuery<WorkflowNotificationItemV1>($"""
             SELECT n."Id",n."Type",CASE WHEN s.kind='DEADLINE_RECALCULATED'
               THEN '待办期限已重算' ELSE '' END AS "Title",''::text AS "Body",
-              CASE WHEN s.kind NOT IN ('LEGACY_ENGINE_ASSIGNMENT','LEGACY_ENGINE_STARTER') THEN n."InstanceId" END AS "InstanceId",
-              CASE WHEN s.kind NOT IN ('LEGACY_ENGINE_ASSIGNMENT','LEGACY_ENGINE_STARTER') THEN n."TaskId" END AS "TaskId",
-              NULL::text AS "FlowKey",n."IsRead",n."ReadAt",n."CreateDate",
-              COALESCE((SELECT d.state FROM cp6_oa_notification_v1.deliveries d
-                WHERE d.tenant_id=n."TenantId" AND d.environment_id={scope.EnvironmentId} AND d.notification_id=n."Id"
-                  AND d.recipient_id={user} AND d.channel='IN_APP' ORDER BY d.updated_at DESC LIMIT 1),
-                CASE WHEN s.notification_id IS NOT NULL AND n."InAppRequested" THEN 'PENDING' END) AS "InAppDelivery",
-              COALESCE((SELECT d.state FROM cp6_oa_notification_v1.deliveries d
-                WHERE d.tenant_id=n."TenantId" AND d.environment_id={scope.EnvironmentId} AND d.notification_id=n."Id"
-                  AND d.recipient_id={user} AND d.channel='EMAIL' ORDER BY d.updated_at DESC LIMIT 1),
-                CASE WHEN s.notification_id IS NOT NULL AND n."EmailRequested" THEN 'PENDING' END) AS "EmailDelivery"
+              CASE WHEN s.notification_id IS NOT NULL THEN n."InstanceId" END AS "InstanceId",
+              CASE WHEN s.notification_id IS NOT NULL THEN n."TaskId" END AS "TaskId",
+              NULL::text AS "FlowKey",n."IsRead",n."ReadAt",n."CreateDate"
             FROM public."Wf_Notification" n
             LEFT JOIN cp6_oa_notification_v1.owner_sources s ON s.notification_id=n."Id"
             WHERE n."TenantId"={db.CurrentTenantId} AND n."UserId"={user} AND n."InAppRequested"
@@ -120,22 +110,6 @@ public sealed class WorkflowNotificationInboxV1(CP6Context db, ScopeAuthorizatio
         await scope.ValidateAsync(lease, ct);
         await transaction.CommitAsync(ct);
         return changed;
-    }
-
-    public async Task<IReadOnlyList<WorkflowNotificationDeliveryViewV1>> DeliveriesAsync(CancellationToken ct)
-    {
-        await using var transaction = await db.Database.BeginTransactionAsync(ct);
-        var lease = await scope.AcquireAsync(ct);
-        var user = await WorkflowNotificationAuthorityV1.ActualUserAsync(db, http, ct);
-        var rows = await db.Database.SqlQuery<WorkflowNotificationDeliveryViewV1>($"""
-            SELECT d.notification_id AS "NotificationId",d.channel AS "Channel",d.state AS "State",d.reason AS "Reason"
-            FROM cp6_oa_notification_v1.deliveries d JOIN cp6_oa_notification_v1.owner_sources s
-              ON (s.notification_id,s.tenant_id,s.environment_id,s.recipient_id)=(d.notification_id,d.tenant_id,d.environment_id,d.recipient_id)
-            WHERE d.tenant_id={db.CurrentTenantId} AND d.environment_id={scope.EnvironmentId} AND d.recipient_id={user}
-            ORDER BY d.updated_at DESC,d.notification_id,d.channel LIMIT 100
-            """).ToListAsync(ct);
-        await scope.ValidateAsync(lease, ct);
-        return rows;
     }
 
     private async Task<Point> Observe(Guid user, CancellationToken ct)

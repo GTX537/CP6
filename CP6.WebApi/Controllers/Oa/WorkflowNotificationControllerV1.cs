@@ -42,9 +42,6 @@ public sealed class WorkflowNotificationControllerV1(WorkflowNotificationPrefere
     public Task<IActionResult> Original(string commandId, CancellationToken ct)
         => Reply(() => preferences.OriginalAsync(commandId, ct));
 
-    [HttpGet("notification-deliveries")]
-    public Task<IActionResult> Deliveries(CancellationToken ct) => Reply(() => inbox.DeliveriesAsync(ct));
-
     private async Task<IActionResult> Reply<T>(Func<Task<T>> read)
     {
         try

@@ -188,7 +188,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
 
     [CurrentPermissionPostgresFact]
-    public async Task WorkflowNotice_Form_and_APP_outboxes_record_commit_snapshot_and_keep_provider_outcomes_separate()
+    public async Task WorkflowNotice_Form_and_APP_outboxes_keep_atomic_snapshot_and_original_replay()
     {
         var hook = new StartWriteHook();
         await using var h = await Seed(hook);
@@ -201,35 +201,6 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             SELECT preference_version AS "Value" FROM cp6_oa_notification_v1.owner_sources WHERE notification_id={initial.Id}
             """).SingleAsync();
         Assert.Equal(WorkflowNotificationPreferencesV1.DefaultVersion,version);
-
-        var mail = new NoticeMailbox(true) { Result = WorkflowNotificationEmailOutcomeV1.RetryableFailure };
-        var refreshes = new List<(Guid,Guid,Guid)>();
-        Task Invalidate(Guid tenant,Guid environment,Guid recipient,CancellationToken ct)
-        { refreshes.Add((tenant,environment,recipient)); return Task.CompletedTask; }
-        var delivery = new WorkflowNotificationDeliveryService(h.Db,ScopeFence(h),[mail]);
-        await delivery.ScanAsync(Invalidate,default);
-        Assert.Equal("ACCEPTED_BY_PROVIDER",await NoticeState(h,initial.Id,"IN_APP"));
-        Assert.Equal("RETRYABLE_FAILED",await NoticeState(h,initial.Id,"EMAIL"));
-        Assert.Equal(2,refreshes.Count);
-        Assert.All(refreshes,row=>Assert.Equal((h.Tenant,ScopeEnvironment,h.User),row));
-
-        await NoticeDue(h,initial.Id);
-        mail.Result = WorkflowNotificationEmailOutcomeV1.Unknown;
-        await delivery.ScanAsync(Invalidate,default);
-        Assert.Equal("UNKNOWN",await NoticeState(h,initial.Id,"EMAIL"));
-        Assert.Equal(2,mail.Sends.Count);
-        Assert.Single(mail.Sends.Select(m => m.DeliveryKey).Distinct());
-        Assert.All(mail.Sends,m => Assert.Equal("form-recipient@example.test",m.Address));
-        Assert.Equal(2,refreshes.Count);
-
-        await NoticeDue(h,initial.Id);
-        mail.Result = WorkflowNotificationEmailOutcomeV1.Accepted;
-        await delivery.ScanAsync(Invalidate,default);
-        Assert.Equal("ACCEPTED_BY_PROVIDER",await NoticeState(h,initial.Id,"EMAIL"));
-        Assert.Equal(mail.Sends[0].DeliveryKey,Assert.Single(mail.Lookups));
-        Assert.Equal(2,mail.Sends.Count);
-        Assert.Equal(2,refreshes.Count);
-        Assert.False(await h.Db.Wf_Notifications.AsNoTracking().AnyAsync(n=>n.IsRead));
 
         var task = await f.Owner.TaskContextAsync(f.Task);
         var approval = NativeVote(task,"notification-atomic","approve");
@@ -249,14 +220,6 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(completions[0],completions[1]);
         var terminal = await h.Db.Wf_Notifications.AsNoTracking().SingleAsync(n=>n.Type==WfNotificationType.FlowApproved);
         Assert.Equal(1,await NoticeSourceCount(h,terminal.Id));
-        Assert.Equal(FlowInstanceStatus.Approved,(await h.Db.Wf_FlowInstances.AsNoTracking().SingleAsync()).Status);
-        var failing = new NoticeMailbox(false) { Result=WorkflowNotificationEmailOutcomeV1.Unknown };
-        var noLookup = new WorkflowNotificationDeliveryService(h.Db,ScopeFence(h),[failing]);
-        await noLookup.ScanAsync(Invalidate,default);
-        await noLookup.ScanAsync(Invalidate,default);
-        Assert.Equal("UNKNOWN",await NoticeState(h,terminal.Id,"EMAIL"));
-        Assert.Single(failing.Sends);
-        Assert.Empty(failing.Lookups);
         Assert.Equal(FlowInstanceStatus.Approved,(await h.Db.Wf_FlowInstances.AsNoTracking().SingleAsync()).Status);
         Assert.Single((await NativeInbox(h,f.Owner).DetailAsync(f.Instance)).Votes);
 
@@ -279,56 +242,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var appNotice = await app.Db.Wf_Notifications.AsNoTracking().SingleAsync(n => n.TaskId==input.Task && n.UserId==reviewer);
         Assert.Equal(reviewer,appNotice.UserId);
         Assert.Equal(1,await NoticeSourceCount(app,appNotice.Id));
-        Assert.Equal(0,await app.Db.Database.SqlQuery<int>($"""
-            SELECT count(*)::int AS "Value" FROM cp6_oa_notification_v1.deliveries WHERE tenant_id={app.Tenant}
-            """).SingleAsync());
-        output.WriteLine("FORM assignment/decision and APP transfer are real Owner transactions. Original replay adds zero notifications. In-app accepted once; email failure and recovery share one delivery key; unknown without lookup is held.");
-    }
-
-    [CurrentPermissionPostgresFact]
-    public async Task WorkflowNotice_dispatch_blocks_missing_address_and_suppresses_current_preference_without_business_writes()
-    {
-        await using var h = await Seed();
-        var f = await NativeFormSetup(h);
-        await NoticePermissions(h);
-        var pending = await h.Db.Wf_Notifications.AsNoTracking().SingleAsync(n => n.TaskId == f.Task);
-        var fake = new NoticeMailbox(true);
-        var delivery = new WorkflowNotificationDeliveryService(h.Db,ScopeFence(h),[fake]);
-        await new PrefService(h.Db).SaveMergeAsync(h.User,"""{"notify":{"todoCreated":{"inApp":false,"email":true},"formSubmitted":{"inApp":false}}}""");
-        await delivery.ScanAsync((_,_,_,_) => throw new InvalidOperationException("Suppressed notice must not show an online hint"),default);
-        Assert.Equal("SUPPRESSED",await NoticeState(h,pending.Id,"IN_APP"));
-        Assert.Equal("BLOCKED_ADDRESS",await NoticeState(h,pending.Id,"EMAIL"));
-        Assert.Empty(fake.Sends);
-        Assert.False(await h.Db.Wf_Notifications.AsNoTracking().AnyAsync(n=>n.IsRead));
-        Assert.Equal(FlowTaskStatus.Pending,(await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync(x=>x.Id==f.Task)).Status);
-        Assert.Empty((await NativeInbox(h,f.Owner).DetailAsync(f.Instance)).Votes);
-
-        await new PrefService(h.Db).SaveMergeAsync(h.User,"""{"notify":null}""");
-        await h.Db.Sys_Users.Where(x=>x.Id==h.User).ExecuteUpdateAsync(s=>s.SetProperty(u=>u.Email,"synthetic-new@example.test"));
-        var context = await f.Owner.ContextAsync("personal");
-        var submitted = PersonalResult<PersonalFormSubmissionV2>(await f.Owner.SubmitDirectAsync("personal",
-            PersonalCommand(PersonalDirect(context,"{\"a\":\"second fixture\"}"),"notice-contact-change")));
-        var second = await h.Db.Wf_Notifications.AsNoTracking().SingleAsync(n=>n.InstanceId==submitted.FlowInstanceId && n.TaskId!=null);
-        fake.Result = WorkflowNotificationEmailOutcomeV1.RetryableFailure;
-        await delivery.ScanAsync((_,_,_,_) => Task.CompletedTask,default);
-        Assert.Equal("RETRYABLE_FAILED",await NoticeState(h,second.Id,"EMAIL"));
-        await NoticeDue(h,second.Id);
-        await h.Db.Sys_Users.Where(x=>x.Id==h.User).ExecuteUpdateAsync(s=>s.SetProperty(u=>u.Email,(string?)null));
-        await delivery.ScanAsync((_,_,_,_) => Task.CompletedTask,default);
-        Assert.Equal("BLOCKED_ADDRESS",await NoticeState(h,second.Id,"EMAIL"));
-        Assert.Single(fake.Sends);
-
-        var additional = PersonalResult<PersonalFormSubmissionV2>(await f.Owner.SubmitDirectAsync("personal",
-            PersonalCommand(PersonalDirect(context,"{\"a\":\"third fixture\"}"),"notice-revoked")));
-        var third = await h.Db.Wf_Notifications.AsNoTracking().SingleAsync(n=>n.InstanceId==additional.FlowInstanceId && n.TaskId!=null);
-        var menu = await h.Db.Sys_Menus.SingleAsync(x=>x.MenuKey=="oa-inbox");
-        await h.Db.Sys_RoleActions.Where(x=>x.MenuId==menu.MenuId && x.RoleId==72 && x.ActionCode=="read").ExecuteDeleteAsync();
-        await delivery.ScanAsync((_,_,_,_) => throw new InvalidOperationException("Revoked reader must not receive an online hint"),default);
-        Assert.Equal("SUPPRESSED",await NoticeState(h,third.Id,"IN_APP"));
-        Assert.Equal("SUPPRESSED",await NoticeState(h,third.Id,"EMAIL"));
-        Assert.Single(fake.Sends);
-        Assert.Equal(3,await h.Db.Wf_FlowInstances.CountAsync(n=>n.Status==FlowInstanceStatus.Running));
-        output.WriteLine("Queued optional delivery reflects current preference and revoked read action. No address is BLOCKED_ADDRESS. There is no new provider call after missing address or revocation, and no user read or approval vote.");
+        Assert.Equal(1,await app.Db.Wf_Notifications.CountAsync(n=>n.TaskId==input.Task && n.UserId==reviewer));
+        Assert.False(await h.Db.Wf_Notifications.AnyAsync(n=>n.IsRead));
+        output.WriteLine("FORM 通知与审批、APP 通知与转办按原 Owner 事务提交，保留发生时偏好版本，原命令重放不新增通知。");
     }
 
     private static Wf_Notification NewNotice(Guid user) => new()
@@ -373,34 +289,4 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         SELECT count(*)::int AS "Value" FROM cp6_oa_notification_v1.owner_sources
         WHERE tenant_id={h.Tenant} AND environment_id={ScopeEnvironment} AND notification_id={id} AND preference_version IS NOT NULL
         """).SingleAsync();
-
-    private static Task<string> NoticeState(Harness h,Guid id,string channel) => h.Db.Database.SqlQuery<string>($"""
-        SELECT state AS "Value" FROM cp6_oa_notification_v1.deliveries
-        WHERE tenant_id={h.Tenant} AND environment_id={ScopeEnvironment} AND notification_id={id} AND channel={channel}
-        """).SingleAsync();
-
-    private static Task NoticeDue(Harness h,Guid id) => h.Db.Database.ExecuteSqlInterpolatedAsync($"""
-        UPDATE cp6_oa_notification_v1.deliveries SET next_attempt_at=clock_timestamp()-interval '1 second'
-        WHERE tenant_id={h.Tenant} AND notification_id={id} AND channel='EMAIL'
-        """);
-
-    private sealed class NoticeMailbox(bool lookup) : IWorkflowNotificationEmailV1
-    {
-        public bool SupportsOriginalKeyAndLookup { get; } = lookup;
-        public WorkflowNotificationEmailOutcomeV1 Result { get; set; }
-        public List<WorkflowNotificationEmailV1> Sends { get; } = [];
-        public List<string> Lookups { get; } = [];
-
-        public Task<WorkflowNotificationEmailOutcomeV1> SendAsync(WorkflowNotificationEmailV1 message,CancellationToken ct)
-        {
-            Sends.Add(message);
-            return Task.FromResult(Result);
-        }
-
-        public Task<WorkflowNotificationEmailOutcomeV1> OriginalAsync(string deliveryKey,CancellationToken ct)
-        {
-            Lookups.Add(deliveryKey);
-            return Task.FromResult(Result);
-        }
-    }
 }
