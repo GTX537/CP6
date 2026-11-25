@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework Condition="'$(Cp6MainUseNet10)' == 'true'">net10.0</TargetFramework>
+    <NuGetLockFilePath Condition="'$(Cp6MainUseNet10)' == 'true'">packages.net10.lock.json</NuGetLockFilePath>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
