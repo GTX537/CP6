@@ -293,8 +293,9 @@ public class GdprService : IGdprService
     private async Task ExecuteDeleteByTenantAsync(Type clr, Guid tenantId)
     {
         var query = BuildTenantQueryable(clr, tenantId);
-        var exec = typeof(RelationalQueryableExtensions).GetMethods()
-            .First(m => m.Name == nameof(RelationalQueryableExtensions.ExecuteDeleteAsync)
+        // EF Core 10 将批量删除从 RelationalQueryableExtensions 移到 EntityFrameworkQueryableExtensions。
+        var exec = typeof(EntityFrameworkQueryableExtensions).GetMethods()
+            .First(m => m.Name == nameof(EntityFrameworkQueryableExtensions.ExecuteDeleteAsync)
                         && m.GetParameters().Length == 2)
             .MakeGenericMethod(clr);
         var task = (Task)exec.Invoke(null, new object[] { query, CancellationToken.None })!;

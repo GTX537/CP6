@@ -10,7 +10,7 @@ using NpgsqlTypes;
 
 namespace CP6.Core.Persistence;
 
-// This adapter targets the repository's exact EF 8.0.30 / Npgsql EF 8.0.11 pins.
+// This adapter targets the repository's exact EF Core 10.0.15 / Npgsql EF 10.0.4 pins.
 // Provider upgrades must repeat the real text/parameter regression gate.
 #pragma warning disable EF1001
 public sealed class PostgreSqlTextTypeMappingSource : NpgsqlTypeMappingSource
@@ -20,12 +20,14 @@ public sealed class PostgreSqlTextTypeMappingSource : NpgsqlTypeMappingSource
         ISqlGenerationHelper sqlGenerationHelper, INpgsqlSingletonOptions options)
         : base(dependencies, relationalDependencies, sqlGenerationHelper, options) { }
 
-    public override CoreTypeMapping? FindMapping(IProperty property)
+    // EF Core 10 narrows the relational override to RelationalTypeMapping?; behaviour is unchanged.
+    public override RelationalTypeMapping? FindMapping(IProperty property)
     {
         var mapping = base.FindMapping(property);
         if (mapping is not PostgreSqlBusinessStringTypeMapping business) return mapping;
         var collation = property.GetCollation() ?? property.DeclaringType.Model.GetCollation();
-        return business.WithCollation(collation).Clone(keyComparer: new PostgreSqlBusinessTextComparer(collation == "C"));
+        return (RelationalTypeMapping)business.WithCollation(collation)
+            .Clone(keyComparer: new PostgreSqlBusinessTextComparer(collation == "C"));
     }
 
     protected override RelationalTypeMapping? FindMapping(in RelationalTypeMappingInfo info)

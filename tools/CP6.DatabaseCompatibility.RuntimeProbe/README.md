@@ -5,7 +5,7 @@
 ```powershell
 dotnet restore tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj --locked-mode
 dotnet build tools/CP6.DatabaseCompatibility.RuntimeProbe/CP6.DatabaseCompatibility.RuntimeProbe.csproj --no-restore
-dotnet tools/CP6.DatabaseCompatibility.RuntimeProbe/bin/Debug/net8.0/CP6.DatabaseCompatibility.RuntimeProbe.dll --provider PostgreSql --suite orders --initialize --output <新的报告路径> --source-sha <基线提交>
+dotnet tools/CP6.DatabaseCompatibility.RuntimeProbe/bin/Debug/net10.0/CP6.DatabaseCompatibility.RuntimeProbe.dll --provider PostgreSql --suite orders --initialize --output <新的报告路径> --source-sha <基线提交>
 ```
 
 从仓库根目录运行，身份用例读取该目录中固定的 `contracts/events/platform`。SQL Server 对应 `--provider SqlServer`。连接从进程环境变量 `CP6_TEST_POSTGRES` / `CP6_TEST_SQLSERVER` 读取；`CP6_TEST_DATABASE_OWNER` 为创建该测试库时记录的32位小写十六进制随机所有者标识。不要把连接或凭据写入命令行、报告或 Git。

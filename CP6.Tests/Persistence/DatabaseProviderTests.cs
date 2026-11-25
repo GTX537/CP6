@@ -118,7 +118,20 @@ public sealed class DatabaseProviderTests
         Assert.Single(configured.Options.Extensions, extension => extension.Info.IsDatabaseProvider);
         using var context = new ProviderFixtureContext(configured.Options);
         Assert.Equal(ProviderName(provider), context.Database.ProviderName);
-        Assert.Equal(ConnectionString(provider), context.Database.GetConnectionString());
+        if (provider == DatabaseProvider.SqlServer)
+        {
+            // EF Core 10 / SqlClient 6 读回时规范 SQL Server 关键字，并在未设置时追加 Application Name；
+            // 原始键值必须全部保留，且只允许多出 Application Name。
+            var expected = new SqlConnectionStringBuilder(ConnectionString(provider));
+            var actual = new SqlConnectionStringBuilder(context.Database.GetConnectionString());
+            foreach (string key in expected.Keys)
+                if (expected.ShouldSerialize(key))
+                    Assert.Equal(expected[key], actual[key]);
+            var added = actual.Keys.Cast<string>().Where(key => actual.ShouldSerialize(key) && !expected.ShouldSerialize(key));
+            Assert.Equal(["Application Name"], added);
+        }
+        else
+            Assert.Equal(ConnectionString(provider), context.Database.GetConnectionString());
     }
 
     [Theory]
