@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework Condition="'$(Cp6MainUseNet10)' == 'true'">net10.0</TargetFramework>
+    <NuGetLockFilePath Condition="'$(TargetFramework)' == 'net10.0'">packages.net10.lock.json</NuGetLockFilePath>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
