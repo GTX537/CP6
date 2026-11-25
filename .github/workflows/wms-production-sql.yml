@@ -24,6 +24,7 @@ jobs:
           --health-timeout 5s
           --health-retries 20
     env:
+      Cp6MainUseNet10: 'false'
       CP6_TEST_SQLSERVER: Server=localhost,1433;Database=master;User Id=sa;Password=CP6_Test_Strong_Passw0rd!;TrustServerCertificate=True
       NuGetPackageSourceCredentials_github: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }};ValidAuthenticationTypes=Basic
     steps:
@@ -31,6 +32,7 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
+          global-json-file: global.json
       - run: dotnet restore CP6.Tests/CP6.Tests.csproj --locked-mode
       - run: dotnet test CP6.Tests/CP6.Tests.csproj --no-restore --filter FullyQualifiedName~WmsProductionSqlServerTests
       - name: Verify CRM OIDC grant and global logout SQL boundaries

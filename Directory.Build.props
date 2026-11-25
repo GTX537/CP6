@@ -1,5 +1,12 @@
 <Project>
+  <PropertyGroup>
+    <Cp6MainUseNet10 Condition="'$(Cp6MainUseNet10)' == ''">true</Cp6MainUseNet10>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(MSBuildProjectName)' == 'CP6.Core' Or '$(MSBuildProjectName)' == 'CP6.Entity' Or '$(MSBuildProjectName)' == 'CP6.WebApi' Or '$(MSBuildProjectName)' == 'CP6.Tests' Or '$(MSBuildProjectName)' == 'CP6.Space.Infrastructure' Or '$(MSBuildProjectName)' == 'CP6.Space.IntegrationTests' Or '$(MSBuildProjectName)' == 'CP6.Oidc.IntegrationTests'">
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+  <!-- 保留迁移前的 C# 编译语义。 -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'CP6.Core' Or '$(MSBuildProjectName)' == 'CP6.Entity' Or '$(MSBuildProjectName)' == 'CP6.WebApi' Or '$(MSBuildProjectName)' == 'CP6.Space.Infrastructure' Or '$(MSBuildProjectName)' == 'CP6.Persistence.PostgreSql'">
+    <LangVersion>12.0</LangVersion>
   </PropertyGroup>
 </Project>
