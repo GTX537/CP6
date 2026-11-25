@@ -17,6 +17,7 @@ jobs:
   source-gate:
     runs-on: windows-latest
     env:
+      Cp6MainUseNet10: 'false'
       NuGetPackageSourceCredentials_github: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }};ValidAuthenticationTypes=Basic
     outputs:
       version: ${{ steps.release.outputs.version }}
@@ -31,6 +32,7 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
+          global-json-file: global.json
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -167,6 +169,7 @@ jobs:
           --health-timeout 5s
           --health-retries 20
     env:
+      Cp6MainUseNet10: 'false'
       CP6_TEST_SQLSERVER: Server=localhost,1433;Database=master;User Id=sa;Password=CP6_Test_Strong_Passw0rd!;TrustServerCertificate=True
       NuGetPackageSourceCredentials_github: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }};ValidAuthenticationTypes=Basic
     steps:
@@ -174,6 +177,7 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
+          global-json-file: global.json
       - run: dotnet restore CP6.Tests/CP6.Tests.csproj --locked-mode
       - name: Run SQL Server production integration tests
         run: >-
@@ -286,9 +290,8 @@ jobs:
           path: evidence/sql
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: |
-            8.0.x
-            10.0.x
+          dotnet-version: 8.0.x
+          global-json-file: global.json
       - uses: actions/setup-node@v4
         with:
           node-version: 22

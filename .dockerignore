@@ -3,6 +3,7 @@
 docs/
 .pnpm-store/
 cp6.web/
+!cp6.web/src/router/menu-routes.json
 claudedocs/
 
 # .NET
