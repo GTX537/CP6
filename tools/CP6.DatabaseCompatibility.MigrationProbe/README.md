@@ -7,7 +7,7 @@ Build locally with the repository SDK and locked dependencies:
 ```powershell
 dotnet restore tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj --locked-mode
 dotnet build tools/CP6.DatabaseCompatibility.MigrationProbe/CP6.DatabaseCompatibility.MigrationProbe.csproj --no-restore
-dotnet tools/CP6.DatabaseCompatibility.MigrationProbe/bin/Debug/net8.0/CP6.DatabaseCompatibility.MigrationProbe.dll --provider PostgreSql --output tmp/wp2-pg.json --source-sha <confirmed-baseline-sha>
+dotnet tools/CP6.DatabaseCompatibility.MigrationProbe/bin/Debug/net10.0/CP6.DatabaseCompatibility.MigrationProbe.dll --provider PostgreSql --output tmp/wp2-pg.json --source-sha <confirmed-baseline-sha>
 ```
 
 Set `CP6_TEST_DATABASE_OWNER` and the selected `CP6_TEST_POSTGRES` or `CP6_TEST_SQLSERVER` in the process environment through a local secret entry. Do not put credentials on the command line. The tool requires a literal loopback host, a dedicated `CP6Compat_WP2_YYYYMMDD_<eight-lowercase-hex>` database and matching task ownership metadata. It rejects an unmarked database before any migration or fixture write. PostgreSQL requires version 18 and the application connection pins `search_path=public`.

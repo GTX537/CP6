@@ -24,7 +24,6 @@ jobs:
           --health-timeout 5s
           --health-retries 20
     env:
-      Cp6MainUseNet10: 'false'
       CP6_TEST_SQLSERVER: Server=localhost,1433;Database=master;User Id=sa;Password=CP6_Test_Strong_Passw0rd!;TrustServerCertificate=True
       NuGetPackageSourceCredentials_github: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }};ValidAuthenticationTypes=Basic
     steps:

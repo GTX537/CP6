@@ -95,7 +95,7 @@ $legacyServerCommands = [ordered]@{
 
 Assert-StepFailsClosed -Name "Restore" -Commands $restoreCommands
 Assert-StepFailsClosed -Name "Build and test .NET" -Commands $requiredCommands
-Assert-StepFailsClosed -Name "Build and test legacy .NET 8 server" -Commands $legacyServerCommands
+Assert-StepFailsClosed -Name "Build and test .NET 10 server" -Commands $legacyServerCommands
 
 $workflowText = $workflowLines -join "`n"
 if ($workflowText -notmatch

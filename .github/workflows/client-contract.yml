@@ -54,11 +54,10 @@ jobs:
           dotnet test CP6.Client.Tests/CP6.Client.Tests.csproj -c Release --no-restore
           if ($LASTEXITCODE -ne 0) { throw 'Client tests failed.' }
 
-      - name: Build and test legacy .NET 8 server
+      - name: Build and test .NET 10 server
         shell: pwsh
         env:
-          Cp6MainUseNet10: 'false'
-          ArtifactsPath: ${{ runner.temp }}/cp6-server-net8
+          ArtifactsPath: ${{ runner.temp }}/cp6-server-net10
           UseArtifactsOutput: 'true'
         run: |
           dotnet restore CP6.Tests/CP6.Tests.csproj --locked-mode

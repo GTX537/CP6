@@ -52,7 +52,7 @@ def main():
         cases = [{"name": e.attrib["testName"], "outcome": e.attrib["outcome"]} for e in document.findall(".//t:UnitTestResult", ns)]
     new_receipts = sorted(set(lifecycle.glob("*.json")) - old_receipts) if lifecycle.exists() else []
     receipt_data = [{"path": p.relative_to(ROOT).as_posix(), "sha256": sha(p), "status": json.loads(p.read_text())["status"]} for p in new_receipts]
-    artifact_dir = ROOT / "eng/contracts/postgresql-tests/bin/Debug/net8.0"
+    artifact_dir = ROOT / "eng/contracts/postgresql-tests/bin/Debug/net10.0"
     artifacts = {name: sha(artifact_dir / name) for name in ["CP6.ExactValues.PostgreSqlTests.dll", "CP6.Persistence.PostgreSql.dll", "CP6.Entity.dll", "Npgsql.dll"] if (artifact_dir / name).exists()}
     valid = process.returncode == 0 and before == sources() and int(counters.get("total", 0)) > 0 and all(c["outcome"] == "Passed" for c in cases)
     valid = valid and int(counters.get("notExecuted", 1)) == 0 and len(new_receipts) == 1 and receipt_data[0]["status"] == "CLEANED"
