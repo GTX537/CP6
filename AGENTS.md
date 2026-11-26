@@ -3,8 +3,8 @@
 ## 开工先选入口
 
 - 只读审查用 `git show`、`git diff`。先核对 origin 和远端 `main`，本地主目录落后时按已核实的远端提交阅读。保留主目录中的用户文件。
-- 当前按**单对话、单卡串行**执行，一次只做一张卡，不启动其他执行对话或子代理。开始时写明卡号、卡定义中的 scope、acceptance 和对应原 AC 的剩余出口。所有直接前置及其拆分余卡完整 DONE 后才开工。卡定义、唯一状态台账及阶段顺序分别见[任务定义](docs/development/task-definitions.json)、[状态台账](docs/development/roadmap.json)和[单卡执行计划](docs/development/planning/20261117-card-execution.md)。
-- 每卡一个分支、一个 PR、一份交付报告。只在卡 DONE 或拆卡的 PR 更新台账。目标关闭须核对全部原 AC、必需修订验收和实际远端采用。拆卡预算、缺口归属、阶段顺序、工时检查点及升级条件按单卡计划执行。旧[多对话派工和 Handoff](docs/development/09-parallel-development.md)须经用户重新授权才启用。
+- Claude 总控，Codex 执行。Codex 仅在总控通过 Codex CLI 派发的会话中执行，Codex 桌面端不再执行同一卡。**Main／CRM 双线并行，每线一次一卡**，Main 线用 DEV-1，CRM 线用 DEV-2，两线卡的互斥资源不得重叠。一线没有可开工卡时，总控可通过 `bind` 将其席位临时借给另一线的解锁工作，并在日志中记录。四仓合计最多两个开发席位和一个集成席位。开始时写明卡号、卡定义中的 scope、acceptance 和对应原 AC 的剩余出口。所有直接前置及其拆分余卡完整 DONE 后才开工。卡定义、唯一状态台账及阶段顺序分别见[任务定义](docs/development/task-definitions.json)、[状态台账](docs/development/roadmap.json)和[单卡执行计划](docs/development/planning/20261117-card-execution.md)。双线执行方式见[治理决定记录](docs/development/decisions/DECISION-20261126-two-lanes.md)。
+- 每卡一个分支、一个 PR、一份交付报告。总控逐卡独立复核，通过后由总控推送任务分支、创建 Draft PR 并用 `record-pr` 登记。仅改台账、文档或证据的 PR 经总控复核并满足适用合并要求后，可由总控合并。含产品代码的 PR 合并前须逐个经用户确认。发包、部署和真实库迁移须逐次取得用户批准。只在卡 DONE 或拆卡的 PR 更新台账。目标关闭须核对全部原 AC、必需修订验收和实际远端采用。拆卡预算、缺口归属、阶段顺序、工时检查点及升级条件按单卡计划执行。旧[多对话派工和 Handoff](docs/development/09-parallel-development.md)须经用户重新授权才启用。上述双线方式已获该授权。
 - 活动 BUG 统一走 [GitHub Issues](docs/quality/BUG-MANAGEMENT.md)，一个问题一个 Issue。修复须覆盖回归、复测原步骤、核对远端采用，再按规定关闭。
 
 ## 从分支到交付
