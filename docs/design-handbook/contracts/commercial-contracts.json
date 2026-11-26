@@ -364,6 +364,8 @@
       "rules": [
         "Add Clean且当前用途允许，Retain/Unlink/Download各自判定",
         "唯一当前启用方式LOCAL_AUTHORITATIVE_GUARD作为Owner实际撤权裁决点",
+        "R1由File/Security Owner将ACT撤权裁决委托给CRM PostgreSQL库内的guard记录，Activity事务共享持有至最终提交",
+        "影响ACT的Main FILE授权、下载权、扫描、隔离、保留许可、解绑与处置先经专用角色排他推进对应guard并核对原键回执；guard不可达或结果未知时Main变更保持未生效或UNKNOWN",
         "普通远端GET/TTL/reserve-hold-confirm不构成当前受支持协议",
         "全部Add/Retain/Remove一项失败整意图零写",
         "下载精确版本当前DL/scan/guard，流中撤权停止后续字节"

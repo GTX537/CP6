@@ -102,9 +102,23 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         internal Task<AuthenticationApiProcess> Start() => AuthenticationApiProcess.Start(harness.Db.Database.GetConnectionString()!, settings,
             allowAutoRedirect: false, serverCertificateThumbprint: certificate.Thumbprint);
 
-        internal HttpRequestMessage Http(string path, object? body = null, bool bearer = true, Guid? tenant = null, Guid? credential = null)
+        internal void EnableActFile(ActFileGuardCrmFixtureV1 guard, string localStorage, string key, string privatePem)
         {
-            var request = new HttpRequestMessage(body is null ? HttpMethod.Get : HttpMethod.Post, ContactExportRoute + path);
+            settings["ActFileReference__Enabled"] = "true";
+            settings["ActFileReference__KeyId"] = key;
+            settings["ActFileReference__PrivateKeyPem"] = privatePem;
+            settings["ActFileReference__Clients__0__TenantId"] = Tenant.ToString("D");
+            settings["ActFileReference__Clients__0__ClientId"] = ExportClient;
+            settings["ActFileReference__Clients__0__StoreId"] = guard.Store.ToString("D");
+            settings["ActFileReference__Clients__0__ReadConnectionString"] = guard.ReadConnection;
+            settings["Storage__Provider"] = "Local";
+            settings["Storage__LocalRoot"] = localStorage;
+        }
+
+        internal HttpRequestMessage Http(string path, object? body = null, bool bearer = true, Guid? tenant = null,
+            Guid? credential = null, string route = ContactExportRoute)
+        {
+            var request = new HttpRequestMessage(body is null ? HttpMethod.Get : HttpMethod.Post, route + path);
             request.Headers.Add("tenantid", (tenant ?? Tenant).ToString("D"));
             request.Headers.Add("correlationid", "owned-g05-fixture");
             if (bearer) request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokens[credential ?? Tenant]);

@@ -87,6 +87,7 @@ CP6.WebApi.Configuration.CrmIdentityConfiguration.AddCrmIdentityEvents(builder.S
 CP6.WebApi.Configuration.ErpIntegrationConfiguration.AddErpIntegration(builder.Services, builder.Configuration, crmOidc, database);
 builder.Services.AddSingleton<CP6.WebApi.Services.CrmOidcCrypto>();
 CP6.WebApi.Configuration.ContactHistoryExportConfiguration.AddContactHistoryExport(builder.Services, builder.Configuration, crmOidc, database.Provider);
+CP6.WebApi.Configuration.ActFileReferenceConfigurationV1.Register(builder.Services, builder.Configuration, crmOidc, database.Provider);
 var inquirySigning = builder.Configuration.GetSection("InquiryPermissionSigning").Get<CP6.WebApi.Services.InquiryPermissionSigningOptionsV1>()
     ?? new CP6.WebApi.Services.InquiryPermissionSigningOptionsV1();
 builder.Services.AddSingleton(new CP6.WebApi.Services.InquiryPermissionSigningKeyV1(inquirySigning, crmOidc));

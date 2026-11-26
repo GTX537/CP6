@@ -101,7 +101,7 @@ previewToken 自含完整 Request/Decision、依赖、固定绑定摘要、Actor
 
 **File 准入。** `ACT-FILE-REFERENCE/1` 绑定 Owner、O/意图摘要、primary/Activity/Set、ReferenceId、文件版本、Purpose、Decision、扫描/策略/保留水位及 Gate 证明。Add 要精确版本 Clean/current purpose；Retain 可以没有当前读取权或 Clean，但必须有保留许可；Remove 要精确 Unlink，不需要下载权，也不删除文件。单次意图所有 Add/Retain/Remove 全核，任何失败整意图0写。[文件操作差异][S509]
 
-当前只启用 `LOCAL_AUTHORITATIVE_GUARD`：本地 Gate 本身是 File Owner 承认的实际撤权裁决点，业务共享持有与撤权排他互斥并持至最终提交。远端普通 GET、推测 TTL、远端 reserve/hold/confirm 均未获本版支持；不能把别域的通用 lease 自动视为本合同满足，缺证明确503。未来等价跨域原子协议需要后继明确批准。[File 最终裁决][S531]
+当前只启用 `LOCAL_AUTHORITATIVE_GUARD`。File/Security Owner 已将 ACT 的实际撤权裁决点委托到 CRM PostgreSQL 库。WP03-19 在同一个 Activity 事务按租户、登记存储和代次取得该行的共享锁，核对完整意图和签名证明，持锁至活动修订与原回执最终提交。Main 相关写者先排他更新该行，推进后旧代次即失效。Main 与 CRM 任一侧的裁决缺证时返回 503。普通远端 GET、推测 TTL、远端 reserve/hold/confirm 仍不受支持。未来等价跨域协议须后继明确批准。 [File 最终裁决][S531] · [委托裁决 R1](https://github.com/GTX537/CP6.AI-Handoff/pull/439)
 
 **Contact 读取。** 既有 Contact ActivityPage 的原 `asRecorded` 仍按原参与→原主锚→原 OBJECT 优先级适配，同 Activity 只一行。原 Contact 主锚内部 Note 可 `asRecorded.contactId=PrimaryId`、关系/渠道全 null、非参与；只有后继才加入的 Contact 不能伪造原关联。当前接受 `ACT-CONTACT-READ/1.1` 允许 asRecorded=null，并新增 association/relationExplanations 及读取时点；须双方实际接线。尚用旧 DTO 遇到无法无损表达的分支应 Partial/nextCursor=null，而不是空且完整。[兼容与扩展][S666] [接受覆盖][U21]
 
