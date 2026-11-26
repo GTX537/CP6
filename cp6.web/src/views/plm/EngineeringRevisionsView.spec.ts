@@ -2,7 +2,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { mount, flushPromises, type VueWrapper } from '@vue/test-utils'
 import type { LegacyRegistration, RevisionCommand, RevisionSnapshot } from '@/api/plm/engineeringRevisions'
 import type { EngineeringVersion } from '@/api/plm/engineeringProducts'
-const api = vi.hoisted(() => ({ scope: vi.fn(), creationContext: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), rebasePreview: vi.fn(), save: vi.fn(), operation: vi.fn(), registerLegacy: vi.fn(), legacyOperation: vi.fn(), products: vi.fn(), rules: vi.fn(), rule: vi.fn(), routings: vi.fn(), documents: vi.fn(), boms: vi.fn(), qualities: vi.fn(), qualityRead: vi.fn(), qualitySource: vi.fn(), authenticated: true, allowed: true }))
+const api = vi.hoisted(() => ({ scope: vi.fn(), creationContext: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), rebasePreview: vi.fn(), save: vi.fn(), operation: vi.fn(), conflict: vi.fn(), registerLegacy: vi.fn(), legacyOperation: vi.fn(), products: vi.fn(), rules: vi.fn(), rule: vi.fn(), routings: vi.fn(), documents: vi.fn(), boms: vi.fn(), qualities: vi.fn(), qualityRead: vi.fn(), qualitySource: vi.fn(), authenticated: true, allowed: true }))
 vi.mock('@/api/plm/engineeringRevisions', () => ({ revisionApi: api }))
 vi.mock('@/api/plm/configurationRules', () => ({ configurationApi: { list: api.rules, read: api.rule } }))
 vi.mock('@/api/mes/qualitySpecification', () => ({ qualityApi: { list: api.qualities, read: api.qualityRead, source: api.qualitySource } }))
@@ -164,6 +164,37 @@ it('keeps unknown results without resend and clears stale editor when original c
   api.operation.mockResolvedValue(ok({ operationId: original.operationId, state: 'UNKNOWN' })); await click('查询原操作'); expect(pendingRevisionOperation(scope, 'ENGINEERING_REVISION')).not.toBeNull(); expect(api.save).toHaveBeenCalledTimes(1)
   api.operation.mockResolvedValue(ok({ operationId: original.operationId, state: 'COMMITTED', result: { operationId: original.operationId, kind: 'ENGINEERING_REVISION', objectId: id, version: '3', digest: 'd'.repeat(64) } })); await click('查询原操作')
   expect(pendingRevisionOperation(scope, 'ENGINEERING_REVISION')).toBeNull(); expect(view!.find('[aria-label="设计目标"]').exists()).toBe(false); expect(api.save).toHaveBeenCalledTimes(1)
+})
+it('recovers a rejected CAS by the original key after reload and clears the evidence on denial', async () => {
+  api.save.mockRejectedValue({ response: { status: 412, data: { message: 'ENGINEERING_WORKING_VERSION_CHANGED' } } })
+  await opened()
+  await field('设计目标').setValue('并行设计值')
+  await submit('设计目标')
+  const original = pendingRevisionOperation(scope, 'ENGINEERING_REVISION')!
+  const next = { version: '3', digest: 'd'.repeat(64) }
+  api.operation.mockResolvedValue(ok({ operationId: original.operationId, state: 'CONFLICT' }))
+  api.conflict.mockResolvedValue(ok({ operationId: original.operationId, action: 'PATCH', reason: '重做装配', recordedAt: row.recordedAt,
+    requestedEtag: row.etag, expected: { revision: row.reference, candidate: row.candidateRef, etag: row.etag },
+    current: { revision: { ...row.reference, ...next }, candidate: { ...row.candidateRef, ...next }, etag: department },
+    items: [{ path: 'goal', expectedValue: row.draft.goal, currentValue: '先保存值', attemptedValue: '并行设计值', reason: '重做装配', conflict: true }] }))
+  view!.unmount()
+  await render()
+  await click('查询原操作')
+  expect(api.conflict).toHaveBeenCalledWith(original.operationId)
+  expect(pendingRevisionOperation(scope, 'ENGINEERING_REVISION')).toBeNull()
+  expect(view!.get('[aria-label="已保存冲突清单"]').text()).toContain('先保存值')
+  expect(view!.text()).toContain('并行设计值')
+  expect(view!.text()).toContain('重做装配')
+  expect(api.save).toHaveBeenCalledOnce()
+  view!.unmount()
+  await render()
+  expect((field('冲突原操作键').element as HTMLInputElement).value).toBe(original.operationId)
+  await submit('冲突原操作键')
+  expect(api.conflict).toHaveBeenCalledTimes(2)
+  api.conflict.mockRejectedValueOnce({ response: { status: 403, data: { message: 'OBJECT_FORBIDDEN' } } })
+  await submit('冲突原操作键')
+  expect(view!.text()).not.toContain('并行设计值')
+  expect(view!.text()).toContain('当前权限无法访问')
 })
 it('clears private drafts and rejects late responses after identity change', async () => {
   await opened(); await field('设计目标').setValue('Private draft'); let done!: (value: ReturnType<typeof ok<EngineeringVersion[]>>) => void

@@ -43,7 +43,7 @@ internal static class EngineeringRevisionRebaseV1
 
     internal static (EngineeringWorkingDraftV1 Draft, EngineeringRebaseChangeV1[] Changes) Compare(
         EngineeringWorkingDraftV1 basis, EngineeringWorkingDraftV1 current, EngineeringWorkingDraftV1 incoming,
-        EngineeringRebaseResolutionV1[]? resolutions = null)
+        EngineeringRebaseResolutionV1[]? resolutions = null, bool compareConfigurationInputs = false)
     {
         var decisions = new Dictionary<string, EngineeringRebaseResolutionV1>(StringComparer.Ordinal);
         if (resolutions != null)
@@ -85,12 +85,16 @@ internal static class EngineeringRevisionRebaseV1
             merged.Add(component);
         }
 
-        var draft = new EngineeringWorkingDraftV1(
-            Select("productRef", basis.ProductRef, current.ProductRef, incoming.ProductRef),
-            Select("goal", basis.Goal, current.Goal, incoming.Goal)!,
-            Select("configuration", basis.Configuration, current.Configuration, incoming.Configuration,
-                value => value.ValueKind == JsonValueKind.Null ? null : Configuration(value.Deserialize<EngineeringConfigurationInputV1>(ManualJson)!)),
-            merged.ToArray());
+        var selectedProduct = Select("productRef", basis.ProductRef, current.ProductRef, incoming.ProductRef);
+        var selectedGoal = Select("goal", basis.Goal, current.Goal, incoming.Goal)!;
+        var selectedConfiguration = current.Configuration;
+        // 若写入未获准，配置只比较输入值，避免把临时配置编号误当成已存引用。
+        if (compareConfigurationInputs)
+            Select("configuration", basis.Configuration?.Input, current.Configuration?.Input, incoming.Configuration?.Input);
+        else
+            selectedConfiguration = Select("configuration", basis.Configuration, current.Configuration, incoming.Configuration,
+                value => value.ValueKind == JsonValueKind.Null ? null : Configuration(value.Deserialize<EngineeringConfigurationInputV1>(ManualJson)!));
+        var draft = new EngineeringWorkingDraftV1(selectedProduct, selectedGoal, selectedConfiguration, merged.ToArray());
         if (decisions.Count != 0) throw Error("ENGINEERING_REBASE_RESOLUTION_UNKNOWN", 422);
         return (draft, changes.ToArray());
 

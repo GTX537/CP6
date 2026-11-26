@@ -2,7 +2,9 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using CP6.Core.Services.Erp;
+using CP6.Core.Services.Integration;
 using CP6.Core.Services.Plm;
+using CP6.Core.Services.Pub;
 using CP6.Tests.Platform;
 using Microsoft.EntityFrameworkCore;
 
@@ -118,15 +120,25 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var product = await MakeEngineering(h);
         var owner = Revisions(h);
         var command = await NewRevision(owner, product: product.Reference);
-        var originalReceipt = await owner.CommandAsync(command);
-        string original;
-        await using (var transaction = await h.Db.Database.BeginTransactionAsync())
+        // 在旧架构下用原工作版与回执存储建立迁移前证据。
+        var (original, originalReceipt) = await CandidateAuthority(h).ExecuteAsync(OperationsOwnerV1.EngineeringRevision, "add", true, async (access, ct) =>
         {
             var store = new EngineeringRevisionStoreV1(h.Db);
-            await store.Fence(false, default);
-            original = (await store.Read(command.RevisionId, 1, default)).OriginalJson;
-            await transaction.CommitAsync();
-        }
+            await store.Fence(true, ct);
+            var binding = await access.BeginEngineeringRevisionCreation(command.RevisionId, command.ExpectedAuthorityVersion, command.DepartmentId, ct);
+            var instant = DateTimeOffset.Now;
+            var code = await new SeqService(h.Db).NextAsync(EngineeringRevisionValuesV1.NumberingKey, instant.DateTime);
+            var rule = await h.Db.Pub_DocSequences.AsNoTracking().SingleAsync(x => x.BizKey == EngineeringRevisionValuesV1.NumberingKey, ct);
+            var saved = await store.Append(command.RevisionId, access.ActorId, new(command.ProductRef, command.Goal!, null, []), command.Reason,
+                null, null, code, command.Origin, new(rule.Id, rule.BizKey, rule.Prefix, rule.DateFormat, rule.SeqLength, rule.ResetCycle,
+                    rule.CurrentPeriod, rule.CurrentValue, instant), ct);
+            await access.CompleteEngineeringRevisionCreation(binding, ct);
+            var receipt = new EngineeringRevisionResultV1(command.OperationId, "ENGINEERING_REVISION", command.RevisionId, saved.Reference.Version, saved.Reference.Digest);
+            await new MainOwnerOperationJournalV1(h.Db).Store(EngineeringRevisionValuesV1.RevisionOwner, "Main.Plm.EngineeringRevision.commands.v1",
+                command.OperationId, access.ActorId, MainOwnerOperationJournalV1.Encode(command), receipt, [command.RevisionId],
+                new { action = command.Action, actor = access.ActorId, reason = command.Reason, result = receipt, saved.CandidateRef }, ct);
+            return (saved.OriginalJson, receipt);
+        });
         var grants = await h.Db.Sys_RoleActions.OrderBy(x => x.Id).Select(x => new { x.Id, x.MenuId, x.ActionCode }).ToArrayAsync();
 
         await h.Db.Database.MigrateAsync();
@@ -134,6 +146,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(grants, await h.Db.Sys_RoleActions.OrderBy(x => x.Id).Select(x => new { x.Id, x.MenuId, x.ActionCode }).ToArrayAsync());
         Assert.Equal(original, (await owner.ReadAsync(command.RevisionId, "1")).OriginalJson);
         Assert.Equal(originalReceipt, await owner.CommandAsync(command));
+        Assert.Equal(404, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => owner.ConflictAsync(command.OperationId))).Status);
         var menu = await h.Db.Sys_Menus.Where(x => x.MenuKey == "plm-engineering-revision").Select(x => x.MenuId).SingleAsync();
         Assert.True(await h.Db.Sys_MenuActions.AnyAsync(x => x.MenuId == menu && x.ActionCode == "legacy-register"));
         Assert.False(await h.Db.Sys_RoleActions.AnyAsync(x => x.MenuId == menu && x.ActionCode == "legacy-register"));

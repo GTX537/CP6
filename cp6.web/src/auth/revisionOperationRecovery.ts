@@ -17,6 +17,10 @@ export function pendingRevisionOperation(scope: RevisionScope, kind: RevisionOpe
   if (!value || !uuid.test(value.operationId) || value.kind !== kind || !uuid.test(value.objectId)) throw new Error('原操作记录异常，请保留记录并联系管理员。')
   return { operationId: value.operationId, kind, objectId: value.objectId }
 }
+export function latestRevisionConflict(scope: RevisionScope): string {
+  const value = localStorage.getItem(`${key(scope, 'ENGINEERING_REVISION')}:conflict`) ?? ''
+  return uuid.test(value) ? value : ''
+}
 async function exclusive<T>(scope: RevisionScope, kind: RevisionOperationKind, guard: () => void, action: (check: () => void) => Promise<T>) {
   if (!navigator.locks?.request) throw new Error('此浏览器无法安全协调多个页面，暂不能提交。')
   const stamp = identityStamp(), channel = key(scope, kind), api = revisionApi
@@ -31,12 +35,14 @@ async function exclusive<T>(scope: RevisionScope, kind: RevisionOperationKind, g
 function accept(scope: RevisionScope, original: PendingRevisionOperation, value: RevisionOperation, check: () => void) {
   check()
   const receipt = value?.result
-  if (value?.operationId !== original.operationId || !['COMMITTED', 'CLOSED', 'UNKNOWN'].includes(value.state)
+  if (value?.operationId !== original.operationId || !['COMMITTED', 'CLOSED', 'UNKNOWN', 'CONFLICT'].includes(value.state)
+    || value.state === 'CONFLICT' && original.kind !== 'ENGINEERING_REVISION'
     || (value.state === 'COMMITTED' ? !receipt || receipt.operationId !== original.operationId || receipt.kind !== original.kind
       || receipt.objectId !== original.objectId || !/^[1-9][0-9]*$/.test(receipt.version) || !/^[0-9a-f]{64}$/.test(receipt.digest) : receipt != null))
     throw new Error('返回结果与原操作不一致，请保留记录。')
   const pending = pendingRevisionOperation(scope, original.kind)
   if (pending?.operationId !== original.operationId || pending.objectId !== original.objectId) throw new Error('原操作记录已变化。')
+  if (value.state === 'CONFLICT') localStorage.setItem(`${key(scope, original.kind)}:conflict`, original.operationId)
   if (value.state !== 'UNKNOWN') localStorage.removeItem(key(scope, original.kind))
   return value
 }

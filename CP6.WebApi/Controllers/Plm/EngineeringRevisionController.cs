@@ -33,6 +33,8 @@ public sealed class EngineeringRevisionController(EngineeringRevisionOwnerV1 own
     public async Task<IActionResult> Command([FromBody] EngineeringRevisionCommandV1 command, CancellationToken ct) => Result(await owner.CommandAsync(command, ct));
     [HttpGet("operations/{id:guid}")]
     public async Task<IActionResult> Operation(Guid id, CancellationToken ct) => Result(await owner.OperationAsync(id, false, ct));
+    [HttpGet("operations/{id:guid}/conflict")]
+    public async Task<IActionResult> ConflictRead(Guid id, CancellationToken ct) => Result(await owner.ConflictAsync(id, ct));
     [HttpPost("operations/{id:guid}/close")]
     public async Task<IActionResult> Close(Guid id, CancellationToken ct) => Result(await owner.OperationAsync(id, true, ct));
 }

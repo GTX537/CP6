@@ -20,6 +20,24 @@ public sealed class EngineeringRevisionLineageV1 : Migration
         CREATE TRIGGER engineering_rebase_immutable BEFORE UPDATE OR DELETE OR TRUNCATE ON cp6_engineering_revision_v1.rebases
           FOR EACH STATEMENT EXECUTE FUNCTION cp6_engineering_revision_v1.immutable();
 
+        CREATE TABLE cp6_engineering_revision_v1.revision_conflicts (
+          tenant_id uuid NOT NULL,operation_id uuid NOT NULL,actor_id uuid NOT NULL,revision_id uuid NOT NULL,
+          expected_version bigint NOT NULL CHECK(expected_version>0),current_version bigint NOT NULL CHECK(current_version>=expected_version),
+          input_bytes bytea NOT NULL,input_digest text COLLATE "C" NOT NULL CHECK(input_digest=encode(sha256(input_bytes),'hex')),
+          body bytea NOT NULL,body_digest text COLLATE "C" NOT NULL CHECK(body_digest=encode(sha256(body),'hex')),
+          CHECK(actor_id<>'00000000-0000-0000-0000-000000000000'::uuid AND operation_id<>'00000000-0000-0000-0000-000000000000'::uuid),
+          CHECK(convert_from(input_bytes,'UTF8')::jsonb->>'OperationId' IS NOT DISTINCT FROM operation_id::text),
+          CHECK(convert_from(body,'UTF8')::jsonb->>'operationId' IS NOT DISTINCT FROM operation_id::text),
+          CHECK(convert_from(body,'UTF8')::jsonb#>>'{expected,revision,id}' IS NOT DISTINCT FROM revision_id::text),
+          CHECK(convert_from(body,'UTF8')::jsonb#>>'{current,revision,id}' IS NOT DISTINCT FROM revision_id::text),
+          CHECK(convert_from(body,'UTF8')::jsonb#>>'{expected,revision,version}' IS NOT DISTINCT FROM expected_version::text),
+          CHECK(convert_from(body,'UTF8')::jsonb#>>'{current,revision,version}' IS NOT DISTINCT FROM current_version::text),
+          PRIMARY KEY(tenant_id,operation_id),
+          FOREIGN KEY(tenant_id,revision_id,expected_version) REFERENCES cp6_engineering_revision_v1.working_versions,
+          FOREIGN KEY(tenant_id,revision_id,current_version) REFERENCES cp6_engineering_revision_v1.working_versions);
+        CREATE TRIGGER engineering_revision_conflict_immutable BEFORE UPDATE OR DELETE OR TRUNCATE ON cp6_engineering_revision_v1.revision_conflicts
+          FOR EACH STATEMENT EXECUTE FUNCTION cp6_engineering_revision_v1.immutable();
+
         CREATE TABLE cp6_engineering_revision_v1.legacy_references (
           tenant_id uuid NOT NULL,id uuid NOT NULL,product_id uuid NOT NULL,
           source_repo_sha text COLLATE "C" NOT NULL CHECK(source_repo_sha ~ '^[0-9a-f]{40}$'),

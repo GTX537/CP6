@@ -3,6 +3,44 @@
     <header><div><h1>工程修订与工作快照</h1><p>逐次保存设计草稿及修改原因，保留每个组成位置和历史版本。</p></div><button :disabled="busy" @click="reload">刷新</button></header>
     <p v-if="error" role="alert">{{ error }}</p><p v-if="notice" role="status">{{ notice }}</p>
     <section v-if="pending" aria-label="原操作恢复"><p>上次保存结果尚未确认。</p><button :disabled="busy" @click="recover(false)">查询原操作</button><button :disabled="busy" @click="recover(true)">结束未提交操作</button></section>
+    <section v-if="scope && canRead" aria-label="冲突清单回读">
+      <form class="inline" @submit.prevent="loadConflict">
+        <label>冲突原操作键<input v-model.trim="conflictKey" aria-label="冲突原操作键" maxlength="36" required :disabled="busy" /></label>
+        <button :disabled="busy || !conflictKey">读取冲突清单</button>
+      </form>
+      <div v-if="conflict" aria-label="已保存冲突清单">
+        <h2>已保存冲突清单</h2>
+        <p>原操作 {{ conflict.operationId }} · {{ conflict.action === 'REBASE' ? '重基' : '工作草稿修改' }} · {{ conflict.recordedAt }}</p>
+        <p>原操作理由：{{ conflict.reason }}</p>
+        <details>
+          <summary>准确版本与来源</summary>
+          <dl class="refs">
+            <dt>提交时依据的修订</dt><dd>{{ refKey(conflict.expected.revision) }}</dd>
+            <dt>提交时依据的候选</dt><dd>{{ refKey(conflict.expected.candidate) }}</dd>
+            <dt>拒绝时的修订</dt><dd>{{ refKey(conflict.current.revision) }}</dd>
+            <dt>拒绝时的候选</dt><dd>{{ refKey(conflict.current.candidate) }}</dd>
+            <dt>请求的 ETag</dt><dd>{{ conflict.requestedEtag }}</dd>
+            <dt>请求版本的原 ETag</dt><dd>{{ conflict.expected.etag }}</dd>
+            <dt>拒绝时的 ETag</dt><dd>{{ conflict.current.etag }}</dd>
+            <template v-if="conflict.sources">
+              <dt>重基来源</dt><dd>{{ refKey(conflict.sources.base) }}</dd>
+              <dt>传入来源</dt><dd>{{ refKey(conflict.sources.incoming) }}</dd>
+            </template>
+          </dl>
+        </details>
+        <p v-if="!conflict.items.length">工作版本或 ETag 已变化，相关字段值一致。</p>
+        <div v-else class="table-scroll"><table>
+          <thead><tr><th>发生位置与字段</th><th>提交所依据的值</th><th>已保存值</th><th>尝试保存的值</th><th>理由</th></tr></thead>
+          <tbody><tr v-for="item in conflict.items" :key="item.path">
+            <td><code>{{ item.path }}</code><p>{{ item.conflict ? '双方改动冲突' : '字段差异' }}</p></td>
+            <td><pre>{{ displayValue(item.expectedValue) }}</pre><code v-if="item.expectedSource">{{ refKey(item.expectedSource) }}</code></td>
+            <td><pre>{{ displayValue(item.currentValue) }}</pre><code v-if="item.currentSource">{{ refKey(item.currentSource) }}</code></td>
+            <td><pre>{{ displayValue(item.attemptedValue) }}</pre><code v-if="item.attemptedSource">{{ refKey(item.attemptedSource) }}</code></td>
+            <td>{{ item.reason }}</td>
+          </tr></tbody>
+        </table></div>
+      </div>
+    </section>
     <section>
       <header><h2>修订目录</h2><button v-if="permissions.has('plm-engineering-revision:add')" :disabled="locked || !scope" @click="openNew">新建修订</button></header>
       <form class="inline" @submit.prevent="loadList(1)"><label>修订编号<input v-model="search" aria-label="修订编号搜索" maxlength="256" :disabled="busy" /></label><button :disabled="busy || !canRead">搜索</button></form>
@@ -99,6 +137,7 @@
       </fieldset>
       <div v-if="rebasePreview">
         <p>基准 {{ rebasePreview.sources.base.id }} · v{{ rebasePreview.sources.base.version }}；传入 {{ rebasePreview.sources.incoming.id }} · v{{ rebasePreview.sources.incoming.version }}</p>
+        <p>工程 BOM、制造 BOM、工艺路线和受控文档须属于目标工程修订。跨修订重基时，请选用已绑定到目标修订的准确专业版本。</p>
         <p v-if="rebasePreview.baseMissing.length">基准来源状态：{{ rebasePreview.baseMissing.map(missingText).join('；') }}</p>
         <p v-if="rebasePreview.incomingMissing.length">传入来源状态：{{ rebasePreview.incomingMissing.map(missingText).join('；') }}</p>
         <p v-if="!rebasePreview.changes.length">组成字段一致。保存会追加工作版及来源记录。</p>
@@ -135,15 +174,16 @@ import { bomApi, type BomSnapshot } from '@/api/plm/engineeringBom'
 import { routingApi, type RoutingSnapshot } from '@/api/plm/engineeringRouting'
 import { baselineApi } from '@/api/plm/engineeringBaselines'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
-import { revisionApi, type LegacyReference, type LegacyRegistration, type RebaseDecision, type RebasePreview, type RebaseResolution, type RevisionCommand, type RevisionComponent, type RevisionConfiguration, type RevisionCreation, type RevisionDiff, type RevisionPatch, type RevisionResult, type RevisionScope, type RevisionSnapshot } from '@/api/plm/engineeringRevisions'
+import { revisionApi, type LegacyReference, type LegacyRegistration, type RebaseDecision, type RebasePreview, type RebaseResolution, type RevisionCommand, type RevisionComponent, type RevisionConfiguration, type RevisionConflict, type RevisionCreation, type RevisionDiff, type RevisionPatch, type RevisionResult, type RevisionScope, type RevisionSnapshot } from '@/api/plm/engineeringRevisions'
 import { engineeringApi, type EngineeringReference, type EngineeringVersion } from '@/api/plm/engineeringProducts'
-import { revisionResponse, pendingRevisionOperation, resolveRevisionOperation, saveRevisionOperation, type PendingRevisionOperation } from '@/auth/revisionOperationRecovery'
+import { latestRevisionConflict, revisionResponse, pendingRevisionOperation, resolveRevisionOperation, saveRevisionOperation, type PendingRevisionOperation } from '@/auth/revisionOperationRecovery'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
 const permissions = usePermissionStore(), canRead = computed(() => permissions.loaded && permissions.has('plm-engineering-revision:query')), canEdit = computed(() => canRead.value && permissions.has('plm-engineering-revision:edit') && current.value?.state === 'DRAFT')
 const checkPending = ref(false)
 const busy = ref(false), error = ref(''), notice = ref(''), scope = ref<RevisionScope | null>(null), pending = ref<PendingRevisionOperation | null>(null), locked = computed(() => busy.value || !!pending.value || checkPending.value)
+const conflictKey = ref(''), conflict = ref<RevisionConflict | null>(null)
 const rows = ref<RevisionSnapshot[]>([]), search = ref(''), page = ref(1), current = ref<RevisionSnapshot | null>(null), creating = ref(false), creation = ref<RevisionCreation | null>(null), draftId = ref('')
 const goal = ref(''), reason = ref(''), noParentReason = ref(''), department = ref(''), productSearch = ref(''), products = ref<EngineeringVersion[]>([]), rootProduct = ref('')
 const rules = ref<ConfigurationSnapshot[]>([]), ruleSelection = ref('')
@@ -174,6 +214,7 @@ const decisionErrors: Record<string, string> = {
   ENGINEERING_REBASE_PRODUCT_MISMATCH: '基准、当前稿和传入来源须属于同一工程产品。',
   ENGINEERING_REBASE_RESOLUTION_REQUIRED: '请为每个差异填写决定和理由。',
   ENGINEERING_REBASE_MANUAL_INVALID: '人工值不符合所选字段的格式。',
+  ENGINEERING_REVISION_CONFLICT_NOT_FOUND: '此原操作键下没有已保存的冲突清单。',
   ENGINEERING_WORKING_NOT_DRAFT: '当前工作版在审或已冻结，请重新打开确认状态。',
   ENGINEERING_LEGACY_REFERENCE_EXISTS: '已登记此版本的原记录，请读取原登记。',
   ENGINEERING_LEGACY_PRODUCT_MISMATCH: '历史来源须与所选工程产品一致。',
@@ -195,7 +236,7 @@ function missingText(value: string) {
 }
 function message(failure: any) {
   const code = failure?.response?.data?.message || failure?.message || ''
-  const known: Record<string, string> = { ENGINEERING_NUMBER_RULE_REQUIRED: '尚未配置工程修订编号规则，请联系编号规则管理员。', ENGINEERING_NUMBER_RULE_INVALID: '当前编号规则无法分配修订号，请核对规则。', ENGINEERING_WORKING_VERSION_CHANGED: '工作草稿已变化，请重新打开后核对。', ENGINEERING_PRODUCT_CHANGED: '工程产品来源已变化或停用，请重新选择。', ENGINEERING_REVISION_PRODUCT_IMMUTABLE: '已绑定的工程产品身份不可替换。', CREATION_AUTHORITY_CHANGED: '当前创建范围已变化，请重新新建并选择部门。', CREATION_DEPARTMENT_FORBIDDEN: '请选择授权范围内的部门。', ACTION_FORBIDDEN: '当前权限无法执行此操作。', OBJECT_FORBIDDEN: '当前权限无法访问所选对象。', OPERATIONS_OUTCOME_UNKNOWN: '保存结果尚未确认，请查询原操作。' }
+  const known: Record<string, string> = { ENGINEERING_NUMBER_RULE_REQUIRED: '尚未配置工程修订编号规则，请联系编号规则管理员。', ENGINEERING_NUMBER_RULE_INVALID: '当前编号规则无法分配修订号，请核对规则。', ENGINEERING_WORKING_VERSION_CHANGED: '工作草稿已变化，请查询原操作以核对冲突清单。', ENGINEERING_PRODUCT_CHANGED: '工程产品来源已变化或停用，请重新选择。', ENGINEERING_REVISION_PRODUCT_IMMUTABLE: '已绑定的工程产品身份不可替换。', CREATION_AUTHORITY_CHANGED: '当前创建范围已变化，请重新新建并选择部门。', CREATION_DEPARTMENT_FORBIDDEN: '请选择授权范围内的部门。', ACTION_FORBIDDEN: '当前权限无法执行此操作。', OBJECT_FORBIDDEN: '当前权限无法访问所选对象。', ORIGINAL_OPERATION_FORBIDDEN: '当前权限无法访问该原操作。', OPERATIONS_OUTCOME_UNKNOWN: '保存结果尚未确认，请查询原操作。' }
   return known[code] || decisionErrors[code] || (/^[A-Z][A-Z0-9_]+$/.test(code) ? '无法保存，请核对输入和原操作状态。' : code) || '暂时无法完成。'
 }
 function syncPending() { pending.value = scope.value ? pendingRevisionOperation(scope.value, 'ENGINEERING_REVISION') ?? pendingRevisionOperation(scope.value, 'ENGINEERING_LEGACY_REFERENCE') : null }
@@ -215,7 +256,16 @@ function clearSourceEditors() {
   legacyId.value = ''; legacy.value = null; useLegacy.value = false; Object.assign(legacyForm, blankLegacy())
 }
 function setCurrent(value: RevisionSnapshot) { clearEditor(); current.value = value; draftId.value = value.reference.id; goal.value = value.draft.goal; configuration.value = copy(value.draft.configuration?.input ?? emptyConfiguration()); afterVersion.value = value.reference.version; baseVersion.value = value.parentWorkingVersion ?? ''; legacyId.value = value.origin.legacyRef?.id ?? '' }
-async function reload() { await run(async check => { rows.value = []; clearEditor(); scope.value = null; if (!permissions.loaded) await permissions.loadMyActions(); check(); if (!canRead.value) throw new Error('当前没有读取工程修订的权限。'); const s = revisionResponse(await revisionApi.scope()); check(); scope.value = s; const list = revisionResponse(await revisionApi.list(search.value, page.value)); check(); rows.value = list }) }
+async function reload() {
+  await run(async check => {
+    rows.value = []; clearEditor(); conflict.value = null; conflictKey.value = ''; scope.value = null
+    if (!permissions.loaded) await permissions.loadMyActions()
+    check(); if (!canRead.value) throw new Error('当前没有读取工程修订的权限。')
+    const s = revisionResponse(await revisionApi.scope()); check()
+    scope.value = s; conflictKey.value = latestRevisionConflict(s)
+    const list = revisionResponse(await revisionApi.list(search.value, page.value)); check(); rows.value = list
+  })
+}
 async function loadList(target: number) { await run(async check => { rows.value = []; const list = revisionResponse(await revisionApi.list(search.value, target)); check(); rows.value = list; page.value = target }) }
 async function open(row: RevisionSnapshot) { const id = row.reference.id; await run(async check => { clearEditor(); const value = revisionResponse(await revisionApi.read(id)); check(); setCurrent(value) }) }
 async function openNew() { await run(async check => { clearEditor(); const value = revisionResponse(await revisionApi.creationContext()); check(); creation.value = value; creating.value = true; draftId.value = crypto.randomUUID() }) }
@@ -342,6 +392,17 @@ async function saveComponent() { if (!component.value) return; try { const value
 async function removeComponent(value: RevisionComponent) { await patch([{ op: 'REMOVE_COMPONENT', occurrenceId: value.occurrenceId }]) }
 async function loadHistory() { const id = current.value?.reference.id, version = historyVersion.value; if (!id) return; await run(async check => { history.value = null; const value = revisionResponse(await revisionApi.read(id, version)); check(); history.value = value }) }
 async function loadDiff() { const id = current.value?.reference.id, before = beforeVersion.value, after = afterVersion.value; if (!id) return; await run(async check => { diff.value = null; const value = revisionResponse(await revisionApi.diff(id, before, after)); check(); diff.value = value }) }
+async function readConflict(id: string, check: () => void, objectId?: string) {
+  const value = revisionResponse(await revisionApi.conflict(id)); check()
+  if (value.operationId !== id || value.expected.revision.id !== value.current.revision.id || (objectId && value.expected.revision.id !== objectId))
+    throw new Error('冲突清单与原操作不一致。')
+  return value
+}
+async function loadConflict() {
+  const id = conflictKey.value.toLowerCase()
+  if (!id || !scope.value || !canRead.value) return
+  await run(async check => { conflict.value = null; conflict.value = await readConflict(id, check) })
+}
 async function recover(close: boolean) {
   const s = scope.value, original = pending.value
   if (!s || !original) return
@@ -357,12 +418,22 @@ async function recover(close: boolean) {
       notice.value = result.state === 'COMMITTED' ? '已恢复原历史登记。' : result.state === 'CLOSED' ? '原操作已结束。' : '仍无法确认，请继续查询或结束未提交操作。'
       return
     }
-    const result = await resolveRevisionOperation(s, original.kind, close, check); check()
+    let evidence: RevisionConflict | undefined
+    const result = await resolveRevisionOperation(s, original.kind, close, check, async (id, finish) => {
+      const response = await revisionApi.operation(id, finish); check()
+      if (revisionResponse(response).state === 'CONFLICT') evidence = await readConflict(id, check, original.objectId)
+      return response
+    }); check()
+    if (result.state === 'CONFLICT' && evidence) {
+      clearEditor(); conflict.value = evidence; conflictKey.value = evidence.operationId
+      notice.value = '已读取原冲突清单。继续编辑前请打开最新工作版。'
+      return
+    }
     if (result.state === 'COMMITTED') { clearEditor(); rows.value = []; const values = revisionResponse(await revisionApi.list(search.value, page.value)); check(); rows.value = values }
     notice.value = result.state === 'COMMITTED' ? '原操作已提交，请重新打开最新工作快照。' : result.state === 'CLOSED' ? '原操作已结束，可以继续编辑。' : '仍无法确认，请继续查询或结束未提交操作。'
   })
 }
-function clearPrivate() { clearEditor(); rows.value = []; search.value = ''; page.value = 1 }
+function clearPrivate() { clearEditor(); rows.value = []; search.value = ''; page.value = 1; conflict.value = null; conflictKey.value = '' }
 function clear() { generation++; busy.value = false; clearPrivate(); scope.value = null; pending.value = null; error.value = ''; notice.value = '' }
 function identityChanged() { clear(); if (authenticationCanRead()) void reload() }
 function storage(event: StorageEvent) { if (event.key?.startsWith('cp6_revision_operation_v1:')) { try { syncPending() } catch (failure) { error.value = message(failure) } } }
@@ -380,4 +451,5 @@ button { cursor: pointer; margin: 4px; } button:disabled { opacity: .5; cursor: 
 .table-scroll { overflow: auto; margin-top: 16px; } table { width: 100%; border-collapse: collapse; } th,td { text-align: left; padding: 10px; border-bottom: 1px solid var(--el-border-color-lighter); }
 fieldset { border: 0; padding: 0; } [role=alert] { color: var(--el-color-danger); } pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 .rebase-item { border-top: 1px solid var(--el-border-color-lighter); padding-block: 12px; }
+.refs dd, td code { overflow-wrap: anywhere; }
 </style>

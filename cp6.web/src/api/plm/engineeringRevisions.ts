@@ -15,7 +15,7 @@ export interface RevisionPatch { op: 'SET_GOAL' | 'SET_PRODUCT' | 'SET_CONFIGURA
 export interface RevisionCommand { operationId: string; revisionId: string; action: 'CREATE' | 'PATCH' | 'REBASE'; expectedVersion?: string | null; expectedEtag?: string | null; expectedAuthorityVersion?: string | null; departmentId?: string | null; origin?: RevisionOrigin | null; productRef?: EngineeringReference | null; goal?: string | null; reason: string; patches?: RevisionPatch[] | null; rebase?: RebaseInput }
 export type RevisionOperationKind = 'ENGINEERING_REVISION' | 'ENGINEERING_LEGACY_REFERENCE'
 export interface RevisionResult { operationId: string; kind: RevisionOperationKind; objectId: string; version: string; digest: string }
-export interface RevisionOperation { operationId: string; state: 'COMMITTED' | 'CLOSED' | 'UNKNOWN'; result?: RevisionResult | null }
+export interface RevisionOperation { operationId: string; state: 'COMMITTED' | 'CLOSED' | 'UNKNOWN' | 'CONFLICT'; result?: RevisionResult | null }
 export interface RevisionDiff { before: EngineeringReference; after: EngineeringReference; changes: { path: string; before: unknown; after: unknown }[] }
 export interface RebaseSources { base: EngineeringReference; incoming: EngineeringReference }
 export type RebaseDecision = 'KEEP_BASE' | 'ACCEPT_SOURCE' | 'MANUAL'
@@ -23,9 +23,19 @@ export interface RebaseResolution { path: string; decision: RebaseDecision; reas
 export interface RebaseInput { sources: RebaseSources; resolutions: RebaseResolution[] }
 export interface RebasePreview { revision: EngineeringReference; candidate: EngineeringReference; etag: string; sources: RebaseSources; changes: { path: string; baseValue: unknown; currentValue: unknown; incomingValue: unknown; conflict: boolean }[]; baseMissing: string[]; incomingMissing: string[] }
 export interface RebaseRecord { operationId: string; previousCandidate: EngineeringReference; input: RebaseInput; previousChange?: EngineeringReference; incomingChange?: EngineeringReference; reason: string }
+export interface RevisionConflictHead { revision: EngineeringReference; candidate: EngineeringReference; etag: string }
+export interface RevisionConflictItem {
+  path: string; occurrenceId?: string | null; expectedValue: unknown; currentValue: unknown; attemptedValue: unknown;
+  expectedSource?: EngineeringReference | null; currentSource?: EngineeringReference | null; attemptedSource?: EngineeringReference | null;
+  reason: string; conflict: boolean
+}
+export interface RevisionConflict {
+  operationId: string; action: 'PATCH' | 'REBASE'; reason: string; recordedAt: string; requestedEtag: string;
+  expected: RevisionConflictHead; current: RevisionConflictHead; sources?: RebaseSources | null; items: RevisionConflictItem[]
+}
 export interface LegacyRegistration { operationId: string; product: EngineeringReference; sourceRepositorySha: string; sourceRecordRef: string; sourcePath?: string | null; sourceHash: string; evidenceGaps: string[]; reason: string }
 export interface LegacyReference { reference: EngineeringReference; original: { id: string; tenantId: string; actorId: string; recordedAt: string; registration: LegacyRegistration }; evidenceStatus: 'EVIDENCE_INCOMPLETE' }
-export interface LegacyOperation { operationId: string; state: RevisionOperation['state']; result?: LegacyReference | null }
+export interface LegacyOperation { operationId: string; state: Exclude<RevisionOperation['state'], 'CONFLICT'>; result?: LegacyReference | null }
 const root = '/engineering-revisions/owner-v1'
 export const revisionApi = {
   scope: () => http.get<any, RevisionEnvelope<RevisionScope>>(`${root}/scope`),
@@ -38,6 +48,7 @@ export const revisionApi = {
   operation: (id: string, close: boolean) => close
     ? http.post<any, RevisionEnvelope<RevisionOperation>>(`${root}/operations/${encodeURIComponent(id)}/close`, {})
     : http.get<any, RevisionEnvelope<RevisionOperation>>(`${root}/operations/${encodeURIComponent(id)}`),
+  conflict: (id: string) => http.get<any, RevisionEnvelope<RevisionConflict>>(`${root}/operations/${encodeURIComponent(id)}/conflict`),
   registerLegacy: (body: LegacyRegistration) => http.post<any, RevisionEnvelope<LegacyReference>>(`${root}/legacy-references`, body),
   readLegacy: (id: string) => http.get<any, RevisionEnvelope<LegacyReference>>(`${root}/legacy-references/${encodeURIComponent(id)}`),
   legacyOperation: (id: string, close: boolean) => close

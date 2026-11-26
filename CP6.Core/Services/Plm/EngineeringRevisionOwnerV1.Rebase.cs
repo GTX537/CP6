@@ -56,9 +56,10 @@ public sealed partial class EngineeringRevisionOwnerV1
     }
 
     private async Task<(EngineeringRevisionSnapshotV1 Base, EngineeringRevisionSnapshotV1 Incoming)> RebaseSources(OperationsAccessV1 access,
-        EngineeringRevisionStoreV1 store, EngineeringRevisionSnapshotV1 current, EngineeringRebaseSourcesV1 sources, CancellationToken ct)
+        EngineeringRevisionStoreV1 store, EngineeringRevisionSnapshotV1 current, EngineeringRebaseSourcesV1 sources, CancellationToken ct,
+        bool historical = false)
     {
-        if (current.State != "DRAFT") throw Error("ENGINEERING_WORKING_NOT_DRAFT", 409);
+        if (!historical && current.State != "DRAFT") throw Error("ENGINEERING_WORKING_NOT_DRAFT", 409);
         var previous = await new EngineeringRevisionLineageStoreV1(db).RebaseAtOrBefore(current.Reference.Id, Revision(current.Reference.Version), ct);
         var expectedBase = await CompositionBase(current, previous, ct);
         if (expectedBase != null && sources.Base != expectedBase) throw Error("ENGINEERING_REBASE_BASE_CHANGED", 412);
@@ -66,7 +67,7 @@ public sealed partial class EngineeringRevisionOwnerV1
         var basis = await RebaseSource(access, store, sources.Base, false, ct);
         if (expectedBase == null && (basis.Reference.Id != current.Reference.Id || Revision(basis.Reference.Version) >= Revision(current.Reference.Version)))
             throw Error("ENGINEERING_REBASE_BASE_CHANGED", 412);
-        var incoming = await RebaseSource(access, store, sources.Incoming, true, ct);
+        var incoming = await RebaseSource(access, store, sources.Incoming, !historical, ct);
         var product = current.Draft.ProductRef?.Id;
         if (product == null || basis.Draft.ProductRef?.Id != product || incoming.Draft.ProductRef?.Id != product)
             throw Error("ENGINEERING_REBASE_PRODUCT_MISMATCH", 422);
@@ -86,17 +87,18 @@ public sealed partial class EngineeringRevisionOwnerV1
     }
 
     private async Task<(EngineeringWorkingDraftV1 Draft, EngineeringRebaseRecordV1 Record)> Rebase(OperationsAccessV1 access,
-        EngineeringRevisionStoreV1 store, EngineeringRevisionSnapshotV1 current, EngineeringRevisionCommandV1 command, CancellationToken ct)
+        EngineeringRevisionStoreV1 store, EngineeringRevisionSnapshotV1 current, EngineeringRevisionCommandV1 command, CancellationToken ct,
+        bool historical = false)
     {
         var input = command.Rebase!;
-        var (basis, incoming) = await RebaseSources(access, store, current, input.Sources, ct);
-        if (incoming.Origin.Type == "CHANGE") await VerifyOrigin(access, incoming.Origin, incoming.Draft.ProductRef, true, ct);
+        var (basis, incoming) = await RebaseSources(access, store, current, input.Sources, ct, historical);
+        if (!historical && incoming.Origin.Type == "CHANGE") await VerifyOrigin(access, incoming.Origin, incoming.Draft.ProductRef, true, ct);
         var (draft, _) = EngineeringRevisionRebaseV1.Compare(basis.Draft, current.Draft, incoming.Draft, input.Resolutions);
         if (draft.Components.Length > 1000) throw Error("ENGINEERING_COMPONENT_LIMIT", 400);
         if (draft.ProductRef?.Id != current.Draft.ProductRef?.Id) throw Error("ENGINEERING_REVISION_PRODUCT_IMMUTABLE", 409);
         Text(draft.Goal);
         foreach (var member in draft.Components) Component(member);
-        if (input.Resolutions.Any(r => r.Path == "configuration" && r.Decision == "MANUAL") && draft.Configuration?.Input.RuleRef is { } ruleRef)
+        if (!historical && input.Resolutions.Any(r => r.Path == "configuration" && r.Decision == "MANUAL") && draft.Configuration?.Input.RuleRef is { } ruleRef)
         {
             var rule = await new ConfigurationRuleOwnerV1(db, owner).Source(access, ruleRef, draft.ProductRef, true, ct);
             draft = draft with { Configuration = draft.Configuration with { OptionCheck = ConfigurationRuleValuesV1.Evaluate(rule, draft.Configuration.Input.Options) } };

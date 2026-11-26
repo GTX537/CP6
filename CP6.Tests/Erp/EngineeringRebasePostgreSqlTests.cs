@@ -6,6 +6,7 @@ using CP6.Core.Services.Common;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.Integration;
 using CP6.Core.Services.Plm;
+using CP6.Entity.DomainModels.Sys;
 using CP6.Tests.Platform;
 using Microsoft.EntityFrameworkCore;
 
@@ -74,6 +75,123 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var operation = await owner.OperationAsync(operationId, false);
         Assert.Equal("COMMITTED", operation.State);
         Assert.Equal(next.Reference.Digest, operation.Result!.Digest);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task EngineeringRebase_stale_http_recovers_immutable_occurrence_conflicts_by_original_key()
+    {
+        await using var h = await Seed();
+        await GrantEngineeringRevision(h);
+        await GrantEngineering(h);
+        await RevisionRule(h);
+        var owner = Revisions(h);
+        var product = await MakeEngineering(h);
+        var source = new EngineeringSourceRefV1(product.Reference.Owner, product.Reference.Id, product.Reference.Version, product.Reference.Digest);
+        var member = new EngineeringComponentDraftV1(Guid.NewGuid(), "PRODUCT", "机架/左", 20, "APPLIES", "", "原工作值", source);
+        var a = await MakeRevision(owner, product.Reference);
+        var b = await MakeRevision(owner, product.Reference);
+        await owner.CommandAsync(PatchRevision(a, Upsert(member)));
+        await owner.CommandAsync(PatchRevision(b, Upsert(member with { Note = "并行写入值" })));
+        var expected = await owner.ReadAsync(a.Reference.Id, null);
+        var incoming = await owner.ReadAsync(b.Reference.Id, null);
+        var field = $"components/{member.OccurrenceId}/note";
+        var sources = new EngineeringRebaseSourcesV1(a.CandidateRef, incoming.CandidateRef);
+        var resolution = new EngineeringRebaseResolutionV1($"components/{member.OccurrenceId}", "ACCEPT_SOURCE", "按装配记录采用传入注释");
+        var rejected = RebaseCommand(expected, sources, resolution);
+        Assert.Equal(resolution.Path, Assert.Single((await owner.RebasePreviewAsync(a.Reference.Id, sources)).Changes).Path);
+
+        var colleague = new Sys_User { UserName = "competing-engineer", RoleId = 72 };
+        h.Db.Sys_Users.Add(colleague);
+        await h.Db.SaveChangesAsync();
+        h.Db.ChangeTracker.Clear();
+        await Revisions(DecisionActor(h, colleague.Id)).CommandAsync(PatchRevision(expected, Upsert(member with { Note = "先保存值" })));
+        var winner = await owner.ReadAsync(a.Reference.Id, null);
+        await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!);
+        var cookies = await Login(host, h);
+        var operationPath = $"api/engineering-revisions/owner-v1/operations/{rejected.OperationId}";
+        var json = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+        async Task<HttpResponseMessage> Post(EngineeringRevisionCommandV1 command)
+        {
+            var request = OperationsRequest(cookies, HttpMethod.Post, "api/engineering-revisions/owner-v1/commands");
+            request.Content = new StringContent(JsonSerializer.Serialize(command, json), Encoding.UTF8, "application/json");
+            return await host.Send(request);
+        }
+        using var stale = await Post(rejected);
+        Assert.Equal(HttpStatusCode.PreconditionFailed, stale.StatusCode);
+        Assert.Contains("ENGINEERING_WORKING_VERSION_CHANGED", await stale.Content.ReadAsStringAsync());
+        using var read = await host.Send(OperationsRequest(cookies, HttpMethod.Get, $"{operationPath}/conflict"));
+        Assert.Equal(HttpStatusCode.OK, read.StatusCode);
+        Assert.True(read.Headers.CacheControl?.NoStore);
+        var original = await read.Content.ReadAsStringAsync();
+        using var body = JsonDocument.Parse(original);
+        var data = body.RootElement.GetProperty("data");
+        Assert.Equal(rejected.OperationId, data.GetProperty("operationId").GetGuid());
+        Assert.Equal(rejected.Reason, data.GetProperty("reason").GetString());
+        Assert.Equal(expected.CandidateRef, data.GetProperty("expected").GetProperty("candidate").Deserialize<EngineeringRevisionRefV1>(json));
+        Assert.Equal(winner.CandidateRef, data.GetProperty("current").GetProperty("candidate").Deserialize<EngineeringRevisionRefV1>(json));
+        Assert.Equal(sources, data.GetProperty("sources").Deserialize<EngineeringRebaseSourcesV1>(json));
+        var item = Assert.Single(data.GetProperty("items").EnumerateArray());
+        Assert.Equal(field, item.GetProperty("path").GetString());
+        Assert.Equal(member.OccurrenceId, item.GetProperty("occurrenceId").GetGuid());
+        Assert.Equal("原工作值", item.GetProperty("expectedValue").GetString());
+        Assert.Equal("先保存值", item.GetProperty("currentValue").GetString());
+        Assert.Equal("并行写入值", item.GetProperty("attemptedValue").GetString());
+        Assert.Equal(resolution.Reason, item.GetProperty("reason").GetString());
+        foreach (var property in new[] { "expectedSource", "currentSource", "attemptedSource" })
+            Assert.Equal(source, item.GetProperty(property).Deserialize<EngineeringSourceRefV1>(json));
+        Assert.True(item.GetProperty("conflict").GetBoolean());
+
+        using var repeat = await Post(rejected);
+        Assert.Equal(HttpStatusCode.PreconditionFailed, repeat.StatusCode);
+        using var altered = await Post(rejected with { Reason = "改写原操作" });
+        Assert.Equal(HttpStatusCode.Conflict, altered.StatusCode);
+        foreach (var (method, endpoint) in new[] { (HttpMethod.Get, operationPath), (HttpMethod.Post, $"{operationPath}/close") })
+        {
+            using var status = await host.Send(OperationsRequest(cookies, method, endpoint));
+            Assert.Equal(HttpStatusCode.OK, status.StatusCode);
+            using var statusBody = JsonDocument.Parse(await status.Content.ReadAsStringAsync());
+            var operation = statusBody.RootElement.GetProperty("data");
+            Assert.Equal("CONFLICT", operation.GetProperty("state").GetString());
+            Assert.True(!operation.TryGetProperty("result", out var result) || result.ValueKind == JsonValueKind.Null);
+        }
+        Assert.Equal(winner.Reference, (await owner.ReadAsync(a.Reference.Id, null)).Reference);
+        Assert.Equal(3, await h.Db.Database.SqlQuery<int>($"""
+            SELECT count(*)::int AS "Value" FROM cp6_engineering_revision_v1.working_versions
+            WHERE tenant_id={h.Tenant} AND revision_id={a.Reference.Id}
+            """).SingleAsync());
+        Assert.Equal(1, await h.Db.Database.SqlQuery<int>($"""
+            SELECT count(*)::int AS "Value" FROM cp6_engineering_revision_v1.revision_conflicts
+            WHERE tenant_id={h.Tenant} AND operation_id={rejected.OperationId} AND actor_id={h.User}
+              AND expected_version=2 AND current_version=3 AND body_digest=encode(sha256(body),'hex')
+            """).SingleAsync());
+        Assert.Equal(0, await h.Db.Database.SqlQuery<int>($"""
+            SELECT count(*)::int AS "Value" FROM cp6_main_owner_v1.operations
+            WHERE tenant_id={h.Tenant} AND owner={EngineeringRevisionValuesV1.RevisionOwner} AND operation_id={rejected.OperationId}
+            """).SingleAsync());
+
+        await owner.CommandAsync(PatchRevision(winner, Upsert(member with { Note = "更晚的工作值" })));
+        await owner.CommandAsync(PatchRevision(incoming, Upsert(member with { Note = "更晚的来源值" })));
+        using var historical = await host.Send(OperationsRequest(cookies, HttpMethod.Get, $"{operationPath}/conflict"));
+        Assert.Equal(HttpStatusCode.OK, historical.StatusCode);
+        Assert.Equal(original, await historical.Content.ReadAsStringAsync());
+        var colleagueCookies = await DocumentReviewerLogin(host, h, colleague.Id);
+        using var anotherActor = await host.Send(OperationsRequest(colleagueCookies, HttpMethod.Get, $"{operationPath}/conflict"));
+        Assert.Equal(HttpStatusCode.Forbidden, anotherActor.StatusCode);
+        Assert.DoesNotContain("并行写入值", await anotherActor.Content.ReadAsStringAsync());
+
+        await using var foreign = await Seed();
+        await GrantEngineeringRevision(foreign);
+        var foreignCookies = await Login(host, foreign);
+        using var isolated = await host.Send(OperationsRequest(foreignCookies, HttpMethod.Get, $"{operationPath}/conflict"));
+        Assert.Equal(HttpStatusCode.NotFound, isolated.StatusCode);
+        Assert.DoesNotContain("先保存值", await isolated.Content.ReadAsStringAsync());
+        var menu = await h.Db.Sys_Menus.Where(x => x.MenuKey == "plm-engineering-product").Select(x => x.MenuId).SingleAsync();
+        await h.Db.Sys_RoleActions.Where(x => x.MenuId == menu && x.ActionCode == "query" && x.RoleId == 72).ExecuteDeleteAsync();
+        using var revoked = await host.Send(OperationsRequest(cookies, HttpMethod.Get, $"{operationPath}/conflict"));
+        Assert.Equal(HttpStatusCode.Forbidden, revoked.StatusCode);
+        Assert.DoesNotContain("并行写入值", await revoked.Content.ReadAsStringAsync());
+        using var revokedReplay = await Post(rejected);
+        Assert.Equal(HttpStatusCode.Forbidden, revokedReplay.StatusCode);
     }
 
     [CurrentPermissionPostgresFact]
@@ -196,7 +314,47 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Single(states, x => x == "ENGINEERING_WORKING_VERSION_CHANGED");
         Assert.Equal("3", (await owner.ReadAsync(current.Reference.Id, null)).Reference.Version);
         Assert.Equal(1, await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_engineering_revision_v1.rebases WHERE tenant_id={h.Tenant}").SingleAsync());
-        Assert.Equal("UNKNOWN", (await owner.OperationAsync(states[0] == "COMMITTED" ? second.OperationId : first.OperationId, false)).State);
+        var rejected = states[0] == "COMMITTED" ? second.OperationId : first.OperationId;
+        Assert.Equal("CONFLICT", (await owner.OperationAsync(rejected, false)).State);
+        Assert.Equal(current.CandidateRef, (await owner.ConflictAsync(rejected)).Expected.Candidate);
+        Assert.Equal(1, await h.Db.Database.SqlQuery<int>($"""
+            SELECT count(*)::int AS "Value" FROM cp6_main_owner_v1.operations
+            WHERE tenant_id={h.Tenant} AND operation_id IN ({first.OperationId},{second.OperationId})
+            """).SingleAsync());
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task EngineeringRebase_stale_patch_and_etag_only_preserve_typed_values_and_the_actual_head()
+    {
+        await using var h = await Seed();
+        await GrantEngineeringRevision(h);
+        await RevisionRule(h);
+        var owner = Revisions(h);
+        var basis = await MakeRevision(owner);
+        var order = new EngineeringComponentDraftV1(Guid.NewGuid(), "PRODUCT", "工位/总成", 10, "UNKNOWN", "", "");
+        await owner.CommandAsync(PatchRevision(basis, Upsert(order)));
+        var expected = await owner.ReadAsync(basis.Reference.Id, null);
+        await owner.CommandAsync(PatchRevision(expected, Upsert(order with { SemanticOrder = 20 })));
+        var actual = await owner.ReadAsync(basis.Reference.Id, null);
+        var late = PatchRevision(expected, Upsert(order with { SemanticOrder = 30 }));
+        Assert.Equal(412, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => owner.CommandAsync(late))).Status);
+        var original = await owner.ConflictAsync(late.OperationId);
+        var item = Assert.Single(original.Items);
+        Assert.Equal($"components/{order.OccurrenceId}/semanticOrder", item.Path);
+        Assert.Equal(10, item.ExpectedValue.GetInt32());
+        Assert.Equal(20, item.CurrentValue.GetInt32());
+        Assert.Equal(30, item.AttemptedValue.GetInt32());
+        Assert.True(item.Conflict);
+        Assert.Equal(late.Reason, original.Reason);
+
+        var badTag = PatchRevision(actual, Upsert(order with { SemanticOrder = 20 })) with { ExpectedEtag = expected.Etag };
+        Assert.Equal(412, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => owner.CommandAsync(badTag))).Status);
+        var etagOnly = await owner.ConflictAsync(badTag.OperationId);
+        Assert.Equal(expected.Etag, etagOnly.RequestedEtag);
+        Assert.Equal(actual.Etag, etagOnly.Current.Etag);
+        Assert.Equal(etagOnly.Current, etagOnly.Expected);
+        Assert.Empty(etagOnly.Items);
+        Assert.Equal(actual.Reference, (await owner.ReadAsync(basis.Reference.Id, null)).Reference);
     }
 
     [CurrentPermissionPostgresFact]
@@ -253,6 +411,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var frozen = await baselines.FreezeAsync(f.Command with { ApplicationReceiptId = applied.Receipt.ReceiptId });
         var original = await baselines.ReadAsync(frozen.Baseline.Id);
         var locked = await owner.ReadAsync(f.Command.Revision.Id, null);
+        await owner.CommandAsync(PatchRevision(incoming, new EngineeringDraftPatchV1 { Op = "SET_GOAL", Goal = "冻结后另存的并行候选目标" }));
+        incoming = await owner.ReadAsync(incoming.Reference.Id, null);
         var sources = new EngineeringRebaseSourcesV1(BaselineRef(frozen.Baseline), incoming.CandidateRef);
         Assert.Equal("ENGINEERING_WORKING_NOT_DRAFT", (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() =>
             owner.CommandAsync(RebaseCommand(locked, sources)))).Message);
@@ -272,6 +432,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal("PASS", before.Original.State);
         var preview = await owner.RebasePreviewAsync(working.Reference.Id, sources);
         var choices = preview.Changes.Select(x => new EngineeringRebaseResolutionV1(x.Path, "KEEP_BASE", "保留已核验的父基线内容")).ToArray();
+        var document = working.Draft.Components.Single(x => x.Kind == "DOCUMENT");
+        var occurrence = $"components/{document.OccurrenceId}";
+        var lateChoices = choices.Select(choice => choice.Path == occurrence
+            ? new EngineeringRebaseResolutionV1(occurrence, "MANUAL", "补入后到的文档备注",
+                JsonSerializer.SerializeToElement(document with { Note = "后到的文档备注" }, EngineeringProductStoreV1.Json))
+            : choice).ToArray();
+        Assert.Contains(lateChoices, choice => choice.Decision == "MANUAL");
+        var late = RebaseCommand(working, sources, lateChoices);
         await owner.CommandAsync(RebaseCommand(working, sources, choices));
         var next = await owner.ReadAsync(working.Reference.Id, null);
         Assert.Equal(working.CandidateRef.Digest, next.CandidateRef.Digest);
@@ -283,6 +451,21 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal("ENGINEERING_CHECK_NOT_CURRENT_PASS", (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() =>
             CandidateAuthority(h).ExecuteAsync(OperationsOwnerV1.EngineeringRevision, "query", false,
                 (a, t) => checks.HoldExact(a, before.Reference, t)))).Message);
+        await owner.CommandAsync(PatchRevision(next, Upsert(document with { Note = "先保存的文档备注" })));
+        var winner = await owner.ReadAsync(working.Reference.Id, null);
+        Assert.Equal(412, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => owner.CommandAsync(late))).Status);
+        var conflict = await owner.ConflictAsync(late.OperationId);
+        Assert.Equal(BaselineRef(frozen.Baseline), conflict.Sources!.Base);
+        Assert.Equal(incoming.CandidateRef, conflict.Sources.Incoming);
+        Assert.Equal(working.Reference, conflict.Expected.Revision);
+        Assert.Equal(winner.Reference, conflict.Current.Revision);
+        var note = Assert.Single(conflict.Items);
+        Assert.True(note.Conflict);
+        Assert.Equal($"{occurrence}/note", note.Path);
+        Assert.Equal(document.SourceRef, note.AttemptedSource);
+        Assert.Equal("先保存的文档备注", note.CurrentValue.GetString());
+        Assert.Equal("后到的文档备注", note.AttemptedValue.GetString());
+        Assert.Equal("补入后到的文档备注", note.Reason);
         await owner.CommandAsync(PatchRevision(incoming, new EngineeringDraftPatchV1 { Op = "SET_GOAL", Goal = "并行修订工作目标" }));
         var variant = await owner.ReadAsync(incoming.Reference.Id, null);
         var frozenSource = new EngineeringRebaseSourcesV1(incoming.CandidateRef, BaselineRef(frozen.Baseline));

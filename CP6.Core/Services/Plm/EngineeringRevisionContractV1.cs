@@ -64,5 +64,12 @@ public sealed record EngineeringRevisionSnapshotV1(Guid TenantId, EngineeringRev
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] EngineeringRebaseRecordV1? Rebase = null);
 public sealed record EngineeringRevisionResultV1(Guid OperationId, string Kind, Guid ObjectId, string Version, string Digest);
 public sealed record EngineeringRevisionOperationV1(Guid OperationId, string State, EngineeringRevisionResultV1? Result = null);
+public sealed record EngineeringRevisionConflictHeadV1(EngineeringRevisionRefV1 Revision, EngineeringRevisionRefV1 Candidate, Guid Etag);
+public sealed record EngineeringRevisionConflictItemV1(string Path, Guid? OccurrenceId, JsonElement ExpectedValue, JsonElement CurrentValue,
+    JsonElement AttemptedValue, EngineeringSourceRefV1? ExpectedSource, EngineeringSourceRefV1? CurrentSource,
+    EngineeringSourceRefV1? AttemptedSource, string Reason, bool Conflict);
+public sealed record EngineeringRevisionConflictV1(Guid OperationId, string Action, string Reason, DateTimeOffset RecordedAt,
+    Guid RequestedEtag, EngineeringRevisionConflictHeadV1 Expected, EngineeringRevisionConflictHeadV1 Current,
+    EngineeringRebaseSourcesV1? Sources, EngineeringRevisionConflictItemV1[] Items);
 public sealed record EngineeringWorkingChangeV1(string Path, JsonElement? Before, JsonElement? After);
 public sealed record EngineeringWorkingDiffV1(EngineeringRevisionRefV1 Before, EngineeringRevisionRefV1 After, EngineeringWorkingChangeV1[] Changes);

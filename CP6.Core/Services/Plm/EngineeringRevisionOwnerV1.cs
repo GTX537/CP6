@@ -141,7 +141,7 @@ public sealed partial class EngineeringRevisionOwnerV1(CP6Context db, Operations
         var rule = await db.Pub_DocSequences.AsNoTracking().SingleAsync(row => row.BizKey == NumberingKey, ct);
         return (code, new(rule.Id, rule.BizKey, rule.Prefix, rule.DateFormat, rule.SeqLength, rule.ResetCycle, rule.CurrentPeriod, rule.CurrentValue, instant));
     }
-    public Task<EngineeringRevisionResultV1> CommandAsync(EngineeringRevisionCommandV1 input, CancellationToken ct = default)
+    public async Task<EngineeringRevisionResultV1> CommandAsync(EngineeringRevisionCommandV1 input, CancellationToken ct = default)
     {
         if (input == null || input.OperationId == Guid.Empty || input.RevisionId == Guid.Empty || input.Action is not ("CREATE" or "PATCH" or "REBASE")) throw Error("ENGINEERING_COMMAND_INVALID", 400);
         var frozen = OperationsOwnerV1.Freeze(input); Text(frozen.Reason);
@@ -152,11 +152,19 @@ public sealed partial class EngineeringRevisionOwnerV1(CP6Context db, Operations
         }
         else if (frozen.Rebase != null) throw Error("ENGINEERING_COMMAND_INVALID", 400);
         var bytes = MainOwnerOperationJournalV1.Encode(frozen); var journal = new MainOwnerOperationJournalV1(db); MainOwnerOperationJournalV1.Original? original = null;
+        var conflicts = new EngineeringRevisionConflictStoreV1(db);
+        EngineeringRevisionConflictStoreV1.Original? rejected = null;
         var action = frozen.Action == "CREATE" ? "add" : "edit";
-        return Authority.ExecuteAsync(OperationsOwnerV1.EngineeringRevision, action, true, async (access, token) =>
+        var outcome = await Authority.ExecuteAsync<EngineeringRevisionResultV1?>(OperationsOwnerV1.EngineeringRevision, action, true, async (access, token) =>
         {
             var store = new EngineeringRevisionStoreV1(db); await store.Fence(true, token);
             if (original != null) return await Disclose(access, store, original, frozen.OperationId, bytes, token);
+            if (rejected != null)
+            {
+                await DiscloseConflict(access, store, rejected, frozen.OperationId, token);
+                if (!rejected.Input.AsSpan().SequenceEqual(bytes)) throw Error("ORIGINAL_OPERATION_INPUT_CONFLICT", 409);
+                return null;
+            }
             EngineeringWorkingDraftV1 draft; long? expected = null; string? code = null; EngineeringNumberAllocationV1? numbering = null;
             EngineeringRebaseRecordV1? rebase = null;
             OperationsAccessV1.NewEngineeringRevisionBinding? creation = null;
@@ -177,7 +185,14 @@ public sealed partial class EngineeringRevisionOwnerV1(CP6Context db, Operations
                     throw Error("ENGINEERING_COMMAND_INVALID", 400);
                 expected = Revision(frozen.ExpectedVersion); await access.RequireEngineeringRevision(frozen.RevisionId, token);
                 var current = await Observe(access, await store.Read(frozen.RevisionId, null, token), token);
-                if (current.Reference.Version != frozen.ExpectedVersion || current.Etag != frozen.ExpectedEtag) throw Error("ENGINEERING_WORKING_VERSION_CHANGED", 412);
+                if (current.Reference.Version != frozen.ExpectedVersion || current.Etag != frozen.ExpectedEtag)
+                {
+                    if (expected > Revision(current.Reference.Version)) throw Error("ENGINEERING_WORKING_VERSION_CHANGED", 412);
+                    var previous = await Observe(access, await store.Read(frozen.RevisionId, expected, token), token);
+                    var conflict = await CaptureConflict(access, store, frozen, previous, current, token);
+                    await conflicts.Save(access.ActorId, bytes, conflict, token);
+                    return null;
+                }
                 if (current.State != "DRAFT") throw Error("ENGINEERING_WORKING_NOT_DRAFT", 409);
                 if (current.Origin.Type == "CHANGE") await VerifyOrigin(access, current.Origin, current.Draft.ProductRef, true, token);
                 if (frozen.Action == "REBASE") (draft, rebase) = await Rebase(access, store, current, frozen, token);
@@ -220,7 +235,15 @@ public sealed partial class EngineeringRevisionOwnerV1(CP6Context db, Operations
             await journal.Store(RevisionOwner, Contract, frozen.OperationId, access.ActorId, bytes, result, [frozen.RevisionId],
                 new { action = frozen.Action, actor = access.ActorId, reason = frozen.Reason, result, saved.CandidateRef }, token);
             return result;
-        }, ct, actionAtFence: async token => { original = await journal.Read(RevisionOwner, frozen.OperationId, token); return original == null ? action : "query"; });
+        }, ct, actionAtFence: async token =>
+        {
+            original = await journal.Read(RevisionOwner, frozen.OperationId, token);
+            if (original != null) return "query";
+            rejected = await conflicts.Read(frozen.OperationId, token);
+            return rejected == null ? action : "query";
+        });
+        // 先提交冲突原件并复核授权，再发出 CAS 拒绝的 HTTP 结果。
+        return outcome ?? throw Error("ENGINEERING_WORKING_VERSION_CHANGED", 412);
     }
     private async Task VerifyOrigin(OperationsAccessV1 access, EngineeringRevisionOriginV1 origin, EngineeringProductRefV1? product,
         bool requireApproval, CancellationToken ct)
@@ -268,6 +291,12 @@ public sealed partial class EngineeringRevisionOwnerV1(CP6Context db, Operations
             {
                 if (original.Actor != access.ActorId || original.Contract != Contract) throw Error("ORIGINAL_OPERATION_FORBIDDEN", 403);
                 return original.State == "CLOSED" ? new(id, "CLOSED") : new EngineeringRevisionOperationV1(id, "COMMITTED", await Disclose(access, store, original, id, null, token));
+            }
+            var rejected = await new EngineeringRevisionConflictStoreV1(db).Read(id, token);
+            if (rejected != null)
+            {
+                await DiscloseConflict(access, store, rejected, id, token);
+                return new(id, "CONFLICT");
             }
             if (!close) return new EngineeringRevisionOperationV1(id, "UNKNOWN");
             var result = new EngineeringRevisionOperationV1(id, "CLOSED");
