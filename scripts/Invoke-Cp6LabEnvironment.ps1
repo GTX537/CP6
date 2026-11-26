@@ -597,9 +597,9 @@ if ($Action -eq "Build") {
         if (-not [string]::IsNullOrWhiteSpace($ApiImageIdFile)) {
             $apiBuildArguments += @("--iidfile", [IO.Path]::GetFullPath($ApiImageIdFile))
         }
-        if ($apiTargetFramework -ceq "net10.0") {
-            $apiBuildArguments += @("--build-arg", "ASPNET_RUNTIME_TAG=10.0")
-        }
+        # 运行时镜像固定到补丁版本；net8.0 仅用于回滚升级前的历史制品。
+        $apiRuntimeTag = if ($apiTargetFramework -ceq "net10.0") { "10.0.15" } else { "8.0" }
+        $apiBuildArguments += @("--build-arg", "ASPNET_RUNTIME_TAG=$apiRuntimeTag")
         $apiBuildArguments += $apiRuntimeContext
         & docker @apiBuildArguments
         if ($LASTEXITCODE -ne 0) { throw "API runtime image packaging failed." }

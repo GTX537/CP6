@@ -23,10 +23,10 @@ stages:
     - checkout: none
 
     - task: UseDotNet@2
-      displayName: 'Use .NET SDK 8'
+      displayName: 'Use .NET SDK 10'
       inputs:
         packageType: 'sdk'
-        version: '8.0.x'
+        version: '10.0.404'
 
     - task: NodeTool@0
       displayName: 'Use Node.js 22'
@@ -64,8 +64,8 @@ stages:
           Get-Command npm.cmd -ErrorAction Stop | Out-Null
 
           $dotnetVersion = (& dotnet.exe --version).Trim()
-          if ($LASTEXITCODE -ne 0 -or $dotnetVersion -notmatch '^8\.') {
-              throw "The deployment agent requires .NET SDK 8.x, but received '$dotnetVersion'."
+          if ($LASTEXITCODE -ne 0 -or $dotnetVersion -notmatch '^10\.') {
+              throw "The deployment agent requires .NET SDK 10.x, but received '$dotnetVersion'."
           }
           $nodeVersion = (& node.exe --version).Trim()
           if ($LASTEXITCODE -ne 0 -or $nodeVersion -notmatch '^v22\.') {

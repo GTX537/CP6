@@ -9,7 +9,7 @@
 # 3. EXPOSE 声明端口，实际映射在 docker-compose 中配置
 
 # ===== Stage 1: Build =====
-FROM mcr.microsoft.com/dotnet/sdk:10.0.302 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0.404 AS build
 WORKDIR /src
 ARG RELEASE_VERSION=0.0.0-dev
 ARG GIT_SHA=unknown
@@ -44,7 +44,7 @@ RUN dotnet publish CP6.WebApi/CP6.WebApi.csproj -c Release -o /app/publish --no-
     -p:InformationalVersion=${RELEASE_VERSION}+${GIT_SHA}
 
 # ===== Stage 2: Runtime =====
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0.15 AS runtime
 WORKDIR /app
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
