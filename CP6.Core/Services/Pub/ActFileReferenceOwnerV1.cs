@@ -1,4 +1,5 @@
 using System.Data;
+using System.Globalization;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Erp;
@@ -29,8 +30,17 @@ public sealed partial class ActFileReferenceOwnerV1(CP6Context db, IFileStore fi
                 if (previous.ClientId != caller.ClientId) throw Denied();
                 if (previous.InputDigest != inputDigest)
                     throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_INPUT_CONFLICT", 409);
+                var original = JsonSerializer.Deserialize<ActFileAttestationV1>(previous.Proof, Wire) ?? throw Unproven();
+                if (request.Mode == GuardedStream)
+                {
+                    // 下载证明含披露元数据。原键恢复也须通过当前 guard，才能返回该证明。
+                    var evidence = ActFileSignerV1.Verify(original, signer.KeyId, signer.PublicKeySpkiBase64);
+                    var currentStamp = await HoldSourceAsync(caller.TenantId, ct);
+                    if (evidence.Guard != currentStamp) throw Denied();
+                    await guard.HoldAsync(caller.TenantId, currentStamp, _ => Task.FromResult(true), ct);
+                }
                 if (await NowAsync(ct) >= expiresAt) throw Denied();
-                return JsonSerializer.Deserialize<ActFileAttestationV1>(previous.Proof, Wire) ?? throw Unproven();
+                return original;
             }
 
             var store = await HoldFileStoreAsync(ct);
@@ -40,7 +50,7 @@ public sealed partial class ActFileReferenceOwnerV1(CP6Context db, IFileStore fi
                 var decisions = new List<ActFileDecisionV1>(request.References.Length);
                 foreach (var reference in request.References)
                 {
-                    var current = await store.Read(reference.AttachmentId, null, ct);
+                    var current = await store.Read(NativeFileId(reference), null, ct);
                     decisions.Add(await DecideAsync(reference, current, ct));
                 }
                 if (await NowAsync(ct) >= expiresAt) throw Denied();
@@ -118,14 +128,14 @@ public sealed partial class ActFileReferenceOwnerV1(CP6Context db, IFileStore fi
 
     private async Task<ActFileDecisionV1> DecideAsync(ActFileIdentityV1 identity, FileContentSnapshotV1 file, CancellationToken ct)
     {
-        if (file.TenantId != identity.TenantId || file.ContentRef.Id != identity.AttachmentId ||
+        if (file.TenantId != identity.TenantId || file.ContentRef.Id.ToString("D") != identity.AttachmentId ||
             file.ContentRef.Version != identity.Version || file.ContentRef.Digest != identity.ContentSha256)
             throw Denied();
         var grant = await db.Database.SqlQuery<Grant>($"""
             SELECT can_add AS "CanAdd",can_retain AS "CanRetain",can_unlink AS "CanUnlink",
               can_download AS "CanDownload",policy_version AS "PolicyVersion",retention_ref AS "RetentionRef"
             FROM cp6_act_file_v1.grants WHERE tenant_id={identity.TenantId} AND actor_id={identity.SubjectId}
-              AND file_id={identity.AttachmentId} AND purpose={identity.Purpose}
+              AND file_id={file.ContentRef.Id} AND purpose={identity.Purpose}
             """).SingleOrDefaultAsync(ct) ?? throw Denied();
         var allowed = identity.Action switch
         {
@@ -142,8 +152,16 @@ public sealed partial class ActFileReferenceOwnerV1(CP6Context db, IFileStore fi
             "PENDING" => "PENDING",
             _ => "BLOCKED"
         };
-        return new(identity, "ALLOW", scan, file.StateVersion, file.OriginalDigest, grant.PolicyVersion, grant.RetentionRef);
+        var download = identity.Action == "DOWNLOAD"
+            ? new ActFileDownloadEvidenceV1(file.ContentRef.ByteLength.ToString(CultureInfo.InvariantCulture), DownloadMediaType, file.FileName)
+            : null;
+        return new(identity, "ALLOW", scan, file.StateVersion, file.OriginalDigest, grant.PolicyVersion, grant.RetentionRef, download);
     }
+
+    // 合同保留不透明外部键。只有 Main 原生提供者在读取自己发行的键时解析本地 ID。
+    private static Guid NativeFileId(ActFileIdentityV1 identity) =>
+        Guid.TryParseExact(identity.AttachmentId, "D", out var id) && id != Guid.Empty && id.ToString("D") == identity.AttachmentId
+            ? id : throw Denied();
 
     private Task<bool> HasRetentionHoldAsync(ActFileIdentityV1 identity, CancellationToken ct) =>
         db.Database.SqlQuery<bool>($"""
@@ -151,7 +169,7 @@ public sealed partial class ActFileReferenceOwnerV1(CP6Context db, IFileStore fi
               EXISTS(SELECT FROM (
                 SELECT DISTINCT ON (kind,reference_id) active FROM cp6_audit_v1.safeguards
                  WHERE tenant_id={identity.TenantId} AND retention_class='TECHNICAL_CONTENT_EVIDENCE'
-                   AND native_id={identity.AttachmentId.ToString("D")}
+                   AND native_id={identity.AttachmentId}
                  ORDER BY kind,reference_id,sequence DESC
               ) safeguards WHERE active)
               OR EXISTS(SELECT FROM (

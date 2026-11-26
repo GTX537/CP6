@@ -7,7 +7,7 @@ using static CP6.Core.Services.Pub.ActFileReferenceV1;
 namespace CP6.Core.Services.Pub;
 
 public sealed record ActFileDownloadRequestV1(ActFileIdentityV1 Identity, ActFileAttestationV1 Attestation);
-public sealed record ActFileDownloadSliceV1(ReadOnlyMemory<byte> Bytes, int Offset, int Length, string Sha256, string FileName);
+public sealed record ActFileDownloadSliceV1(ReadOnlyMemory<byte> Bytes, int Offset, int Length, string Sha256, string FileName, string MediaType);
 
 public sealed partial class ActFileReferenceOwnerV1
 {
@@ -22,6 +22,8 @@ public sealed partial class ActFileReferenceOwnerV1
         var signed = ActFileSignerV1.Verify(request.Attestation, signer.KeyId, signer.PublicKeySpkiBase64);
         ActFileSignerV1.RequireIdentity(signed, expected, caller.ClientId);
         var decision = signed.Decisions.Single();
+        var metadata = decision.Download ?? throw Denied();
+        var fileId = NativeFileId(identity);
         var proofDigest = FileContentBytesV1.Digest(request.Attestation.Body);
         var delivery = Guid.NewGuid();
         var offset = 0;
@@ -31,18 +33,18 @@ public sealed partial class ActFileReferenceOwnerV1
 
         try
         {
-            var name = await WithCurrentDownloadAsync(caller, decision, signed.Guard, async (store, file, _) =>
+            await WithCurrentDownloadAsync(caller, fileId, decision, signed.Guard, async (store, _) =>
             {
-                var row = await store.Row(identity.AttachmentId, ct);
+                var row = await store.Row(fileId, ct);
                 payload = await ReadExactAsync(row, ct);
-                await AuditStreamAsync(identity, delivery, proofDigest, "STARTED", 0, ct);
-                return file.FileName;
+                await AuditStreamAsync(identity, fileId, delivery, proofDigest, "STARTED", 0, ct);
+                return true;
             }, ct);
             started = true;
             var bytes = payload ?? throw Unproven();
             while (offset < bytes.Length)
             {
-                await WithCurrentDownloadAsync(caller, decision, signed.Guard, async (_, _, expiresAt) =>
+                await WithCurrentDownloadAsync(caller, fileId, decision, signed.Guard, async (_, expiresAt) =>
                 {
                     var now = await NowAsync(ct);
                     var remaining = expiresAt - now;
@@ -51,7 +53,8 @@ public sealed partial class ActFileReferenceOwnerV1
                     deadline.CancelAfter(remaining < MaxWriteTime ? remaining : MaxWriteTime);
                     var count = Math.Min(SliceSize, bytes.Length - offset);
                     // 每批写入并刷新时持有本地来源和 CRM guard，批间释放，让等候的撤权先取得排他锁。
-                    await write(new(bytes.AsMemory(offset, count), offset, bytes.Length, identity.ContentSha256, name), deadline.Token);
+                    await write(new(bytes.AsMemory(offset, count), offset, bytes.Length, identity.ContentSha256,
+                        metadata.SafeFileName, metadata.MediaType), deadline.Token);
                     offset += count;
                     return true;
                 }, ct);
@@ -69,13 +72,13 @@ public sealed partial class ActFileReferenceOwnerV1
             if (started)
             {
                 using var auditDeadline = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-                await AuditStreamAsync(identity, delivery, proofDigest, outcome, offset, auditDeadline.Token);
+                await AuditStreamAsync(identity, fileId, delivery, proofDigest, outcome, offset, auditDeadline.Token);
             }
         }
     }
 
-    private Task<T> WithCurrentDownloadAsync<T>(ActFileCallerV1 caller, ActFileDecisionV1 signed,
-        ActFileGuardStampV1 expected, Func<FileContentStoreV1, FileContentSnapshotV1, DateTimeOffset, Task<T>> use, CancellationToken ct)
+    private Task<T> WithCurrentDownloadAsync<T>(ActFileCallerV1 caller, Guid fileId, ActFileDecisionV1 signed,
+        ActFileGuardStampV1 expected, Func<FileContentStoreV1, DateTimeOffset, Task<T>> use, CancellationToken ct)
         => TransactionAsync(caller, signed.Identity, async expiresAt =>
         {
             var store = await HoldFileStoreAsync(ct);
@@ -83,9 +86,9 @@ public sealed partial class ActFileReferenceOwnerV1
             if (source != expected) throw Denied();
             return await guard.HoldAsync(caller.TenantId, source, async _ =>
             {
-                var file = await store.Read(signed.Identity.AttachmentId, null, ct);
+                var file = await store.Read(fileId, null, ct);
                 if (await DecideAsync(signed.Identity, file, ct) != signed) throw Denied();
-                return await use(store, file, expiresAt);
+                return await use(store, expiresAt);
             }, ct);
         }, ct);
 
@@ -106,7 +109,7 @@ public sealed partial class ActFileReferenceOwnerV1
         }
     }
 
-    private async Task AuditStreamAsync(ActFileIdentityV1 identity, Guid delivery, string proofDigest, string state,
+    private async Task AuditStreamAsync(ActFileIdentityV1 identity, Guid fileId, Guid delivery, string proofDigest, string state,
         long confirmedBytes, CancellationToken ct)
     {
         try
@@ -114,7 +117,7 @@ public sealed partial class ActFileReferenceOwnerV1
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 INSERT INTO cp6_act_file_v1.stream_audit
                   (tenant_id,delivery_id,actor_id,file_id,operation_id,proof_digest,state,confirmed_bytes)
-                VALUES({identity.TenantId},{delivery},{identity.SubjectId},{identity.AttachmentId},
+                VALUES({identity.TenantId},{delivery},{identity.SubjectId},{fileId},
                   {identity.OperationKey},{proofDigest},{state},{confirmedBytes})
                 """, ct);
         }

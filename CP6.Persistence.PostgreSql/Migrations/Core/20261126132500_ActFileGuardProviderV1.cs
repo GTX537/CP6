@@ -197,6 +197,11 @@ public sealed class ActFileGuardProviderV1 : Migration
                 IS DISTINCT FROM ROW(NEW.tenant_id,NEW.actor_id,NEW.file_id,NEW.purpose) THEN
                 RAISE EXCEPTION 'ACT_FILE_GRANT_IDENTITY_IMMUTABLE' USING ERRCODE='23514';
             END IF;
+            IF TG_OP='UPDATE' AND ROW(OLD.can_add,OLD.can_retain,OLD.can_unlink,OLD.can_download,OLD.retention_ref)
+                IS NOT DISTINCT FROM ROW(NEW.can_add,NEW.can_retain,NEW.can_unlink,NEW.can_download,NEW.retention_ref) THEN
+                NEW.policy_version := OLD.policy_version;
+                RETURN NEW;
+            END IF;
             IF EXISTS(SELECT FROM cp6_file_content_v1.dispositions d WHERE d.tenant_id=NEW.tenant_id
                 AND d.file_id=NEW.file_id AND d.initial_state='DISPOSAL_PENDING') THEN
                 RAISE EXCEPTION 'ACT_FILE_PHYSICAL_DISPOSITION_PENDING' USING ERRCODE='23514';

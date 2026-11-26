@@ -15,7 +15,6 @@ namespace CP6.WebApi.Controllers.Internal;
 
 [ApiController, AllowAnonymous, ApiExplorerSettings(IgnoreApi = true)]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-[RequestSizeLimit(131072)]
 [Route("internal/main/v1/act-file-references")]
 public sealed class ActFileReferenceControllerV1(ActFileReferenceRegistrationV1 registration, CrmOidcOptions oidc,
     CrmOidcCrypto crypto, ITenantContext tenant) : ControllerBase
@@ -63,7 +62,7 @@ public sealed class ActFileReferenceControllerV1(ActFileReferenceRegistrationV1 
             disposition.SetHttpFileName(slice.FileName);
             Response.Headers.ContentDisposition = disposition.ToString();
             Response.Headers["X-Content-SHA256"] = slice.Sha256;
-            Response.ContentType = "application/octet-stream";
+            Response.ContentType = slice.MediaType;
             Response.ContentLength = slice.Length;
         }
         await Response.Body.WriteAsync(slice.Bytes, ct);

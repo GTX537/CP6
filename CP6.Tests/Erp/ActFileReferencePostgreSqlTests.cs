@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
+using System.Text.Json;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.Pub;
 using CP6.Tests.Platform;
@@ -15,6 +16,26 @@ namespace CP6.Tests.Erp;
 
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
+    [Fact]
+    public void ActFile_intent_accepts_complete_window_and_opaque_external_keys()
+    {
+        var tenant = Guid.NewGuid();
+        var example = new ActFileIdentityV1(tenant, Guid.NewGuid(), "attachment-reference", Guid.NewGuid(), new string('a', 64),
+            new("Account", Guid.NewGuid(), "外部+ anchor/v1"), Guid.NewGuid(), "3", "2", null, "文件+不透明键", "版本/v1+",
+            new string('b', 64), Purpose, "ADD", null);
+        var references = Enumerable.Range(0, 150).Select(index => example with
+        {
+            AttachmentId = $"{example.AttachmentId}/{index}",
+            Action = index < 100 ? "RETAIN" : "ADD",
+            ReferenceId = index < 100 ? Guid.NewGuid() : null
+        }).ToArray();
+        var input = new ActFileProofRequestV1(LocalGuard, references);
+        var encoded = JsonSerializer.SerializeToElement(input, Wire);
+        var received = Read<ActFileProofRequestV1>(encoded);
+        Assert.Equal(references[0], Validate(received, tenant));
+        Assert.Equal(references, received.References);
+    }
+
     [CurrentPermissionPostgresFact]
     public async Task ActFile_Main_native_hold_waits_for_CRM_commit_then_invalidates_the_original_guard()
     {
@@ -87,7 +108,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal("CLEAN", signed.Decisions[0].ScanState);
         Assert.Equal(1L, await fixture.ProofCountAsync());
 
-        var changed = request with { References = [input with { AttachmentId = Guid.NewGuid() }] };
+        var changed = request with { References = [input with { AttachmentId = Guid.NewGuid().ToString("D") }] };
         var conflict = await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => fixture.Owner.ProveAsync(fixture.Caller, changed, default));
         Assert.Equal("ORIGINAL_OPERATION_INPUT_CONFLICT", conflict.Message);
         var mismatched = request with { References = [input with { Primary = input.Primary with { Version = "anchor-other" } }, retained, removed] };
@@ -122,7 +143,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var historical = request with { References = NewActOperation(retained, removed) };
         var historicalProof = await fixture.Owner.ProveAsync(fixture.Caller, historical, default);
         Assert.Equal(2, fixture.Verify(historicalProof, historical, current).Decisions.Length);
-        Assert.Equal(fixture.Bytes, (await fixture.Native.DownloadAsync(input.AttachmentId, input.Version, input.ContentSha256)).Bytes);
+        Assert.Equal(fixture.Bytes, (await fixture.Native.DownloadAsync(fixture.Input.FileId, input.Version, input.ContentSha256)).Bytes);
     }
 
     [CurrentPermissionPostgresFact]
@@ -140,7 +161,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         {
             input, input with { TenantId = Guid.NewGuid() }, input with { Version = "2" },
             input with { Purpose = "OTHER_USE" }, input with { SubjectId = Guid.NewGuid() },
-            input with { ContentSha256 = new string('0', 64) }
+            input with { ContentSha256 = new string('0', 64) }, input with { AttachmentId = "不透明键+外部/版本" }
         })
         {
             Assert.Equal(403, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(
@@ -148,7 +169,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         }
         Assert.Equal(0L, await fixture.ProofCountAsync());
         fixture.Scanner.Status = "NOT_CLEAN";
-        var state = await fixture.Native.ReadAsync(input.AttachmentId);
+        var state = await fixture.Native.ReadAsync(fixture.Input.FileId);
         await fixture.Native.CommandAsync(ContentCommand(state, "INSPECT"));
         var quarantined = fixture.Identity("DOWNLOAD");
         Assert.Equal(403, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(
@@ -252,6 +273,10 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             """, ("tenant", tenant), ("file", file));
         var afterGrant = await fixture.ReadCrmGuardAsync();
         Assert.NotEqual(initial, afterGrant);
+        await Scalar(writer, """
+            UPDATE cp6_act_file_v1.grants SET can_download=false WHERE tenant_id=@tenant AND file_id=@file
+            """, ("tenant", tenant), ("file", file));
+        Assert.Equal(afterGrant, await fixture.ReadCrmGuardAsync());
 
         await Scalar(db, """
             INSERT INTO cp6_audit_v1.safeguards
@@ -317,6 +342,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(1L, await fixture.AuditCountAsync("REVOKED", partial.Length));
         await Assert.ThrowsAsync<OrderPriceCorrectionException>(() =>
             fixture.Owner.DownloadAsync(fixture.Caller, download, (_, _) => throw new InvalidOperationException(), default));
+        Assert.Equal(403, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(
+            () => fixture.Owner.ProveAsync(fixture.Caller, new(GuardedStream, [input]), default))).Status);
     }
 
     [CurrentPermissionPostgresFact]
@@ -385,12 +412,16 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.NotNull(proof);
         var verified = ActFileSignerV1.VerifyFor(proof, key, Convert.ToBase64String(pin.ExportSubjectPublicKeyInfo()), input,
             ExportClient, await fixture.ReadCrmGuardAsync());
-        Assert.Equal(identity, Assert.Single(verified.Decisions).Identity);
+        var verifiedDownload = Assert.Single(verified.Decisions);
+        Assert.Equal(identity, verifiedDownload.Identity);
+        Assert.Equal(fixture.Bytes.Length.ToString(System.Globalization.CultureInfo.InvariantCulture), verifiedDownload.Download?.Bytes);
+        Assert.Equal(fixture.Input.FileName, verifiedDownload.Download?.SafeFileName);
         using (var download = setup.Http("/downloads", new ActFileDownloadRequestV1(identity, proof), route: route))
         using (var bytes = await app.Send(download))
         {
             Assert.Equal(HttpStatusCode.OK, bytes.StatusCode);
             Assert.Equal("attachment", bytes.Content.Headers.ContentDisposition?.DispositionType);
+            Assert.Equal(verifiedDownload.Download?.MediaType, bytes.Content.Headers.ContentType?.MediaType);
             Assert.Equal(identity.ContentSha256, Assert.Single(bytes.Headers.GetValues("X-Content-SHA256")));
             Assert.Equal(fixture.Bytes, await bytes.Content.ReadAsByteArrayAsync());
         }
@@ -485,7 +516,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 
         internal ActFileIdentityV1 Identity(string action) => new(h.Tenant, h.User, "attachment-reference", Guid.NewGuid(),
             FileContentBytesV1.Digest("intent"u8.ToArray()), new("Account", Guid.NewGuid(), "anchor-v1"),
-            Guid.NewGuid(), "3", "2", action == "ADD" ? null : Guid.NewGuid(), input.FileId, "1", input.Digest,
+            Guid.NewGuid(), "3", "2", action == "ADD" ? null : Guid.NewGuid(), input.FileId.ToString("D"), "1", input.Digest,
             Purpose, action, action == "DOWNLOAD" ? "activity-access-v1" : null);
 
         internal ActFileEvidenceV1 Verify(ActFileAttestationV1 proof, ActFileProofRequestV1 request, ActFileGuardStampV1 held) =>
@@ -525,7 +556,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             Scalar(main, "SELECT count(*) FROM cp6_act_file_v1.stream_audit WHERE tenant_id=@tenant AND state=@state AND confirmed_bytes=@count",
                 ("tenant", h.Tenant), ("state", state), ("count", count));
 
-        internal async Task<Guid> AddFileAsync()
+        internal async Task<string> AddFileAsync()
         {
             var extra = input with { FileId = Guid.NewGuid(), OperationId = Guid.NewGuid() };
             await native.UploadAsync(extra, new MemoryStream(bytes));
@@ -534,7 +565,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
                   (tenant_id,actor_id,file_id,purpose,can_add,can_retain,can_unlink,can_download,retention_ref)
                 VALUES(@tenant,@actor,@file,'ACTIVITY_EVIDENCE',false,true,true,false,@retention)
                 """, ("tenant", h.Tenant), ("actor", h.User), ("file", extra.FileId), ("retention", Guid.NewGuid()));
-            return extra.FileId;
+            return extra.FileId.ToString("D");
         }
 
         public async ValueTask DisposeAsync()
