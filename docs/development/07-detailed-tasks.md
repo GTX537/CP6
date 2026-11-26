@@ -2,13 +2,13 @@
 
 台账日期：2026-11-26。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 394 项，已交付 111 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 394 项，已交付 112 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)。按[单卡串行计划](planning/20261117-card-execution.md)核对完整前置并选择下一卡。
 
 原 375 卡及其全部出口保留；已登记 13 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。
 
-原号 DONE 95/375；完整 DONE 92/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 6/6，沿用原卡池内划拨。
+原号 DONE 96/375；完整 DONE 93/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 6/6，沿用原卡池内划拨。
 
 ## WP01 现有实现与设计对照
 
@@ -69,7 +69,7 @@
 | [WP02-26 SLO封存、故障注入与精确断言辅助](../../docs/development/task-plans/WP02.md#wp02-26) | Platform | 已交付 | S01-03, S01-04, WP02-25 | CODE / M | D / WP02-26 |
 | [WP02-27 Platform包能力矩阵与不可变信任验证](../../docs/development/task-plans/WP02.md#wp02-27) | Platform | 已交付 | S01-09, WP02-01 | CODE / M | B / WP02-27（沿用原S01-10对话） |
 | [WP02-28 Main宿主实际加载身份与兼容回退验证](../../docs/development/task-plans/WP02.md#wp02-28) | Main | 已交付 | WP02-25, WP02-27 | CODE / M | FORWARD-COMPAT / W351-01 |
-| [WP02-29 CRM宿主平台合同与观测包采用](../../docs/development/task-plans/WP02.md#wp02-29) | CRM | 待安排 | WP02-09, WP02-11, WP02-12, WP02-25, WP02-27 | CODE / M | COORD / W62-01 |
+| [WP02-29 CRM宿主平台合同与观测包采用](../../docs/development/task-plans/WP02.md#wp02-29) | CRM | 已交付 | WP02-09, WP02-11, WP02-12, WP02-25, WP02-27 | CODE / M | CP6-EXEC |
 | [WP02-30 独立入站与手工 Lead 的维护授权合同](../../docs/development/task-plans/WP02.md#wp02-30) | Main | 已交付 | WP02-05, WP02-10, WP02-15 | CODE / M | EXEC-WP02-14B |
 | [WP02-31 联系人历史导出与受控下载](../../docs/development/task-plans/WP02.md#wp02-31) | Main | 已交付 | WP02-14, WP02-14b, WP02-15 | CODE / M | EXEC-WP02-14B |
 
