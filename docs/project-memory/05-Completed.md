@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP10-47 既有物料、UOM与容量维度原Owner目录适配](../development/evidence/WP10-47/DELIVERY.md)（DONE），核对时间 `2026-11-26T10:00:04.7465523+00:00`。
+- [WP03-18 活动内容、事实更正与Void](https://github.com/GTX537/CP6.CRM/blob/9c071f20d044f9fb26dbf8f91e777a204326adee/docs/development/evidence/WP03-18/DELIVERY.md)（DONE），核对时间 `2026-11-26T11:28:13.404808+00:00`。
 
 ### 已关闭目标
 

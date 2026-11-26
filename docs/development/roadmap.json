@@ -8588,8 +8588,8 @@
         "latest_review_effective_seconds": 1.124,
         "gaps": [
           {
-            "owner_task_id": "WP03-18",
-            "gap": "C47 的 ACT Note、镜像和原 Void 历史组合，保留当前写入门及不级联。",
+            "owner_task_id": "WP14-08",
+            "gap": "C47 沿用 WP03-11 的两种事务顺序与只读镜像证据及 WP03-18 的更正、Void 和历史回归。按跨域撤权专项在同一 Contact、Activity 和 Lead 链复验两种收紧顺序、拒绝用 Note 标签绕过原准入和拒绝从只读镜像写入。活动先提交时原事实保留，收紧无级联 Voided，独立 Void 后原历史可查。",
             "source_cases": [
               "C47"
             ]
@@ -177878,6 +177878,11 @@
       "at": "2026-11-26T11:12:26.127068+00:00",
       "evidence": "https://github.com/GTX537/CP6.CRM/blob/775c61e527a7450590ce0dbd853cfc4fba91d1f9/docs/development/evidence/WP02-29/DELIVERY.md",
       "change": "WP02-29 按 CRM #266 的已采用树登记卡级 DONE。累计有效时间取执行回执的 46.67 分钟（原登记 22.75 分钟、本轮 23.92 分钟），合 2800.2 秒。R1 冒烟按独立回执登记。四个平台目标的 60 项待验原 AC 按决定 3 与 CRM 报告登记归属。PLT-CTX-01 依据补充 A1 核销 CTX04-A1/A3，CTX04-A2 未覆盖的 RecordingStub 生产资格验收归 WP14-10，CTX04-A7 继续归 WP02-24。五目标保持开放。"
+    },
+    {
+      "at": "2026-11-26T11:28:13.404808+00:00",
+      "evidence": "https://github.com/GTX537/CP6.CRM/blob/9c071f20d044f9fb26dbf8f91e777a204326adee/docs/development/evidence/WP03-18/DELIVERY.md",
+      "change": "WP03-18 活动内容、事实更正与 Void 按 CRM #267 的已采用树登记卡级 DONE。执行侧自正式领取至最终读回有效 53 分 59 秒（09:29:46–10:23:45 UTC），累计 254861.035 秒。CRM-ACT-01 保持开放。CRM-CON-01 原 C47 仍待同链复验，归 WP14-08 跨域撤权专项。"
     }
   ],
   "implementation_assessment": {
@@ -207724,19 +207729,111 @@
         "file:CRM:src/CP6.CRM.Infrastructure/Leads/CrmBusinessService.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP03.md",
       "card_anchor": "wp03-18",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "CP6-EXEC",
+        "repository": "CRM",
+        "owning_task_repository": "CRM",
+        "branch": "codex/wp03-18",
+        "worktree": "D:/CP6-worktrees/dev-2",
+        "claimed_at": "2026-11-26T09:29:46.0854660+00:00",
+        "baseline_sha": "775c61e527a7450590ce0dbd853cfc4fba91d1f9",
+        "entry_evidence": "docs/development/planning/20261117-card-execution.md",
+        "phase": "CLOSED",
+        "worker_start_received": true,
+        "full_task_completed": true,
+        "delivery_report": "https://github.com/GTX537/CP6.CRM/blob/9c071f20d044f9fb26dbf8f91e777a204326adee/docs/development/evidence/WP03-18/DELIVERY.md",
+        "dispatch_scope": "CONTENT 仅更正正文和下次联系时间。FACT 用原参与绑定执行精确 PrepareExisting，预览封装最长五分钟，Apply 复核原渠道值、当前依赖与授权。修订、证据、来源、审计、Outbox 和原结果在同一 PostgreSQL 事务提交，无变化时只登记原结果。VOID 要求独立授权和原因，单向追加并保留历史、原 Lead SLA 与本地工程效果。Web 保留 UNKNOWN 后的原请求及原键。"
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/9c071f20d044f9fb26dbf8f91e777a204326adee/docs/development/evidence/WP03-18/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "7e379895ca9602cef8c7e4b117a2391d57a8174f",
+          "adopted_main_sha": "9c071f20d044f9fb26dbf8f91e777a204326adee",
+          "command": "执行侧对已提交候选运行 verify.ps1 -Phase Final。CRM 35/35，0 跳过，含实际 Chrome 和跨进程恢复。Web 29/29，路由类型生成、TypeScript 检查和 Next 生产构建通过。",
+          "observed_at": "2026-11-26T10:22:36.0106758Z",
+          "result": "PASS",
+          "environment": "Windows、.NET SDK 10.0.404、实际 CRM API、隔离 PostgreSQL 18.6、Node 22.22.0、Next/React 及 Chrome。主体、业务数据、Contact 用途权威和注入故障使用报告标记的合成夹具。",
+          "scope": "CONTENT 仅更正正文和下次联系时间。FACT 用原参与绑定执行精确 PrepareExisting，预览封装最长五分钟，Apply 复核原渠道值、当前依赖与授权。修订、证据、来源、审计、Outbox 和原结果在同一 PostgreSQL 事务提交，无变化时只登记原结果。VOID 要求独立授权和原因，单向追加并保留历史、原 Lead SLA 与本地工程效果。Web 保留 UNKNOWN 后的原请求及原键。定向覆盖租户隔离、撤权、并发、回滚、前向安装和重复安装。原件 D:/CP6-test-artifacts/WP03-18/exec-20261126T092946Z/final-20261126T101318747Z/，verification.json 记录受测树 aa6d4943774e374a18c2ec8f78d262c136bf1be7。crm.trx SHA-256 为 da781b4e28b12fb6f975c3130db461d06569194f69545067c3a8d216f32d9538。"
+        },
+        {
+          "path": "docs/development/planning/20261117-card-execution.md",
+          "report_url": "https://github.com/GTX537/CP6.CRM/blob/9c071f20d044f9fb26dbf8f91e777a204326adee/docs/development/evidence/WP03-18/DELIVERY.md",
+          "source_repository": "GTX537/CP6.CRM",
+          "source_sha": "7e379895ca9602cef8c7e4b117a2391d57a8174f",
+          "adopted_main_sha": "9c071f20d044f9fb26dbf8f91e777a204326adee",
+          "command": "总控用相同 Final 脚本在独立目录复跑相同候选。CRM 35/35，0 跳过，Web 29/29，路由类型生成、TypeScript 检查和 Next 生产构建通过。",
+          "observed_at": "2026-11-26T10:36:33.0197447Z",
+          "result": "PASS",
+          "environment": "Windows、.NET SDK 10.0.404、实际 CRM API、隔离 PostgreSQL 18.6、Node 22.22.0、Next/React 及 Chrome。主体、业务数据、Contact 用途权威和注入故障使用报告标记的合成夹具。",
+          "scope": "原件 D:/CP6-test-artifacts/WP03-18/coord-verify-20261126/final-20261126T102649929Z/，verification.json 的审阅头为 7e379895ca9602cef8c7e4b117a2391d57a8174f，受测树与 CRM 合并树均为 aa6d4943774e374a18c2ec8f78d262c136bf1be7。crm.trx SHA-256 为 e6dd2117368c6f473e944375e6676a290fa6d91fdd1c5802835164c081fae82f。合并后冒烟复用同树复验。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/planning/20261117-card-execution.md",
+        "report_url": "https://github.com/GTX537/CP6.CRM/blob/9c071f20d044f9fb26dbf8f91e777a204326adee/docs/development/evidence/WP03-18/DELIVERY.md",
+        "source_sha": "7e379895ca9602cef8c7e4b117a2391d57a8174f",
+        "remote_main_sha": "9c071f20d044f9fb26dbf8f91e777a204326adee",
+        "pr_url": "https://github.com/GTX537/CP6.CRM/pull/267",
+        "reviewed_crm_head": "7e379895ca9602cef8c7e4b117a2391d57a8174f",
+        "scope": "CRM 产品及交付报告已采用，CRM 席位已 finish 并释放 DEV-2。CRM schema 前向安装两张不可变 FACT 证据表，前向及重复安装在隔离 PostgreSQL 验证，真实环境部署待独立批准。CRM-ACT-01 保持开放。WP03-19 承接 T14–T15、T29–T35、T41、T43–T46、T51 的引用窗口、附件字节及当前授权，并验证 PE-ACT-FILE-COMMIT-MODE-POS/NEG。WP03-20 承接 T16、T36–T37、T40–T42、T49–T51 的实际工程快照、晚回执与原键收件。T11、T47–T49 的导出、Artifact 版本及下载按 WP03-11、WP03-11b 职责核对，T05–T07 的 Lead 原生活动、首响及 SLA 按 WP03-13 职责核对。WP14 承接真实角色采用、数据迁移、环境切换和主写者启用。G06 完整跨会话原件协议待后续采用，G07 复合更正及重绑保持 NOT_ENABLED。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：CRM PostgreSQL可信租户路由、当前权限、原生外层事务/共同锁、原结果账与可靠消息实际采用",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "card_execution": {
+        "result": "DONE",
+        "report": "https://github.com/GTX537/CP6.CRM/blob/9c071f20d044f9fb26dbf8f91e777a204326adee/docs/development/evidence/WP03-18/DELIVERY.md",
+        "started_at": "2026-11-26T09:29:46.0854660+00:00",
+        "official_started_at": "2026-11-26T09:29:46.0854660+00:00",
+        "technical_verified_at": "2026-11-26T10:22:36.0106758Z",
+        "verified_at": "2026-11-26T11:28:13.404808+00:00",
+        "effective_seconds": 3239,
+        "accounting_evidence": {
+          "path": "D:/CP6-test-artifacts/WP03-18/exec-20261126T092946Z/workspace-readback.json"
+        },
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "S01-01",
+          "S01-02",
+          "S01-08",
+          "S01-09",
+          "S02-00",
+          "WP02-01",
+          "WP02-02",
+          "WP02-03",
+          "WP02-04",
+          "WP02-05",
+          "WP02-05b",
+          "WP02-06",
+          "WP02-07",
+          "WP02-09",
+          "WP02-09b",
+          "WP02-10",
+          "WP02-13",
+          "WP02-13b",
+          "WP02-14",
+          "WP02-14b",
+          "WP02-15",
+          "WP03-05",
+          "WP03-08",
+          "WP03-10",
+          "WP03-17"
+        ],
+        "new_product_execution": true,
+        "crm_seat_finished_at": "2026-11-26T10:42:27.676804+00:00"
+      }
     },
     {
       "id": "WP03-19",
@@ -306056,7 +306153,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 251622.035,
+      "effective_seconds": 254861.035,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -306129,7 +306226,8 @@
         "WP10-48",
         "WP04-33",
         "WP03-22",
-        "WP10-47"
+        "WP10-47",
+        "WP03-18"
       ],
       "closed_targets": [
         "OA-DEF-01",
