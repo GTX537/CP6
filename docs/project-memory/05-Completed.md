@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP04-33 ERP经营产品物料身份与工程映射读取提供者](../development/evidence/WP04-33/DELIVERY.md)（DONE），核对时间 `2026-11-26T08:07:30.005798+00:00`。
+- [WP03-22 商机资格、阶段与销售决定](https://github.com/GTX537/CP6.CRM/blob/4d2a188d907760a90a67c265ab57fd0f1b252490/docs/development/evidence/WP03-22/DELIVERY.md)（DONE），核对时间 `2026-11-26T08:33:20.705173+00:00`。
 
 ### 已关闭目标
 
