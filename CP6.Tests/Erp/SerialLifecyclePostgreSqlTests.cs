@@ -68,6 +68,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await using var administrator = await TenantManagementSeed();
         var db = h.Db; var tenant = h.Tenant; var connection = db.Database.GetConnectionString()!;
         var normalProduct = SerialProduct(h, "P"); var pendingProduct = SerialProduct(h, "Q");
+        var normalProductId = await db.ProductMasters.Where(row => row.ProductCd == normalProduct).Select(row => row.Id).SingleAsync();
+        await AssertProductFrontierCommit(h, normalProductId, 1);
         await using var host = await AuthenticationApiProcess.Start(connection);
         var writer = await Login(host, h); var manager = await Login(host, administrator);
         var normalKey = Guid.NewGuid(); var pendingKey = Guid.NewGuid();
@@ -76,6 +78,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await DeviceEvidence("serial-" + operation + "-normal.json", new { Operation = operation, Status = (int)normal.StatusCode,
             Body = await normal.Content.ReadAsStringAsync(), Before = prior, After = await SerialWriteSet(h) });
         Assert.True(normal.StatusCode == HttpStatusCode.OK, await OperationsFailure(normal));
+        await AssertProductFrontierCommit(h, normalProductId, 2);
         var original = await normal.Content.ReadAsStringAsync();
         var result = JsonSerializer.Deserialize<SerialOperationResult>(original, new JsonSerializerOptions(JsonSerializerDefaults.Web))!;
         Assert.Equal(normalKey, result.OperationId); Assert.Equal(2, result.SerialCount);
@@ -308,6 +311,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     private static Task<string> SerialWriteSet(Harness h) => h.Db.Database.SqlQuery<string>($"""
         SELECT jsonb_build_object(
           'Products',(SELECT coalesce(jsonb_agg(to_jsonb(p) ORDER BY p."Id"),'[]') FROM public."T_ProductMaster" p WHERE p."TenantId"={h.Tenant}),
+          'ProductFrontiers',(SELECT coalesce(jsonb_agg(to_jsonb(f) ORDER BY f.product_id),'[]') FROM cp6_product_identity_v1.heads f WHERE f.tenant_id={h.Tenant}),
+          'ProductVersions',(SELECT coalesce(jsonb_agg(to_jsonb(v) ORDER BY v.product_id,v.revision),'[]') FROM cp6_product_identity_v1.versions v WHERE v.tenant_id={h.Tenant}),
           'Serials',(SELECT coalesce(jsonb_agg(to_jsonb(s) ORDER BY s."Id"),'[]') FROM public."T_StockSerial" s WHERE s."TenantId"={h.Tenant}),
           'SerialTransactions',(SELECT coalesce(jsonb_agg(to_jsonb(s) ORDER BY s."Id"),'[]') FROM public."T_StockSerialTransaction" s WHERE s."TenantId"={h.Tenant}),
           'Stock',(SELECT coalesce(jsonb_agg(to_jsonb(s) ORDER BY s."Id"),'[]') FROM public."T_Stock" s WHERE s."TenantId"={h.Tenant}),

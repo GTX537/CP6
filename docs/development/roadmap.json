@@ -177632,6 +177632,11 @@
       "at": "2026-11-26T06:35:49.953026+00:00",
       "evidence": "docs/development/evidence/WP10-48/DELIVERY.md",
       "change": "WP10-48 精确工程候选与同事务实物提供者登记同 PR DONE 候选。正式采用以 #1331 受保护合并及包含性为准，WMS-TOOL-01 仍开放，14 项正式场景 NOT_RUN。OA 暂停，下一卡未指定。"
+    },
+    {
+      "at": "2026-11-26T08:07:30.005798+00:00",
+      "evidence": "docs/development/evidence/WP04-33/DELIVERY.md",
+      "change": "WP04-33 经营产品物料身份与工程映射读取登记同 PR 卡级 DONE，在 #1332 受保护合并并核对主线包含性后生效。四项缺口依用户裁决登记到对应产出卡。ERP-EST-01 与 ERP-ORD-01 保持开放。"
     }
   ],
   "implementation_assessment": {
@@ -208385,6 +208390,9 @@
         "WP02：SYS-FILE真实文件限制与安全解析",
         "WP05：产品/材料/UOM权威精确读取",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
+      ],
+      "remaining_scope": [
+        "按 WP04-33 缺口归属决定产出价格 Profile 的准确产品币种绑定。缺证时 WP04-33 返回 productCurrencyBinding = REQUIRED_FENCED。"
       ]
     },
     {
@@ -209610,14 +209618,52 @@
         "file:Main:CP6.Core/Services/Erp/ProductService.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP04.md",
       "card_anchor": "wp04-33",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "CP6-EXEC",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp04-33",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-24T05:42:41.566899+00:00",
+        "baseline_sha": "cb32b3a54c7898d8141faa604c2768ddeff44318",
+        "execution_baseline_sha": "ab571e684dffd3a5e4401a420b059f564d48b99b",
+        "entry_evidence": "docs/development/evidence/WP04-33/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/WP04-33/DELIVERY.md",
+        "dispatch_scope": "在 DEV-1 恢复 WP04-33 原分支，验收经营产品物料身份、双 Owner 工程映射读取与旧写者资格版本同步。",
+        "worker_start_received": true
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP04-33/DELIVERY.md",
+          "source_sha": "bcbb52e460e5505bc3710333a4e161d605c555af",
+          "observed_at": "2026-11-26T07:33:14.9892214+00:00",
+          "environment": "LAPTOP-3QQ44FJS 的 DEV-1，.NET SDK 10.0.404，Release，PostgreSQL 18.6 回环隔离 127.0.0.1:58109，Main HTTP 与合成数据。",
+          "command": "按交付报告锁定还原和构建。$artifactDir 指向执行侧证据目录，$filter 取 validation-verified.json 中的实际过滤式。& \"$artifactDir/run-postgresql-tests.ps1\" -Label verified -TestFilter $filter",
+          "result": "PASS",
+          "scope": "执行侧最终运行 41 通过、0 失败、0 跳过。覆盖原 8 项、3 项新增定向用例和 30 项相关回归。TRX SHA-256 为 88852597794349e1114ac56f13067dec03631c63d04354eb86af07543695f3cf。受测源码至交付祖先只追加交付报告。"
+        },
+        {
+          "path": "docs/development/evidence/WP04-33/DELIVERY.md",
+          "source_sha": "a92d4e54a1d77b84eef980045305827472ba8795",
+          "observed_at": "2026-11-26T07:46:20.8228744+00:00",
+          "environment": "LAPTOP-3QQ44FJS 的 DEV-1，.NET SDK 10.0.404，全新 Release 构建，PostgreSQL 18 回环隔离 127.0.0.1:55466，合成数据。",
+          "command": "总控在独立制品目录锁定还原和构建。对其 CP6.Tests.dll 执行 dotnet test $dll.FullName --filter $filter --logger 'trx;LogFileName=verify.trx' --results-directory \"$out\\results\"。过滤式与执行侧原件相同。",
+          "result": "PASS",
+          "scope": "总控独立复跑 41 通过、0 失败、0 跳过。TRX SHA-256 为 dd58209546debb0b6628d2ee4abdc6d46ff2a12e35208b101dc0723fbbdf8223。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP04-33/DELIVERY.md",
+        "source_sha": "a92d4e54a1d77b84eef980045305827472ba8795",
+        "remote_main_sha": "a92d4e54a1d77b84eef980045305827472ba8795",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1332",
+        "scope": "WP04-33 的 ERP 经营产品物料身份和工程映射读取提供者。remote_main_sha 固定须由同 PR 纳入主线的已验收交付祖先。同 PR 卡级 DONE 在受保护 main 正常合并并核对主线包含性后生效，实际合并 SHA 以 PR 回执为准。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
@@ -209854,6 +209900,37 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
+      },
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP04-33/DELIVERY.md",
+        "started_at": "2026-11-24T05:42:41.566899+00:00",
+        "official_started_at": "2026-11-24T05:42:41.566899+00:00",
+        "technical_verified_at": "2026-11-26T07:33:14.9892214+00:00",
+        "verified_at": "2026-11-26T08:07:30.005798+00:00",
+        "ledger_candidate_at": "2026-11-26T08:07:30.005798+00:00",
+        "effective_seconds": 8180.473,
+        "accounting_evidence": {
+          "path": "docs/development/evidence/WP04-33/DELIVERY.md#有效时间"
+        },
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "S01-01",
+          "S01-02",
+          "S01-09",
+          "S02-00",
+          "WP02-01",
+          "WP02-02",
+          "WP02-03",
+          "WP02-07",
+          "WP02-10",
+          "WP02-13",
+          "WP02-13b"
+        ],
+        "new_product_execution": true
       }
     },
     {
@@ -210413,7 +210490,11 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
-      }
+      },
+      "remaining_scope": [
+        "按 WP04-33 缺口归属决定产出经营产品法人归属和适用域。缺证时 WP04-33 返回 legalEntityApplicability = REQUIRED_FENCED。",
+        "按 WP04-33 缺口归属决定产出双 Owner 旧映射确认与历史。未证旧映射在 WP04-33 返回 legacyMappingKnowledge = UNKNOWN。"
+      ]
     },
     {
       "id": "WP05-03",
@@ -213119,6 +213200,9 @@
         "WP02：按S02-00采用的PostgreSQL租户存储/迁移与可信上下文；当前动作/读取授权和共同最终授权fence；Main Owner事务、原键结果及审计能力。",
         "专业条件按所选Purpose需要引用WP05-24、QA/客户确认等真实依据；不强制等待所有VER/生产目标。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
+      ],
+      "remaining_scope": [
+        "按 WP04-33 缺口归属决定产出正式制造资格的 REL 用途政策与准确使用授权。缺证时 WP04-33 返回 manufacturingApplicability = REQUIRED_FENCED。"
       ]
     },
     {
@@ -213581,6 +213665,9 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02-10公共Main原生PostgreSQL事务/最终授权fence由根统一加入；精确值/身份保原Owner协议。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
+      ],
+      "remaining_scope": [
+        "按 WP04-33 缺口归属决定产出正式制造资格的后验采用证据，关联 WP05-32 的 REL 用途政策与准确使用授权。"
       ]
     },
     {
@@ -305447,7 +305534,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 238134.461,
+      "effective_seconds": 246314.934,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -305517,7 +305604,8 @@
         "WP04-32",
         "WP06-13",
         "WP08-16",
-        "WP10-48"
+        "WP10-48",
+        "WP04-33"
       ],
       "closed_targets": [
         "OA-DEF-01",

@@ -93,15 +93,7 @@ public class MasterDataService : IMasterDataService
         if (onlyApproved) q = q.Where(x => x.Status == 9);
         if (!string.IsNullOrWhiteSpace(customerCd)) q = q.Where(x => x.CustomerCd == customerCd);
 
-        if (!string.IsNullOrWhiteSpace(keyword))
-        {
-            var k = keyword.Trim();
-            q = q.Where(x =>
-                x.ProductCd.Contains(k) ||
-                (x.SetProductName != null && x.SetProductName.Contains(k)) ||
-                (x.CustomerItemName1 != null && x.CustomerItemName1.Contains(k)) ||
-                (x.CustomerItemName2 != null && x.CustomerItemName2.Contains(k)));
-        }
+        q = FilterProductKeyword(q, keyword);
 
         var total = await q.CountAsync();
         var rows = await q
@@ -122,5 +114,16 @@ public class MasterDataService : IMasterDataService
             .ToListAsync();
 
         return new MasterLookupResult<ProductLookupDto> { Rows = rows, Total = total };
+    }
+
+    internal static IQueryable<ProductMaster> FilterProductKeyword(IQueryable<ProductMaster> rows, string? keyword)
+    {
+        if (string.IsNullOrWhiteSpace(keyword)) return rows;
+        var value = keyword.Trim();
+        return rows.Where(row =>
+            row.ProductCd.Contains(value) ||
+            (row.SetProductName != null && row.SetProductName.Contains(value)) ||
+            (row.CustomerItemName1 != null && row.CustomerItemName1.Contains(value)) ||
+            (row.CustomerItemName2 != null && row.CustomerItemName2.Contains(value)));
     }
 }

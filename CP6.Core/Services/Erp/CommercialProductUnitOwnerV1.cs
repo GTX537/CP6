@@ -109,34 +109,38 @@ public sealed class CommercialProductUnitOwnerV1(CP6Context db, OperationsOwnerV
     {
         if (id == Guid.Empty) throw Error("PRODUCT_UNIT_COMMAND_INVALID", 400);
         var selected = version == null ? (long?)null : Revision(version);
-        return Authority.ExecuteAsync(OperationsOwnerV1.Product, "query", false, async (access, token) =>
+        return Authority.ExecuteAsync(OperationsOwnerV1.Product, "query", false,
+            (access, token) => ReadOwnedAsync(db, access, id, selected, token), ct);
+    }
+
+    internal static async Task<CommercialProductUnitVersionV1> ReadOwnedAsync(CP6Context db,
+        OperationsAccessV1 access, Guid id, long? selected, CancellationToken token)
+    {
+        var store = new UomProfileStoreV1(db); await store.Fence(false, token);
+        var product = await CommercialProductIdentityReader.ReadOwnedAsync(db, access, id, null, token);
+        var saved = await store.ReadProduct(id, selected, token); var original = saved.Value;
+        var units = await access.SourceAsync(OperationsOwnerV1.UomProfile, token);
+        await units.RequireUomProfile(original.ProfileRef.Id, token);
+        var historicalProfile = await store.Read(original.ProfileRef.Id, Revision(original.ProfileRef.Version), token);
+        if (historicalProfile.Reference != original.ProfileRef || historicalProfile.Profile.Code != original.UnitCode)
+            throw Error("PRODUCT_UNIT_ORIGINAL_UNAVAILABLE", 503);
+        var reasons = new List<string>();
+        if (product.Version != original.ProductVersion || product.Digest != original.ProductDigest
+            || product.Source.GetProperty("isDeleted").GetBoolean() || product.Source.GetProperty("qtyUnitCode").GetString() != original.UnitCode)
+            reasons.Add("PRODUCT_UNIT_SOURCE_CHANGED");
+        try
         {
-            var store = new UomProfileStoreV1(db); await store.Fence(false, token);
-            var product = await CommercialProductIdentityReader.ReadOwnedAsync(db, access, id, null, token);
-            var saved = await store.ReadProduct(id, selected, token); var original = saved.Value;
-            var units = await access.SourceAsync(OperationsOwnerV1.UomProfile, token);
-            await units.RequireUomProfile(original.ProfileRef.Id, token);
-            var historicalProfile = await store.Read(original.ProfileRef.Id, Revision(original.ProfileRef.Version), token);
-            if (historicalProfile.Reference != original.ProfileRef || historicalProfile.Profile.Code != original.UnitCode)
-                throw Error("PRODUCT_UNIT_ORIGINAL_UNAVAILABLE", 503);
-            var reasons = new List<string>();
-            if (product.Version != original.ProductVersion || product.Digest != original.ProductDigest
-                || product.Source.GetProperty("isDeleted").GetBoolean() || product.Source.GetProperty("qtyUnitCode").GetString() != original.UnitCode)
-                reasons.Add("PRODUCT_UNIT_SOURCE_CHANGED");
-            try
-            {
-                var current = await UomProfileOwnerV1.CurrentExact(units, store, original.ProfileRef, token);
-                await UomProfileOwnerV1.CurrentBase(units, store, current, token);
-            }
-            catch (OrderPriceCorrectionException error) when (error.Status is 412 or 422) { reasons.Add(error.Message); }
-            if (!saved.Latest) reasons.Add("PRODUCT_UNIT_BINDING_CHANGED");
-            if (selected == null && reasons.Count != 0) throw Error("PRODUCT_UNIT_BINDING_CHANGED", 412);
-            access.AtCommit(last => RequireProduct(access, id, last));
-            units.AtCommit(last => units.RequireUomProfile(original.ProfileRef.Id, last));
-            return new CommercialProductUnitVersionV1(db.CurrentTenantId, id, original.Version, saved.Digest, original.ProductVersion,
-                original.ProductDigest, original.UnitCode, original.ProfileRef, saved.Latest, reasons.Count == 0, reasons.ToArray(),
-                saved.OriginalJson, Missing: ["CURRENCY_IDENTITY", "DUAL_OWNER_ENGINEERING_MAPPING"]);
-        }, ct);
+            var current = await UomProfileOwnerV1.CurrentExact(units, store, original.ProfileRef, token);
+            await UomProfileOwnerV1.CurrentBase(units, store, current, token);
+        }
+        catch (OrderPriceCorrectionException error) when (error.Status is 412 or 422) { reasons.Add(error.Message); }
+        if (!saved.Latest) reasons.Add("PRODUCT_UNIT_BINDING_CHANGED");
+        if (selected == null && reasons.Count != 0) throw Error("PRODUCT_UNIT_BINDING_CHANGED", 412);
+        access.AtCommit(last => RequireProduct(access, id, last));
+        units.AtCommit(last => units.RequireUomProfile(original.ProfileRef.Id, last));
+        return new CommercialProductUnitVersionV1(db.CurrentTenantId, id, original.Version, saved.Digest, original.ProductVersion,
+            original.ProductDigest, original.UnitCode, original.ProfileRef, saved.Latest, reasons.Count == 0, reasons.ToArray(),
+            saved.OriginalJson, Missing: ["CURRENCY_IDENTITY", "DUAL_OWNER_ENGINEERING_MAPPING"]);
     }
 
     public Task<UomProfileOperationV1> OperationAsync(Guid operation, bool close, CancellationToken ct = default)

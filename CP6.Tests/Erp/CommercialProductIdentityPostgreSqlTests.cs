@@ -52,6 +52,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync()); var data = doc.RootElement.GetProperty("data");
         Assert.Equal(id, data.GetProperty("productId").GetGuid()); Assert.Equal("1", data.GetProperty("version").GetString());
         Assert.Equal("REQUIRED_FENCED", data.GetProperty("formalAdoption").GetString());
+        AssertUnprovenProductFacts(data);
         Assert.Equal(JsonValueKind.Null, data.GetProperty("source").GetProperty("qtyUnitCode").ValueKind);
         await h.Db.Sys_RoleActions.Where(x => x.ActionCode == "query").ExecuteDeleteAsync();
         using var denied = await host.Send(OperationsRequest(cookies, HttpMethod.Get, $"api/products/identity-owner-v1/{id:D}?version=1"));
@@ -193,11 +194,19 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var name = "w144_product_" + Guid.NewGuid().ToString("N"); await db.Database.ExecuteSqlRawAsync($"CREATE DATABASE {name}");
         db.Database.SetConnectionString(new NpgsqlConnectionStringBuilder(db.Database.GetConnectionString()) { Database = name }.ConnectionString);
         await db.GetService<IMigrator>().MigrateAsync("20261026114000_TransferLocalDemandBudgetV1");
-        var native = new ProductMaster { ProductCd = "BEFORE", ItemCd = "BEFORE", CustomerCd = "C", SetProductCd = "BEFORE", QtyUnit = null, Status = 9 };
-        db.ProductMasters.Add(native); await db.SaveChangesAsync(); db.ChangeTracker.Clear();
+        var productId = Guid.NewGuid();
+        // 按迁移切点的原表结构准备存量合成数据，现行审计列由后续迁移添加。
+        await db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO public."T_ProductMaster" (
+                "Id","TenantId","ProductCd","ItemCd","Branch1","Branch2","Branch3","CustomerCd","SetProductCd",
+                "ParentChildDiv","SetRatio","SalesPriceDiv","FreightBilling","Status","WfApprovalFlg","McTransferFlg",
+                "TrackingMode","CreateDate","IsDeleted")
+            VALUES ({productId},{tenant.CurrentTenantId},'BEFORE','BEFORE','','','','C','BEFORE',
+                '0',1,'2','0',9,false,false,0,localtimestamp,false)
+            """);
         await db.Database.MigrateAsync(); Assert.Empty(await db.Database.GetPendingMigrationsAsync());
         var json = await db.Database.SqlQuery<string>($"""
-            SELECT source_json AS "Value" FROM cp6_product_identity_v1.versions WHERE tenant_id={tenant.CurrentTenantId} AND product_id={native.Id} AND revision=1
+            SELECT source_json AS "Value" FROM cp6_product_identity_v1.versions WHERE tenant_id={tenant.CurrentTenantId} AND product_id={productId} AND revision=1
             """).SingleAsync();
         using var original = JsonDocument.Parse(json); Assert.Equal(9, original.RootElement.GetProperty("status").GetInt32());
         Assert.Equal(JsonValueKind.Null, original.RootElement.GetProperty("qtyUnitCode").ValueKind);

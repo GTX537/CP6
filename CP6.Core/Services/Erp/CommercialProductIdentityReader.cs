@@ -4,28 +4,106 @@ using System.Text;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Integration;
+using CP6.Core.Services.Plm;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Erp;
 
+/// <summary>按原主账号段标识部材。同名或同一套件的部材仍有独立的产品 UUID。</summary>
+public sealed record CommercialMaterialKeyV1(string ItemCode, string Branch1, string Branch2, string Branch3);
+
 public sealed record CommercialProductIdentityV1(Guid TenantId, Guid ProductId, string Version, string Digest,
     bool IsCurrent, bool SourcePresent, JsonElement Source, string OriginalJson,
     string FormalAdoption = "REQUIRED_FENCED",
-    string[]? Missing = null);
+    string[]? Missing = null)
+{
+    public EngineeringSourceRefV1 Reference => new(EngineeringProductValuesV1.BusinessOwner, ProductId, Version, Digest);
+    public string ProductCode => Source.GetProperty("productCd").GetString()!;
+    public CommercialMaterialKeyV1 MaterialKey => new(Source.GetProperty("itemCd").GetString()!,
+        Source.GetProperty("branch1").GetString()!, Source.GetProperty("branch2").GetString()!,
+        Source.GetProperty("branch3").GetString()!);
+    public string? DeclaredUnitCode => Source.GetProperty("qtyUnitCode").GetString();
+    public int LegacyStatus => Source.GetProperty("status").GetInt32();
 
-/// <summary>Exact native product-head source. Does not attest UOM, engineering mapping or manufacturing eligibility.</summary>
+    // 产品级缺证随原身份披露。已确认的站点映射和显式选定的币种政策沿各自 Owner 返回。
+    public string LegalEntityApplicability => "REQUIRED_FENCED";
+    public string ManufacturingApplicability => "REQUIRED_FENCED";
+    public string ProductCurrencyBinding => "REQUIRED_FENCED";
+    public string LegacyMappingKnowledge => "UNKNOWN";
+
+    public string EffectiveState => !SourcePresent || Source.GetProperty("isDeleted").GetBoolean() ? "INACTIVE" : LegacyStatus switch
+    {
+        0 => "PENDING_APPROVAL",
+        1 => "APPROVED",
+        9 => "TRANSFERRED",
+        _ => "UNPROVEN"
+    };
+}
+
+/// <summary>从原产品头和现有 Owner 精确读取版本。旧版仍按当前读取资格披露。</summary>
 public sealed class CommercialProductIdentityReader(CP6Context db, OperationsOwnerV1 owner)
 {
     public Task<CommercialProductIdentityV1> ReadAsync(Guid productId, string? version = null, CancellationToken ct = default)
     {
         if (!owner.Owns(db)) throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
-        long? exact = null;
-        if (productId == Guid.Empty || version != null && (!long.TryParse(version, NumberStyles.None, CultureInfo.InvariantCulture, out var parsed)
-            || parsed < 1 || parsed.ToString(CultureInfo.InvariantCulture) != version))
-            throw new OrderPriceCorrectionException("PRODUCT_IDENTITY_INPUT_INVALID", 400);
-        if (version != null) exact = long.Parse(version, CultureInfo.InvariantCulture);
+        if (productId == Guid.Empty) throw new OrderPriceCorrectionException("PRODUCT_IDENTITY_INPUT_INVALID", 400);
+        var exact = version == null ? (long?)null : ParseVersion(version);
         return owner.ExecuteAsync(OperationsOwnerV1.Product, "query", false,
             (access, token) => ReadOwnedAsync(db, access, productId, exact, token), ct);
+    }
+
+    public Task<CommercialProductQualificationV1> ReadQualificationAsync(CommercialProductQualificationQueryV1 input,
+        CancellationToken ct = default)
+    {
+        if (!owner.Owns(db)) throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
+        if (input == null || input.ProductRef is not { } reference || reference.Owner != EngineeringProductValuesV1.BusinessOwner
+            || reference.Id == Guid.Empty || !EngineeringProductValuesV1.ValidDigest(reference.Digest))
+            throw new OrderPriceCorrectionException("PRODUCT_IDENTITY_INPUT_INVALID", 400);
+        var version = ParseVersion(reference.Version);
+        var unitVersion = input.UnitBindingVersion == null ? (long?)null : UomProfileValuesV1.Revision(input.UnitBindingVersion);
+
+        return owner.ExecuteAsync(OperationsOwnerV1.Product, "query", false, async (access, token) =>
+        {
+            var product = await ReadOwnedAsync(db, access, reference.Id, version, token);
+            if (product.Reference != reference)
+                throw new OrderPriceCorrectionException("PRODUCT_IDENTITY_VERSION_CHANGED", 412);
+
+            CommercialProductUnitVersionV1? unit = null;
+            if (unitVersion is not null)
+            {
+                unit = await CommercialProductUnitOwnerV1.ReadOwnedAsync(db, access, reference.Id, unitVersion, token);
+                if (unit.ProductVersion != reference.Version || unit.ProductDigest != reference.Digest)
+                    throw new OrderPriceCorrectionException("PRODUCT_UNIT_SOURCE_CHANGED", 412);
+            }
+
+            CurrencyPolicyVersionV1? currency = null;
+            if (input.CurrencyPolicyRef is { } currencyRef)
+            {
+                CurrencyPolicyValuesV1.Reference(currencyRef);
+                var currencyAccess = await access.SourceAsync(OperationsOwnerV1.CurrencyPolicy, token);
+                currency = await CurrencyPolicyOwnerV1.ReadOwnedAsync(db, currencyAccess, currencyRef.Id,
+                    CurrencyPolicyValuesV1.Revision(currencyRef.Version), token);
+                if (currency.Reference != currencyRef)
+                    throw new OrderPriceCorrectionException("CURRENCY_POLICY_CHANGED", 412);
+            }
+
+            var mapping = input.MappingRef is { } mappingRef
+                ? await EngineeringProductMappingService.ReadProductMappingAsync(db, access, mappingRef, reference, token)
+                : null;
+
+            var missing = new List<string> { "PRODUCT_CURRENCY_BINDING", "LEGAL_ENTITY_APPLICABILITY", "MANUFACTURING_APPLICABILITY" };
+            if (unit == null) missing.Add("VERSIONED_UOM_PROFILE");
+            if (mapping?.ConfirmedIdentitySite == null) missing.Add("DUAL_OWNER_ENGINEERING_MAPPING");
+            return new CommercialProductQualificationV1(product, unit, currency, mapping, missing.ToArray());
+        }, ct);
+    }
+
+    private static long ParseVersion(string? version)
+    {
+        if (!long.TryParse(version, NumberStyles.None, CultureInfo.InvariantCulture, out var result)
+            || result < 1 || result.ToString(CultureInfo.InvariantCulture) != version)
+            throw new OrderPriceCorrectionException("PRODUCT_IDENTITY_INPUT_INVALID", 400);
+        return result;
     }
 
     // The original reader is shared with the actual product-unit writer, on its exact Main transaction.

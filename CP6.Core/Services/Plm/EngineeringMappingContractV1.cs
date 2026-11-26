@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using CP6.Core.Services.Erp;
 
 namespace CP6.Core.Services.Plm;
 
@@ -33,8 +34,20 @@ public sealed record EngineeringMappingVersionV1(Guid TenantId, EngineeringMappi
     EngineeringOwnerConfirmationV1? EngineeringConfirmation, EngineeringOwnerConfirmationV1? BusinessConfirmation,
     string OriginalJson, string Coverage = "IDENTITY_SITE_ONLY",
     string TechnicalApplicability = "REQUIRED_FENCED", string LegalEntityApplicability = "REQUIRED_FENCED",
-    bool CanAdoptIdentitySite = false, string[]? Reasons = null);
-public sealed record EngineeringBusinessChoiceV1(EngineeringSourceRefV1 Reference, string Code);
+    bool CanAdoptIdentitySite = false, string[]? Reasons = null)
+{
+    public string ManufacturingApplicability => "REQUIRED_FENCED";
+
+    public EngineeringIdentitySiteScopeV1? ConfirmedIdentitySite =>
+        State == "CONFIRMED" && EngineeringConfirmation != null && BusinessConfirmation != null
+            && Candidate.BusinessRef is { } product && Candidate.SiteRef is { } site
+            ? new(Reference, Candidate.EngineeringRef, product, site, Candidate.Purpose)
+            : null;
+}
+public sealed record EngineeringIdentitySiteScopeV1(EngineeringMappingRefV1 MappingRef,
+    EngineeringProductRefV1 EngineeringRef, EngineeringSourceRefV1 ProductRef, EngineeringSourceRefV1 SiteRef, string Purpose);
+public sealed record EngineeringBusinessChoiceV1(EngineeringSourceRefV1 Reference, string Code,
+    string? Name = null, CommercialMaterialKeyV1? MaterialKey = null);
 public sealed record EngineeringSiteChoiceV1(EngineeringSourceRefV1 Reference, string Code, string Name, bool Enabled);
 internal sealed record EngineeringMappingStoredV1(Guid TenantId, Guid Id, string Version, Guid EngineeringId,
     string State, EngineeringMappingCandidateV1 Candidate, EngineeringOwnerConfirmationV1? EngineeringConfirmation,

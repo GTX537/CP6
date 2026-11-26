@@ -16,4 +16,12 @@ public sealed class CommercialProductIdentityController(CommercialProductIdentit
         var result = await reader.ReadAsync(id, version, ct);
         return Ok(new { code = 0, data = result });
     }
+
+    [HttpPost("qualification")]
+    public async Task<IActionResult> ReadQualification([FromBody] CommercialProductQualificationQueryV1 input, CancellationToken ct)
+    {
+        Response.Headers.CacheControl = "no-store";
+        var result = await reader.ReadQualificationAsync(input, ct);
+        return Ok(new { code = 0, data = result });
+    }
 }
