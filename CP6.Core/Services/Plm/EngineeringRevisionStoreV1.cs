@@ -45,21 +45,40 @@ internal sealed class EngineeringRevisionStoreV1(CP6Context db)
     {
         Transaction();
         var head = await Heads(db).SingleOrDefaultAsync(row => row.Id == id, ct) ?? throw Error("OBJECT_FORBIDDEN", 403);
-        var selected = version ?? head.Revision;
+        var (raw, value) = await ReadOriginal(head, version ?? head.Revision, ct);
+        return (head, raw, value);
+    }
+
+    internal async Task<(EngineeringRevisionRefV1 Reference, EngineeringWorkingDraftV1 Draft)> HoldCurrentDraft(Guid id, CancellationToken ct)
+    {
+        Transaction(false);
+        // 映射事务已锁定工程产品。逐行锁复核技术头，沿用修订写者对同一行的更新锁。
+        var head = await db.Database.SqlQuery<EngineeringRevisionHeadV1>($"""
+            SELECT revision_id AS "Id",creator_id AS "CreatorId",product_id AS "ProductId",
+                   candidate_id AS "CandidateId",code AS "Code",revision AS "Revision"
+            FROM cp6_engineering_revision_v1.heads
+            WHERE tenant_id={db.CurrentTenantId} AND revision_id={id} FOR SHARE
+            """).SingleOrDefaultAsync(ct) ?? throw Error("OBJECT_FORBIDDEN", 403);
+        var (raw, value) = await ReadOriginal(head, head.Revision, ct);
+        return (new(RevisionOwner, head.Id, value.Version, raw.Digest), value.Draft);
+    }
+
+    private async Task<(Original Raw, EngineeringRevisionStoredV1 Value)> ReadOriginal(EngineeringRevisionHeadV1 head, long selected, CancellationToken ct)
+    {
         var raw = await db.Database.SqlQuery<Original>($"""
             SELECT body_bytes AS "Body",body_digest AS "Digest" FROM cp6_engineering_revision_v1.working_versions
-            WHERE tenant_id={db.CurrentTenantId} AND revision_id={id} AND revision={selected}
+            WHERE tenant_id={db.CurrentTenantId} AND revision_id={head.Id} AND revision={selected}
             """).SingleOrDefaultAsync(ct) ?? throw Error("ENGINEERING_WORKING_VERSION_NOT_FOUND", 404);
         if (Digest(raw.Body) != raw.Digest) throw Error("ENGINEERING_WORKING_ORIGINAL_UNAVAILABLE", 503);
         EngineeringRevisionStoredV1? value;
         try { value = JsonSerializer.Deserialize<EngineeringRevisionStoredV1>(raw.Body, EngineeringProductStoreV1.Json); }
         catch (JsonException) { throw Error("ENGINEERING_WORKING_ORIGINAL_UNAVAILABLE", 503); }
         if (value == null || value.Draft == null || value.Origin == null || value.Numbering == null || value.Draft.Components == null
-            || value.TenantId != db.CurrentTenantId || value.Id != id || value.Code != head.Code || value.CreatorId != head.CreatorId
+            || value.TenantId != db.CurrentTenantId || value.Id != head.Id || value.Code != head.Code || value.CreatorId != head.CreatorId
             || value.CandidateId != head.CandidateId || value.Etag == Guid.Empty || value.Version != selected.ToString(CultureInfo.InvariantCulture)
             || value.Draft.ProductRef != null && value.Draft.ProductRef.Id != head.ProductId)
             throw Error("ENGINEERING_WORKING_ORIGINAL_UNAVAILABLE", 503);
-        return (head, raw, value);
+        return (raw, value);
     }
     internal async Task<EngineeringRevisionSnapshotV1> Read(Guid id, long? version, CancellationToken ct)
     {

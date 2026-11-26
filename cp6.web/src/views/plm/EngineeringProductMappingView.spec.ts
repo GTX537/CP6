@@ -1,8 +1,9 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { mount, flushPromises, type VueWrapper } from '@vue/test-utils'
 import type { EngineeringReference, EngineeringVersion, MappingVersion } from '@/api/plm/engineeringProducts'
-const api = vi.hoisted(() => ({ scope: vi.fn(), creationContext: vi.fn(), list: vi.fn(), read: vi.fn(), save: vi.fn(), operation: vi.fn(), mappings: vi.fn(), mapping: vi.fn(), saveMapping: vi.fn(), businessChoices: vi.fn(), siteChoices: vi.fn(), authenticated: true, allowed: true, erpConfirm: true }))
+const api = vi.hoisted(() => ({ scope: vi.fn(), creationContext: vi.fn(), list: vi.fn(), read: vi.fn(), save: vi.fn(), operation: vi.fn(), mappings: vi.fn(), mapping: vi.fn(), saveMapping: vi.fn(), businessChoices: vi.fn(), businessMappings: vi.fn(), siteChoices: vi.fn(), authenticated: true, allowed: true, erpConfirm: true, query: {} as Record<string, string> }))
 vi.mock('@/api/plm/engineeringProducts', () => ({ engineeringApi: api }))
+vi.mock('vue-router', async importOriginal => ({ ...await importOriginal<typeof import('vue-router')>(), useRoute: () => ({ query: api.query }) }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ loaded: true, has: (action: string) => api.allowed && (action !== 'erp-product:confirm-engineering' || api.erpConfirm), loadMyActions: vi.fn() }) }))
 vi.mock('@/auth/browserAuthentication', () => ({ authenticationCanRead: () => api.authenticated }))
 import View from './EngineeringProductMappingView.vue'
@@ -22,7 +23,7 @@ async function click(text: string) { await button(text).trigger('click'); await 
 async function submit(label: string) { view!.get(`[aria-label="${label}"]`).element.closest('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })); await flushPromises() }
 async function productForm() { await click('新增技术身份'); for (const [label, value] of [['工程编码', 'part-001'], ['工程名称', 'different assembly'], ['工程类别', 'ASSEMBLY'], ['技术定义', 'A distinct technical definition'], ['识别依据', 'Original review']]) await view!.get(`[aria-label="${label}"]`).setValue(value) }
 beforeEach(() => {
-  vi.resetAllMocks(); localStorage.clear(); localStorage.setItem(AUTH_EPOCH, 'first'); api.authenticated = true; api.allowed = true; api.erpConfirm = true
+  vi.resetAllMocks(); localStorage.clear(); localStorage.setItem(AUTH_EPOCH, 'first'); api.authenticated = true; api.allowed = true; api.erpConfirm = true; api.query = {}
   api.scope.mockResolvedValue(ok(scope)); api.list.mockResolvedValue(ok([structuredClone(row)])); api.mappings.mockResolvedValue(ok([structuredClone(mapping)])); api.creationContext.mockResolvedValue(ok({ ...scope, authorityVersion: 'current', allowsUnbound: false, departments: [{ id: department, code: 'D', name: 'Department' }] }))
   api.save.mockImplementation(async body => ok({ operationId: body.operationId, kind: 'ENGINEERING_PRODUCT', objectId: body.productId, version: '1', digest: 'b'.repeat(64) }))
   api.saveMapping.mockImplementation(async body => ok({ operationId: body.operationId, kind: 'ENGINEERING_MAPPING', objectId: body.mappingId, version: '4', digest: 'b'.repeat(64) }))
@@ -45,6 +46,31 @@ it('saves unresolved drafts without guessing ERP or Site and confirms only an ex
   await click('双方 Owner 确认'); expect(api.saveMapping.mock.calls[2]![0]).toMatchObject({ action: 'CONFIRM', mappingId: mapping.reference.id, expectedVersion: '3', candidate: null })
 })
 it('does not offer confirmation without the ERP Owner action', async () => { api.erpConfirm = false; await render(); await click('查看映射'); expect(view!.findAll('button').some(b => b.text() === '双方 Owner 确认')).toBe(false); expect(api.saveMapping).not.toHaveBeenCalled() })
+it('requires a saved ambiguity review before offering scoped dual Owner confirmation', async () => {
+  const scoped = { ...mapping, candidate: { ...mapping.candidate, legalEntity: { key: 'SIMULATED-LEGAL', version: '1', evidence: '法人核对原件' } } }
+  api.mappings.mockResolvedValue(ok([scoped]))
+  await render(); await click('查看映射')
+  expect(button('双方 Owner 确认')).toBeUndefined()
+  expect(view!.text()).toContain('待核对')
+  api.mappings.mockResolvedValue(ok([{ ...scoped, reference: { ...mapping.reference, version: '4' }, review: { action: 'edit' } }]))
+  await click('保存歧义核对')
+  expect(api.saveMapping.mock.calls[0]![0]).toMatchObject({ action: 'REVIEW', expectedVersion: '3', candidate: null })
+  await click('双方 Owner 确认')
+  expect(api.saveMapping.mock.calls[1]![0]).toMatchObject({ action: 'CONFIRM', expectedVersion: '4', candidate: null })
+})
+it('opens an exact engineering mapping from the ERP product UUID and its returned version', async () => {
+  api.query = { businessProductId: businessRef.id }
+  api.businessMappings.mockResolvedValue(ok({ productId: businessRef.id, productCode: 'ERP-1',
+    engineeringMappings: [{ mappingRef: mapping.reference, productRef: businessRef, engineeringRef: reference, siteRef, purpose: '工程用途' }],
+    legacyMappingConfirmations: [] }))
+  api.mapping.mockResolvedValue(ok({ ...mapping, state: 'CONFIRMED', canAdoptIdentitySite: true }))
+  api.read.mockResolvedValue(ok(row))
+  await render()
+  expect(api.businessMappings).toHaveBeenCalledWith(businessRef.id)
+  await click('查看映射版本 3')
+  expect(api.mapping).toHaveBeenCalledWith(mapping.reference.id, mapping.reference.version)
+  expect(view!.get('pre').text()).toContain('映射版本 3 · 双方已确认')
+})
 it('retains uncertain mapping writes and clears committed draft without resending', async () => {
   api.saveMapping.mockRejectedValue(new Error('response lost')); await render(); await click('查看映射'); await click('新增映射草稿'); await submit('映射用途')
   const original = pendingEngineeringOperation(scope, 'ENGINEERING_MAPPING')!; expect(view!.text()).toContain('上次保存结果尚未确认')

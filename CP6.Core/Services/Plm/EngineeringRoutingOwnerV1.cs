@@ -98,10 +98,21 @@ public sealed partial class EngineeringRoutingOwnerV1(CP6Context db, OperationsO
             }
             await Sources(a, command.Body, true, token);
             var legacy = previous?.Legacy;
+            (EngineeringSourceRefV1? SiteRef, EngineeringRevisionRefV1 RevisionOrigin)? previousScope = null;
+            if (previous is { Legacy: { } inherited }
+                && (command.LegacyMappingRef == null || command.LegacyMappingRef == inherited.MappingRef))
+                previousScope = (previous.Body.SiteRef, previous.Body.RevisionOrigin);
             if (command.LegacyMappingRef != null)
             {
-                legacy = await Legacy(a, command.LegacyMappingRef, command.Body.ProductRef, command.Body.SiteRef, token);
+                legacy = await Legacy(a, command.LegacyMappingRef, command.Body.ProductRef, command.Body.SiteRef,
+                    command.Body.RevisionOrigin, token, previousScope);
                 if (legacy.Digest != command.LegacyDigest) throw Error("ROUTING_LEGACY_CHANGED", 412);
+            }
+            else if (legacy != null)
+            {
+                var business = await EngineeringProductMappingService.HoldLegacyUsageAsync(db, a, legacy.MappingRef,
+                    command.Body.ProductRef, command.Body.SiteRef, command.Body.RevisionOrigin, "ROUTING_LEGACY_MAPPING_MISMATCH", token, previousScope);
+                if (business != legacy.ProductRef) throw Error("ROUTING_LEGACY_ORIGINAL_UNAVAILABLE", 503);
             }
             var originalIds = legacy?.Rows.Select(x => x.GetProperty("Id").GetGuid()).ToHashSet() ?? [];
             var used = new HashSet<Guid>();

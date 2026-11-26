@@ -241,6 +241,7 @@ export interface ProductDto {
 
 /** MSBBPA060 一覧行 */
 export interface ProductListItemDto {
+  productId?: string
   productCd: string
   setProductCd?: string
   setProductName?: string
