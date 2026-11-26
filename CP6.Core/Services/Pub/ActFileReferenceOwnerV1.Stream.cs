@@ -33,30 +33,47 @@ public sealed partial class ActFileReferenceOwnerV1
 
         try
         {
-            await WithCurrentDownloadAsync(caller, fileId, decision, signed.Guard, async (store, _) =>
+            await TransactionAsync(caller, identity, async expiresAt =>
             {
-                var row = await store.Row(fileId, ct);
-                payload = await ReadExactAsync(row, ct);
-                await AuditStreamAsync(identity, fileId, delivery, proofDigest, "STARTED", 0, ct);
+                var store = await HoldFileStoreAsync(ct, write: true);
+                var file = await WithCurrentDownloadAsync(store, decision, signed.Guard, async current =>
+                {
+                    if (await NowAsync(ct) >= expiresAt) throw Denied();
+                    payload = await fileOwner.ReadVerifiedDownloadAsync(store, fileId, ct);
+                    return current;
+                }, ct, holdForIntegrity: true);
+                if (payload is null)
+                {
+                    // CRM 共享锁已经释放。本地写锁仍保护原状态，FILE 隔离写可排他推进同一 CRM guard。
+                    await fileOwner.QuarantineIntegrityFailureAsync(store, file, identity.SubjectId, ct);
+                    await AuditStreamAsync(identity, fileId, delivery, proofDigest, "UNPROVEN", 0, ct);
+                }
+                else
+                {
+                    await AuditStreamAsync(identity, fileId, delivery, proofDigest, "STARTED", 0, ct);
+                }
                 return true;
             }, ct);
+            var bytes = payload ?? throw new OrderPriceCorrectionException(FileContentOwnerV1.IntegrityUnavailable, 503);
             started = true;
-            var bytes = payload ?? throw Unproven();
             while (offset < bytes.Length)
             {
-                await WithCurrentDownloadAsync(caller, fileId, decision, signed.Guard, async (_, expiresAt) =>
+                await TransactionAsync(caller, identity, async expiresAt =>
                 {
-                    var now = await NowAsync(ct);
-                    var remaining = expiresAt - now;
-                    if (remaining <= TimeSpan.Zero) throw Denied();
-                    using var deadline = CancellationTokenSource.CreateLinkedTokenSource(ct);
-                    deadline.CancelAfter(remaining < MaxWriteTime ? remaining : MaxWriteTime);
-                    var count = Math.Min(SliceSize, bytes.Length - offset);
-                    // 每批写入并刷新时持有本地来源和 CRM guard，批间释放，让等候的撤权先取得排他锁。
-                    await write(new(bytes.AsMemory(offset, count), offset, bytes.Length, decision.ContentSha256,
-                        metadata.SafeFileName, metadata.MediaType), deadline.Token);
-                    offset += count;
-                    return true;
+                    var store = await HoldFileStoreAsync(ct);
+                    return await WithCurrentDownloadAsync(store, decision, signed.Guard, async _ =>
+                    {
+                        var remaining = expiresAt - await NowAsync(ct);
+                        if (remaining <= TimeSpan.Zero) throw Denied();
+                        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                        deadline.CancelAfter(remaining < MaxWriteTime ? remaining : MaxWriteTime);
+                        var count = Math.Min(SliceSize, bytes.Length - offset);
+                        // 每批写入并刷新时持有本地来源和 CRM guard，批间释放，让等候的撤权先取得排他锁。
+                        await write(new(bytes.AsMemory(offset, count), offset, bytes.Length, decision.ContentSha256,
+                            metadata.SafeFileName, metadata.MediaType), deadline.Token);
+                        offset += count;
+                        return true;
+                    }, ct);
                 }, ct);
             }
             outcome = "COMPLETED";
@@ -77,36 +94,19 @@ public sealed partial class ActFileReferenceOwnerV1
         }
     }
 
-    private Task<T> WithCurrentDownloadAsync<T>(ActFileCallerV1 caller, Guid fileId, ActFileDecisionV1 signed,
-        ActFileGuardStampV1 expected, Func<FileContentStoreV1, DateTimeOffset, Task<T>> use, CancellationToken ct)
-        => TransactionAsync(caller, signed.Identity, async expiresAt =>
-        {
-            var store = await HoldFileStoreAsync(ct);
-            var source = await HoldSourceAsync(caller.TenantId, ct);
-            if (source != expected) throw Denied();
-            return await guard.HoldAsync(caller.TenantId, source, async _ =>
-            {
-                var file = await store.Read(fileId, null, ct);
-                if (await DecideAsync(signed.Identity, file, ct) != signed) throw Denied();
-                return await use(store, expiresAt);
-            }, ct);
-        }, ct);
-
-    private async Task<byte[]> ReadExactAsync(FileContentRowV1 row, CancellationToken ct)
+    private async Task<T> WithCurrentDownloadAsync<T>(FileContentStoreV1 store, ActFileDecisionV1 signed,
+        ActFileGuardStampV1 expected, Func<FileContentSnapshotV1, Task<T>> use, CancellationToken ct,
+        bool holdForIntegrity = false)
     {
-        try
+        var tenant = signed.Identity.TenantId;
+        var source = await HoldSourceAsync(tenant, ct, write: holdForIntegrity);
+        if (source != expected) throw Denied();
+        return await guard.HoldAsync(tenant, source, async _ =>
         {
-            await using var input = await files.OpenReadBoundedAsync(row.StorePath, row.ByteLength, ct);
-            var bytes = await FileContentBytesV1.Read(input, row.ByteLength, ct);
-            if (FileContentBytesV1.Digest(bytes) == row.Digest) return bytes;
-            CryptographicOperations.ZeroMemory(bytes);
-            throw Unproven();
-        }
-        catch (Exception error) when (error is IOException or NotSupportedException ||
-            error is OrderPriceCorrectionException { Message: "FILE_LENGTH_MISMATCH" or "FILE_SIZE_LIMIT" })
-        {
-            throw Unproven(error);
-        }
+            var (file, decision) = await DecideAsync(signed.Identity, store, ct);
+            if (decision != signed) throw Denied();
+            return await use(file);
+        }, ct);
     }
 
     private async Task AuditStreamAsync(ActFileIdentityV1 identity, Guid fileId, Guid delivery, string proofDigest, string state,

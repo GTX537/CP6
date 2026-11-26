@@ -115,6 +115,7 @@ internal sealed class ActFileGuardCrmFixtureV1
             await Scalar(root, $"CREATE DATABASE {fixture.database}");
             foreach (var login in new[] { fixture.SealLogin, fixture.activityLogin, fixture.readLogin })
                 await Scalar(root, $"CREATE ROLE {login} LOGIN PASSWORD '{fixture.secret}'");
+            await Scalar(root, $"ALTER ROLE {fixture.SealLogin} IN DATABASE {fixture.database} SET statement_timeout='12s'");
         }
         await using var crm = await fixture.OpenCrmOwnerAsync();
         await Scalar(crm, Schema);

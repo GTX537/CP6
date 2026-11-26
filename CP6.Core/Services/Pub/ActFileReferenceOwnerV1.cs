@@ -3,13 +3,15 @@ using System.Globalization;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Erp;
+using CP6.Core.Services.Integration;
+using CP6.Core.Services.Sys;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using static CP6.Core.Services.Pub.ActFileReferenceV1;
 
 namespace CP6.Core.Services.Pub;
 
-public sealed partial class ActFileReferenceOwnerV1(CP6Context db, IFileStore files, ActFileGuardReadV1 guard, ActFileSignerV1 signer)
+public sealed partial class ActFileReferenceOwnerV1(CP6Context db, FileContentOwnerV1 fileOwner, ActFileGuardReadV1 guard, ActFileSignerV1 signer)
 {
     public Task<ActFileAttestationV1> ProveAsync(ActFileCallerV1 caller, ActFileProofRequestV1 request, CancellationToken ct)
     {
@@ -33,11 +35,11 @@ public sealed partial class ActFileReferenceOwnerV1(CP6Context db, IFileStore fi
                 var original = JsonSerializer.Deserialize<ActFileAttestationV1>(previous.Proof, Wire) ?? throw Unproven();
                 if (request.Mode == GuardedStream)
                 {
-                    // 下载证明含披露元数据。原键恢复也须通过当前 guard，才能返回该证明。
+                    // 下载证明含披露元数据。原键恢复也须通过当前 FILE 权限与 guard。
                     var evidence = ActFileSignerV1.Verify(original, signer.KeyId, signer.PublicKeySpkiBase64);
-                    var currentStamp = await HoldSourceAsync(caller.TenantId, ct);
-                    if (evidence.Guard != currentStamp) throw Denied();
-                    await guard.HoldAsync(caller.TenantId, currentStamp, _ => Task.FromResult(true), ct);
+                    var originalStore = await HoldFileStoreAsync(ct);
+                    await WithCurrentDownloadAsync(originalStore, evidence.Decisions.Single(), evidence.Guard,
+                        _ => Task.FromResult(true), ct);
                 }
                 if (await NowAsync(ct) >= expiresAt) throw Denied();
                 return original;
@@ -50,8 +52,8 @@ public sealed partial class ActFileReferenceOwnerV1(CP6Context db, IFileStore fi
                 var decisions = new List<ActFileDecisionV1>(request.References.Length);
                 foreach (var reference in request.References)
                 {
-                    var current = await store.Read(NativeFileId(reference), null, ct);
-                    decisions.Add(await DecideAsync(reference, current, ct));
+                    var (_, decision) = await DecideAsync(reference, store, ct);
+                    decisions.Add(decision);
                 }
                 if (await NowAsync(ct) >= expiresAt) throw Denied();
                 var proof = signer.Sign(new(Contract, ActFileReferenceV1.Authority, request.Mode, signer.KeyId,
@@ -80,12 +82,13 @@ public sealed partial class ActFileReferenceOwnerV1(CP6Context db, IFileStore fi
         {
             await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
             await db.Database.ExecuteSqlRawAsync("SET LOCAL lock_timeout='8s'; SET LOCAL statement_timeout='15s'", ct);
+            await OperationsOwnerV1.HoldReadAuthorityFenceAsync(db, ct);
             var expiry = await HoldCallerAsync(caller, identity.SubjectId, ct);
             var result = await execute(expiry);
             await tx.CommitAsync(ct);
             return result;
         }
-        catch (Exception error) when (error is NpgsqlException or TimeoutException)
+        catch (Exception error) when (error is NpgsqlException or TimeoutException or CurrentPermissionUnavailableException)
         {
             throw Unproven(error);
         }
@@ -111,23 +114,38 @@ public sealed partial class ActFileReferenceOwnerV1(CP6Context db, IFileStore fi
     private Task<DateTimeOffset> NowAsync(CancellationToken ct) =>
         db.Database.SqlQueryRaw<DateTimeOffset>("SELECT clock_timestamp() AS \"Value\"").SingleAsync(ct);
 
-    private async Task<FileContentStoreV1> HoldFileStoreAsync(CancellationToken ct)
+    private async Task<FileContentStoreV1> HoldFileStoreAsync(CancellationToken ct, bool write = false)
     {
         var store = new FileContentStoreV1(db);
-        await store.Fence(false, ct);
+        await store.Fence(write, ct);
         return store;
     }
 
-    private async Task<ActFileGuardStampV1> HoldSourceAsync(Guid tenant, CancellationToken ct)
+    private async Task<ActFileGuardStampV1> HoldSourceAsync(Guid tenant, CancellationToken ct, bool write = false)
     {
-        var source = await db.Database.SqlQuery<Source>($"""
-            SELECT store_id AS "StoreId",epoch AS "Epoch",receipt AS "Receipt" FROM cp6_act_file_v1.hold_source_v1({tenant})
-            """).SingleOrDefaultAsync(ct) ?? throw Unproven();
+        var query = write
+            ? db.Database.SqlQuery<Source>($"""
+                SELECT store_id AS "StoreId",epoch AS "Epoch",receipt AS "Receipt" FROM cp6_act_file_v1.hold_source_for_integrity_v1({tenant})
+                """)
+            : db.Database.SqlQuery<Source>($"""
+                SELECT store_id AS "StoreId",epoch AS "Epoch",receipt AS "Receipt" FROM cp6_act_file_v1.hold_source_v1({tenant})
+                """);
+        var source = await query.SingleOrDefaultAsync(ct) ?? throw Unproven();
         return new(source.StoreId, source.Epoch, source.Receipt);
     }
 
-    private async Task<ActFileDecisionV1> DecideAsync(ActFileIdentityV1 identity, FileContentSnapshotV1 file, CancellationToken ct)
+    private async Task<(FileContentSnapshotV1 File, ActFileDecisionV1 Decision)> DecideAsync(ActFileIdentityV1 identity,
+        FileContentStoreV1 store, CancellationToken ct)
     {
+        FileContentSnapshotV1 file;
+        try
+        {
+            file = await fileOwner.ReadActReferenceAsync(store, NativeFileId(identity), identity.SubjectId, identity.Action, ct);
+        }
+        catch (OrderPriceCorrectionException error) when (error.Status == 403)
+        {
+            throw Denied();
+        }
         if (file.TenantId != identity.TenantId || file.ContentRef.Id.ToString("D") != identity.AttachmentId ||
             file.ContentRef.Version != identity.Version ||
             identity.ContentSha256 is not null && file.ContentRef.Digest != identity.ContentSha256)
@@ -156,8 +174,8 @@ public sealed partial class ActFileReferenceOwnerV1(CP6Context db, IFileStore fi
         var download = identity.Action == "DOWNLOAD"
             ? new ActFileDownloadEvidenceV1(file.ContentRef.ByteLength.ToString(CultureInfo.InvariantCulture), DownloadMediaType, file.FileName)
             : null;
-        return new(identity, "ALLOW", file.ContentRef.Digest, scan, file.StateVersion, file.OriginalDigest,
-            grant.PolicyVersion, grant.RetentionRef, download);
+        return (file, new(identity, "ALLOW", file.ContentRef.Digest, scan, file.StateVersion, file.OriginalDigest,
+            grant.PolicyVersion, grant.RetentionRef, download));
     }
 
     // 合同保留不透明外部键。只有 Main 原生提供者在读取自己发行的键时解析本地 ID。

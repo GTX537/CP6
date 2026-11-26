@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
@@ -73,6 +74,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(2L, await Scalar(activity, "SELECT epoch FROM crm_act_file_guard_v1.hold_v1(@tenant,@store)",
             ("tenant", h.Tenant), ("store", crm.Store)));
         await using var seal = await crm.OpenSealAsync();
+        Assert.Equal("12s", await Scalar(seal, "SHOW statement_timeout"));
         var wrong = await Assert.ThrowsAsync<PostgresException>(() =>
             Scalar(seal, "INSERT INTO public.activity_fixture VALUES (@operation)", ("operation", Guid.NewGuid())));
         Assert.Equal(PostgresErrorCodes.InsufficientPrivilege, wrong.SqlState);
@@ -146,6 +148,188 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var historicalProof = await fixture.Owner.ProveAsync(fixture.Caller, historical, default);
         Assert.Equal(2, fixture.Verify(historicalProof, historical, current).Decisions.Length);
         Assert.Equal(fixture.Bytes, (await fixture.Native.DownloadAsync(fixture.Input.FileId, input.Version, fixture.Input.Digest)).Bytes);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task ActFile_native_FILE_action_fields_and_parent_revocation_refuse_new_proofs_until_restored()
+    {
+        await using var fixture = await CreateActFilesAsync();
+        var h = fixture.Context;
+        var add = new ActFileProofRequestV1(LocalGuard, [fixture.Identity("ADD")]);
+        var download = new ActFileProofRequestV1(GuardedStream, [fixture.Identity("DOWNLOAD")]);
+        var initial = await fixture.Owner.ProveAsync(fixture.Caller, download, default);
+        var initialGuard = await fixture.ReadCrmGuardAsync();
+        var fileMenu = await h.Db.Sys_Menus.Where(x => x.MenuKey == "file-content").Select(x => x.MenuId).SingleAsync();
+        var parentMenu = await h.Db.Sys_Menus.Where(x => x.MenuKey == "plm-engineering-revision").Select(x => x.MenuId).SingleAsync();
+
+        await RemoveQueryAsync(fileMenu);
+        Assert.NotEqual(initialGuard.Epoch, (await fixture.ReadCrmGuardAsync()).Epoch);
+        await AssertRejectedWithoutReceiptsAsync(add, download, 1);
+        await AssertRejectedWithoutReceiptsAsync(add, FreshDownload(), 1);
+
+        foreach (var action in new[] { "RETAIN", "REMOVE" })
+        {
+            var maintenance = new ActFileProofRequestV1(LocalGuard, [fixture.Identity(action)]);
+            var proof = await fixture.Owner.ProveAsync(fixture.Caller, maintenance, default);
+            var evidence = Assert.Single(fixture.Verify(proof, maintenance, await fixture.ReadCrmGuardAsync()).Decisions);
+            Assert.Equal(action, evidence.Identity.Action);
+            Assert.Null(evidence.Download);
+        }
+        await EngineeringAction(h, "file-content", "query");
+
+        Assert.Equal(1, await h.Db.Sys_RoleActions.Where(x => x.RoleId == 72 && x.MenuId == fileMenu && x.ActionCode == "delete")
+            .ExecuteDeleteAsync());
+        Assert.Equal(403, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => fixture.Owner.ProveAsync(fixture.Caller,
+            new(LocalGuard, [fixture.Identity("REMOVE")]), default))).Status);
+        Assert.Equal(3L, await fixture.ProofCountAsync());
+        await EngineeringAction(h, "file-content", "delete");
+
+        foreach (var field in new[] { "Content", "FileName" })
+        {
+            h.Db.Sys_RoleFieldPerms.Add(new() { RoleId = 72, ResourceKey = "file-content", FieldName = field, Access = 3 });
+            await h.Db.SaveChangesAsync();
+            h.Db.ChangeTracker.Clear();
+            await AssertRejectedWithoutReceiptsAsync(add, FreshDownload(), 3);
+            Assert.Equal(1, await h.Db.Sys_RoleFieldPerms
+                .Where(x => x.RoleId == 72 && x.ResourceKey == "file-content" && x.FieldName == field).ExecuteDeleteAsync());
+        }
+
+        await RemoveQueryAsync(parentMenu);
+        await AssertRejectedWithoutReceiptsAsync(add, FreshDownload(), 3);
+        await EngineeringAction(h, "plm-engineering-revision", "query");
+        Assert.True(await Scalar(fixture.Main, """
+            SELECT can_add AND can_download FROM cp6_act_file_v1.grants
+            WHERE tenant_id=@tenant AND actor_id=@actor AND file_id=@file
+            """, ("tenant", h.Tenant), ("actor", h.User), ("file", fixture.Input.FileId)) is true);
+
+        var restored = await fixture.ReadCrmGuardAsync();
+        foreach (var request in new[] { add, FreshDownload() })
+        {
+            var proof = await fixture.Owner.ProveAsync(fixture.Caller, request, default);
+            Assert.Single(fixture.Verify(proof, request, restored).Decisions);
+        }
+        Assert.False(fixture.MatchesCurrent(initial, download, restored));
+        Assert.Equal(5L, await fixture.ProofCountAsync());
+
+        ActFileProofRequestV1 FreshDownload() => new(GuardedStream, [fixture.Identity("DOWNLOAD")]);
+
+        async Task RemoveQueryAsync(int menu) => Assert.Equal(1, await h.Db.Sys_RoleActions
+            .Where(x => x.RoleId == 72 && x.MenuId == menu && x.ActionCode == "query").ExecuteDeleteAsync());
+
+        async Task AssertRejectedWithoutReceiptsAsync(ActFileProofRequestV1 first, ActFileProofRequestV1 second, long count)
+        {
+            foreach (var request in new[] { first, second })
+                Assert.Equal(403, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(
+                    () => fixture.Owner.ProveAsync(fixture.Caller, request, default))).Status);
+            Assert.Equal(count, await fixture.ProofCountAsync());
+        }
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task ActFile_native_FILE_object_scope_writer_invalidates_guard_and_rejects_new_reference()
+    {
+        await using var fixture = await CreateActFilesAsync();
+        var h = fixture.Context;
+        var department = await MappingAdmin(h);
+        var binding = await BindStandalone(h, department, "plm-engineering-revision", fixture.Input.Parent.Id);
+        await h.Db.Sys_Users.Where(x => x.Id == h.User).ExecuteUpdateAsync(s => s.SetProperty(x => x.DeptId, department.Child));
+        Assert.Equal(1, await h.Db.Sys_RoleDataScopes.Where(x => x.RoleId == 72 && x.ResourceKey == "file-content")
+            .ExecuteUpdateAsync(s => s.SetProperty(x => x.ScopeType, 2)));
+        var prior = new ActFileProofRequestV1(LocalGuard, [fixture.Identity("ADD")]);
+        var original = await fixture.Owner.ProveAsync(fixture.Caller, prior, default);
+        var stamp = await fixture.ReadCrmGuardAsync();
+        Assert.Single(fixture.Verify(original, prior, stamp).Decisions);
+
+        await h.Db.Database.ExecuteSqlInterpolatedAsync(
+            $"UPDATE cp6_operations_owner_v1.department_mappings SET enabled=false WHERE id={binding.EntityId}");
+        var current = await fixture.ReadCrmGuardAsync();
+        Assert.NotEqual(stamp.Epoch, current.Epoch);
+        Assert.False(fixture.MatchesCurrent(original, prior, current));
+        var pending = new ActFileProofRequestV1(LocalGuard, [fixture.Identity("ADD")]);
+        Assert.Equal(403, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(
+            () => fixture.Owner.ProveAsync(fixture.Caller, pending, default))).Status);
+        Assert.Equal(1L, await fixture.ProofCountAsync());
+
+        await h.Db.Database.ExecuteSqlInterpolatedAsync(
+            $"UPDATE cp6_operations_owner_v1.department_mappings SET enabled=true WHERE id={binding.EntityId}");
+        var proof = await fixture.Owner.ProveAsync(fixture.Caller, pending, default);
+        Assert.Single(fixture.Verify(proof, pending, await fixture.ReadCrmGuardAsync()).Decisions);
+        Assert.Equal(2L, await fixture.ProofCountAsync());
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task ActFile_guarded_stream_integrity_failure_quarantines_exact_file_and_advances_guard()
+    {
+        await using var fixture = await CreateActFilesAsync();
+        var healthyId = await fixture.AddFileAsync(allowContent: true);
+        var identity = fixture.Identity("DOWNLOAD");
+        var request = new ActFileProofRequestV1(GuardedStream, [identity]);
+        var proof = await fixture.Owner.ProveAsync(fixture.Caller, request, default);
+        var original = await fixture.Native.ReadAsync(fixture.Input.FileId);
+        var previousGuard = await fixture.ReadCrmGuardAsync();
+        var storePath = await fixture.CorruptOriginalAsync();
+        var written = 0;
+
+        await using var activity = await fixture.Crm.OpenActivityAsync();
+        await using var activityTx = await activity.BeginTransactionAsync();
+        Assert.Equal(previousGuard, await fixture.ReadCrmGuardAsync(activity));
+        var download = fixture.Owner.DownloadAsync(fixture.Caller, new(identity, proof), (slice, _) =>
+        {
+            written += slice.Bytes.Length;
+            return Task.CompletedTask;
+        }, default);
+        try
+        {
+            await using var monitor = await fixture.Crm.OpenCrmOwnerAsync();
+            await WaitForActFileLockAsync(monitor, "cp6-act-file-seal-test");
+            Assert.False(download.IsCompleted);
+            Assert.Equal(previousGuard.Epoch, Convert.ToString(await Scalar(fixture.Main,
+                "SELECT epoch FROM cp6_act_file_v1.sources WHERE tenant_id=@tenant",
+                ("tenant", fixture.Caller.TenantId)), CultureInfo.InvariantCulture));
+        }
+        finally
+        {
+            await activityTx.CommitAsync();
+        }
+        var error = await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => download);
+        Assert.Equal(503, error.Status);
+        Assert.Equal(0, written);
+        var quarantined = await fixture.Native.ReadAsync(fixture.Input.FileId);
+        Assert.Equal("QUARANTINED", quarantined.Availability);
+        Assert.Equal("INTEGRITY_FAILURE", quarantined.Action);
+        Assert.Equal("NOT_CLEAN", quarantined.Inspection.Status);
+        Assert.Equal("ContentIntegrity", quarantined.Inspection.Provider);
+        Assert.Equal(original.ContentRef, quarantined.ContentRef);
+        Assert.NotEqual(original.StateVersion, quarantined.StateVersion);
+        Assert.Equal("FILE_CONTENT_INTEGRITY_UNAVAILABLE", error.Message);
+        Assert.DoesNotContain(storePath, error.ToString(), StringComparison.Ordinal);
+
+        var currentGuard = await fixture.ReadCrmGuardAsync();
+        Assert.Equal(long.Parse(previousGuard.Epoch, CultureInfo.InvariantCulture) + 1,
+            long.Parse(currentGuard.Epoch, CultureInfo.InvariantCulture));
+        Assert.NotEqual(previousGuard.Receipt, currentGuard.Receipt);
+        Assert.False(fixture.MatchesCurrent(proof, request, currentGuard));
+        Assert.Equal(1L, await fixture.AuditCountAsync("UNPROVEN", 0));
+        Assert.Equal(0L, await fixture.AuditCountAsync("STARTED", 0));
+        Assert.Equal(1L, await Scalar(fixture.Main, """
+            SELECT count(*) FROM cp6_main_owner_v1.operations
+             WHERE tenant_id=@tenant AND actor_id=@actor AND owner=@owner AND @file=ANY(object_ids)
+               AND state='COMMITTED' AND audit_json->>'Action'='INTEGRITY_FAILURE'
+            """, ("tenant", fixture.Caller.TenantId), ("actor", fixture.CallerActor),
+            ("owner", FileContentBytesV1.Owner), ("file", fixture.Input.FileId)));
+
+        var add = new ActFileProofRequestV1(LocalGuard, [fixture.Identity("ADD")]);
+        Assert.Equal(403, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(
+            () => fixture.Owner.ProveAsync(fixture.Caller, add, default))).Status);
+        Assert.Equal(1L, await fixture.ProofCountAsync());
+
+        var healthy = fixture.Identity("DOWNLOAD") with { AttachmentId = healthyId };
+        var healthyProof = await fixture.Owner.ProveAsync(fixture.Caller, new(GuardedStream, [healthy]), default);
+        using var bytes = new MemoryStream();
+        await fixture.Owner.DownloadAsync(fixture.Caller, new(healthy, healthyProof),
+            (slice, ct) => bytes.WriteAsync(slice.Bytes, ct).AsTask(), default);
+        Assert.Equal(fixture.Bytes, bytes.ToArray());
+        Assert.Equal("AVAILABLE", (await fixture.Native.ReadAsync(Guid.Parse(healthyId))).Availability);
     }
 
     [CurrentPermissionPostgresFact]
@@ -471,6 +655,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         {
             var bytes = Enumerable.Range(0, length).Select(index => (byte)(index % 251)).ToArray();
             var input = await ContentInput(h, bytes);
+            await EngineeringAction(h, "file-content", "delete");
             IFileStore storage = localRoot is null ? new ContentStore() : new LocalFileStore(localRoot);
             var scanner = new ContentInspector { Status = scan };
             var native = ContentOwner(h, storage, scanner);
@@ -495,7 +680,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
                 var signer = new ActFileSignerV1("wp02-14c-fixture", key.ExportPkcs8PrivateKeyPem());
                 var guard = new ActFileGuardReadV1(new Dictionary<Guid, ActFileGuardBindingV1>
                     { [h.Tenant] = new(crm.Store, crm.ReadConnection) });
-                return new(h, main, crm, guard, signer, native, scanner, new(h.Db, storage, guard, signer), caller, input, bytes);
+                return new(h, main, crm, guard, signer, native, scanner, new(h.Db, native, guard, signer), caller, input, bytes, storage);
             }
             catch { await main.DisposeAsync(); throw; }
         }
@@ -504,7 +689,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 
     private sealed class ActFileTest(Harness h, NpgsqlConnection main, ActFileGuardCrmFixtureV1 crm, ActFileGuardReadV1 guard,
         ActFileSignerV1 signer, FileContentOwnerV1 native, ContentInspector scanner, ActFileReferenceOwnerV1 owner,
-        ActFileCallerV1 caller, FileUploadV1 input, byte[] bytes) : IAsyncDisposable
+        ActFileCallerV1 caller, FileUploadV1 input, byte[] bytes, IFileStore storage) : IAsyncDisposable
     {
         internal ActFileGuardCrmFixtureV1 Crm => crm;
         internal Harness Context => h;
@@ -559,15 +744,26 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             Scalar(main, "SELECT count(*) FROM cp6_act_file_v1.stream_audit WHERE tenant_id=@tenant AND state=@state AND confirmed_bytes=@count",
                 ("tenant", h.Tenant), ("state", state), ("count", count));
 
-        internal async Task<string> AddFileAsync()
+        internal async Task<string> CorruptOriginalAsync()
+        {
+            var path = Assert.IsType<string>(await Scalar(main, """
+                SELECT store_path FROM cp6_file_content_v1.contents WHERE tenant_id=@tenant AND file_id=@file
+                """, ("tenant", h.Tenant), ("file", input.FileId)));
+            var corrupted = bytes.ToArray();
+            corrupted[^1] ^= 1;
+            Assert.IsType<ContentStore>(storage).Bytes[path] = corrupted;
+            return path;
+        }
+
+        internal async Task<string> AddFileAsync(bool allowContent = false)
         {
             var extra = input with { FileId = Guid.NewGuid(), OperationId = Guid.NewGuid() };
             await native.UploadAsync(extra, new MemoryStream(bytes));
             await Scalar(main, """
                 INSERT INTO cp6_act_file_v1.grants
                   (tenant_id,actor_id,file_id,purpose,can_add,can_retain,can_unlink,can_download,retention_ref)
-                VALUES(@tenant,@actor,@file,'ACTIVITY_EVIDENCE',false,true,true,false,@retention)
-                """, ("tenant", h.Tenant), ("actor", h.User), ("file", extra.FileId), ("retention", Guid.NewGuid()));
+                VALUES(@tenant,@actor,@file,'ACTIVITY_EVIDENCE',@allow,true,true,@allow,@retention)
+                """, ("tenant", h.Tenant), ("actor", h.User), ("file", extra.FileId), ("retention", Guid.NewGuid()), ("allow", allowContent));
             return extra.FileId.ToString("D");
         }
 
