@@ -177627,6 +177627,11 @@
       "at": "2026-11-24T17:13:25.448991+00:00",
       "evidence": "docs/development/evidence/WP06-13/DELIVERY.md",
       "change": "WP06-13 仅本机拟核销文件。R10 技术证据已固定，独立复核和 #1326 受保护采用待完成。OA 暂停，下一卡仍未指定。"
+    },
+    {
+      "at": "2026-11-26T06:35:49.953026+00:00",
+      "evidence": "docs/development/evidence/WP10-48/DELIVERY.md",
+      "change": "WP10-48 精确工程候选与同事务实物提供者登记同 PR DONE 候选。正式采用以 #1331 受保护合并及包含性为准，WMS-TOOL-01 仍开放，14 项正式场景 NOT_RUN。OA 暂停，下一卡未指定。"
     }
   ],
   "implementation_assessment": {
@@ -221430,14 +221435,69 @@
         "file:Main:CP6.Tests/WmsPaperIndustry2ServiceTests.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP10.md",
       "card_anchor": "wp10-48",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "CP6-EXEC",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp10-48",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-26T04:20:08.274534+00:00",
+        "baseline_sha": "204464f95bfffb067f11bd3ba9edc6224af8f7d7",
+        "entry_evidence": "docs/development/evidence/WP10-48/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/WP10-48/DELIVERY.md",
+        "dispatch_scope": "WP10-48 实物当前、原来源与 HoldExact 提供者，补齐完整旧工程号及显式修订候选读取和本机合成验收。",
+        "worker_start_received": true
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP10-48/DELIVERY.md",
+          "source_sha": "44aef14a239995a22488e902b6cbfbc7839bfd9f",
+          "observed_at": "2026-11-26T05:43:00.8753469+00:00",
+          "environment": "LAPTOP-3QQ44FJS，.NET SDK 10.0.404，PostgreSQL 18.6 回环隔离，全部合成。",
+          "command": "dotnet test CP6.Tests/CP6.Tests.csproj -c Release --no-build --no-restore --filter (FullyQualifiedName~Tool_association_|FullyQualifiedName~Tool_instance_|FullyQualifiedName~Tool_specification_|FullyQualifiedName~Plate_tool_source_|FullyQualifiedName~Tool_registration_|FullyQualifiedName~Tool_linked_registration_)&FullyQualifiedName!=CP6.Tests.Erp.OrderPriceCorrectionPostgreSqlTests.Tool_association_HTTP_candidate_pages_preserve_exact_visible_sources_under_qualification_changes",
+          "result": "PASS",
+          "scope": "现行架构首轮 87 个用例通过，旧迁移夹具单项失败另附最终定向回放。覆盖精确候选、实物登记、原始历史、同轮双角色、HoldExact 与原键恢复。"
+        },
+        {
+          "path": "docs/development/evidence/WP10-48/DELIVERY.md",
+          "source_sha": "44aef14a239995a22488e902b6cbfbc7839bfd9f",
+          "observed_at": "2026-11-26T05:49:41.2591771+00:00",
+          "environment": "LAPTOP-3QQ44FJS，.NET SDK 10.0.404，PostgreSQL 18.6 回环隔离，全部合成。",
+          "command": "dotnet test CP6.Tests/CP6.Tests.csproj -c Release --no-build --no-restore --filter FullyQualifiedName=CP6.Tests.Erp.OrderPriceCorrectionPostgreSqlTests.Plate_tool_source_forward_migration_preserves_native_rows_and_grants_without_fabricating_history",
+          "result": "PASS",
+          "scope": "修正历史夹具后，首轮同一失败用例定向通过。验证旧原生记录原样、授权动作数量、正确回填原件。两次合计 88 个唯一通过。"
+        },
+        {
+          "path": "docs/development/evidence/WP10-48/DELIVERY.md",
+          "source_sha": "44aef14a239995a22488e902b6cbfbc7839bfd9f",
+          "observed_at": "2026-11-26T04:38:17.4117001+00:00",
+          "environment": "LAPTOP-3QQ44FJS，.NET SDK 10.0.404，PostgreSQL 18.6 回环隔离，全部合成。真实 Main HTTP 和 Chrome，临时多 Base 索引只在一次性合成压力库。",
+          "command": "dotnet test CP6.Tests/CP6.Tests.csproj -c Release --no-build --no-restore --filter FullyQualifiedName=CP6.Tests.Erp.OrderPriceCorrectionPostgreSqlTests.Tool_association_HTTP_candidate_pages_preserve_exact_visible_sources_under_qualification_changes",
+          "result": "PASS",
+          "scope": "旧粗筛第 102 位候选实际可见；105 个合格候选，来源前进后 104 个；真实页面精确选择末页、DRAFT、权限及零普通库存副作用。"
+        },
+        {
+          "path": "docs/development/evidence/WP10-48/DELIVERY.md",
+          "source_sha": "44aef14a239995a22488e902b6cbfbc7839bfd9f",
+          "observed_at": "2026-11-26T05:49:54.223464+00:00",
+          "environment": "LAPTOP-3QQ44FJS，Node 20.19.0，两个 Vue 组件套件。",
+          "command": "在 cp6.web 运行 Vitest 定向用例与 npm run build。命令和原件见交付报告。",
+          "result": "PASS",
+          "scope": "组件 18 项，TypeScript 检查及 Vite 构建通过。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP10-48/DELIVERY.md",
+        "source_sha": "44aef14a239995a22488e902b6cbfbc7839bfd9f",
+        "remote_main_sha": "44aef14a239995a22488e902b6cbfbc7839bfd9f",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1331",
+        "scope": "WP10-48 的 Main WMS 实物版模精确工程候选提供者。remote_main_sha 固定需由同 PR 正常合并纳入主线的已验收交付祖先。合并并核对包含性后正式生效，实际合并节点以该 PR 回执为准。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02-10公共Main原生PostgreSQL事务/最终授权fence由根统一加入；精确值/身份保原Owner协议。",
@@ -221949,6 +222009,36 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
+      },
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP10-48/DELIVERY.md",
+        "started_at": "2026-11-26T04:20:08.274534+00:00",
+        "official_started_at": "2026-11-26T04:20:08.274534+00:00",
+        "technical_verified_at": "2026-11-26T05:49:41.2591771+00:00",
+        "verified_at": "2026-11-26T06:35:49.953026+00:00",
+        "ledger_candidate_at": "2026-11-26T06:35:49.953026+00:00",
+        "effective_seconds": 5653.555,
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "S01-01",
+          "S01-02",
+          "S01-07",
+          "S01-09",
+          "S02-00",
+          "WP02-01",
+          "WP02-02",
+          "WP02-03",
+          "WP02-07",
+          "WP02-10",
+          "WP02-13",
+          "WP02-13b",
+          "WP05-04"
+        ],
+        "new_product_execution": true
       }
     },
     {
@@ -305357,7 +305447,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 232480.906,
+      "effective_seconds": 238134.461,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -305426,7 +305516,8 @@
         "WP05-04",
         "WP04-32",
         "WP06-13",
-        "WP08-16"
+        "WP08-16",
+        "WP10-48"
       ],
       "closed_targets": [
         "OA-DEF-01",

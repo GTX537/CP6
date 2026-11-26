@@ -2,13 +2,13 @@
 
 台账日期：2026-11-26。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 394 项，已交付 107 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 394 项，已交付 108 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)。按[单卡串行计划](planning/20261117-card-execution.md)核对完整前置并选择下一卡。
 
 原 375 卡及其全部出口保留；已登记 13 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。
 
-原号 DONE 91/375；完整 DONE 88/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 6/6，沿用原卡池内划拨。
+原号 DONE 92/375；完整 DONE 89/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 6/6，沿用原卡池内划拨。
 
 ## WP01 现有实现与设计对照
 
@@ -332,7 +332,7 @@
 | [WP10-45 仓储ABC、库龄呆滞与分析发布](../../docs/development/task-plans/WP10.md#wp10-45) | Main | 待安排 | S01-02, S01-05, S02-00, WP02-10, WP02-13, WP10-44 | CODE / M | 未领取 |
 | [WP10-46 采购质量结果在库存正式应用与可用性回流](../../docs/development/task-plans/WP10.md#wp10-46) | Main | 待安排 | S01-02, S01-05, S02-00, WP02-10, WP02-13, WP09-04, WP10-14 | CODE / L | 未领取 |
 | [WP10-47 既有物料、UOM与容量维度原Owner目录适配](../../docs/development/task-plans/WP10.md#wp10-47) | Main | 待安排 | S01-02, S01-07, S02-00, WP02-03, WP02-10, WP02-13 | CODE / M | 未领取 |
-| [WP10-48 WMS版模实例身份、当前头与HoldExact提供者](../../docs/development/task-plans/WP10.md#wp10-48) | Main | 待安排 | S01-07, S02-00, WP02-03, WP02-10, WP02-13, WP05-04 | CODE / M | 未领取 |
+| [WP10-48 WMS版模实例身份、当前头与HoldExact提供者](../../docs/development/task-plans/WP10.md#wp10-48) | Main | 已交付 | S01-07, S02-00, WP02-03, WP02-10, WP02-13, WP05-04 | CODE / M | CP6-EXEC |
 | [WP10-49 WMS完整Canonical Target与正式映射提供者](../../docs/development/task-plans/WP10.md#wp10-49) | Main | 待安排 | S01-07, S02-00, WP02-03, WP02-10, WP02-13, WP10-01, WP10-47 | CODE / M | 未领取 |
 | [WP10-50 SPACE完整Target在WMS的原子采用Owner](../../docs/development/task-plans/WP10.md#wp10-50) | Main | 待安排 | S01-02, S01-07, S02-00, WP02-03, WP02-10, WP02-13, WP10-04, WP10-25, WP10-49 | CODE / M | 未领取 |
 | [WP10-51 SPACE来源停止与恢复的WMS当前控制适配](../../docs/development/task-plans/WP10.md#wp10-51) | Main | 待安排 | S01-02, S01-07, S02-00, WP02-03, WP02-10, WP02-13, WP10-06, WP10-49, WP10-50 | CODE / M | 未领取 |
