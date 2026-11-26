@@ -3,7 +3,6 @@ using CP6.Core.Services.Common;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.Integration;
 using CP6.Core.Services.Plm;
-using CP6.Entity.DomainModels.Space;
 using CP6.Tests.Platform;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -72,16 +71,22 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await db.Database.ExecuteSqlRawAsync($"CREATE DATABASE {name}");
         db.Database.SetConnectionString(new NpgsqlConnectionStringBuilder(db.Database.GetConnectionString()) { Database = name }.ConnectionString);
         await db.GetService<IMigrator>().MigrateAsync("20261026180000_CurrencyPolicyOwnerV1");
-        var site = new Space_Site { SiteCode = "ORIGINAL", SiteName = "Original physical Site", Creator = "original", Enable = false };
-        db.Space_Sites.Add(site); db.Sys_Menus.Add(new() { MenuId = int.MaxValue, MenuKey = "historical-max-id", MenuName = "Original menu" });
-        await db.SaveChangesAsync(); db.ChangeTracker.Clear(); await db.Database.MigrateAsync();
+        var siteId = Guid.NewGuid();
+        // 按迁移切点的原表结构准备站点和菜单，现行审计列由后续迁移添加。
+        await db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO public."Space_Site" ("Id","TenantId","SiteCode","SiteName","Creator","Enable","CreateDate","IsDeleted")
+            VALUES ({siteId},{tenant.CurrentTenantId},'ORIGINAL','Original physical Site','original',false,localtimestamp,false);
+            INSERT INTO public."Sys_Menus" ("MenuId","MenuKey","MenuName","OrderNo","Enable","CreateDate")
+            VALUES ({int.MaxValue},'historical-max-id','Original menu',0,true,localtimestamp)
+            """);
+        await db.Database.MigrateAsync();
         Assert.Empty(await db.Database.GetPendingMigrationsAsync());
         var json = await db.Database.SqlQuery<string>($"""
-            SELECT source_json AS "Value" FROM cp6_physical_site_identity_v1.versions WHERE tenant_id={tenant.CurrentTenantId} AND site_id={site.Id} AND revision=1
+            SELECT source_json AS "Value" FROM cp6_physical_site_identity_v1.versions WHERE tenant_id={tenant.CurrentTenantId} AND site_id={siteId} AND revision=1
             """).SingleAsync();
-        using var original = JsonDocument.Parse(json); Assert.Equal(site.Id, original.RootElement.GetProperty("siteId").GetGuid()); Assert.False(original.RootElement.GetProperty("enabled").GetBoolean());
+        using var original = JsonDocument.Parse(json); Assert.Equal(siteId, original.RootElement.GetProperty("siteId").GetGuid()); Assert.False(original.RootElement.GetProperty("enabled").GetBoolean());
         Assert.Equal(1, await db.Database.SqlQueryRaw<int>("SELECT count(*)::int AS \"Value\" FROM cp6_physical_site_identity_v1.versions").SingleAsync());
-        Assert.Equal("Original physical Site", await db.Space_Sites.Where(row => row.Id == site.Id).Select(row => row.SiteName).SingleAsync());
+        Assert.Equal("Original physical Site", await db.Space_Sites.Where(row => row.Id == siteId).Select(row => row.SiteName).SingleAsync());
         var menuId = await db.Sys_Menus.Where(row => row.MenuKey == "plm-engineering-product").Select(row => row.MenuId).SingleAsync();
         Assert.NotEqual(int.MaxValue, menuId); Assert.False(await db.Sys_RoleActions.AnyAsync(row => row.MenuId == menuId || row.ActionCode == "confirm-engineering"));
         Assert.Equal(0, await db.Database.SqlQueryRaw<int>("SELECT count(*)::int AS \"Value\" FROM cp6_engineering_product_v1.heads").SingleAsync());

@@ -25,6 +25,12 @@ public sealed record CommercialProductIdentityV1(Guid TenantId, Guid ProductId, 
     public string? DeclaredUnitCode => Source.GetProperty("qtyUnitCode").GetString();
     public int LegacyStatus => Source.GetProperty("status").GetInt32();
 
+    // 产品级缺证随原身份披露。已确认的站点映射和显式选定的币种政策沿各自 Owner 返回。
+    public string LegalEntityApplicability => "REQUIRED_FENCED";
+    public string ManufacturingApplicability => "REQUIRED_FENCED";
+    public string ProductCurrencyBinding => "REQUIRED_FENCED";
+    public string LegacyMappingKnowledge => "UNKNOWN";
+
     public string EffectiveState => !SourcePresent || Source.GetProperty("isDeleted").GetBoolean() ? "INACTIVE" : LegacyStatus switch
     {
         0 => "PENDING_APPROVAL",
