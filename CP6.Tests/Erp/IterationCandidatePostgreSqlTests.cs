@@ -89,7 +89,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await revisions.CommandAsync(PatchRevision(f.Revision,
             new EngineeringDraftPatchV1{Op="UPSERT_COMPONENT",Component=new(first,"DOCUMENT","/one",0,"APPLIES","","",null)},
             new EngineeringDraftPatchV1{Op="UPSERT_COMPONENT",Component=new(second,"DOCUMENT","/two",1,"APPLIES","","",null)}));
-        Assert.Equal("CHANGED",(await o.ReadAsync(f.Command.IterationId,f.Command.CandidateId)).SourceDrift);
+        var stale=await o.ReadAsync(f.Command.IterationId,f.Command.CandidateId);
+        Assert.Equal("CHANGED",stale.SourceDrift);
+        Assert.Contains("CANDIDATE_CHANGED",stale.Findings);
+        Assert.Contains(stale.Original.Definition.TechnicalSource.Items,x=>x.State=="UNKNOWN");
+        Assert.Equal(f.Check.OriginalJson,stale.Original.Definition.TechnicalSourceOriginal);
         var changed=f.Command with{OperationId=Guid.NewGuid(),CandidateId=Guid.NewGuid()};
         Assert.Equal("ITERATION_CANDIDATE_SOURCE_CHANGED",(await Assert.ThrowsAsync<OrderPriceCorrectionException>(()=>o.CommandAsync(changed))).Message);
         await o.CommandAsync(changed with{SourceDecision="KEEP_ORIGINAL",DriftReason="Retain original for comparison; no approval inferred"});
