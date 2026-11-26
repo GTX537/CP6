@@ -1,4 +1,6 @@
-# WP02-14c ACT 文件权威门与守护流式下载
+# WP02-32 ACT 文件权威门与守护流式下载
+
+本补充卡正式编号为 `WP02-32`。Handoff #439 R1 授权中的暂名为 `WP02-14c`。分支 `codex/wp02-14c` 与 DEV-2 工作区租约 `CP6:WP02-14c` 沿用原派工标识。 [Draft PR #1339](https://github.com/GTX537/CP6/pull/1339)
 
 总控经 Handoff #439 转交 File/Security Owner 的 R1 裁决「选甲，委托本地门」。唯一授权消息提交为 `c49a2ed2ff23eba263ff969bae6f5322f3616483`。预算沿 WP02-29 的 11599.8 秒和 WP03-18 的 2800.2 秒，合计 14400 秒。原 AC 归属沿用 #438。 [R1 原消息](https://github.com/GTX537/CP6.AI-Handoff/blob/c49a2ed2ff23eba263ff969bae6f5322f3616483/handoffs/CP6-DEV-20261012/tasks/WP03-19/replies/20261126T132500Z-coord-file-guard-delegation-r1/MESSAGE.md)
 
@@ -76,4 +78,18 @@ IAM 封存的实际 DDL 位于 CRM 仓，所以本卡在隔离夹具上验证 CR
 
 两库使用同一隔离 PostgreSQL 18 试验集群，分别使用不同数据库和真实锁。身份、文件、授权和 CRM 活动占位写为合成，服务传输为回环真实 TLS。远端回执未知使用远端实际提交、丢弃返回结果的测试注入。真实 CRM 生产 schema 和业务采用、生产数据库间 TLS 登记、真实迁移与运行采用保持 `UNPROVEN`／`NOT_RUN`。资料归档后未保留监听或测试进程。
 
-打回复核从本机 UTC 2026-11-26T13:42:47 到产品证据完成 2026-11-26T14:05:20 约 1353 有效秒。加上上一轮 3104 秒，产品证据阶段累计约 4457 秒。最终含报告候选的复验与席位记录见交付回执。任务分支 `codex/wp02-14c` 留在 DEV-2，席位保持登记给 CP6-EXEC，等待总控复核。第一阶段台账留待总控后续指令。
+## 总控独立复核
+
+首轮对候选 `5d6c6e1fcfe19a6a1c45fbd95b5fc3c66075b14a` 的结论为 **FAIL**。32 项自动化全通过，集中复核发现 FILE 当前权限复核和摘要异常隔离两处阻塞。首轮 TRX SHA-256 为 `387f76a0bfc58ffaf88a299f92c0cb0f55ea953480e177470fcd48431126a04f`，原件位于 `D:/CP6-test-artifacts/WP02-14c/coord-verify-20261126T133250174Z/results.trx`。
+
+打回修复后，总控对 `84bed4b2d9e9427efb77727cd0c9f2e414e892b2`（树 `2ef15eed0928f278223529ce6b36b938ab072fd2`）独立构建并复跑，**35 项通过，0 失败，0 跳过**，测试名单和结果与执行侧一致。复核结论 **PASS_WITH_NITS**。独立 TRX 位于 `D:/CP6-test-artifacts/WP02-14c/coord-verify-20261126T142630678Z/results.trx`，SHA-256 为 `e8d8d423dc1eb95780031d03b3a1693b0c3295074899c0834ca821d35d0ba9e1`。集中审查记录位于 `D:/CP6-test-artifacts/WP02-14c/coord-verify-20261126T142630678Z/review.json`。
+
+## 已知项
+
+守护流首读在读取整件原件期间持有 FILE 表级写锁。上线前需量化慢存储下并发下载等待，以及对旧 FILE 下载入口延迟的影响。生产启用保持 `NOT_RUN`。 [守护流首读](../../../../CP6.Core/Services/Pub/ActFileReferenceOwnerV1.Stream.cs#L38)
+
+## 有效时间与生效
+
+执行侧累计有效时间台账取最终交付原件的 `4912.0` 秒。两个产品复跑分别绑定执行侧与总控记录。 [执行侧计时与席位原件](/D:/CP6-test-artifacts/WP02-14c/exec-20261126T140339Z/workspace-readback.json)
+
+WP02-32 的卡级 DONE 随 #1339 登记，在 PR 正常合并至受保护主线并核对实际远端采用后生效。SYS-FILE-01 保持开放，生产 guard schema、八条原 AC 与两条提交方式场景的 CRM 采用归 WP03-19，`runtime_status` 保持 `UNPROVEN_G03`。 [PR #1339](https://github.com/GTX537/CP6/pull/1339)
