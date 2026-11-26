@@ -103,6 +103,13 @@ public sealed partial class EngineeringBomOwnerV1(CP6Context db, OperationsOwner
                 legacy = await Legacy(a, command.LegacyMappingRef, command.Body.ProductRef, command.Body.SiteRef, command.Body.RevisionOrigin, token);
                 if (legacy.Digest != command.LegacyDigest) throw Error("BOM_LEGACY_CHANGED", 412);
             }
+            else if (legacy != null)
+            {
+                var business = await EngineeringProductMappingService.HoldLegacyUsageAsync(db, a, legacy.MappingRef,
+                    command.Body.ProductRef, command.Body.SiteRef, command.Body.RevisionOrigin, "BOM_LEGACY_MAPPING_MISMATCH", token,
+                    requireExactSite: true);
+                if (business != legacy.ProductRef) throw Error("BOM_LEGACY_ORIGINAL_UNAVAILABLE", 503);
+            }
             var originalIds = legacy?.Rows.Select(x => x.GetProperty("Id").GetGuid()).ToHashSet() ?? [];
             var used = new HashSet<Guid>();
             foreach (var step in command.Body.Occurrences)

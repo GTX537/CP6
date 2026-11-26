@@ -103,6 +103,13 @@ public sealed partial class EngineeringRoutingOwnerV1(CP6Context db, OperationsO
                 legacy = await Legacy(a, command.LegacyMappingRef, command.Body.ProductRef, command.Body.SiteRef, command.Body.RevisionOrigin, token);
                 if (legacy.Digest != command.LegacyDigest) throw Error("ROUTING_LEGACY_CHANGED", 412);
             }
+            else if (legacy != null)
+            {
+                var business = await EngineeringProductMappingService.HoldLegacyUsageAsync(db, a, legacy.MappingRef,
+                    command.Body.ProductRef, command.Body.SiteRef, command.Body.RevisionOrigin, "ROUTING_LEGACY_MAPPING_MISMATCH", token,
+                    requireExactSite: true);
+                if (business != legacy.ProductRef) throw Error("ROUTING_LEGACY_ORIGINAL_UNAVAILABLE", 503);
+            }
             var originalIds = legacy?.Rows.Select(x => x.GetProperty("Id").GetGuid()).ToHashSet() ?? [];
             var used = new HashSet<Guid>();
             foreach (var step in command.Body.Operations)

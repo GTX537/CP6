@@ -29,13 +29,9 @@ public sealed partial class EngineeringRoutingOwnerV1
     private async Task<EngineeringRoutingLegacyV1> Legacy(OperationsAccessV1 root, EngineeringMappingRefV1 reference,
         EngineeringProductRefV1? product, EngineeringSourceRefV1? site, EngineeringRevisionRefV1? revision, CancellationToken ct)
     {
-        var a = await root.SourceAsync(OperationsOwnerV1.EngineeringProduct, ct);
-        var store = new EngineeringProductStoreV1(db); await store.Fence(false, ct);
-        var mapping = await EngineeringProductMappingService.CurrentExact(a, store, reference, ct);
-        EngineeringProductMappingService.RequireUsageScope(mapping, site, revision);
-        if (product != null && mapping.Candidate.EngineeringRef != product || site != null && mapping.Candidate.SiteRef != site)
-            throw Error("ROUTING_LEGACY_MAPPING_MISMATCH", 422);
-        var business = mapping.Candidate.BusinessRef!; var products = await root.SourceAsync(OperationsOwnerV1.Product, ct);
+        var business = await EngineeringProductMappingService.HoldLegacyUsageAsync(db, root, reference, product, site, revision,
+            "ROUTING_LEGACY_MAPPING_MISMATCH", ct);
+        var products = await root.SourceAsync(OperationsOwnerV1.Product, ct);
         var master = await products.Products().Where(x => x.Id == business.Id).Select(x => new { x.ProductCd }).SingleOrDefaultAsync(ct)
             ?? throw Error("OBJECT_FORBIDDEN", 403);
         products.AtCommit(async token => { if (!await products.Products().AnyAsync(x => x.Id == business.Id, token)) throw Error("OBJECT_FORBIDDEN", 403); });

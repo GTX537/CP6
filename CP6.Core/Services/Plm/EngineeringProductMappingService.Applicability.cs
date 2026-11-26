@@ -79,11 +79,20 @@ public sealed partial class EngineeringProductMappingService
         }
     }
 
-    internal static void RequireUsageScope(EngineeringMappingVersionV1 mapping, EngineeringSourceRefV1? site, EngineeringRevisionRefV1? revision)
+    internal static async Task<EngineeringSourceRefV1> HoldLegacyUsageAsync(CP6Context db, OperationsAccessV1 root,
+        EngineeringMappingRefV1 reference, EngineeringProductRefV1? product, EngineeringSourceRefV1? site,
+        EngineeringRevisionRefV1? revision, string mismatch, CancellationToken ct, bool requireExactSite = false)
     {
-        if (revision != null && mapping.Candidate.RequiresScopeReview
+        var access = await root.SourceAsync(OperationsOwnerV1.EngineeringProduct, ct);
+        var store = new EngineeringProductStoreV1(db);
+        await store.Fence(false, ct);
+        var mapping = await CurrentExact(access, store, reference, ct);
+        if (revision != null && (requireExactSite || mapping.Candidate.RequiresScopeReview)
             && (site != mapping.Candidate.SiteRef || mapping.ConfirmedTechnicalScope is { } technical && technical.RevisionRef != revision))
             throw Error("ENGINEERING_MAPPING_USAGE_SCOPE_MISMATCH");
+        if (product != null && mapping.Candidate.EngineeringRef != product || site != null && mapping.Candidate.SiteRef != site)
+            throw Error(mismatch);
+        return mapping.Candidate.BusinessRef!;
     }
 
     internal static async Task<(EngineeringIdentitySiteScopeV1[] Mappings, EngineeringConfirmedLegalScopeV1[] LegalScopes,

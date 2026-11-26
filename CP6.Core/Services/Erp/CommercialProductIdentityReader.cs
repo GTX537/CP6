@@ -99,6 +99,11 @@ public sealed class CommercialProductIdentityReader(CP6Context db, OperationsOwn
                 : null;
 
             product = await WithEngineeringFacts(access, product, token);
+            product = product with
+            {
+                LegalEntityScopes = mapping is { LegalEntityApplicability: "CONFIRMED", ConfirmedLegalScope: { } scope }
+                    ? [scope] : []
+            };
             var missing = new List<string> { "PRODUCT_CURRENCY_BINDING" };
             if (product.LegalEntityScopes.Length == 0) missing.Add("LEGAL_ENTITY_APPLICABILITY");
             missing.Add("MANUFACTURING_APPLICABILITY");

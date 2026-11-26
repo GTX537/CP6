@@ -116,6 +116,62 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
 
     [CurrentPermissionPostgresFact]
+    public async Task Wp0502_r1_qualification_uses_only_the_selected_site_legal_scope()
+    {
+        await using var h = await Seed();
+        await GrantMappingRead(h);
+        await EngineeringAction(h, "erp-product", "confirm-engineering");
+        const string legalKey = "SIM-R1-LEGAL";
+        await SeedMappingLegalScope(h, legalKey);
+        var service = EngineeringMappings(h);
+        var a = await MappingCandidate(h, await MakeEngineering(h), "R1SITE");
+        var confirmedA = await ConfirmReviewedMapping(service, await MakeMapping(h, a with { LegalEntity = ProductMappingLegal(legalKey) }));
+        var siteB = await OtherScopeSite(h);
+        var draftB = await MakeMapping(h, a with { SiteRef = siteB });
+        var identityOnly = await service.CommandAsync(MappingAction(draftB, "CONFIRM"));
+        var confirmedB = await service.ReadAsync(identityOnly.ObjectId, identityOnly.Version);
+        Assert.Equal(a.BusinessRef, confirmedB.Candidate.BusinessRef);
+        Assert.Equal(siteB, confirmedB.ConfirmedIdentitySite!.SiteRef);
+        Assert.Null(confirmedB.ConfirmedLegalScope);
+
+        await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!);
+        var cookies = await Login(host, h);
+        async Task<JsonElement> Read(HttpMethod method, string path, object? body = null)
+        {
+            using var response = await host.Send(OperationsRequest(cookies, method, path, body));
+            Assert.True(response.StatusCode == HttpStatusCode.OK, await OperationsFailure(response));
+            using var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            return json.RootElement.GetProperty("data").Clone();
+        }
+
+        const string path = "api/products/identity-owner-v1";
+        var product = a.BusinessRef!;
+        Task<JsonElement> Qualify(EngineeringMappingRefV1? mapping) => Read(HttpMethod.Post, $"{path}/qualification",
+            new CommercialProductQualificationQueryV1(product, MappingRef: mapping));
+
+        var bResult = await Qualify(confirmedB.Reference);
+        Assert.Equal(confirmedB.Reference, bResult.GetProperty("mapping").GetProperty("reference").Deserialize<EngineeringMappingRefV1>(ProductWire));
+        foreach (var result in new[] { bResult, await Qualify(draftB.Reference), await Qualify(null) })
+        {
+            Assert.Contains("LEGAL_ENTITY_APPLICABILITY", result.GetProperty("missing").Deserialize<string[]>()!);
+            var identity = result.GetProperty("product");
+            Assert.Equal("REQUIRED_FENCED", identity.GetProperty("legalEntityApplicability").GetString());
+            Assert.Empty(identity.GetProperty("legalEntityScopes").EnumerateArray());
+        }
+
+        var aResult = await Qualify(confirmedA.Reference);
+        Assert.DoesNotContain("LEGAL_ENTITY_APPLICABILITY", aResult.GetProperty("missing").Deserialize<string[]>()!);
+        var aIdentity = aResult.GetProperty("product");
+        Assert.Equal("CONFIRMED", aIdentity.GetProperty("legalEntityApplicability").GetString());
+        var scope = Assert.Single(aIdentity.GetProperty("legalEntityScopes").Deserialize<EngineeringConfirmedLegalScopeV1[]>(ProductWire)!);
+        Assert.Equal(confirmedA.ConfirmedLegalScope, scope);
+        Assert.Equal(a.SiteRef, scope.IdentitySite.SiteRef);
+        Assert.Equal(legalKey, scope.LegalEntity.Key);
+        var standalone = await Read(HttpMethod.Get, $"{path}/{product.Id}");
+        Assert.Equal(scope, Assert.Single(standalone.GetProperty("legalEntityScopes").Deserialize<EngineeringConfirmedLegalScopeV1[]>(ProductWire)!));
+    }
+
+    [CurrentPermissionPostgresFact]
     public async Task Wp0502_two_sites_keep_their_own_legal_scope_and_conflicting_owner_facts_are_rejected()
     {
         await using var h = await Seed();
@@ -329,6 +385,123 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(403, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => boms.ReadAsync(input.BomId, "1"))).Status);
         Assert.Equal(403, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => routes.ReadAsync(routing.RoutingId, "1"))).Status);
         Assert.Equal(403, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => service.ReadAsync(mapping.Reference.Id, mapping.Reference.Version))).Status);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task Wp0502_r1_bom_revise_rechecks_inherited_mapping_scope_and_keeps_original_snapshot()
+    {
+        await using var h = await Seed();
+        var (parent, mapping, code) = await ScopedLegacyMapping(h);
+        h.Db.ProductMaterials.Add(new ProductMaterial { ProductCd = code, ProcessCd = "CUT", MaterialCd = "SIM-MAT",
+            UnitUsage = 1.23456789m, UsageUnit = "个", UsageType = 2 });
+        await h.Db.SaveChangesAsync();
+        h.Db.ChangeTracker.Clear();
+
+        var owner = Boms(h);
+        var preview = await owner.LegacyPreviewAsync(mapping.Reference);
+        var create = BomCreate(parent);
+        await owner.CommandAsync(create with { Body = create.Body with { SiteRef = mapping.Candidate.SiteRef, Occurrences = preview.SuggestedOccurrences },
+            LegacyMappingRef = mapping.Reference, LegacyDigest = preview.Digest });
+        var original = await owner.ReadAsync(create.BomId, "1");
+        var revise = BomRevise(original);
+        var wrongSite = revise with { Body = revise.Body with { SiteRef = await OtherScopeSite(h) } };
+        Assert.Equal("ENGINEERING_MAPPING_USAGE_SCOPE_MISMATCH", (await Assert.ThrowsAsync<OrderPriceCorrectionException>(
+            () => owner.CommandAsync(wrongSite))).Message);
+        Assert.Equal(original.Reference, (await owner.ReadAsync(create.BomId)).Reference);
+        Assert.Equal("UNKNOWN", (await owner.OperationAsync(wrongSite.OperationId, false)).State);
+
+        await h.Db.ProductMaterials.Where(row => row.ProductCd == code).ExecuteUpdateAsync(change => change.SetProperty(row => row.UnitUsage, 9m));
+        var matching = revise with { OperationId = Guid.NewGuid(), Body = revise.Body with { Name = "同一适用域的结构修订" } };
+        var receipt = await owner.CommandAsync(matching);
+        var revised = await owner.ReadAsync(create.BomId);
+        Assert.Equal("2", revised.Reference.Version);
+        Assert.NotNull(revised.Legacy);
+        Assert.Equal(JsonSerializer.Serialize(original.Legacy), JsonSerializer.Serialize(revised.Legacy));
+
+        var newParent = await ChangeScopeRevision(h, parent, "另一版本的合成配置");
+        var wrongRevision = BomRevise(revised) with { Body = revised.Body with { RevisionOrigin = newParent.Reference } };
+        Assert.Equal("ENGINEERING_MAPPING_TECHNICAL_SCOPE_CHANGED", (await Assert.ThrowsAsync<OrderPriceCorrectionException>(
+            () => owner.CommandAsync(wrongRevision))).Message);
+        Assert.Equal("UNKNOWN", (await owner.OperationAsync(wrongRevision.OperationId, false)).State);
+        Assert.Equal(receipt, await owner.CommandAsync(matching));
+        Assert.Equal(original.OriginalJson, (await owner.ReadAsync(create.BomId, "1")).OriginalJson);
+        Assert.Equal(revised.OriginalJson, (await owner.ReadAsync(create.BomId)).OriginalJson);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task Wp0502_r1_routing_revise_rechecks_inherited_mapping_scope_and_keeps_original_snapshot()
+    {
+        await using var h = await Seed();
+        var (parent, mapping, code) = await ScopedLegacyMapping(h);
+        h.Db.ProductProcesses.Add(new ProductProcess { ProductCd = code, TaskCd = "CUT-1", ProcessCd = "CUT", SortOrder = 10, SetupHour = 2.12345678m });
+        await h.Db.SaveChangesAsync();
+        h.Db.ChangeTracker.Clear();
+
+        var owner = Routings(h);
+        var preview = await owner.LegacyPreviewAsync(mapping.Reference);
+        var create = RoutingCreate(parent);
+        await owner.CommandAsync(create with { Body = create.Body with { SiteRef = mapping.Candidate.SiteRef, Operations = preview.SuggestedOperations },
+            LegacyMappingRef = mapping.Reference, LegacyDigest = preview.Digest });
+        var original = await owner.ReadAsync(create.RoutingId, "1");
+        var revise = RoutingRevise(original);
+        var wrongSite = revise with { Body = revise.Body with { SiteRef = await OtherScopeSite(h) } };
+        Assert.Equal("ENGINEERING_MAPPING_USAGE_SCOPE_MISMATCH", (await Assert.ThrowsAsync<OrderPriceCorrectionException>(
+            () => owner.CommandAsync(wrongSite))).Message);
+        Assert.Equal(original.Reference, (await owner.ReadAsync(create.RoutingId)).Reference);
+        Assert.Equal("UNKNOWN", (await owner.OperationAsync(wrongSite.OperationId, false)).State);
+
+        await h.Db.ProductProcesses.Where(row => row.ProductCd == code).ExecuteUpdateAsync(change => change.SetProperty(row => row.SetupHour, 9m));
+        var matching = revise with { OperationId = Guid.NewGuid(), Body = revise.Body with { Name = "同一适用域的路线修订" } };
+        var receipt = await owner.CommandAsync(matching);
+        var revised = await owner.ReadAsync(create.RoutingId);
+        Assert.Equal("2", revised.Reference.Version);
+        Assert.NotNull(revised.Legacy);
+        Assert.Equal(JsonSerializer.Serialize(original.Legacy), JsonSerializer.Serialize(revised.Legacy));
+
+        var newParent = await ChangeScopeRevision(h, parent, "另一版本的合成配置");
+        var wrongRevision = RoutingRevise(revised) with { Body = revised.Body with { RevisionOrigin = newParent.Reference } };
+        Assert.Equal("ENGINEERING_MAPPING_TECHNICAL_SCOPE_CHANGED", (await Assert.ThrowsAsync<OrderPriceCorrectionException>(
+            () => owner.CommandAsync(wrongRevision))).Message);
+        Assert.Equal("UNKNOWN", (await owner.OperationAsync(wrongRevision.OperationId, false)).State);
+        Assert.Equal(receipt, await owner.CommandAsync(matching));
+        Assert.Equal(original.OriginalJson, (await owner.ReadAsync(create.RoutingId, "1")).OriginalJson);
+        Assert.Equal(revised.OriginalJson, (await owner.ReadAsync(create.RoutingId)).OriginalJson);
+    }
+
+    private static async Task<(EngineeringRevisionSnapshotV1 Parent, EngineeringMappingVersionV1 Mapping, string ProductCode)> ScopedLegacyMapping(Harness h)
+    {
+        var initial = await BomParent(h);
+        await GrantProductIdentity(h);
+        await EngineeringAction(h, "erp-product", "confirm-engineering");
+        await EngineeringAction(h, "space-site", "query");
+        const string legalKey = "SIM-R1-LEGACY";
+        await SeedMappingLegalScope(h, legalKey);
+        var parent = await ChangeScopeRevision(h, initial, "映射确认时的合成配置");
+        var engineering = await Engineering(h).ReadAsync(parent.Draft.ProductRef!.Id, null);
+        var candidate = await MappingCandidate(h, engineering, "R1MAP");
+        var service = new EngineeringProductMappingService(h.Db, BomAuthority(h));
+        var draft = await service.CommandAsync(MappingDraft(candidate with
+        {
+            LegalEntity = ProductMappingLegal(legalKey),
+            TechnicalScope = new(parent.Reference, parent.Draft.Configuration!.Reference)
+        }));
+        var mapping = await ConfirmReviewedMapping(service, await service.ReadAsync(draft.ObjectId, draft.Version));
+        var code = await h.Db.ProductMasters.Where(row => row.Id == candidate.BusinessRef!.Id).Select(row => row.ProductCd).SingleAsync();
+        return (parent, mapping, code);
+    }
+
+    private static async Task<EngineeringRevisionSnapshotV1> ChangeScopeRevision(Harness h, EngineeringRevisionSnapshotV1 parent, string evidence)
+    {
+        var owner = BomRevisions(h);
+        await owner.CommandAsync(PatchRevision(parent, new EngineeringDraftPatchV1 { Op = "SET_CONFIGURATION", Configuration = new([], "APPLIES", evidence) }));
+        return await owner.ReadAsync(parent.Reference.Id, null);
+    }
+
+    private static async Task<EngineeringSourceRefV1> OtherScopeSite(Harness h)
+    {
+        const string code = "R1B";
+        var site = await PhysicalSite(h, code);
+        return (await EngineeringMappings(h).SiteChoicesAsync(code)).Single(row => row.Reference.Id == site).Reference;
     }
 
     [CurrentPermissionPostgresFact]
