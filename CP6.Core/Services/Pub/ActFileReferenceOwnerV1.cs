@@ -129,7 +129,8 @@ public sealed partial class ActFileReferenceOwnerV1(CP6Context db, IFileStore fi
     private async Task<ActFileDecisionV1> DecideAsync(ActFileIdentityV1 identity, FileContentSnapshotV1 file, CancellationToken ct)
     {
         if (file.TenantId != identity.TenantId || file.ContentRef.Id.ToString("D") != identity.AttachmentId ||
-            file.ContentRef.Version != identity.Version || file.ContentRef.Digest != identity.ContentSha256)
+            file.ContentRef.Version != identity.Version ||
+            identity.ContentSha256 is not null && file.ContentRef.Digest != identity.ContentSha256)
             throw Denied();
         var grant = await db.Database.SqlQuery<Grant>($"""
             SELECT can_add AS "CanAdd",can_retain AS "CanRetain",can_unlink AS "CanUnlink",
@@ -155,7 +156,8 @@ public sealed partial class ActFileReferenceOwnerV1(CP6Context db, IFileStore fi
         var download = identity.Action == "DOWNLOAD"
             ? new ActFileDownloadEvidenceV1(file.ContentRef.ByteLength.ToString(CultureInfo.InvariantCulture), DownloadMediaType, file.FileName)
             : null;
-        return new(identity, "ALLOW", scan, file.StateVersion, file.OriginalDigest, grant.PolicyVersion, grant.RetentionRef, download);
+        return new(identity, "ALLOW", file.ContentRef.Digest, scan, file.StateVersion, file.OriginalDigest,
+            grant.PolicyVersion, grant.RetentionRef, download);
     }
 
     // 合同保留不透明外部键。只有 Main 原生提供者在读取自己发行的键时解析本地 ID。

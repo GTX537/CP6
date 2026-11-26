@@ -6,11 +6,11 @@ using CP6.Core.Services.Erp;
 
 namespace CP6.Core.Services.Pub;
 
-public sealed record ActFileAnchorV1(string Kind, Guid Id, string Version);
+public sealed record ActFileAnchorV1(string Kind, Guid Id, string? Version);
 
 public sealed record ActFileIdentityV1(Guid TenantId, Guid SubjectId, string OperationKind, Guid OperationKey,
     string IntentDigest, ActFileAnchorV1 Primary, Guid? ActivityId, string? ActivityRevision,
-    string? ReferenceSetVersion, Guid? ReferenceId, string AttachmentId, string Version, string ContentSha256,
+    string? ReferenceSetVersion, Guid? ReferenceId, string AttachmentId, string Version, string? ContentSha256,
     string Purpose, string Action, string? CurrentAccessStamp);
 
 public sealed record ActFileProofRequestV1(string Mode, ActFileIdentityV1[] References);
@@ -25,7 +25,7 @@ public sealed record ActFileGuardStampV1(Guid StoreId, string Epoch, Guid Receip
 
 public sealed record ActFileDownloadEvidenceV1(string Bytes, string MediaType, string SafeFileName);
 
-public sealed record ActFileDecisionV1(ActFileIdentityV1 Identity, string Decision, string ScanState,
+public sealed record ActFileDecisionV1(ActFileIdentityV1 Identity, string Decision, string ContentSha256, string ScanState,
     string ScanVersion, string ScanEvidenceDigest, Guid PolicyVersion, Guid? RetentionDecisionRef,
     ActFileDownloadEvidenceV1? Download);
 
@@ -77,8 +77,8 @@ public static class ActFileReferenceV1
             if (value.SubjectId == Guid.Empty || value.OperationKey == Guid.Empty || !Opaque(value.AttachmentId) ||
                 value.Primary is not { Id: var anchor } || anchor == Guid.Empty ||
                 value.Primary.Kind is not ("Account" or "Contact" or "Lead" or "Opportunity") ||
-                !Opaque(value.Primary.Version) || !Key(value.OperationKind, 64) ||
-                !Digest(value.IntentDigest) || !Digest(value.ContentSha256) || !Opaque(value.Version))
+                (value.Primary.Version is not null && !Opaque(value.Primary.Version)) || !Key(value.OperationKind, 64) ||
+                !Digest(value.IntentDigest) || (value.ContentSha256 is not null && !Digest(value.ContentSha256)) || !Opaque(value.Version))
                 throw Invalid();
             if (value.Purpose != Purpose) throw Denied();
             if (!attachments.Add((value.AttachmentId, value.Version))) throw Invalid();

@@ -85,7 +85,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     public async Task ActFile_proof_is_atomic_binds_exact_identity_and_replays_original_after_revocation()
     {
         await using var fixture = await CreateActFilesAsync();
-        var input = fixture.Identity("ADD");
+        var initialIdentity = fixture.Identity("ADD");
+        var input = initialIdentity with { ContentSha256 = null, Primary = initialIdentity.Primary with { Version = null } };
         var retainFile = await fixture.AddFileAsync();
         var unlinkFile = await fixture.AddFileAsync();
         var retained = input with { Action = "RETAIN", ReferenceId = Guid.NewGuid(), AttachmentId = retainFile };
@@ -104,6 +105,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         }
         Assert.Equal(new[] { "ADD", "RETAIN", "REMOVE" }, signed.Decisions.Select(item => item.Identity.Action));
         Assert.All(signed.Decisions, d => Assert.NotEqual(Guid.Empty, d.PolicyVersion));
+        Assert.All(signed.Decisions, d => Assert.Equal(fixture.Input.Digest, d.ContentSha256));
         Assert.NotNull(signed.Decisions[1].RetentionDecisionRef);
         Assert.Equal("CLEAN", signed.Decisions[0].ScanState);
         Assert.Equal(1L, await fixture.ProofCountAsync());
@@ -143,7 +145,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var historical = request with { References = NewActOperation(retained, removed) };
         var historicalProof = await fixture.Owner.ProveAsync(fixture.Caller, historical, default);
         Assert.Equal(2, fixture.Verify(historicalProof, historical, current).Decisions.Length);
-        Assert.Equal(fixture.Bytes, (await fixture.Native.DownloadAsync(fixture.Input.FileId, input.Version, input.ContentSha256)).Bytes);
+        Assert.Equal(fixture.Bytes, (await fixture.Native.DownloadAsync(fixture.Input.FileId, input.Version, fixture.Input.Digest)).Bytes);
     }
 
     [CurrentPermissionPostgresFact]
@@ -376,9 +378,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         setup.EnableActFile(fixture.Crm, storage, key, pin.ExportPkcs8PrivateKeyPem());
         await using var app = await setup.Start();
         Assert.Equal("https", app.Origin.Scheme);
-        var identity = fixture.Identity("DOWNLOAD");
+        var identity = fixture.Identity("DOWNLOAD") with { ContentSha256 = null };
         var input = new ActFileProofRequestV1(GuardedStream, [identity]);
-        var nativeUrl = $"/api/file-content/owner-v1/{identity.AttachmentId}/download?version=1&digest={identity.ContentSha256}";
+        var nativeUrl = $"/api/file-content/owner-v1/{identity.AttachmentId}/download?version=1&digest={fixture.Input.Digest}";
 
         using (var bad = setup.Http("/proofs", input, bearer: false, route: route))
         using (var unauthenticated = await app.Send(bad))
@@ -414,6 +416,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             ExportClient, await fixture.ReadCrmGuardAsync());
         var verifiedDownload = Assert.Single(verified.Decisions);
         Assert.Equal(identity, verifiedDownload.Identity);
+        Assert.Equal(fixture.Input.Digest, verifiedDownload.ContentSha256);
         Assert.Equal(fixture.Bytes.Length.ToString(System.Globalization.CultureInfo.InvariantCulture), verifiedDownload.Download?.Bytes);
         Assert.Equal(fixture.Input.FileName, verifiedDownload.Download?.SafeFileName);
         using (var download = setup.Http("/downloads", new ActFileDownloadRequestV1(identity, proof), route: route))
@@ -422,7 +425,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             Assert.Equal(HttpStatusCode.OK, bytes.StatusCode);
             Assert.Equal("attachment", bytes.Content.Headers.ContentDisposition?.DispositionType);
             Assert.Equal(verifiedDownload.Download?.MediaType, bytes.Content.Headers.ContentType?.MediaType);
-            Assert.Equal(identity.ContentSha256, Assert.Single(bytes.Headers.GetValues("X-Content-SHA256")));
+            Assert.Equal(verifiedDownload.ContentSha256, Assert.Single(bytes.Headers.GetValues("X-Content-SHA256")));
             Assert.Equal(fixture.Bytes, await bytes.Content.ReadAsByteArrayAsync());
         }
         using var stream = setup.Http("/downloads", new ActFileDownloadRequestV1(identity, proof), route: route);

@@ -53,7 +53,7 @@ public sealed partial class ActFileReferenceOwnerV1
                     deadline.CancelAfter(remaining < MaxWriteTime ? remaining : MaxWriteTime);
                     var count = Math.Min(SliceSize, bytes.Length - offset);
                     // 每批写入并刷新时持有本地来源和 CRM guard，批间释放，让等候的撤权先取得排他锁。
-                    await write(new(bytes.AsMemory(offset, count), offset, bytes.Length, identity.ContentSha256,
+                    await write(new(bytes.AsMemory(offset, count), offset, bytes.Length, decision.ContentSha256,
                         metadata.SafeFileName, metadata.MediaType), deadline.Token);
                     offset += count;
                     return true;
