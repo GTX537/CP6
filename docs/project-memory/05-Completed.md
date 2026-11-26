@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP03-22 商机资格、阶段与销售决定](https://github.com/GTX537/CP6.CRM/blob/4d2a188d907760a90a67c265ab57fd0f1b252490/docs/development/evidence/WP03-22/DELIVERY.md)（DONE），核对时间 `2026-11-26T08:33:20.705173+00:00`。
+- [WP10-47 既有物料、UOM与容量维度原Owner目录适配](../development/evidence/WP10-47/DELIVERY.md)（DONE），核对时间 `2026-11-26T10:00:04.7465523+00:00`。
 
 ### 已关闭目标
 

@@ -177642,6 +177642,11 @@
       "at": "2026-11-26T08:33:20.705173+00:00",
       "evidence": "https://github.com/GTX537/CP6.CRM/blob/4d2a188d907760a90a67c265ab57fd0f1b252490/docs/development/evidence/WP03-22/DELIVERY.md",
       "change": "WP03-22 商机资格、阶段与销售决定按 CRM #265 的已采用树登记卡级 DONE。有效时间 2269.698 秒取执行侧正式领取至最终读回，累计 248584.632 秒。CRM-OPP-01 保持开放，原 AC 剩余出口见本卡交付范围。"
+    },
+    {
+      "at": "2026-11-26T10:18:11.875579+00:00",
+      "evidence": "docs/development/evidence/WP10-47/DELIVERY.md",
+      "change": "WP10-47 原 Owner 单位转换、量纲与容量目录适配登记同 PR 卡级 DONE，在 #1334 合并至受保护 main 并核对包含性后生效。执行侧和总控复跑各 210 项通过。消费者正式采用与工程映射确认按责任卡核销，WMS-MASTER-01 和 WMS-STOCK-01 保持开放。"
     }
   ],
   "implementation_assessment": {
@@ -210590,7 +210595,8 @@
       },
       "remaining_scope": [
         "按 WP04-33 缺口归属决定产出经营产品法人归属和适用域。缺证时 WP04-33 返回 legalEntityApplicability = REQUIRED_FENCED。",
-        "按 WP04-33 缺口归属决定产出双 Owner 旧映射确认与历史。未证旧映射在 WP04-33 返回 legacyMappingKnowledge = UNKNOWN。"
+        "按 WP04-33 缺口归属决定产出双 Owner 旧映射确认与历史。未证旧映射在 WP04-33 返回 legacyMappingKnowledge = UNKNOWN。",
+        "按 WP10-47 出口承接工程产品与经营料号的双 Owner 映射确认，并在原工程序列中核对映射历史与当前授权。"
       ]
     },
     {
@@ -211475,7 +211481,10 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
-      }
+      },
+      "remaining_scope": [
+        "按 WP10-47 出口核验版本化 BOM 对经营料号、原单位与原 Owner 批准换算的正式采用，覆盖工程冻结前的引用。"
+      ]
     },
     {
       "id": "WP05-10",
@@ -213638,7 +213647,10 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
-      }
+      },
+      "remaining_scope": [
+        "按 WP10-47 出口核验 CFG 配置替代规则正式采用原 Owner 的单位比例与批准换算。"
+      ]
     },
     {
       "id": "WP05-40",
@@ -217840,7 +217852,10 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
-      }
+      },
+      "remaining_scope": [
+        "按 WP10-47 出口核验 MASTER 正式启用类型化容量规则时采用原仓库字典的容量指标和当前控制。"
+      ]
     },
     {
       "id": "WP10-02",
@@ -218063,7 +218078,10 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
-      }
+      },
+      "remaining_scope": [
+        "按 WP10-47 出口在 Stock 新过账及占用评估的效果点核验原身份、批准换算、容量规则及当前资格的正式采用。"
+      ]
     },
     {
       "id": "WP10-04",
@@ -221526,14 +221544,51 @@
         "file:Main:CP6.Tests/WmsBinConsumerRetryFenceTests.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP10.md",
       "card_anchor": "wp10-47",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "CP6-EXEC",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp10-47",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-26T08:52:06.342777Z",
+        "baseline_sha": "7517f87644e8ed9d08473612be5bd5f8e85390f2",
+        "entry_evidence": "docs/development/evidence/WP10-47/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/WP10-47/DELIVERY.md",
+        "dispatch_scope": "在 DEV-1 交付并验收原 Owner 批准的单位转换、量纲、容量指标及当前控制的只读目录适配，供 BOM、CFG、Stock 和 MASTER 按准确版本采用。",
+        "worker_start_received": true
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP10-47/DELIVERY.md",
+          "source_sha": "333059b5e18831e7b7c8e828c147fd5a6dffa2f4",
+          "observed_at": "2026-11-26T09:38:06.2769919+00:00",
+          "environment": "LAPTOP-3QQ44FJS 的 DEV-1，.NET SDK 10.0.404，Release，PostgreSQL 18.6 回环隔离 127.0.0.1:55466，Main HTTP 与合成数据。",
+          "command": "& 'D:/CP6-test-artifacts/WP10-47/exec-20261126T085436Z/run-validation.ps1' -Label verified -Port 55466 -BuildDirectory build-final -Restore",
+          "result": "PASS",
+          "scope": "执行侧最终回归 210 通过、0 失败、0 跳过。覆盖原 Owner 单位转换与容量取证、历史精度、租户隔离、当前权限撤销、并发及原键恢复。9 个受测文件的 blob 与受测源码提交一致。TRX SHA-256 为 c2df51ad6eaa91f4f736983bd1ff45f2e6c3392cf656e86ddc5aa1a7ff651cf3。"
+        },
+        {
+          "path": "docs/development/evidence/WP10-47/DELIVERY.md",
+          "source_sha": "13b9318e298d60ded853280a5a28bcd2bea5bf6a",
+          "observed_at": "2026-11-26T10:00:04.7465523+00:00",
+          "environment": "总控在独立制品目录使用 .NET SDK 10.0.404 全新构建 Release，PostgreSQL 18.6 回环隔离 127.0.0.1:55467，Main HTTP 与合成数据。",
+          "command": "& 'D:/CP6-test-artifacts/WP10-47/coord-verify-20261126/run-validation.ps1' -Label claude-verify -Port 55467 -BuildDirectory build -Restore",
+          "result": "PASS",
+          "scope": "总控对交付候选直接使用同一复验脚本独立锁定还原、构建并复跑，210 通过、0 失败、0 跳过，用例名单与执行侧一致。TRX SHA-256 为 cb295ae9fe7a338666d758e6a09d74d950e7082f7ba596fe85f314629fca1cc8。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP10-47/DELIVERY.md",
+        "source_sha": "13b9318e298d60ded853280a5a28bcd2bea5bf6a",
+        "remote_main_sha": "13b9318e298d60ded853280a5a28bcd2bea5bf6a",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1334",
+        "scope": "WP10-47 的 Main 原 Owner 单位转换、量纲、容量指标和当前控制目录适配。remote_main_sha 固定须由同 PR 纳入主线的已验收交付祖先。卡级 DONE 在 #1334 正常合并至受保护 main 并核对主线包含性后生效，实际合并 SHA 以 PR 回执为准。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02-10公共Main原生PostgreSQL事务/最终授权fence由根统一加入；精确值/身份保原Owner协议。",
@@ -221591,6 +221646,43 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
+      },
+      "remaining_scope": [
+        "BOM 批准转换采用、CFG 单位比例采用、MASTER 容量规则启用和 Stock 新过账分别由 WP05-09、WP05-39、WP10-01、WP10-03 承接，按各卡原 AC 核销。",
+        "工程产品与经营料号的双 Owner 映射确认归 WP05-02。",
+        "真实企业原件及正式配置保持 UNPROVEN。"
+      ],
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP10-47/DELIVERY.md",
+        "started_at": "2026-11-26T08:49:34.4207521Z",
+        "official_started_at": "2026-11-26T08:52:06.342777Z",
+        "technical_verified_at": "2026-11-26T09:38:06.2769919+00:00",
+        "verified_at": "2026-11-26T10:00:04.7465523+00:00",
+        "ledger_candidate_at": "2026-11-26T10:18:11.875579+00:00",
+        "effective_seconds": 3037.403,
+        "accounting_evidence": {
+          "path": "docs/development/evidence/WP10-47/DELIVERY.md#有效时间与交接"
+        },
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "S01-01",
+          "S01-02",
+          "S01-07",
+          "S01-09",
+          "S02-00",
+          "WP02-01",
+          "WP02-02",
+          "WP02-03",
+          "WP02-07",
+          "WP02-10",
+          "WP02-13",
+          "WP02-13b"
+        ],
+        "new_product_execution": true
       }
     },
     {
@@ -305631,7 +305723,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 248584.632,
+      "effective_seconds": 251622.035,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -305703,7 +305795,8 @@
         "WP08-16",
         "WP10-48",
         "WP04-33",
-        "WP03-22"
+        "WP03-22",
+        "WP10-47"
       ],
       "closed_targets": [
         "OA-DEF-01",

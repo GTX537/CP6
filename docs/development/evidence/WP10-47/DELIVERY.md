@@ -1,5 +1,7 @@
 # WP10-47 既有物料、UOM 与容量维度原 Owner 目录适配
 
+同 PR 卡级 DONE 在受保护 `main` 正常合并并核对主线包含性后生效。台账锚点为已验收交付候选 `13b9318e298d60ded853280a5a28bcd2bea5bf6a`，树为 `dda259b340a001453d6e1b441c855acc640d12a1`。实际合并 SHA 以 PR 回执为准。 [WP10-47 PR #1334](https://github.com/GTX537/CP6/pull/1334)
+
 ## 固定基线与准入
 
 派工基线为 `origin/main@7517f87644e8ed9d08473612be5bd5f8e85390f2`，树为 `afe987f18f1394986ab7f9e42f010010914cf017`。总控决定授权 CP6-EXEC 在 DEV-1 领取 `codex/wp10-47`，席位登记时间为 `2026-11-26T08:52:06.342777Z`。开工核对远端 Main 版本、同名分支和 PR 查询。 [派工卡](<D:/CP6-test-artifacts/WP10-47/WP10-47-CARD-20261126.md>) · [总控决定](<D:/CP6-test-artifacts/COORD/DECISION-20261126-two-lanes-and-wp04-33.md>)
@@ -40,7 +42,7 @@ W310 已核销旧身份读取。W155-01 #575 提供原时间 UOM，W187-01 提�
 
 ## 受测提交与验证原件
 
-受测提交为 `333059b5e18831e7b7c8e828c147fd5a6dffa2f4`，树为 `be645fb93c0fe04c3fabd8f75c2b63df976f0a30`。完工前将 9 个受测路径的 Git blob 与工作文件、索引及受测树逐一比对。最终候选包含这个受测提交及本报告提交。前滚迁移为无。
+执行侧受测提交为 `333059b5e18831e7b7c8e828c147fd5a6dffa2f4`，树为 `be645fb93c0fe04c3fabd8f75c2b63df976f0a30`。完工前将 9 个受测路径的 Git blob 与工作文件、索引及受测树逐一比对。交付候选在该受测源码之上仅追加首版交付报告。前滚迁移为无。
 
 在 LAPTOP-3QQ44FJS 的 DEV-1 使用 .NET SDK 10.0.404 锁定还原及 Release 构建，PostgreSQL 18.6 绑定 `127.0.0.1:55466`。原 Owner 读写、当前授权、迁移回放和真实 Main HTTP 均使用隔离夹具的合成数据。最终 210 项通过、0 失败、0 跳过。PostgreSQL 195 项包含本卡 9 项、经营产品 17 项、BOM 13 项、UOM 28 项、仓库与库位 90 项、库存身份/直移/占用 34 项、库位重试 4 项。另有 15 项既有库位内存组件回归。
 
@@ -63,9 +65,19 @@ HTTP 红测的 5 项均得到缺失入口的 404。首次扩展回归暴露三�
 
 6 个本卡实例的 `pg_ctl status` 均返回 3 和 `no server running`，PID 文件缺席，关联回环监听与本卡残留进程均为 0。 [全部夹具停机读回](<D:/CP6-test-artifacts/WP10-47/exec-20261126T085436Z/all-fixtures-stop-readback.json>)
 
+## 总控独立复跑
+
+总控直接针对交付候选 `13b9318e298d60ded853280a5a28bcd2bea5bf6a`，在独立制品目录使用执行侧同一复验脚本锁定还原并全新构建 Release。复跑使用 .NET SDK 10.0.404、回环隔离的 PostgreSQL 18.6（`127.0.0.1:55467`）及合成数据，还原、构建和测试均退出 0。结果为 **210 通过、0 失败、0 跳过**，用例名单与执行侧一致。TRX SHA-256 为 `cb295ae9fe7a338666d758e6a09d74d950e7082f7ba596fe85f314629fca1cc8`。 [复验脚本](<D:/CP6-test-artifacts/WP10-47/coord-verify-20261126/run-validation.ps1>) · [复跑记录](<D:/CP6-test-artifacts/WP10-47/coord-verify-20261126/validation-claude-verify.json>) · [复跑 TRX](<D:/CP6-test-artifacts/WP10-47/coord-verify-20261126/results-claude-verify/wp10-47-claude-verify.trx>)
+
+## 已知小项
+
+仓库策略原件的 JSON 解析失败时归为 `UNKNOWN`。完整性损坏与来源未知目前共用这一状态，后续可分别报告两种原因。
+
 ## 有效时间与交接
 
-执行记录自 `2026-11-26T08:49:34.4207521Z` 起算，截至 `2026-11-26T09:39:14.1049483Z` 为 **2979.684 秒**，在 M 卡 14,400 秒预算内。DEV-1 由 `CP6:WP10-47` 占用，Owner 为 CP6-EXEC。分支 `codex/wp10-47` 保存在本地，工作区清洁，席位保留给总控复核。
+执行记录自 `2026-11-26T08:49:34.4207521Z` 起算，首版报告快照为 **2979.684 秒**。执行侧截至 `2026-11-26T09:40:11.8234485Z` 的最终读回为 **3037.403 秒**，以该数单次入账。M 卡预算为 14,400 秒，强制拆分线为 21,600 秒，本卡拆分 0 张。计划累计有效时间由 248584.632 秒增至 251622.035 秒。 [执行侧最终读回](<D:/CP6-test-artifacts/WP10-47/exec-20261126T085436Z/candidate-readback.json>)
 
-- `UNPROVEN`。企业真实原件配置、后续消费者正式采用及候选远端采用。
+台账追加在 DEV-1 的本地分支 `codex/wp10-47`，远端分支在本次交接时指向已验收交付候选。DEV-1 继续登记 `CP6:WP10-47` 为 `active`，Owner 为 CP6-EXEC，席位保留给总控处理同一 PR。
+
+- `UNPROVEN`。企业真实原件及正式配置、后续消费者正式采用和受保护主线采用。
 - `NOT_RUN`。两个完整目标的原 AC、正式环境冒烟、部署、Actions 与 SQL Server。前端为 `NOT_RUN`，本卡交付面为后端接口和回归夹具。
