@@ -306131,7 +306131,7 @@
       "id": "CP6-CARD-EXECUTION-20261117",
       "path": "docs/development/planning/20261117-card-execution.md",
       "rules": "AGENTS.md",
-      "mode": "SINGLE_CHAT_SERIAL",
+      "mode": "DUAL_LANE_SERIAL",
       "original_task_count": 375,
       "original_target_count": 125,
       "accepted_designs_unchanged": true,
