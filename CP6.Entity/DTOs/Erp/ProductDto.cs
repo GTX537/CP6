@@ -279,6 +279,8 @@ public class ProductCoProductDto
 /// <summary>MSBBPA060 製品マスタ一覧 用 DTO（軽量）</summary>
 public class ProductListItemDto
 {
+    /// <summary>经营产品原身份，用于按准确对象查询工程映射。</summary>
+    public Guid ProductId { get; set; }
     public string ProductCd { get; set; } = string.Empty;
     public string? SetProductCd { get; set; }
     public string? SetProductName { get; set; }

@@ -9,6 +9,17 @@ namespace CP6.Core.Services.Erp;
 // The original ERP product Owner participates in the same Main transaction with its own explicit action.
 internal static class CommercialEngineeringMappingParticipantV1
 {
+    internal static async Task HoldLegalEntity(CP6Context db, EngineeringMappingLegalEntityV1 legal, CancellationToken ct)
+    {
+        var selected = Revision(legal.Version);
+        var revision = await db.Database.SqlQuery<long>($"""
+            SELECT revision AS "Value" FROM main_bp.scopes
+            WHERE tenant_id={db.CurrentTenantId} AND legal_entity_key={legal.Key} AND enabled FOR SHARE
+            """).SingleOrDefaultAsync(ct);
+        if (revision == 0) throw Error("ENGINEERING_LEGAL_ENTITY_UNPROVEN");
+        if (revision != selected) throw Error("ENGINEERING_LEGAL_ENTITY_CHANGED", 412);
+    }
+
     internal static async Task<EngineeringOwnerConfirmationV1> Confirm(CP6Context db, OperationsAccessV1 root,
         EngineeringSourceRefV1 reference, CancellationToken ct)
     {

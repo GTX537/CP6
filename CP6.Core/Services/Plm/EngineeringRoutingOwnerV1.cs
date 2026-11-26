@@ -100,7 +100,7 @@ public sealed partial class EngineeringRoutingOwnerV1(CP6Context db, OperationsO
             var legacy = previous?.Legacy;
             if (command.LegacyMappingRef != null)
             {
-                legacy = await Legacy(a, command.LegacyMappingRef, command.Body.ProductRef, command.Body.SiteRef, token);
+                legacy = await Legacy(a, command.LegacyMappingRef, command.Body.ProductRef, command.Body.SiteRef, command.Body.RevisionOrigin, token);
                 if (legacy.Digest != command.LegacyDigest) throw Error("ROUTING_LEGACY_CHANGED", 412);
             }
             var originalIds = legacy?.Rows.Select(x => x.GetProperty("Id").GetGuid()).ToHashSet() ?? [];

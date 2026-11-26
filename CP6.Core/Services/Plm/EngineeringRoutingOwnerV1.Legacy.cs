@@ -23,15 +23,16 @@ public sealed partial class EngineeringRoutingOwnerV1
     }
     public Task<EngineeringRoutingLegacyV1> LegacyPreviewAsync(EngineeringMappingRefV1 reference, CancellationToken ct = default)
         => Authority.ExecuteAsync(OperationsOwnerV1.EngineeringRouting, "query", false,
-            (a, token) => Legacy(a, reference, null, null, token), ct);
+            (a, token) => Legacy(a, reference, null, null, null, token), ct);
 
     private sealed class LegacyRow { public string Json { get; init; } = ""; }
     private async Task<EngineeringRoutingLegacyV1> Legacy(OperationsAccessV1 root, EngineeringMappingRefV1 reference,
-        EngineeringProductRefV1? product, EngineeringSourceRefV1? site, CancellationToken ct)
+        EngineeringProductRefV1? product, EngineeringSourceRefV1? site, EngineeringRevisionRefV1? revision, CancellationToken ct)
     {
         var a = await root.SourceAsync(OperationsOwnerV1.EngineeringProduct, ct);
         var store = new EngineeringProductStoreV1(db); await store.Fence(false, ct);
         var mapping = await EngineeringProductMappingService.CurrentExact(a, store, reference, ct);
+        EngineeringProductMappingService.RequireUsageScope(mapping, site, revision);
         if (product != null && mapping.Candidate.EngineeringRef != product || site != null && mapping.Candidate.SiteRef != site)
             throw Error("ROUTING_LEGACY_MAPPING_MISMATCH", 422);
         var business = mapping.Candidate.BusinessRef!; var products = await root.SourceAsync(OperationsOwnerV1.Product, ct);
