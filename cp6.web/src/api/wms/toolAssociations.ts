@@ -14,7 +14,10 @@ const root = '/tool-associations/owner-v1', tools = '/wms/specials/v1/tools', id
 export const associationEtag = (view: ToolAssociationView) => `"tool-association:${view.subject.proposalId}:${view.revision}"`
 export const toolAssociationApi = {
   scope: toolInstanceApi.scope,
-  candidates: (physical: string, engineeringNo: string, revision: number) => http.get<any, EngineeringEnvelope<ToolAssociationCandidate[]>>(`${tools}/${id(physical)}/engineering-candidates`, { params: { engineeringNo, revision } }),
+  candidates: (physical: string, engineeringNo: string, revision: number, after?: string) =>
+    http.get<any, EngineeringEnvelope<ToolAssociationCandidate[]> & { nextCursor: string | null }>(
+      `${tools}/${id(physical)}/engineering-candidates`, { params: { engineeringNo, revision, pageSize: 50, after } },
+    ),
   list: (physical: string, page = 1) => http.get<any, EngineeringEnvelope<ToolAssociationView[]>>(`${tools}/${id(physical)}/engineering-links`, { params: { page } }),
   read: (proposal: string, version?: string) => http.get<any, EngineeringEnvelope<ToolAssociationView>>(`${root}/${id(proposal)}`, { params: { version } }),
   propose: (physical: string, etag: string, body: ToolAssociationProposal) => http.post<any, EngineeringEnvelope<ToolAssociationResult>>(`${tools}/${id(physical)}/engineering-links`, body, { headers: { 'If-Match': etag } }),

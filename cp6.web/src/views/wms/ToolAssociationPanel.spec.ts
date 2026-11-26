@@ -38,9 +38,45 @@ beforeEach(() => {
 })
 afterEach(() => { view?.unmount(); view = undefined })
 it('chooses exact No/Rev and submits original technical and physical references with native If-Match', async () => {
-  await prepare(); await submit(); expect(api.candidates).toHaveBeenCalledWith(id, candidate.number, 7)
+  await prepare(); await submit(); expect(api.candidates).toHaveBeenCalledWith(id, candidate.number, 7, undefined)
   expect(api.propose.mock.calls[0]!.slice(0, 2)).toEqual([id, selected.etag]); expect(api.propose.mock.calls[0]![2]).toMatchObject({ technical, physical: reference, scope: { effectiveFrom: '2026-10-27T00:00:00Z', effectiveTo: null }, supersedes: null })
   expect(pendingToolAssociation(scope)).toBeNull(); await submit(); expect(api.propose).toHaveBeenCalledTimes(1); expect(view!.text()).toContain('技术批准尚未取得')
+})
+it('continues a qualified page explicitly and selects the exact source from the next page', async () => {
+  const second = {
+    ...candidate,
+    baseCode: 'BASE-FULL-SECOND',
+    technical: { ...technical, id: proposalId, version: '11', digest: 'f'.repeat(64) },
+    native: { ...candidate.native, id: proposalId, version: '8' },
+  }
+  api.candidates.mockResolvedValueOnce({ ...ok([candidate]), nextCursor: technical.id })
+    .mockResolvedValueOnce({ ...ok([second]), nextCursor: null })
+  await prepare()
+  await click('读取下一批工程候选')
+  expect(api.candidates).toHaveBeenLastCalledWith(id, candidate.number, 7, technical.id)
+
+  const source = view!.get('select[aria-label="技术来源"]')
+  expect((source.element as HTMLSelectElement).value).toBe('')
+  expect(source.text()).not.toContain('技术版本 9')
+  expect(source.text()).toContain('BASE-FULL-SECOND / Exact raw e\u0301 / Rev 7 / 技术版本 11 · 草稿')
+  expect(view!.findAll('button').some(b => b.text() === '读取下一批工程候选')).toBe(false)
+  await submit()
+  expect(api.propose).not.toHaveBeenCalled()
+
+  await source.setValue(proposalId)
+  await submit()
+  expect(api.propose.mock.calls[0]![2]).toMatchObject({ technical: second.technical, physical: reference })
+})
+it('clears candidates and continuation on an exact query change even when the query changes back', async () => {
+  api.candidates.mockResolvedValueOnce({ ...ok([candidate]), nextCursor: technical.id })
+  await prepare()
+  const revision = view!.get('input[aria-label="业务修订号"]')
+  await revision.setValue('8')
+  await revision.setValue('7')
+  expect(view!.get('select[aria-label="技术来源"]').findAll('option')).toHaveLength(1)
+  expect(view!.findAll('button').some(b => b.text() === '读取下一批工程候选')).toBe(false)
+  await submit()
+  expect(api.propose).not.toHaveBeenCalled()
 })
 it('does not substitute a newer candidate after a query changes', async () => {
   await prepare(); await view!.get('input[aria-label="业务修订号"]').setValue('8'); await submit(); expect(api.propose).not.toHaveBeenCalled(); expect(view!.find('select').text()).not.toContain('技术版本 9')
