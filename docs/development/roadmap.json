@@ -18661,7 +18661,55 @@
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "OPEN_GAPS",
+        "reviewed_at": "2026-11-26T14:32:14.071615+00:00",
+        "report": "docs/development/evidence/WP05-02/DELIVERY.md",
+        "coverage_cards": [
+          "WP05-02",
+          "WP05-10"
+        ],
+        "gaps": [
+          {
+            "owner_task_id": "WP05-11",
+            "source_cases": [
+              "AC-PLM-FB01-025"
+            ],
+            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。BOM 和工艺依据由 WP05-09、WP05-08 提供，冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
+          },
+          {
+            "owner_task_id": "WP05-12",
+            "source_cases": [
+              "AC-PLM-FB01-026"
+            ],
+            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。版本化工艺由 WP05-08 提供，完备性检查由 WP05-11 提供。"
+          },
+          {
+            "owner_task_id": "WP05-32",
+            "source_cases": [
+              "AC-PLM-FB01-027"
+            ],
+            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。工具规格与实例证据、工艺引用、检查和冻结分别由 WP05-06/08/11/12 提供，正式后验用途按 WP05-42 验证。"
+          },
+          {
+            "owner_task_id": "WP05-10",
+            "source_cases": [
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-POS",
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-NEG"
+            ],
+            "gap": "核验配置及逐输出输入和生产工序关系的完整性、主产品对应与变更后的旧预览失效。"
+          },
+          {
+            "owner_task_id": "WP05-12",
+            "source_cases": [
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-POS",
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-NEG"
+            ],
+            "gap": "在工程冻结事务内绑定准确的逐输出关系集与基线，拒绝错配及陈旧预览。"
+          }
+        ]
+      }
     },
     {
       "id": "ENG-REV-01",
@@ -19964,7 +20012,56 @@
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "OPEN_GAPS",
+        "reviewed_at": "2026-11-26T14:32:14.071615+00:00",
+        "report": "docs/development/evidence/WP05-02/DELIVERY.md",
+        "coverage_cards": [
+          "WP05-03",
+          "WP05-11",
+          "WP05-12"
+        ],
+        "gaps": [
+          {
+            "owner_task_id": "WP05-11",
+            "source_cases": [
+              "AC-PLM-FB01-025"
+            ],
+            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。BOM 和工艺依据由 WP05-09、WP05-08 提供，冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
+          },
+          {
+            "owner_task_id": "WP05-12",
+            "source_cases": [
+              "AC-PLM-FB01-026"
+            ],
+            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。版本化工艺由 WP05-08 提供，完备性检查由 WP05-11 提供。"
+          },
+          {
+            "owner_task_id": "WP05-32",
+            "source_cases": [
+              "AC-PLM-FB01-027"
+            ],
+            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。工具规格与实例证据、工艺引用、检查和冻结分别由 WP05-06/08/11/12 提供，正式后验用途按 WP05-42 验证。"
+          },
+          {
+            "owner_task_id": "WP05-10",
+            "source_cases": [
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-POS",
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-NEG"
+            ],
+            "gap": "核验配置及逐输出输入和生产工序关系的完整性、主产品对应与变更后的旧预览失效。"
+          },
+          {
+            "owner_task_id": "WP05-12",
+            "source_cases": [
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-POS",
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-NEG"
+            ],
+            "gap": "在工程冻结事务内绑定准确的逐输出关系集与基线，拒绝错配及陈旧预览。"
+          }
+        ]
+      }
     },
     {
       "id": "ENG-BOM-01",
@@ -21269,7 +21366,55 @@
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "OPEN_GAPS",
+        "reviewed_at": "2026-11-26T14:32:14.071615+00:00",
+        "report": "docs/development/evidence/WP05-02/DELIVERY.md",
+        "coverage_cards": [
+          "WP05-09",
+          "WP05-10"
+        ],
+        "gaps": [
+          {
+            "owner_task_id": "WP05-11",
+            "source_cases": [
+              "AC-PLM-FB01-025"
+            ],
+            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。BOM 和工艺依据由 WP05-09、WP05-08 提供，冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
+          },
+          {
+            "owner_task_id": "WP05-12",
+            "source_cases": [
+              "AC-PLM-FB01-026"
+            ],
+            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。版本化工艺由 WP05-08 提供，完备性检查由 WP05-11 提供。"
+          },
+          {
+            "owner_task_id": "WP05-32",
+            "source_cases": [
+              "AC-PLM-FB01-027"
+            ],
+            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。工具规格与实例证据、工艺引用、检查和冻结分别由 WP05-06/08/11/12 提供，正式后验用途按 WP05-42 验证。"
+          },
+          {
+            "owner_task_id": "WP05-10",
+            "source_cases": [
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-POS",
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-NEG"
+            ],
+            "gap": "核验配置及逐输出输入和生产工序关系的完整性、主产品对应与变更后的旧预览失效。"
+          },
+          {
+            "owner_task_id": "WP05-12",
+            "source_cases": [
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-POS",
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-NEG"
+            ],
+            "gap": "在工程冻结事务内绑定准确的逐输出关系集与基线，拒绝错配及陈旧预览。"
+          }
+        ]
+      }
     },
     {
       "id": "ENG-ROU-01",
@@ -22431,7 +22576,55 @@
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "OPEN_GAPS",
+        "reviewed_at": "2026-11-26T14:32:14.071615+00:00",
+        "report": "docs/development/evidence/WP05-02/DELIVERY.md",
+        "coverage_cards": [
+          "WP05-08",
+          "WP05-10"
+        ],
+        "gaps": [
+          {
+            "owner_task_id": "WP05-11",
+            "source_cases": [
+              "AC-PLM-FB01-025"
+            ],
+            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。BOM 和工艺依据由 WP05-09、WP05-08 提供，冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
+          },
+          {
+            "owner_task_id": "WP05-12",
+            "source_cases": [
+              "AC-PLM-FB01-026"
+            ],
+            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。版本化工艺由 WP05-08 提供，完备性检查由 WP05-11 提供。"
+          },
+          {
+            "owner_task_id": "WP05-32",
+            "source_cases": [
+              "AC-PLM-FB01-027"
+            ],
+            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。工具规格与实例证据、工艺引用、检查和冻结分别由 WP05-06/08/11/12 提供，正式后验用途按 WP05-42 验证。"
+          },
+          {
+            "owner_task_id": "WP05-10",
+            "source_cases": [
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-POS",
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-NEG"
+            ],
+            "gap": "核验配置及逐输出输入和生产工序关系的完整性、主产品对应与变更后的旧预览失效。"
+          },
+          {
+            "owner_task_id": "WP05-12",
+            "source_cases": [
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-POS",
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-NEG"
+            ],
+            "gap": "在工程冻结事务内绑定准确的逐输出关系集与基线，拒绝错配及陈旧预览。"
+          }
+        ]
+      }
     },
     {
       "id": "PLM-REQ-01",
@@ -24722,7 +24915,39 @@
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "OPEN_GAPS",
+        "reviewed_at": "2026-11-26T14:32:14.071615+00:00",
+        "report": "docs/development/evidence/WP05-02/DELIVERY.md",
+        "coverage_cards": [
+          "WP05-16",
+          "WP05-17"
+        ],
+        "gaps": [
+          {
+            "owner_task_id": "WP05-11",
+            "source_cases": [
+              "AC-PLM-FB01-025"
+            ],
+            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。BOM 和工艺依据由 WP05-09、WP05-08 提供，冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
+          },
+          {
+            "owner_task_id": "WP05-12",
+            "source_cases": [
+              "AC-PLM-FB01-026"
+            ],
+            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。版本化工艺由 WP05-08 提供，完备性检查由 WP05-11 提供。"
+          },
+          {
+            "owner_task_id": "WP05-32",
+            "source_cases": [
+              "AC-PLM-FB01-027"
+            ],
+            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。工具规格与实例证据、工艺引用、检查和冻结分别由 WP05-06/08/11/12 提供，正式后验用途按 WP05-42 验证。"
+          }
+        ]
+      }
     },
     {
       "id": "PLM-VER-01",
@@ -30006,7 +30231,60 @@
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "OPEN_GAPS",
+        "reviewed_at": "2026-11-26T14:32:14.071615+00:00",
+        "report": "docs/development/evidence/WP05-02/DELIVERY.md",
+        "coverage_cards": [
+          "WP05-32",
+          "WP05-33",
+          "WP05-34",
+          "WP05-35",
+          "WP05-36",
+          "WP05-42",
+          "WP05-61"
+        ],
+        "gaps": [
+          {
+            "owner_task_id": "WP05-11",
+            "source_cases": [
+              "AC-PLM-FB01-025"
+            ],
+            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。BOM 和工艺依据由 WP05-09、WP05-08 提供，冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
+          },
+          {
+            "owner_task_id": "WP05-12",
+            "source_cases": [
+              "AC-PLM-FB01-026"
+            ],
+            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。版本化工艺由 WP05-08 提供，完备性检查由 WP05-11 提供。"
+          },
+          {
+            "owner_task_id": "WP05-32",
+            "source_cases": [
+              "AC-PLM-FB01-027"
+            ],
+            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。工具规格与实例证据、工艺引用、检查和冻结分别由 WP05-06/08/11/12 提供，正式后验用途按 WP05-42 验证。"
+          },
+          {
+            "owner_task_id": "WP05-10",
+            "source_cases": [
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-POS",
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-NEG"
+            ],
+            "gap": "核验配置及逐输出输入和生产工序关系的完整性、主产品对应与变更后的旧预览失效。"
+          },
+          {
+            "owner_task_id": "WP05-12",
+            "source_cases": [
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-POS",
+              "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-NEG"
+            ],
+            "gap": "在工程冻结事务内绑定准确的逐输出关系集与基线，拒绝错配及陈旧预览。"
+          }
+        ]
+      }
     },
     {
       "id": "PLM-FBK-01",
@@ -157696,7 +157974,41 @@
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "OPEN_GAPS",
+        "reviewed_at": "2026-11-26T14:32:14.071615+00:00",
+        "report": "docs/development/evidence/WP05-02/DELIVERY.md",
+        "coverage_cards": [
+          "WP05-04",
+          "WP05-05",
+          "WP05-06",
+          "WP05-07"
+        ],
+        "gaps": [
+          {
+            "owner_task_id": "WP05-11",
+            "source_cases": [
+              "AC-PLM-FB01-025"
+            ],
+            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。BOM 和工艺依据由 WP05-09、WP05-08 提供，冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
+          },
+          {
+            "owner_task_id": "WP05-12",
+            "source_cases": [
+              "AC-PLM-FB01-026"
+            ],
+            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。版本化工艺由 WP05-08 提供，完备性检查由 WP05-11 提供。"
+          },
+          {
+            "owner_task_id": "WP05-32",
+            "source_cases": [
+              "AC-PLM-FB01-027"
+            ],
+            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。工具规格与实例证据、工艺引用、检查和冻结分别由 WP05-06/08/11/12 提供，正式后验用途按 WP05-42 验证。"
+          }
+        ]
+      }
     },
     {
       "id": "ERP-FSC-01",
@@ -177883,6 +178195,11 @@
       "at": "2026-11-26T11:28:13.404808+00:00",
       "evidence": "https://github.com/GTX537/CP6.CRM/blob/9c071f20d044f9fb26dbf8f91e777a204326adee/docs/development/evidence/WP03-18/DELIVERY.md",
       "change": "WP03-18 活动内容、事实更正与 Void 按 CRM #267 的已采用树登记卡级 DONE。执行侧自正式领取至最终读回有效 53 分 59 秒（09:29:46–10:23:45 UTC），累计 254861.035 秒。CRM-ACT-01 保持开放。CRM-CON-01 原 C47 仍待同链复验，归 WP14-08 跨域撤权专项。"
+    },
+    {
+      "at": "2026-11-26T14:32:14.071615+00:00",
+      "evidence": "docs/development/evidence/WP05-02/DELIVERY.md",
+      "change": "WP05-02 工程身份、经营料号双 Owner 映射和适用域登记同 PR 卡级 DONE，在 #1338 合并至受保护 main 并核对包含性后生效。执行侧和总控独立复跑各 95 项 .NET、53 项 Vitest。三轮有效时间 7383.57 秒，累计 262244.605 秒。FB01 与多输出出口按原责任卡登记，ENG-PROD-01 及共享验收的目标继续开放。"
     }
   ],
   "implementation_assessment": {
@@ -210959,14 +211276,51 @@
         "file:Main:CP6.Entity/DomainModels/Erp/ProductCoProduct.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP05.md",
       "card_anchor": "wp05-02",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "CP6-EXEC",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp05-02",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-26T11:39:21.040776Z",
+        "baseline_sha": "bbaf7aaa39fbb6e079525a816170c57221f3d0b9",
+        "entry_evidence": "docs/development/evidence/WP05-02/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/WP05-02/DELIVERY.md",
+        "dispatch_scope": "在 DEV-1 沿原工程产品身份、原经营料号与准确 Site 交付法人及技术适用域、双 Owner 确认与历史。验收 WP04-33 读取与 WP10-47 工程序列出口。",
+        "worker_start_received": true
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP05-02/DELIVERY.md",
+          "source_sha": "93b2f40a41a13864dbfaf93305e3be39c1e4ed46",
+          "observed_at": "2026-11-26T14:09:35.7601562+00:00",
+          "environment": "执行侧 DEV-1，.NET SDK 10.0.404 Release，隔离 PostgreSQL 18.6 回环 127.0.0.1:55458，Main HTTP、合成数据及 Node v20.19.0。",
+          "command": "& 'D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/run-validation.ps1' -Label final -Port 55458 -BuildDirectory build-final -Restore，随后按本轮 run-frontend.ps1 -Label final 验证。",
+          "result": "PASS",
+          "scope": "最终产品树 b7bfa8bee106da658874e65d7b0154ff16efe769 的 .NET 95 通过、0 失败、0 跳过，Vitest 53 通过，vue-tsc 与 Vite 退出 0。涵盖双 Owner 确认、R1 与 R2、原经营入口、权限撤销、租户隔离、并发、原键恢复及前滚迁移。TRX SHA-256 22cc02114fdc548c9988be3a93a2417b27c1316816a0679ebc84f963990068bf。"
+        },
+        {
+          "path": "docs/development/evidence/WP05-02/DELIVERY.md",
+          "source_sha": "93b2f40a41a13864dbfaf93305e3be39c1e4ed46",
+          "observed_at": "2026-11-26T14:23:27.8579962+00:00",
+          "environment": "总控独立制品目录，.NET SDK 10.0.404 Release，隔离 PostgreSQL 18.6 回环 127.0.0.1:55489，Main HTTP、合成数据及直接 Node 前端验证。",
+          "command": "按 D:/CP6-test-artifacts/WP05-02/coord-verify-20261126T141231Z/validation-coord-verify.json 的 RestoreArgs、BuildArgs、TestArgs 及 frontend-coord-verify/validation.json 的参数独立执行。",
+          "result": "PASS",
+          "scope": "第三轮独立复核通过。最终产品树 b7bfa8bee106da658874e65d7b0154ff16efe769 的 .NET 95 通过、0 失败、0 跳过，Vitest 53 通过，vue-tsc 与 Vite 退出 0。与执行侧逐名一致，22 个实测文件 blob 匹配，迁移复审通过。TRX SHA-256 6ce142599f692e23950abe50d8cb379ca80ce959c54ccaabc674c1c7e1ccd175。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP05-02/DELIVERY.md",
+        "source_sha": "93b2f40a41a13864dbfaf93305e3be39c1e4ed46",
+        "remote_main_sha": "93b2f40a41a13864dbfaf93305e3be39c1e4ed46",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1338",
+        "scope": "交付工程产品身份、经营料号双 Owner 映射、适用域与历史，产出 WP04-33 两项事实和 WP10-47 工程序列所需映射。remote_main_sha 固定本 PR 须纳入的已验收产品祖先。卡级 DONE 在 #1338 正常合并至受保护 main 并核对主线包含性后生效，实际合并 SHA 以 PR 回执为准。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL租户存储/迁移与可信上下文；当前动作/读取授权和共同最终授权fence；Main Owner事务、原键结果及审计能力。",
@@ -211024,10 +211378,43 @@
         "new_product_validation": false
       },
       "remaining_scope": [
-        "按 WP04-33 缺口归属决定产出经营产品法人归属和适用域。缺证时 WP04-33 返回 legalEntityApplicability = REQUIRED_FENCED。",
-        "按 WP04-33 缺口归属决定产出双 Owner 旧映射确认与历史。未证旧映射在 WP04-33 返回 legacyMappingKnowledge = UNKNOWN。",
-        "按 WP10-47 出口承接工程产品与经营料号的双 Owner 映射确认，并在原工程序列中核对映射历史与当前授权。"
-      ]
+        "本卡已产出 WP04-33 所需的经营产品法人归属和适用域。组合查询按所选映射返回准确范围，缺证保留 legalEntityApplicability = REQUIRED_FENCED。",
+        "本卡已产出 WP04-33 所需的双 Owner 旧映射确认与历史。准确补证且有权时 legacyMappingKnowledge = KNOWN，未补证保持 UNKNOWN，原版本和原回执可回读。",
+        "本卡已产出 WP10-47 工程序列所需的工程产品与经营料号双 Owner 映射确认。BOM 和工艺路线按当前授权核对原映射历史及修订适用域。"
+      ],
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP05-02/DELIVERY.md",
+        "started_at": "2026-11-26T11:36:41.0000000+00:00",
+        "official_started_at": "2026-11-26T11:39:21.040776Z",
+        "technical_verified_at": "2026-11-26T14:09:35.7601562+00:00",
+        "verified_at": "2026-11-26T14:24:19.149627+00:00",
+        "ledger_candidate_at": "2026-11-26T14:32:14.071615+00:00",
+        "effective_seconds": 7383.57,
+        "accounting_evidence": {
+          "path": "docs/development/evidence/WP05-02/DELIVERY.md#有效时间与交接"
+        },
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "S01-01",
+          "S01-02",
+          "S01-07",
+          "S01-09",
+          "S02-00",
+          "WP02-01",
+          "WP02-02",
+          "WP02-03",
+          "WP02-07",
+          "WP02-10",
+          "WP02-13",
+          "WP02-13b",
+          "WP04-33"
+        ],
+        "new_product_execution": true
+      }
     },
     {
       "id": "WP05-03",
@@ -211640,7 +212027,10 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
-      }
+      },
+      "remaining_scope": [
+        "承接 AC-PLM-FB01-027 的准确工具规格与实例状态证据，支持技术冻结后按实际使用实例重新核对。"
+      ]
     },
     {
       "id": "WP05-07",
@@ -211818,7 +212208,10 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
-      }
+      },
+      "remaining_scope": [
+        "承接 AC-PLM-FB01-025/026/027 的工艺适用依据、必需工艺缺项和准确工具规格引用，供检查、冻结与现场用途联验。"
+      ]
     },
     {
       "id": "WP05-09",
@@ -211913,7 +212306,8 @@
         "new_product_validation": false
       },
       "remaining_scope": [
-        "按 WP10-47 出口核验版本化 BOM 对经营料号、原单位与原 Owner 批准换算的正式采用，覆盖工程冻结前的引用。"
+        "按 WP10-47 出口核验版本化 BOM 对经营料号、原单位与原 Owner 批准换算的正式采用，覆盖工程冻结前的引用。",
+        "承接 AC-PLM-FB01-025 的采购成品 BOM 不适用依据，供技术包检查保留原例外。"
       ]
     },
     {
@@ -212049,7 +212443,10 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
-      }
+      },
+      "remaining_scope": [
+        "承接 DR-PE-ENG-MULTI-OUTPUT-MANIFEST POS／NEG 的完整配置、逐输出输入与生产工序关系及旧预览失效，供 WP05-12 在冻结中绑定。"
+      ]
     },
     {
       "id": "WP05-11",
@@ -212180,7 +212577,10 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
-      }
+      },
+      "remaining_scope": [
+        "承接 AC-PLM-FB01-025 的技术包有据例外，采用 WP05-08/09 的工艺及 BOM 证据。为 AC-PLM-FB01-026/027 提供必需工艺与准确工具规格检查。"
+      ]
     },
     {
       "id": "WP05-12",
@@ -212269,7 +212669,10 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
-      }
+      },
+      "remaining_scope": [
+        "承接 AC-PLM-FB01-026 的自制工艺缺失冻结拒绝与 AC-PLM-FB01-027 的工具规格冻结。承接 DR-PE-ENG-MULTI-OUTPUT-MANIFEST POS／NEG 的基线绑定与错配拒绝。"
+      ]
     },
     {
       "id": "WP05-13",
@@ -213738,7 +214141,8 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "remaining_scope": [
-        "按 WP04-33 缺口归属决定产出正式制造资格的 REL 用途政策与准确使用授权。缺证时 WP04-33 返回 manufacturingApplicability = REQUIRED_FENCED。"
+        "按 WP04-33 缺口归属决定产出正式制造资格的 REL 用途政策与准确使用授权。缺证时 WP04-33 返回 manufacturingApplicability = REQUIRED_FENCED。",
+        "承接 AC-PLM-FB01-025 的后继用途准入与 AC-PLM-FB01-027 的现场实例门禁，采用 WP05-06/08/11/12 的原证据。"
       ]
     },
     {
@@ -214206,7 +214610,8 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "remaining_scope": [
-        "按 WP04-33 缺口归属决定产出正式制造资格的后验采用证据，关联 WP05-32 的 REL 用途政策与准确使用授权。"
+        "按 WP04-33 缺口归属决定产出正式制造资格的后验采用证据，关联 WP05-32 的 REL 用途政策与准确使用授权。",
+        "承接 AC-PLM-FB01-025/027 涉及正式用途时的专业后验条件和实际使用授权，沿 WP05-32 的用途政策验收。"
       ]
     },
     {
@@ -306153,7 +306558,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 254861.035,
+      "effective_seconds": 262244.605,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -306227,7 +306632,8 @@
         "WP04-33",
         "WP03-22",
         "WP10-47",
-        "WP03-18"
+        "WP03-18",
+        "WP05-02"
       ],
       "closed_targets": [
         "OA-DEF-01",

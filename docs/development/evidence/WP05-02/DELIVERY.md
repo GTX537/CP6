@@ -10,18 +10,19 @@
 | R1 源码候选 | `b1c4c4f84d3c168cf6df79e1b22f00c38db1e6e3` | `ec5ab7023b9ad7fe2b10722221c96bc88711ec7c` |
 | R1 交付与总控二轮复核对象 | `af52e9f69414957c738950abfe9b811a100b9fef` | `8bf5f5ea681a3873e0a7eb591832125bbc783564` |
 | R2 源码候选 | `aaa92e1e280772d5776902d1fd00181523d7075d` | `00329709d4c7312c2e4db65b109f2ca73532d839` |
-| R2 最终交付候选 | 最终验证原件的 `Head` | 同一原件的 `HeadTree` 和 `InputTree` |
+| 已推送的 R2 产品候选 | `93b2f40a41a13864dbfaf93305e3be39c1e4ed46` | `b7bfa8bee106da658874e65d7b0154ff16efe769` |
+| DEV-1 合入 `origin/main` | `90defdaaac3abaecc095ddfce171b3d48f04217d` | `211c0b7680353f6a89fe22b635c7f16a5c971145` |
 
 Main 线在 DEV-1 领取 `CP6:WP05-02`，执行者 `CP6-EXEC`，分支 `codex/wp05-02`。六项直接前置 S01-02、S01-07、S02-00、WP02-10、WP02-13、WP04-33 递归展开为 13 项，含 WP02-13b。13 项均为 DONE，交付提交分别属于固定 Main 和 Platform `a07edc24160d10cb1e3936cc6f495ad4195dd8f0` 的祖先。Main 锁定还原的 `CP6.Platform.AspNetCore` 为 0.11.0。领取时远端同名分支和同卡 PR 查询均为空。[派工卡](<D:/CP6-test-artifacts/WP05-02/WP05-02-CARD-20261126.md>) · [严格前置原件](<D:/CP6-test-artifacts/WP05-02/exec-20261126T114139Z/prerequisites.json>) · [总控决定](<D:/CP6-test-artifacts/COORD/DECISION-20261126-two-lanes-and-wp04-33.md>)
 
-Main #1337 的增量为治理文档与台账工具，本卡沿派发 SHA 和原任务分支接续。R2 在 DEV-1 原登记接续。Main 和 Platform 的已核实远端主线保持相同提交，13 项前置与采用提交沿用同一基线的复核。最终候选含本报告，最终 SHA、树、TRX SHA-256 和工作区状态由同树复跑及读回原件记录。[R2 打回单](<D:/CP6-test-artifacts/WP05-02/WP05-02-REWORK-R2-20261126.md>) · [总控对 R1 的复核](<D:/CP6-test-artifacts/WP05-02/coord-verify-20261126T131549Z/coord-review.md>) · [R2 前置与接续](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/preflight-r2.json>) · [最终同树证明](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/validation-final.json>) · [最终读回](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/validation.json>)
+Main #1337 的增量为治理文档与台账工具，本卡沿派发 SHA 和原任务分支接续。R2 在 DEV-1 原登记接续。Main 和 Platform 的已核实远端主线保持相同提交，13 项前置与采用提交沿用同一基线的复核。R2 产品候选的 SHA、树、TRX SHA-256 和工作区状态由同树复跑及读回原件记录。[R2 打回单](<D:/CP6-test-artifacts/WP05-02/WP05-02-REWORK-R2-20261126.md>) · [总控对 R1 的复核](<D:/CP6-test-artifacts/WP05-02/coord-verify-20261126T131549Z/coord-review.md>) · [R2 前置与接续](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/preflight-r2.json>) · [最终同树证明](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/validation-final.json>) · [最终读回](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/validation.json>)
 
 ## 原范围与交付
 
 - 沿现有工程身份保存类别、识别来源以及 Site、法人、技术修订和配置的适用域。法人采用 WP04-01 已登记的当前法人原键和版本，经营产品归属由 ERP 产品 Owner 在确认事务内核对。技术适用域使用工程修订原件中准确配置及 `APPLIES`。来源缺证、越权、过期或有冲突时关闭相关采用。登记新版需要再次核对。
 - 沿现有产品和映射入口增加版本化歧义核对。扩展范围的映射先保存草稿，再保存 `REVIEW`，双方 Owner `CONFIRM` 时复核当前权限、源版本和对象范围。同一实际操作者持两项授权时保留两项独立 Owner 事实。映射版本、原操作和审计同事务保存。补证须固定同一映射链中较早的工程、经营和 Site 原引用及准确旧版摘要。
 - ERP 产品列表按原 UUID 打开授权可见的当前映射及旧映射补证。WP04-33 的身份及组合查询投影当前法人范围和可读旧映射证明。BOM 和工艺路线的新采用核对准确 Site、技术修订和当前来源。停用、换版和撤权分别影响采用与披露，既存记录仍以原键和摘要识别。
-- PostgreSQL 前向迁移 `20261126120000_EngineeringMappingBusinessReferenceV1` 从不可变原件建立经营原引用索引，保留原数据字节、角色授权与原结果。旧工程修订迁移用例按原切点字段准备夹具，保留全部原断言。
+- PostgreSQL 前向迁移 `20261126120000_EngineeringMappingBusinessReferenceV1` 从不可变原件建立经营原引用索引，保留原数据字节、角色授权与原结果。旧工程修订迁移用例按原切点字段准备夹具，保留全部原断言。普通建索引会扫描存量并阻塞映射版本写入。真实库执行须另行取得用户批准，恢复按前向迁移处理。
 
 [原卡](../../task-plans/WP05.md#wp05-02) · [ENG-PROD-01](../../../design-handbook/modules/ENG-PROD-01.md) · [WP04-01 法人登记](../WP04-01/DELIVERY.md) · [W150-01 原事务和 Site 映射](../W150-01/DELIVERY.md) · [W310-01 余项](../W310-01/DELIVERY.md#wp05-02) · [WP04-33 读取合同](../WP04-33/DELIVERY.md) · [WP10-47 目录及交接](../WP10-47/DELIVERY.md)
 
@@ -74,9 +75,22 @@ Main #1337 的增量为治理文档与台账工具，本卡沿派发 SHA 和原�
 - R2 两条新用例在 R1 上复现只改名称被拒。定向复查补验显式重选同一映射的范围变更，最终两条 R2 用例与三条 R1 用例均通过。[R2 初次复现](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/validation-red-r2.json>) · [重选旧映射复现](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/validation-red-r2-same-ref.json>) · [最终定向验证](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/validation-green-r2-scope.json>)
 - 两侧工作流事件、过滤和依赖按实际 Git 对象及变更路径核对。W150-01 的稳定身份、事务和 Site 事实与 W310-01 的余项核销继续作为本卡基础。最终读回核对各轮 PostgreSQL 实例退出、PID 文件、监听和进程。[最终工作流核对](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/workflow-final.json>) · [停机与进程读回](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/validation.json>)
 
+## 总控独立复核与同 PR 生效
+
+- 第一轮 `FAIL`，发现组合查询按产品汇总清除法人缺项，以及 BOM 和工艺路线沿用旧映射时缺少适用域复核。R1 根据打回单修复。[第一轮复核](<D:/CP6-test-artifacts/WP05-02/coord-verify-dispatch-20261126/codex-last.txt>)
+- 第二轮 `FAIL`，发现 R1 误拦 Site 待定的旧草稿修订。R2 恢复待定范围内的修订，保留对变更适用域的拒绝。[第二轮复核](<D:/CP6-test-artifacts/WP05-02/coord-verify-20261126T131549Z/coord-review.md>)
+- 第三轮 `PASS`。总控在产品提交 `93b2f40a41a13864dbfaf93305e3be39c1e4ed46`、树 `b7bfa8bee106da658874e65d7b0154ff16efe769` 上独立复跑，.NET 95 项和 Vitest 53 项均通过，`vue-tsc --build --force` 和 Vite 均退出 0。总控 TRX SHA-256 为 `6ce142599f692e23950abe50d8cb379ca80ce959c54ccaabc674c1c7e1ccd175`。执行侧和总控的用例逐名一致，前滚迁移审阅通过。[第三轮复核](<D:/CP6-test-artifacts/WP05-02/coord-verify-20261126T141231Z/coord-review.md>) · [独立复跑原件](<D:/CP6-test-artifacts/WP05-02/coord-verify-20261126T141231Z/validation-coord-verify.json>)
+
+总控已推送产品候选并登记 Draft PR #1338。卡级 `DONE` 在该 PR 正常合入受保护的 `main` 并核对主线包含已验收产品提交后生效。`delivery_evidence.remote_main_sha` 固定为须由本 PR 纳入的产品祖先，实际合并 SHA 以 PR 回执为准。[PR #1338](https://github.com/GTX537/CP6/pull/1338)
+
+ENG-PROD-01 和共享这些验收的相关目标继续开放。FB01-025 的技术包有据例外由 WP05-11 承接，FB01-026 的冻结拒绝由 WP05-12 承接，FB01-027 的现场实例准入由 WP05-32 承接，规格、工艺、检查、冻结和正式后验条件沿各原责任卡。多输出 POS／NEG 的逐输出关系和基线绑定分别归 WP05-10 与 WP05-12。原跨 Owner 场景与多输出验收保持 `NOT_RUN`。[台账](../../roadmap.json)
+
 ## 未证、有效工时与席位
 
 - **UNPROVEN** 真实企业法人归属、原始业务单据和实际远端采用。测试夹具的证据模式为合成。
 - **NOT_RUN** 制造资格 WP05-32/42、产品币种绑定 WP04-04、整目标的跨 Owner 场景及多输出修订验收、SQL Server、生产环境迁移或部署、Actions、远端合并后冒烟及浏览器端到端。工程技术适用域在本地工作修订上受验。
-- 首轮有效时间 **2821.17 秒**，R1 **2210.13 秒**。R2 计时从 `2026-11-26T13:30:40.9975009Z` 起。R2 单独工时及合计见最终读回。M 卡额度 14400 秒，150% 阈值 21600 秒。[有效时间](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/validation.json>)
-- R2 候选在已远端保存的 R1 提交后追加，保存在本地 `codex/wp05-02`。DEV-1 的 `CP6:WP05-02` 登记为 `active`，远端保存、独立复核、PR 及后续台账交由总控。[分支与席位](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/validation.json>) · [远端读回](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/remote-readback.json>) · [全差异](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/diff-stat.txt>) · [R2 差异](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/rework-diff-stat.txt>)
+
+### 有效时间与交接
+
+- 首轮有效时间 **2821.17 秒**，R1 **2210.13 秒**，R2 **2352.27 秒**，三轮执行累计 **7383.57 秒**。M 卡额度 14400 秒，150% 拆分线 21600 秒。本卡登记新增拆分为 0。[执行侧最终工时读回](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/validation.json>)
+- DEV-1 的 `CP6:WP05-02` 登记为 `active`，关联 PR #1338。台账追加提交在本地 `codex/wp05-02`，由总控接续复核及推送。[R2 回执时远端读回](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/remote-readback.json>) · [R2 产品差异](<D:/CP6-test-artifacts/WP05-02/exec-20261126T133201Z/rework-diff-stat.txt>)
