@@ -13,7 +13,7 @@ $projects = @(
     "CP6.Mobile/CP6.Mobile.csproj"
 )
 $stillNet8 = $projects | Where-Object {
-    (Get-Content -LiteralPath $_ -Raw) -match "<TargetFramework>net8\.0"
+    (Get-Content -LiteralPath $_ -Raw) -match "<TargetFrameworks?(\s[^>]*)?>[^<]*net8\.0"
 }
 if ($stillNet8.Count -gt 0) {
     throw "External client release blocked: .NET 10 LTS upgrade is overdue for: $($stillNet8 -join ', ')"

@@ -1,4 +1,4 @@
-ARG ASPNET_RUNTIME_TAG=8.0
+ARG ASPNET_RUNTIME_TAG=10.0.15
 FROM mcr.microsoft.com/dotnet/aspnet:${ASPNET_RUNTIME_TAG} AS runtime
 
 WORKDIR /app

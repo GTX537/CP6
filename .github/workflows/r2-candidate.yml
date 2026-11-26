@@ -30,7 +30,6 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
           global-json-file: global.json
       - uses: actions/setup-node@v4
         with:
@@ -174,7 +173,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
           global-json-file: global.json
       - run: dotnet restore CP6.Tests/CP6.Tests.csproj --locked-mode
       - name: Run SQL Server production integration tests
@@ -288,7 +286,6 @@ jobs:
           path: evidence/sql
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
           global-json-file: global.json
       - uses: actions/setup-node@v4
         with:

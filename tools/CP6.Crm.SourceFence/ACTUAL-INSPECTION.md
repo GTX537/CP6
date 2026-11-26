@@ -7,7 +7,7 @@ The separate [actual-source freezer](ACTUAL-FREEZE.md) consumes this inspection 
 Use the same build and credential handling as [the tool README](README.md). Set `C04A_SQL_CONNECTION`, exact `C04A_EXPECTED_DATABASE`, independently observed `C04A_EXPECTED_DATABASE_GUID` (broker GUID), and exact `C04A_EXPECTED_SERVER_NAME` (`SERVERPROPERTY('ServerName')`). Optional timeouts are unchanged. Only a local, nonclustered SQL Server user database is accepted; local `tcp:` and `lpc:` endpoints are supported. Connections cannot attach files, select a failover partner or join an ambient transaction. The inspector disables pooling and identifies its own connection as `CP6.C04A.ActualSourceInspector`.
 
 ```powershell
-dotnet tools/CP6.Crm.SourceFence/bin/Release/net8.0/CP6.Crm.SourceFence.dll inspect-actual
+dotnet tools/CP6.Crm.SourceFence/bin/Release/net10.0/CP6.Crm.SourceFence.dll inspect-actual
 ```
 
 The inspector requires a non-impersonated sysadmin observer because SQL Server otherwise silently filters server, session and Agent catalogs. A filtered inventory must not be reported as an empty inventory. This requirement grants no permissions: use an existing authorized observer. Its administrative privilege is reported as a remaining isolation problem, not evidence that this identity can be fenced by public DENY.

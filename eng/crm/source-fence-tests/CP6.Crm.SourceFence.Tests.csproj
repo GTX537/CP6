@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.30" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.15" />
     <Compile Include="../../../CP6.Core/Migrations/20260811030108_CrmFoundation.cs" Link="Foundation.cs" />
   </ItemGroup>
 </Project>

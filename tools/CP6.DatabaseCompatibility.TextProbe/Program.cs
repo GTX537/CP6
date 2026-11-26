@@ -215,7 +215,7 @@ finally
     if (context is not null) await context.DisposeAsync();
     if (connection is not null) await connection.DisposeAsync();
     var inputs = new SortedDictionary<string, string>(StringComparer.Ordinal);
-    foreach (var file in new[] { "Program.cs", "CP6.DatabaseCompatibility.TextProbe.csproj", "packages.lock.json", "../../CP6.Core/Persistence/PostgreSqlTextTypeMappingSource.cs", "../../CP6.Core/Persistence/PostgreSqlTextQuerySqlGenerator.cs", "../../CP6.Core/Persistence/PostgreSqlManagedTextV1.cs", "../../CP6.Core/Persistence/PostgreSqlBusinessTextComparer.cs" })
+    foreach (var file in new[] { "Program.cs", "CP6.DatabaseCompatibility.TextProbe.csproj", "packages.lock.json", "../../CP6.Core/Persistence/PostgreSqlTextTypeMappingSource.cs", "../../CP6.Core/Persistence/PostgreSqlTextQuerySqlGenerator.cs", "../../CP6.Core/Persistence/PostgreSqlManagedTextV1.cs", "../../CP6.Core/Persistence/PostgreSqlBusinessTextComparer.cs", "../../CP6.Core/Persistence/PostgreSqlModelConfiguration.cs", "../../CP6.Core/Persistence/PostgreSqlModelExpressions.cs", "../../CP6.Core/Persistence/PostgreSqlModelIdentifiers.cs" })
         if (File.Exists(file)) inputs[file] = Convert.ToHexString(SHA256.HashData(await File.ReadAllBytesAsync(file)));
     Directory.CreateDirectory(Path.GetDirectoryName(output)!);
     await File.WriteAllTextAsync(output, JsonSerializer.Serialize(new { Scope = "WP2 real isolated text contract, not full migrations or production acceptance", Provider = provider, Adapted = adapted, DatabaseVersion = serverVersion,
