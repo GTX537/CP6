@@ -161,6 +161,17 @@ class ProgressIntegrityTests(unittest.TestCase):
         self.assertIn("0/247", views["03-progress.md"])
         self.assertIn("41 条，不计业务运行进度", views["03-progress.md"])
 
+    def test_render_dual_lane_serial_links_to_decision(self):
+        self.data["dispatch_policy"]["card_execution_policy"]["mode"] = "DUAL_LANE_SERIAL"
+        view = roadmap.render(self.data)["07-detailed-tasks.md"]
+        self.assertIn("Main／CRM 双线并行，每线一次一卡。", view)
+        self.assertIn("[双线治理决定](decisions/DECISION-20261126-two-lanes.md)", view)
+
+    def test_render_single_chat_serial_preserves_existing_instructions(self):
+        self.data["dispatch_policy"]["card_execution_policy"]["mode"] = "SINGLE_CHAT_SERIAL"
+        view = roadmap.render(self.data)["07-detailed-tasks.md"]
+        self.assertIn("按[单卡串行计划](planning/20261117-card-execution.md)核对完整前置并选择下一卡。", view)
+
     def test_overview_summarizes_long_dependencies_without_truncating_task_cards(self):
         task = self.data["implementation_tasks"][0]
         task["dependencies"] = [f"FIX-{index:02}" for index in range(13)]
@@ -247,6 +258,16 @@ class DispatchIntegrityTests(unittest.TestCase):
 
     def test_complete_planned_dispatch_is_valid(self):
         self.assertEqual(self.errors(), [])
+
+    def test_dispatch_rejects_invalid_card_execution_modes(self):
+        policy = self.data["dispatch_policy"] = {"card_execution_policy": {}}
+        for mode in ("UNSUPPORTED", None, ["DUAL_LANE_SERIAL"]):
+            with self.subTest(mode=mode):
+                policy["card_execution_policy"]["mode"] = mode
+                self.assertIn(
+                    "dispatch_policy.card_execution_policy.mode 必须为 SINGLE_CHAT_SERIAL 或 DUAL_LANE_SERIAL",
+                    self.errors(),
+                )
 
     def test_design_or_support_task_cannot_replace_target_implementation(self):
         for kind, role in [("DESIGN", "IMPLEMENTATION"), ("CODE", "FOUNDATION")]:

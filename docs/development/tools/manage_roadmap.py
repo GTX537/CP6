@@ -19,6 +19,13 @@ import project_memory
 STATES = {"PLANNED", "READY", "IN_PROGRESS", "VERIFYING", "BLOCKED", "DONE"}
 ASSESSMENTS = {"PENDING", "REUSE_CONFIRMED", "CHANGE_REQUIRED", "NEW_REQUIRED", "DECISION_REQUIRED"}
 LABELS = {"PLANNED": "待安排", "ASSESSING": "评估中", "READY": "可开工", "IN_PROGRESS": "开发中", "VERIFYING": "验收中", "BLOCKED": "受阻", "DONE": "已交付"}
+CARD_EXECUTION_MODE_LINKS = {
+    "SINGLE_CHAT_SERIAL": "按[单卡串行计划](planning/20261117-card-execution.md)核对完整前置并选择下一卡。",
+    "DUAL_LANE_SERIAL": (
+        "Main／CRM 双线并行，每线一次一卡。"
+        "核对完整前置后选择下一卡。[双线治理决定](decisions/DECISION-20261126-two-lanes.md)"
+    ),
+}
 
 
 def read_json(path: Path):
@@ -250,6 +257,11 @@ def validate_tasks(data, root: Path, targets):
 def validate_dispatch(data, targets):
     """Validate the coordinator's snapshot; this is not a distributed lock service."""
     errors = []
+    card_policy = data.get("dispatch_policy", {}).get("card_execution_policy", {})
+    mode = card_policy.get("mode")
+    if "mode" in card_policy and (not isinstance(mode, str) or mode not in CARD_EXECUTION_MODE_LINKS):
+        allowed_modes = " 或 ".join(CARD_EXECUTION_MODE_LINKS)
+        errors.append(f"dispatch_policy.card_execution_policy.mode 必须为 {allowed_modes}")
     tasks = data["implementation_tasks"]
     packages = {p["id"] for p in data["work_packages"]}
     owning = {tid: [] for tid in targets}
@@ -781,8 +793,8 @@ def render(data, definitions=None):
     s01 = [t for t in tasks if t["id"].startswith("S01-")]
     delivered = sum(t["state"] == "DONE" for t in s01)
     card_policy = data.get("dispatch_policy", {}).get("card_execution_policy", {})
-    if card_policy.get("mode") == "SINGLE_CHAT_SERIAL":
-        execution_link = "按[单卡串行计划](planning/20261117-card-execution.md)核对完整前置并选择下一卡。"
+    if "mode" in card_policy:
+        execution_link = CARD_EXECUTION_MODE_LINKS[card_policy["mode"]]
     else:
         execution_link = "分配步骤见[多对话协作](09-parallel-development.md)。"
     task_view = ["# 细分任务进度", "", f"台账日期：{data['as_of']}。由 roadmap.json 生成；S01 已交付：{delivered}/{len(s01)}。S02-00 多租户设计前置保留。", "", f"全部已登记任务 {len(tasks)} 项，已交付 {sum(t['state']=='DONE' for t in tasks)} 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。", "", f"任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)。{execution_link}", ""]
