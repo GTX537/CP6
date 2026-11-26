@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP05-02 工程产品身份与经营料号双Owner映射](../development/evidence/WP05-02/DELIVERY.md)（DONE），核对时间 `2026-11-26T14:24:19.149627+00:00`。
+- [WP02-32 ACT-FILE-REFERENCE/1 本地权威门与 Owner 守护流式下载](../development/evidence/WP02-32/DELIVERY.md)（DONE），核对时间 `2026-11-26T14:32:49.7826700+00:00`。
 
 ### 已关闭目标
 

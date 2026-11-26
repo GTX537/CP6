@@ -16,7 +16,13 @@ internal sealed partial class OperationsAccessV1
     internal IQueryable<FileContentRowV1> FileContents()
     {
         RequireFileFields(false);
-        if (authority.Source.TenantId != db.CurrentTenantId || authority.Action is not ("query" or "add" or "edit" or "delete")) throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
+        return FileContentsInScope();
+    }
+    private IQueryable<FileContentRowV1> FileContentsInScope()
+    {
+        if (authority.Resource != OperationsOwnerV1.FileContent || authority.Source.TenantId != db.CurrentTenantId ||
+            authority.Action is not ("query" or "add" or "edit" or "delete"))
+            throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
         var rows = FileContentStoreV1.Rows(db);
         if (authority.Scope == 1) return rows.Where(x => x.CreatorId == ActorId);
         if (authority.Scope == 5) return rows;
@@ -25,6 +31,12 @@ internal sealed partial class OperationsAccessV1
     }
     internal async Task RequireFileContent(Guid id, CancellationToken ct)
     { if (!await FileContents().AnyAsync(x => x.Id == id, ct)) throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403); }
+    internal async Task RequireFileLinkScope(Guid id, CancellationToken ct)
+    {
+        if (authority.Action is not ("edit" or "delete")) throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
+        if (!await FileContentsInScope().AnyAsync(x => x.Id == id, ct))
+            throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
+    }
     internal async Task RequireFileCreation(Guid parent, CancellationToken ct)
     {
         RequireFileFields(true);

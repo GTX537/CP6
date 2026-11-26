@@ -196,13 +196,7 @@ public sealed partial class OperationsOwnerV1
             var bpScopeGate = resource == BusinessPartner && await BpUseScopeGate.IsCutoverAsync(db, ct);
             if (bpScopeGate)
                 await BpUseScopeGate.HoldIamAsync(db, ct);
-            else if(readOnlyAuthorityFence)
-            {
-                // Application read-only recovery still uses native READ COMMITTED row locking.
-                if(!await db.Database.SqlQueryRaw<bool>("""
-                    SELECT singleton AS "Value" FROM cp6_platform_admin_guard_v1.root WHERE singleton FOR SHARE
-                    """).SingleAsync(ct))throw new CurrentPermissionUnavailableException();
-            }
+            else if(readOnlyAuthorityFence) await HoldReadAuthorityFenceAsync(db,ct);
             else await AuthenticationCompletionGateV1.AcquireAsync(db,ct);
             if (!bpScopeGate) await LockGraph(write,ct,resource);
             if(delegation!=null && (!write || !ReferenceEquals(delegation.Context,db)
@@ -242,6 +236,27 @@ public sealed partial class OperationsOwnerV1
             if(tx!=null)await tx.DisposeAsync();
         }
     }
+    internal static async Task HoldReadAuthorityFenceAsync(CP6Context context, CancellationToken ct)
+    {
+        if (context.Database.CurrentTransaction is null || !await context.Database.SqlQueryRaw<bool>("""
+            SELECT singleton AS "Value" FROM cp6_platform_admin_guard_v1.root WHERE singleton FOR SHARE
+            """).SingleOrDefaultAsync(ct))
+            throw new CurrentPermissionUnavailableException();
+    }
+
+    internal async Task<OperationsAccessV1> ReadActFileAccessAsync(Guid subject, string action, CancellationToken ct)
+    {
+        if (action is not ("query" or "edit" or "delete"))
+            throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
+        var source = await AuthorityCoreAsync(FileContent, action, subject, true, ct);
+        return new OperationsAccessV1(db, this, source, storedSubjectSource: ReadParentAsync);
+
+        Task<Authority> ReadParentAsync(string resource, string action, CancellationToken token) =>
+            resource is (EngineeringRevision or EngineeringProduct) && action == "query"
+                ? AuthorityCoreAsync(resource, action, subject, true, token)
+                : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
+    }
+
     internal async Task ValidateFinalAuthorityAsync(OperationsAccessV1 access,Guid subject,CancellationToken ct,
         CP6Context? organizationContext=null)
     {

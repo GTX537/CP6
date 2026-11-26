@@ -1,5 +1,7 @@
+using System.Security.Cryptography;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Erp;
 using CP6.Core.Services.Integration;
 using CP6.Core.Services.Plm;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +14,7 @@ public sealed partial class FileContentOwnerV1(CP6Context db, OperationsOwnerV1 
     IOptions<FileDispositionOptionsV1>? dispositionOptions = null)
 {
     private const string Contract = "Main.File.Content.commands.v1";
+    internal const string IntegrityUnavailable = "FILE_CONTENT_INTEGRITY_UNAVAILABLE";
     private OperationsOwnerV1 Authority => owner.Owns(db) ? owner : throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);
     public Task<EngineeringProductScopeV1> ScopeAsync(CancellationToken ct = default) => Authority.ExecuteAsync(
         OperationsOwnerV1.FileContent, "query", false, (a, _) => { a.RequireFileFields(false); return Task.FromResult(new EngineeringProductScopeV1(db.CurrentTenantId, a.ActorId)); }, ct, readOnlyAuthorityFence: true);
@@ -47,6 +50,34 @@ public sealed partial class FileContentOwnerV1(CP6Context db, OperationsOwnerV1 
         access.AtCommit(token => access.RequireFileContent(value.ContentRef.Id, token));
         await Parent(access, value.Parent, false, ct);
         return value;
+    }
+
+    internal async Task<FileContentSnapshotV1> ReadActReferenceAsync(FileContentStoreV1 store, Guid id, Guid subject,
+        string actAction, CancellationToken ct)
+    {
+        // 主体已由 ACT 服务入口在当前事务中核实。父级查询沿用 FILE 原有证据链。
+        var action = actAction switch
+        {
+            "ADD" or "DOWNLOAD" => "query",
+            "RETAIN" => "edit",
+            "REMOVE" => "delete",
+            _ => throw Error("ACTION_FORBIDDEN", 403)
+        };
+        var access = await Authority.ReadActFileAccessAsync(subject, action, ct);
+        FileContentSnapshotV1 current;
+        if (action == "query")
+        {
+            current = await ReadVisibleContent(access, store, id, ct);
+        }
+        else
+        {
+            await access.RequireFileLinkScope(id, ct);
+            current = await store.Read(id, null, ct);
+            await Parent(access, current.Parent, false, ct);
+            access.AtCommit(token => access.RequireFileLinkScope(id, token));
+        }
+        await access.ValidateFinalAsync(ct);
+        return current;
     }
     public Task<FileContentSnapshotV1[]> ListAsync(Guid parent, int page = 1, CancellationToken ct = default)
     {
@@ -136,8 +167,8 @@ public sealed partial class FileContentOwnerV1(CP6Context db, OperationsOwnerV1 
             {
                 var row = await store.Row(command.FileId, token);
                 try { inspection = await inspector.InspectAsync(await VerifyStored(row.StorePath, row.ByteLength, row.Digest, token), token); }
-                catch (CP6.Core.Services.Erp.OrderPriceCorrectionException e) when (e.Message == "FILE_CONTENT_INTEGRITY_UNAVAILABLE")
-                { inspection = new("NOT_CLEAN", "ContentIntegrity", null, null, DateTimeOffset.UtcNow, null, "FILE_CONTENT_INTEGRITY_UNAVAILABLE"); }
+                catch (OrderPriceCorrectionException e) when (e.Message == IntegrityUnavailable)
+                { inspection = FailedIntegrityInspection(); }
                 ValidateInspection(inspection);
             }
             var saved = await store.Append(command, a.ActorId, inspection, command.Action == "HOLD" || command.Action == "INSPECT" && current.Held, token);
@@ -151,7 +182,7 @@ public sealed partial class FileContentOwnerV1(CP6Context db, OperationsOwnerV1 
         {
             return await DownloadWithin(a,id,digest,token);
         }, ct);
-        return outcome ?? throw Error("FILE_CONTENT_INTEGRITY_UNAVAILABLE", 503);
+        return outcome ?? throw Error(IntegrityUnavailable, 503);
     }
     internal Task<FileContentSnapshotV1> ReadOwnedAsync(OperationsAccessV1 root, Guid id, CancellationToken ct)
         => ReadOwnedAsync(root, id, new FileContentStoreV1(db), ct);
@@ -176,37 +207,56 @@ public sealed partial class FileContentOwnerV1(CP6Context db, OperationsOwnerV1 
         await BoundSource(root,reference,parent,false,ct);
         return await DownloadWithin(await root.SourceAsync(OperationsOwnerV1.FileContent,ct),reference.Id,reference.Digest,ct);
     }
-    private async Task<FileContentDownloadV1?> DownloadWithin(OperationsAccessV1 a,Guid id,string digest,CancellationToken token)
+    private async Task<FileContentDownloadV1?> DownloadWithin(OperationsAccessV1 access, Guid id, string digest, CancellationToken ct)
     {
-            var store = new FileContentStoreV1(db); await store.Fence(true, token); await a.RequireFileContent(id, token);
-            var current = await Observe(a, await store.Read(id, null, token), token);
-            if (current.ContentRef.Digest != digest) throw Error("FILE_REFERENCE_CHANGED", 412);
-            if (current.Availability != "AVAILABLE") throw Error("FILE_CONTENT_NOT_AVAILABLE", 409);
-            var row = await store.Row(id, token); byte[] bytes;
-            try { bytes = await VerifyStored(row.StorePath, row.ByteLength, row.Digest, token); }
-            catch (CP6.Core.Services.Erp.OrderPriceCorrectionException e) when (e.Message == "FILE_CONTENT_INTEGRITY_UNAVAILABLE")
-            {
-                // A server-observed integrity failure quarantines this exact content. Query authority cannot release it.
-                var command = new FileContentCommandV1(Guid.NewGuid(), id, "INTEGRITY_FAILURE", current.StateVersion, current.Etag, "Exact stored content failed verification");
-                var saved = await store.Append(command, a.ActorId, new("NOT_CLEAN", "ContentIntegrity", null, null, DateTimeOffset.UtcNow, null, "FILE_CONTENT_INTEGRITY_UNAVAILABLE"), current.Held, token);
-                await SaveResult(new MainOwnerOperationJournalV1(db), command.OperationId, MainOwnerOperationJournalV1.Encode(command), saved, a.ActorId, token);
-                return null;
-            }
-            // Bytes are returned only after ExecuteAsync completes its final current authority fence.
-            return new FileContentDownloadV1(bytes, current.ContentRef, current.FileName);
+        var store = new FileContentStoreV1(db);
+        await store.Fence(true, ct);
+        var current = await ReadVisibleContent(access, store, id, ct);
+        if (current.ContentRef.Digest != digest) throw Error("FILE_REFERENCE_CHANGED", 412);
+        if (current.Availability != "AVAILABLE") throw Error("FILE_CONTENT_NOT_AVAILABLE", 409);
+        var bytes = await ReadVerifiedDownloadAsync(store, id, ct);
+        if (bytes is null)
+        {
+            await QuarantineIntegrityFailureAsync(store, current, access.ActorId, ct);
+            return null;
+        }
+        return new FileContentDownloadV1(bytes, current.ContentRef, current.FileName);
     }
+
+    internal async Task<byte[]?> ReadVerifiedDownloadAsync(FileContentStoreV1 store, Guid id, CancellationToken ct)
+    {
+        var row = await store.Row(id, ct);
+        try { return await VerifyStored(row.StorePath, row.ByteLength, row.Digest, ct); }
+        catch (OrderPriceCorrectionException e) when (e.Message == IntegrityUnavailable) { return null; }
+    }
+
+    internal async Task QuarantineIntegrityFailureAsync(FileContentStoreV1 store, FileContentSnapshotV1 current, Guid actor,
+        CancellationToken ct)
+    {
+        // 两个下载入口都对原状态做 CAS，隔离、原回执和审计随同一个 FILE 写事务提交。
+        var command = new FileContentCommandV1(Guid.NewGuid(), current.ContentRef.Id, "INTEGRITY_FAILURE",
+            current.StateVersion, current.Etag, "Exact stored content failed verification");
+        var saved = await store.Append(command, actor, FailedIntegrityInspection(), current.Held, ct);
+        await SaveResult(new MainOwnerOperationJournalV1(db), command.OperationId, MainOwnerOperationJournalV1.Encode(command),
+            saved, actor, ct);
+    }
+
+    private static FileInspectionV1 FailedIntegrityInspection() =>
+        new("NOT_CLEAN", "ContentIntegrity", null, null, DateTimeOffset.UtcNow, null, IntegrityUnavailable);
+
     private async Task<byte[]> VerifyStored(string path, long size, string digest, CancellationToken ct)
     {
         try
         {
             await using var stream = await files.OpenReadBoundedAsync(path, size, ct); var bytes = await FileContentBytesV1.Read(stream, size, ct);
-            if (FileContentBytesV1.Digest(bytes) != digest) throw Error("FILE_CONTENT_INTEGRITY_UNAVAILABLE", 503);
-            return bytes;
+            if (FileContentBytesV1.Digest(bytes) == digest) return bytes;
+            CryptographicOperations.ZeroMemory(bytes);
+            throw Error(IntegrityUnavailable, 503);
         }
-        catch (IOException) { throw Error("FILE_CONTENT_INTEGRITY_UNAVAILABLE", 503); }
-        catch (NotSupportedException) { throw Error("FILE_CONTENT_INTEGRITY_UNAVAILABLE", 503); }
-        catch (CP6.Core.Services.Erp.OrderPriceCorrectionException e) when (e.Message is "FILE_LENGTH_MISMATCH" or "FILE_SIZE_LIMIT")
-        { throw Error("FILE_CONTENT_INTEGRITY_UNAVAILABLE", 503); }
+        catch (IOException) { throw Error(IntegrityUnavailable, 503); }
+        catch (NotSupportedException) { throw Error(IntegrityUnavailable, 503); }
+        catch (OrderPriceCorrectionException e) when (e.Message is "FILE_LENGTH_MISMATCH" or "FILE_SIZE_LIMIT")
+        { throw Error(IntegrityUnavailable, 503); }
     }
     private static async Task<FileContentResultV1> SaveResult(MainOwnerOperationJournalV1 journal, Guid operation, byte[] body,
         FileContentSnapshotV1 saved, Guid actor, CancellationToken ct)

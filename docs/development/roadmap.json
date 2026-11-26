@@ -149541,7 +149541,7 @@
           {
             "case_id": "DR-PE-ACT-FILE-COMMIT-MODE::PE-ACT-FILE-COMMIT-MODE-POS",
             "owner_task_id": "WP03-19",
-            "gap": "CRM ACT 在真实业务 Owner 使用 LOCAL_AUTHORITATIVE_GUARD，验证正反两条必需修订、完整集合、目标权限、分页和新请求持续当前授权。 对应 AC-FI02-02、AC-FI02-03、AC-FI03-01、AC-FI03-04、AC-FI04-01、AC-FI06-01、AC-FI06-02、AC-FI06-04。"
+            "gap": "CRM ACT 在真实业务 Owner 使用 LOCAL_AUTHORITATIVE_GUARD，验证正反两条必需修订、完整集合、目标权限、分页和新请求持续当前授权。 对应 AC-FI02-02、AC-FI02-03、AC-FI03-01、AC-FI03-04、AC-FI04-01、AC-FI06-01、AC-FI06-02、AC-FI06-04。 Main 提供者侧证据见 WP02-32。生产 guard schema、真实 Activity 事务持有、Add/Retain/Unlink 与字节访问的采用范围仍归 WP03-19。"
           },
           {
             "case_id": "SYS-FILE-01::AC-FI04-03",
@@ -149573,6 +149573,29 @@
           ],
           "covered": "独立租户的旧归档共享原字节，PRIV hold、AUD 必要引用和 FILE 原计划；已登记 PRIV Owner 的归档墓碑复验。",
           "remaining_owner_task_id": "WP14-08"
+        },
+        "latest_gap_evidence": {
+          "task_id": "WP02-32",
+          "report": "docs/development/evidence/WP02-32/DELIVERY.md",
+          "source_sha": "84bed4b2d9e9427efb77727cd0c9f2e414e892b2",
+          "pr_url": "https://github.com/GTX537/CP6/pull/1339",
+          "reviewed_at": "2026-11-26T14:32:49.7826700+00:00",
+          "revision_case_ids": [
+            "DR-PE-ACT-FILE-COMMIT-MODE::PE-ACT-FILE-COMMIT-MODE-POS",
+            "DR-PE-ACT-FILE-COMMIT-MODE::PE-ACT-FILE-COMMIT-MODE-NEG"
+          ],
+          "original_cases": [
+            "AC-FI02-02",
+            "AC-FI02-03",
+            "AC-FI03-01",
+            "AC-FI03-04",
+            "AC-FI04-01",
+            "AC-FI06-01",
+            "AC-FI06-02",
+            "AC-FI06-04"
+          ],
+          "covered": "Main 提供者侧的委托、写者排他推进、完整意图证明、守护流撤权和完整性隔离。执行侧与总控独立复跑各 35 项通过。卡级证据随 #1339 采用后生效。",
+          "remaining_owner_task_id": "WP03-19"
         }
       }
     },
@@ -178200,6 +178223,11 @@
       "at": "2026-11-26T14:32:14.071615+00:00",
       "evidence": "docs/development/evidence/WP05-02/DELIVERY.md",
       "change": "WP05-02 工程身份、经营料号双 Owner 映射和适用域登记同 PR 卡级 DONE，在 #1338 合并至受保护 main 并核对包含性后生效。执行侧和总控独立复跑各 95 项 .NET、53 项 Vitest。三轮有效时间 7383.57 秒，累计 262244.605 秒。FB01 与多输出出口按原责任卡登记，ENG-PROD-01 及共享验收的目标继续开放。"
+    },
+    {
+      "at": "2026-11-26T14:45:33.835900+00:00",
+      "evidence": "docs/development/evidence/WP02-32/DELIVERY.md",
+      "change": "Handoff #439 的补充卡 WP02-32（暂名 WP02-14c）经总控独立复核，随 #1339 登记卡级 DONE 候选。执行与独立复跑各 35 项通过。原卡池由 WP02-29 划拨 11599.8 秒、WP03-18 划拨 2800.2 秒。卡级 DONE 在受保护主线采用核实后生效。WP03-19 新增直接前置，SYS-FILE-01 保持开放。"
     }
   ],
   "implementation_assessment": {
@@ -202343,6 +202371,115 @@
       }
     },
     {
+      "id": "WP02-32",
+      "package_id": "WP02",
+      "title": "ACT-FILE-REFERENCE/1 本地权威门与 Owner 守护流式下载",
+      "repository": "Main",
+      "kind": "CODE",
+      "target_ids": [
+        "SYS-FILE-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP02-14",
+        "WP02-14b"
+      ],
+      "exclusive_resources": [
+        "Main:attachment-owner",
+        "Main:file-content-owner",
+        "file:Main:CP6.Core/Services/Pub/FileContentStoreV1.cs",
+        "file:Main:CP6.WebApi/Controllers/Pub/FileContentController.cs"
+      ],
+      "coverage_role": "IMPLEMENTATION",
+      "state": "DONE",
+      "plan_path": "docs/development/task-plans/WP02.md",
+      "card_anchor": "wp02-32",
+      "entry_gate": "CONFIRMED",
+      "entry_conditions": [
+        "在 Main 已确认远端基线复核 WP02-14、WP02-14b 与递归前置及拆分余项，11 项均已 DONE。",
+        "按 Handoff #439 核对委托边界、写者参加、两笔预算划拨和跨仓生产 schema 分工。",
+        "DEV-2 已登记 CP6:WP02-14c 与原分支，FILE 互斥资源独占。"
+      ],
+      "assignment": {
+        "chat_label": "CP6-EXEC",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp02-14c",
+        "worktree": "D:/CP6-worktrees/dev-2",
+        "claimed_at": "2026-11-26T12:27:33.507334Z",
+        "baseline_sha": "80113f4f751617d73d1b1e989838a2f6ee0b27da",
+        "entry_evidence": "docs/development/evidence/WP02-32/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/WP02-32/DELIVERY.md",
+        "worker_start_received": true,
+        "dispatch_scope": "按 R1 交付 Main FILE 写者参加、ACT 完整证明和守护流。CRM 生产 schema 与业务消费归 WP03-19。 正式卡号 WP02-32 对应派工时的 CP6:WP02-14c 租约与 codex/wp02-14c 分支。"
+      },
+      "blockers": [],
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP02-32/DELIVERY.md",
+          "source_sha": "84bed4b2d9e9427efb77727cd0c9f2e414e892b2",
+          "observed_at": "2026-11-26T14:12:29.0173376+00:00",
+          "environment": "DEV-2，.NET SDK 10.0.404 Release，隔离 PostgreSQL 18.6 回环 127.0.0.1:55471，Main 真实回环 TLS 与合成数据。",
+          "command": "& 'D:/CP6-test-artifacts/WP02-14c/exec-20261126T140339Z/verify.ps1' -Phase final -ExpectedHead 84bed4b2d9e9427efb77727cd0c9f2e414e892b2",
+          "result": "PASS",
+          "scope": "最终产品提交全量运行 35 通过、0 失败、0 跳过，覆盖 R1、当前 FILE 权限与摘要异常隔离、旧 FILE 及 WP02-31。 TRX SHA-256 为 b2c5dff57b014a0692a392092e65aba01db17c75749368475fa3c9c099772441。",
+          "original_path": "D:/CP6-test-artifacts/WP02-14c/exec-20261126T140339Z/final-20261126T140617123Z/results.trx",
+          "original_sha256": "b2c5dff57b014a0692a392092e65aba01db17c75749368475fa3c9c099772441",
+          "verification_record": "D:/CP6-test-artifacts/WP02-14c/exec-20261126T140339Z/final-verification.json"
+        },
+        {
+          "path": "docs/development/evidence/WP02-32/DELIVERY.md",
+          "source_sha": "84bed4b2d9e9427efb77727cd0c9f2e414e892b2",
+          "observed_at": "2026-11-26T14:32:49.7826700+00:00",
+          "environment": "总控独立构建 .NET SDK 10.0.404 Release，同一产品树，隔离 PostgreSQL 18.6 回环 127.0.0.1:55481，真实回环 TLS 与合成数据。",
+          "command": "本地 dotnet test 全量筛选及参数见 D:/CP6-test-artifacts/WP02-14c/coord-verify-20261126T142630678Z/command.json",
+          "result": "PASS",
+          "scope": "总控独立复跑 35 通过、0 失败、0 跳过，与执行侧用例与结果逐项一致。集中复核 PASS_WITH_NITS，已记录首读写锁待量化项。 TRX SHA-256 为 e8d8d423dc1eb95780031d03b3a1693b0c3295074899c0834ca821d35d0ba9e1。",
+          "original_path": "D:/CP6-test-artifacts/WP02-14c/coord-verify-20261126T142630678Z/results.trx",
+          "original_sha256": "e8d8d423dc1eb95780031d03b3a1693b0c3295074899c0834ca821d35d0ba9e1",
+          "verification_record": "D:/CP6-test-artifacts/WP02-14c/coord-verify-20261126T142630678Z/verification.json"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP02-32/DELIVERY.md",
+        "source_sha": "84bed4b2d9e9427efb77727cd0c9f2e414e892b2",
+        "remote_main_sha": "84bed4b2d9e9427efb77727cd0c9f2e414e892b2",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1339",
+        "scope": "Main R1 提供者产品候选。remote_main_sha 固定须由同 PR 纳入主线的已受验产品祖先。卡级 DONE 在 #1339 正常合并至受保护 main 并核对实际远端采用后生效。Draft 阶段为候选登记。"
+      },
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP02-32/DELIVERY.md",
+        "started_at": "2026-11-26T12:27:33.507334Z",
+        "official_started_at": "2026-11-26T12:27:33.507334Z",
+        "technical_verified_at": "2026-11-26T14:12:29.0173376+00:00",
+        "verified_at": "2026-11-26T14:32:49.7826700+00:00",
+        "ledger_candidate_at": "2026-11-26T14:45:33.835900+00:00",
+        "effective_seconds": 4912.0,
+        "accounting_evidence": {
+          "path": "D:/CP6-test-artifacts/WP02-14c/exec-20261126T140339Z/workspace-readback.json"
+        },
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "S01-01",
+          "S01-02",
+          "S01-09",
+          "S02-00",
+          "WP02-01",
+          "WP02-02",
+          "WP02-03",
+          "WP02-07",
+          "WP02-10",
+          "WP02-14",
+          "WP02-14b"
+        ],
+        "new_product_execution": true
+      }
+    },
+    {
       "id": "WP03-01",
       "package_id": "WP03",
       "title": "公开表单Bundle与配置生效",
@@ -208165,7 +208302,8 @@
       "dependencies": [
         "WP02-09",
         "WP02-14",
-        "WP03-17"
+        "WP03-17",
+        "WP02-32"
       ],
       "exclusive_resources": [
         "CRM:crm-act-owner",
@@ -234219,7 +234357,8 @@
       "target_id": "SYS-FILE-01",
       "implementation_task_ids": [
         "WP02-14",
-        "WP02-14b"
+        "WP02-14b",
+        "WP02-32"
       ]
     },
     {
@@ -306558,7 +306697,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 262244.605,
+      "effective_seconds": 267156.605,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -306633,7 +306772,8 @@
         "WP03-22",
         "WP10-47",
         "WP03-18",
-        "WP05-02"
+        "WP05-02",
+        "WP02-32"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -307200,6 +307340,26 @@
             "commit": "027eab421b934bbd6833d39d6551026d9eb62418",
             "path": "handoffs/CP6-DEV-20261012/tasks/WP03-11/replies/20261122T152246Z-coord-g05-main-owner-authorization/MESSAGE.md",
             "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/402"
+          }
+        },
+        {
+          "source_task_id": "WP02-29",
+          "target_task_id": "WP02-32",
+          "seconds": 11599.8,
+          "decision": {
+            "commit": "c49a2ed2ff23eba263ff969bae6f5322f3616483",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-19/replies/20261126T132500Z-coord-file-guard-delegation-r1/MESSAGE.md",
+            "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/439"
+          }
+        },
+        {
+          "source_task_id": "WP03-18",
+          "target_task_id": "WP02-32",
+          "seconds": 2800.2,
+          "decision": {
+            "commit": "c49a2ed2ff23eba263ff969bae6f5322f3616483",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-19/replies/20261126T132500Z-coord-file-guard-delegation-r1/MESSAGE.md",
+            "pr_url": "https://github.com/GTX537/CP6.AI-Handoff/pull/439"
           }
         }
       ],
