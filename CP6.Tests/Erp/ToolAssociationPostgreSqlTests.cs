@@ -1,10 +1,14 @@
+using System.Diagnostics;
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.Integration;
+using CP6.Core.Services.Integration.StockOutbox;
 using CP6.Core.Services.Plm;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wms;
@@ -49,6 +53,196 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             $"/api/wms/specials/v1/tools/{id}/engineering-links"));
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
+    [CurrentPermissionPostgresFact]
+    public async Task Tool_association_HTTP_candidate_pages_preserve_exact_visible_sources_under_qualification_changes()
+    {
+        var database = await server.CreateIsolatedDatabaseAsync();
+        await using var h = await SeedForDatabase(database);
+        var nativeIndexes = await h.Db.Database.SqlQueryRaw<string>("""
+            SELECT indexdef AS "Value" FROM pg_indexes
+            WHERE schemaname='public' AND tablename='T_PlateMold'
+              AND indexname IN ('IX_T_PlateMold_WdPtnNo_WdRev', 'UX_T_PlateMold_NoRev')
+            """).ToArrayAsync();
+        Assert.Equal(2, nativeIndexes.Length);
+        Assert.Contains(nativeIndexes, index => index.Contains("(\"TenantId\", \"WdPtnNo\", \"WdRev\")", StringComparison.Ordinal));
+        Assert.Contains(nativeIndexes, index => index.Contains("(\"WdPtnNo\", \"WdRev\") NULLS NOT DISTINCT", StringComparison.Ordinal));
+        // 仅在已迁移的一次性压力库模拟跨 Base 的来源分布，保留授权和来源原件约束。
+        await h.Db.Database.ExecuteSqlRawAsync("""
+            DROP INDEX public."IX_T_PlateMold_WdPtnNo_WdRev";
+            DROP INDEX public."UX_T_PlateMold_NoRev";
+            CREATE UNIQUE INDEX wp10_48_fixture_exact_base ON public."T_PlateMold" ("TenantId","BaseCd","WdPtnNo","WdRev");
+            """);
+        await GrantToolInstance(h);
+        await GrantSpecification(h);
+        await EngineeringAction(h, "wms-plate-mold", "engineering-link");
+        var physical = await SeedToolInstance(h, 2);
+        var hiddenPhysical = await h.Db.PlateMoldStocks.Where(row => row.PlateNo == "PLT2-1").Select(row => row.Id).SingleAsync();
+        const int revision = 7;
+        var number = h.Tenant.ToString("N")[..15] + " " + new string('N', 22) + "e\u0301";
+        var prefix = h.Tenant.ToString("D")[..24];
+        var plates = Enumerable.Range(0, 208).Select(i =>
+        {
+            var row = NativePlate(revision: i == 207 ? 0 : revision);
+            row.Id = Guid.Parse(prefix + i.ToString("D12", CultureInfo.InvariantCulture));
+            row.BaseCd = "WP10-48-BASE-" + i.ToString("D7", CultureInfo.InvariantCulture);
+            row.WdPtnNo = number;
+            if (i == 206) row.Creator = "other";
+            return row;
+        }).ToArray();
+        h.Db.PlateMolds.AddRange(plates);
+        await h.Db.SaveChangesAsync();
+        h.Db.ChangeTracker.Clear();
+        var specs = Specifications(h);
+        var product = (await MakeEngineering(h)).Reference;
+        var requirements = new ToolRequirementsV1(product, "Synthetic product applicability", "Synthetic process",
+            "Synthetic configuration", "Synthetic exact requirement", "Synthetic document requirement");
+        var expected = new List<ToolAssociationCandidateV1>();
+        foreach (var plate in plates.Skip(101))
+        {
+            var original = await specs.ReadAsync(plate.Id);
+            var result = await specs.CommandAsync(new(Guid.NewGuid(), "CREATE", original.Source.Reference,
+                original.Source.CurrentNativeRowVersion, original.CurrentControl, requirements, "Synthetic WP10-48 draft"));
+            expected.Add(new(new("Main.Plm.ToolSpecification.v1", plate.Id, result.Version, result.Digest), original.Source.Reference,
+                plate.BaseCd, number, plate.WdRev, requirements));
+        }
+        await h.Db.Sys_RoleDataScopes.Where(x => x.ResourceKey == "erp-plate-mold" || x.ResourceKey == "wms-plate-mold")
+            .ExecuteUpdateAsync(s => s.SetProperty(x => x.ScopeType, 1));
+        var eligible = expected.Where(x => x.BusinessRevision == revision && x.Technical.Id != plates[206].Id).ToArray();
+        Assert.Equal(105, eligible.Length);
+        await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!);
+        var cookies = await Login(host, h);
+        var path = $"/api/wms/specials/v1/tools/{physical}/engineering-candidates";
+        var exact = path + "?engineeringNo=" + Uri.EscapeDataString(number);
+        var query = exact + "&revision=" + revision;
+        Assert.Equal(expected[^1], Assert.Single((await ToolCandidatePage(host, cookies, exact + "&revision=0")).Items));
+        foreach (var invalid in new[]
+        {
+            exact, exact + "&revision=bad", exact + "&revision=-1", query + "&revision=0", query + "&pageSize=101",
+            query + "&pageSize=", query + "&after=" + eligible[0].Technical.Id,
+            query + "&pageSize=50&after=00000000-0000-0000-0000-000000000000"
+        })
+            await ToolCandidatePage(host, cookies, invalid, HttpStatusCode.BadRequest);
+        foreach (var mismatch in new[]
+        {
+            exact + "&revision=8",
+            path + "?engineeringNo=" + Uri.EscapeDataString(number[..15]) + "&revision=7",
+            path + "?engineeringNo=" + Uri.EscapeDataString(number.Normalize()) + "&revision=7"
+        })
+            Assert.Empty((await ToolCandidatePage(host, cookies, mismatch)).Items);
+        await ToolCandidatePage(host, cookies, query.Replace(physical.ToString(), hiddenPhysical.ToString()), HttpStatusCode.NotFound);
+
+        var before = await ToolCandidateEffects(h);
+        var first = await ToolCandidatePage(host, cookies, query + "&pageSize=50");
+        Assert.Equal(eligible[..50], first.Items);
+        Assert.Equal(first.Items[^1].Technical.Id, first.NextCursor);
+
+        // 合成旧原件仍可读。原 Owner 记录来源的后继版后，旧草稿退出当前候选。
+        var drifted = eligible[0];
+        await h.Db.Database.ExecuteSqlInterpolatedAsync($"""
+            UPDATE public."T_PlateMold" SET "SheetWidth"=42.1234
+            WHERE "TenantId"={h.Tenant} AND "Id"={drifted.Native.Id}
+            """);
+        var second = await ToolCandidatePage(host, cookies, query + $"&pageSize=50&after={first.NextCursor}");
+        Assert.Equal(eligible[50..100], second.Items);
+        Assert.Equal(second.Items[^1].Technical.Id, second.NextCursor);
+        var last = await ToolCandidatePage(host, cookies, query + $"&pageSize=50&after={second.NextCursor}");
+        Assert.Equal(eligible[100..], last.Items);
+        Assert.Null(last.NextCursor);
+        Assert.Equal(eligible.Length, first.Items.Concat(second.Items).Concat(last.Items).Select(x => x.Technical.Id).Distinct().Count());
+
+        var current = (await ToolCandidatePage(host, cookies, query)).Items;
+        Assert.Equal(eligible[1..], current);
+        var history = await specs.ReadAsync(drifted.Technical.Id, drifted.Technical.Version);
+        Assert.Equal(drifted.Technical, history.Specification!.Reference);
+        Assert.Equal(drifted.Native, history.Specification.Source);
+        Assert.False(history.SourceMatches);
+        Assert.All(current, row => { Assert.Equal("DRAFT", row.TechnicalState); Assert.Equal("NOT_REQUESTED", row.Approval); });
+        Assert.Equal(before, await ToolCandidateEffects(h));
+        Assert.Equal(new[] { 0, 0, 0, 0 }, before);
+
+        if (Environment.GetEnvironmentVariable("CP6_TOOL_CANDIDATES_BROWSER_SCRIPT") is string script)
+            await RunToolCandidateBrowser(host, h, physical, number, current, script);
+        Assert.Equal(before, await ToolCandidateEffects(h));
+
+        var menu = await h.Db.Sys_Menus.Where(m => m.MenuKey == "plm-tool-specification").Select(m => m.MenuId).SingleAsync();
+        await h.Db.Sys_RoleActions.Where(x => x.MenuId == menu && x.ActionCode == "query").ExecuteDeleteAsync();
+        await ToolCandidatePage(host, cookies, query + "&pageSize=50", HttpStatusCode.Forbidden);
+        await using var another = await SeedForDatabase(database);
+        await GrantToolInstance(another);
+        await GrantSpecification(another);
+        await ToolCandidatePage(host, await Login(host, another), query + "&pageSize=50", HttpStatusCode.NotFound);
+        await DeviceEvidence("wp10-48-http-candidates.json", new
+        {
+            ScaleFixtureOnly = true, DeployedIndexes = nativeIndexes, FixtureIndex = "TenantId,BaseCd,WdPtnNo,WdRev",
+            NativeMatches = plates.Count(row => row.WdRev == revision), InitialEligible = eligible.Length,
+            PageSizes = new[] { first.Items.Length, second.Items.Length, last.Items.Length },
+            CurrentAfterDrift = current.Length, DraftState = "DRAFT", Approval = "NOT_REQUESTED",
+            ExplicitZeroRevision = true, WrongVersionDoesNotMatch = true, SourceHistoryExact = true,
+            HiddenPhysical = 404, RevokedEngineeringQuery = 403, CrossTenant = 404,
+            StockBalances = before[0], StockTransactions = before[1], AssociationProposals = before[2], StockMovementReceipts = before[3]
+        });
+    }
+
+    private static async Task<ToolAssociationCandidatePageV1> ToolCandidatePage(AuthenticationApiProcess host,
+        Dictionary<string, string> cookies, string path, HttpStatusCode expected = HttpStatusCode.OK)
+    {
+        using var response = await host.Send(OperationsRequest(cookies, HttpMethod.Get, path));
+        Assert.True(response.StatusCode == expected, $"Expected {expected}, got {response.StatusCode} on candidate query.");
+        if (expected != HttpStatusCode.OK) return new([], null);
+        Assert.True(response.Headers.CacheControl?.NoStore);
+        using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var envelope = body.RootElement;
+        var paged = path.Contains("&pageSize=", StringComparison.Ordinal);
+        Assert.Equal(paged ? 3 : 2, envelope.EnumerateObject().Count());
+        var items = envelope.GetProperty("data").Deserialize<ToolAssociationCandidateV1[]>(JsonSerializerOptions.Web)!;
+        var next = paged && envelope.GetProperty("nextCursor").ValueKind != JsonValueKind.Null
+            ? envelope.GetProperty("nextCursor").GetGuid() : (Guid?)null;
+        return new(items, next);
+    }
+
+    private static async Task<int[]> ToolCandidateEffects(Harness h) =>
+        [await h.Db.Stocks.CountAsync(), await h.Db.StockTransactions.CountAsync(),
+         await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_tool_association_v1.proposals WHERE tenant_id={h.Tenant}").SingleAsync(),
+         await h.Db.Database.SqlQuery<int>($"""
+             SELECT count(*)::int AS "Value" FROM cp6_main_owner_v1.operations
+             WHERE tenant_id={h.Tenant} AND owner={StockOutboxProtocolV1.SourceOwner}
+             """).SingleAsync()];
+
+    private static async Task RunToolCandidateBrowser(AuthenticationApiProcess host, Harness h, Guid physical,
+        string number, ToolAssociationCandidateV1[] expected, string script)
+    {
+        var info = new ProcessStartInfo(Environment.GetEnvironmentVariable("CP6_TOOL_CANDIDATES_BROWSER_NODE")!)
+        {
+            UseShellExecute = false, CreateNoWindow = true, RedirectStandardInput = true, RedirectStandardOutput = true,
+            RedirectStandardError = true, StandardInputEncoding = new UTF8Encoding(false),
+            StandardOutputEncoding = Encoding.UTF8, StandardErrorEncoding = Encoding.UTF8
+        };
+        info.ArgumentList.Add(script);
+        using var browser = Process.Start(info)!;
+        var evidence = Environment.GetEnvironmentVariable(CurrentPermissionPostgresFactAttribute.RootVariable)!;
+        await browser.StandardInput.WriteAsync(JsonSerializer.Serialize(new
+        {
+            api = host.Origin.ToString(), dist = Environment.GetEnvironmentVariable("CP6_TOOL_CANDIDATES_BROWSER_DIST"),
+            chrome = Environment.GetEnvironmentVariable("CP6_TOOL_CANDIDATES_BROWSER_CHROME"),
+            evidence, physical, number, user = "price-owner", password = "Price1!Password", tenant = h.Tenant.ToString("N"),
+            expected = expected.Select(x => new { id = x.Technical.Id, version = x.Technical.Version, baseCode = x.BaseCode })
+        }));
+        browser.StandardInput.Close();
+        var stdout = browser.StandardOutput.ReadToEndAsync();
+        var stderr = browser.StandardError.ReadToEndAsync();
+        using var timeout = new CancellationTokenSource(TimeSpan.FromMinutes(3));
+        try { await browser.WaitForExitAsync(timeout.Token); }
+        finally
+        {
+            if (!browser.HasExited) { browser.Kill(entireProcessTree: true); await browser.WaitForExitAsync(); }
+        }
+        var result = await stdout;
+        Assert.True(browser.ExitCode == 0, await stderr + "\n" + result);
+        using var proof = JsonDocument.Parse(result);
+        Assert.True(proof.RootElement.GetProperty("passed").GetBoolean());
+        await DeviceEvidence("wp10-48-browser.json", proof.RootElement.Clone());
+    }
+
     [CurrentPermissionPostgresFact]
     public async Task Tool_association_exact_candidates_and_two_real_owner_decisions_preserve_independent_native_facts()
     {
@@ -168,6 +362,15 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     {
         await using var h = await Seed(); var (c, etag, _) = await AssociationSetup(h);
         await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!); var cookies = await Login(host, h);
+        var native = await h.Db.PlateMolds.AsNoTracking().SingleAsync(x => x.Id == c.Technical.Id);
+        var query = $"/api/wms/specials/v1/tools/{c.Physical.Id}/engineering-candidates?engineeringNo={Uri.EscapeDataString(native.WdPtnNo)}";
+        await ToolCandidatePage(host, cookies, query, HttpStatusCode.BadRequest);
+        var unpaged = await ToolCandidatePage(host, cookies, query + $"&revision={native.WdRev}");
+        var paged = await ToolCandidatePage(host, cookies, query + $"&revision={native.WdRev}&pageSize=50");
+        Assert.Equal(c.Technical, Assert.Single(unpaged.Items).Technical);
+        Assert.Equal(unpaged.Items, paged.Items);
+        Assert.Null(paged.NextCursor);
+        Assert.Equal(new[] { 0, 0, 0, 0 }, await ToolCandidateEffects(h));
         async Task<HttpResponseMessage> Send(string path, object body, string match, bool csrf = true)
         {
             var request = OperationsRequest(cookies, HttpMethod.Post, path); request.Content = JsonContent.Create(body); request.Headers.TryAddWithoutValidation("If-Match", match);

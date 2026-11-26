@@ -15,6 +15,7 @@ public sealed record ToolAssociationDecisionCommandV1(Guid OperationId, Guid Pro
 public sealed record ToolAssociationCandidateV1(EngineeringSourceRefV1 Technical, PlateMoldSourceRefV1 Native,
     string BaseCode, string Number, int BusinessRevision, ToolRequirementsV1 Requirements,
     string TechnicalState = "DRAFT", string Approval = "NOT_REQUESTED");
+public sealed record ToolAssociationCandidatePageV1(ToolAssociationCandidateV1[] Items, Guid? NextCursor);
 public sealed record ToolAssociationSubjectV1(Guid TenantId, Guid ProposalId, string ProposalRevision,
     EngineeringSourceRefV1 Technical, PlateMoldSourceRefV1 Native, string BaseCode, string Number, int BusinessRevision,
     ToolInstanceRefV1 Physical, EngineeringProductRefV1 Product, ToolAssociationScopeV1 Scope, string Reason,

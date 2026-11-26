@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP08-16 RES资源身份与独立能力目录提供者](../development/evidence/WP08-16/DELIVERY.md)（DONE），核对时间 `2026-11-26T04:04:39.629541+00:00`。
+- [WP10-48 WMS版模实例身份、当前头与HoldExact提供者](../development/evidence/WP10-48/DELIVERY.md)（DONE），核对时间 `2026-11-26T06:35:49.953026+00:00`。
 
 ### 已关闭目标
 

@@ -58,30 +58,62 @@ public sealed class ToolAssociationOwnerV1(CP6Context db, OperationsOwnerV1 owne
         AND EXISTS(SELECT FROM cp6_engineering_product_v1.heads h WHERE h.tenant_id={db.CurrentTenantId}
           AND h.product_id={spec.Requirements.ProductRef.Id} AND h.revision={Revision(spec.Requirements.ProductRef.Version)}) AS "Value"
         """).SingleAsync(ct);
-    public Task<ToolAssociationCandidateV1[]> CandidatesAsync(Guid physical, string number, int revision, CancellationToken ct = default)
+    public async Task<ToolAssociationCandidateV1[]> CandidatesAsync(Guid physical, string number, int revision, CancellationToken ct = default)
+        => (await ReadCandidatesAsync(physical, number, revision, null, null, ct)).Items;
+
+    public Task<ToolAssociationCandidatePageV1> CandidatePageAsync(Guid physical, string number, int revision,
+        int pageSize, Guid? after, CancellationToken ct = default)
+    {
+        if (pageSize is < 1 or > 100 || after == Guid.Empty) throw Error("TOOL_CANDIDATE_QUERY_INVALID", 400);
+        return ReadCandidatesAsync(physical, number, revision, pageSize, after, ct);
+    }
+
+    private Task<ToolAssociationCandidatePageV1> ReadCandidatesAsync(Guid physical, string number, int revision,
+        int? pageSize, Guid? after, CancellationToken ct)
     {
         if (physical == Guid.Empty || !ValidText(number, 40) || revision < 0) throw Error("TOOL_CANDIDATE_QUERY_INVALID", 400);
         return Authority.ExecuteAsync(OperationsOwnerV1.ToolInstance, "query", false, async (a, t) =>
         {
-            var s = await Stores(a, false, t); await s.Tools.Read(s.Physical, physical, null, t);
+            var s = await Stores(a, false, t);
+            await s.Tools.Read(s.Physical, physical, null, t);
             var native = await a.SourceAsync(OperationsOwnerV1.PlateMold, t);
             var visible = native.PlateMolds().Select(x => x.Id);
-            var ids = await s.Engineering.SpecificationTools().Where(x => visible.Contains(x.Id) && x.WdPtnNo == number && x.WdRev == revision)
-                .OrderBy(x => x.BaseCd).ThenBy(x => x.Id).Take(100).Select(x => x.Id).ToArrayAsync(t);
+            var matches = s.Engineering.SpecificationTools()
+                .Where(x => visible.Contains(x.Id) && x.WdPtnNo == number && x.WdRev == revision);
             var result = new List<ToolAssociationCandidateV1>();
-            foreach (var id in ids)
+            const int batchSize = 128;
+            var scanAfter = after;
+            while (true)
             {
-                var spec = await s.Specs.Read(id, null, t); if (spec == null) continue;
-                try
+                // 分页按稳定 UUID 前进。每一批都重新经过现有原 Owner 的资格检查。
+                var rows = scanAfter is Guid cursor ? matches.Where(x => x.Id.CompareTo(cursor) > 0) : matches;
+                var ordered = pageSize == null ? rows.OrderBy(x => x.BaseCd).ThenBy(x => x.Id) : rows.OrderBy(x => x.Id).Take(batchSize);
+                var ids = await ordered.Select(x => x.Id).ToArrayAsync(t);
+                foreach (var id in ids)
                 {
-                    await Technical(a, spec.Reference, true, t);
-                    var src = await s.Native.Read(native, id, null, t); var identity = src.Source.GetProperty("identity");
-                    result.Add(new(spec.Reference, spec.Source, identity.GetProperty("baseCode").GetString()!,
-                        identity.GetProperty("number").GetString()!, identity.GetProperty("businessRevision").GetInt32(), spec.Requirements));
+                    var spec = await s.Specs.Read(id, null, t);
+                    if (spec is not { State: "DRAFT", Approval: "NOT_REQUESTED" }) continue;
+                    try
+                    {
+                        await Technical(a, spec.Reference, true, t);
+                        var src = await s.Native.Read(native, id, null, t);
+                        var identity = src.Source.GetProperty("identity");
+                        var sourceNumber = identity.GetProperty("number").GetString()!;
+                        var sourceRevision = identity.GetProperty("businessRevision").GetInt32();
+                        if (sourceNumber != number || sourceRevision != revision || src.Reference != spec.Source) continue;
+
+                        // 只在还有一条实际可见且符合资格的记录时返回上一批的末行键。
+                        if (result.Count == pageSize)
+                            return new(result.ToArray(), result[^1].Technical.Id);
+                        result.Add(new(spec.Reference, spec.Source, identity.GetProperty("baseCode").GetString()!,
+                            sourceNumber, sourceRevision, spec.Requirements));
+                    }
+                    catch (OrderPriceCorrectionException e) when (e.Status is 403 or 404 or 412 || e.Message == "ENGINEERING_PRODUCT_DISABLED") { }
                 }
-                catch (OrderPriceCorrectionException e) when (e.Status is 403 or 404 or 412 || e.Message == "ENGINEERING_PRODUCT_DISABLED") { }
+                if (pageSize == null || ids.Length < batchSize)
+                    return new ToolAssociationCandidatePageV1(result.ToArray(), null);
+                scanAfter = ids[^1];
             }
-            return result.ToArray();
         }, ct);
     }
     public Task<ToolAssociationViewV1[]> ListAsync(Guid physical, int page = 1, CancellationToken ct = default)

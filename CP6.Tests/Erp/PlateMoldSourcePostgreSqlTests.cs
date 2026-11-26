@@ -11,6 +11,7 @@ using CP6.Entity.DomainModels.Erp;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql;
+using NpgsqlTypes;
 using CP6.Tests.Platform;
 using Microsoft.EntityFrameworkCore;
 namespace CP6.Tests.Erp;
@@ -208,7 +209,24 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         settings.Database=name; var database = new DatabaseOptions(DatabaseProvider.PostgreSql); var profile=DatabaseMigrationProfile.For(database,DatabaseContextKind.Core);
         var options=DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6Context>(),database,settings.ConnectionString,profile.MigrationsAssembly,profile.HistoryTable,profile.HistorySchema);
         await using var db=new CP6Context(options.Options,new TenantContext()); await db.GetService<IMigrator>().MigrateAsync("20261026230000_UomTimeBasisV1");
-        db.PlateMolds.Add(NativePlate()); await db.SaveChangesAsync(); db.ChangeTracker.Clear();
+        // Seed the legacy table before the current EF audit columns exist.
+        var plate = NativePlate();
+        var startDate = new NpgsqlParameter("start_date", NpgsqlDbType.Timestamp) { Value = plate.StDate };
+        var endDate = new NpgsqlParameter("end_date", NpgsqlDbType.Timestamp) { Value = plate.EndDate };
+        await db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO public."T_PlateMold" (
+                "Id", "TenantId", "WdPtnNo", "WdRev", "BaseCd", "VrsnName", "DecisionEstimateNo",
+                "CustomerCd", "SupplierCd", "RepresentativeProductCd", "ProcessCd", "StDate", "EndDate",
+                "SheetWidth", "SheetFlow", "BladeWidth", "BladeFlow", "CylinderSize", "CompositionQty",
+                "MfgQty", "Creator", "DecisionAmount", "Status", "McTransferFlg", "AtachInfoActual")
+            VALUES (
+                {Guid.NewGuid()}, {db.CurrentTenantId}, {plate.WdPtnNo}, {plate.WdRev}, {plate.BaseCd},
+                {plate.VrsnName}, {plate.DecisionEstimateNo}, {plate.CustomerCd}, {plate.SupplierCd},
+                {plate.RepresentativeProductCd}, {plate.ProcessCd}, {startDate}, {endDate},
+                {plate.SheetWidth}, {plate.SheetFlow}, {plate.BladeWidth}, {plate.BladeFlow},
+                {plate.CylinderSize}, {plate.CompositionQty}, {plate.MfgQty}, {plate.Creator},
+                {plate.DecisionAmount}, {plate.Status}, {plate.McTransferFlg}, {plate.AtachInfoActual});
+            """);
         var before=await db.Database.SqlQueryRaw<string>("SELECT to_jsonb(p)::text AS \"Value\" FROM public.\"T_PlateMold\" p").SingleAsync(); var grants=await db.Sys_RoleActions.CountAsync();
         await db.Database.MigrateAsync();
         Assert.Equal(before,await db.Database.SqlQueryRaw<string>("SELECT to_jsonb(p)::text AS \"Value\" FROM public.\"T_PlateMold\" p").SingleAsync()); Assert.Equal(grants,await db.Sys_RoleActions.CountAsync());

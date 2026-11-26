@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP10-48 WMS版模实例身份、当前头与HoldExact提供者](../development/evidence/WP10-48/DELIVERY.md)（DONE），核对时间 `2026-11-26T06:35:49.953026+00:00`。
 - [WP08-16 RES资源身份与独立能力目录提供者](../development/evidence/WP08-16/DELIVERY.md)（DONE），核对时间 `2026-11-26T04:04:39.629541+00:00`。
 - [WP06-13 Planning H10原生接收槽与源控制最终门](../development/evidence/WP06-13/DELIVERY.md)（DONE），核对时间 `2026-11-24T17:09:02.5658485Z`。
 - [WP04-32 Sales稳定来源目录、原结果与H10 H32发布参加](../development/evidence/WP04-32/DELIVERY.md)（DONE），核对时间 `2026-11-24T12:11:45Z`。
