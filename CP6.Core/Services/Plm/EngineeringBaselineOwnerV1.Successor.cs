@@ -1,10 +1,43 @@
 using System.Text.Json;
 using CP6.Core.Services.Integration;
+using Microsoft.EntityFrameworkCore;
 using static CP6.Core.Services.Plm.EngineeringProductValuesV1;
 using static CP6.Core.Services.Plm.EngineeringBaselineValuesV1;
 namespace CP6.Core.Services.Plm;
 public sealed partial class EngineeringBaselineOwnerV1
 {
+    private sealed class ParentOriginal
+    {
+        public long Version { get; init; }
+        public byte[] Body { get; init; } = [];
+        public string Digest { get; init; } = "";
+    }
+
+    // 调用方已核准工作修订并持有其锁。父基线正文仍走基线 Owner 的独立读取授权。
+    internal async Task<(long Version, EngineeringSourceRefV1 Parent)?> ParentOfWorkingVersion(Guid id, long version, CancellationToken ct)
+    {
+        if (!Owns(db) || db.Database.CurrentTransaction == null) throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);
+        if (!scope.HasDeploymentEnvironment)
+        {
+            if (await db.Database.SqlQuery<bool>($"""
+                SELECT EXISTS(SELECT FROM cp6_engineering_baseline_v1.successors
+                  WHERE tenant_id={db.CurrentTenantId} AND revision_id={id} AND revision_version<={version}) AS "Value"
+                """).SingleAsync(ct)) throw Error("ENGINEERING_BASELINE_ENVIRONMENT_UNAVAILABLE", 503);
+            return null;
+        }
+        var original = await db.Database.SqlQuery<ParentOriginal>($"""
+            SELECT revision_version AS "Version",body AS "Body",digest AS "Digest" FROM cp6_engineering_baseline_v1.successors
+            WHERE environment_id={scope.EnvironmentId} AND tenant_id={db.CurrentTenantId} AND revision_id={id} AND revision_version<={version}
+            ORDER BY revision_version DESC LIMIT 1
+            """).SingleOrDefaultAsync(ct);
+        if (original == null) return null;
+        if (Hash(original.Body) != original.Digest) throw Error("ENGINEERING_BASELINE_ORIGINAL_UNAVAILABLE", 503);
+        var value = JsonSerializer.Deserialize<EngineeringBaselineSuccessorResultV1>(original.Body, EngineeringProductStoreV1.Json);
+        if (value == null || value.Revision.Id != id || Revision(value.Revision.Version) != original.Version)
+            throw Error("ENGINEERING_BASELINE_ORIGINAL_UNAVAILABLE", 503);
+        return (original.Version, value.ParentBaseline);
+    }
+
     public Task<EngineeringBaselineSuccessorResultV1> SuccessorAsync(EngineeringBaselineSuccessorV1 input,CancellationToken ct=default)
     {
         if(input==null || input.OperationId==Guid.Empty || input.ExpectedRevision==null || input.ExpectedEtag==Guid.Empty)throw Error("ENGINEERING_SUCCESSOR_COMMAND_INVALID",400);

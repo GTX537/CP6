@@ -4,7 +4,7 @@ import { identityStamp, requireIdentity } from './identity'
 export interface PendingRevisionOperation { operationId: string; kind: RevisionOperationKind; objectId: string }
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 function key(scope: RevisionScope, kind: RevisionOperationKind) {
-  if (!uuid.test(scope.tenantId) || !uuid.test(scope.actorId) || !['ENGINEERING_REVISION'].includes(kind)) throw new Error('无法确认当前用户和租户。')
+  if (!uuid.test(scope.tenantId) || !uuid.test(scope.actorId) || !['ENGINEERING_REVISION', 'ENGINEERING_LEGACY_REFERENCE'].includes(kind)) throw new Error('无法确认当前用户和租户。')
   return `cp6_revision_operation_v1:${scope.tenantId.toLowerCase()}:${scope.actorId.toLowerCase()}:${kind}`
 }
 export function revisionResponse<T>(response: RevisionEnvelope<T>): T {
@@ -52,10 +52,10 @@ export function saveRevisionOperation(scope: RevisionScope, kind: RevisionOperat
     return accept(scope, original, { operationId: original.operationId, state: 'COMMITTED', result }, check)
   })
 }
-export function resolveRevisionOperation(scope: RevisionScope, kind: RevisionOperationKind, close: boolean, guard: () => void) {
+export function resolveRevisionOperation(scope: RevisionScope, kind: RevisionOperationKind, close: boolean, guard: () => void,
+  read = revisionApi.operation) {
   return exclusive(scope, kind, guard, async check => {
     const original = pendingRevisionOperation(scope, kind); if (!original) throw new Error('没有待确认的原操作。')
-    const api = revisionApi
-    return accept(scope, original, revisionResponse(await api.operation(original.operationId, close)), check)
+    return accept(scope, original, revisionResponse(await read(original.operationId, close)), check)
   })
 }

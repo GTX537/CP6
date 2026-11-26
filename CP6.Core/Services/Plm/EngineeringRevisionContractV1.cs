@@ -43,6 +43,8 @@ public sealed record EngineeringRevisionCommandV1
     public string? Goal { get; init; }
     public string Reason { get; init; } = "";
     public EngineeringDraftPatchV1[]? Patches { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public EngineeringRebaseInputV1? Rebase { get; init; }
 }
 public sealed record EngineeringRevisionScopeV1(Guid TenantId, Guid ActorId);
 public sealed record EngineeringRevisionDepartmentV1(Guid Id, string Code, string Name);
@@ -57,7 +59,9 @@ public sealed record EngineeringRevisionSnapshotV1(Guid TenantId, EngineeringRev
     Guid Etag, EngineeringRevisionRefV1 CandidateRef, bool IsCurrent, string State, EngineeringRevisionOriginV1 Origin,
     EngineeringWorkingDraftV1 Draft, string Reason, string? ParentWorkingVersion, DateTimeOffset RecordedAt,
     string OriginalJson, string Readiness = "DRAFT_ONLY", string[]? Missing = null,
-    string Review = "NOT_REQUESTED", string Freeze = "NOT_REQUESTED");
+    string Review = "NOT_REQUESTED", string Freeze = "NOT_REQUESTED",
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] EngineeringRevisionRefV1? CompositionBase = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] EngineeringRebaseRecordV1? Rebase = null);
 public sealed record EngineeringRevisionResultV1(Guid OperationId, string Kind, Guid ObjectId, string Version, string Digest);
 public sealed record EngineeringRevisionOperationV1(Guid OperationId, string State, EngineeringRevisionResultV1? Result = null);
 public sealed record EngineeringWorkingChangeV1(string Path, JsonElement? Before, JsonElement? After);

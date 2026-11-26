@@ -9,7 +9,8 @@ using static CP6.Core.Services.Plm.EngineeringProductValuesV1;
 using static CP6.Core.Services.Plm.EngineeringRevisionValuesV1;
 
 namespace CP6.Core.Services.Plm;
-public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 owner, ControlledDocumentOwnerV1? documents = null, QualitySpecificationAuthorityService? quality = null)
+public sealed partial class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 owner, ControlledDocumentOwnerV1? documents = null,
+    QualitySpecificationAuthorityService? quality = null, EngineeringBaselineOwnerV1? baselines = null, EngineeringRevisionChangeAuthorityV1? changeAuthority = null)
 {
     private const string Contract = "Main.Plm.EngineeringRevision.commands.v1";
     private OperationsOwnerV1 Authority => owner.Owns(db) ? owner : throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);
@@ -31,6 +32,7 @@ public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 
     private async Task<EngineeringRevisionSnapshotV1> Observe(OperationsAccessV1 access, EngineeringRevisionSnapshotV1 value, CancellationToken ct)
     {
         await access.RequireEngineeringRevision(value.Reference.Id, ct); access.AtCommit(token => access.RequireEngineeringRevision(value.Reference.Id, token));
+        await VerifyOrigin(access, value.Origin, value.Draft.ProductRef, false, ct);
         var missing = new List<string>();
         if (value.Draft.ProductRef is { } product)
         { var actual = await Product(access, product, false, ct); if (!actual.IsCurrent || actual.Product.Enabled != true) missing.Add("PRODUCT_SOURCE_CHANGED"); }
@@ -104,7 +106,8 @@ public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 
         return Authority.ExecuteAsync(OperationsOwnerV1.EngineeringRevision, "query", false, async (access, token) =>
         {
             var store = new EngineeringRevisionStoreV1(db); await store.Fence(false, token); await access.RequireEngineeringRevision(id, token);
-            return await Observe(access, await store.Read(id, selected, token), token);
+            var value = await Observe(access, await store.Read(id, selected, token), token);
+            return await ObserveLineage(access, store, value, token);
         }, ct);
     }
     public Task<EngineeringWorkingDiffV1> DiffAsync(Guid id, string before, string after, CancellationToken ct = default)
@@ -140,8 +143,14 @@ public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 
     }
     public Task<EngineeringRevisionResultV1> CommandAsync(EngineeringRevisionCommandV1 input, CancellationToken ct = default)
     {
-        if (input == null || input.OperationId == Guid.Empty || input.RevisionId == Guid.Empty || input.Action is not ("CREATE" or "PATCH")) throw Error("ENGINEERING_COMMAND_INVALID", 400);
+        if (input == null || input.OperationId == Guid.Empty || input.RevisionId == Guid.Empty || input.Action is not ("CREATE" or "PATCH" or "REBASE")) throw Error("ENGINEERING_COMMAND_INVALID", 400);
         var frozen = OperationsOwnerV1.Freeze(input); Text(frozen.Reason);
+        if (frozen.Action == "REBASE")
+        {
+            if (frozen.Rebase?.Resolutions == null || frozen.Patches != null) throw Error("ENGINEERING_COMMAND_INVALID", 400);
+            EngineeringRevisionRebaseV1.References(frozen.Rebase.Sources);
+        }
+        else if (frozen.Rebase != null) throw Error("ENGINEERING_COMMAND_INVALID", 400);
         var bytes = MainOwnerOperationJournalV1.Encode(frozen); var journal = new MainOwnerOperationJournalV1(db); MainOwnerOperationJournalV1.Original? original = null;
         var action = frozen.Action == "CREATE" ? "add" : "edit";
         return Authority.ExecuteAsync(OperationsOwnerV1.EngineeringRevision, action, true, async (access, token) =>
@@ -149,6 +158,7 @@ public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 
             var store = new EngineeringRevisionStoreV1(db); await store.Fence(true, token);
             if (original != null) return await Disclose(access, store, original, frozen.OperationId, bytes, token);
             EngineeringWorkingDraftV1 draft; long? expected = null; string? code = null; EngineeringNumberAllocationV1? numbering = null;
+            EngineeringRebaseRecordV1? rebase = null;
             OperationsAccessV1.NewEngineeringRevisionBinding? creation = null;
             if (frozen.Action == "CREATE")
             {
@@ -156,6 +166,9 @@ public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 
                 Origin(frozen.Origin); Text(frozen.Goal);
                 creation = await access.BeginEngineeringRevisionCreation(frozen.RevisionId, frozen.ExpectedAuthorityVersion, frozen.DepartmentId, token);
                 if (frozen.ProductRef != null) await Product(access, frozen.ProductRef, true, token);
+                if (frozen.Origin!.Type == "NEW_PRODUCT" && frozen.ProductRef != null && await store.ProductHasBaseline(frozen.ProductRef.Id, token))
+                    throw Error("ENGINEERING_PARENT_CHANGE_REQUIRED", 422);
+                await VerifyOrigin(access, frozen.Origin!, frozen.ProductRef, true, token);
                 draft = new(frozen.ProductRef, frozen.Goal!, null, []); (code, numbering) = await Allocate(token);
             }
             else
@@ -166,10 +179,17 @@ public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 
                 var current = await Observe(access, await store.Read(frozen.RevisionId, null, token), token);
                 if (current.Reference.Version != frozen.ExpectedVersion || current.Etag != frozen.ExpectedEtag) throw Error("ENGINEERING_WORKING_VERSION_CHANGED", 412);
                 if (current.State != "DRAFT") throw Error("ENGINEERING_WORKING_NOT_DRAFT", 409);
-                draft = Patch(current.Draft, frozen.Patches);
-                foreach (var patch in frozen.Patches!)
+                if (current.Origin.Type == "CHANGE") await VerifyOrigin(access, current.Origin, current.Draft.ProductRef, true, token);
+                if (frozen.Action == "REBASE") (draft, rebase) = await Rebase(access, store, current, frozen, token);
+                else draft = Patch(current.Draft, frozen.Patches);
+                foreach (var patch in frozen.Patches ?? [])
                 {
-                    if (patch.Op == "SET_PRODUCT") await Product(access, patch.ProductRef!, true, token);
+                    if (patch.Op == "SET_PRODUCT")
+                    {
+                        await Product(access, patch.ProductRef!, true, token);
+                        if (current.Origin.Type == "NEW_PRODUCT" && current.Draft.ProductRef == null && await store.ProductHasBaseline(patch.ProductRef!.Id, token))
+                            throw Error("ENGINEERING_PARENT_CHANGE_REQUIRED", 422);
+                    }
                     if (patch.Op == "UPSERT_COMPONENT" && patch.Component!.SourceRef is { } source)
                     {
                         if (patch.Component.Kind == "QUALITY_SPEC")
@@ -195,11 +215,34 @@ public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 
             var saved = await store.Append(frozen.RevisionId, access.ActorId, draft, frozen.Reason, expected, frozen.ExpectedEtag, code, frozen.Origin, numbering, token);
             if (creation != null) await access.CompleteEngineeringRevisionCreation(creation, token);
             await Observe(access, saved, token);
+            if (rebase != null) await new EngineeringRevisionLineageStoreV1(db).SaveRebase(saved, rebase, token);
             var result = new EngineeringRevisionResultV1(frozen.OperationId, "ENGINEERING_REVISION", frozen.RevisionId, saved.Reference.Version, saved.Reference.Digest);
             await journal.Store(RevisionOwner, Contract, frozen.OperationId, access.ActorId, bytes, result, [frozen.RevisionId],
                 new { action = frozen.Action, actor = access.ActorId, reason = frozen.Reason, result, saved.CandidateRef }, token);
             return result;
         }, ct, actionAtFence: async token => { original = await journal.Read(RevisionOwner, frozen.OperationId, token); return original == null ? action : "query"; });
+    }
+    private async Task VerifyOrigin(OperationsAccessV1 access, EngineeringRevisionOriginV1 origin, EngineeringProductRefV1? product,
+        bool requireApproval, CancellationToken ct)
+    {
+        if (origin.Type == "NEW_PRODUCT") return;
+        if (product == null) throw Error("ENGINEERING_PRODUCT_REQUIRED", 422);
+        if (origin.Type == "LEGACY_REVIEW")
+        {
+            await VerifyLegacyOrigin(access, origin.LegacyRef!, product, ct);
+            return;
+        }
+
+        var parent = await (baselines ?? throw Error("ENGINEERING_PARENT_CHANGE_OWNER_REQUIRED", 503)).Source(access, origin.ParentBaselineRef!, false, ct);
+        if (parent.Original.Revision.Draft.ProductRef?.Id != product.Id) throw Error("ENGINEERING_PARENT_PRODUCT_MISMATCH", 422);
+        if (changeAuthority == null || !changeAuthority.Owns(db)) throw Error("ENGINEERING_PARENT_CHANGE_OWNER_REQUIRED", 503);
+        await changeAuthority.RequireAsync(access, origin.ChangeRef!, parent.Reference, product, requireApproval, ct);
+        if (requireApproval)
+            access.AtCommit(t => access.EngineeringFinalObservation(async (a, token) =>
+            {
+                await changeAuthority.RequireAsync(a, origin.ChangeRef!, parent.Reference, product, true, token);
+                return true;
+            }, t));
     }
     private async Task<EngineeringRevisionResultV1> Disclose(OperationsAccessV1 access, EngineeringRevisionStoreV1 store,
         MainOwnerOperationJournalV1.Original original, Guid id, byte[]? input, CancellationToken ct)
@@ -211,6 +254,7 @@ public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 
         if (result == null || result.OperationId != id || result.Kind != "ENGINEERING_REVISION" || !original.Objects.SequenceEqual(new[] { result.ObjectId })) throw Error("ORIGINAL_OPERATION_UNAVAILABLE", 503);
         var saved = await Observe(access, await store.Read(result.ObjectId, Revision(result.Version), ct), ct);
         if (saved.Reference.Digest != result.Digest) throw Error("ORIGINAL_OPERATION_UNAVAILABLE", 503);
+        await ObserveLineage(access, store, saved, ct);
         return result;
     }
     public Task<EngineeringRevisionOperationV1> OperationAsync(Guid id, bool close, CancellationToken ct = default)

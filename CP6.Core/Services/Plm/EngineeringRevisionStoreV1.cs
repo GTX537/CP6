@@ -84,13 +84,37 @@ internal sealed class EngineeringRevisionStoreV1(CP6Context db)
     {
         var (head, raw, value) = await OriginalAt(id, version, ct);
         var frozen = await Frozen(id, Revision(value.Version), ct);
+        var inReview = !frozen && await InReview(id, value.Version, ct);
         return new(db.CurrentTenantId, new(RevisionOwner, id, value.Version, raw.Digest), value.Code, value.Etag,
             new(CandidateOwner, value.CandidateId, value.Version, Digest(Encode(value.Draft))), value.Version == head.Revision.ToString(CultureInfo.InvariantCulture),
-            frozen ? "FROZEN" : "DRAFT", value.Origin, value.Draft, value.Reason, value.ParentVersion, value.RecordedAt, Encoding.UTF8.GetString(raw.Body),
-            Freeze: frozen ? "FROZEN" : "NOT_REQUESTED");
+            frozen ? "FROZEN" : inReview ? "IN_REVIEW" : "DRAFT", value.Origin, value.Draft, value.Reason, value.ParentVersion, value.RecordedAt, Encoding.UTF8.GetString(raw.Body),
+            Review: inReview ? "IN_REVIEW" : "NOT_REQUESTED", Freeze: frozen ? "FROZEN" : "NOT_REQUESTED");
     }
     private Task<bool> Frozen(Guid id,long version,CancellationToken ct)=>db.Database.SqlQuery<bool>($"""
         SELECT EXISTS(SELECT FROM cp6_engineering_baseline_v1.baselines WHERE tenant_id={db.CurrentTenantId} AND revision_id={id} AND revision_version={version}) AS "Value"
+        """).SingleAsync(ct);
+    internal Task<bool> ProductHasBaseline(Guid product, CancellationToken ct)
+    {
+        Transaction();
+        return db.Database.SqlQuery<bool>($"""
+            SELECT EXISTS(SELECT FROM cp6_engineering_baseline_v1.baselines b
+              JOIN cp6_engineering_revision_v1.heads r ON (r.tenant_id,r.revision_id)=(b.tenant_id,b.revision_id)
+              WHERE r.tenant_id={db.CurrentTenantId} AND r.product_id={product}) AS "Value"
+            """).SingleAsync(ct);
+    }
+    // 读取实际在审包中的准确修订。业务写入与送审共用 Main 最终写入门和修订锁。
+    private Task<bool> InReview(Guid id, string version, CancellationToken ct) => db.Database.SqlQuery<bool>($"""
+        SELECT EXISTS(
+          SELECT FROM cp6_iteration_review_v1.submissions s
+          JOIN cp6_engineering_iteration_v1.heads h ON (h.tenant_id,h.object_id)=(s.tenant_id,s.iteration_id)
+          JOIN cp6_engineering_iteration_v1.versions v ON (v.tenant_id,v.object_id,v.revision)=(h.tenant_id,h.object_id,h.revision)
+          WHERE s.tenant_id={db.CurrentTenantId}
+            AND convert_from(v.body_bytes,'UTF8')::jsonb#>>ARRAY['body','iteration','stage']='IN_REVIEW'
+            AND convert_from(v.body_bytes,'UTF8')::jsonb#>>ARRAY['body','iteration','currentReview','submissionId']=s.id::text
+            AND EXISTS(SELECT FROM jsonb_array_elements(convert_from(s.package_bytes,'UTF8')::jsonb->'candidates') AS c(value)
+              WHERE c.value#>>ARRAY['original','definition','engineeringRevision','id']={id}::text
+                AND c.value#>>ARRAY['original','definition','engineeringRevision','version']={version})
+        ) AS "Value"
         """).SingleAsync(ct);
     internal async Task<EngineeringRevisionSnapshotV1> Append(Guid id, Guid actor, EngineeringWorkingDraftV1 draft, string reason,
         long? expected, Guid? etag, string? code, EngineeringRevisionOriginV1? origin, EngineeringNumberAllocationV1? numbering, CancellationToken ct, bool allowFrozenSuccessor = false)
