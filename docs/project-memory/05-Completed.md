@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP02-32 ACT-FILE-REFERENCE/1 本地权威门与 Owner 守护流式下载](../development/evidence/WP02-32/DELIVERY.md)（DONE），核对时间 `2026-11-26T14:32:49.7826700+00:00`。
+- [WP05-03 工程修订、工作快照与组成候选](../development/evidence/WP05-03/DELIVERY.md)（DONE），核对时间 `2026-11-26T21:49:27.736715+00:00`。
 
 ### 已关闭目标
 

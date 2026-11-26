@@ -36,6 +36,9 @@ R2 在同一席位从已推送并复核的 `6d966dcd27c33cc2173121f3c3991f79d11d
 
 - WP05-10 承接 `ENG-OUTPUT-RELATIONS/1`，核销多输出逐 occurrence 的输入、产出工序、配置与关系证据，提供多输出差异及准确回读。 [WP05-10](../../task-plans/WP05.md#wp05-10)
 - WP05-12 承接技术评审和双候选双摘要复核，以及冻结时对 `RelationSet`、`OutputBinding`、原技术清单与原回执的同事务绑定。 [WP05-12](../../task-plans/WP05.md#wp05-12)
+- WP05-25 固定真实 ECR 的来源、对象行及影响范围，WP05-26 复核正式 ECO 的准确批准和撤回，联验并行 ECO 的同位置冲突、逐项决定、重新送审及基线漂移拒绝。 [WP05-25](../../task-plans/WP05.md#wp05-25) · [WP05-26](../../task-plans/WP05.md#wp05-26)
+- WP05-32 核验工程基线的用途政策与准确使用授权，WP05-42 接入正式用途所需的真实专业后验条件。 [WP05-32](../../task-plans/WP05.md#wp05-32) · [WP05-42](../../task-plans/WP05.md#wp05-42)
+- 真实存量档案的分类、逐类映射和批准由业务 Owner 核定。WP05-12 核验这些证据与新草稿的准确关联及当前冻结条件。历史原件保留原状态，证据不足时保留 `EVIDENCE_INCOMPLETE`，禁止批量标为 `FROZEN` 或 `RELEASED`。 [WP05-12](../../task-plans/WP05.md#wp05-12)
 
 ## 迁移与验证原件
 
@@ -49,6 +52,21 @@ R1 在改动实现前复现 412 后的回读 404 和浏览器未发起回读。R
 
 最终候选统一运行 Release 还原与构建、WP05-02 原 95 项、工程、DOC／QUALITY 及前端。最终证据记录提交与树、各组 TRX 用例名及 SHA-256、Vitest、`vue-tsc --build`、Vite 和本轮实例停机。TC-018 原件保留两个冻结版本、请求与回执、数据库原件、触发器结果和最终决定。 [最终读回](<D:/CP6-test-artifacts/WP05-03/exec-20261126T200325Z/final-readback.json>) · [TC-018 原件](<D:/CP6-test-artifacts/WP05-03/exec-20261126T200325Z/permission-consumption-wp05-03-final-engineering/tc-018.json>) · [运行脚本](<D:/CP6-test-artifacts/WP05-03/exec-20261126T200325Z/run-final.ps1>) · [工作流核对](<D:/CP6-test-artifacts/WP05-03/exec-20261126T200325Z/workflow-final.json>)
 
-## 交接状态
+## 总控独立复核与同 PR 生效
 
-候选保存在 DEV-1 的 `codex/wp05-03`。席位仍由 `CP6:WP05-03` 占用，候选、工作区清洁性与登记状态以最终读回为准。总控负责独立复核、远端处置和席位释放。 [席位记录与回执](<D:/CP6-test-artifacts/WP05-03/exec-20261126T200325Z/final-readback.json>)
+- R1 `FAIL`。过期 CAS 返回 412 后缺少持久化冲突清单和原键回读，前端刷新后也无法恢复。接续轮补齐服务端原件和页面回读。 [R1 复核](<D:/CP6-test-artifacts/WP05-03/coord-verify-20261126T174324790Z/coord-review.md>)
+- R2 `FAIL`。已有用例分别验证了冻结基线、双工程人员和原键回读，TC-018 仍缺双冻结基线下由两位授权工程人员写同一位置的同场验证。接续轮补齐从冻结 BL-A、BL-B 到冲突回读及显式采用 BL-B 的完整场景。 [R2 复核](<D:/CP6-test-artifacts/WP05-03/coord-verify-20261126T192352680Z/coord-review.md>)
+- R3 `PASS`。在产品提交 `4b14dece4c6e3f3595b24f60c4f3daa20c025b10`、树 `6aa61a9e738a4f81ef903b81ebcc7b45d1d1d3ec` 上独立复跑，.NET 174 项和 Vitest 115 项均通过，无失败或跳过。两侧 .NET 和 Vitest 的用例名及结果一致。Release 还原与构建、`vue-tsc --build`、Vite 均退出 0。迁移及不可变保护在隔离 PostgreSQL 18.6 的模拟数据上复验通过。 [R3 复核](<D:/CP6-test-artifacts/WP05-03/coord-verify-20261126T211053596Z/coord-review.md>) · [证据对照](<D:/CP6-test-artifacts/WP05-03/coord-verify-20261126T211053596Z/evidence-comparison.json>)
+
+| R3 分组 | 通过 | TRX SHA-256 |
+| --- | ---: | --- |
+| WP05-02 | 95 | `66ecf9feb74c174690d0ac49774836dc1877f998c79245399f8e8a136c28f221` [TRX](<D:/CP6-test-artifacts/WP05-03/coord-verify-20261126T211053596Z/results-final-wp05-02/wp05-03-final-wp05-02.trx>) |
+| 工程 | 44 | `7de381ea848eeb58b47169ceebaa74593b98e8c1186b460af05df414c2cb00cd` [TRX](<D:/CP6-test-artifacts/WP05-03/coord-verify-20261126T211053596Z/results-final-engineering/wp05-03-final-engineering.trx>) |
+| DOC／QUALITY | 35 | `bde8980d7ca6d8d93721957b1265e94e2293b30c4282e3abbc7d0f774dc7affc` [TRX](<D:/CP6-test-artifacts/WP05-03/coord-verify-20261126T211053596Z/results-final-sources/wp05-03-final-sources.trx>) |
+
+总控已推送产品候选并登记 Draft PR #1340。卡级 `DONE` 在该 PR 正常合入受保护的 `main`，且核对远端主线包含已验收产品提交和本次台账后生效。`delivery_evidence.remote_main_sha` 记录该 PR 须纳入的产品祖先，实际合并 SHA 以 PR 回执为准。ENG-REV-01 及相关目标保持开放，剩余出口由上述责任卡承接。 [PR #1340](https://github.com/GTX537/CP6/pull/1340) · [台账](../../roadmap.json)
+
+## 有效时间与交接
+
+- 首轮 **6342.906 秒**、R1 修订 **3367.463 秒**、R2 修订 **3814.830 秒**，执行侧累计 **13525.199 秒**。L 卡额度 28800 秒，150% 拆分线 43200 秒，本卡新增拆分为 0。 [R1 有效时间](<D:/CP6-test-artifacts/WP05-03/exec-20261126T182106Z/final-readback.json>) · [最终有效时间](<D:/CP6-test-artifacts/WP05-03/exec-20261126T200325Z/final-readback.json>)
+- DEV-1 仍由 `CP6:WP05-03` 占用，登记状态为 `active`，关联 PR #1340。本地 `codex/wp05-03` 保留产品及台账，待总控复核台账、更新 PR 并核对远端采用。 [执行侧产品回执](<D:/CP6-test-artifacts/WP05-03/exec-20261126T200325Z/final-readback.json>)
