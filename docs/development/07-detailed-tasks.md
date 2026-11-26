@@ -2,13 +2,13 @@
 
 台账日期：2026-11-26。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 394 项，已交付 109 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 394 项，已交付 110 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)。按[单卡串行计划](planning/20261117-card-execution.md)核对完整前置并选择下一卡。
 
 原 375 卡及其全部出口保留；已登记 13 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。
 
-原号 DONE 93/375；完整 DONE 90/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 6/6，沿用原卡池内划拨。
+原号 DONE 94/375；完整 DONE 91/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 6/6，沿用原卡池内划拨。
 
 ## WP01 现有实现与设计对照
 
@@ -101,7 +101,7 @@
 | [WP03-19 活动引用集合与附件字节访问](../../docs/development/task-plans/WP03.md#wp03-19) | CRM | 待安排 | WP02-09, WP02-14, WP03-17 | CODE / M | 未领取 |
 | [WP03-20 活动工程来源快照与原键收件](../../docs/development/task-plans/WP03.md#wp03-20) | CRM | 待安排 | WP02-09, WP03-19, WP03-26, WP05-61 | CODE / M | 未领取 |
 | [WP03-21 商机创建、需求预测与关联人](../../docs/development/task-plans/WP03.md#wp03-21) | CRM | 已交付 | WP02-09, WP03-05, WP03-09 | CODE / M | EXEC-WP02-14B |
-| [WP03-22 商机资格、阶段与销售决定](../../docs/development/task-plans/WP03.md#wp03-22) | CRM | 待安排 | WP02-09, WP03-21 | CODE / M | 未领取 |
+| [WP03-22 商机资格、阶段与销售决定](../../docs/development/task-plans/WP03.md#wp03-22) | CRM | 已交付 | WP02-09, WP03-21 | CODE / M | CP6-EXEC |
 | [WP03-23 商机商业交接与补件同事务](../../docs/development/task-plans/WP03.md#wp03-23) | CRM | 待安排 | WP02-09, WP02-22, WP03-07, WP03-22, WP04-13 | CODE / L | 未领取 |
 | [WP03-24 商机报价及商业责任完整投影](../../docs/development/task-plans/WP03.md#wp03-24) | CRM | 待安排 | WP02-09, WP03-23, WP04-13, WP04-16, WP04-18 | CODE / M | 未领取 |
 | [WP03-25 商业交接投递重试与安全原键查询](../../docs/development/task-plans/WP03.md#wp03-25) | CRM | 待安排 | WP02-09, WP02-11, WP02-21, WP02-23, WP03-23, WP04-13 | CODE / M | 未领取 |

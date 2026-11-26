@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP03-22 商机资格、阶段与销售决定](https://github.com/GTX537/CP6.CRM/blob/4d2a188d907760a90a67c265ab57fd0f1b252490/docs/development/evidence/WP03-22/DELIVERY.md)（DONE），核对时间 `2026-11-26T08:33:20.705173+00:00`。
 - [WP04-33 ERP经营产品物料身份与工程映射读取提供者](../development/evidence/WP04-33/DELIVERY.md)（DONE），核对时间 `2026-11-26T08:07:30.005798+00:00`。
 - [WP10-48 WMS版模实例身份、当前头与HoldExact提供者](../development/evidence/WP10-48/DELIVERY.md)（DONE），核对时间 `2026-11-26T06:35:49.953026+00:00`。
 - [WP08-16 RES资源身份与独立能力目录提供者](../development/evidence/WP08-16/DELIVERY.md)（DONE），核对时间 `2026-11-26T04:04:39.629541+00:00`。
