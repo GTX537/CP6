@@ -1,17 +1,20 @@
 # WP04-33 经营产品物料身份与工程映射读取
 
-本地候选已完成派工卡范围，提交总控复核。ERP-EST-01、ERP-ORD-01 的整目标验收另依各业务任务核销。[恢复派工卡](<D:/CP6-test-artifacts/WP04-33/WP04-33-RESUME-CARD-20261126.md>)
+本记录供同一 PR 验收。ERP-EST-01、ERP-ORD-01 的整目标验收按各业务任务核销。[WP04-33 PR #1332](https://github.com/GTX537/CP6/pull/1332) · [恢复派工卡](<D:/CP6-test-artifacts/WP04-33/WP04-33-RESUME-CARD-20261126.md>)
+
+同 PR 卡级 DONE 在受保护 main 正常合并并核对主线包含性后生效。台账锚点为已验收交付祖先 `a92d4e54a1d77b84eef980045305827472ba8795`，实际合并 SHA 以 PR 回执为准。
 
 ## 提交与基线
 
 | 对象 | SHA | Git 树 |
 | --- | --- | --- |
-| 领取时及交付核实的 Main | `ab571e684dffd3a5e4401a420b059f564d48b99b` | `bf13c1a0d68e20d99b946fdcd25cff25cfd8c2ab` |
+| 恢复执行及交付核实的 Main | `ab571e684dffd3a5e4401a420b059f564d48b99b` | `bf13c1a0d68e20d99b946fdcd25cff25cfd8c2ab` |
 | 原冻结候选（已关闭的 #1322） | `606ba8d8506c93c3b87222dddd49cf01a1b4c7cf` | `7f6bc46a3c69820dd592b41e126bf2dfca5b2dff` |
 | 本地合并提交 | `a4b4b9fc2e228626da6456ac9e04d3056050c8fa` | `17a5f9f333e834f284bf4f428e3a51d1c7d4c661` |
-| 本轮受验源码提交 | `bcbb52e460e5505bc3710333a4e161d605c555af` | `f12fb9a4d15a2acee867e173e5d95a48966d8260` |
+| 执行侧受验源码提交 | `bcbb52e460e5505bc3710333a4e161d605c555af` | `f12fb9a4d15a2acee867e173e5d95a48966d8260` |
+| 总控受验交付祖先 | `a92d4e54a1d77b84eef980045305827472ba8795` | `3534d30a67f8dbbbd8ec8f7b8c9fe3948e3af58e` |
 
-冻结候选原基线是 `cb32b3a54c7898d8141faa604c2768ddeff44318`。DEV-1 通过席位工具恢复原分支 `codex/wp04-33`。本地合并的两个父提交依次为原冻结候选和本轮 Main。对照 #435 复核 11 项严格前置的采用祖先，含 Main 的 WP02-10、WP02-13 和拆分余卡 WP02-13b。Platform 的远端主线为 `a07edc24160d10cb1e3936cc6f495ad4195dd8f0`。[前置与原范围决定](https://github.com/GTX537/CP6.AI-Handoff/blob/b59dba8d0581516d10d499b09449aeb018e4fbde/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261124T053106Z-coord4-wp04-33-decision/MESSAGE.md)
+席位登记的原领取时间为 `2026-11-24T05:42:41.566899+00:00`，基线为 `cb32b3a54c7898d8141faa604c2768ddeff44318`。DEV-1 通过席位工具恢复原分支 `codex/wp04-33`。本地合并的两个父提交依次为原冻结候选和本轮 Main。对照 #435 复核 11 项严格前置的采用祖先，含 Main 的 WP02-10、WP02-13 和拆分余卡 WP02-13b。Platform 的远端主线为 `a07edc24160d10cb1e3936cc6f495ad4195dd8f0`。[前置与原范围决定](https://github.com/GTX537/CP6.AI-Handoff/blob/b59dba8d0581516d10d499b09449aeb018e4fbde/handoffs/CP6-DEV-20261012/tasks/COORD/replies/20261124T053106Z-coord4-wp04-33-decision/MESSAGE.md)
 
 交付报告作为单独的本地提交。最终候选 SHA、树、分支读回与受验源码的同 blob 校验记录在 `validation.json`。Main 的 `ProductService.cs` 与候选同 blob，包含已采用的 BUG-1323 修复。[最终验证读回](<D:/CP6-test-artifacts/WP04-33/exec-20261126T070650Z/validation.json>) · [独立删除范围](https://github.com/GTX537/CP6.AI-Handoff/blob/58424657ef383d978c14af9b0dce1724c6c3a683/handoffs/CP6-DEV-20261012/tasks/WP04-33/replies/20261124T070459Z-coord4-legacy-delete-extraction-scope/MESSAGE.md)
 
@@ -90,12 +93,18 @@ $filter = $run.Arguments[2].Substring('/TestCaseFilter:'.Length)
 
 集中审查比较精确 Main 与本地候选的完整差异，覆盖权限、租户、当前版本检查、历史、原键、敏感信息和范围。静态工作流审查记录两侧事件、过滤、`uses` 依赖和实际变更路径。[工作流读回](<D:/CP6-test-artifacts/WP04-33/exec-20261126T070650Z/workflow-final.json>)
 
+## 总控独立复跑
+
+总控在 `a92d4e54a1d77b84eef980045305827472ba8795` 上使用 .NET SDK `10.0.404`，在独立目录锁定还原并全新构建 Release，两个命令均退出 0。总控使用 PostgreSQL 18 的回环隔离实例和合成夹具，在新构建的 `CP6.Tests.dll` 上以 `dotnet test` 运行执行侧同一过滤式。测试退出 0，结果为 **41 通过、0 失败、0 跳过**。两份 TRX 的用例名单相同。独立复跑 TRX SHA-256 为 `dd58209546debb0b6628d2ee4abdc6d46ff2a12e35208b101dc0723fbbdf8223`。[复跑脚本](<D:/CP6-test-artifacts/WP04-33/coord-verify-20261126/run.ps1>) · [构建日志](<D:/CP6-test-artifacts/WP04-33/coord-verify-20261126/build.log>) · [复跑 TRX](<D:/CP6-test-artifacts/WP04-33/coord-verify-20261126/results/verify.trx>)
+
 ## 未覆盖项与交接
 
-- **UNPROVEN** 四项业务事实的真实权威来源、真实生产使用及候选的远端采用。
+- **UNPROVEN** 四项业务事实的真实权威来源、真实生产使用及受保护主线采用。
 - **NOT_RUN** PE／mcframe7、真实权限或数据、外部运行服务、整目标 ERP-EST-01／ERP-ORD-01、SQL Server、Actions、部署及合并后冒烟。本卡变更路径均为 .NET 源码、测试与报告，Vue 验证为 `NOT_RUN`。
-- 本地分支为 `codex/wp04-33`，远端分支保留冻结头。DEV-1 工作区干净，登记任务 `CP6:WP04-33` 为 `active`，席位保留给总控复核。
+- 台账提交追加于本地分支 `codex/wp04-33`，远端分支仍指向 `a92d4e54a1d77b84eef980045305827472ba8795`。DEV-1 继续登记 `CP6:WP04-33` 为 `active`。
 
 ## 有效时间
 
 本轮从 `2026-11-26T07:04:11.8140249Z` 派工日志创建到 `2026-11-26T07:34:02.0913748+00:00` 的报告快照为 **1790.277 秒**，含实际阅读、实现和本机验证。旧报告明确登记候选阶段 1660.215 秒。其后有效工时缺少净计量，用暂缓前的 `state.json` 从 `2026-11-24T05:42:41.566899Z` 领取到 `2026-11-24T07:28:12.422899Z` 挂起的 **6330.856 秒**保守扣减此前预算，其中包含等待。M 档上限为 14400 秒，原卡 150% 为 21600 秒。至本报告快照累计预算计量 **8121.133 秒**，以该计量开工时尚有 8069.144 秒，按剩余额度计算的 150% 检查点为 12103.716 秒。
+
+执行侧最终读回将本轮更新为 **1849.617 秒**，该值与暂缓前保守计量的 **6330.856 秒**相加，本卡累计登记 **8180.473 秒**。旧报告的 1660.215 秒用于佐证历史工时，计入暂缓前窗口。本卡台账累计从 238134.461 秒增至 246314.934 秒。[执行侧最终验证与工时读回](<D:/CP6-test-artifacts/WP04-33/exec-20261126T070650Z/validation.json>)
