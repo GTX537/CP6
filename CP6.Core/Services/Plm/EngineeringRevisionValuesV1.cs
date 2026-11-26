@@ -23,10 +23,28 @@ internal static class EngineeringRevisionValuesV1
     internal static void Origin(EngineeringRevisionOriginV1? value)
     {
         if (value == null || value.Type is not ("NEW_PRODUCT" or "CHANGE" or "LEGACY_REVIEW")) throw Error("ENGINEERING_ORIGIN_INVALID", 400);
-        if (value.Type == "CHANGE") throw Error("ENGINEERING_PARENT_CHANGE_OWNER_REQUIRED", 503);
-        if (value.Type == "LEGACY_REVIEW") throw Error("ENGINEERING_LEGACY_OWNER_REQUIRED", 503);
-        if (value.ParentBaselineRef != null || value.ChangeRef != null || value.LegacyRef != null) throw Error("ENGINEERING_ORIGIN_INVALID", 400);
-        Text(value.NoParentReason);
+        switch (value.Type)
+        {
+            case "NEW_PRODUCT":
+                if (value.ParentBaselineRef != null || value.ChangeRef != null || value.LegacyRef != null) throw Error("ENGINEERING_ORIGIN_INVALID", 400);
+                Text(value.NoParentReason);
+                break;
+            case "CHANGE":
+                if (value.ParentBaselineRef == null || value.ChangeRef == null) throw Error("ENGINEERING_PARENT_CHANGE_OWNER_REQUIRED", 503);
+                if (value.NoParentReason != null || value.LegacyRef != null) throw Error("ENGINEERING_ORIGIN_INVALID", 400);
+                EngineeringBaselineValuesV1.Ref(value.ParentBaselineRef, EngineeringBaselineValuesV1.Owner);
+                if (value.ParentBaselineRef.Version != "1" || !ValidText(value.ChangeRef.Owner, 256)
+                    || value.ChangeRef.Id == Guid.Empty || !ValidText(value.ChangeRef.Version, 256)
+                    || string.Equals(value.ChangeRef.Version, "latest", StringComparison.OrdinalIgnoreCase) || !ValidDigest(value.ChangeRef.Digest))
+                    throw Error("ENGINEERING_ORIGIN_INVALID", 400);
+                break;
+            case "LEGACY_REVIEW":
+                if (value.LegacyRef == null) throw Error("ENGINEERING_LEGACY_OWNER_REQUIRED", 503);
+                if (value.ParentBaselineRef != null || value.ChangeRef != null || value.NoParentReason != null) throw Error("ENGINEERING_ORIGIN_INVALID", 400);
+                IterationCandidateValuesV1.Reference(value.LegacyRef, EngineeringRevisionLineageStoreV1.LegacyOwner);
+                if (value.LegacyRef.Version != "1") throw Error("ENGINEERING_ORIGIN_INVALID", 400);
+                break;
+        }
     }
     internal static void Applicability(string value, string reason)
     {

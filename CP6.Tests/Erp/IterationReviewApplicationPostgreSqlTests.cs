@@ -3,6 +3,7 @@ using CP6.Core.Services.Erp;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Plm;
 using CP6.Core.Services.Sys;
+using CP6.Core.Services.Wf;
 using CP6.Core.Services.Wms;
 using CP6.Tests.Platform;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ namespace CP6.Tests.Erp;
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     private sealed record IterationDecisionFixture(IterationReviewFixture Source,Guid Submission,IntakeAuthority Service);
-    private async Task<IterationDecisionFixture> IterationDecisionSetup(Harness h,string rejectDisposition="RETURN",Func<Task>? beforeCheck=null,bool subflow=false,string? subflowSchema=null)
+    private async Task<IterationDecisionFixture> IterationDecisionSetup(Harness h,string rejectDisposition="RETURN",Func<Task>? beforeCheck=null,bool subflow=false,string? subflowSchema=null,Guid? additionalProjectMember=null)
     {
         var f=await IterationReviewSetup(h,1,async iteration=>{
             foreach(var action in new[]{"review-apply","review-withdraw","review-issue","review-issue-verify","review-issue-degrade"})await EngineeringAction(h,"plm-engineering-iteration",action);
@@ -18,7 +19,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             await h.Db.Sys_Users.Where(x=>x.Id==iteration.Reviewer).ExecuteUpdateAsync(s=>s.SetProperty(x=>x.RoleId,76));
             await TaskPermission(h,iteration.Reviewer);await EngineeringAction(h,"oa-inbox","query");
             if(beforeCheck!=null)await beforeCheck();
-        },rejectDisposition);
+        },rejectDisposition,additionalProjectMember);
         var(binding,flows,initial)=await ExistingReviewBinding(h);var head=await flows.ReadHeadAsync("binding-flow");
         var runtimeSchema=StartSchema.Replace("\"approverRoleId\":73","\"approverRoleId\":76");
         if(subflow)
@@ -32,11 +33,16 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var edit=await flows.SaveAsync("binding-flow",AuthoringCommand("iteration-decision-flow",draft.ResourceVersion,"iteration professional",runtimeSchema));
         var published=await flows.PublishAsync("binding-flow",PublicationCommand(await Preview(flows,"binding-flow",edit),"iteration-decision-publish"));
         var at=BindingTime();await binding.SaveAsync(null,null,BindingBytes(BindingInput(published.Result!.Publication!.VersionId,at) with{BizType="PLM_ITER_REVIEW",SubjectKind="PLM_ITER_REVIEW",DetailRoute="/plm/engineering-iteration/{bizId}"}));
+        var service=new IntakeAuthority(new(ScopeEnvironment,h.Tenant,f.Principal,"iteration-owner","CP6.Services","test-registration",true,"DEMO"));
+        return await SubmitIterationDecision(h,f,service,flows,at.AddSeconds(1));
+    }
+    private static async Task<IterationDecisionFixture> SubmitIterationDecision(Harness h,IterationReviewFixture f,
+        IntakeAuthority service,FlowAuthoringOwnerV2 flows,DateTimeOffset receiveAt)
+    {
         var owner=IterationReviews(h,f.Files);f=f with{Context=await owner.ContextAsync(f.Context.IterationId)};
         var result=await owner.SubmitAsync(f.Context.IterationId,f.Context.Etag,IterationSubmit(f));var submission=result.Submission!.SubmissionId;
         var bytes=await h.Db.Database.SqlQuery<byte[]>($"SELECT payload AS \"Value\" FROM cp6_iteration_review_v1.outbox WHERE tenant_id={h.Tenant} AND submission_id={submission}").SingleAsync();
-        var service=new IntakeAuthority(new(ScopeEnvironment,h.Tenant,f.Principal,"iteration-owner","CP6.Services","test-registration",true,"DEMO"));
-        var intake=new ApprovalIntakeOwnerV2(h.Db,ScopeFence(h),service,ToolApproval(h),flows,new(ToolApproval(h),null,null,owner)){ReceiveClock=()=>at.AddSeconds(1)};
+        var intake=new ApprovalIntakeOwnerV2(h.Db,ScopeFence(h),service,ToolApproval(h),flows,new(ToolApproval(h),null,null,owner)){ReceiveClock=()=>receiveAt};
         await intake.SubmitAsync(bytes);Assert.Equal("RUNNING",(await Starter(h).RunAsync(h.Tenant)).State);h.Db.ChangeTracker.Clear();
         return new(f,submission,service);
     }

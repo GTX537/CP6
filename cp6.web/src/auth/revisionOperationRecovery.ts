@@ -4,7 +4,7 @@ import { identityStamp, requireIdentity } from './identity'
 export interface PendingRevisionOperation { operationId: string; kind: RevisionOperationKind; objectId: string }
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 function key(scope: RevisionScope, kind: RevisionOperationKind) {
-  if (!uuid.test(scope.tenantId) || !uuid.test(scope.actorId) || !['ENGINEERING_REVISION'].includes(kind)) throw new Error('无法确认当前用户和租户。')
+  if (!uuid.test(scope.tenantId) || !uuid.test(scope.actorId) || !['ENGINEERING_REVISION', 'ENGINEERING_LEGACY_REFERENCE'].includes(kind)) throw new Error('无法确认当前用户和租户。')
   return `cp6_revision_operation_v1:${scope.tenantId.toLowerCase()}:${scope.actorId.toLowerCase()}:${kind}`
 }
 export function revisionResponse<T>(response: RevisionEnvelope<T>): T {
@@ -16,6 +16,10 @@ export function pendingRevisionOperation(scope: RevisionScope, kind: RevisionOpe
   const value = JSON.parse(text) as PendingRevisionOperation
   if (!value || !uuid.test(value.operationId) || value.kind !== kind || !uuid.test(value.objectId)) throw new Error('原操作记录异常，请保留记录并联系管理员。')
   return { operationId: value.operationId, kind, objectId: value.objectId }
+}
+export function latestRevisionConflict(scope: RevisionScope): string {
+  const value = localStorage.getItem(`${key(scope, 'ENGINEERING_REVISION')}:conflict`) ?? ''
+  return uuid.test(value) ? value : ''
 }
 async function exclusive<T>(scope: RevisionScope, kind: RevisionOperationKind, guard: () => void, action: (check: () => void) => Promise<T>) {
   if (!navigator.locks?.request) throw new Error('此浏览器无法安全协调多个页面，暂不能提交。')
@@ -31,12 +35,14 @@ async function exclusive<T>(scope: RevisionScope, kind: RevisionOperationKind, g
 function accept(scope: RevisionScope, original: PendingRevisionOperation, value: RevisionOperation, check: () => void) {
   check()
   const receipt = value?.result
-  if (value?.operationId !== original.operationId || !['COMMITTED', 'CLOSED', 'UNKNOWN'].includes(value.state)
+  if (value?.operationId !== original.operationId || !['COMMITTED', 'CLOSED', 'UNKNOWN', 'CONFLICT'].includes(value.state)
+    || value.state === 'CONFLICT' && original.kind !== 'ENGINEERING_REVISION'
     || (value.state === 'COMMITTED' ? !receipt || receipt.operationId !== original.operationId || receipt.kind !== original.kind
       || receipt.objectId !== original.objectId || !/^[1-9][0-9]*$/.test(receipt.version) || !/^[0-9a-f]{64}$/.test(receipt.digest) : receipt != null))
     throw new Error('返回结果与原操作不一致，请保留记录。')
   const pending = pendingRevisionOperation(scope, original.kind)
   if (pending?.operationId !== original.operationId || pending.objectId !== original.objectId) throw new Error('原操作记录已变化。')
+  if (value.state === 'CONFLICT') localStorage.setItem(`${key(scope, original.kind)}:conflict`, original.operationId)
   if (value.state !== 'UNKNOWN') localStorage.removeItem(key(scope, original.kind))
   return value
 }
@@ -52,10 +58,10 @@ export function saveRevisionOperation(scope: RevisionScope, kind: RevisionOperat
     return accept(scope, original, { operationId: original.operationId, state: 'COMMITTED', result }, check)
   })
 }
-export function resolveRevisionOperation(scope: RevisionScope, kind: RevisionOperationKind, close: boolean, guard: () => void) {
+export function resolveRevisionOperation(scope: RevisionScope, kind: RevisionOperationKind, close: boolean, guard: () => void,
+  read = revisionApi.operation) {
   return exclusive(scope, kind, guard, async check => {
     const original = pendingRevisionOperation(scope, kind); if (!original) throw new Error('没有待确认的原操作。')
-    const api = revisionApi
-    return accept(scope, original, revisionResponse(await api.operation(original.operationId, close)), check)
+    return accept(scope, original, revisionResponse(await read(original.operationId, close)), check)
   })
 }

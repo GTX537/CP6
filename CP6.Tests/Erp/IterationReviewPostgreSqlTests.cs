@@ -22,12 +22,12 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
     private sealed record IterationReviewFixture(ContentStore Files,IterationFixture Iteration,EngineeringCheckViewV1 Check,
         IterationCandidateService Candidates,IterationCandidateCommandV1 Candidate,IterationReviewContextV1 Context,Guid Principal);
-    private async Task<IterationReviewFixture> IterationReviewSetup(Harness h,int count=2,Func<IterationFixture,Task>? beforeCheck=null,string rejectDisposition="RETURN")
+    private async Task<IterationReviewFixture> IterationReviewSetup(Harness h,int count=2,Func<IterationFixture,Task>? beforeCheck=null,string rejectDisposition="RETURN",Guid? additionalProjectMember=null)
     {
         var f=await CheckSetup(h);var checkAuthority=CandidateAuthority(h);
         var checks=new EngineeringSourceCheckService(h.Db,checkAuthority,Documents(h,f.Files),Specifications(h,f.Files));
         var revision=await new EngineeringRevisionOwnerV1(h.Db,checkAuthority,Documents(h,f.Files),Specifications(h,f.Files)).ReadAsync(f.Command.Revision.Id,null);
-        var iteration=await IterationSetup(h,f.Files,revision.Draft.ProductRef,reuseBinding:true);
+        var iteration=await IterationSetup(h,f.Files,revision.Draft.ProductRef,reuseBinding:true,additionalProjectMember:additionalProjectMember);
         foreach(var action in new[]{"candidate-write","review-policy","review-submit","review-decide"})await EngineeringAction(h,"plm-engineering-iteration",action);
         if(beforeCheck!=null)await beforeCheck(iteration);
         // Check only after all native inputs and permission registrations are established.

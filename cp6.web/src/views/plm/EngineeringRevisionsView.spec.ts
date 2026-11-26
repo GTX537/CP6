@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { mount, flushPromises, type VueWrapper } from '@vue/test-utils'
-import type { RevisionCommand, RevisionSnapshot } from '@/api/plm/engineeringRevisions'
+import type { LegacyRegistration, RevisionCommand, RevisionSnapshot } from '@/api/plm/engineeringRevisions'
 import type { EngineeringVersion } from '@/api/plm/engineeringProducts'
-const api = vi.hoisted(() => ({ scope: vi.fn(), creationContext: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), save: vi.fn(), operation: vi.fn(), products: vi.fn(), rules: vi.fn(), rule: vi.fn(), routings: vi.fn(), documents: vi.fn(), boms: vi.fn(), qualities: vi.fn(), qualityRead: vi.fn(), qualitySource: vi.fn(), authenticated: true, allowed: true }))
+const api = vi.hoisted(() => ({ scope: vi.fn(), creationContext: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), rebasePreview: vi.fn(), save: vi.fn(), operation: vi.fn(), conflict: vi.fn(), registerLegacy: vi.fn(), legacyOperation: vi.fn(), products: vi.fn(), rules: vi.fn(), rule: vi.fn(), routings: vi.fn(), documents: vi.fn(), boms: vi.fn(), qualities: vi.fn(), qualityRead: vi.fn(), qualitySource: vi.fn(), authenticated: true, allowed: true }))
 vi.mock('@/api/plm/engineeringRevisions', () => ({ revisionApi: api }))
 vi.mock('@/api/plm/configurationRules', () => ({ configurationApi: { list: api.rules, read: api.rule } }))
 vi.mock('@/api/mes/qualitySpecification', () => ({ qualityApi: { list: api.qualities, read: api.qualityRead, source: api.qualitySource } }))
@@ -28,11 +28,66 @@ const field = (label: string) => view!.get(`[aria-label="${label}"]`)
 async function click(text: string) { await button(text).trigger('click'); await flushPromises() }
 async function submit(label: string) { field(label).element.closest('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })); await flushPromises() }
 async function opened() { await render(); await click('打开'); await field('修改原因').setValue('Reviewed draft edit') }
+it('requires a decision and reason per three-way change and submits the preview CAS with one original key', async () => {
+  const basis = { ...row.candidateRef, version: '1', digest: 'a'.repeat(64) }
+  const incoming = { ...row.candidateRef, id: '90000000-0000-4000-8000-000000000009', version: '4', digest: 'e'.repeat(64) }
+  persisted.draft.productRef = product.reference
+  api.read.mockImplementation(async (key: string, version?: string) => ok(key === incoming.id || version
+    ? { ...structuredClone(persisted), reference: { ...row.reference, id: key, version: version! }, candidateRef: version === '1' ? basis : incoming }
+    : structuredClone(persisted)))
+  api.rebasePreview.mockResolvedValue(ok({ revision: row.reference, candidate: row.candidateRef, etag: row.etag,
+    sources: { base: basis, incoming }, baseMissing: [], incomingMissing: [],
+    changes: [{ path: 'goal', baseValue: '基准', currentValue: '当前', incomingValue: '传入', conflict: true }] }))
+  await opened()
+  await field('传入对象编号').setValue(incoming.id)
+  await field('传入工作版本').setValue('4')
+  await click('预览三方差异')
+  expect(api.rebasePreview).toHaveBeenCalledWith(row.reference.id, { base: basis, incoming })
+  expect(button('追加重基工作版').element.disabled).toBe(true)
+  await field('决定 goal').setValue('MANUAL')
+  await field('决定理由 goal').setValue('保留核对后的设计')
+  await field('人工值 goal').setValue('"手动目标"')
+  await field('重基原因').setValue('确认为独立工作版')
+  await click('追加重基工作版')
+  expect(api.save).toHaveBeenCalledOnce()
+  expect(api.save).toHaveBeenCalledWith(expect.objectContaining({ operationId: expect.any(String), action: 'REBASE', expectedVersion: '2',
+    expectedEtag: row.etag, rebase: { sources: { base: basis, incoming }, resolutions: [{ path: 'goal', decision: 'MANUAL', reason: '保留核对后的设计', manual: '手动目标' }] } }))
+})
 it('preserves frozen originals and directs editing through an explicit baseline successor', async () => {
   persisted.state = 'FROZEN'; await opened(); expect(view!.text()).toContain('已冻结，请在工程基线中开始后继设计')
   expect(field('设计目标').element.closest('fieldset')!.disabled).toBe(true); await submit('设计目标'); expect(api.save).not.toHaveBeenCalled()
 })
+it('keeps an in-review working version locked', async () => {
+  persisted.state = 'IN_REVIEW'; persisted.draft.productRef = product.reference
+  await opened()
+  expect(view!.text()).toContain('在审 · 当前工作版已锁定')
+  expect(button('预览三方差异')).toBeUndefined()
+  await submit('设计目标')
+  expect(api.save).not.toHaveBeenCalled()
+})
 async function form() { await click('新建修订'); await field('设计目标').setValue('New design'); await field('无父基线原因').setValue('No previous baseline'); await field('修改原因').setValue('New product'); await field('修订所属部门').setValue(department) }
+it('recovers a lost historical registration response under its original key and adopts it into a new draft', async () => {
+  const reference = { owner: 'Main.Plm.EngineeringLegacyReference.v1', id: '80000000-0000-4000-8000-000000000008', version: '1', digest: 'd'.repeat(64) }
+  let registration: LegacyRegistration
+  api.registerLegacy.mockImplementation(async (body: LegacyRegistration) => { registration = body; throw new Error('回复丢失') })
+  api.legacyOperation.mockImplementation(async () => ok({ operationId: registration.operationId, state: 'COMMITTED',
+    result: { reference, evidenceStatus: 'EVIDENCE_INCOMPLETE', original: { ...scope, id: reference.id, registration, recordedAt: row.recordedAt } } }))
+  await render(); await form(); await submit('工程产品搜索'); await field('本修订的工程产品').setValue(productKey)
+  await field('来源提交 SHA').setValue('a'.repeat(40)); await field('历史原记录键').setValue('ProductMaterial/Synthetic:27')
+  await field('历史原件 SHA-256').setValue('b'.repeat(64)); await field('历史证据缺项').setValue('缺历史批准'); await field('历史登记理由').setValue('记入获准档案')
+  await submit('历史登记理由')
+  const original = pendingRevisionOperation(scope, 'ENGINEERING_LEGACY_REFERENCE')
+  expect(original?.objectId).toBe(product.reference.id)
+  await click('查询原操作')
+  expect(api.legacyOperation).toHaveBeenCalledWith(original?.operationId, false)
+  expect(api.registerLegacy).toHaveBeenCalledOnce()
+  expect(pendingRevisionOperation(scope, 'ENGINEERING_LEGACY_REFERENCE')).toBeNull()
+  expect(view!.text()).toContain('ProductMaterial/Synthetic:27')
+  expect(view!.text()).toContain('证据不足')
+  await view!.get('input[type="checkbox"]').setValue(true)
+  await submit('设计目标')
+  expect(api.save).toHaveBeenCalledWith(expect.objectContaining({ action: 'CREATE', productRef: product.reference, origin: { type: 'LEGACY_REVIEW', legacyRef: reference } }))
+})
 beforeEach(() => {
   vi.resetAllMocks(); localStorage.clear(); localStorage.setItem(AUTH_EPOCH, 'first'); api.authenticated = true; api.allowed = true; persisted = structuredClone(row)
   api.scope.mockResolvedValue(ok(scope)); api.list.mockImplementation(async () => ok([structuredClone(persisted)])); api.read.mockImplementation(async () => ok(structuredClone(persisted)))
@@ -109,6 +164,37 @@ it('keeps unknown results without resend and clears stale editor when original c
   api.operation.mockResolvedValue(ok({ operationId: original.operationId, state: 'UNKNOWN' })); await click('查询原操作'); expect(pendingRevisionOperation(scope, 'ENGINEERING_REVISION')).not.toBeNull(); expect(api.save).toHaveBeenCalledTimes(1)
   api.operation.mockResolvedValue(ok({ operationId: original.operationId, state: 'COMMITTED', result: { operationId: original.operationId, kind: 'ENGINEERING_REVISION', objectId: id, version: '3', digest: 'd'.repeat(64) } })); await click('查询原操作')
   expect(pendingRevisionOperation(scope, 'ENGINEERING_REVISION')).toBeNull(); expect(view!.find('[aria-label="设计目标"]').exists()).toBe(false); expect(api.save).toHaveBeenCalledTimes(1)
+})
+it('recovers a rejected CAS by the original key after reload and clears the evidence on denial', async () => {
+  api.save.mockRejectedValue({ response: { status: 412, data: { message: 'ENGINEERING_WORKING_VERSION_CHANGED' } } })
+  await opened()
+  await field('设计目标').setValue('并行设计值')
+  await submit('设计目标')
+  const original = pendingRevisionOperation(scope, 'ENGINEERING_REVISION')!
+  const next = { version: '3', digest: 'd'.repeat(64) }
+  api.operation.mockResolvedValue(ok({ operationId: original.operationId, state: 'CONFLICT' }))
+  api.conflict.mockResolvedValue(ok({ operationId: original.operationId, action: 'PATCH', reason: '重做装配', recordedAt: row.recordedAt,
+    requestedEtag: row.etag, expected: { revision: row.reference, candidate: row.candidateRef, etag: row.etag },
+    current: { revision: { ...row.reference, ...next }, candidate: { ...row.candidateRef, ...next }, etag: department },
+    items: [{ path: 'goal', expectedValue: row.draft.goal, currentValue: '先保存值', attemptedValue: '并行设计值', reason: '重做装配', conflict: true }] }))
+  view!.unmount()
+  await render()
+  await click('查询原操作')
+  expect(api.conflict).toHaveBeenCalledWith(original.operationId)
+  expect(pendingRevisionOperation(scope, 'ENGINEERING_REVISION')).toBeNull()
+  expect(view!.get('[aria-label="已保存冲突清单"]').text()).toContain('先保存值')
+  expect(view!.text()).toContain('并行设计值')
+  expect(view!.text()).toContain('重做装配')
+  expect(api.save).toHaveBeenCalledOnce()
+  view!.unmount()
+  await render()
+  expect((field('冲突原操作键').element as HTMLInputElement).value).toBe(original.operationId)
+  await submit('冲突原操作键')
+  expect(api.conflict).toHaveBeenCalledTimes(2)
+  api.conflict.mockRejectedValueOnce({ response: { status: 403, data: { message: 'OBJECT_FORBIDDEN' } } })
+  await submit('冲突原操作键')
+  expect(view!.text()).not.toContain('并行设计值')
+  expect(view!.text()).toContain('当前权限无法访问')
 })
 it('clears private drafts and rejects late responses after identity change', async () => {
   await opened(); await field('设计目标').setValue('Private draft'); let done!: (value: ReturnType<typeof ok<EngineeringVersion[]>>) => void

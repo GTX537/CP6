@@ -34,8 +34,10 @@ public sealed partial class IterationCandidateService(CP6Context db,OperationsOw
         if(iteration.SourceDrift!="UNCHANGED")findings.Add("ITERATION_INPUT_"+iteration.SourceDrift);
         if(exact.Original.State!="PASS")findings.Add("TECHNICAL_CHECK_"+exact.Original.State);
         if(string.IsNullOrWhiteSpace(d.ChangeSummary))findings.Add("CHANGE_SUMMARY_REQUIRED");
-        var drift=iteration.SourceDrift=="UNKNOWN" || exact.Original.Items.Any(x=>x.State=="UNKNOWN")?"UNKNOWN"
-            :exact.Freshness!="CURRENT" || iteration.SourceDrift!="UNCHANGED" || findings.Any(x=>x.EndsWith("CHANGED",StringComparison.Ordinal))?"CHANGED":"UNCHANGED";
+        // 已确认漂移优先展示，历史缺项仍可从原检查条目回查。
+        var changed=exact.Freshness=="STALE" || findings.Any(x=>x.EndsWith("CHANGED",StringComparison.Ordinal));
+        var unknown=iteration.SourceDrift=="UNKNOWN" || exact.Original.Items.Any(x=>x.State=="UNKNOWN");
+        var drift=changed?"CHANGED":unknown?"UNKNOWN":"UNCHANGED";
         return value with{SourceDrift=drift,Findings=findings.Distinct(StringComparer.Ordinal).ToArray()};
     }
     public Task<IterationCandidateSnapshotV1[]> ListAsync(Guid iterationId,string? search=null,int page=1,CancellationToken ct=default)

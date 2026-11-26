@@ -19,10 +19,22 @@ public sealed class EngineeringRevisionController(EngineeringRevisionOwnerV1 own
     public async Task<IActionResult> Read(Guid id, [FromQuery] string? version, CancellationToken ct) => Result(await owner.ReadAsync(id, version, ct));
     [HttpGet("{id:guid}/diff")]
     public async Task<IActionResult> Diff(Guid id, [FromQuery] string before, [FromQuery] string after, CancellationToken ct) => Result(await owner.DiffAsync(id, before, after, ct));
+    [HttpPost("{id:guid}/rebase-preview"), RequestSizeLimit(8192)]
+    public async Task<IActionResult> RebasePreview(Guid id, [FromBody] EngineeringRebaseSourcesV1 sources, CancellationToken ct) => Result(await owner.RebasePreviewAsync(id, sources, ct));
+    [HttpPost("legacy-references"), RequestSizeLimit(131072)]
+    public async Task<IActionResult> RegisterLegacy([FromBody] EngineeringLegacyRegistrationV1 command, CancellationToken ct) => Result(await owner.RegisterLegacyAsync(command, ct));
+    [HttpGet("legacy-references/{id:guid}")]
+    public async Task<IActionResult> ReadLegacy(Guid id, CancellationToken ct) => Result(await owner.LegacyReadAsync(id, ct));
+    [HttpGet("legacy-operations/{id:guid}")]
+    public async Task<IActionResult> LegacyOperation(Guid id, CancellationToken ct) => Result(await owner.LegacyOperationAsync(id, false, ct));
+    [HttpPost("legacy-operations/{id:guid}/close")]
+    public async Task<IActionResult> CloseLegacy(Guid id, CancellationToken ct) => Result(await owner.LegacyOperationAsync(id, true, ct));
     [HttpPost("commands"), RequestSizeLimit(8388608)]
     public async Task<IActionResult> Command([FromBody] EngineeringRevisionCommandV1 command, CancellationToken ct) => Result(await owner.CommandAsync(command, ct));
     [HttpGet("operations/{id:guid}")]
     public async Task<IActionResult> Operation(Guid id, CancellationToken ct) => Result(await owner.OperationAsync(id, false, ct));
+    [HttpGet("operations/{id:guid}/conflict")]
+    public async Task<IActionResult> ConflictRead(Guid id, CancellationToken ct) => Result(await owner.ConflictAsync(id, ct));
     [HttpPost("operations/{id:guid}/close")]
     public async Task<IActionResult> Close(Guid id, CancellationToken ct) => Result(await owner.OperationAsync(id, true, ct));
 }
