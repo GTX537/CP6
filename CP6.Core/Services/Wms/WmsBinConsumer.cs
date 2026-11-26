@@ -342,9 +342,7 @@ public class WmsBinConsumer : IWmsLocationConsumer
                     e.NextRetryAt > lockNow);
             if (_db.Database.IsRelational())
             {
-                // A same-value UPDATE acquires the provider's write lock
-                // before any WMS read/write. SQLite tests exercise this
-                // branch; SQL Server uses explicit lock hints above.
+                // 写回相同租约，先取得数据库写锁，再进行 WMS 读写。PostgreSQL 夹具覆盖此路径。
                 var affected = await owned.ExecuteUpdateAsync(
                     setters => setters.SetProperty(
                         e => e.RetryLeaseId,

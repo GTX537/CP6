@@ -263,11 +263,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await h.Db.Locations.FirstAsync();await Assert.ThrowsAsync<OrderPriceCorrectionException>(()=>svc.WarehousesAsync(new()));h.Db.ChangeTracker.Clear();
         foreach(var q in new[]{new WarehouseQueryV1{Page=0},new(){PageSize=201},new(){Page=int.MaxValue},new(){WarehouseCd=new string('x',11)}})
             Assert.Equal(400,(await Assert.ThrowsAsync<OrderPriceCorrectionException>(()=>svc.WarehousesAsync(q))).Status);
+        // 旧迁移会替换部门映射函数，回放和菜单变更须一起回滚。
+        await using var replay=await h.Db.Database.BeginTransactionAsync();
         await h.Db.Sys_RoleActions.Where(x=>(x.MenuId==401||x.MenuId==402)&&(x.ActionCode=="query"||x.ActionCode=="abandon")).ExecuteDeleteAsync();
         await h.Db.Sys_MenuActions.Where(x=>(x.MenuId==401||x.MenuId==402)&&(x.ActionCode=="query"||x.ActionCode=="abandon")).ExecuteDeleteAsync();
         foreach(var operation in new CP6.Persistence.PostgreSql.Migrations.Core.WarehouseDepartmentOwnerV1().UpOperations.Cast<Microsoft.EntityFrameworkCore.Migrations.Operations.SqlOperation>())
         {await h.Db.Database.ExecuteSqlRawAsync(operation.Sql);await h.Db.Database.ExecuteSqlRawAsync(operation.Sql);}
         Assert.Equal(4,await h.Db.Sys_MenuActions.CountAsync(x=>(x.MenuId==401||x.MenuId==402)&&(x.ActionCode=="query"||x.ActionCode=="abandon")));
         Assert.False(await h.Db.Sys_RoleActions.AnyAsync(x=>(x.MenuId==401||x.MenuId==402)&&(x.ActionCode=="query"||x.ActionCode=="abandon")));
+        await replay.RollbackAsync();
     }
 }

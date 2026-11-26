@@ -158,9 +158,13 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema);
         await using var db = new CP6Context(options.Options, new TenantContext());
         await db.GetService<IMigrator>().MigrateAsync("20261026130000_CommercialProductIdentityV1");
-        db.Sys_Menus.Add(new() { MenuId = int.MaxValue, MenuKey = "historical-max-id", MenuName = "Original menu" });
-        db.MasterGenericCodes.Add(new() { Code = "EA", GroupCode = "Unit", Name = "Original unit code" });
-        await db.SaveChangesAsync(); db.ChangeTracker.Clear();
+        // 按迁移切点写入存量数据，避免现行 EF 的审计列进入旧架构。
+        await db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO public."Sys_Menus" ("MenuId","MenuKey","MenuName","OrderNo","Enable","CreateDate")
+            VALUES ({int.MaxValue},'historical-max-id','Original menu',0,true,localtimestamp);
+            INSERT INTO public."M_GenericCode" ("Id","TenantId","Code","GroupCode","Name","SortOrder","CreateDate","IsDeleted","RowVersion")
+            VALUES ({Guid.NewGuid()},{db.CurrentTenantId},'EA','Unit','Original unit code',0,localtimestamp,false,decode('0000000000000000','hex'));
+            """);
         await db.Database.MigrateAsync();
         Assert.Equal("Original menu", await db.Sys_Menus.Where(row => row.MenuId == int.MaxValue).Select(row => row.MenuName).SingleAsync());
         Assert.Equal("Original unit code", await db.MasterGenericCodes.Where(row => row.GroupCode == "Unit" && row.Code == "EA").Select(row => row.Name).SingleAsync());
