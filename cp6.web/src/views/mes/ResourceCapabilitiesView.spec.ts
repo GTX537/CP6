@@ -6,6 +6,8 @@ import type { UomVersion } from '@/api/erp/uomProfiles'
 const api = vi.hoisted(() => ({ scope: vi.fn(), editor: vi.fn(), read: vi.fn(), save: vi.fn(), operation: vi.fn(), list: vi.fn(), units: vi.fn(), time: vi.fn(), authenticated: true, canEdit: true }))
 vi.mock('@/api/mes/resourceSources', () => ({ resourceApi: () => api }))
 vi.mock('@/api/mes/resourceCapabilities', () => ({ capabilityApi: () => api }))
+const assignment = vi.hoisted(() => ({ read: vi.fn(), save: vi.fn(), operation: vi.fn() }))
+vi.mock('@/api/mes/resourceAssignments', () => ({ assignmentApi: { ...assignment, scope: api.scope } }))
 vi.mock('@/api/erp/uomProfiles', () => ({ uomApi: { list: api.units } }))
 vi.mock('@/api/erp/uomTimeBases', () => ({ timeApi: { editor: api.time } }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ loaded: true, has: (key: string) => !key.endsWith(':capability-edit') || api.canEdit, loadMyActions: vi.fn() }) }))
@@ -82,4 +84,41 @@ it('keeps work-center capacity exact and offers only its own declaration fields'
   expect(view.text()).toContain('1234567890123.12345678'); expect(button('增加能力')).toBeUndefined(); expect(view.find('[aria-label="能力产出单位"]').exists()).toBe(false)
   await field('能力整体依据').setValue('Explicit center declaration'); await field('能力登记原因').setValue('Initial'); await submit('能力整体依据')
   expect(api.save.mock.calls[0]![0].body).toMatchObject({ source: { kind: 'WORK_CENTER' }, capabilities: [], outputUnit: null })
+})
+
+
+it('keeps assignment recovery separate when a saved interval has an unknown result', async () => {
+  await render()
+  assignment.read.mockResolvedValue(ok(null))
+  assignment.save.mockRejectedValue(new Error('response lost'))
+  const center = structuredClone(resource)
+  center.reference = { ...center.reference, kind: 'WORK_CENTER', id: guid(6), version: '2' }
+  center.source.master = { code: 'WC', name: 'Synthetic work center' }
+  api.list.mockResolvedValue(ok([center]))
+
+  await click('读取当前归属')
+  expect(assignment.read).toHaveBeenCalledWith(id)
+  await click('查找工作中心')
+  await click('增加区间')
+  const panel = view!.get('[aria-label="机器归属"]')
+  await panel.get('select').setValue(`${center.reference.id}:${center.reference.version}:${center.reference.digest}`)
+  const periodInputs = panel.findAll<HTMLInputElement>('fieldset fieldset input')
+  await periodInputs[0]!.setValue('2026-11-26T09:00:00+08:00')
+  await panel.get('textarea').setValue('模拟归属')
+  panel.get('textarea').element.closest('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+  await flushPromises()
+
+  const original = pendingCapabilityOperation(scope, 'MACHINE', 'assignment')
+  expect(original).not.toBeNull()
+  expect(pendingCapabilityOperation(scope, 'MACHINE')).toBeNull()
+  expect(assignment.save).toHaveBeenCalledWith({
+    operationId: original!.operationId, expectedVersion: 'absent', reason: '模拟归属',
+    plan: { machine: resource.reference, intervals: [{ workCenter: center.reference, validFrom: '2026-11-26T09:00:00+08:00', validTo: null }] },
+  })
+  assignment.operation.mockResolvedValue(ok({ operationId: original!.operationId, state: 'CLOSED' }))
+  await click('关闭未提交的归属操作')
+  expect(assignment.operation).toHaveBeenCalledWith(original!.operationId, true)
+  expect(assignment.save).toHaveBeenCalledTimes(1)
+  expect(api.operation).not.toHaveBeenCalled()
+  expect(pendingCapabilityOperation(scope, 'MACHINE', 'assignment')).toBeNull()
 })

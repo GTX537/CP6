@@ -1032,6 +1032,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<CommercialProductIdentityReader>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceSourceOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceCapabilityOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceAssignmentOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.InventoryIdentityOwnerV1>();
 builder.Services.Configure<CP6.Core.Services.Wms.Transfer.TransferEnvironmentOptionsV1>(builder.Configuration.GetSection("TransferEnvironment"));
 builder.Services.AddScoped<CP6.Core.Services.Wms.Transfer.TransferEnvironmentOwnerV1>();
