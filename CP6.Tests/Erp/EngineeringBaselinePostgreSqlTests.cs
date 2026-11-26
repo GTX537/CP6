@@ -14,14 +14,18 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     private static EngineeringBaselineOwnerV1 Baselines(Harness h,ContentStore files)=>new(h.Db,CandidateAuthority(h),ScopeFence(h),new("DEMO"),
         new(h.Db,CandidateAuthority(h),Documents(h,files),Specifications(h,files),Outputs(h,files)),IterationReviews(h,files),Outputs(h,files));
     private sealed record BaselineFixture(IterationDecisionFixture Review,EngineeringFreezeCommandV1 Command);
-    private async Task<BaselineFixture> BaselineSetup(Harness h,bool apply=true,Func<Task>? beforeCheck=null)
+    private async Task<BaselineFixture> BaselineSetup(Harness h,bool apply=true,Func<Task>? beforeCheck=null,Guid? additionalProjectMember=null)
     {
         BaselineTrace("setup-start");var f=await IterationDecisionSetup(h,beforeCheck:async()=>{
             foreach(var action in new[]{"query","freeze","cancel","successor"})await EngineeringAction(h,"plm-engineering-baseline",action);
             h.Db.Sys_RoleDataScopes.Add(new(){RoleId=72,ResourceKey="plm-engineering-baseline",ScopeType=5});
             await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
             if(beforeCheck!=null)await beforeCheck();
-        });
+        },additionalProjectMember:additionalProjectMember);
+        return await CompleteBaselineReview(h,f,apply);
+    }
+    private async Task<BaselineFixture> CompleteBaselineReview(Harness h,IterationDecisionFixture f,bool apply)
+    {
         BaselineTrace("setup-native-ready");await IterationVote(h,f);var receiver=await IterationReceiver(h,f);FactAck(await receiver.Receiver.ReceiveAsync(receiver.Payload));
         var reviews=IterationReviews(h,f.Source.Files);var context=await reviews.ApplicationAsync(f.Source.Context.IterationId,f.Submission);
         BaselineTrace("setup-decision-received");var receipt=apply?(await reviews.ApplyAsync(f.Source.Context.IterationId,context.Etag,new(Guid.NewGuid(),f.Submission,null,"Apply actual native review before freeze"))).Receipt.ReceiptId:Guid.NewGuid();
