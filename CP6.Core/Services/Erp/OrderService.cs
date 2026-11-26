@@ -264,6 +264,9 @@ public partial class OrderService : IOrderService
 
         await _db.SaveChangesAsync();
 
+        // C03 的原草稿与 Sales 来源观察在同一个调用方事务中写入。
+        if (origin is not null && _db.Database.IsNpgsql())
+            await OrderSourceFacts.Capture(_db, webOrderNo, "Order.C03QuotationDraft", default, origin);
         // C03 queues durable post-commit work in the caller's transaction; no bridge can escape it.
         if (origin is not null || deferBridges) return webOrderNo;
 

@@ -1,4 +1,5 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+ARG ASPNET_RUNTIME_TAG=10.0.15
+FROM mcr.microsoft.com/dotnet/aspnet:${ASPNET_RUNTIME_TAG} AS runtime
 
 WORKDIR /app
 RUN apt-get update \

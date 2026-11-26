@@ -10,7 +10,15 @@
 
 工时表达单位需准确 UOM 及其真实时间含义版本；不能从 `TIME`、`HOUR` 等名称推测单位。原主数据中的分钟、秒、小时数保持其原字段含义，选择表达单位不会改义或自动换算。原默认 480、null、0 和宽精度数值按实际原件保留，不被认作已核实产能。产出单位、工时单位未选时明确报告缺项。
 
-依据说明是操作者声明的来源说明，**不是已验证的外部证据、现场测量或专业批准**。响应资格固定为 `DECLARED_NOT_QUALIFIED`，始终保留 `RESOURCE_QUALIFICATION_REQUIRED`。本目录不替代正式 RES-WRITE-1 的能力变更预检、Assignment/Effect 计划、技术适配、准入 Claim，也不授予生产 Start / WO 许可。
+声明依据保留操作者原话。机器的 `capability-approve` 动作可批准已保存的准确声明版本。命令固定声明 Owner、UUID、版本和摘要。批准生成新的目录版本，记录批准来源、操作 ID、实际操作者和时间，并与原结果同一事务提交。声明后继版本需要独立批准。迁移仅登记动作，角色权限仍由现有权限管理控制。
+
+按能力键读取当前目录使用 `GET /api/mes/resource-capabilities/owner-v1/{kind}/{id}/capability?key=...`。有效声明有准确批准原件时返回 `APPROVED`。有效声明尚无批准时返回 `DECLARED_NOT_QUALIFIED`。缺能力、能力区间不适用或原资源、单位、时间定义失效时返回 `UNKNOWN`。目录仍保留 `RESOURCE_QUALIFICATION_REQUIRED`。路线适配、RES-WRITE-1 变更预检和生产准入沿各自合同处理。
+
+## 机器归属计划
+
+`Main.Mes.ResourceAssignment.v1` 以原机器 UUID 为稳定身份，独立维护归属版本。每个版本记录完整的有序半开区间，固定原机器与各工作中心的 Owner、UUID、版本和摘要。没有登记时当前读取返回空结果。保存接受 `absent` 或准确归属版本，旧版本和原结果始终可按当前权限读取。当前工作中心仅在机器和生效区间所引用的工作中心均有当前有效原件时返回。
+
+能力目录页提供机器归属的当前与历史读取、计划编辑及原键恢复。API 根路径是 `/api/mes/resource-assignments/owner-v1`。使用机器 `query` 读取，`assignment-edit` 写入，两者均核对涉及的原工作中心当前查询范围。旧归属代码沿用原资源读取语义，已有路线保留其准确资源引用。
 
 ## 当前来源与恢复
 

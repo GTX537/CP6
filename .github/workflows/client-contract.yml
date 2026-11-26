@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          global-json-file: global.json
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -32,8 +32,6 @@ jobs:
         run: |
           dotnet restore CP6.WebApi/CP6.WebApi.csproj --locked-mode
           if ($LASTEXITCODE -ne 0) { throw 'Web API restore failed.' }
-          dotnet restore CP6.Tests/CP6.Tests.csproj --locked-mode
-          if ($LASTEXITCODE -ne 0) { throw 'Server test restore failed.' }
           dotnet restore CP6.Desktop/CP6.Desktop.csproj
           if ($LASTEXITCODE -ne 0) { throw 'Desktop restore failed.' }
           dotnet restore CP6.Client.Tests/CP6.Client.Tests.csproj
@@ -52,10 +50,19 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Web API build failed.' }
           dotnet build CP6.Desktop/CP6.Desktop.csproj -c Release --no-restore
           if ($LASTEXITCODE -ne 0) { throw 'Desktop build failed.' }
-          dotnet test CP6.Tests/CP6.Tests.csproj -c Release --no-restore
-          if ($LASTEXITCODE -ne 0) { throw 'Server tests failed.' }
           dotnet test CP6.Client.Tests/CP6.Client.Tests.csproj -c Release --no-restore
           if ($LASTEXITCODE -ne 0) { throw 'Client tests failed.' }
+
+      - name: Build and test .NET 10 server
+        shell: pwsh
+        env:
+          ArtifactsPath: ${{ runner.temp }}/cp6-server-net10
+          UseArtifactsOutput: 'true'
+        run: |
+          dotnet restore CP6.Tests/CP6.Tests.csproj --locked-mode
+          if ($LASTEXITCODE -ne 0) { throw 'Server test restore failed.' }
+          dotnet test CP6.Tests/CP6.Tests.csproj -c Release --no-restore
+          if ($LASTEXITCODE -ne 0) { throw 'Server tests failed.' }
 
       - name: Check OpenAPI generated client drift
         shell: pwsh
@@ -66,7 +73,7 @@ jobs:
           $api = Start-Process dotnet `
             -WorkingDirectory "CP6.WebApi" `
             -ArgumentList @(
-              "bin/Release/net8.0/CP6.WebApi.dll",
+              "bin/Release/net10.0/CP6.WebApi.dll",
               "--urls", "http://127.0.0.1:5080"
             ) -WindowStyle Hidden -PassThru
           try {
@@ -159,7 +166,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 10.0.x
+          global-json-file: global.json
       - name: Install MAUI Android workload
         run: dotnet workload install maui-android
       - name: Audit Android dependencies

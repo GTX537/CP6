@@ -18,7 +18,7 @@ internal sealed class ResourceCapabilityStoreV1(CP6Context db)
         await new ResourceSourceStoreV1(db).Fence(false, ct);
         await db.Database.ExecuteSqlRawAsync("LOCK TABLE cp6_resource_capability_v1.heads,cp6_resource_capability_v1.versions"
             + (write ? " IN SHARE ROW EXCLUSIVE MODE" : " IN SHARE MODE"), ct);
-        if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_resource_capability_v1.ready() AS \"Value\"").SingleAsync(ct)) throw Error("RESOURCE_CAPABILITY_STORE_UNAVAILABLE", 503);
+        if (!await db.Database.SqlQueryRaw<bool>("SELECT (cp6_resource_capability_v1.ready() AND cp6_resource_capability_v1.approval_ready()) AS \"Value\"").SingleAsync(ct)) throw Error("RESOURCE_CAPABILITY_STORE_UNAVAILABLE", 503);
         fenced = db.Database.CurrentTransaction;
     }
     private void Transaction()
@@ -52,16 +52,17 @@ internal sealed class ResourceCapabilityStoreV1(CP6Context db)
             || value.Version != row.Revision.ToString(CultureInfo.InvariantCulture) || value.Body.Source.Id != id || value.Body.Source.Kind != kind
             || EngineeringProductStoreV1.Digest(row.Body) != row.Digest) throw Error("RESOURCE_CAPABILITY_ORIGINAL_UNAVAILABLE", 503);
         return new(db.CurrentTenantId, new(ResourceCapabilityValuesV1.Owner, kind, id, value.Version, row.Digest), row.Revision == row.Current,
-            value.Body, value.ActorId, value.RecordedAt, Encoding.UTF8.GetString(row.Body), []);
+            value.Body, value.ActorId, value.RecordedAt, Encoding.UTF8.GetString(row.Body), [], Approval: value.Approval);
     }
     internal async Task<ResourceCapabilitySnapshotV1> Append(string kind, ResourceCapabilityCommandV1 input, Guid actor,
-        ResourceSourceVersionV1 resource, ResourceCapabilityOriginalV1[] units, string? timeBasis, CancellationToken ct)
+        ResourceSourceVersionV1 resource, ResourceCapabilityOriginalV1[] units, string? timeBasis, ResourceCapabilityApprovalV1? approval, CancellationToken ct)
     {
         Transaction(); var id = input.Body.Source.Id; var current = await Head(kind, id, ct);
         var expected = input.ExpectedVersion == "absent" ? (long?)null : Revision(input.ExpectedVersion);
         if (current != expected) throw Error("RESOURCE_CAPABILITY_CHANGED", 412);
         ResourceCapabilitySnapshotV1? previous = current == null ? null : await Read(kind, id, current, ct);
-        if (previous != null && EngineeringProductStoreV1.Encode(previous.Body).AsSpan().SequenceEqual(EngineeringProductStoreV1.Encode(input.Body))) return previous;
+        if (approval == null && previous != null && EngineeringProductStoreV1.Encode(previous.Body).AsSpan()
+            .SequenceEqual(EngineeringProductStoreV1.Encode(input.Body))) return previous;
         if (current == long.MaxValue) throw Error("RESOURCE_CAPABILITY_VERSION_EXHAUSTED", 503);
         var next = (current ?? 0) + 1;
         var creator = previous == null ? actor : JsonSerializer.Deserialize<ResourceCapabilityStoredV1>(previous.OriginalJson, EngineeringProductStoreV1.Json)!.CreatorId;
@@ -72,7 +73,7 @@ internal sealed class ResourceCapabilityStoreV1(CP6Context db)
             UPDATE cp6_resource_capability_v1.heads SET revision={next} WHERE tenant_id={db.CurrentTenantId} AND kind={kind} AND resource_id={id}
             """, ct);
         var body = EngineeringProductStoreV1.Encode(new ResourceCapabilityStoredV1(db.CurrentTenantId, id, kind, next.ToString(CultureInfo.InvariantCulture),
-            creator, actor, DateTimeOffset.UtcNow, input.Body, input.Reason, resource.OriginalJson, units, timeBasis));
+            creator, actor, DateTimeOffset.UtcNow, input.Body, input.Reason, resource.OriginalJson, units, timeBasis, approval));
         if (body.Length > 1048576) throw Error("RESOURCE_CAPABILITY_SIZE_LIMIT", 413);
         var digest = EngineeringProductStoreV1.Digest(body); var sourceVersion = Revision(input.Body.Source.Version);
         await db.Database.ExecuteSqlInterpolatedAsync($"""

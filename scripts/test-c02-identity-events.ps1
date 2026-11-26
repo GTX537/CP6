@@ -7,7 +7,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $fixture = Join-Path $repositoryRoot 'eng/crm/identity-events-fixture'
-$binary = Join-Path $fixture 'bin/Debug/net8.0/CP6.IdentityEvents.Fixture.dll'
+$binary = Join-Path $fixture 'bin/Debug/net10.0/CP6.IdentityEvents.Fixture.dll'
 if (-not (Test-Path -LiteralPath $binary)) { throw 'Build only the identity-events fixture locally before running this probe.' }
 $publicRoot = [IO.Path]::GetFullPath($OutputDirectory)
 $privateRoot = [IO.Path]::GetFullPath($PrivateDiagnosticDirectory)

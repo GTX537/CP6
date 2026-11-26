@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
     [ValidateSet("dev", "uat", "prod-lab")]
@@ -568,6 +568,27 @@ if ($Action -eq "Build") {
                 -Force
         }
 
+        $apiRuntimeConfigPath = Join-Path $apiPublishRoot "CP6.WebApi.runtimeconfig.json"
+        if (-not (Test-Path -LiteralPath $apiRuntimeConfigPath -PathType Leaf)) {
+            throw "找不到 API 运行时配置文件 $apiRuntimeConfigPath。"
+        }
+        try {
+            $apiRuntimeConfigJson = [IO.File]::ReadAllText($apiRuntimeConfigPath)
+            $apiRuntimeConfig = ConvertFrom-Json -InputObject $apiRuntimeConfigJson -ErrorAction Stop
+        }
+        catch {
+            throw "无法读取或解析 API 运行时配置文件 $apiRuntimeConfigPath。"
+        }
+        $apiTargetFramework = $apiRuntimeConfig.runtimeOptions.tfm
+        if (-not $apiRuntimeConfigJson.TrimStart().StartsWith("{") -or
+            $apiRuntimeConfig.runtimeOptions -isnot [pscustomobject] -or
+            $apiTargetFramework -isnot [string]) {
+            throw "API 运行时配置必须包含字符串形式的 runtimeOptions.tfm。"
+        }
+        if ($apiTargetFramework -cnotin @("net8.0", "net10.0")) {
+            throw "API 运行时配置的目标框架不受支持。仅支持 net8.0 和 net10.0。"
+        }
+
         $apiBuildArguments = @(
             "build",
             "-f", $apiRuntimeDockerfile,
@@ -576,6 +597,9 @@ if ($Action -eq "Build") {
         if (-not [string]::IsNullOrWhiteSpace($ApiImageIdFile)) {
             $apiBuildArguments += @("--iidfile", [IO.Path]::GetFullPath($ApiImageIdFile))
         }
+        # 运行时镜像固定到补丁版本；net8.0 仅用于回滚升级前的历史制品。
+        $apiRuntimeTag = if ($apiTargetFramework -ceq "net10.0") { "10.0.15" } else { "8.0" }
+        $apiBuildArguments += @("--build-arg", "ASPNET_RUNTIME_TAG=$apiRuntimeTag")
         $apiBuildArguments += $apiRuntimeContext
         & docker @apiBuildArguments
         if ($LASTEXITCODE -ne 0) { throw "API runtime image packaging failed." }

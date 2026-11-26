@@ -131,6 +131,8 @@ public sealed class ToolOrderLinkOwnerV1(CP6Context db, OperationsOwnerV1 owner,
                 }
                 var updated=await store.Read(query,native.Id,null,token);
                 result=new(frozen.OperationId,db.CurrentTenantId,frozen.Tool,updated.CurrentNativeRowVersion,order,created?"ORDER_CREATED":"NATIVE_LINK_RECORDED");
+                if (created)
+                    await OrderSourceFacts.Capture(db, order.Number, "Tool.OrderCreate", token, result);
                 var body=MainOwnerOperationJournalV1.Encode(result);var digest=MainOwnerOperationJournalV1.Digest(body);
                 await db.Database.ExecuteSqlInterpolatedAsync($"""
                     INSERT INTO cp6_tool_order_link_v1.links(tenant_id,tool_id,order_id,line_id,body_bytes,body_digest)

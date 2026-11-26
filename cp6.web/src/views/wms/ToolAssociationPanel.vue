@@ -34,7 +34,9 @@
       <h3>提出准确版本关联</h3>
       <label>完整工程编号 <input v-model="engineeringNo" aria-label="完整工程编号" maxlength="40" /></label>
       <label>业务修订号 <input v-model="businessRevision" aria-label="业务修订号" inputmode="numeric" /></label>
-      <button type="button" @click="search">查找准确工程版本</button>
+      <button type="button" @click="search()">查找准确工程版本</button>
+      <button v-if="nextCursor" type="button" @click="search(nextCursor)">读取下一批工程候选</button>
+      <p v-if="searched && !candidates.length" role="status">未找到符合条件的准确工程版本。</p>
       <label>技术来源 <select v-model="candidateKey" aria-label="技术来源"><option value="">请选择</option><option v-for="x in candidates" :key="x.technical.id" :value="x.technical.id">{{ x.baseCode }} / {{ x.number }} / Rev {{ x.businessRevision }} / 技术版本 {{ x.technical.version }} · 草稿</option></select></label>
       <p v-if="candidate">技术要求：{{ candidate.requirements.technicalRequirements }}；文件要求：{{ candidate.requirements.documentRequirements }}。技术批准尚未取得。</p>
       <label v-for="field in scopeFields" :key="field.key">{{ field.label }}<textarea v-model="draft[field.key]" :aria-label="field.label" :maxlength="field.key === 'purpose' ? 1000 : 2000" required /></label>
@@ -64,8 +66,16 @@ const terminal = computed(() => !!current.value && ['REJECTED', 'REVOKED'].inclu
 const canDecide = (engineering: boolean) => permission.has(engineering ? 'plm-tool-specification:instance-associate' : 'wms-plate-mold:engineering-link')
 function state(value: string) { return ({ UNKNOWN: '待核实', PROPOSED: '已提出', CONFIRMED: '双方已确认对应', REJECTED: '已拒绝', REVOKED: '已撤回' } as Record<string, string>)[value] ?? value }
 function roleName(value: string) { return ({ ENG_SPEC_CONFIRMATION: '工程本轮确认', PHYSICAL_INSTANCE_ASSOCIATION: '实物本轮确认', SOURCE_CHANGED: '原来源已变化' } as Record<string, string>)[value] ?? value }
-let live = true, generation = 0
-function clear() { rows.value = []; current.value = null; history.value = null; candidates.value = []; candidateKey.value = ''; engineeringNo.value = ''; businessRevision.value = ''; draft.value = {}; evidence.value = ''; reason.value = ''; from.value = ''; to.value = ''; supersedes.value = ''; notice.value = ''; completed.value = false; pending.value = null; loaded.value = false; page.value = 1 }
+const nextCursor = ref<string | null>(null), searched = ref(false)
+let live = true, generation = 0, searchGeneration = 0
+function clearCandidates() {
+  searchGeneration++
+  candidates.value = []
+  candidateKey.value = ''
+  nextCursor.value = null
+  searched.value = false
+}
+function clear() { rows.value = []; current.value = null; history.value = null; clearCandidates(); engineeringNo.value = ''; businessRevision.value = ''; draft.value = {}; evidence.value = ''; reason.value = ''; from.value = ''; to.value = ''; supersedes.value = ''; notice.value = ''; completed.value = false; pending.value = null; loaded.value = false; page.value = 1 }
 function accept(v: ToolAssociationView) { if (v.subject.tenantId !== props.scope?.tenantId || v.subject.physical.id !== props.selected?.reference.id || v.subject.technical.owner !== 'Main.Plm.ToolSpecification.v1' || v.notExecutionPermit !== true) throw new Error('关联与当前实物或身份不一致。'); return v }
 async function run(action: (check: () => void) => Promise<void>) {
   if (busy.value || !props.scope || !props.selected) return
@@ -78,10 +88,24 @@ async function run(action: (check: () => void) => Promise<void>) {
 async function load(target: number) { const id = props.selected?.reference.id; if (!id) return; await run(async check => { const list = result(await api.list(id, target)); check(); rows.value = list.map(accept); page.value = target; loaded.value = true; current.value = null; history.value = null; completed.value = false }) }
 async function open(id: string) { await run(async check => { const value = result(await api.read(id)); check(); current.value = accept(value); history.value = null; completed.value = false; evidence.value = ''; notice.value = '' }) }
 async function readHistory() { const id = current.value?.subject.proposalId; if (!id || !/^[1-9][0-9]*$/.test(historyVersion.value)) return; await run(async check => { const value = result(await api.read(id, historyVersion.value)); check(); history.value = accept(value) }) }
-async function search() {
+async function search(after?: string) {
   const id = props.selected?.reference.id, number = engineeringNo.value, revision = businessRevision.value
-  if (!id || !number || !/^(0|[1-9][0-9]*)$/.test(revision) || Number(revision) > 2147483647) return
-  await run(async check => { candidates.value = []; candidateKey.value = ''; const found = result(await api.candidates(id, number, Number(revision))); check(); if (engineeringNo.value !== number || businessRevision.value !== revision) return; candidates.value = found.filter(x => x.number === number && x.businessRevision === Number(revision) && x.technical.owner === 'Main.Plm.ToolSpecification.v1') })
+  if (!id || !number.trim() || !/^(0|[1-9][0-9]*)$/.test(revision) || Number(revision) > 2147483647) return
+  await run(async check => {
+    clearCandidates()
+    nextCursor.value = after ?? null
+    const request = searchGeneration
+    const response = await api.candidates(id, number, Number(revision), after)
+    check()
+    if (request !== searchGeneration) return
+
+    candidates.value = result(response).filter(x => x.number === number && x.businessRevision === Number(revision)
+      && x.technical.owner === 'Main.Plm.ToolSpecification.v1')
+    const last = candidates.value[candidates.value.length - 1]
+    nextCursor.value = last && response.nextCursor === last.technical.id && response.nextCursor !== after
+      ? response.nextCursor : null
+    searched.value = true
+  })
 }
 async function propose() {
   const scope = props.scope, physical = props.selected, tech = candidate.value
@@ -99,7 +123,7 @@ async function decide(engineering: boolean, decision: ToolAssociationDecision['d
 async function recover(close: boolean) { const scope = props.scope; if (!scope) return; await run(async check => { const operation = await resolveToolAssociation(scope, close, check); check(); completed.value = operation.state === 'COMMITTED'; if (completed.value) { current.value = null; rows.value = []; history.value = null } notice.value = operation.state === 'UNKNOWN' ? '原结果仍未知，请继续查询。' : operation.state === 'CLOSED' ? '未提交操作已结束，输入仍保留。' : '原操作已保存，请重新读取当前关联。' }) }
 function changed() { generation++; clear(); busy.value = false; error.value = ''; if (props.scope) pending.value = pendingToolAssociation(props.scope) }
 watch(() => [props.scope?.tenantId, props.scope?.actorId, props.selected?.reference.id, props.selected?.reference.version], changed, { immediate: true })
-watch([engineeringNo, businessRevision], () => { candidates.value = []; candidateKey.value = '' })
+watch([engineeringNo, businessRevision], clearCandidates, { flush: 'sync' })
 onMounted(() => { window.addEventListener(AUTH_EVENT, changed); window.addEventListener('storage', changed) })
 onBeforeUnmount(() => { live = false; generation++; clear(); window.removeEventListener(AUTH_EVENT, changed); window.removeEventListener('storage', changed) })
 </script>

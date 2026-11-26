@@ -1,14 +1,14 @@
 # 细分任务进度
 
-台账日期：2026-11-24。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
+台账日期：2026-11-26。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 394 项，已交付 104 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 394 项，已交付 108 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)。按[单卡串行计划](planning/20261117-card-execution.md)核对完整前置并选择下一卡。
 
 原 375 卡及其全部出口保留；已登记 13 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。
 
-原号 DONE 88/375；完整 DONE 85/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 6/6，沿用原卡池内划拨。
+原号 DONE 92/375；完整 DONE 89/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 6/6，沿用原卡池内划拨。
 
 ## WP01 现有实现与设计对照
 
@@ -145,7 +145,7 @@
 | [WP04-29 售后退款授权与真实现金结果跟踪](../../docs/development/task-plans/WP04.md#wp04-29) | Main | 待安排 | WP02-10, WP02-13, WP04-28, WP11-33, WP11-64 | CODE / M | 未领取 |
 | [WP04-30 售后补发和替换的新需求交接](../../docs/development/task-plans/WP04.md#wp04-30) | Main | 待安排 | WP02-10, WP02-13, WP04-14, WP04-27, WP04-36, WP10-22, WP10-52 | CODE / M | 未领取 |
 | [WP04-31 售后更正撤权与全成员恢复](../../docs/development/task-plans/WP04.md#wp04-31) | Main | 待安排 | WP02-10, WP02-13, WP04-28, WP04-29, WP04-30, WP09-12, WP10-22 | CODE / L | 未领取 |
-| [WP04-32 Sales稳定来源目录、原结果与H10 H32发布参加](../../docs/development/task-plans/WP04.md#wp04-32) | Main | 待安排 | WP02-10, WP02-13, WP02-22, WP04-02 | CODE / M | 未领取 |
+| [WP04-32 Sales稳定来源目录、原结果与H10 H32发布参加](../../docs/development/task-plans/WP04.md#wp04-32) | Main | 已交付 | WP02-10, WP02-13, WP02-22, WP04-02 | CODE / M | CP6-EXEC-5 |
 | [WP04-33 ERP经营产品物料身份与工程映射读取提供者](../../docs/development/task-plans/WP04.md#wp04-33) | Main | 待安排 | WP02-10, WP02-13 | CODE / M | 未领取 |
 | [WP04-34 原发运商业可退资格与独立退货来源授权](../../docs/development/task-plans/WP04.md#wp04-34) | Main | 待安排 | WP02-10, WP02-13, WP04-32, WP10-19, WP12-07 | CODE / M | 未领取 |
 | [WP04-35 售后新需求真实Producer与独立创建授权采用设计](../../docs/development/task-plans/WP04.md#wp04-35) | Main | 待安排 | WP04-32, WP04-34, WP12-07 | DESIGN / M | 未领取 |
@@ -219,7 +219,7 @@
 | [WP06-10 CP22计划单来源份额、委托与转换意图](../../docs/development/task-plans/WP06.md#wp06-10) | Main | 待安排 | S01-02, S01-05, S02-00, WP02-10, WP02-13, WP06-09 | CODE / L | 未领取 |
 | [WP06-11 CP22真实PR、WO与调拨转单并替换Stub](../../docs/development/task-plans/WP06.md#wp06-11) | Main | 待安排 | S01-02, S01-05, S02-00, WP02-10, WP02-13, WP06-10, WP07-01, WP08-03, WP10-10 | CODE / L | 未领取 |
 | [WP06-12 CP12缺料异常、完整影响图与有证重算协调](../../docs/development/task-plans/WP06.md#wp06-12) | Main | 待安排 | S01-02, S01-05, S02-00, WP02-10, WP02-13, WP06-03, WP06-05, WP06-09, WP06-11, WP08-13 | CODE / L | 未领取 |
-| [WP06-13 Planning H10原生接收槽与源控制最终门](../../docs/development/task-plans/WP06.md#wp06-13) | Main | 待安排 | WP02-10, WP02-13, WP04-32 | CODE / M | 未领取 |
+| [WP06-13 Planning H10原生接收槽与源控制最终门](../../docs/development/task-plans/WP06.md#wp06-13) | Main | 已交付 | WP02-10, WP02-13, WP04-32 | CODE / M | CP6-EXEC-5 |
 
 ## WP07 采购执行
 
@@ -260,7 +260,7 @@
 | [WP08-13 生产追加料从责任后继到采购及重新领料闭环](../../docs/development/task-plans/WP08.md#wp08-13) | Main | 待安排 | S01-02, S01-05, S02-00, WP02-10, WP02-13, WP06-05, WP06-11, WP07-07, WP08-06, WP10-14, WP10-46 | CODE / L | 未领取 |
 | [WP08-14 报工更正、Basis无缝后继与持久副作用恢复](../../docs/development/task-plans/WP08.md#wp08-14) | Main | 待安排 | S01-02, S01-05, S02-00, WP02-10, WP02-13, WP08-06, WP08-07, WP08-08, WP09-06, WP11-40 | CODE / L | 未领取 |
 | [WP08-15 工单取消、剩余责任与完整关闭](../../docs/development/task-plans/WP08.md#wp08-15) | Main | 待安排 | S01-02, S01-05, S02-00, WP02-10, WP02-13, WP08-09, WP08-11, WP08-14 | CODE / L | 未领取 |
-| [WP08-16 RES资源身份与独立能力目录提供者](../../docs/development/task-plans/WP08.md#wp08-16) | Main | 待安排 | S01-02, S02-00, WP02-03, WP02-10, WP02-13 | CODE / M | 未领取 |
+| [WP08-16 RES资源身份与独立能力目录提供者](../../docs/development/task-plans/WP08.md#wp08-16) | Main | 已交付 | S01-02, S02-00, WP02-03, WP02-10, WP02-13 | CODE / M | CP6-EXEC |
 | [WP08-17 MES原执行意图、原键查询与最终准入参加者](../../docs/development/task-plans/WP08.md#wp08-17) | Main | 待安排 | S01-02, S01-07, S02-00, WP02-03, WP02-10, WP02-13, WP05-12 | CODE / M | 未领取 |
 | [WP08-18 MES正式生产与DEV多限制采用闭环](../../docs/development/task-plans/WP08.md#wp08-18) | Main | 待安排 | 共13项，详见任务卡 | CODE / M | 未领取 |
 
@@ -332,7 +332,7 @@
 | [WP10-45 仓储ABC、库龄呆滞与分析发布](../../docs/development/task-plans/WP10.md#wp10-45) | Main | 待安排 | S01-02, S01-05, S02-00, WP02-10, WP02-13, WP10-44 | CODE / M | 未领取 |
 | [WP10-46 采购质量结果在库存正式应用与可用性回流](../../docs/development/task-plans/WP10.md#wp10-46) | Main | 待安排 | S01-02, S01-05, S02-00, WP02-10, WP02-13, WP09-04, WP10-14 | CODE / L | 未领取 |
 | [WP10-47 既有物料、UOM与容量维度原Owner目录适配](../../docs/development/task-plans/WP10.md#wp10-47) | Main | 待安排 | S01-02, S01-07, S02-00, WP02-03, WP02-10, WP02-13 | CODE / M | 未领取 |
-| [WP10-48 WMS版模实例身份、当前头与HoldExact提供者](../../docs/development/task-plans/WP10.md#wp10-48) | Main | 待安排 | S01-07, S02-00, WP02-03, WP02-10, WP02-13, WP05-04 | CODE / M | 未领取 |
+| [WP10-48 WMS版模实例身份、当前头与HoldExact提供者](../../docs/development/task-plans/WP10.md#wp10-48) | Main | 已交付 | S01-07, S02-00, WP02-03, WP02-10, WP02-13, WP05-04 | CODE / M | CP6-EXEC |
 | [WP10-49 WMS完整Canonical Target与正式映射提供者](../../docs/development/task-plans/WP10.md#wp10-49) | Main | 待安排 | S01-07, S02-00, WP02-03, WP02-10, WP02-13, WP10-01, WP10-47 | CODE / M | 未领取 |
 | [WP10-50 SPACE完整Target在WMS的原子采用Owner](../../docs/development/task-plans/WP10.md#wp10-50) | Main | 待安排 | S01-02, S01-07, S02-00, WP02-03, WP02-10, WP02-13, WP10-04, WP10-25, WP10-49 | CODE / M | 未领取 |
 | [WP10-51 SPACE来源停止与恢复的WMS当前控制适配](../../docs/development/task-plans/WP10.md#wp10-51) | Main | 待安排 | S01-02, S01-07, S02-00, WP02-03, WP02-10, WP02-13, WP10-06, WP10-49, WP10-50 | CODE / M | 未领取 |

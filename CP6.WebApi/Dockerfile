@@ -9,13 +9,13 @@
 # 3. EXPOSE 声明端口，实际映射在 docker-compose 中配置
 
 # ===== Stage 1: Build =====
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0.404 AS build
 WORKDIR /src
 ARG RELEASE_VERSION=0.0.0-dev
 ARG GIT_SHA=unknown
 
 # 先复制项目文件，还原依赖（利用 Docker 层缓存）
-COPY NuGet.config Directory.Build.props ./
+COPY NuGet.config Directory.Build.props global.json ./
 COPY CP6.Entity/CP6.Entity.csproj CP6.Entity/
 COPY CP6.Entity/packages.lock.json CP6.Entity/
 COPY CP6.Core/CP6.Core.csproj CP6.Core/
@@ -25,6 +25,8 @@ COPY CP6.Space.Domain/CP6.Space.Domain.csproj CP6.Space.Domain/
 COPY CP6.Space.Application/CP6.Space.Application.csproj CP6.Space.Application/
 COPY CP6.Space.Infrastructure/CP6.Space.Infrastructure.csproj CP6.Space.Infrastructure/
 COPY CP6.Space.Infrastructure/packages.lock.json CP6.Space.Infrastructure/
+COPY CP6.Persistence.PostgreSql/CP6.Persistence.PostgreSql.csproj CP6.Persistence.PostgreSql/
+COPY CP6.Persistence.PostgreSql/packages.lock.json CP6.Persistence.PostgreSql/
 COPY CP6.WebApi/CP6.WebApi.csproj CP6.WebApi/
 COPY CP6.WebApi/packages.lock.json CP6.WebApi/
 RUN --mount=type=secret,id=nuget_token,required=true \
@@ -42,7 +44,7 @@ RUN dotnet publish CP6.WebApi/CP6.WebApi.csproj -c Release -o /app/publish --no-
     -p:InformationalVersion=${RELEASE_VERSION}+${GIT_SHA}
 
 # ===== Stage 2: Runtime =====
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0.15 AS runtime
 WORKDIR /app
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \

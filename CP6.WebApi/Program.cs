@@ -1032,6 +1032,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<CommercialProductIdentityReader>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceSourceOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceCapabilityOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceAssignmentOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.InventoryIdentityOwnerV1>();
 builder.Services.Configure<CP6.Core.Services.Wms.Transfer.TransferEnvironmentOptionsV1>(builder.Configuration.GetSection("TransferEnvironment"));
 builder.Services.AddScoped<CP6.Core.Services.Wms.Transfer.TransferEnvironmentOwnerV1>();
@@ -1092,6 +1093,8 @@ builder.Services.AddScoped(sp => new OrderPriceCorrectionOwnerV1(sp.GetRequiredS
 builder.Services.AddScoped(sp => new OrderReadOwnerV1(sp.GetRequiredService<CP6Context>(),
     sp.GetRequiredService<IHttpContextAccessor>(), ct => CP6.WebApi.Services.OrderPriceCorrectionAuthenticationV1
         .CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext, ct)));
+builder.Services.AddScoped<OrderSourceReader>();
+builder.Services.AddScoped<CP6.Core.Services.Plan.DemandSourceIntake>();
 builder.Services.AddScoped(sp => new OrderWriteOwnerV1(sp.GetRequiredService<CP6Context>(),
     sp.GetRequiredService<IHttpContextAccessor>(), ct => CP6.WebApi.Services.OrderPriceCorrectionAuthenticationV1
         .CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext, ct)));

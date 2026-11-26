@@ -29,11 +29,11 @@ Set environment variables in the calling process without putting credentials on 
 Then invoke the built assembly explicitly:
 
 ```powershell
-dotnet tools/CP6.Crm.SourceFence/bin/Release/net8.0/CP6.Crm.SourceFence.dll preflight
-dotnet tools/CP6.Crm.SourceFence/bin/Release/net8.0/CP6.Crm.SourceFence.dll freeze
-dotnet tools/CP6.Crm.SourceFence/bin/Release/net8.0/CP6.Crm.SourceFence.dll status
-dotnet tools/CP6.Crm.SourceFence/bin/Release/net8.0/CP6.Crm.SourceFence.dll reopen
-dotnet tools/CP6.Crm.SourceFence/bin/Release/net8.0/CP6.Crm.SourceFence.dll seal-forward-only
+dotnet tools/CP6.Crm.SourceFence/bin/Release/net10.0/CP6.Crm.SourceFence.dll preflight
+dotnet tools/CP6.Crm.SourceFence/bin/Release/net10.0/CP6.Crm.SourceFence.dll freeze
+dotnet tools/CP6.Crm.SourceFence/bin/Release/net10.0/CP6.Crm.SourceFence.dll status
+dotnet tools/CP6.Crm.SourceFence/bin/Release/net10.0/CP6.Crm.SourceFence.dll reopen
+dotnet tools/CP6.Crm.SourceFence/bin/Release/net10.0/CP6.Crm.SourceFence.dll seal-forward-only
 ```
 
 Each line is a separate operator command, not a script to execute all transitions. Successful commands emit one JSON object and return 0. Rejected commands emit only `{ "error": "C04A_..." }` to stderr and return 2. Connection strings, SQL exception text and source field values are excluded. The same operations are available as `SourceFence` instance async methods using `SourceFenceOptions` and an optional cancellation token.

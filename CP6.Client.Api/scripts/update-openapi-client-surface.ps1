@@ -7,7 +7,7 @@ param(
 $ErrorActionPreference = "Stop"
 $projectRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $apiWorkingDirectory = Join-Path $projectRoot "CP6.WebApi"
-$apiDll = Join-Path $projectRoot "CP6.WebApi\bin\$Configuration\net8.0\CP6.WebApi.dll"
+$apiDll = Join-Path $projectRoot "CP6.WebApi\bin\$Configuration\net10.0\CP6.WebApi.dll"
 if (-not (Test-Path -LiteralPath $apiDll)) {
     throw "Web API build output was not found: $apiDll"
 }

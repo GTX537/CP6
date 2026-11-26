@@ -1,12 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\CP6.Space.CadExperiment\CP6.Space.CadExperiment.csproj" />
     <PackageReference Include="Aspose.CAD" Version="26.6.0" />
+    <!-- Aspose.CAD 在 net10.0 下传递引入有已知漏洞的 Pkcs 8.0.0，显式抬升到与 CP6.Core 一致的 10.0.15。 -->
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.15" />
   </ItemGroup>
 </Project>

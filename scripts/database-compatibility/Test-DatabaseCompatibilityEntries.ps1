@@ -67,7 +67,7 @@ $fakeManifest=Join-Path $fakeRoot 'eng/database-compatibility/required-cases.jso
 $null=[IO.Directory]::CreateDirectory((Split-Path $fakeProjectPath -Parent));$null=[IO.Directory]::CreateDirectory((Split-Path $fakeManifest -Parent))
 Copy-Item -LiteralPath (Join-Path $Worktree $fakeProject) -Destination $fakeProjectPath
 Copy-Item -LiteralPath (Join-Path $Worktree 'eng/database-compatibility/required-cases.json') -Destination $fakeManifest
-$fakeBinary=Join-Path (Split-Path $fakeProjectPath -Parent) 'bin/Debug/net8.0/CP6.DatabaseCompatibility.ApplicationProbe.dll'
+$fakeBinary=Join-Path (Split-Path $fakeProjectPath -Parent) 'bin/Debug/net10.0/CP6.DatabaseCompatibility.ApplicationProbe.dll'
 $null=[IO.Directory]::CreateDirectory((Split-Path $fakeBinary -Parent));[IO.File]::WriteAllText($fakeBinary,'offline dummy; never executed')
 $fakeDependency=Join-Path (Split-Path $fakeBinary -Parent) 'CP6.Core.dll'
 [IO.File]::WriteAllText($fakeDependency,'offline dependency before')

@@ -9,7 +9,7 @@ using static CP6.Core.Services.Mes.ResourceCapabilityValuesV1;
 
 namespace CP6.Core.Services.Mes;
 
-/// <summary>Versioned declarations, not RES change/admission claims or physical production qualification.</summary>
+/// <summary>登记资源能力声明及批准原件，提供当前目录和历史读取。</summary>
 public sealed class ResourceCapabilityOwnerV1(CP6Context db, OperationsOwnerV1 owner)
 {
     private OperationsOwnerV1 Authority => owner.Owns(db) ? owner : throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);
@@ -122,7 +122,7 @@ public sealed class ResourceCapabilityOwnerV1(CP6Context db, OperationsOwnerV1 o
             await a.RequireResourceSource(db, kind, frozen.Body.Source.Id, t);
             a.AtCommit(last => a.RequireResourceSource(db, kind, frozen.Body.Source.Id, last));
             var sources = await Sources(a, frozen.Body, true, t);
-            var value = await store.Append(kind, frozen, a.ActorId, sources.Resource, sources.Units, sources.Time, t);
+            var value = await store.Append(kind, frozen, a.ActorId, sources.Resource, sources.Units, sources.Time, null, t);
             var result = new ResourceSourceResultV1(frozen.OperationId, kind, value.Reference.Id, value.Reference.Version, value.Reference.Digest,
                 value.Reference.Version != frozen.ExpectedVersion);
             await journal.Store(Journal(kind), Contract, frozen.OperationId, a.ActorId, bytes, result, [result.ObjectId],
@@ -131,6 +131,58 @@ public sealed class ResourceCapabilityOwnerV1(CP6Context db, OperationsOwnerV1 o
             return result;
         }, ct, actionAtFence: async t => { original = await journal.Read(Journal(kind), frozen.OperationId, t); return original == null ? "capability-edit" : "query"; });
     }
+    public async Task<ResourceCapabilityReadingV1> ReadCurrentCapabilityAsync(string kind, Guid id, string key, CancellationToken ct = default)
+    {
+        Text(key, 64);
+        var editor = await EditorAsync(kind, id, ct);
+        var catalog = editor.Current;
+        var item = catalog?.Body.Capabilities.SingleOrDefault(x => x.Key == key);
+        var now = DateTimeOffset.UtcNow;
+        if (catalog == null || item == null || Time(item.ValidFrom) > now || item.ValidTo != null && Time(item.ValidTo) <= now
+            || catalog.Missing.Any(x => x is "RESOURCE_SOURCE_CHANGED_OR_DISABLED" or "UNIT_SOURCE_CHANGED_OR_DISABLED" or "TIME_BASIS_CHANGED_OR_DISABLED"))
+            return new(editor.Resource.Reference, key, "UNKNOWN");
+        var state = catalog.Approval == null ? "DECLARED_NOT_QUALIFIED" : "APPROVED";
+        return new(editor.Resource.Reference, key, state, catalog.Reference, item, catalog.Approval);
+    }
+
+    public Task<ResourceSourceResultV1> ApproveAsync(string kind, ResourceCapabilityApprovalCommandV1 input, CancellationToken ct = default)
+    {
+        if (input == null || input.OperationId == Guid.Empty || kind != "MACHINE")
+            throw Error("RESOURCE_CAPABILITY_APPROVAL_INVALID", 400);
+        var frozen = OperationsOwnerV1.Freeze(input);
+        Reference(frozen.Declaration);
+        if (frozen.Declaration.Kind != kind) throw Error("RESOURCE_CAPABILITY_APPROVAL_INVALID", 400);
+        Text(frozen.Evidence, 2000);
+        var bytes = MainOwnerOperationJournalV1.Encode(frozen);
+        var journal = new MainOwnerOperationJournalV1(db);
+        MainOwnerOperationJournalV1.Original? original = null;
+        return Authority.ExecuteAsync(Resource(kind), "capability-approve", true, async (access, token) =>
+        {
+            var store = new ResourceCapabilityStoreV1(db);
+            await store.Fence(true, token);
+            if (original != null) return await Disclose(access, store, kind, frozen.OperationId, original, bytes, token);
+            var id = frozen.Declaration.Id;
+            await access.RequireResourceSource(db, kind, id, token);
+            access.AtCommit(last => access.RequireResourceSource(db, kind, id, last));
+            var declaration = await store.Read(kind, id, null, token);
+            if (declaration.Reference != frozen.Declaration) throw Error("RESOURCE_CAPABILITY_CHANGED", 412);
+            if (declaration.Approval != null || declaration.Body.Capabilities.Length == 0)
+                throw Error("RESOURCE_CAPABILITY_APPROVAL_INVALID", 422);
+            var sources = await Sources(access, declaration.Body, true, token);
+            var approval = new ResourceCapabilityApprovalV1(frozen.OperationId, declaration.Reference, frozen.Evidence);
+            var command = new ResourceCapabilityCommandV1(frozen.OperationId, declaration.Reference.Version, declaration.Body, frozen.Evidence);
+            var value = await store.Append(kind, command, access.ActorId, sources.Resource, sources.Units, sources.Time, approval, token);
+            var result = new ResourceSourceResultV1(frozen.OperationId, kind, id, value.Reference.Version, value.Reference.Digest, true);
+            await journal.Store(Journal(kind), Contract, frozen.OperationId, access.ActorId, bytes, result, [id],
+                new { action = "approve-resource-capability", approval.Declaration, approval.Evidence, approved = value.Reference }, token);
+            return result;
+        }, ct, actionAtFence: async token =>
+        {
+            original = await journal.Read(Journal(kind), frozen.OperationId, token);
+            return original == null ? "capability-approve" : "query";
+        });
+    }
+
     private async Task<ResourceSourceResultV1> Disclose(OperationsAccessV1 a, ResourceCapabilityStoreV1 store, string kind, Guid id,
         MainOwnerOperationJournalV1.Original original, byte[]? input, CancellationToken ct)
     {

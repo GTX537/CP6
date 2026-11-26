@@ -18,6 +18,12 @@ public sealed class ResourceCapabilityController(ResourceCapabilityOwnerV1 owner
     public async Task<IActionResult> Read(string kind, Guid id, [FromQuery] string? version, CancellationToken ct) => Result(await owner.ReadAsync(kind, id, version, ct));
     [HttpPost("commands"), RequestSizeLimit(1048576)]
     public async Task<IActionResult> Save(string kind, [FromBody] ResourceCapabilityCommandV1 input, CancellationToken ct) => Result(await owner.SaveAsync(kind, input, ct));
+    [HttpGet("{id:guid}/capability")]
+    public async Task<IActionResult> CurrentCapability(string kind, Guid id, [FromQuery] string key, CancellationToken ct)
+        => Result(await owner.ReadCurrentCapabilityAsync(kind, id, key, ct));
+    [HttpPost("approvals"), RequestSizeLimit(8192)]
+    public async Task<IActionResult> Approve(string kind, [FromBody] ResourceCapabilityApprovalCommandV1 input, CancellationToken ct)
+        => Result(await owner.ApproveAsync(kind, input, ct));
     [HttpGet("operations/{id:guid}")]
     public async Task<IActionResult> Operation(string kind, Guid id, CancellationToken ct) => Result(await owner.OperationAsync(kind, id, false, ct));
     [HttpPost("operations/{id:guid}/close")]

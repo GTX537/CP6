@@ -13,14 +13,14 @@ internal static class ResourceCapabilityValuesV1
     internal static string Journal(string kind) { Resource(kind); return Owner + "." + kind; }
     private static readonly Regex Number = new(@"\A-?(0|[1-9][0-9]{0,12})\.[0-9]{8}\z", RegexOptions.NonBacktracking | RegexOptions.CultureInvariant);
     private static readonly Regex Instant = new(@"\A[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?(Z|[+-][0-9]{2}:[0-9]{2})\z", RegexOptions.NonBacktracking | RegexOptions.CultureInvariant);
-    internal static void Text(string? value, int limit)
+    internal static void Text(string? value, int limit, string error = "RESOURCE_CAPABILITY_TEXT_INVALID")
     {
         if (string.IsNullOrWhiteSpace(value) || value.Length > limit || value != value.Trim() || value != value.Normalize(NormalizationForm.FormC)
-            || value.Any(char.IsControl)) throw Error("RESOURCE_CAPABILITY_TEXT_INVALID", 400);
+            || value.Any(char.IsControl)) throw Error(error, 400);
     }
-    private static DateTimeOffset Time(string value)
+    internal static DateTimeOffset Time(string value, string error = "RESOURCE_CAPABILITY_TIME_INVALID")
         => value != null && Instant.IsMatch(value) && DateTimeOffset.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.None, out var time)
-            ? time : throw Error("RESOURCE_CAPABILITY_TIME_INVALID", 400);
+            ? time : throw Error(error, 400);
     internal static void Reference(ResourceCapabilityRefV1 value)
     {
         if (value == null || value.Owner != Owner || value.Id == Guid.Empty || !Digest(value.Digest)) throw Error("RESOURCE_CAPABILITY_REFERENCE_INVALID", 400);

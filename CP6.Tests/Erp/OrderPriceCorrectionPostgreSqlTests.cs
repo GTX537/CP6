@@ -44,10 +44,13 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests(TenantManagement
     private Task<Harness> Seed(params IInterceptor[] interceptors)
         => SeedForDatabase(TenantManagementPostgresFixture.Database, interceptors);
 
-    private async Task<Harness> SeedForDatabase(string database, params IInterceptor[] interceptors)
+    private Task<Harness> SeedWithProduct(string productCode)
+        => SeedForDatabase(TenantManagementPostgresFixture.Database, lineProductCode: productCode);
+
+    private async Task<Harness> SeedForDatabase(string database, IInterceptor[]? interceptors = null, string? lineProductCode = null)
     {
         var tenant = Guid.NewGuid();
-        var db = server.ContextForDatabase(database, new TenantContext { CurrentTenantId = tenant }, null, interceptors);
+        var db = server.ContextForDatabase(database, new TenantContext { CurrentTenantId = tenant }, null, interceptors ?? []);
         var user = new Sys_User { UserName = "price-owner", Password = new BCryptPasswordHasher(4).Hash("Price1!Password"), RoleId = 72 };
         db.Sys_Tenants.Add(new() { Id = tenant, TenantCode = tenant.ToString("N"), TenantName = "owned" });
         db.Sys_Roles.Add(new() { RoleId = 72, RoleName = "price-correction" });
@@ -64,7 +67,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests(TenantManagement
         var number = "W32" + tenant.ToString("N")[..16];
         var order = new Order { WebOrderNo = number, CustomerCd = "C", OrderType = "1", Creator = user.UserName };
         for (var i = 1; i <= 2; i++)
-            order.Details.Add(new() { WebOrderNo = number, WebOrderDetailNo = i, ProductCd = "P" + i,
+            order.Details.Add(new() { WebOrderNo = number, WebOrderDetailNo = i, ProductCd = lineProductCode ?? "P" + i,
                 Quantity = 2m, SalesPriceDiv = "1", IndividualUnitPrice = 3m, SetUnitPrice = null,
                 Amount = 6m, Creator = user.UserName, ApprovalStatus = 0 });
         db.Orders.Add(order);
