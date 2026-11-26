@@ -41,6 +41,8 @@
     </template>
     <template #col-_action="{ row }">
       <el-button link type="primary" @click="onView(row)">{{ t('sales.op.view') }}</el-button>
+      <RouterLink v-if="row.productId && permissions.has('erp-product:query') && permissions.has('plm-engineering-product:query')"
+        :to="{ path: '/plm/engineering-products', query: { businessProductId: row.productId } }">工程映射</RouterLink>
       <el-button v-permission="'erp-product:edit'" link type="warning" @click="onEdit(row)">{{ t('sales.op.edit') }}</el-button>
       <el-button v-permission="'erp-product:add'" link type="success" @click="onCopy(row)">{{ t('sales.op.copy') }}</el-button>
       <el-button v-permission="'erp-product:del'" link type="danger" @click="onDelete(row)">{{ t('sales.op.delete') }}</el-button>
@@ -51,6 +53,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { RouterLink } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Check, Link, Download } from '@element-plus/icons-vue'
 import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose, type SortOrder } from '@/components/templates/CpListPage.vue'
@@ -58,8 +61,10 @@ import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { productApi } from '@/api/erp/product'
 import type { ProductListItemDto, ProductQuery } from '@/types/erp/productMaster'
+import { usePermissionStore } from '@/stores/permission'
 
 const { t } = useI18n()
+const permissions = usePermissionStore()
 const listRef = ref<ListPageExpose>()
 const exporting = ref(false)
 const statusSel = ref<number[]>([])

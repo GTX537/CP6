@@ -8,7 +8,7 @@ using static CP6.Core.Services.Plm.EngineeringProductValuesV1;
 
 namespace CP6.Core.Services.Plm;
 
-public sealed class EngineeringProductMappingService(CP6Context db, OperationsOwnerV1 owner)
+public sealed partial class EngineeringProductMappingService(CP6Context db, OperationsOwnerV1 owner)
 {
     private const string Contract = "Main.Plm.EngineeringMapping.commands.v1";
     private OperationsOwnerV1 Authority => owner.Owns(db) ? owner : throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);
@@ -24,6 +24,7 @@ public sealed class EngineeringProductMappingService(CP6Context db, OperationsOw
         if (value.SiteRef != null) SourceReference(value.SiteRef, SiteOwner);
         foreach (var text in new[] { value.Purpose, value.Evidence, value.Conflicts })
             if (text == null || text.Length > 8000 || text.Length != 0 && !ValidText(text, 8000, true)) throw Error("ENGINEERING_MAPPING_INPUT_INVALID", 400);
+        ValidateScope(value);
     }
     public Task<EngineeringBusinessChoiceV1[]> BusinessChoicesAsync(string search, CancellationToken ct = default)
     {
@@ -68,6 +69,8 @@ public sealed class EngineeringProductMappingService(CP6Context db, OperationsOw
             access.AtCommit(token => RequireBusiness(products, business.Id, token));
         }
         if (value.Candidate.SiteRef != null) (await access.SourceAsync(OperationsOwnerV1.PhysicalSite, ct)).RequirePhysicalSiteSourceAccess(db);
+        if (value.Candidate.TechnicalScope is { } technical)
+            await RequireRevisionRead(db, access, technical.RevisionRef.Id, ct);
     }
     private static async Task VerifySources(CP6Context db, OperationsAccessV1 root, EngineeringProductStoreV1 store,
         EngineeringMappingCandidateV1 candidate, bool complete, CancellationToken ct)
@@ -102,9 +105,19 @@ public sealed class EngineeringProductMappingService(CP6Context db, OperationsOw
         await RequireRead(db, access, value, ct); var reasons = new List<string>();
         if (!value.IsCurrent) reasons.Add("ENGINEERING_MAPPING_CHANGED");
         if (value.State != "CONFIRMED") reasons.Add("ENGINEERING_MAPPING_NOT_CONFIRMED");
-        try { await VerifySources(db, access, store, value.Candidate, true, ct); }
+        try
+        {
+            await VerifySources(db, access, store, value.Candidate, true, ct);
+            if (reasons.Count == 0) await HoldScopeSources(db, access, value.Candidate, ct);
+        }
         catch (OrderPriceCorrectionException error) when (error.Status is 412 or 422) { reasons.Add(error.Message); }
-        return value with { CanAdoptIdentitySite = reasons.Count == 0, Reasons = reasons.ToArray() };
+        var current = reasons.Count == 0;
+        return value with
+        {
+            CanAdoptIdentitySite = current, Reasons = reasons.ToArray(),
+            LegalEntityApplicability = current && value.ConfirmedLegalScope != null ? "CONFIRMED" : "REQUIRED_FENCED",
+            TechnicalApplicability = current && value.ConfirmedTechnicalScope != null ? "CONFIRMED" : "REQUIRED_FENCED"
+        };
     }
     public Task<EngineeringMappingVersionV1[]> ListAsync(Guid engineeringId, int page = 1, CancellationToken ct = default)
     {
@@ -160,14 +173,25 @@ public sealed class EngineeringProductMappingService(CP6Context db, OperationsOw
         if (current.Reference != reference) throw Error("ENGINEERING_MAPPING_CHANGED", 412);
         if (current.State != "CONFIRMED") throw Error("ENGINEERING_MAPPING_NOT_CONFIRMED");
         await VerifySources(store.Context, access, store, current.Candidate, true, ct);
-        return current with { CanAdoptIdentitySite = true, Reasons = [] };
+        await HoldScopeSources(store.Context, access, current.Candidate, ct);
+        return current with
+        {
+            CanAdoptIdentitySite = true, Reasons = [],
+            LegalEntityApplicability = current.ConfirmedLegalScope != null ? "CONFIRMED" : "REQUIRED_FENCED",
+            TechnicalApplicability = current.ConfirmedTechnicalScope != null ? "CONFIRMED" : "REQUIRED_FENCED"
+        };
     }
     public Task<EngineeringProductCommandResultV1> CommandAsync(EngineeringMappingCommandV1 input, CancellationToken ct = default)
     {
-        if (input == null || input.OperationId == Guid.Empty || input.MappingId == Guid.Empty || input.Action is not ("DRAFT" or "CONFIRM" or "DISABLE")) throw Error("ENGINEERING_MAPPING_INPUT_INVALID", 400);
+        if (input == null || input.OperationId == Guid.Empty || input.MappingId == Guid.Empty || input.Action is not ("DRAFT" or "REVIEW" or "CONFIRM" or "DISABLE")) throw Error("ENGINEERING_MAPPING_INPUT_INVALID", 400);
         var frozen = OperationsOwnerV1.Freeze(input); var expected = frozen.ExpectedVersion == "absent" ? (long?)null : Revision(frozen.ExpectedVersion);
         if (frozen.Action == "DRAFT" ? frozen.Candidate == null : frozen.Candidate != null || expected == null) throw Error("ENGINEERING_MAPPING_INPUT_INVALID", 400);
-        if (frozen.Candidate != null) Candidate(frozen.Candidate);
+        if (frozen.Candidate != null)
+        {
+            Candidate(frozen.Candidate);
+            if (frozen.Candidate.LegacyMappingRef is { } prior && (prior.Id != frozen.MappingId || expected == null))
+                throw Error("ENGINEERING_LEGACY_MAPPING_MISMATCH");
+        }
         var bytes = MainOwnerOperationJournalV1.Encode(frozen); var journal = new MainOwnerOperationJournalV1(db); MainOwnerOperationJournalV1.Original? original = null;
         var action = frozen.Action == "CONFIRM" ? "confirm" : "edit";
         return Authority.ExecuteAsync(OperationsOwnerV1.EngineeringProduct, action, true, async (access, token) =>
@@ -182,21 +206,38 @@ public sealed class EngineeringProductMappingService(CP6Context db, OperationsOw
             }
             var candidate = frozen.Candidate ?? current!.Candidate;
             await access.RequireEngineeringProduct(candidate.EngineeringRef.Id, token);
-            EngineeringOwnerConfirmationV1? engineering = null, business = null;
-            if (frozen.Action != "DISABLE") await VerifySources(db, access, store, candidate, frozen.Action == "CONFIRM", token);
+            EngineeringOwnerConfirmationV1? engineering = null, business = null, review = null;
+            if (frozen.Action != "DISABLE")
+            {
+                var decisive = frozen.Action is "REVIEW" or "CONFIRM";
+                if (decisive && current!.State != "DRAFT") throw Error("ENGINEERING_MAPPING_NOT_DRAFT", 409);
+                await VerifySources(db, access, store, candidate, decisive, token);
+                await VerifyLegacyReference(store, access, candidate, expected, token);
+                if (candidate.TechnicalScope is { } technical)
+                    await RequireRevisionRead(db, access, technical.RevisionRef.Id, token);
+                if (decisive) await HoldScopeSources(db, access, candidate, token);
+            }
+            if (frozen.Action == "REVIEW")
+            {
+                if (!candidate.RequiresScopeReview || current!.Review != null) throw Error("ENGINEERING_MAPPING_REVIEW_UNAVAILABLE", 409);
+                review = access.EngineeringConfirmation(OperationsOwnerV1.EngineeringProduct, "edit", Owner);
+            }
             if (frozen.Action == "CONFIRM")
             {
-                if (current!.State != "DRAFT") throw Error("ENGINEERING_MAPPING_NOT_DRAFT", 409);
+                review = current!.Review;
+                if (candidate.RequiresScopeReview && review == null) throw Error("ENGINEERING_MAPPING_REVIEW_REQUIRED");
                 engineering = access.EngineeringConfirmation(OperationsOwnerV1.EngineeringProduct, "confirm", Owner);
                 business = await CommercialEngineeringMappingParticipantV1.Confirm(db, access, candidate.BusinessRef!, token);
+                if (candidate.LegalEntity is { } legal)
+                    await RequireConsistentLegalEntity(store, candidate.BusinessRef!, legal.Key, token);
             }
             var state = frozen.Action switch { "CONFIRM" => "CONFIRMED", "DISABLE" => "DISABLED", _ => "DRAFT" };
-            if (state == "DISABLED") { engineering = current!.EngineeringConfirmation; business = current.BusinessConfirmation; }
-            var saved = await store.AppendMapping(frozen.MappingId, expected, state, candidate, engineering, business, token);
+            if (state == "DISABLED") { engineering = current!.EngineeringConfirmation; business = current.BusinessConfirmation; review = current.Review; }
+            var saved = await store.AppendMapping(frozen.MappingId, expected, state, candidate, engineering, business, review, token);
             access.AtCommit(last => access.RequireEngineeringProduct(candidate.EngineeringRef.Id, last));
             var result = new EngineeringProductCommandResultV1(frozen.OperationId, "ENGINEERING_MAPPING", frozen.MappingId, saved.Reference.Version, saved.Reference.Digest);
             await journal.Store(MappingOwner, Contract, frozen.OperationId, access.ActorId, bytes, result,
-                [frozen.MappingId, candidate.EngineeringRef.Id], new { action = frozen.Action, actor = access.ActorId, result, engineering, business }, token);
+                [frozen.MappingId, candidate.EngineeringRef.Id], new { action = frozen.Action, actor = access.ActorId, result, engineering, business, review }, token);
             return result;
         }, ct, actionAtFence: async token => { original = await journal.Read(MappingOwner, frozen.OperationId, token); return original == null ? action : "query"; });
     }

@@ -17,6 +17,22 @@ internal sealed partial class EngineeringProductStoreV1
         SELECT mapping_id AS "Id",engineering_id AS "EngineeringId",revision AS "Revision"
         FROM cp6_engineering_product_v1.mapping_heads WHERE tenant_id={db.CurrentTenantId}
         """);
+    internal Task<MappingHead[]> ProductMappings(EngineeringSourceRefV1 product, bool includeLegacyHistory, CancellationToken ct)
+    {
+        Transaction();
+        var reference = Encoding.UTF8.GetString(Encode(product));
+        return db.Database.SqlQuery<MappingHead>($"""
+            SELECT v.mapping_id AS "Id",h.engineering_id AS "EngineeringId",v.revision AS "Revision"
+            FROM cp6_engineering_product_v1.mapping_versions v
+            JOIN cp6_engineering_product_v1.mapping_heads h USING(tenant_id,mapping_id)
+            WHERE v.tenant_id={db.CurrentTenantId}
+              AND cp6_engineering_product_v1.mapping_business_reference(v.body_bytes)=CAST({reference} AS jsonb)
+              AND (v.revision=h.revision OR ({includeLegacyHistory}
+                AND convert_from(v.body_bytes,'UTF8')::jsonb->>'state'='CONFIRMED'
+                AND jsonb_typeof(convert_from(v.body_bytes,'UTF8')::jsonb->'candidate'->'legacyMappingRef')='object'))
+            ORDER BY v.mapping_id,v.revision DESC
+            """).ToArrayAsync(ct);
+    }
     internal async Task<EngineeringMappingVersionV1> ReadMapping(Guid id, long? version, CancellationToken ct)
     {
         Transaction();
@@ -33,14 +49,16 @@ internal sealed partial class EngineeringProductStoreV1
         if (value == null || value.Candidate == null || value.TenantId != db.CurrentTenantId || value.Id != id
             || value.Version != revision.ToString(CultureInfo.InvariantCulture) || value.EngineeringId != head.EngineeringId
             || value.Candidate.EngineeringRef?.Id != head.EngineeringId || value.State is not ("DRAFT" or "CONFIRMED" or "DISABLED")
-            || value.State == "CONFIRMED" && (value.EngineeringConfirmation == null || value.BusinessConfirmation == null))
+            || value.State == "CONFIRMED" && (value.EngineeringConfirmation == null || value.BusinessConfirmation == null
+                || value.Candidate.RequiresScopeReview && value.Review == null))
             throw Error("ENGINEERING_MAPPING_ORIGINAL_UNAVAILABLE", 503);
         return new(db.CurrentTenantId, new(MappingOwner, id, value.Version, row.Digest), value.State,
-            revision == head.Revision, value.Candidate, value.EngineeringConfirmation, value.BusinessConfirmation, Encoding.UTF8.GetString(row.Body));
+            revision == head.Revision, value.Candidate, value.EngineeringConfirmation, value.BusinessConfirmation,
+            Encoding.UTF8.GetString(row.Body), Review: value.Review);
     }
     internal async Task<EngineeringMappingVersionV1> AppendMapping(Guid id, long? expected, string state,
         EngineeringMappingCandidateV1 candidate, EngineeringOwnerConfirmationV1? engineering,
-        EngineeringOwnerConfirmationV1? business, CancellationToken ct)
+        EngineeringOwnerConfirmationV1? business, EngineeringOwnerConfirmationV1? review, CancellationToken ct)
     {
         Transaction(); var head = await MappingHeads().SingleOrDefaultAsync(row => row.Id == id, ct); long next;
         if (expected == null)
@@ -64,7 +82,7 @@ internal sealed partial class EngineeringProductStoreV1
                 """, ct) != 1) throw Error("ENGINEERING_MAPPING_CHANGED", 412);
         }
         var body = Encode(new EngineeringMappingStoredV1(db.CurrentTenantId, id, next.ToString(CultureInfo.InvariantCulture),
-            candidate.EngineeringRef.Id, state, candidate, engineering, business)); var digest = Digest(body);
+            candidate.EngineeringRef.Id, state, candidate, engineering, business, review)); var digest = Digest(body);
         await db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_engineering_product_v1.mapping_versions(tenant_id,mapping_id,revision,body_bytes,body_digest)
             VALUES({db.CurrentTenantId},{id},{next},{body},{digest})

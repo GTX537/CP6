@@ -25,11 +25,15 @@ public sealed record CommercialProductIdentityV1(Guid TenantId, Guid ProductId, 
     public string? DeclaredUnitCode => Source.GetProperty("qtyUnitCode").GetString();
     public int LegacyStatus => Source.GetProperty("status").GetInt32();
 
-    // 产品级缺证随原身份披露。已确认的站点映射和显式选定的币种政策沿各自 Owner 返回。
-    public string LegalEntityApplicability => "REQUIRED_FENCED";
+    public EngineeringIdentitySiteScopeV1[] EngineeringMappings { get; init; } = [];
+    public EngineeringConfirmedLegalScopeV1[] LegalEntityScopes { get; init; } = [];
+    public EngineeringLegacyMappingConfirmationV1[] LegacyMappingConfirmations { get; init; } = [];
+
+    // 只披露准确经营版本上经当前授权验证的双 Owner 事实。
+    public string LegalEntityApplicability => LegalEntityScopes.Length != 0 ? "CONFIRMED" : "REQUIRED_FENCED";
     public string ManufacturingApplicability => "REQUIRED_FENCED";
     public string ProductCurrencyBinding => "REQUIRED_FENCED";
-    public string LegacyMappingKnowledge => "UNKNOWN";
+    public string LegacyMappingKnowledge => LegacyMappingConfirmations.Length != 0 ? "KNOWN" : "UNKNOWN";
 
     public string EffectiveState => !SourcePresent || Source.GetProperty("isDeleted").GetBoolean() ? "INACTIVE" : LegacyStatus switch
     {
@@ -48,8 +52,11 @@ public sealed class CommercialProductIdentityReader(CP6Context db, OperationsOwn
         if (!owner.Owns(db)) throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
         if (productId == Guid.Empty) throw new OrderPriceCorrectionException("PRODUCT_IDENTITY_INPUT_INVALID", 400);
         var exact = version == null ? (long?)null : ParseVersion(version);
-        return owner.ExecuteAsync(OperationsOwnerV1.Product, "query", false,
-            (access, token) => ReadOwnedAsync(db, access, productId, exact, token), ct);
+        return owner.ExecuteAsync(OperationsOwnerV1.Product, "query", false, async (access, token) =>
+        {
+            var original = await ReadOwnedAsync(db, access, productId, exact, token);
+            return await WithEngineeringFacts(access, original, token);
+        }, ct);
     }
 
     public Task<CommercialProductQualificationV1> ReadQualificationAsync(CommercialProductQualificationQueryV1 input,
@@ -91,11 +98,29 @@ public sealed class CommercialProductIdentityReader(CP6Context db, OperationsOwn
                 ? await EngineeringProductMappingService.ReadProductMappingAsync(db, access, mappingRef, reference, token)
                 : null;
 
-            var missing = new List<string> { "PRODUCT_CURRENCY_BINDING", "LEGAL_ENTITY_APPLICABILITY", "MANUFACTURING_APPLICABILITY" };
+            product = await WithEngineeringFacts(access, product, token);
+            product = product with
+            {
+                LegalEntityScopes = mapping is { LegalEntityApplicability: "CONFIRMED", ConfirmedLegalScope: { } scope }
+                    ? [scope] : []
+            };
+            var missing = new List<string> { "PRODUCT_CURRENCY_BINDING" };
+            if (product.LegalEntityScopes.Length == 0) missing.Add("LEGAL_ENTITY_APPLICABILITY");
+            missing.Add("MANUFACTURING_APPLICABILITY");
             if (unit == null) missing.Add("VERSIONED_UOM_PROFILE");
             if (mapping?.ConfirmedIdentitySite == null) missing.Add("DUAL_OWNER_ENGINEERING_MAPPING");
             return new CommercialProductQualificationV1(product, unit, currency, mapping, missing.ToArray());
         }, ct);
+    }
+
+    private async Task<CommercialProductIdentityV1> WithEngineeringFacts(OperationsAccessV1 access, CommercialProductIdentityV1 original, CancellationToken ct)
+    {
+        var (mappings, legal, history) = await EngineeringProductMappingService.ReadProductFactsAsync(db, access, original.Reference, ct);
+        return original with
+        {
+            EngineeringMappings = mappings, LegalEntityScopes = legal, LegacyMappingConfirmations = history,
+            Missing = mappings.Length == 0 ? original.Missing : original.Missing?.Where(item => item != "DUAL_OWNER_ENGINEERING_MAPPING").ToArray()
+        };
     }
 
     private static long ParseVersion(string? version)

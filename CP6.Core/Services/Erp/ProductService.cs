@@ -97,6 +97,7 @@ public class ProductService : IProductService
             .Take(query.PageSize)
             .Select(x => new ProductListItemDto
             {
+                ProductId = x.Id,
                 ProductCd = x.ProductCd,
                 SetProductCd = x.SetProductCd,
                 SetProductName = x.SetProductName,

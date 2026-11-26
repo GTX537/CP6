@@ -6,10 +6,55 @@ export interface EngineeringProduct { code: string; name: string; category: stri
 export interface EngineeringVersion { tenantId: string; reference: EngineeringReference; isCurrent: boolean; product: EngineeringProduct; originalJson: string }
 export interface EngineeringCreation extends EngineeringScope { authorityVersion: string; allowsUnbound: boolean; departments: { id: string; code: string; name: string }[] }
 export interface EngineeringCommand { operationId: string; action: 'CREATE' | 'REVISE'; productId: string; expectedVersion: string | null; expectedAuthorityVersion: string | null; departmentId: string | null; product: EngineeringProduct }
-export interface MappingCandidate { engineeringRef: EngineeringReference; businessRef: EngineeringReference | null; siteRef: EngineeringReference | null; purpose: string; evidence: string; conflicts: string; conflictsResolved: boolean | null }
+export interface MappingLegalEntity { key: string; version: string; evidence: string }
+export interface MappingTechnicalScope { revisionRef: EngineeringReference; configurationRef: EngineeringReference }
+export interface MappingIdentitySite {
+  mappingRef: EngineeringReference
+  engineeringRef: EngineeringReference
+  productRef: EngineeringReference
+  siteRef: EngineeringReference
+  purpose: string
+}
+export interface LegacyMappingConfirmation { originalMappingRef: EngineeringReference; confirmedMappingRef: EngineeringReference }
+export interface BusinessProductMappings {
+  productId: string
+  productCode: string
+  engineeringMappings: MappingIdentitySite[]
+  legacyMappingConfirmations: LegacyMappingConfirmation[]
+}
+export interface MappingCandidate {
+  engineeringRef: EngineeringReference
+  businessRef: EngineeringReference | null
+  siteRef: EngineeringReference | null
+  purpose: string
+  evidence: string
+  conflicts: string
+  conflictsResolved: boolean | null
+  legalEntity?: MappingLegalEntity | null
+  technicalScope?: MappingTechnicalScope | null
+  legacyMappingRef?: EngineeringReference | null
+}
 export interface OwnerConfirmation { owner: string; resource: string; action: string; actorId: string; permissionVersion: string; registryVersion: string; organizationVersion: string }
-export interface MappingVersion { tenantId: string; reference: EngineeringReference; state: 'DRAFT' | 'CONFIRMED' | 'DISABLED'; isCurrent: boolean; candidate: MappingCandidate; engineeringConfirmation: OwnerConfirmation | null; businessConfirmation: OwnerConfirmation | null; originalJson: string; coverage: 'IDENTITY_SITE_ONLY'; technicalApplicability: 'REQUIRED_FENCED'; legalEntityApplicability: 'REQUIRED_FENCED'; canAdoptIdentitySite: boolean; reasons: string[] }
-export interface MappingCommand { operationId: string; mappingId: string; action: 'DRAFT' | 'CONFIRM' | 'DISABLE'; expectedVersion: string; candidate: MappingCandidate | null }
+export interface MappingVersion {
+  tenantId: string
+  reference: EngineeringReference
+  state: 'DRAFT' | 'CONFIRMED' | 'DISABLED'
+  isCurrent: boolean
+  candidate: MappingCandidate
+  review?: OwnerConfirmation | null
+  engineeringConfirmation: OwnerConfirmation | null
+  businessConfirmation: OwnerConfirmation | null
+  originalJson: string
+  coverage: 'IDENTITY_SITE_ONLY'
+  technicalApplicability: 'REQUIRED_FENCED' | 'CONFIRMED'
+  legalEntityApplicability: 'REQUIRED_FENCED' | 'CONFIRMED'
+  confirmedLegalScope?: { legalEntity: MappingLegalEntity } | null
+  confirmedTechnicalScope?: MappingTechnicalScope | null
+  legacyConfirmation?: LegacyMappingConfirmation | null
+  canAdoptIdentitySite: boolean
+  reasons: string[]
+}
+export interface MappingCommand { operationId: string; mappingId: string; action: 'DRAFT' | 'REVIEW' | 'CONFIRM' | 'DISABLE'; expectedVersion: string; candidate: MappingCandidate | null }
 export interface SourceChoice { reference: EngineeringReference; code: string; name?: string; enabled?: boolean }
 export type EngineeringOperationKind = 'ENGINEERING_PRODUCT' | 'ENGINEERING_MAPPING'
 export interface EngineeringResult { operationId: string; kind: EngineeringOperationKind; objectId: string; version: string; digest: string }
@@ -25,6 +70,7 @@ export const engineeringApi = {
   mapping: (id: string, version?: string) => http.get<any, EngineeringEnvelope<MappingVersion>>(`${mappings}/${encodeURIComponent(id)}`, { params: { version } }),
   saveMapping: (body: MappingCommand) => http.post<any, EngineeringEnvelope<EngineeringResult>>(`${mappings}/commands`, body),
   businessChoices: (search: string) => http.get<any, EngineeringEnvelope<SourceChoice[]>>(`${mappings}/business-choices`, { params: { search } }),
+  businessMappings: (id: string) => http.get<any, EngineeringEnvelope<BusinessProductMappings>>(`/products/identity-owner-v1/${encodeURIComponent(id)}`),
   siteChoices: (search: string) => http.get<any, EngineeringEnvelope<SourceChoice[]>>(`${mappings}/site-choices`, { params: { search } }),
   operation: (kind: EngineeringOperationKind, id: string, close: boolean) => {
     const root = kind === 'ENGINEERING_PRODUCT' ? products : mappings, path = `${root}/operations/${encodeURIComponent(id)}`

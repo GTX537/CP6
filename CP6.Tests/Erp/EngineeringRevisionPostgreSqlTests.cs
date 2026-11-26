@@ -241,14 +241,23 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var name = "w151_revision_" + Guid.NewGuid().ToString("N"); await db.Database.ExecuteSqlRawAsync($"CREATE DATABASE {name}");
         db.Database.SetConnectionString(new NpgsqlConnectionStringBuilder(db.Database.GetConnectionString()) { Database = name }.ConnectionString);
         await db.GetService<IMigrator>().MigrateAsync("20261026191000_EngineeringMappingV1");
-        db.Sys_Tenants.Add(new() { Id = tenant.CurrentTenantId, TenantCode = name, TenantName = "Original tenant" });
-        db.Pub_DocSequences.Add(new() { BizKey = "ENG_REV", Prefix = "ORIGINAL", SeqLength = 5, ResetCycle = 0, CurrentValue = 7 });
-        db.Sys_Menus.Add(new() { MenuId = int.MaxValue, MenuKey = "original-menu-max", MenuName = "Original menu" });
-        db.Sys_Menus.Add(new() { MenuId = int.MaxValue - 1, MenuKey = "original-menu-near-max", MenuName = "Original adjacent menu" });
-        db.Sys_Roles.Add(new() { RoleId = 684, RoleName = "Original menu role" });
-        db.Sys_MenuActions.Add(new() { MenuId = int.MaxValue, ActionCode = "query", ActionName = "Original read" });
-        db.Sys_RoleActions.Add(new() { RoleId = 684, MenuId = int.MaxValue, ActionCode = "query" });
-        await db.SaveChangesAsync(); db.ChangeTracker.Clear(); EngineeringProductVersionV1 original;
+        // 使用切点的原表结构准备夹具，现行 EF 审计列由后继迁移追加。
+        await db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO public."Sys_Tenants" ("Id","TenantCode","TenantName","Enable","TwoFactorMode","CreateDate")
+            VALUES ({tenant.CurrentTenantId},{name},'Original tenant',true,0,LOCALTIMESTAMP);
+            INSERT INTO public."Pub_DocSequence" ("Id","TenantId","BizKey","Prefix","SeqLength","ResetCycle","CurrentValue","CreateDate")
+            VALUES (gen_random_uuid(),{tenant.CurrentTenantId},'ENG_REV','ORIGINAL',5,0,7,LOCALTIMESTAMP);
+            INSERT INTO public."Sys_Menus" ("MenuId","MenuKey","MenuName","OrderNo","Enable","CreateDate") VALUES
+                ({int.MaxValue},'original-menu-max','Original menu',0,true,LOCALTIMESTAMP),
+                ({int.MaxValue - 1},'original-menu-near-max','Original adjacent menu',0,true,LOCALTIMESTAMP);
+            INSERT INTO public."Sys_Roles" ("TenantId","RoleId","RoleName","Enable","OrderNo","CreateDate")
+            VALUES ({tenant.CurrentTenantId},684,'Original menu role',true,0,LOCALTIMESTAMP);
+            INSERT INTO public."Sys_MenuAction" ("Id","TenantId","MenuId","ActionCode","ActionName","Sort","CreateDate")
+            VALUES (gen_random_uuid(),{tenant.CurrentTenantId},{int.MaxValue},'query','Original read',0,LOCALTIMESTAMP);
+            INSERT INTO public."Sys_RoleAction" ("Id","TenantId","RoleId","MenuId","ActionCode","CreateDate")
+            VALUES (gen_random_uuid(),{tenant.CurrentTenantId},684,{int.MaxValue},'query',LOCALTIMESTAMP);
+            """);
+        EngineeringProductVersionV1 original;
         await using (var transaction = await db.Database.BeginTransactionAsync())
         {
             var store = new EngineeringProductStoreV1(db); await store.Fence(true, default);
