@@ -798,6 +798,9 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.LocationDraftOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.LocationControlOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.LocationRuleOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.LocationRuleReferencesOwnerV1>();
+var operationalCatalogueSource = builder.Configuration["OperationalCatalogue:Source"];
+builder.Services.AddScoped(sp => new CP6.Core.Services.Wms.OperationalCatalogueEvidenceAdapter(sp.GetRequiredService<CP6Context>(),
+    sp.GetRequiredService<OperationsOwnerV1>(), operationalCatalogueSource));
 builder.Services.Configure<CP6.Core.Services.Wms.WarehouseClockOptionsV1>(builder.Configuration.GetSection("WarehouseClock"));
 builder.Services.AddScoped(sp=>new CP6.Core.Services.Wms.WarehouseClockRuntimeV1(sp.GetRequiredService<CP6Context>(),
     sp.GetRequiredService<CP6.Core.Services.Sys.ScopeAuthorizationFenceV1>(),sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<CP6.Core.Services.Wms.WarehouseClockOptionsV1>>(),builder.Environment.IsDevelopment()));

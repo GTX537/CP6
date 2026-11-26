@@ -1,5 +1,4 @@
 using System.Data.Common;
-using System.Text.RegularExpressions;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Integration;
@@ -8,25 +7,24 @@ using CP6.Entity.DomainModels;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DomainModels.Wms;
 using CP6.Entity.DTOs.Space;
+using CP6.Tests.Platform;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Data.Sqlite;
 
 namespace CP6.Tests;
 
-public sealed class WmsBinConsumerRetryFenceTests
+[Collection("TenantManagementPostgres")]
+public sealed class WmsBinConsumerRetryFenceTests(TenantManagementPostgresFixture server)
 {
-    private static readonly Guid TenantId =
-        Guid.Parse("22222222-2222-2222-2222-222222222222");
+    private readonly TenantContext _tenant = new() { CurrentTenantId = Guid.NewGuid() };
 
-    [Fact]
+    private CP6Context Context(params IInterceptor[] interceptors) => server.Context(_tenant, null, interceptors);
+
+    [CurrentPermissionPostgresFact]
     public async Task Fenced_consume_commits_bin_and_completion_marker_together()
     {
-        await using var database = NewDatabase();
-        var (eventId, leaseId, locationId) =
-            await SeedAsync(database);
-        await using var db =
-            new CP6Context(database.Options, database.Tenant);
+        var (eventId, leaseId, locationId) = await SeedAsync();
+        await using var db = Context();
 
         var result = await new WmsBinConsumer(db)
             .ConsumeAsync(
@@ -34,26 +32,20 @@ public sealed class WmsBinConsumerRetryFenceTests
                 new SpaceRetryFence(eventId, leaseId));
 
         Assert.True(result.Success);
-        await using var assertDb =
-            new CP6Context(database.Options, database.Tenant);
+        await using var assertDb = Context();
         Assert.Equal(
             7,
             (await assertDb.WmsBins.SingleAsync()).Version);
-        var evt = await assertDb.IntegrationEvents
-            .IgnoreQueryFilters()
-            .SingleAsync();
+        var evt = await assertDb.IntegrationEvents.SingleAsync(row => row.Id == eventId);
         Assert.Equal(leaseId, evt.RetryCompletionLeaseId);
         Assert.True(evt.RetryCompletionSucceeded);
     }
 
-    [Fact]
+    [CurrentPermissionPostgresFact]
     public async Task Fenced_consume_with_lost_lease_makes_no_wms_write()
     {
-        await using var database = NewDatabase();
-        var (eventId, _, locationId) =
-            await SeedAsync(database);
-        await using var db =
-            new CP6Context(database.Options, database.Tenant);
+        var (eventId, _, locationId) = await SeedAsync();
+        await using var db = Context();
 
         var error = await Assert.ThrowsAsync<InvalidOperationException>(
             () => new WmsBinConsumer(db).ConsumeAsync(
@@ -63,104 +55,76 @@ public sealed class WmsBinConsumerRetryFenceTests
                     Guid.NewGuid())));
 
         Assert.Equal("SPACE_RETRY_FENCE_LOST", error.Message);
-        await using var assertDb =
-            new CP6Context(database.Options, database.Tenant);
+        await using var assertDb = Context();
         Assert.Empty(await assertDb.WmsBins.ToListAsync());
-        var evt = await assertDb.IntegrationEvents
-            .IgnoreQueryFilters()
-            .SingleAsync();
+        var evt = await assertDb.IntegrationEvents.SingleAsync(row => row.Id == eventId);
         Assert.Null(evt.RetryCompletionLeaseId);
         Assert.Null(evt.RetryCompletionSucceeded);
     }
 
-    [Fact]
+    [CurrentPermissionPostgresFact]
     public async Task Fenced_consume_rolls_back_bin_and_marker_when_save_fails()
     {
-        await using var database = NewDatabase();
-        var (eventId, leaseId, locationId) =
-            await SeedAsync(database);
-        await using var db = new WmsSaveFailingContext(
-            database.Options,
-            database.Tenant);
+        var (eventId, leaseId, locationId) = await SeedAsync();
+        await using var db = Context(new WmsSaveFailingInterceptor());
 
         await Assert.ThrowsAsync<DbUpdateException>(
             () => new WmsBinConsumer(db).ConsumeAsync(
                 Batch(locationId),
                 new SpaceRetryFence(eventId, leaseId)));
 
-        await using var assertDb =
-            new CP6Context(database.Options, database.Tenant);
+        await using var assertDb = Context();
         Assert.Empty(await assertDb.WmsBins.ToListAsync());
-        var evt = await assertDb.IntegrationEvents
-            .IgnoreQueryFilters()
-            .SingleAsync();
+        var evt = await assertDb.IntegrationEvents.SingleAsync(row => row.Id == eventId);
         Assert.Null(evt.RetryCompletionLeaseId);
         Assert.Null(evt.RetryCompletionSucceeded);
         Assert.Equal(leaseId, evt.RetryLeaseId);
     }
 
-    [Fact]
+    [CurrentPermissionPostgresFact]
     public async Task Fenced_consume_holds_write_lock_until_marker_is_committed()
     {
-        await using var database = NewDatabase();
-        var (eventId, leaseId, locationId) =
-            await SeedAsync(database);
+        var (eventId, leaseId, locationId) = await SeedAsync();
         var gate = new WmsInsertGateInterceptor();
-        var consumerOptions =
-            new DbContextOptionsBuilder<CP6Context>(
-                    database.Options)
-                .AddInterceptors(gate)
-                .Options;
-        await using var consumerDb =
-            new CP6Context(consumerOptions, database.Tenant);
+        await using var consumerDb = Context(gate);
         var consume = new WmsBinConsumer(consumerDb)
             .ConsumeAsync(
                 Batch(locationId),
                 new SpaceRetryFence(eventId, leaseId));
-        await gate.Entered.Task.WaitAsync(
-            TimeSpan.FromSeconds(5));
-
-        var takeoverLeaseId = Guid.NewGuid();
-        var takeover = Task.Run(async () =>
-        {
-            await using var takeoverDb =
-                new CP6Context(
-                    database.Options,
-                    database.Tenant);
-            return await takeoverDb.IntegrationEvents
-                .IgnoreQueryFilters()
-                .Where(evt =>
-                    evt.Id == eventId &&
-                    evt.TenantId == TenantId &&
-                    evt.Status ==
-                        IntegrationEventStatus.Failed &&
-                    evt.RetryLeaseId == leaseId &&
-                    evt.RetryCompletionLeaseId == null)
-                .ExecuteUpdateAsync(setters =>
-                    setters.SetProperty(
-                        evt => evt.RetryLeaseId,
-                        takeoverLeaseId));
-        });
-
+        Task<int>? takeover = null;
         try
         {
-            var premature = await Task.WhenAny(
-                takeover,
-                Task.Delay(250));
-            Assert.NotSame(takeover, premature);
+            var first = await Task.WhenAny(consume, gate.Entered.Task).WaitAsync(TimeSpan.FromSeconds(8));
+            Assert.Same(gate.Entered.Task, first);
+            var takeoverLeaseId = Guid.NewGuid();
+            takeover = Task.Run(async () =>
+            {
+                await using var takeoverDb = Context();
+                return await takeoverDb.IntegrationEvents
+                    .Where(evt => evt.Id == eventId && evt.Status == IntegrationEventStatus.Failed
+                        && evt.RetryLeaseId == leaseId && evt.RetryCompletionLeaseId == null)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(evt => evt.RetryLeaseId, takeoverLeaseId));
+            });
+            await using var observer = Context();
+            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(8));
+            while (!await observer.Database.SqlQueryRaw<bool>("""
+                SELECT EXISTS(SELECT FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock'
+                    AND query LIKE 'UPDATE%"T_IntegrationEvent"%') AS "Value"
+                """).SingleAsync(timeout.Token))
+                await Task.Delay(20, timeout.Token);
+            Assert.False(takeover.IsCompleted);
         }
         finally
         {
             gate.Release.TrySetResult();
+            await consume;
+            if (takeover is not null) await takeover;
         }
 
         Assert.True((await consume).Success);
-        Assert.Equal(0, await takeover);
-        await using var assertDb =
-            new CP6Context(database.Options, database.Tenant);
-        var evt = await assertDb.IntegrationEvents
-            .IgnoreQueryFilters()
-            .SingleAsync();
+        Assert.Equal(0, await takeover!);
+        await using var assertDb = Context();
+        var evt = await assertDb.IntegrationEvents.SingleAsync(row => row.Id == eventId);
         Assert.Equal(leaseId, evt.RetryLeaseId);
         Assert.Equal(leaseId, evt.RetryCompletionLeaseId);
     }
@@ -195,25 +159,23 @@ public sealed class WmsBinConsumerRetryFenceTests
             ],
         };
 
-    private static async Task<(Guid EventId, Guid LeaseId, Guid LocationId)>
-        SeedAsync(TestDatabase database)
+    private async Task<(Guid EventId, Guid LeaseId, Guid LocationId)> SeedAsync()
     {
         var eventId = Guid.NewGuid();
         var leaseId = Guid.NewGuid();
         var locationId = Guid.NewGuid();
-        await using var db =
-            new CP6Context(database.Options, database.Tenant);
+        await using var db = Context();
         db.Space_Locations.Add(new Space_Location
         {
             Id = locationId,
-            TenantId = TenantId,
+            TenantId = _tenant.CurrentTenantId,
             LocationCode = "A-01-01-01",
             Status = 1,
         });
         db.IntegrationEvents.Add(new IntegrationEvent
         {
             Id = eventId,
-            TenantId = TenantId,
+            TenantId = _tenant.CurrentTenantId,
             SourceModule = "SPACE",
             TargetModule = "WMS",
             HookName = "OnLocationPublishedAsync",
@@ -232,71 +194,16 @@ public sealed class WmsBinConsumerRetryFenceTests
         return (eventId, leaseId, locationId);
     }
 
-    private static TestDatabase NewDatabase()
+    private sealed class WmsSaveFailingInterceptor : SaveChangesInterceptor
     {
-        var path = Path.Combine(
-            Path.GetTempPath(),
-            $"cp6-wms-fence-{Guid.NewGuid():N}.db");
-        var connectionString =
-            $"Data Source={path};Default Timeout=10";
-        var options =
-            new DbContextOptionsBuilder<CP6Context>()
-                .UseSqlite(connectionString)
-                .Options;
-        var tenant =
-            new TenantContext { CurrentTenantId = TenantId };
-        using (var setup = new CP6Context(options, tenant))
-        {
-            var script = Regex.Replace(
-                setup.Database.GenerateCreateScript(),
-                "n?varchar\\(max\\)",
-                "TEXT",
-                RegexOptions.IgnoreCase);
-            using var connection =
-                new SqliteConnection(connectionString);
-            connection.Open();
-            using var command = connection.CreateCommand();
-            command.CommandText = script;
-            command.ExecuteNonQuery();
-        }
-        return new TestDatabase(path, options, tenant);
-    }
-
-    private sealed record TestDatabase(
-        string Path,
-        DbContextOptions<CP6Context> Options,
-        TenantContext Tenant) : IAsyncDisposable
-    {
-        public ValueTask DisposeAsync()
-        {
-            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
-            if (File.Exists(Path))
-                File.Delete(Path);
-            return ValueTask.CompletedTask;
-        }
-    }
-
-    private sealed class WmsSaveFailingContext :
-        CP6Context
-    {
-        public WmsSaveFailingContext(
-            DbContextOptions<CP6Context> options,
-            ITenantContext tenant)
-            : base(options, tenant)
-        {
-        }
-
-        public override Task<int> SaveChangesAsync(
+        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
+            DbContextEventData eventData, InterceptionResult<int> result,
             CancellationToken cancellationToken = default)
         {
-            if (ChangeTracker.Entries<WmsBin>().Any(entry =>
-                    entry.State is EntityState.Added or
-                        EntityState.Modified))
-            {
-                throw new DbUpdateException(
-                    "simulated WMS persistence failure");
-            }
-            return base.SaveChangesAsync(cancellationToken);
+            if (eventData.Context!.ChangeTracker.Entries<WmsBin>()
+                .Any(entry => entry.State is EntityState.Added or EntityState.Modified))
+                throw new DbUpdateException("模拟 WMS 持久化失败");
+            return ValueTask.FromResult(result);
         }
     }
 
@@ -340,9 +247,8 @@ public sealed class WmsBinConsumerRetryFenceTests
             DbCommand command,
             CancellationToken ct)
         {
-            if (!command.CommandText.Contains(
-                    "INSERT INTO \"T_WmsBin\"",
-                    StringComparison.OrdinalIgnoreCase))
+            if (!command.CommandText.Contains("INSERT INTO", StringComparison.OrdinalIgnoreCase)
+                || !command.CommandText.Contains("\"T_WmsBin\"", StringComparison.Ordinal))
             {
                 return;
             }
