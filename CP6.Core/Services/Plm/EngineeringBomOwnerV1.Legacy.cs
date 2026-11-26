@@ -27,10 +27,11 @@ public sealed partial class EngineeringBomOwnerV1
 
     private sealed class LegacyRow { public string Json { get; init; } = ""; }
     private async Task<EngineeringBomLegacyV1> Legacy(OperationsAccessV1 root, EngineeringMappingRefV1 reference,
-        EngineeringProductRefV1? product, EngineeringSourceRefV1? site, EngineeringRevisionRefV1? revision, CancellationToken ct)
+        EngineeringProductRefV1? product, EngineeringSourceRefV1? site, EngineeringRevisionRefV1? revision, CancellationToken ct,
+        (EngineeringSourceRefV1? SiteRef, EngineeringRevisionRefV1 RevisionOrigin)? previousScope = null)
     {
         var business = await EngineeringProductMappingService.HoldLegacyUsageAsync(db, root, reference, product, site, revision,
-            "BOM_LEGACY_MAPPING_MISMATCH", ct);
+            "BOM_LEGACY_MAPPING_MISMATCH", ct, previousScope);
         var products = await root.SourceAsync(OperationsOwnerV1.Product, ct);
         var master = await products.Products().Where(x => x.Id == business.Id).Select(x => new { x.ProductCd }).SingleOrDefaultAsync(ct)
             ?? throw Error("OBJECT_FORBIDDEN", 403);

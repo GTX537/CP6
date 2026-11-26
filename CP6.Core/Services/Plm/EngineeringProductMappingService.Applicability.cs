@@ -81,13 +81,20 @@ public sealed partial class EngineeringProductMappingService
 
     internal static async Task<EngineeringSourceRefV1> HoldLegacyUsageAsync(CP6Context db, OperationsAccessV1 root,
         EngineeringMappingRefV1 reference, EngineeringProductRefV1? product, EngineeringSourceRefV1? site,
-        EngineeringRevisionRefV1? revision, string mismatch, CancellationToken ct, bool requireExactSite = false)
+        EngineeringRevisionRefV1? revision, string mismatch, CancellationToken ct,
+        (EngineeringSourceRefV1? SiteRef, EngineeringRevisionRefV1 RevisionOrigin)? previousScope = null)
     {
         var access = await root.SourceAsync(OperationsOwnerV1.EngineeringProduct, ct);
         var store = new EngineeringProductStoreV1(db);
         await store.Fence(false, ct);
         var mapping = await CurrentExact(access, store, reference, ct);
-        if (revision != null && (requireExactSite || mapping.Candidate.RequiresScopeReview)
+        if (previousScope is { } prior && prior.SiteRef == null)
+        {
+            // 仅沿用身份关系的旧草稿可保持 Site 待定，修订仍受上一版适用域约束。
+            if (mapping.Candidate.RequiresScopeReview || site != null || revision != prior.RevisionOrigin)
+                throw Error("ENGINEERING_MAPPING_USAGE_SCOPE_MISMATCH");
+        }
+        else if (revision != null && (previousScope.HasValue || mapping.Candidate.RequiresScopeReview)
             && (site != mapping.Candidate.SiteRef || mapping.ConfirmedTechnicalScope is { } technical && technical.RevisionRef != revision))
             throw Error("ENGINEERING_MAPPING_USAGE_SCOPE_MISMATCH");
         if (product != null && mapping.Candidate.EngineeringRef != product || site != null && mapping.Candidate.SiteRef != site)

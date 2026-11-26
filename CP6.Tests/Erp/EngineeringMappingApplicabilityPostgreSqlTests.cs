@@ -128,6 +128,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var confirmedA = await ConfirmReviewedMapping(service, await MakeMapping(h, a with { LegalEntity = ProductMappingLegal(legalKey) }));
         var siteB = await OtherScopeSite(h);
         var draftB = await MakeMapping(h, a with { SiteRef = siteB });
+        var pendingSite = await MakeMapping(h, a with { SiteRef = null, LegalEntity = ProductMappingLegal(legalKey) });
         var identityOnly = await service.CommandAsync(MappingAction(draftB, "CONFIRM"));
         var confirmedB = await service.ReadAsync(identityOnly.ObjectId, identityOnly.Version);
         Assert.Equal(a.BusinessRef, confirmedB.Candidate.BusinessRef);
@@ -151,7 +152,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 
         var bResult = await Qualify(confirmedB.Reference);
         Assert.Equal(confirmedB.Reference, bResult.GetProperty("mapping").GetProperty("reference").Deserialize<EngineeringMappingRefV1>(ProductWire));
-        foreach (var result in new[] { bResult, await Qualify(draftB.Reference), await Qualify(null) })
+        var pendingResult = await Qualify(pendingSite.Reference);
+        Assert.Contains("DUAL_OWNER_ENGINEERING_MAPPING", pendingResult.GetProperty("missing").Deserialize<string[]>()!);
+        Assert.Equal(JsonValueKind.Null, pendingResult.GetProperty("mapping").GetProperty("confirmedIdentitySite").ValueKind);
+        Assert.False(pendingResult.GetProperty("canAdoptIdentitySite").GetBoolean());
+        foreach (var result in new[] { bResult, await Qualify(draftB.Reference), pendingResult, await Qualify(null) })
         {
             Assert.Contains("LEGAL_ENTITY_APPLICABILITY", result.GetProperty("missing").Deserialize<string[]>()!);
             var identity = result.GetProperty("product");
@@ -466,6 +471,120 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(receipt, await owner.CommandAsync(matching));
         Assert.Equal(original.OriginalJson, (await owner.ReadAsync(create.RoutingId, "1")).OriginalJson);
         Assert.Equal(revised.OriginalJson, (await owner.ReadAsync(create.RoutingId)).OriginalJson);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task Wp0502_r2_bom_revise_keeps_pending_site_and_rejects_scope_changes()
+    {
+        await using var h = await Seed();
+        var parent = await BomParent(h);
+        var (mapping, code) = await IdentityOnlyLegacyMapping(h, parent);
+        h.Db.ProductMaterials.Add(new ProductMaterial { ProductCd = code, ProcessCd = "CUT", MaterialCd = "SIM-MAT",
+            UnitUsage = 1.23456789m, UsageUnit = "个", UsageType = 2 });
+        await h.Db.SaveChangesAsync();
+        h.Db.ChangeTracker.Clear();
+
+        var owner = Boms(h);
+        var preview = await owner.LegacyPreviewAsync(mapping.Reference);
+        var create = BomCreate(parent);
+        await owner.CommandAsync(create with { Body = create.Body with { Kind = "MBOM", Occurrences = preview.SuggestedOccurrences },
+            LegacyMappingRef = mapping.Reference, LegacyDigest = preview.Digest });
+        var original = await owner.ReadAsync(create.BomId, "1");
+        Assert.Contains("SITE_REQUIRED", original.Missing!);
+        var rename = BomRevise(original) with { Body = original.Body with { Name = "场所待定的结构修订" } };
+        var receipt = await owner.CommandAsync(rename);
+        var revised = await owner.ReadAsync(create.BomId);
+        Assert.Equal("2", revised.Reference.Version);
+        Assert.Equal(rename.Body.Name, revised.Body.Name);
+        Assert.Equal(parent.Reference, revised.Body.RevisionOrigin);
+        Assert.Null(revised.Body.SiteRef);
+        Assert.Equal("DRAFT_ONLY", revised.Readiness);
+        Assert.Contains("SITE_REQUIRED", revised.Missing!);
+        Assert.Equal(JsonSerializer.Serialize(original.Legacy), JsonSerializer.Serialize(revised.Legacy));
+
+        async Task RejectScopeChange(EngineeringBomBodyV1 body)
+        {
+            foreach (var reference in new EngineeringMappingRefV1?[] { null, mapping.Reference })
+            {
+                var change = BomRevise(revised) with
+                { Body = body, LegacyMappingRef = reference, LegacyDigest = reference == null ? null : preview.Digest };
+                var error = await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => owner.CommandAsync(change));
+                Assert.Equal(422, error.Status);
+                Assert.Equal("ENGINEERING_MAPPING_USAGE_SCOPE_MISMATCH", error.Message);
+                Assert.Equal("UNKNOWN", (await owner.OperationAsync(change.OperationId, false)).State);
+            }
+        }
+
+        await RejectScopeChange(revised.Body with { SiteRef = mapping.Candidate.SiteRef });
+        var newParent = await ChangeScopeRevision(h, parent, "待定场所草稿的另一技术修订");
+        await RejectScopeChange(revised.Body with { RevisionOrigin = newParent.Reference });
+        Assert.Equal(receipt, await owner.CommandAsync(rename));
+        Assert.Equal(original.OriginalJson, (await owner.ReadAsync(create.BomId, "1")).OriginalJson);
+        Assert.Equal(revised.OriginalJson, (await owner.ReadAsync(create.BomId)).OriginalJson);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task Wp0502_r2_routing_revise_keeps_pending_site_and_rejects_scope_changes()
+    {
+        await using var h = await Seed();
+        var parent = await BomParent(h);
+        var (mapping, code) = await IdentityOnlyLegacyMapping(h, parent);
+        h.Db.ProductProcesses.Add(new ProductProcess { ProductCd = code, TaskCd = "CUT-1", ProcessCd = "CUT", SortOrder = 10, SetupHour = 2.12345678m });
+        await h.Db.SaveChangesAsync();
+        h.Db.ChangeTracker.Clear();
+
+        var owner = Routings(h);
+        var preview = await owner.LegacyPreviewAsync(mapping.Reference);
+        var create = RoutingCreate(parent);
+        await owner.CommandAsync(create with { Body = create.Body with { Operations = preview.SuggestedOperations },
+            LegacyMappingRef = mapping.Reference, LegacyDigest = preview.Digest });
+        var original = await owner.ReadAsync(create.RoutingId, "1");
+        Assert.Contains("SITE_REQUIRED", original.Missing!);
+        var rename = RoutingRevise(original) with { Body = original.Body with { Name = "场所待定的路线修订" } };
+        var receipt = await owner.CommandAsync(rename);
+        var revised = await owner.ReadAsync(create.RoutingId);
+        Assert.Equal("2", revised.Reference.Version);
+        Assert.Equal(rename.Body.Name, revised.Body.Name);
+        Assert.Equal(parent.Reference, revised.Body.RevisionOrigin);
+        Assert.Null(revised.Body.SiteRef);
+        Assert.Equal("DRAFT_ONLY", revised.Readiness);
+        Assert.Contains("SITE_REQUIRED", revised.Missing!);
+        Assert.Equal(JsonSerializer.Serialize(original.Legacy), JsonSerializer.Serialize(revised.Legacy));
+
+        async Task RejectScopeChange(EngineeringRoutingBodyV1 body)
+        {
+            foreach (var reference in new EngineeringMappingRefV1?[] { null, mapping.Reference })
+            {
+                var change = RoutingRevise(revised) with
+                { Body = body, LegacyMappingRef = reference, LegacyDigest = reference == null ? null : preview.Digest };
+                var error = await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => owner.CommandAsync(change));
+                Assert.Equal(422, error.Status);
+                Assert.Equal("ENGINEERING_MAPPING_USAGE_SCOPE_MISMATCH", error.Message);
+                Assert.Equal("UNKNOWN", (await owner.OperationAsync(change.OperationId, false)).State);
+            }
+        }
+
+        await RejectScopeChange(revised.Body with { SiteRef = mapping.Candidate.SiteRef });
+        var newParent = await ChangeScopeRevision(h, parent, "待定场所草稿的另一技术修订");
+        await RejectScopeChange(revised.Body with { RevisionOrigin = newParent.Reference });
+        Assert.Equal(receipt, await owner.CommandAsync(rename));
+        Assert.Equal(original.OriginalJson, (await owner.ReadAsync(create.RoutingId, "1")).OriginalJson);
+        Assert.Equal(revised.OriginalJson, (await owner.ReadAsync(create.RoutingId)).OriginalJson);
+    }
+
+    private static async Task<(EngineeringMappingVersionV1 Mapping, string ProductCode)> IdentityOnlyLegacyMapping(Harness h, EngineeringRevisionSnapshotV1 parent)
+    {
+        await GrantProductIdentity(h);
+        await EngineeringAction(h, "erp-product", "confirm-engineering");
+        await EngineeringAction(h, "space-site", "query");
+        var engineering = await Engineering(h).ReadAsync(parent.Draft.ProductRef!.Id, null);
+        var candidate = await MappingCandidate(h, engineering, "R2MAP");
+        var draft = await MakeMapping(h, candidate);
+        var service = EngineeringMappings(h);
+        var confirmed = await service.CommandAsync(MappingAction(draft, "CONFIRM"));
+        var mapping = await service.ReadAsync(confirmed.ObjectId, confirmed.Version);
+        var code = await h.Db.ProductMasters.Where(row => row.Id == candidate.BusinessRef!.Id).Select(row => row.ProductCd).SingleAsync();
+        return (mapping, code);
     }
 
     private static async Task<(EngineeringRevisionSnapshotV1 Parent, EngineeringMappingVersionV1 Mapping, string ProductCode)> ScopedLegacyMapping(Harness h)
