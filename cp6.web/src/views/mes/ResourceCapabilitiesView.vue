@@ -12,6 +12,18 @@
       <h2>{{ editor.resource.source.master.name || editor.resource.source.master.code }}</h2>
       <p>资源版本 {{ body.source.version }}；目录版本 {{ editor.expectedVersion === 'absent' ? '尚未登记' : editor.expectedVersion }}。</p>
       <p v-if="editor.current">声明已记录，现场资格待核实。{{ editor.current.missing.map(finding).join('；') }}</p>
+      <p v-if="editor.current?.approval">批准来源 v{{ editor.current.approval.declaration.version }} · {{ editor.current.approval.evidence }}</p>
+      <form v-if="canApprove && editor.current?.body.capabilities.length && !editor.current.approval" @submit.prevent="approve">
+        <label>批准依据<textarea v-model="approvalEvidence" maxlength="2000" required /></label>
+        <button :disabled="locked">批准已保存声明 v{{ editor.current.reference.version }}</button>
+      </form>
+      <form @submit.prevent="readCapability">
+        <label>查询能力键<input v-model="lookupKey" maxlength="64" required /></label>
+        <button :disabled="busy">读取当前能力</button>
+      </form>
+      <p v-if="lookup" role="status">{{ lookup.key }} · {{ evidenceLabel[lookup.state] }}</p>
+      <ResourceAssignmentPanel v-if="kind === 'MACHINE' && scope" :key="editor.resource.reference.id"
+                               :resource="editor.resource" :scope="scope" :can-edit="canEditAssignment" />
       <details><summary>原资源能力描述</summary><pre>{{ editor.resource.source.capability }}</pre><p>原空值与旧默认值按来源保留，其含义需核实。选择工时表达单位不会改写原字段的分钟、秒或小时含义，也不会自动换算数值。</p></details>
       <form class="unit-search" @submit.prevent="findUnits"><label>单位搜索<input v-model="unitSearch" aria-label="能力单位搜索" maxlength="100" /></label><button :disabled="locked">查找单位</button></form>
       <form @submit.prevent="save">
@@ -46,15 +58,20 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { resourceApi, type ResourceKind, type ResourceScope, type ResourceVersion } from '@/api/mes/resourceSources'
-import { capabilityApi, type CapabilityBody, type CapabilityEditor, type CapabilityItem, type CapabilitySnapshot } from '@/api/mes/resourceCapabilities'
+import { capabilityApi, type CapabilityBody, type CapabilityEditor, type CapabilityItem, type CapabilityReading, type CapabilitySnapshot } from '@/api/mes/resourceCapabilities'
 import { uomApi, type UomReference, type UomVersion } from '@/api/erp/uomProfiles'
 import { timeApi } from '@/api/erp/uomTimeBases'
 import { capabilityResponse as result, pendingCapabilityOperation, saveCapabilityOperation, resolveCapabilityOperation, type PendingCapabilityOperation } from '@/auth/resourceCapabilityRecovery'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
+import ResourceAssignmentPanel from './ResourceAssignmentPanel.vue'
 const props = withDefaults(defineProps<{ kind?: ResourceKind }>(), { kind: 'MACHINE' }), kind = computed(() => props.kind)
 const permissions = usePermissionStore(), canEdit = computed(() => permissions.has((kind.value === 'MACHINE' ? 'mes-machine' : 'mes-work-center') + ':capability-edit'))
+const canApprove = computed(() => kind.value === 'MACHINE' && permissions.has('mes-machine:capability-approve'))
+const canEditAssignment = computed(() => permissions.has('mes-machine:assignment-edit'))
+const approvalEvidence = ref(''), lookupKey = ref(''), lookup = ref<CapabilityReading | null>(null)
+const evidenceLabel = { UNKNOWN: '未知', DECLARED_NOT_QUALIFIED: '已声明，待批准', APPROVED: '批准来源已记录' }
 const busy = ref(false), error = ref(''), notice = ref(''), scope = ref<ResourceScope | null>(null), pending = ref<PendingCapabilityOperation | null>(null), locked = computed(() => busy.value || !!pending.value)
 const search = ref(''), page = ref(1), rows = ref<ResourceVersion[]>([]), editor = ref<CapabilityEditor | null>(null), body = ref<CapabilityBody | null>(null), reason = ref('')
 const unitSearch = ref(''), units = ref<UomVersion[]>([]), history = ref<CapabilitySnapshot | null>(null), historyVersion = ref('1')
@@ -62,7 +79,10 @@ const copy = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T
 const refKey = (value: UomReference | null) => value ? `${value.id}:${value.version}:${value.digest}` : ''
 function finding(value: string) { const labels: Record<string, string> = { RESOURCE_QUALIFICATION_REQUIRED: '现场及生产资格待核实', RESOURCE_TIME_UNIT_REQUIRED: '工时单位未声明', RESOURCE_OUTPUT_UNIT_REQUIRED: '产出单位未声明', RESOURCE_CAPABILITIES_UNKNOWN: '具体能力未知', RESOURCE_CAPABILITY_CHANGED: '目录已有后继版本', RESOURCE_SOURCE_CHANGED_OR_DISABLED: '原资源已变化或停用', UNIT_SOURCE_CHANGED_OR_DISABLED: '单位已变化或停用', TIME_BASIS_CHANGED_OR_DISABLED: '时间含义已变化或停用' }; return labels[value] || '来源待核实' }
 let live = true, generation = 0
-function clearEditor() { editor.value = null; body.value = null; reason.value = ''; units.value = []; unitSearch.value = ''; history.value = null }
+function clearEditor() {
+  editor.value = null; body.value = null; reason.value = ''; units.value = []; unitSearch.value = ''; history.value = null
+  approvalEvidence.value = ''; lookupKey.value = ''; lookup.value = null
+}
 function clearPrivate() { clearEditor(); rows.value = []; scope.value = null; pending.value = null; search.value = '' }
 async function run(action: (check: () => void) => Promise<void>) {
   if (busy.value) return
@@ -84,6 +104,28 @@ async function findUnits() { await run(async check => { const value = result(awa
 async function chooseTime(event: Event) { const selected = selectedUnit(event); if (!selected) { if (body.value) { body.value.timeUnit = null; body.value.timeBasis = null }; return }; await run(async check => { const unit = units.value.find(u => refKey(u.reference) === refKey(selected))!; const base = unit.profile.mode === 'BASE' ? unit.reference : unit.profile.baseRef!; const observed = result(await timeApi.editor(base.id)); check(); if (!observed.definition?.currentApplicable || refKey(observed.currentBase.reference) !== refKey(base)) throw new Error('该单位尚无当前可用的时间含义，请先在时间单位目录登记。'); if (body.value) { body.value.timeUnit = selected; body.value.timeBasis = observed.definition.reference } }) }
 async function save() { await run(async check => { if (!scope.value || !body.value || !editor.value || !canEdit.value) throw new Error('请先选择有权资源。'); const frozen = copy(body.value), expectedVersion = editor.value.expectedVersion, why = reason.value; await saveCapabilityOperation(scope.value, kind.value, frozen.source.id, check, operationId => capabilityApi(kind.value).save({ operationId, expectedVersion, body: frozen, reason: why })); check(); clearEditor(); const value = result(await capabilityApi(kind.value).editor(frozen.source.id)); check(); setEditor(value); notice.value = '能力声明已保存，现场资格仍待核实。' }) }
 async function recover(close: boolean) { await run(async check => { if (!scope.value) throw new Error('请先载入身份。'); const value = await resolveCapabilityOperation(scope.value, kind.value, close, check); check(); if (value.state === 'COMMITTED' && value.result) { clearEditor(); const current = result(await capabilityApi(kind.value).editor(value.result.objectId)); check(); setEditor(current); notice.value = '已找回原提交结果。' } else notice.value = value.state === 'CLOSED' ? '未提交键已关闭，可以明确开始新操作。' : '结果仍未知，请继续按原键查询。' }) }
+async function approve() {
+  await run(async check => {
+    const declaration = editor.value?.current?.reference
+    if (!scope.value || !declaration || !canApprove.value) return
+    const evidence = approvalEvidence.value
+    await saveCapabilityOperation(scope.value, kind.value, declaration.id, check,
+      operationId => capabilityApi(kind.value).approve({ operationId, declaration, evidence }))
+    check()
+    const current = result(await capabilityApi(kind.value).editor(declaration.id))
+    check()
+    setEditor(current)
+    notice.value = '能力批准原件已登记。'
+  })
+}
+async function readCapability() {
+  await run(async check => {
+    if (!editor.value) return
+    const read = result(await capabilityApi(kind.value).capability(editor.value.resource.reference.id, lookupKey.value))
+    check()
+    lookup.value = read
+  })
+}
 async function readHistory() { await run(async check => { if (!editor.value) return; const value = result(await capabilityApi(kind.value).read(editor.value.resource.reference.id, historyVersion.value)); check(); history.value = value }) }
 function reset() { generation++; busy.value = false; clearPrivate(); if (authenticationCanRead()) void reload() }
 watch(kind, reset)

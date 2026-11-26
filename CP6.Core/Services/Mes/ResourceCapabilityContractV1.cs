@@ -16,8 +16,17 @@ public sealed record ResourceCapabilityCommandV1(Guid OperationId, string Expect
 public sealed record ResourceCapabilityOriginalV1(UomProfileRefV1 Reference, string OriginalJson);
 internal sealed record ResourceCapabilityStoredV1(Guid TenantId, Guid Id, string Kind, string Version, Guid CreatorId,
     Guid ActorId, DateTimeOffset RecordedAt, ResourceCapabilityBodyV1 Body, string Reason, string ResourceOriginal,
-    ResourceCapabilityOriginalV1[] Units, string? TimeBasisOriginal);
+    ResourceCapabilityOriginalV1[] Units, string? TimeBasisOriginal,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] ResourceCapabilityApprovalV1? Approval = null);
 public sealed record ResourceCapabilitySnapshotV1(Guid TenantId, ResourceCapabilityRefV1 Reference, bool IsCurrent,
     ResourceCapabilityBodyV1 Body, Guid ActorId, DateTimeOffset RecordedAt, string OriginalJson,
-    string[] Missing, string Qualification = "DECLARED_NOT_QUALIFIED");
+    string[] Missing, string Qualification = "DECLARED_NOT_QUALIFIED",
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] ResourceCapabilityApprovalV1? Approval = null);
 public sealed record ResourceCapabilityEditorV1(ResourceSourceVersionV1 Resource, string ExpectedVersion, ResourceCapabilitySnapshotV1? Current);
+
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record ResourceCapabilityApprovalCommandV1(Guid OperationId, ResourceCapabilityRefV1 Declaration, string Evidence);
+
+public sealed record ResourceCapabilityApprovalV1(Guid OperationId, ResourceCapabilityRefV1 Declaration, string Evidence);
+public sealed record ResourceCapabilityReadingV1(ResourceSourceRefV1 Resource, string Key, string State,
+    ResourceCapabilityRefV1? Catalog = null, ResourceCapabilityItemV1? Capability = null, ResourceCapabilityApprovalV1? Approval = null);
