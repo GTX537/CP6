@@ -15,6 +15,17 @@ internal static class EngineeringRequirementValuesV1
     { if (r == null || r.Owner != Owner || r.Id == Guid.Empty || !ValidDigest(r.Digest)) throw Error("REQUIREMENT_REFERENCE_INVALID",400); Revision(r.Version); }
     internal static void Origin(RequirementOriginV1? origin)
     {
+        if (origin?.ActFile is { } actFile)
+        {
+            if (origin.Reference is not null || origin.OccurrenceId is not null ||
+                actFile.ActivityId == Guid.Empty || actFile.ReferenceId == Guid.Empty ||
+                InvalidActFileKey(actFile.AttachmentId) || InvalidActFileKey(actFile.Version) ||
+                actFile.ContentSha256 is { } digest && !ActFileReferenceV1.Digest(digest))
+                throw Error("REQUIREMENT_ORIGIN_INVALID", 400);
+            if (actFile.ActivityRevision is { } activityRevision) Revision(activityRevision);
+            if (actFile.ReferenceSetVersion is { } setVersion) Revision(setVersion);
+            return;
+        }
         if (origin?.Reference is not { } reference || reference.Id == Guid.Empty || !ValidDigest(reference.Digest)
             || reference.Owner is not (ControlledDocumentValuesV1.Owner or FileContentBytesV1.Owner or OrderSourceReader.RequirementSourceOwner
                 or EngineeringRequirementService.CrmActivityOrigin or EngineeringRequirementService.CrmOpportunityOrigin or EngineeringRequirementService.CrmAttachmentOrigin)
@@ -22,6 +33,8 @@ internal static class EngineeringRequirementValuesV1
             throw Error("REQUIREMENT_ORIGIN_INVALID", 400);
         Revision(reference.Version);
     }
+    private static bool InvalidActFileKey(string? value) =>
+        value is not null && (string.IsNullOrWhiteSpace(value) || value.Any(char.IsControl));
     private static readonly Regex Decimal = new(@"^-?(0|[1-9][0-9]*)(\.[0-9]+)?$", RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
     private static (BigInteger Number, int Scale) Exact(string s)
     {

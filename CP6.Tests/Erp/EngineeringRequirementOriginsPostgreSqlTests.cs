@@ -293,6 +293,114 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
 
     [CurrentPermissionPostgresFact]
+    public async Task EngineeringRequirement_wp0513_r1_act_attachment_drafts_preserve_distinct_host_coordinates()
+    {
+        await using var h = await Seed();
+        await GrantRequirement(h);
+        await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!);
+        var session = await Login(host, h);
+        using var context = await host.Send(OperationsRequest(session, HttpMethod.Get, RequirementPath + "/creation-context"));
+        var authority = (await DocumentHttpData<EngineeringRevisionCreationContextV1>(context)).AuthorityVersion;
+        var fileId = Guid.NewGuid().ToString("D");
+        var digest = new string('a', 64);
+        var first = RequirementNode(new
+        {
+            activityId = Guid.NewGuid(), activityRevision = "3", referenceSetVersion = "7",
+            referenceId = Guid.NewGuid(), attachmentId = fileId, version = "1", contentSha256 = digest
+        });
+        var second = first.DeepClone();
+        second["activityId"] = Guid.NewGuid();
+        second["activityRevision"] = "5";
+        second["referenceSetVersion"] = "9";
+        second["referenceId"] = Guid.NewGuid();
+
+        var firstId = await SaveDraft(first);
+        var secondId = await SaveDraft(second);
+        Assert.NotEqual(firstId, secondId);
+        using var response = await host.Send(OperationsRequest(session, HttpMethod.Get, RequirementPath + "?kind=SOURCE"));
+        var rows = await DocumentHttpData<EngineeringRequirementSnapshotV1[]>(response);
+        Assert.Equal(2, rows.Length);
+        Assert.True(JsonNode.DeepEquals(first, ActCoordinates(Assert.Single(rows, row => row.Reference.Id == firstId))));
+        Assert.True(JsonNode.DeepEquals(second, ActCoordinates(Assert.Single(rows, row => row.Reference.Id == secondId))));
+
+        async Task<Guid> SaveDraft(JsonNode coordinates)
+        {
+            var command = ActRequirementDraft(authority, new JsonObject { ["actFile"] = coordinates.DeepClone() });
+            using var write = await host.Send(OperationsRequest(session, HttpMethod.Post, RequirementPath + "/commands", command));
+            var result = await DocumentHttpData<EngineeringRequirementResultV1>(write);
+            var path = RequirementPath + "/" + result.ObjectId;
+            using var read = await host.Send(OperationsRequest(session, HttpMethod.Get, path + "?version=1"));
+            var saved = await DocumentHttpData<EngineeringRequirementSnapshotV1>(read);
+            Assert.Equal("DRAFT_ONLY", saved.State);
+            Assert.Empty(saved.Body.Source!.Clauses);
+            Assert.True(JsonNode.DeepEquals(coordinates, ActCoordinates(saved)));
+            using var replay = await host.Send(OperationsRequest(session, HttpMethod.Post, RequirementPath + "/commands", command));
+            Assert.Equal(result, await DocumentHttpData<EngineeringRequirementResultV1>(replay));
+            using var blocked = await host.Send(OperationsRequest(session, HttpMethod.Get, path + "/original?version=1"));
+            Assert.Equal(HttpStatusCode.ServiceUnavailable, blocked.StatusCode);
+            Assert.Contains("UNPROVEN_G03", await blocked.Content.ReadAsStringAsync());
+            return result.ObjectId;
+        }
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task EngineeringRequirement_wp0513_r1_partial_act_attachment_can_only_be_saved_as_draft()
+    {
+        await using var h = await Seed();
+        await GrantRequirement(h);
+        await using var host = await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!);
+        var session = await Login(host, h);
+        using var context = await host.Send(OperationsRequest(session, HttpMethod.Get, RequirementPath + "/creation-context"));
+        var authority = (await DocumentHttpData<EngineeringRevisionCreationContextV1>(context)).AuthorityVersion;
+        var partial = RequirementNode(new { activityId = Guid.NewGuid(), attachmentId = "SIMULATED/File:原键", version = "版本 01" });
+        var command = ActRequirementDraft(authority, new JsonObject { ["actFile"] = partial.DeepClone() });
+        var confirmed = command.DeepClone();
+        confirmed["body"]!["source"]!["kind"] = "OWNER_ORIGINAL";
+        using (var blocked = await host.Send(OperationsRequest(session, HttpMethod.Post, RequirementPath + "/commands", confirmed)))
+        {
+            Assert.Equal(HttpStatusCode.ServiceUnavailable, blocked.StatusCode);
+            Assert.Contains("UNPROVEN_G03", await blocked.Content.ReadAsStringAsync());
+        }
+
+        using var write = await host.Send(OperationsRequest(session, HttpMethod.Post, RequirementPath + "/commands", command));
+        var result = await DocumentHttpData<EngineeringRequirementResultV1>(write);
+        using var read = await host.Send(OperationsRequest(session, HttpMethod.Get, RequirementPath + "/" + result.ObjectId));
+        var saved = await DocumentHttpData<EngineeringRequirementSnapshotV1>(read);
+        Assert.Equal("DRAFT_ONLY", saved.State);
+        Assert.Contains("SOURCE_UNRESOLVED", saved.Missing);
+        Assert.True(JsonNode.DeepEquals(partial, ActCoordinates(saved)));
+
+        var legacy = ActRequirementDraft(authority, RequirementNode(new
+        {
+            reference = new EngineeringSourceRefV1(EngineeringRequirementService.CrmAttachmentOrigin, Guid.NewGuid(), "1", new string('b', 64)),
+            occurrenceId = (Guid?)null
+        }));
+        using var oldWrite = await host.Send(OperationsRequest(session, HttpMethod.Post, RequirementPath + "/commands", legacy));
+        var oldResult = await DocumentHttpData<EngineeringRequirementResultV1>(oldWrite);
+        using var oldRead = await host.Send(OperationsRequest(session, HttpMethod.Get, RequirementPath + "/" + oldResult.ObjectId + "?version=1"));
+        var original = await DocumentHttpData<EngineeringRequirementSnapshotV1>(oldRead);
+        Assert.DoesNotContain("\"actFile\"", original.OriginalJson);
+        using var oldReplay = await host.Send(OperationsRequest(session, HttpMethod.Post, RequirementPath + "/commands", legacy));
+        Assert.Equal(oldResult, await DocumentHttpData<EngineeringRequirementResultV1>(oldReplay));
+    }
+
+    private static JsonNode ActRequirementDraft(string authority, JsonNode origin)
+    {
+        var command = RequirementNode(new EngineeringRequirementCommandV1
+        {
+            OperationId = Guid.NewGuid(), ObjectId = Guid.NewGuid(), Action = "CREATE",
+            ExpectedAuthorityVersion = authority, Reason = "SIMULATED 保留活动附件坐标",
+            Body = new("SOURCE", "SIMULATED 同名活动附件",
+                new("UNRESOLVED", "SIMULATED 宿主与原件待核", "", "", []))
+        });
+        command["body"]!["source"]!["origin"] = origin;
+        return command;
+    }
+
+    private static JsonNode ActCoordinates(EngineeringRequirementSnapshotV1 saved) =>
+        JsonNode.Parse(saved.OriginalJson)!["body"]!["source"]!["origin"]!["actFile"]!;
+
+    [CurrentPermissionPostgresFact]
     public async Task EngineeringRequirement_wp0513_export_migration_keeps_original_receipt_and_requires_new_permission()
     {
         var database = await server.CreateIsolatedDatabaseAsync("20261126160000_EngineeringRevisionLineageV1");

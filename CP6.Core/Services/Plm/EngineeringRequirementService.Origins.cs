@@ -13,7 +13,7 @@ public sealed partial class EngineeringRequirementService
 {
     internal const string CrmActivityOrigin = "CRM-ACTIVITY/1";
     internal const string CrmOpportunityOrigin = "OPP/1";
-    internal const string CrmAttachmentOrigin = "ACT-FILE-REFERENCE/1";
+    internal const string CrmAttachmentOrigin = ActFileReferenceV1.Contract;
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
 
     public async Task<RequirementOriginalDownloadV1> DownloadOriginalAsync(Guid id, string version, Guid? question,
@@ -28,7 +28,7 @@ public sealed partial class EngineeringRequirementService
             await access.RequireEngineeringRequirement(id, token);
             var snapshot = await Observe(access, store, await store.Read(id, revision, token), token);
             if (snapshot.Body.Source is { Kind: "UNRESOLVED", Origin: { } pending })
-                throw OriginUnavailable(pending.Reference.Owner);
+                throw OriginUnavailable(pending.ActFile is null ? pending.Reference!.Owner : CrmAttachmentOrigin);
 
             RequirementOriginV1? origin;
             if (question is Guid questionId)
@@ -63,7 +63,8 @@ public sealed partial class EngineeringRequirementService
     private async Task<RequirementOriginMaterial> ReadOrigin(OperationsAccessV1 access, RequirementOriginV1 origin, CancellationToken ct)
     {
         EngineeringRequirementValuesV1.Origin(origin);
-        var reference = origin.Reference;
+        if (origin.ActFile is not null) throw OriginUnavailable(CrmAttachmentOrigin);
+        var reference = origin.Reference!;
         if (reference.Owner == OrderSourceReader.RequirementSourceOwner)
         {
             if (sales is null) throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);

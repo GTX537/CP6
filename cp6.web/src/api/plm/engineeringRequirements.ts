@@ -7,7 +7,16 @@ export type RequirementCreation = EngineeringCreation
 export type RequirementOperationKind = 'SOURCE' | 'REQUIREMENT'
 export interface RequirementScopeAxis { mode: 'UNKNOWN' | 'ALL' | 'VALUES'; namespace: string | null; keys: string[] }
 export interface RequirementClauseTerms { schema: 'requirement-clause-terms/1'; customers: RequirementScopeAxis; products: RequirementScopeAxis; configurations: RequirementScopeAxis; from: string | null; until: string | null; fromUnbounded: boolean; untilUnbounded: boolean; necessity: 'UNKNOWN' | 'MANDATORY' | 'OPTIONAL'; waivability: 'UNKNOWN' | 'PROHIBITED' | 'SOURCE_DECISION_REQUIRED'; basis: string }
-export interface RequirementOrigin { reference: EngineeringReference; occurrenceId: string | null }
+export interface RequirementActFileCoordinates {
+  activityId?: string | null
+  activityRevision?: string | null
+  referenceSetVersion?: string | null
+  referenceId?: string | null
+  attachmentId?: string | null
+  version?: string | null
+  contentSha256?: string | null
+}
+export interface RequirementOrigin { reference: EngineeringReference | null; occurrenceId: string | null; actFile?: RequirementActFileCoordinates | null }
 export interface RequirementClarification { id: string; source: EngineeringReference; clauseId: string; question: string; reply?: RequirementOrigin | null }
 export interface RequirementSource { kind: 'INTERNAL_PROPOSAL' | 'UNRESOLVED' | 'OWNER_ORIGINAL'; originDescription: string; sourceLabel: string; acquisitionBasis: string; clauses: { id: string; originalText: string; locator: string; terms?: RequirementClauseTerms | null }[]; origin?: RequirementOrigin | null }
 export interface RequirementCriterion { id: string; kind: 'QUANTITATIVE' | 'QUALITATIVE'; object: string; conditions: string; methodRequirement: string; lower: string | null; lowerInclusive: boolean | null; upper: string | null; upperInclusive: boolean | null; proposedUnit: string | null; unitBasis: string | null; precision: string | null; qualitativeBasis: string | null; evaluation?: { schema: 'requirement-evaluation/1'; unit: UomReference; lowerUnbounded: boolean; upperUnbounded: boolean } | null; sourceClauseIds?: string[] | null }

@@ -5,7 +5,7 @@
     <section v-if="pending" aria-label="原操作恢复"><p>上次保存结果尚未确认，请先核对原操作。</p><button :disabled="busy" @click="recover(false)">查询原操作</button><button :disabled="busy" @click="recover(true)">结束未提交操作</button></section>
     <section>
       <header><h2>来源与需求目录</h2><div><button v-if="canAdd" :disabled="locked" @click="newDraft('SOURCE')">新建来源包</button><button v-if="canAdd" :disabled="locked" @click="newDraft('REQUIREMENT')">新建需求</button></div></header>
-      <form class="inline" @submit.prevent="list(1)"><label>类别<select v-model="kind" aria-label="目录类别"><option value="SOURCE">来源包</option><option value="REQUIREMENT">需求</option></select></label><label>名称<input v-model="search" aria-label="目录搜索" maxlength="256" /></label><button :disabled="busy || !canRead">搜索</button><button v-if="canExport" type="button" :disabled="busy" @click="exportPage">导出当前页</button></form>
+      <form class="inline" @submit.prevent="list(1)"><label>类别<select v-model="kind" aria-label="目录类别"><option value="SOURCE">来源包</option><option value="REQUIREMENT">需求</option></select></label><label>名称<input v-model="search" aria-label="目录搜索" maxlength="256" /></label><button :disabled="busy || !canRead">搜索</button><button v-if="canExport" type="button" :disabled="busy || !displayedQuery" @click="exportPage">导出当前页</button></form>
       <table><thead><tr><th>名称</th><th>版本</th><th>状态</th><th>操作</th></tr></thead><tbody><tr v-for="r in rows" :key="r.reference.id"><td>{{ r.body.name }}</td><td>{{ r.reference.version }}</td><td>草稿</td><td><button :disabled="locked" @click="open(r)">打开</button></td></tr></tbody></table>
       <p v-if="!rows.length">当前范围没有记录。</p><nav class="inline"><button :disabled="busy || page === 1 || !canRead" @click="list(page - 1)">上一页</button><span>第 {{ page }} 页</span><button :disabled="busy || rows.length < 20 || !canRead" @click="list(page + 1)">下一页</button></nav>
     </section>
@@ -112,6 +112,9 @@
         <button v-if="history.body.source?.kind === 'OWNER_ORIGINAL'" :disabled="busy" @click="downloadOriginal(history)">下载历史原件</button>
         <button v-if="history.reference.version !== current.reference.version" :disabled="busy" @click="compareVersions">比较当前版</button>
         <ul><li v-for="m in history.missing" :key="m">{{ missingText(m) }}</li></ul>
+        <fieldset v-if="history.body.source?.origin?.actFile" disabled>
+          <RequirementOriginFields :model-value="history.body.source.origin" prefix="历史" pending />
+        </fieldset>
         <blockquote v-for="c in history.body.source?.clauses || []" :key="c.id">{{ c.id }} · {{ c.originalText }}</blockquote>
         <template v-if="history.body.requirement">
           <p>{{ history.body.requirement.interpretation }}</p><p>来源版本 {{ history.body.requirement.source.version }} · {{ history.body.requirement.clauseIds.join('、') }}</p>
@@ -147,14 +150,16 @@ import { usePermissionStore } from '@/stores/permission'
 const permission = usePermissionStore(), canRead = computed(() => permission.loaded && permission.has('plm-engineering-requirement:query')), canAdd = computed(() => canRead.value && permission.has('plm-engineering-requirement:add')), canEdit = computed(() => canRead.value && permission.has('plm-engineering-requirement:edit'))
 const canExport = computed(() => canRead.value && permission.has('plm-engineering-requirement:export'))
 const busy = ref(false), error = ref(''), notice = ref(''), scope = ref<RequirementScope | null>(null), pending = ref<PendingRequirementOperation | null>(null), locked = computed(() => busy.value || !!pending.value)
-const kind = ref<RequirementOperationKind>('SOURCE'), search = ref(''), page = ref(1), rows = ref<RequirementSnapshot[]>([]), current = ref<RequirementSnapshot | null>(null), creation = ref<RequirementCreation | null>(null), draft = ref<RequirementBody | null>(null), objectId = ref(''), department = ref(''), reason = ref('')
+const kind = ref<RequirementOperationKind>('SOURCE'), search = ref(''), rows = ref<RequirementSnapshot[]>([]), current = ref<RequirementSnapshot | null>(null), creation = ref<RequirementCreation | null>(null), draft = ref<RequirementBody | null>(null), objectId = ref(''), department = ref(''), reason = ref('')
+const displayedQuery = ref<{ kind: RequirementOperationKind; search: string; page: number } | null>(null)
+const page = computed(() => displayedQuery.value?.page ?? 1)
 const source = ref<RequirementSnapshot | null>(null), sources = ref<RequirementSnapshot[]>([]), sourceSearch = ref(''), sourceKey = ref(''), sourcePage = ref(1), relations = ref<RequirementSnapshot[]>([]), relationSearch = ref(''), relationKey = ref(''), relationPage = ref(1), historyVersion = ref('1'), history = ref<RequirementSnapshot | null>(null)
 const diff = ref<RequirementDiff | null>(null)
 const copy = <T,>(v: T): T => JSON.parse(JSON.stringify(v)) as T
 const key = (r: EngineeringReference) => `${r.owner}:${r.id}:${r.version}:${r.digest}`
 let generation = 0, live = true
 function resetEditor() { current.value = null; creation.value = null; draft.value = null; objectId.value = ''; department.value = ''; reason.value = ''; source.value = null; sources.value = []; sourceSearch.value = ''; sourceKey.value = ''; sourcePage.value = 1; relations.value = []; relationSearch.value = ''; relationKey.value = ''; relationPage.value = 1; history.value = null; historyVersion.value = '1'; diff.value = null }
-function clearPrivate() { resetEditor(); rows.value = []; scope.value = null; pending.value = null; search.value = ''; notice.value = '' }
+function clearPrivate() { resetEditor(); rows.value = []; displayedQuery.value = null; scope.value = null; pending.value = null; search.value = ''; notice.value = '' }
 function syncPending() { pending.value = scope.value ? pendingRequirementOperation(scope.value, 'SOURCE') || pendingRequirementOperation(scope.value, 'REQUIREMENT') : null }
 async function run(action: (check: () => void) => Promise<void>) {
   if (busy.value) return
@@ -268,8 +273,15 @@ function removeCoverageChild(index: number) {
   definition.decomposition.children.splice(index, 1)
   if (!definition.decomposition.children.length) definition.decomposition = null
 }
-async function reload() { await run(async check => { clearPrivate(); if (!permission.loaded) await permission.loadMyActions(); check(); if (!canRead.value) throw new Error('当前无权读取工程需求。'); const s = requirementResponse(await requirementApi.scope()); check(); scope.value = s; const data = requirementResponse(await requirementApi.list(kind.value, search.value, page.value)); check(); rows.value = data }) }
-async function list(p: number) { await run(async check => { rows.value = []; const data = requirementResponse(await requirementApi.list(kind.value, search.value, p)); check(); rows.value = data; page.value = p }) }
+async function readDirectory(p: number, check: () => void) {
+  const query = { kind: kind.value, search: search.value, page: p }
+  const data = requirementResponse(await requirementApi.list(query.kind, query.search, query.page))
+  check()
+  rows.value = data
+  displayedQuery.value = query
+}
+async function reload() { await run(async check => { clearPrivate(); if (!permission.loaded) await permission.loadMyActions(); check(); if (!canRead.value) throw new Error('当前无权读取工程需求。'); const s = requirementResponse(await requirementApi.scope()); check(); scope.value = s; await readDirectory(1, check) }) }
+async function list(p: number) { await run(check => readDirectory(p, check)) }
 async function loadEditor(v: RequirementSnapshot, check: () => void) {
   const origin = v.body.requirement ? requirementResponse(await requirementApi.read(v.body.requirement.source.id, v.body.requirement.source.version)) : null; check()
   resetEditor(); current.value = v; objectId.value = v.reference.id; draft.value = copy(v.body); source.value = origin
@@ -334,8 +346,10 @@ async function downloadOriginal(snapshot: RequirementSnapshot, question?: string
   })
 }
 async function exportPage() {
+  const query = displayedQuery.value
+  if (!query) return
   await run(async check => {
-    const blob = await requirementApi.exportPage(kind.value, search.value, page.value)
+    const blob = await requirementApi.exportPage(query.kind, query.search, query.page)
     check()
     downloadBlob(blob, '工程需求.json')
   })

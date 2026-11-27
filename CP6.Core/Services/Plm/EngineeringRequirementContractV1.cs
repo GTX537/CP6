@@ -11,7 +11,17 @@ public sealed record RequirementSourceV1(string Kind, string OriginDescription, 
     string AcquisitionBasis, RequirementClauseV1[] Clauses,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] RequirementOriginV1? Origin = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
-public sealed record RequirementOriginV1(EngineeringSourceRefV1 Reference, Guid? OccurrenceId);
+public sealed record RequirementOriginV1(EngineeringSourceRefV1? Reference, Guid? OccurrenceId,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] RequirementActFileCoordinatesV1? ActFile = null);
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record RequirementActFileCoordinatesV1(
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] Guid? ActivityId = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? ActivityRevision = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? ReferenceSetVersion = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] Guid? ReferenceId = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? AttachmentId = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? Version = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? ContentSha256 = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record RequirementClarificationV1(Guid Id, EngineeringSourceRefV1 Source, string ClauseId, string Question,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] RequirementOriginV1? Reply = null);
