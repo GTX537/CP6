@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Numerics;
 using System.Text.RegularExpressions;
+using CP6.Core.Services.Mes;
 using static CP6.Core.Services.Plm.EngineeringProductValuesV1;
 
 namespace CP6.Core.Services.Plm;
@@ -16,20 +17,23 @@ internal static class EngineeringRoutingValuesV1
     }
     internal static void Text(string? value, int max = 4000, bool optional = false)
     { if (!(optional && value == "") && !ValidText(value, max, true)) throw Error("ROUTING_INPUT_INVALID", 400); }
-    internal static (BigInteger Value, int Scale) Number(string value)
+    internal static (BigInteger Value, int Scale) Number(string value, bool allowSignedZero = false)
     {
         if (value == null || value.Length > 2050 || !Decimal.IsMatch(value)) throw Error("ROUTING_DECIMAL_INVALID", 400);
         var dot = value.IndexOf('.'); var scale = dot < 0 ? 0 : value.Length - dot - 1;
         if ((dot < 0 ? value.Length : dot) - (value[0] == '-' ? 1 : 0) > 1024 || scale > 1024) throw Error("ROUTING_DECIMAL_INVALID", 400);
         var number = BigInteger.Parse(value.Replace(".", "", StringComparison.Ordinal), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
-        if (number.IsZero && value[0] == '-') throw Error("ROUTING_DECIMAL_INVALID", 400);
+        if (!allowSignedZero && number.IsZero && value[0] == '-') throw Error("ROUTING_DECIMAL_INVALID", 400);
         return (number, scale);
     }
-    private static int Compare(string x, string y)
+    private static int Compare(string x, string y, bool allowSignedZero = false)
     {
-        var a = Number(x); var b = Number(y); var scale = Math.Max(a.Scale, b.Scale);
+        var a = Number(x); var b = Number(y, allowSignedZero); var scale = Math.Max(a.Scale, b.Scale);
         return (a.Value * BigInteger.Pow(10, scale - a.Scale)).CompareTo(b.Value * BigInteger.Pow(10, scale - b.Scale));
     }
+    internal static bool SameNumber(string? left, string? right) =>
+        left == right || left != null && right != null && Compare(left, right, allowSignedZero: true) == 0;
+
     internal static string[] Validate(EngineeringRoutingBodyV1? body)
     {
         if (body == null || body.Operations == null || body.Operations.Length > 1000 || body.RevisionOrigin == null
@@ -53,7 +57,15 @@ internal static class EngineeringRoutingValuesV1
             if (op.AlternativeGroup != null) Text(op.AlternativeGroup, 256);
             EngineeringRevisionValuesV1.Applicability(op.Applicability, op.Reason);
             if (op.ProcessCode == "") findings.Add("PROCESS_REQUIRED:" + op.OccurrenceId);
-            if (op.Applicability != "APPLIES" || op.AlternativeGroup != null) findings.Add("APPLICABILITY_OWNER_REQUIRED:" + op.OccurrenceId);
+            if (op.Applicability != "APPLIES") findings.Add("APPLICABILITY_OWNER_REQUIRED:" + op.OccurrenceId);
+            if (op.Alternative is { } alternative)
+            {
+                if (op.AlternativeGroup == null || alternative.ReplacesOccurrenceId == Guid.Empty
+                    || alternative.Rule?.Owner != ConfigurationRuleValuesV1.Owner || alternative.When == null)
+                    throw Error("ROUTING_ALTERNATIVE_INVALID", 400);
+                ConfigurationRuleValuesV1.Ref(alternative.Rule);
+                ConfigurationRuleValuesV1.Options([alternative.When]);
+            }
             if (op.Resources.Length == 0) findings.Add("RESOURCE_REQUIRED:" + op.OccurrenceId);
             findings.Add("CONTROLLED_DOCUMENT_OWNER_REQUIRED:" + op.OccurrenceId);
             var sources = new HashSet<(string, Guid)>();
@@ -88,6 +100,15 @@ internal static class EngineeringRoutingValuesV1
                 foreach (var value in new[] { parameter.Value, parameter.Minimum, parameter.Maximum }) if (value != null) Number(value);
                 if (parameter.UnitRef != null) CP6.Core.Services.Erp.UomProfileValuesV1.Reference(parameter.UnitRef);
                 if (parameter.UnitRef == null) findings.Add("PARAMETER_UNIT_REQUIRED:" + op.OccurrenceId + ":" + parameter.Name);
+                if (parameter.DimensionKey == null) findings.Add("PARAMETER_DIMENSION_REQUIRED:" + op.OccurrenceId + ":" + parameter.Name);
+                else Text(parameter.DimensionKey, 128);
+                if (parameter.Evidence is { } evidence)
+                {
+                    QualitySpecificationValuesV1.Ref(evidence.Specification);
+                    QualitySpecificationValuesV1.Ref(evidence.Approval, QualitySpecificationStoreV1.RecordOwner("APPROVAL"));
+                    Text(evidence.RequirementId, 256);
+                }
+                else findings.Add("PARAMETER_EVIDENCE_REQUIRED:" + op.OccurrenceId + ":" + parameter.Name);
                 if (parameter.Method == "") findings.Add("PARAMETER_METHOD_REQUIRED:" + op.OccurrenceId + ":" + parameter.Name);
                 if (parameter.Value == null && parameter.Minimum == null && parameter.Maximum == null) findings.Add("PARAMETER_VALUE_REQUIRED:" + op.OccurrenceId + ":" + parameter.Name);
                 if (parameter.Minimum != null && parameter.Maximum != null && Compare(parameter.Minimum, parameter.Maximum) > 0
@@ -97,6 +118,7 @@ internal static class EngineeringRoutingValuesV1
             }
         }
         var index = body.Operations.ToDictionary(x => x.OccurrenceId); var pending = new Dictionary<Guid, int>();
+        ValidateAlternatives(body.Operations, index, findings);
         var next = ids.ToDictionary(x => x, _ => new List<Guid>());
         foreach (var op in body.Operations)
         {
@@ -109,5 +131,35 @@ internal static class EngineeringRoutingValuesV1
         while (queue.TryDequeue(out var id)) { visited++; foreach (var successor in next[id]) if (--pending[successor] == 0) queue.Enqueue(successor); }
         if (visited != ids.Count) findings.Add("DEPENDENCY_CYCLE_OR_UNRESOLVED");
         return findings.Distinct(StringComparer.Ordinal).ToArray();
+    }
+
+    private static void ValidateAlternatives(RoutingOperationV1[] operations, Dictionary<Guid, RoutingOperationV1> index, List<string> findings)
+    {
+        foreach (var group in operations.Where(op => op.AlternativeGroup != null).GroupBy(op => op.AlternativeGroup))
+        {
+            var alternatives = group.Where(op => op.Alternative != null).ToArray();
+            if (alternatives.Length == 0)
+            {
+                findings.AddRange(group.Select(op => "APPLICABILITY_OWNER_REQUIRED:" + op.OccurrenceId));
+                continue;
+            }
+
+            var first = alternatives[0].Alternative!;
+            var validHead = index.TryGetValue(first.ReplacesOccurrenceId, out var primary)
+                && primary.AlternativeGroup == group.Key && primary.Alternative == null
+                && group.Count() == alternatives.Length + 1;
+            var choices = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var op in alternatives)
+            {
+                var alternative = op.Alternative!;
+                // 同组只允许一个明确主工序，并用同一规则、同一选项的不重复值区分各替代项。
+                if (!validHead || alternative.ReplacesOccurrenceId != first.ReplacesOccurrenceId
+                    || op.OccurrenceId == alternative.ReplacesOccurrenceId || alternative.Rule != first.Rule
+                    || alternative.When.Name != first.When.Name || alternative.When.Type != first.When.Type
+                    || !choices.Add(ConfigurationRuleValuesV1.Key(alternative.When))
+                    || op.DependsOn.Any(id => index.TryGetValue(id, out var predecessor) && predecessor.AlternativeGroup == group.Key))
+                    findings.Add("ALTERNATIVE_RELATION_CONFLICT:" + op.OccurrenceId);
+            }
+        }
     }
 }

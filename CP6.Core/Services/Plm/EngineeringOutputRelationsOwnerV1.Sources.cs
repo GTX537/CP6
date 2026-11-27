@@ -29,11 +29,11 @@ public sealed partial class EngineeringOutputRelationsOwnerV1
     }
     private async Task<SourcesV1> Sources(OperationsAccessV1 root,EngineeringOutputRelationsBodyV1 body,bool held,CancellationToken ct)
     {
-        Body(body);var m=await new EngineeringManufacturingOwnerV1(db,owner).Source(root,body.Manufacturing,ct);var b=m.Body;
-        var boms=new EngineeringBomOwnerV1(db,owner);
+        Body(body);var m=await new EngineeringManufacturingOwnerV1(db,owner,quality).Source(root,body.Manufacturing,ct);var b=m.Body;
+        var boms=new EngineeringBomOwnerV1(db,owner,quality);
         var e=await boms.Source(root,b.EbomRef,b.RevisionOrigin.Id,b.ProductRef,"EBOM",false,ct);
         var mb=await boms.Source(root,b.MbomRef,b.RevisionOrigin.Id,b.ProductRef,"MBOM",false,ct);
-        var r=await new EngineeringRoutingOwnerV1(db,owner).Source(root,b.RoutingRef,b.RevisionOrigin.Id,b.ProductRef,false,ct);
+        var r=await new EngineeringRoutingOwnerV1(db,owner,quality).Source(root,b.RoutingRef,b.RevisionOrigin.Id,b.ProductRef,false,ct);
         if(!body.Inputs.Select(x=>x.OccurrenceId).Order().SequenceEqual(mb.Body.Occurrences.Select(x=>x.OccurrenceId).Order())
             || !body.Outputs.Select(x=>x.OccurrenceId).Order().SequenceEqual(b.Outputs.Select(x=>x.OutputOccurrenceId).Order()))throw Error("OUTPUT_RELATIONS_COMPLETE_OCCURRENCES_REQUIRED",422);
         // A revision origin is an immutable authoring parent; composition can legitimately advance

@@ -54,7 +54,7 @@ public sealed partial class EngineeringBomOwnerV1
         EngineeringRoutingSnapshotV1? routing = null;
         if (body.RoutingRef is { } route)
         {
-            routing = await new EngineeringRoutingOwnerV1(db, owner).Source(root, route, body.RevisionOrigin.Id, product, current, ct);
+            routing = await new EngineeringRoutingOwnerV1(db, owner, quality).Source(root, route, body.RevisionOrigin.Id, product, current, ct);
             if (!routing.IsCurrent) findings.Add("ROUTING_SOURCE_CHANGED");
             if (routing.Body.SiteRef != body.SiteRef) findings.Add("ROUTING_SITE_MISMATCH");
             findings.Add("ROUTING_REVIEW_AND_FREEZE_REQUIRED");

@@ -78,6 +78,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var saved = await owner.ReadAsync(input.RoutingId); Assert.Equal(exact, saved.Body.Operations[0].Parameters[0].Value);
         Assert.Contains("DEPENDENCY_CYCLE_OR_UNRESOLVED", saved.Missing!); Assert.Contains(saved.Missing!, x => x.StartsWith("PARAMETER_LIMIT_CONFLICT:"));
         Assert.Contains(saved.Missing!, x => x.StartsWith("PARAMETER_UNIT_REQUIRED:")); Assert.Equal("DRAFT", saved.State);
+        Assert.Equal("BLOCK", saved.InputValidation!.State);
         foreach (var bad in new[] { "-0.00", "01", "1e3", "NaN", new string('1', 1025) })
             Assert.Equal(400, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => owner.CommandAsync(RoutingRevise(saved) with
                 { Body = saved.Body with { Operations = [a with { Parameters = [new("Invalid", bad, null, null, null, "")] }] } }))).Status);

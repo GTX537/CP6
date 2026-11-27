@@ -1,14 +1,26 @@
 import type { CapabilityReference } from '../mes/resourceCapabilities'
 import http from '../http'
 import type { EngineeringEnvelope, EngineeringReference, EngineeringScope } from './engineeringProducts'
-import type { DraftApplicability, RevisionDiff } from './engineeringRevisions'
+import type { DraftApplicability, RevisionDiff, RevisionOption } from './engineeringRevisions'
 import type { ResourceReference } from '../mes/resourceSources'
 import type { UomReference } from '../erp/uomProfiles'
-export interface RoutingParameter { name: string; value: string | null; minimum: string | null; maximum: string | null; unitRef: UomReference | null; method: string }
-export interface RoutingStep { occurrenceId: string; processCode: string; name: string; semanticOrder: number; dependsOn: string[]; alternativeGroup: string | null; applicability: DraftApplicability; reason: string; instructions: string; resources: ResourceReference[]; tools: EngineeringReference[]; parameters: RoutingParameter[]; documentRequirement: string; legacyRowId?: string | null; resourceCapabilities?: CapabilityReference[] | null }
+import type { TimeReference } from '../erp/uomTimeBases'
+export interface RoutingParameterEvidence { specification: EngineeringReference; approval: EngineeringReference; requirementId: string }
+export interface RoutingParameter { name: string; value: string | null; minimum: string | null; maximum: string | null; unitRef: UomReference | null; method: string; dimensionKey?: string | null; evidence?: RoutingParameterEvidence | null }
+export interface RoutingAlternative { replacesOccurrenceId: string; rule: EngineeringReference; when: RevisionOption }
+export interface RoutingStep { occurrenceId: string; processCode: string; name: string; semanticOrder: number; dependsOn: string[]; alternativeGroup: string | null; applicability: DraftApplicability; reason: string; instructions: string; resources: ResourceReference[]; tools: EngineeringReference[]; parameters: RoutingParameter[]; documentRequirement: string; legacyRowId?: string | null; resourceCapabilities?: CapabilityReference[] | null; alternative?: RoutingAlternative | null }
 export interface RoutingBody { name: string; revisionOrigin: EngineeringReference; productRef: EngineeringReference; siteRef: EngineeringReference | null; manufacturingViewRequirement: string; operations: RoutingStep[] }
 export interface RoutingLegacy { mappingRef: EngineeringReference; productRef: EngineeringReference; digest: string; rows: unknown[]; capturedAt: string; suggestedOperations: RoutingStep[] }
-export interface RoutingSnapshot { tenantId: string; reference: EngineeringReference; etag: string; isCurrent: boolean; body: RoutingBody; action: string; reason: string; parentVersion: string | null; actorId: string; recordedAt: string; legacy: RoutingLegacy | null; originalJson: string; missing: string[]; state: 'DRAFT'; readiness: 'DRAFT_ONLY' }
+export interface RoutingCatalogueObservation {
+  occurrenceId: string
+  reference: CapabilityReference
+  timeUnit: UomReference | null
+  timeBasis: TimeReference | null
+  approvalOperationId: string | null
+  state: 'APPROVED' | 'CATALOGUE_VERIFIED' | 'UNKNOWN'
+}
+export interface RoutingInputValidation { state: 'PASS' | 'BLOCK' | 'UNKNOWN'; findings: string[]; catalogues: RoutingCatalogueObservation[] }
+export interface RoutingSnapshot { tenantId: string; reference: EngineeringReference; etag: string; isCurrent: boolean; body: RoutingBody; action: string; reason: string; parentVersion: string | null; actorId: string; recordedAt: string; legacy: RoutingLegacy | null; originalJson: string; missing: string[]; state: 'DRAFT'; readiness: 'DRAFT_ONLY'; inputValidation?: RoutingInputValidation | null }
 export interface RoutingCommand { operationId: string; routingId: string; action: 'CREATE' | 'REVISE'; expectedVersion: string | null; expectedEtag: string | null; body: RoutingBody; reason: string; legacyMappingRef?: EngineeringReference | null; legacyDigest?: string | null }
 export interface RoutingResult { operationId: string; kind: 'ENGINEERING_ROUTING'; objectId: string; version: string; digest: string }
 export interface RoutingOperation { operationId: string; state: 'COMMITTED' | 'CLOSED' | 'UNKNOWN'; result?: RoutingResult | null }

@@ -46,10 +46,10 @@ public sealed partial class EngineeringManufacturingOwnerV1
             else findings.Add("CONFIGURATION_RULE_REQUIRED");
             findings.Add("CONFIGURATION_APPLICABILITY_REVIEW_REQUIRED");
         }
-        var boms = new EngineeringBomOwnerV1(db, owner);
+        var boms = new EngineeringBomOwnerV1(db, owner, quality);
         var ebom = await boms.Source(root, body.EbomRef, parent.Reference.Id, body.ProductRef, "EBOM", current, ct);
         var mbom = await boms.Source(root, body.MbomRef, parent.Reference.Id, body.ProductRef, "MBOM", current, ct);
-        var routing = await new EngineeringRoutingOwnerV1(db, owner).Source(root, body.RoutingRef, parent.Reference.Id, body.ProductRef, current, ct);
+        var routing = await new EngineeringRoutingOwnerV1(db, owner, quality).Source(root, body.RoutingRef, parent.Reference.Id, body.ProductRef, current, ct);
         foreach (var (prefix, missing, isCurrent) in new[] { ("EBOM", ebom.Missing!, ebom.IsCurrent), ("MBOM", mbom.Missing!, mbom.IsCurrent), ("ROUTING", routing.Missing!, routing.IsCurrent) })
         { findings.AddRange(missing.Select(x => prefix + ":" + x)); if (!isCurrent) findings.Add(prefix + "_SOURCE_CHANGED"); }
         if (mbom.Body.RoutingRef != body.RoutingRef) findings.Add("MBOM_ROUTING_MISMATCH");

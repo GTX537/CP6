@@ -1,12 +1,14 @@
 using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Integration;
+using CP6.Core.Services.Mes;
 using Microsoft.EntityFrameworkCore;
 using static CP6.Core.Services.Plm.EngineeringProductValuesV1;
 
 namespace CP6.Core.Services.Plm;
 
-public sealed partial class EngineeringManufacturingOwnerV1(CP6Context db, OperationsOwnerV1 owner)
+public sealed partial class EngineeringManufacturingOwnerV1(CP6Context db, OperationsOwnerV1 owner,
+    QualitySpecificationAuthorityService? quality = null)
 {
     private const string Contract = "Main.Plm.EngineeringManufacturing.commands.v1";
     private OperationsOwnerV1 Authority => owner.Owns(db) ? owner : throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);

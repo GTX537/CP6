@@ -120,7 +120,7 @@ public sealed partial class EngineeringSourceCheckService
             }
             case "ROUTING":
             {
-                var v = await new EngineeringRoutingOwnerV1(db, owner).Source(root, reference, revision.Reference.Id, product, false, ct);
+                var v = await new EngineeringRoutingOwnerV1(db, owner, quality).Source(root, reference, revision.Reference.Id, product, false, ct);
                 o.Pin(path, reference, "cp6_engineering_routing_v1", v.OriginalJson, new { v.Reference, v.IsCurrent, v.Missing },
                     v.IsCurrent ? v.Missing! : [..v.Missing!, "ROUTING_SOURCE_CHANGED"]);
                 if (v.Body.SiteRef is { } site) await Site(root, o, path + "/site", site, ct);
@@ -158,7 +158,7 @@ public sealed partial class EngineeringSourceCheckService
             }
             case "EBOM": case "MBOM":
             {
-                var v = await new EngineeringBomOwnerV1(db, owner).Source(root, reference, revision.Reference.Id, product, component.Kind, false, ct);
+                var v = await new EngineeringBomOwnerV1(db, owner, quality).Source(root, reference, revision.Reference.Id, product, component.Kind, false, ct);
                 o.Pin(path, reference, "cp6_engineering_bom_v1", v.OriginalJson, new { v.Reference, v.IsCurrent, v.Missing },
                     v.IsCurrent ? v.Missing! : [..v.Missing!, "BOM_SOURCE_CHANGED"]);
                 if (v.Body.SiteRef is { } site) await Site(root, o, path + "/site", site, ct);
