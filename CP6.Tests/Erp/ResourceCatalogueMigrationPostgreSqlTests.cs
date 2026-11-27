@@ -24,7 +24,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var database = await server.CreateIsolatedDatabaseAsync(baseline);
         await using var h = await SeedForDatabase(database);
         Assert.Equal(baseline, (await h.Db.Database.GetAppliedMigrationsAsync()).Last());
-        Assert.Equal(migration, Assert.Single(await h.Db.Database.GetPendingMigrationsAsync()));
+        var pending = (await h.Db.Database.GetPendingMigrationsAsync()).ToArray();
+        Assert.NotEmpty(pending);
+        Assert.Equal(migration, pending[0]);
 
         var (_, draft, unit) = await CapabilitySetup(h);
         var item = Assert.Single(draft.Body.Capabilities) with { ValidFrom = "2020-01-01T00:00:00Z", ValidTo = null };
@@ -54,6 +56,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 
         await h.Db.GetService<IMigrator>().MigrateAsync(migration);
         Assert.Equal(migration, (await h.Db.Database.GetAppliedMigrationsAsync()).Last());
+        Assert.Equal(pending[1..], (await h.Db.Database.GetPendingMigrationsAsync()).ToArray());
         Assert.True(await approvalAction.AnyAsync());
         Assert.Equal(beforeGrants, await grants.ToArrayAsync());
 

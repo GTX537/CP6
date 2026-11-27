@@ -1,14 +1,16 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import type { RoutingCommand, RoutingSnapshot } from '@/api/plm/engineeringRouting'
-const api = vi.hoisted(() => ({ scope: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), legacy: vi.fn(), save: vi.fn(), operation: vi.fn(), parents: vi.fn(), sites: vi.fn(), mappings: vi.fn(), resources: vi.fn(), capability: vi.fn(), tools: vi.fn(), units: vi.fn(), authenticated: true, denied: [] as string[] }))
+const api = vi.hoisted(() => ({ scope: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), legacy: vi.fn(), save: vi.fn(), operation: vi.fn(), parents: vi.fn(), sites: vi.fn(), mappings: vi.fn(), resources: vi.fn(), capability: vi.fn(), tools: vi.fn(), units: vi.fn(), unit: vi.fn(), quality: vi.fn(), rules: vi.fn(), authenticated: true, denied: [] as string[] }))
 vi.mock('@/api/plm/engineeringRouting', () => ({ routingApi: api }))
 vi.mock('@/api/plm/engineeringRevisions', () => ({ revisionApi: { list: api.parents } }))
 vi.mock('@/api/plm/engineeringProducts', () => ({ engineeringApi: { siteChoices: api.sites, mappings: api.mappings } }))
 vi.mock('@/api/mes/resourceSources', () => ({ resourceApi: () => ({ list: api.resources }) }))
 vi.mock('@/api/mes/resourceCapabilities', () => ({ capabilityApi: () => ({ read: api.capability }) }))
 vi.mock('@/api/plm/toolSpecifications', () => ({ toolSpecificationApi: { list: api.tools } }))
-vi.mock('@/api/erp/uomProfiles', () => ({ uomApi: { list: api.units } }))
+vi.mock('@/api/erp/uomProfiles', () => ({ uomApi: { list: api.units, read: api.unit } }))
+vi.mock('@/api/mes/qualitySpecification', () => ({ qualityApi: { list: api.quality } }))
+vi.mock('@/api/plm/configurationRules', () => ({ configurationApi: { list: api.rules } }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ loaded: true, has: (key: string) => !api.denied.includes(key), loadMyActions: vi.fn() }) }))
 vi.mock('@/auth/browserAuthentication', () => ({ authenticationCanRead: () => api.authenticated }))
 import View from './EngineeringRoutingView.vue'
@@ -35,6 +37,7 @@ beforeEach(() => {
   vi.resetAllMocks(); localStorage.clear(); localStorage.setItem(AUTH_EPOCH, 'first'); api.authenticated = true; api.denied = []; persisted = structuredClone(row)
   api.scope.mockResolvedValue(ok(scope)); api.list.mockImplementation(async () => ok([structuredClone(persisted)])); api.read.mockImplementation(async () => ok(structuredClone(persisted)))
   api.parents.mockResolvedValue(ok([parent])); api.sites.mockResolvedValue(ok([])); api.mappings.mockResolvedValue(ok([])); api.resources.mockResolvedValue(ok([])); api.tools.mockResolvedValue(ok([])); api.units.mockResolvedValue(ok([]))
+  api.quality.mockResolvedValue(ok([])); api.rules.mockResolvedValue(ok([]))
   api.save.mockImplementation(async (input: RoutingCommand) => { persisted = { ...persisted, reference: { ...persisted.reference, id: input.routingId, version: input.action === 'CREATE' ? '1' : '2' }, body: structuredClone(input.body) }; return ok({ operationId: input.operationId, kind: 'ENGINEERING_ROUTING', objectId: input.routingId, version: persisted.reference.version, digest: 'b'.repeat(64) }) })
   Object.defineProperty(navigator, 'locks', { configurable: true, value: { request: (_key: string, _options: unknown, action: (lock: object) => unknown) => action({}) } })
 })
@@ -106,4 +109,60 @@ it('explicitly adopts the exact resource capability version, rejects mismatched 
   await click('引用当前能力目录'); expect(view!.text()).toContain('能力目录与所选资源版本不一致')
   await click('移除资源'); await field('工艺修改原因').setValue('Explicit removal'); await submit('工艺名称')
   expect(api.save.mock.calls.at(-1)![0].body.operations[0]).toMatchObject({ resources: [], resourceCapabilities: [] })
+})
+
+it.each([
+  ['uses an explicitly selected approved process requirement and preserves its exact unit and limits',
+    { target: '2.50000000', lowerLimit: '2.48000000', upperLimit: '2.55000000' },
+    { value: '2.50000000', minimum: '2.48000000', maximum: '2.55000000' }],
+  ['带入批准条款时规范目标和上限的负零并保留精确下限',
+    { target: '-0.00000000', lowerLimit: '-0.0000000000000000001', upperLimit: '-0' },
+    { value: '0.00000000', minimum: '-0.0000000000000000001', maximum: '0' }],
+  ['带入批准条款时规范下限的负零并保留空值和精确上限',
+    { target: null, lowerLimit: '-0.00000000', upperLimit: '0.0000000000000000001' },
+    { value: null, minimum: '0.00000000', maximum: '0.0000000000000000001' }],
+] as const)('%s', async (_title, values, expected) => {
+  const site = reference('Main.Space.PhysicalSite.v1', 21)
+  const specification = reference('Main.Quality.Specification.v1', 22, '4')
+  const approval = reference('Main.Quality.SpecificationApproval.v1', 23)
+  const unit = reference('Main.Erp.UomProfile.v1', 24, '2')
+  persisted.body.siteRef = site
+  const requirement = { id: 'SIMULATED-width', characteristic: '模拟宽度', method: '模拟卡尺测量', unit,
+    ...values, applicability: 'APPLIES' }
+  const currentApproval = { reference: approval, body: { specification } }
+  const body = { name: '模拟过程质量规格', product, site, stage: 'IPQC', requirements: [requirement] }
+  api.quality.mockResolvedValue(ok([{ version: { reference: specification, body }, currentApproval, missing: [] },
+    { version: { reference: specification, body: { ...body, stage: 'IQC' } }, currentApproval, missing: [] }]))
+  api.unit.mockResolvedValue(ok({ reference: unit, isCurrent: true, profile: { dimensionKey: 'LENGTH', enabled: true } }))
+  await opened(); await click('添加参数'); await submit('过程质量规格搜索')
+  const select = field('参数证据 1-1').element as HTMLSelectElement
+  expect(select.options).toHaveLength(2)
+  expect(select.value).toBe('')
+  await field('参数证据 1-1').setValue(select.options[1]!.value); await flushPromises()
+  await submit('工艺名称')
+  expect(api.unit).toHaveBeenCalledWith(unit.id, unit.version)
+  expect(api.save.mock.calls[0]![0].body.operations[0].parameters[0]).toMatchObject({
+    name: '模拟宽度', ...expected, unitRef: unit,
+    dimensionKey: 'LENGTH', method: '模拟卡尺测量', evidence: { specification, approval, requirementId: requirement.id }
+  })
+})
+
+it('stores the explicit primary occurrence and approved option for an alternative step', async () => {
+  const primary = persisted.body.operations[0]!
+  primary.alternativeGroup = 'SIMULATED-group'
+  persisted.body.operations.push({ ...structuredClone(primary), occurrenceId: guid(30), semanticOrder: 20, name: '模拟替代工序' })
+  const rule = reference('Main.Plm.ConfigurationRule.v1', 31, '3')
+  const when = { name: 'Finish', type: 'STRING', text: 'Black' }
+  api.rules.mockResolvedValue(ok([{ isActive: true, state: 'APPROVED', reference: rule, missing: [],
+    body: { productRef: product, name: '模拟配置规则', definitions: [{ allowedValues: [when] }] } }]))
+  await opened()
+  await submit('配置规则搜索')
+  await field('替代工艺配置规则').setValue(key(rule))
+  await field('拟替换工序 2').setValue(primary.occurrenceId)
+  expect((field('替代条件 2').element as HTMLSelectElement).value).toBe('')
+  await field('替代条件 2').setValue('0')
+  await submit('工艺名称')
+  const sent = api.save.mock.calls[0]![0] as RoutingCommand
+  expect(sent.body.operations[0]!.alternative).toBeUndefined()
+  expect(sent.body.operations[1]!.alternative).toEqual({ replacesOccurrenceId: primary.occurrenceId, rule, when })
 })

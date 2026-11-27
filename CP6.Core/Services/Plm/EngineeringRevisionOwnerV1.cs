@@ -65,14 +65,14 @@ public sealed partial class EngineeringRevisionOwnerV1(CP6Context db, Operations
                 }
                 else if (component.Kind == "ROUTING")
                 {
-                    var route = await new EngineeringRoutingOwnerV1(db, owner).Source(access, source, value.Reference.Id, value.Draft.ProductRef, false, ct);
+                    var route = await new EngineeringRoutingOwnerV1(db, owner, quality).Source(access, source, value.Reference.Id, value.Draft.ProductRef, false, ct);
                     if (!route.IsCurrent) missing.Add("SOURCE_CHANGED:" + component.OccurrenceId);
                     missing.AddRange(route.Missing!.Select(x => "ROUTING:" + component.OccurrenceId + ":" + x));
                     missing.Add("ROUTING_REVIEW_AND_FREEZE_REQUIRED:" + component.OccurrenceId);
                 }
                 else if (component.Kind is "EBOM" or "MBOM")
                 {
-                    var bom = await new EngineeringBomOwnerV1(db, owner).Source(access, source, value.Reference.Id, value.Draft.ProductRef, component.Kind, false, ct);
+                    var bom = await new EngineeringBomOwnerV1(db, owner, quality).Source(access, source, value.Reference.Id, value.Draft.ProductRef, component.Kind, false, ct);
                     if (!bom.IsCurrent) missing.Add("SOURCE_CHANGED:" + component.OccurrenceId);
                     missing.AddRange(bom.Missing!.Select(x => "BOM:" + component.OccurrenceId + ":" + x));
                     missing.Add("BOM_REVIEW_AND_FREEZE_REQUIRED:" + component.OccurrenceId);
@@ -215,9 +215,9 @@ public sealed partial class EngineeringRevisionOwnerV1(CP6Context db, Operations
                         else if (patch.Component.Kind == "DOCUMENT")
                             await (documents ?? throw Error("DOCUMENT_OWNER_UNAVAILABLE",503)).Source(access,source,frozen.RevisionId,draft.ProductRef,true,token);
                         else if (patch.Component.Kind == "ROUTING")
-                            await new EngineeringRoutingOwnerV1(db, owner).Source(access, source, frozen.RevisionId, draft.ProductRef, true, token);
+                            await new EngineeringRoutingOwnerV1(db, owner, quality).Source(access, source, frozen.RevisionId, draft.ProductRef, true, token);
                         else if (patch.Component.Kind is "EBOM" or "MBOM")
-                            await new EngineeringBomOwnerV1(db, owner).Source(access, source, frozen.RevisionId, draft.ProductRef, patch.Component.Kind, true, token);
+                            await new EngineeringBomOwnerV1(db, owner, quality).Source(access, source, frozen.RevisionId, draft.ProductRef, patch.Component.Kind, true, token);
                         else await Product(access, new(source.Owner, source.Id, source.Version, source.Digest), true, token);
                     }
                 }

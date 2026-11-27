@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP05-13 工程需求来源、分解与可评价判据](../development/evidence/WP05-13/DELIVERY.md)（DONE），核对时间 `2026-11-27T04:41:59.2995349+00:00`。
+- [WP05-08 版本化工艺操作与工具规格引用](../development/evidence/WP05-08/DELIVERY.md)（DONE），核对时间 `2026-11-27T18:11:34.151651+00:00`。
 
 ### 已关闭目标
 

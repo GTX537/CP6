@@ -56,7 +56,8 @@ public sealed partial class QualitySpecificationAuthorityService
     /// <summary>Same native connection and transaction. This is the exact source participant;
     /// it neither starts a nested transaction nor creates an HTTP final-use token.</summary>
     internal async Task<QualitySpecificationSourceProofV1> Source(OperationsAccessV1 root,EngineeringSourceRefV1 reference,
-        EngineeringProductRefV1? product,bool hold,CancellationToken ct,string? expectedEnvironment=null,string? expectedMode=null)
+        EngineeringProductRefV1? product,bool hold,CancellationToken ct,string? expectedEnvironment=null,string? expectedMode=null,
+        EngineeringSourceRefV1? expectedSite=null,string? expectedStage=null)
     {
         if(expectedEnvironment!=null && expectedEnvironment!=Environment.ToString("D") || expectedMode!=null && expectedMode!=runtime.EvidenceMode)
             throw Error("QUALITY_SPEC_SCOPE_MISMATCH",403);
@@ -65,6 +66,8 @@ public sealed partial class QualitySpecificationAuthorityService
         if(v.Version.Reference!=reference)throw Error("QUALITY_SPEC_REFERENCE_CHANGED",412);
         var missing=v.Missing.ToList();
         if(product!=null && v.Version.Body.Product!=product)missing.Add("QUALITY_SPEC_PRODUCT_MISMATCH");
+        if(expectedSite!=null && v.Version.Body.Site!=expectedSite)missing.Add("QUALITY_SPEC_SITE_MISMATCH");
+        if(expectedStage!=null && v.Version.Body.Stage!=expectedStage)missing.Add("QUALITY_SPEC_STAGE_MISMATCH");
         if(v.CurrentApproval==null)missing.Add(v.Control.State=="WITHDRAWN"?"QUALITY_SPEC_WITHDRAWN":"QUALITY_SPEC_APPROVAL_REQUIRED");
         else if(v.CurrentApproval.Body.Specification!=reference)missing.Add("QUALITY_SPEC_CURRENT_VERSION_CHANGED");
         var digest=Hash(Bytes(v.Version.Body.Requirements));

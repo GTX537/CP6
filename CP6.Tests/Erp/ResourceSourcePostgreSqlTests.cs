@@ -206,14 +206,24 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var options = DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6Context>(), database, settings.ConnectionString,
             profile.MigrationsAssembly, profile.HistoryTable, profile.HistorySchema);
         await using var db = new CP6Context(options.Options, new TenantContext());
-        await db.GetService<IMigrator>().MigrateAsync("20261026210000_ConfigurationRuleV1");
-        db.Machines.Add(new() { MachineCd = "old-Case", MachineName = "Historical", PlannedRunMinutesPerDay = 0, CapacityPerHour = null, Creator = "old" });
-        db.WorkCenters.Add(new() { WgCd = "legacy", WgName = null, DailyCapacityHours = 1234567890123.12345678m, Enable = false });
-        await db.SaveChangesAsync(); db.ChangeTracker.Clear();
+        var migrator = db.GetService<IMigrator>();
+        const string migration = "20261026220000_ResourceSourceV1";
+        await migrator.MigrateAsync("20261026210000_ConfigurationRuleV1");
+        // 在旧模式下写入当时的业务列，避免由当前 EF 模型产生后继审计列。
+        await db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO public."M_Machine" ("Id","MachineCd","MachineName","Status","PlannedRunMinutesPerDay","CapacityPerHour",
+                "ActiveFlg","Creator","CreateDate","TenantId","IsDeleted","RowVersion")
+            VALUES ({Guid.NewGuid()},'old-Case','Historical',0,0,NULL,TRUE,'old',TIMESTAMP '2026-10-26 08:00:00',
+                {db.CurrentTenantId},FALSE,pg_catalog.int8send(1::bigint));
+            INSERT INTO public."T_WorkCenter" ("Id","WgCd","WgName","DailyCapacityHours","Enable","CreateDate","TenantId","IsDeleted","RowVersion")
+            VALUES ({Guid.NewGuid()},'legacy',NULL,1234567890123.12345678,FALSE,TIMESTAMP '2026-10-26 08:00:00',
+                {db.CurrentTenantId},FALSE,pg_catalog.int8send(1::bigint));
+            """);
         var oldMachine = await db.Database.SqlQueryRaw<string>("SELECT to_jsonb(p)::text AS \"Value\" FROM public.\"M_Machine\" p").SingleAsync();
         var oldCenter = await db.Database.SqlQueryRaw<string>("SELECT to_jsonb(p)::text AS \"Value\" FROM public.\"T_WorkCenter\" p").SingleAsync();
         var grants = await db.Sys_RoleActions.CountAsync();
-        await db.Database.MigrateAsync();
+        await migrator.MigrateAsync(migration);
+        Assert.Equal(migration, (await db.Database.GetAppliedMigrationsAsync()).Last());
         Assert.Equal(oldMachine, await db.Database.SqlQueryRaw<string>("SELECT to_jsonb(p)::text AS \"Value\" FROM public.\"M_Machine\" p").SingleAsync());
         Assert.Equal(oldCenter, await db.Database.SqlQueryRaw<string>("SELECT to_jsonb(p)::text AS \"Value\" FROM public.\"T_WorkCenter\" p").SingleAsync());
         Assert.Equal(grants, await db.Sys_RoleActions.CountAsync());

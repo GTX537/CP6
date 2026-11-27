@@ -13,6 +13,18 @@
       <form class="inline" @submit.prevent="findParents"><label>工程修订编号<input v-model="parentSearch" aria-label="工程修订搜索" :disabled="locked" /></label><button :disabled="locked || !permissions.has('plm-engineering-revision:query')">查找工程修订</button></form>
       <label>准确工程修订<select aria-label="工程修订选择" :disabled="locked || !canWrite" :value="''" @change="chooseParent(($event.target as HTMLSelectElement).value)"><option value="">请选择已有产品来源的当前草稿</option><option v-for="p in parents" :key="key(p.reference)" :value="key(p.reference)">{{ p.revisionCode }} · v{{ p.reference.version }} · {{ p.draft.goal }}</option></select></label>
       <p v-if="current">若工程组成已变化，请重新查找并明确选择同一修订的当前版本。已录入步骤会保留。</p>
+      <p v-if="current?.inputValidation">已保存 v{{ current.reference.version }} · {{ inputStatus[current.inputValidation.state] }}</p>
+      <details v-if="current">
+        <summary>工艺使用引用</summary>
+        <pre>{{ key(current.reference) }}</pre>
+        <ul v-if="current.inputValidation?.catalogues.length" aria-label="已保存的资源与工时来源">
+          <li v-for="catalogue in current.inputValidation.catalogues" :key="catalogue.occurrenceId + key(catalogue.reference)">
+            {{ current.body.operations.find(step => step.occurrenceId === catalogue.occurrenceId)?.name }}
+            · 目录 v{{ catalogue.reference.version }} · {{ catalogueStatus[catalogue.state] }}
+            <span v-if="catalogue.timeUnit && catalogue.timeBasis"> · 工时单位 {{ catalogue.timeUnit.id }} v{{ catalogue.timeUnit.version }} · 时间定义 v{{ catalogue.timeBasis.version }}</span>
+          </li>
+        </ul>
+      </details>
       <ul v-if="current?.missing.length" aria-label="工艺缺项"><li v-for="item in current.missing" :key="item">{{ finding(item) }}</li></ul>
       <form v-if="body" @submit.prevent="save"><fieldset :disabled="locked || !canWrite"><div class="grid">
         <label>工艺名称<input v-model="body.name" aria-label="工艺名称" required maxlength="256" /></label><label>制造视图要求<textarea v-model="body.manufacturingViewRequirement" aria-label="制造视图要求" maxlength="4000" /></label>
@@ -23,7 +35,23 @@
         <div class="grid"><label>步骤名称<input v-model="step.name" :aria-label="`步骤名称 ${index + 1}`" required maxlength="256" /></label><label>工序代码<input v-model="step.processCode" :aria-label="`工序代码 ${index + 1}`" maxlength="100" /></label>
           <label>语义顺序<input v-model.number="step.semanticOrder" :aria-label="`步骤顺序 ${index + 1}`" type="number" min="0" step="1" required /></label>
           <label>前置步骤<select v-model="step.dependsOn" :aria-label="`前置步骤 ${index + 1}`" multiple><option v-for="p in body.operations.filter(p => p.occurrenceId !== step.occurrenceId)" :key="p.occurrenceId" :value="p.occurrenceId">{{ p.semanticOrder }} / {{ p.name }}</option><option v-for="id in step.dependsOn.filter(id => !body!.operations.some(p => p.occurrenceId === id))" :key="id" :value="id">已移除步骤 {{ id }}</option></select></label>
-          <label>替代步骤组<input :value="step.alternativeGroup || ''" :aria-label="`替代步骤组 ${index + 1}`" maxlength="256" @input="step.alternativeGroup = ($event.target as HTMLInputElement).value || null" /></label>
+          <label>替代步骤组<input :value="step.alternativeGroup || ''" :aria-label="'替代步骤组 ' + (index + 1)" maxlength="256" @input="setAlternativeGroup(step, ($event.target as HTMLInputElement).value)" /></label>
+          <template v-if="step.alternativeGroup">
+            <label>拟替换工序<select :aria-label="'拟替换工序 ' + (index + 1)" :value="alternativeTarget(step)"
+              @change="setAlternativeTarget(step, ($event.target as HTMLSelectElement).value)">
+              <option value="">本步骤为主工序</option>
+              <option v-for="target in body.operations.filter(item => item !== step && item.alternativeGroup === step.alternativeGroup && !item.alternative)"
+                :key="target.occurrenceId" :value="target.occurrenceId">{{ target.semanticOrder }} / {{ target.name }}</option>
+            </select></label>
+            <label v-if="alternativeTarget(step)">批准规则中的替代条件<select :aria-label="'替代条件 ' + (index + 1)" :value="alternativeOptionKey(step)"
+              @change="chooseAlternativeOption(step, ($event.target as HTMLSelectElement).value)">
+              <option value="">请先查找并选择配置规则</option>
+              <option v-if="step.alternative && alternativeOptionKey(step) === 'saved'" value="saved" disabled>
+                已保存 v{{ step.alternative.rule.version }} · {{ optionLabel(step.alternative.when) }}
+              </option>
+              <option v-for="(option, choice) in ruleOptions" :key="choice" :value="String(choice)">{{ optionLabel(option) }}</option>
+            </select></label>
+          </template>
           <label>适用性<select v-model="step.applicability" :aria-label="`步骤适用性 ${index + 1}`"><option value="UNKNOWN">待确定</option><option value="APPLIES">拟适用</option><option value="NOT_APPLICABLE">拟不适用</option></select></label>
           <label>适用性依据<textarea v-model="step.reason" :required="step.applicability === 'NOT_APPLICABLE'" maxlength="8000" /></label><label>工艺说明<textarea v-model="step.instructions" :aria-label="`工艺说明 ${index + 1}`" maxlength="8000" /></label><label>受控文档要求<textarea v-model="step.documentRequirement" maxlength="4000" /></label>
         </div>
@@ -34,7 +62,20 @@
         <h4>参数与精确单位</h4><div v-for="(p, i) in step.parameters" :key="i" class="parameter"><div class="grid"><label>参数名<input v-model="p.name" :aria-label="`参数名 ${index + 1}-${i + 1}`" required maxlength="256" /></label>
           <label v-for="field in numericFields" :key="field.key">{{ field.name }}<input :value="p[field.key] ?? ''" :aria-label="`${field.name} ${index + 1}-${i + 1}`" inputmode="decimal" maxlength="2050" @input="p[field.key] = ($event.target as HTMLInputElement).value || null" /></label>
           <label>单位<select :value="p.unitRef ? key(p.unitRef) : ''" :aria-label="`参数单位 ${index + 1}-${i + 1}`" @change="chooseUnit(p, ($event.target as HTMLSelectElement).value)"><option value="">待确认</option><option v-if="p.unitRef && !units.some(u => key(u.reference) === key(p.unitRef!))" :value="key(p.unitRef)">已保存单位 · v{{ p.unitRef.version }}</option><option v-for="u in units" :key="key(u.reference)" :value="key(u.reference)">{{ u.profile.code }} / {{ u.profile.dimensionKey }} · v{{ u.reference.version }}</option></select></label>
-          <label>测量或计算方法<textarea v-model="p.method" maxlength="4000" /></label></div><button type="button" @click="step.parameters.splice(i, 1)">移除参数</button></div>
+          <label>参数量纲<input :aria-label="'参数量纲 ' + (index + 1) + '-' + (i + 1)" :value="p.dimensionKey || ''" maxlength="128"
+            @input="p.dimensionKey = ($event.target as HTMLInputElement).value || null" /></label>
+          <label>测量或计算方法<textarea v-model="p.method" maxlength="4000" /></label>
+          <label>已批准过程质量条款<select :aria-label="'参数证据 ' + (index + 1) + '-' + (i + 1)"
+            :value="p.evidence ? evidenceKey(p.evidence) : ''" @change="chooseParameterEvidence(p, ($event.target as HTMLSelectElement).value)">
+            <option value="">待补证</option>
+            <option v-if="p.evidence && !qualityChoices.some(choice => choice.key === evidenceKey(p.evidence!))" :value="evidenceKey(p.evidence)">
+              已保存 · {{ p.evidence.requirementId }} · 规格 v{{ p.evidence.specification.version }}
+            </option>
+            <option v-for="choice in qualityChoices" :key="choice.key" :value="choice.key">
+              {{ choice.specificationName }} · {{ choice.requirement.characteristic }} · v{{ choice.evidence.specification.version }}
+            </option>
+          </select></label>
+        </div><button type="button" @click="step.parameters.splice(i, 1)">移除参数</button></div>
         <button type="button" @click="step.parameters.push({ name: '', value: null, minimum: null, maximum: null, unitRef: null, method: '' })">添加参数</button>
       </article><button type="button" @click="addStep">添加工艺步骤</button><button>保存工艺版本</button></fieldset></form>
     </section>
@@ -42,13 +83,29 @@
       <form class="inline" @submit.prevent="findResources(1)"><label>资源类型<select v-model="resourceKind" :disabled="locked"><option value="MACHINE">设备</option><option value="WORK_CENTER">工作中心</option></select></label><label>编码或名称<input v-model="resourceSearch" aria-label="资源搜索" :disabled="locked" /></label><button :disabled="locked">查找资源</button><button type="button" :disabled="locked || !moreResources" @click="findResources(resourcePage + 1)">更多资源</button></form>
       <form class="inline" @submit.prevent="findTools(1)"><label>工具编号<input v-model="toolSearch" aria-label="规格搜索" :disabled="locked" /></label><button :disabled="locked">查找工具规格</button><button type="button" :disabled="locked || !moreTools" @click="findTools(toolPage + 1)">更多规格</button></form>
       <form class="inline" @submit.prevent="findUnits(1)"><label>单位编码<input v-model="unitSearch" aria-label="单位搜索" :disabled="locked" /></label><button :disabled="locked">查找单位</button><button type="button" :disabled="locked || !moreUnits" @click="findUnits(unitPage + 1)">更多单位</button></form>
+      <form class="inline" @submit.prevent="findQuality(1)" v-if="permissions.has('quality-specification:query')">
+        <label>过程质量规格<input v-model="qualitySearch" aria-label="过程质量规格搜索" :disabled="locked" /></label>
+        <button :disabled="locked || !body.siteRef">查找批准条款</button>
+        <button type="button" :disabled="locked || !body.siteRef || !moreQuality" @click="findQuality(qualityPage + 1)">更多质量规格</button>
+      </form>
+      <template v-if="permissions.has('plm-configuration-rule:query')">
+        <form class="inline" @submit.prevent="findRules(1)">
+          <label>配置规则名称<input v-model="ruleSearch" aria-label="配置规则搜索" :disabled="locked" /></label>
+          <button :disabled="locked">查找配置规则</button>
+          <button type="button" :disabled="locked || !moreRules" @click="findRules(rulePage + 1)">更多配置规则</button>
+        </form>
+        <label v-if="availableRules.length">批准的配置规则<select v-model="selectedRuleKey" aria-label="替代工艺配置规则" :disabled="locked">
+          <option value="">请选择具体规则版本</option>
+          <option v-for="rule in availableRules" :key="key(rule.reference)" :value="key(rule.reference)">{{ rule.body.name }} · v{{ rule.reference.version }}</option>
+        </select></label>
+      </template>
       <h3>采用现有产品工艺</h3><p>先选择已确认的产品映射，再预览原工艺。原来的资源编号保留在原件中，仍需明确选择准确资源。</p><button :disabled="locked || !canWrite" @click="findMappings">查找确认映射</button>
       <label>经营产品映射<select v-model="mappingChoice" aria-label="工艺导入映射" :disabled="locked || !canWrite"><option value="">请选择</option><option v-for="m in mappings" :key="key(m.reference)" :value="key(m.reference)">{{ m.candidate.purpose }} · {{ m.candidate.businessRef?.id }} · v{{ m.reference.version }}</option></select></label>
       <button :disabled="locked || !mappingChoice || !canWrite" @click="previewLegacy">预览现有工艺</button>
       <div v-if="preview"><p>原件含 {{ preview.rows.length }} 个步骤。采用后替换本页步骤，提交时再次核对原件是否变化。</p><ol><li v-for="s in preview.suggestedOperations" :key="s.occurrenceId">{{ s.name }} / {{ s.processCode }}<span v-for="p in s.parameters" :key="p.name"> · {{ p.name }}：{{ p.value }}</span></li></ol><button :disabled="locked || !canWrite" @click="adoptLegacy">采用预览步骤</button></div>
     </section>
     <section v-if="current"><h2>历史与差异</h2><form class="inline" @submit.prevent="readHistory"><label>历史版本<input v-model="historyVersion" aria-label="工艺历史版本" pattern="[1-9][0-9]*" required /></label><button :disabled="busy">读取历史</button></form>
-      <div v-if="history"><h3>{{ history.body.name }} · v{{ history.reference.version }}</h3><p>{{ history.reason }}</p><ol><li v-for="s in history.body.operations" :key="s.occurrenceId">{{ s.semanticOrder }} / {{ s.name }} / {{ s.instructions }}</li></ol><details><summary>保存的原件</summary><pre>{{ history.originalJson }}</pre></details></div>
+      <div v-if="history"><h3>{{ history.body.name }} · v{{ history.reference.version }}</h3><p>{{ history.reason }}</p><ol><li v-for="s in [...history.body.operations].sort((a, b) => a.semanticOrder - b.semanticOrder)" :key="s.occurrenceId">{{ s.semanticOrder }} / {{ s.name }} / {{ s.instructions }}</li></ol><details><summary>保存的原件与使用引用</summary><pre>{{ key(history.reference) }}</pre><pre>{{ history.originalJson }}</pre></details></div>
       <form class="inline" @submit.prevent="readDiff"><label>起始版本<input v-model="beforeVersion" aria-label="工艺差异起始版本" pattern="[1-9][0-9]*" required /></label><label>结束版本<input v-model="afterVersion" aria-label="工艺差异结束版本" pattern="[1-9][0-9]*" required /></label><button :disabled="busy">比较版本</button></form>
       <div v-if="diff"><p v-if="!diff.changes.length">两个版本没有内容差异。</p><details v-for="change in diff.changes" :key="change.path"><summary>{{ change.path }}</summary><div class="grid"><pre>{{ change.before }}</pre><pre>{{ change.after }}</pre></div></details></div>
     </section>
@@ -56,13 +113,15 @@
 </template>
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { routingApi, type RoutingBody, type RoutingSnapshot, type RoutingLegacy, type RoutingStep, type RoutingParameter, type RoutingCommand } from '@/api/plm/engineeringRouting'
-import { revisionApi, type RevisionSnapshot, type RevisionDiff } from '@/api/plm/engineeringRevisions'
+import { routingApi, type RoutingBody, type RoutingSnapshot, type RoutingLegacy, type RoutingStep, type RoutingParameter, type RoutingParameterEvidence, type RoutingCommand } from '@/api/plm/engineeringRouting'
+import { revisionApi, type RevisionSnapshot, type RevisionDiff, type RevisionOption } from '@/api/plm/engineeringRevisions'
 import { engineeringApi, type EngineeringReference, type EngineeringScope, type MappingVersion, type SourceChoice } from '@/api/plm/engineeringProducts'
 import { resourceApi, type ResourceKind, type ResourceVersion, type ResourceReference } from '@/api/mes/resourceSources'
 import { capabilityApi } from '@/api/mes/resourceCapabilities'
 import { toolSpecificationApi, type ToolSpecificationView } from '@/api/plm/toolSpecifications'
 import { uomApi, type UomVersion } from '@/api/erp/uomProfiles'
+import { qualityApi, type QualityView } from '@/api/mes/qualitySpecification'
+import { configurationApi, type ConfigurationSnapshot } from '@/api/plm/configurationRules'
 import { pendingRouting, routingResponse as result, saveRouting, resolveRouting, type PendingRouting } from '@/auth/engineeringRoutingRecovery'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
@@ -75,16 +134,66 @@ const parentSearch = ref(''), parents = ref<RevisionSnapshot[]>([]), sites = ref
 const resourceKind = ref<ResourceKind>('MACHINE'), resourceSearch = ref(''), toolSearch = ref(''), unitSearch = ref(''), resourcePage = ref(1), toolPage = ref(1), unitPage = ref(1), moreResources = ref(false), moreTools = ref(false), moreUnits = ref(false)
 const mappings = ref<MappingVersion[]>([]), mappingChoice = ref(''), preview = ref<RoutingLegacy | null>(null), adopted = ref<RoutingLegacy | null>(null)
 const history = ref<RoutingSnapshot | null>(null), historyVersion = ref('1'), beforeVersion = ref('1'), afterVersion = ref('1'), diff = ref<RevisionDiff | null>(null)
+const qualitySearch = ref(''), qualityResults = ref<QualityView[]>([]), qualityPage = ref(1), moreQuality = ref(false)
+const ruleSearch = ref(''), ruleResults = ref<ConfigurationSnapshot[]>([]), rulePage = ref(1), moreRules = ref(false)
+const selectedRuleKey = ref(''), alternativeTargets = ref<Record<string, string>>({})
+const inputStatus = { PASS: '工序输入校验通过', BLOCK: '工序输入存在冲突', UNKNOWN: '工序输入待补证' }
+const catalogueStatus = { APPROVED: '能力已批准', CATALOGUE_VERIFIED: '目录已核对', UNKNOWN: '目录待核实' }
 const numericFields = [{ key: 'value', name: '精确值' }, { key: 'minimum', name: '下限' }, { key: 'maximum', name: '上限' }] as const
 const copy = <T,>(v: T): T => JSON.parse(JSON.stringify(v)) as T
 const key = (v: EngineeringReference & { kind?: string }) => `${v.owner}:${v.kind ? v.kind + ':' : ''}${v.id}:${v.version}:${v.digest}`
 let generation = 0, live = true
+function evidenceKey(evidence: RoutingParameterEvidence) {
+  return key(evidence.specification) + ':' + evidence.requirementId
+}
+const qualityChoices = computed(() => {
+  const draft = body.value, site = draft?.siteRef
+  if (!draft || !site || !permissions.has('quality-specification:query')) return []
+  return qualityResults.value.flatMap(row => {
+    const { reference, body: specification } = row.version
+    const approval = row.currentApproval
+    if (!approval || key(approval.body.specification) !== key(reference) || row.missing.length
+      || specification.stage !== 'IPQC' || key(specification.product) !== key(draft.productRef) || key(specification.site) !== key(site)) return []
+    return specification.requirements.filter(item => item.applicability === 'APPLIES' && item.unit).map(requirement => {
+      const evidence = { specification: reference, approval: approval.reference, requirementId: requirement.id }
+      return { key: evidenceKey(evidence), specificationName: specification.name, requirement, evidence }
+    })
+  })
+})
+const availableRules = computed(() => {
+  const draft = body.value
+  if (!draft || !permissions.has('plm-configuration-rule:query')) return []
+  return ruleResults.value.filter(rule => rule.isActive && rule.state === 'APPROVED' && !rule.missing.length
+    && key(rule.body.productRef) === key(draft.productRef))
+})
+const selectedRule = computed(() => availableRules.value.find(rule => key(rule.reference) === selectedRuleKey.value))
+const ruleOptions = computed(() => selectedRule.value?.body.definitions.flatMap(item => item.allowedValues) ?? [])
 function finding(s: string) {
   const labels: Record<string, string> = { OPERATIONS_REQUIRED: '工艺步骤待补齐', SITE_REQUIRED: '场所待确认', MANUFACTURING_VIEW_OWNER_REQUIRED: '制造视图来源待补齐', CONTROLLED_DOCUMENT_OWNER_REQUIRED: '受控文档来源待补齐', DEPENDENCY_CYCLE_OR_UNRESOLVED: '前置步骤存在循环或缺项', DEPENDENCY_MISSING: '前置步骤已缺失', DEPENDENCY_ORDER_CONFLICT: '顺序与前置步骤冲突', PARAMETER_LIMIT_CONFLICT: '参数值与上下限冲突', PARAMETER_UNIT_REQUIRED: '参数单位待确认', PARAMETER_METHOD_REQUIRED: '参数方法待补齐', PARAMETER_VALUE_REQUIRED: '参数值或范围待补齐', PARAMETER_UNIT_PRECISION_CONFLICT: '参数精度与单位不符', RESOURCE_REQUIRED: '资源待选择', RESOURCE_QUALIFICATION_REQUIRED: '资源生产资格待核准', TOOL_APPROVAL_AND_PHYSICAL_QUALIFICATION_REQUIRED: '工具批准及实物资格待核准', APPLICABILITY_OWNER_REQUIRED: '适用性或替代关系待核准', LEGACY_TECHNICAL_REVIEW_REQUIRED: '导入工艺的顺序、单位及技术要求待核准', PROCESS_REQUIRED: '工序待补齐' }
-  const code = s.split(':')[0] ?? s
-  return labels[code] || (code.endsWith('SOURCE_CHANGED') ? '引用来源已变化，请重新核对' : '来源或资格仍待核准')
+  const [code = s, occurrence, ...parameter] = s.split(':')
+  const evidenceLabels: Record<string, string> = {
+    RESOURCE_CAPABILITY_REQUIRED: '请选择准确能力目录版本', RESOURCE_CAPABILITY_APPROVAL_REQUIRED: '设备能力待批准',
+    RESOURCE_CAPABILITY_NOT_EFFECTIVE: '设备能力已失效或缺少有效期间', RESOURCE_TIME_UNIT_REQUIRED: '缺少资源工时单位',
+    RESOURCE_OUTPUT_UNIT_REQUIRED: '缺少资源产出单位', TIME_BASIS_CHANGED_OR_DISABLED: '时间定义已变化或停用',
+    RESOURCE_CAPABILITY_CHANGED: '能力目录已出后继版本', RESOURCE_SOURCE_CHANGED_OR_DISABLED: '资源来源已变化或停用',
+    UNIT_SOURCE_CHANGED_OR_DISABLED: '目录单位已变化或停用',
+    PARAMETER_DIMENSION_REQUIRED: '参数量纲待确认', PARAMETER_DIMENSION_MISMATCH: '参数量纲与准确单位不符',
+    PARAMETER_EVIDENCE_REQUIRED: '参数缺少批准条款', PARAMETER_EVIDENCE_UNAVAILABLE: '参数原批准条款当前不可用',
+    PARAMETER_EVIDENCE_MISMATCH: '参数的数值、单位或方法与批准条款不符', PARAMETER_UNIT_PRECISION_UNKNOWN: '单位精度待确认',
+    ALTERNATIVE_RULE_CHANGED: '替代条件的规则已变化', ALTERNATIVE_RELATION_CONFLICT: '替代工序关系或条件冲突',
+    ALTERNATIVE_OPTION_MISMATCH: '替代条件超出批准规则的选项'
+  }
+  const label = evidenceLabels[code] || labels[code]
+    || (code.endsWith('SOURCE_CHANGED') ? '引用来源已变化，请重新核对' : '来源或资格仍待核准')
+  const operation = current.value?.body.operations.find(step => step.occurrenceId === occurrence)
+  return operation ? [operation.name, parameter.join(':'), label].filter(Boolean).join(' · ') : label
 }
-function clearEditor() { current.value = null; body.value = null; editing.value = false; id.value = ''; reason.value = ''; parents.value = []; parentSearch.value = ''; sites.value = []; resources.value = []; tools.value = []; units.value = []; mappings.value = []; mappingChoice.value = ''; preview.value = null; adopted.value = null; history.value = null; diff.value = null; resourceSearch.value = ''; toolSearch.value = ''; unitSearch.value = ''; moreResources.value = moreTools.value = moreUnits.value = false }
+function clearEditor() { current.value = null; body.value = null; editing.value = false; id.value = ''; reason.value = ''; parents.value = []; parentSearch.value = ''; sites.value = []; resources.value = []; tools.value = []; units.value = []; mappings.value = []; mappingChoice.value = ''; preview.value = null; adopted.value = null; history.value = null; diff.value = null; resourceSearch.value = ''; toolSearch.value = ''; unitSearch.value = ''; moreResources.value = moreTools.value = moreUnits.value = false; clearEvidenceChoices() }
+function clearEvidenceChoices() {
+  qualityResults.value = []; qualitySearch.value = ''; moreQuality.value = false; qualityPage.value = 1
+  ruleResults.value = []; ruleSearch.value = ''; moreRules.value = false; rulePage.value = 1
+  selectedRuleKey.value = ''; alternativeTargets.value = {}
+}
 function clearPrivate() { clearEditor(); rows.value = []; search.value = ''; page.value = 1 }
 function syncPending() { pending.value = scope.value ? pendingRouting(scope.value) : null }
 async function run(action: (check: () => void) => Promise<void>) {
@@ -116,6 +225,84 @@ function toolName(r: EngineeringReference) { return tools.value.find(t => t.spec
 function addTool(step: RoutingStep, selected: string) { const t = tools.value.find(t => t.specification && key(t.specification.reference) === selected)?.specification; if (t && !step.tools.some(s => s.id === t.reference.id)) step.tools.push(copy(t.reference)) }
 async function findUnits(target: number) { await run(async check => { if (target === 1) units.value = []; const values = result(await uomApi.list(unitSearch.value, target)); check(); units.value.push(...values.filter(u => u.isCurrent && u.profile.enabled)); unitPage.value = target; moreUnits.value = values.length === 20 }) }
 function chooseUnit(p: RoutingParameter, selected: string) { if (!selected) p.unitRef = null; else { const u = units.value.find(u => key(u.reference) === selected); if (u) p.unitRef = copy(u.reference) } }
+async function findQuality(target: number) {
+  if (!body.value?.siteRef || !permissions.has('quality-specification:query')) return
+  await run(async check => {
+    if (target === 1) qualityResults.value = []
+    const values = result(await qualityApi.list(qualitySearch.value, target))
+    check()
+    qualityResults.value.push(...values)
+    qualityPage.value = target
+    moreQuality.value = values.length === 20
+  })
+}
+function normalizeRoutingZero(value: string | null) {
+  return value !== null && /^-0(?:\.0+)?$/.test(value) ? value.slice(1) : value
+}
+async function chooseParameterEvidence(parameter: RoutingParameter, selected: string) {
+  if (locked.value || !canWrite.value) return
+  if (!selected) { parameter.evidence = null; return }
+  const choice = qualityChoices.value.find(item => item.key === selected)
+  const unitRef = choice?.requirement.unit
+  if (!choice || !unitRef) return
+  await run(async check => {
+    const unit = result(await uomApi.read(unitRef.id, unitRef.version))
+    check()
+    if (key(unit.reference) !== key(unitRef) || !unit.isCurrent || !unit.profile.enabled)
+      throw new Error('批准条款的单位版本已变化，请重新核对。')
+    const requirement = choice.requirement
+    Object.assign(parameter, {
+      name: requirement.characteristic, value: normalizeRoutingZero(requirement.target),
+      minimum: normalizeRoutingZero(requirement.lowerLimit), maximum: normalizeRoutingZero(requirement.upperLimit),
+      method: requirement.method, unitRef: copy(unitRef),
+      dimensionKey: unit.profile.dimensionKey, evidence: copy(choice.evidence),
+    })
+  })
+}
+async function findRules(target: number) {
+  if (!permissions.has('plm-configuration-rule:query')) return
+  await run(async check => {
+    if (target === 1) { ruleResults.value = []; selectedRuleKey.value = '' }
+    const values = result(await configurationApi.list(ruleSearch.value, target))
+    check()
+    ruleResults.value.push(...values)
+    rulePage.value = target
+    moreRules.value = values.length === 20
+  })
+}
+function setAlternativeGroup(step: RoutingStep, group: string) {
+  step.alternativeGroup = group || null
+  if (!group) setAlternativeTarget(step, '')
+}
+function alternativeTarget(step: RoutingStep) {
+  return alternativeTargets.value[step.occurrenceId] ?? step.alternative?.replacesOccurrenceId ?? ''
+}
+function setAlternativeTarget(step: RoutingStep, target: string) {
+  alternativeTargets.value[step.occurrenceId] = target
+  if (!target) step.alternative = null
+  else if (step.alternative) step.alternative.replacesOccurrenceId = target
+}
+function optionLabel(option: RevisionOption) {
+  const value = option.text ?? option.decimal ?? (option.boolean ? '是' : '否')
+  return option.name + ' = ' + value
+}
+function alternativeOptionKey(step: RoutingStep) {
+  const alternative = step.alternative
+  if (!alternative) return ''
+  const rule = selectedRule.value
+  const chosen = alternative.when
+  const index = rule && key(rule.reference) === key(alternative.rule)
+    ? ruleOptions.value.findIndex(item => item.name === chosen.name && item.type === chosen.type
+        && (item.text ?? null) === (chosen.text ?? null) && (item.decimal ?? null) === (chosen.decimal ?? null)
+        && (item.boolean ?? null) === (chosen.boolean ?? null))
+    : -1
+  return index >= 0 ? String(index) : 'saved'
+}
+function chooseAlternativeOption(step: RoutingStep, selected: string) {
+  if (!selected) { step.alternative = null; return }
+  const rule = selectedRule.value, when = ruleOptions.value[Number(selected)], target = alternativeTarget(step)
+  if (rule && when && target) step.alternative = { replacesOccurrenceId: target, rule: copy(rule.reference), when: copy(when) }
+}
 async function findMappings() { const product = body.value?.productRef; if (!product) return; await run(async check => { mappings.value = []; mappingChoice.value = ''; preview.value = null; const values = result(await engineeringApi.mappings(product.id)); check(); mappings.value = values.filter(m => m.canAdoptIdentitySite && key(m.candidate.engineeringRef) === key(product)) }) }
 async function previewLegacy() { const mapping = mappings.value.find(m => key(m.reference) === mappingChoice.value); if (!mapping) return; await run(async check => { preview.value = null; const value = result(await routingApi.legacy(mapping.reference)); check(); preview.value = value }) }
 function adoptLegacy() { if (!body.value || !preview.value || locked.value || !canWrite.value) return; adopted.value = copy(preview.value); body.value.operations = copy(preview.value.suggestedOperations); const mapping = mappings.value.find(m => key(m.reference) === key(preview.value!.mappingRef)); body.value.siteRef = copy(mapping?.candidate.siteRef ?? null); notice.value = '预览步骤已放入草稿，请核对顺序、单位和资源后保存。' }
