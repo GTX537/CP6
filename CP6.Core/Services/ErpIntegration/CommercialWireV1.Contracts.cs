@@ -72,7 +72,7 @@ internal static partial class CommercialWireV1
         }
     }
 
-    private static void Requirement(JsonElement value)
+    internal static void Requirement(JsonElement value)
     {
         Exact(value, "summary", "lines", "decisionPath", "noDecisionDateReason");
         Text(value.GetProperty("summary"), 4000);
