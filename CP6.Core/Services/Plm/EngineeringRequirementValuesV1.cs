@@ -1,6 +1,8 @@
 using System.Globalization;
 using System.Numerics;
 using System.Text.RegularExpressions;
+using CP6.Core.Services.Erp;
+using CP6.Core.Services.Pub;
 using static CP6.Core.Services.Plm.EngineeringProductValuesV1;
 
 namespace CP6.Core.Services.Plm;
@@ -11,6 +13,15 @@ internal static class EngineeringRequirementValuesV1
     { if (!required && s == "") return; if (!ValidText(s, max, true)) throw Error("REQUIREMENT_TEXT_INVALID", 400); }
     internal static void Ref(EngineeringSourceRefV1? r)
     { if (r == null || r.Owner != Owner || r.Id == Guid.Empty || !ValidDigest(r.Digest)) throw Error("REQUIREMENT_REFERENCE_INVALID",400); Revision(r.Version); }
+    internal static void Origin(RequirementOriginV1? origin)
+    {
+        if (origin?.Reference is not { } reference || reference.Id == Guid.Empty || !ValidDigest(reference.Digest)
+            || reference.Owner is not (ControlledDocumentValuesV1.Owner or FileContentBytesV1.Owner or OrderSourceReader.RequirementSourceOwner
+                or EngineeringRequirementService.CrmActivityOrigin or EngineeringRequirementService.CrmOpportunityOrigin or EngineeringRequirementService.CrmAttachmentOrigin)
+            || (reference.Owner == ControlledDocumentValuesV1.Owner ? origin.OccurrenceId is null || origin.OccurrenceId == Guid.Empty : origin.OccurrenceId is not null))
+            throw Error("REQUIREMENT_ORIGIN_INVALID", 400);
+        Revision(reference.Version);
+    }
     private static readonly Regex Decimal = new(@"^-?(0|[1-9][0-9]*)(\.[0-9]+)?$", RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
     private static (BigInteger Number, int Scale) Exact(string s)
     {
@@ -27,8 +38,12 @@ internal static class EngineeringRequirementValuesV1
         if (b.Kind=="SOURCE")
         {
             var s=b.Source;
-            if (s==null || b.Requirement!=null || s.Kind is not ("INTERNAL_PROPOSAL" or "UNRESOLVED") || s.Clauses==null || s.Clauses.Length is <1 or >256)
+            if (s==null || b.Requirement!=null || s.Kind is not ("INTERNAL_PROPOSAL" or "UNRESOLVED" or "OWNER_ORIGINAL") ||
+                s.Clauses==null || s.Clauses.Length>256 || s.Origin==null && s.Clauses.Length==0 ||
+                s.Kind=="OWNER_ORIGINAL" && s.Origin==null || s.Kind=="INTERNAL_PROPOSAL" && s.Origin!=null ||
+                s.Kind=="UNRESOLVED" && s.Origin!=null && s.Clauses.Length!=0)
                 throw Error("REQUIREMENT_SOURCE_INVALID",400);
+            if (s.Origin is { } origin) Origin(origin);
             Text(s.OriginDescription,true); Text(s.SourceLabel); Text(s.AcquisitionBasis);
             var ids=new HashSet<string>(StringComparer.Ordinal);
             foreach(var c in s.Clauses)
@@ -48,6 +63,12 @@ internal static class EngineeringRequirementValuesV1
             {
                 if(c==null || !ids.Add(c.Id) || c.Kind is not ("QUANTITATIVE" or "QUALITATIVE"))throw Error("REQUIREMENT_CRITERION_INVALID",400);
                 Text(c.Id,true,128);Text(c.Object);Text(c.Conditions);Text(c.MethodRequirement);
+                if (c.SourceClauseIds is { } basis)
+                {
+                    if (basis.Length>256 || basis.Distinct(StringComparer.Ordinal).Count()!=basis.Length
+                        || basis.Any(clause=>!r.ClauseIds.Contains(clause,StringComparer.Ordinal)))
+                        throw Error("REQUIREMENT_CRITERION_CLAUSE_INVALID",422);
+                }
                 foreach(var v in new[]{c.ProposedUnit,c.UnitBasis,c.Precision,c.QualitativeBasis}) if(v!=null)Text(v,true);
                 foreach(var v in new[]{c.Lower,c.Upper})if(v!=null)_=Exact(v);
                 if(c.Lower==null && c.LowerInclusive!=null || c.Upper==null && c.UpperInclusive!=null
@@ -68,21 +89,60 @@ internal static class EngineeringRequirementValuesV1
             {
                 if(link==null || !ids.Add(link.Id) || link.Kind is not ("PARENT" or "DERIVED" or "CONSTRAINT" or "CONFLICT" or "DEPENDENCY"))throw Error("REQUIREMENT_RELATION_INVALID",400);
                 Text(link.Id,true,128);Ref(link.Target);Text(link.CoverageReason);Text(link.Uncovered);Text(link.Necessity);
+                if (link.Coverage is not { } coverage) continue;
+                if (link.Kind!="PARENT" || coverage.Length is <1 or >256) throw Error("REQUIREMENT_COVERAGE_INVALID",400);
+                var pairs = new HashSet<(string Parent, string Child)>();
+                foreach (var entry in coverage)
+                {
+                    if (entry==null || !pairs.Add((entry.ParentClauseId,entry.ChildClauseId))) throw Error("REQUIREMENT_COVERAGE_INVALID",400);
+                    Text(entry.ParentClauseId,true,128); Text(entry.ChildClauseId,true,128); Text(entry.Reason,true);
+                    if (!r.ClauseIds.Contains(entry.ChildClauseId,StringComparer.Ordinal)) throw Error("REQUIREMENT_COVERAGE_CLAUSE_INVALID",422);
+                }
+            }
+            ValidateClarifications(r.Clarifications);
+            if (r.Decomposition is { } decomposition)
+            {
+                Ref(decomposition.Parent); Text(decomposition.Basis,true);
+                if (decomposition.Children is not { Length: >0 and <=64 }) throw Error("REQUIREMENT_COVERAGE_INVALID",400);
+                foreach (var child in decomposition.Children) Ref(child);
+                if (decomposition.Children.Select(child=>child.Id).Distinct().Count()!=decomposition.Children.Length)
+                    throw Error("REQUIREMENT_COVERAGE_DUPLICATE_CHILD",422);
             }
         }
         else throw Error("REQUIREMENT_KIND_INVALID",400);
+    }
+    private static void ValidateClarifications(RequirementClarificationV1[]? clarifications)
+    {
+        if (clarifications is null) return;
+        var ids = new HashSet<Guid>();
+        if (clarifications.Length>256) throw Error("REQUIREMENT_CLARIFICATION_INVALID",400);
+        foreach (var question in clarifications)
+        {
+            if (question==null || question.Id==Guid.Empty || !ids.Add(question.Id)) throw Error("REQUIREMENT_CLARIFICATION_INVALID",400);
+            Ref(question.Source);
+            Text(question.ClauseId,true,128);
+            Text(question.Question,true);
+            if (question.Reply is { } reply) Origin(reply);
+        }
     }
     internal static List<string> Missing(EngineeringRequirementBodyV1 b)
     {
         var missing=new List<string>();
         if(b.Source is {} s)
-        { if(s.Kind=="UNRESOLVED")missing.Add("SOURCE_UNRESOLVED");if(string.IsNullOrWhiteSpace(s.SourceLabel))missing.Add("SOURCE_LABEL_REQUIRED");if(string.IsNullOrWhiteSpace(s.AcquisitionBasis))missing.Add("ACQUISITION_BASIS_REQUIRED"); }
+        {
+            if(s.Kind=="UNRESOLVED")missing.Add("SOURCE_UNRESOLVED");
+            if(s.Kind=="OWNER_ORIGINAL" && s.Clauses.Length==0)missing.Add("SOURCE_CLAUSES_REQUIRED");
+            if(string.IsNullOrWhiteSpace(s.SourceLabel))missing.Add("SOURCE_LABEL_REQUIRED");
+            if(string.IsNullOrWhiteSpace(s.AcquisitionBasis))missing.Add("ACQUISITION_BASIS_REQUIRED");
+        }
         if(b.Requirement is {} r)
         {
             missing.Add("REQUIREMENT_APPROVAL_PENDING");
             if(string.IsNullOrWhiteSpace(r.ApplicableObject))missing.Add("APPLICABLE_OBJECT_REQUIRED");
             if(string.IsNullOrWhiteSpace(r.Necessity))missing.Add("NECESSITY_REQUIRED");
-            if(r.ClarificationQuestions.Length>0)missing.Add("SOURCE_CLARIFICATION_PENDING");
+            if(r.ClarificationQuestions.Length>0 || r.Clarifications?.Any(q=>q.Reply==null)==true)missing.Add("SOURCE_CLARIFICATION_PENDING");
+            foreach (var question in r.Clarifications ?? [])
+                if (question.Reply!=null) missing.Add("SOURCE_REPLY_AUTHORITY_UNPROVEN:"+question.Id);
             if(r.Criteria.Length==0)missing.Add("CRITERIA_REQUIRED");
             foreach(var c in r.Criteria)
             {

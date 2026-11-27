@@ -1,5 +1,6 @@
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Core.Services.Sys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -21,21 +22,48 @@ public sealed class OrderSourceReader(CP6Context db, OrderReadOwnerV1 owner)
         if (orderId == Guid.Empty || originalRevision is <= 0) throw Error("SCHEMA_INVALID", 400);
         return Read(async (access, token) =>
         {
-            await LockNative(db, orderId, token);
-            var current = await VisibleOrder(access, orderId, token);
-            var allowed = access.Rows.Where(d => d.WebOrderNo == current.Number).Select(d => d.Id);
-            var currentIds = current.Lines.Select(l => l.Id).ToArray();
-            if (await allowed.CountAsync(id => currentIds.Contains(id), token) != currentIds.Length)
-                throw Error("OBJECT_FORBIDDEN", 403);
-
-            var stored = await ReadOriginal(db, orderId, originalRevision, token);
+            var (current, stored) = await VisibleOriginal(access, orderId, originalRevision, token);
             var original = stored?.Read();
-            // 旧行已移除或换了对象范围时，保留原件，读结果不披露无法在当前范围核实的行。
-            if (original is not null && original.Lines.Any(l => !currentIds.Contains(l.Id)))
-                return new(current, null, null, null, null, "UNPROVEN", "UNPROVEN");
             return new LegacyOrderSourceRead(current, original, stored?.Revision, stored?.Digest, stored?.Writer,
                 original is null ? "UNPROVEN" : "ORIGINAL_FOUND", "UNPROVEN");
         }, ct);
+    }
+
+    internal const string RequirementSourceOwner = "Main.Erp.SalesOrderSource.v1";
+
+    internal async Task<byte[]> ReadRequirementOriginal(OperationsAccessV1 root, Guid orderId, long revision,
+        string digest, CancellationToken ct)
+    {
+        if (!owner.Owns(db)) throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);
+        RequireTransaction(db);
+        var access = await owner.ParticipateDisclosureAsync("erp-order", "query", ct);
+        if (access.SubjectId != root.ActorId || !access.Price || !access.Amount)
+            throw Error("FIELD_READ_FORBIDDEN", 403);
+        var (_, original) = await VisibleOriginal(access, orderId, revision, ct);
+        if (original is null) throw Error("SALES_SOURCE_ORIGINAL_UNPROVEN", 503);
+        if (original.Digest != digest) throw Error("REQUIREMENT_ORIGIN_CHANGED", 412);
+
+        root.AtCommit(async token =>
+        {
+            var final = await owner.ParticipateDisclosureAsync("erp-order", "query", token);
+            if (final.SubjectId != access.SubjectId || final.ReadScopeVersion != access.ReadScopeVersion || !final.Price || !final.Amount)
+                throw Error("AUTHORITY_CHANGED", 403);
+        });
+        return original.Body;
+    }
+
+    private async Task<(LegacyOrderSourceSnapshot Current, Original? Original)> VisibleOriginal(
+        OrderReadOwnerV1.Access access, Guid orderId, long? revision, CancellationToken ct)
+    {
+        await LockNative(db, orderId, ct);
+        var current = await VisibleOrder(access, orderId, ct);
+        var currentIds = current.Lines.Select(line => line.Id).ToHashSet();
+        var allowed = access.Rows.Where(row => row.WebOrderNo == current.Number);
+        if (await allowed.CountAsync(row => currentIds.Contains(row.Id), ct) != currentIds.Count)
+            throw Error("OBJECT_FORBIDDEN", 403);
+        var stored = await ReadOriginal(db, orderId, revision, ct);
+        // 保留历史原件。当前范围无法核实旧行时，封闭该原件。
+        return (current, stored?.Read().Lines.Any(line => !currentIds.Contains(line.Id)) == true ? null : stored);
     }
 
     public Task<OrderScheduleSourceRead> ReadScheduleAsync(OrderSourceScope scope, CancellationToken ct = default)
