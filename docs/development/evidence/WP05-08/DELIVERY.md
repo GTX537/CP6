@@ -169,10 +169,28 @@ R1 沿用 DEV-1 和 `codex/wp05-08`，以独立复核的远端任务提交 `e54e
 
 R1 的四组 Release 回归、Vitest、类型检查及 Vite 构建按本文件所在提交的单次运行取证，命令、环境、TRX 及摘要见最终索引。有效时间、席位状态、工作区读回和回环实例停机状态见 R1 交接读回。[最终验证](<D:/CP6-test-artifacts/WP05-08/exec-20261127T095928Z/validation-final/final-verification.json>) · [R1 交接读回](<D:/CP6-test-artifacts/WP05-08/exec-20261127T095928Z/handoff.json>)
 
-## 7. R1B 终态验证说明
+## 7. R1E 终态验证说明
 
-测量候选 `fc1accc7ce9871cc76611c1b0f2efc38047357e4` 的源码树为 `6e9635be29236c4e0f031f66d7c727edcfb5d01c`。主线对照为 `76805d0b7daf9673b7ceb67339e6757ab7a33976`。两侧冻结用例和夹具源文件一致，沿用 15 秒客户端时限。使用 .NET SDK 10.0.404 Release，在 55448 端口的新建回环 PostgreSQL 18.6 夹具上，每项用例各交替运行三次，合计 12 次。ASP.NET Core Hosting 日志记录每个 `POST /freeze` 的起止、状态和已完成耗时。客户端取消且服务器缺少完成日志的样本记为右删失。[对照 JSON、负载快照和 12 份 TRX 摘要](<D:/CP6-test-artifacts/WP05-08/exec-20261127T115409Z-r1b/comparison.json>)
+本节记录当前终态的证据口径。验证候选为 `fc1accc7ce9871cc76611c1b0f2efc38047357e4`，源码树为 `6e9635be29236c4e0f031f66d7c727edcfb5d01c`。终态采用 R1 同树四组其余 .NET 用例 301 项通过（WP05-02 95、工程 42、需求 103、工艺 61），同树 Vitest 185 项通过，`vue-tsc` 与 Vite 构建退出码均为 0，以及下述两个冻结用例的候选与主线成对对照。成对对照保留实际失败结果。[R1 终态索引及原件摘要](<D:/CP6-test-artifacts/WP05-08/exec-20261127T095928Z/validation-final/final-verification.json>)
 
-六对首次有效冻结的 CPU 样本范围均有重叠。观察窗均有 4 个 dotnet、30 个 PostgreSQL 和 16 个 Chrome 进程，DEV-2 测试 .NET 为 0、PostgreSQL 为 9。候选与主线各有 5 次在有效冻结 POST 触发时限。两次完成的 Program 有效冻结分别为候选第 3 轮 14.985 秒、主线第 1 轮 14.498 秒，随后分别在取消探测和原操作回执读回触发时限。两侧共同失效支持本机环境解释。十个首冻样本的服务器完成耗时不可观测，耗时差及低负载效应仍待验证。临时主线 detached 检出已核实清洁并移除。[基线退场原件](<D:/CP6-test-artifacts/WP05-08/exec-20261127T115409Z-r1b/baseline-retire.json>)
+TC018 和实际 Program HTTP 冻结共用工程基线冻结入口。候选和 `origin/main@76805d0b7daf9673b7ceb67339e6757ab7a33976` 在这两项均复现了主线既有冻结链路的 15 秒客户端超时。同一事务内串行执行上万条短 SQL，耗时集中于评审、工程来源读取与提交前复核。总控裁定这是主线既有性能缺陷，本卡合并沿用该对照场景在主线的既有表现。
 
-候选低负载补验为 0／6。等待期间，WP03-19 历史红例的 PostgreSQL 主进程 PID 35376 持续存续，最后一次门槛采样为 2026-11-27 12:56:44 UTC，DEV-2 测试相关 .NET 6 个、PostgreSQL 18 个。只读等待已退场。R1 的同树 301 项 .NET 通过、185 项 Vitest 通过及两项前端构建检查仍可追溯，两个冻结用例尚未取得本卡要求的低负载通过证据。R1B 终态为 `BLOCKED`。[低负载门槛记录](<D:/CP6-test-artifacts/WP05-08/exec-20261127T115409Z-r1b/low-wait-stop.json>) · [R1B 交付读回](<D:/CP6-test-artifacts/WP05-08/exec-20261127T115409Z-r1b/handoff.json>)
+- R1B 在相同用例、夹具与 15 秒时限下，每侧各跑 TC018 和 Program 三次。TC018 两侧均三次在首冻 POST 超时。Program 每侧两次在首个有效 POST 超时，另一次有效 POST 在候选约 14.985 秒、主线约 14.498 秒返回，随后分别在取消探测和原操作回执读回时超时。[R1B 成对对照、负载快照及 12 份 TRX 摘要](<D:/CP6-test-artifacts/WP05-08/exec-20261127T115409Z-r1b/comparison.json>)
+- R1C 在低负载请求窗内对候选各连跑三次，TC018 通过 0／3，Program 通过 1／3。Program 通过的首冻耗时 14.836 秒，另两次由客户端取消。逐次负载、请求窗及 Program 首轮在请求窗外的负载门槛例外随原件保留。[R1C 低负载记录和六份 TRX 摘要](<D:/CP6-test-artifacts/WP05-08/exec-20261127T115409Z-r1b/r1c-validation.json>)
+- R1D 用同一诊断方法在候选和主线各运行一次实际 Program 用例。以下为首次有效 `POST /freeze` 的分段，末段在客户端取消时截断。两侧隔离 PostgreSQL 各有 41 个等待样本，锁阻塞样本数均为 0。SQL 数计 `execute` 与 `statement`，按 R1D 的时间窗边界归段。[R1D 分段与 SQL 计数](<D:/CP6-test-artifacts/WP05-08/exec-20261127T134151Z-r1d/comparison-r1d.json>) · [诊断报告与 TRX SHA-256](<D:/CP6-test-artifacts/WP05-08/exec-20261127T134151Z-r1d/R1D-REPORT.md>)
+
+| 首次有效冻结分段 | 候选耗时 | 主线耗时 | 候选 SQL 数 | 主线 SQL 数 |
+| --- | ---: | ---: | ---: | ---: |
+| 服务端收到请求至进入控制器 | 0.315 秒 | 0.336 秒 | 7 | 7 |
+| 进入 Owner 至事务建立 | 0.047 秒 | 0.042 秒 | 1 | 1 |
+| 事务建立至读完评审原件 | 7.704 秒 | 7.886 秒 | 6,617 | 6,617 |
+| 读完评审原件至首笔基线写入 | 1.748 秒 | 2.033 秒 | 1,558 | 1,558 |
+| 首笔基线写入至操作原件写入结束 | 0.057 秒 | 0.057 秒 | 4 | 4 |
+| 操作原件写入结束至客户端取消 | 5.133 秒 | 4.668 秒 | 4,739 | 3,959 |
+| 客户端总耗时与截至取消的 SQL 数 | 15.004 秒 | 15.024 秒 | 12,926 | 12,146 |
+
+两侧的操作原件写入均为第 8,188 条 SQL，计入 R1D 最后一段的时间窗起点。按日志顺序从该语句之后计，既有最终复核在候选和主线分别执行了 4,738 和 3,958 条。逐条对齐 PostgreSQL 日志记录的 SQL 原文，主线的 12,146 条与候选的前 12,146 条文本和顺序完全一致。候选的最终复核窗口比主线长约 0.465 秒，取消前继续执行的 780 条均来自已在主线样本出现的 74 种 SQL，包含迭代评审、工程修订、文件来源和当前授权读取。[候选 PostgreSQL 原件](<D:/CP6-test-artifacts/WP05-08/exec-20261127T134151Z-r1d/candidate/permission-consumption-wp05-08-r1d/postgres.log>) · [主线 PostgreSQL 原件](<D:/CP6-test-artifacts/WP05-08/exec-20261127T134151Z-r1d/baseline/permission-consumption-wp05-08-r1d/postgres.log>)
+
+这 780 条来自 `OperationsOwnerV1.ValidateFinalAuthorityAsync` 进入 `OperationsAccessV1.ValidateFinalAsync` 后的既有复核。评审重读由 `IterationReviewOwnerV1.FreezeSource` 登记，工程源复核由 `EngineeringSourceCheckService.Final` 登记。本场景的适用组成是 `DOCUMENT` 与 `QUALITY_SPEC`，两侧工艺路线、BOM 和制造来源表查询均为 0，差额中本卡新增校验的逐条查询为 0。[最终复核入口](../../../../CP6.Core/Services/Integration/OperationsOwnerV1.cs#L260-L269) · [评审回调](../../../../CP6.Core/Services/Plm/IterationReviewOwnerV1.Freeze.cs#L83-L89) · [工程来源回调](../../../../CP6.Core/Services/Plm/EngineeringSourceCheckService.cs#L101-L108) · [场景夹具](../../../../CP6.Tests/Erp/EngineeringSourceCheckPostgreSqlTests.cs#L24-L46)
+
+冻结链路性能修复移交 Main 台账补充卡「冻结链路串行 SQL 性能」，编号待总控分配。补充卡承接上述分段及两项冻结用例的原 15 秒验收。
