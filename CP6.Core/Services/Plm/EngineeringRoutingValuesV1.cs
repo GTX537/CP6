@@ -133,14 +133,34 @@ internal static class EngineeringRoutingValuesV1
 
                 next[parent].Add(op.OccurrenceId);
                 if (predecessor.SemanticOrder >= op.SemanticOrder) findings.Add("DEPENDENCY_ORDER_CONFLICT:" + op.OccurrenceId);
-                if (op.AlternativeGroup != null && predecessor.AlternativeGroup == op.AlternativeGroup)
-                    findings.Add("ALTERNATIVE_RELATION_CONFLICT:" + op.OccurrenceId);
             }
+            if (op.AlternativeGroup != null && op.DependsOn.Length > 0 && DependsOnGroupMember(op, index))
+                findings.Add("ALTERNATIVE_RELATION_CONFLICT:" + op.OccurrenceId);
         }
         var queue = new Queue<Guid>(pending.Where(x => x.Value == 0).Select(x => x.Key)); var visited = 0;
         while (queue.TryDequeue(out var id)) { visited++; foreach (var successor in next[id]) if (--pending[successor] == 0) queue.Enqueue(successor); }
         if (visited != ids.Count) findings.Add("DEPENDENCY_CYCLE_OR_UNRESOLVED");
         return findings.Distinct(StringComparer.Ordinal).ToArray();
+    }
+
+    private static bool DependsOnGroupMember(RoutingOperationV1 member, Dictionary<Guid, RoutingOperationV1> index)
+    {
+        var visited = new HashSet<Guid> { member.OccurrenceId };
+        var pending = new Queue<RoutingOperationV1>();
+        pending.Enqueue(member);
+        while (pending.TryDequeue(out var step))
+        {
+            var direct = step.OccurrenceId == member.OccurrenceId;
+            foreach (var id in step.DependsOn)
+            {
+                if (!index.TryGetValue(id, out var predecessor)) continue;
+                // 同组直接前置始终冲突。更长的路径只经过已确认适用的工序。
+                var follow = step.Applicability == "APPLIES" && predecessor.Applicability == "APPLIES" && visited.Add(id);
+                if ((direct || follow) && predecessor.AlternativeGroup == member.AlternativeGroup) return true;
+                if (follow) pending.Enqueue(predecessor);
+            }
+        }
+        return false;
     }
 
     private static void ValidateAlternatives(RoutingOperationV1[] operations, Dictionary<Guid, RoutingOperationV1> index, List<string> findings)

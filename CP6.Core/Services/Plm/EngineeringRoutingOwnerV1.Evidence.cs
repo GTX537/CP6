@@ -7,7 +7,7 @@ namespace CP6.Core.Services.Plm;
 
 public sealed partial class EngineeringRoutingOwnerV1
 {
-    private static RoutingInputValidationV1 InputValidation(List<string> findings, List<RoutingCatalogueObservationV1> catalogues)
+    internal static RoutingInputValidationV1 InputValidation(List<string> findings, List<RoutingCatalogueObservationV1> catalogues)
     {
         // 工程组合、独立技术审批和生产资格继续由原 Owner 裁决。
         var inputs = findings.Where(code => code.Split(':', 2)[0] is not ("MANUFACTURING_VIEW_OWNER_REQUIRED"

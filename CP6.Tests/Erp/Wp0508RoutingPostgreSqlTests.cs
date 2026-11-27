@@ -180,26 +180,41 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var cookies = await Login(host, h);
         const string path = "/api/engineering-routing/owner-v1";
         async Task<EngineeringRoutingSnapshotV1> ReviseWithDependency(EngineeringRoutingSnapshotV1 before,
-            RoutingOperationV1 predecessor, RoutingOperationV1 dependent)
+            RoutingOperationV1 predecessor, RoutingOperationV1 dependent, params RoutingOperationV1[] intermediates)
         {
-            var command = RoutingRevise(before) with { Body = before.Body with { Operations = [predecessor, dependent] } };
+            var command = RoutingRevise(before) with { Body = before.Body with { Operations = [predecessor, .. intermediates, dependent] } };
             using var post = OperationsRequest(cookies, HttpMethod.Post, path + "/commands", command);
             using var saved = await host.Send(post);
             var receipt = await DocumentHttpData<EngineeringRoutingResultV1>(saved);
             using var get = OperationsRequest(cookies, HttpMethod.Get, $"{path}/{input.RoutingId}?version={receipt.Version}");
             using var read = await host.Send(get);
             var persisted = await DocumentHttpData<EngineeringRoutingSnapshotV1>(read);
+            Assert.Equal(command.OperationId, receipt.OperationId);
+            Assert.Equal(command.RoutingId, receipt.ObjectId);
+            Assert.Equal(receipt.Version, persisted.Reference.Version);
             Assert.Equal(receipt.Digest, persisted.Reference.Digest);
-            Assert.Equal(dependent.DependsOn, Assert.Single(persisted.Body.Operations, op => op.OccurrenceId == dependent.OccurrenceId).DependsOn);
+            Assert.Equal("DRAFT", persisted.State);
+            foreach (var expected in command.Body.Operations)
+                Assert.Equal(expected.DependsOn, Assert.Single(persisted.Body.Operations, op => op.OccurrenceId == expected.OccurrenceId).DependsOn);
             Assert.Equal("BLOCK", persisted.InputValidation!.State);
             Assert.Contains($"ALTERNATIVE_RELATION_CONFLICT:{dependent.OccurrenceId}", persisted.InputValidation.Findings);
             Assert.DoesNotContain($"DEPENDENCY_ORDER_CONFLICT:{dependent.OccurrenceId}", persisted.InputValidation.Findings);
+            using var recovery = await host.Send(OperationsRequest(cookies, HttpMethod.Get, $"{path}/operations/{receipt.OperationId}"));
+            var operation = await DocumentHttpData<EngineeringRoutingOperationV1>(recovery);
+            Assert.Equal("COMMITTED", operation.State);
+            Assert.Equal(receipt, operation.Result);
             return persisted;
         }
 
         current = await ReviseWithDependency(current, primary, substitute with { DependsOn = [primary.OccurrenceId] });
         current = await ReviseWithDependency(current, substitute,
             primary with { SemanticOrder = 30, DependsOn = [substitute.OccurrenceId] });
+        var middle = primary with
+        {
+            OccurrenceId = Guid.NewGuid(), AlternativeGroup = null, SemanticOrder = 20, DependsOn = [primary.OccurrenceId]
+        };
+        current = await ReviseWithDependency(current, primary,
+            substitute with { SemanticOrder = 30, DependsOn = [middle.OccurrenceId] }, middle);
         Assert.Equal(original.OriginalJson, (await routing.ReadAsync(input.RoutingId, "1")).OriginalJson);
         await Step(ConfigurationRules(h), rule, "WITHDRAW");
         Assert.Contains("ALTERNATIVE_RULE_CHANGED:" + substitute.OccurrenceId, (await routing.ReadAsync(input.RoutingId, "1")).Missing!);

@@ -194,3 +194,15 @@ TC018 和实际 Program HTTP 冻结共用工程基线冻结入口。候选和 `o
 这 780 条来自 `OperationsOwnerV1.ValidateFinalAuthorityAsync` 进入 `OperationsAccessV1.ValidateFinalAsync` 后的既有复核。评审重读由 `IterationReviewOwnerV1.FreezeSource` 登记，工程源复核由 `EngineeringSourceCheckService.Final` 登记。本场景的适用组成是 `DOCUMENT` 与 `QUALITY_SPEC`，两侧工艺路线、BOM 和制造来源表查询均为 0，差额中本卡新增校验的逐条查询为 0。[最终复核入口](../../../../CP6.Core/Services/Integration/OperationsOwnerV1.cs#L260-L269) · [评审回调](../../../../CP6.Core/Services/Plm/IterationReviewOwnerV1.Freeze.cs#L83-L89) · [工程来源回调](../../../../CP6.Core/Services/Plm/EngineeringSourceCheckService.cs#L101-L108) · [场景夹具](../../../../CP6.Tests/Erp/EngineeringSourceCheckPostgreSqlTests.cs#L24-L46)
 
 冻结链路性能修复移交 Main 台账补充卡「冻结链路串行 SQL 性能」，编号待总控分配。补充卡承接上述分段及两项冻结用例的原 15 秒验收。
+
+## 8. R1F 互斥替代组的传递依赖
+
+主工序或替代项经一个或多个必需工序依赖同组另一成员时，依赖方的发生项产生 `ALTERNATIVE_RELATION_CONFLICT:<occurrenceId>`，输入状态为 `BLOCK`。这条规则也覆盖同组两个不同替代项。主、替代只共用组外前置时，两者之间均不可达，资料齐备的输入为 `PASS`。[第二轮复核原件](<D:/CP6-test-artifacts/WP05-08/coord-verify-20261127T140901676Z-r2/COORD-VERIFY.md>) · [同一复核脚本的修复前记录](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/before/routing-input-observations.json>) · [候选程序集复跑原件](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/routing-input-observations.json>)
+
+显式声明的同组直接依赖沿用原有冲突判定。新增传递校验只沿两端均为 `APPLIES` 的边继续。中间工序为 `NOT_APPLICABLE` 或 `UNKNOWN` 时保留 `APPLICABILITY_OWNER_REQUIRED`，单凭该链得出的输入状态为 `UNKNOWN`。缺失前置、语义顺序和循环仍在完整依赖图上校验。[纯函数参数化回归](../../../../CP6.Tests/Erp/Wp0508RoutingValuesTests.cs)
+
+校验按发生项 ID 复用当前路线原件的索引，对每个带替代组且有前置的成员做一次广度优先搜索，每个可达工序至多入队一次。设工序数为 V、依赖边数为 E、发起搜索的成员数为 M，时间上界为 O((M + 1) × (V + E))，单次搜索额外空间为 O(V)。命令与保存后的按版读取共用 `EngineeringRoutingValuesV1.Validate`。`Observe` 经 `Sources` 对已存原件重新计算，再投影输入状态。本轮搜索只读取内存对象，冻结链路新增 SQL 为 0。第 7 节的两个冻结用例及原 15 秒时限继续由 Main「冻结链路串行 SQL 性能」补充卡承接。[依赖校验](../../../../CP6.Core/Services/Plm/EngineeringRoutingValuesV1.cs) · [按版复验](../../../../CP6.Core/Services/Plm/EngineeringRoutingOwnerV1.Sources.cs) · [冻结对照与工艺表计数](<D:/CP6-test-artifacts/WP05-08/coord-verify-20261127T140901676Z-r2/sql-comparison-r2.json>)
+
+定向回归修复前 11 项中有 6 项失败，修复后 11 项全部通过。实际 Program HTTP 回归通过 `POST /commands` 保存含间接冲突的路线草稿，按回执版本读回 `DRAFT` 和 `InputValidation=BLOCK`，核对两段依赖、操作键、对象、版本和摘要。按原操作键读取返回 `COMMITTED` 和同一草稿保存回执，旧版原件可读。修复前同一 HTTP 输入读回 `UNKNOWN`。复核脚本资料齐备的两个间接反例均读到 `PASS`。[HTTP 回归](../../../../CP6.Tests/Erp/Wp0508RoutingPostgreSqlTests.cs) · [修复前定向 TRX](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/red/red.trx>) · [修复后定向 TRX](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/green/green.trx>)
+
+R1F 的终态以本节所在提交运行 WP05-02（95 项）、工程（44 项，含两个冻结用例）、REQ／销售／DOC／QUALITY（103 项）、工艺／WP08-16／工具规格（69 项）四组 .NET Release 回归，以及前端 21 个测试文件、强制类型检查和 Vite 构建。下列索引记录各组逐项结果、两条冻结用例的实际结局、原件 SHA-256、编译对象和夹具停机核对。复核脚本仅重绑候选提交和程序集位置，六组场景及原断言沿用复核原件，另逐项核对间接方向的冲突发生项。[R1F 终态验证](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/final-verification.json>) · [脚本来源](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/script-provenance.json>) · [六组判定](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/routing-input-assertions.json>)
