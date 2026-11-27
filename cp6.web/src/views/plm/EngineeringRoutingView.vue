@@ -236,6 +236,9 @@ async function findQuality(target: number) {
     moreQuality.value = values.length === 20
   })
 }
+function normalizeRoutingZero(value: string | null) {
+  return value !== null && /^-0(?:\.0+)?$/.test(value) ? value.slice(1) : value
+}
 async function chooseParameterEvidence(parameter: RoutingParameter, selected: string) {
   if (locked.value || !canWrite.value) return
   if (!selected) { parameter.evidence = null; return }
@@ -249,8 +252,9 @@ async function chooseParameterEvidence(parameter: RoutingParameter, selected: st
       throw new Error('批准条款的单位版本已变化，请重新核对。')
     const requirement = choice.requirement
     Object.assign(parameter, {
-      name: requirement.characteristic, value: requirement.target, minimum: requirement.lowerLimit,
-      maximum: requirement.upperLimit, method: requirement.method, unitRef: copy(unitRef),
+      name: requirement.characteristic, value: normalizeRoutingZero(requirement.target),
+      minimum: normalizeRoutingZero(requirement.lowerLimit), maximum: normalizeRoutingZero(requirement.upperLimit),
+      method: requirement.method, unitRef: copy(unitRef),
       dimensionKey: unit.profile.dimensionKey, evidence: copy(choice.evidence),
     })
   })

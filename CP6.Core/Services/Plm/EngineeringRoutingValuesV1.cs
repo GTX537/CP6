@@ -124,8 +124,18 @@ internal static class EngineeringRoutingValuesV1
         {
             pending[op.OccurrenceId] = op.DependsOn.Length;
             foreach (var parent in op.DependsOn)
-                if (!index.TryGetValue(parent, out var predecessor)) findings.Add("DEPENDENCY_MISSING:" + op.OccurrenceId);
-                else { next[parent].Add(op.OccurrenceId); if (predecessor.SemanticOrder >= op.SemanticOrder) findings.Add("DEPENDENCY_ORDER_CONFLICT:" + op.OccurrenceId); }
+            {
+                if (!index.TryGetValue(parent, out var predecessor))
+                {
+                    findings.Add("DEPENDENCY_MISSING:" + op.OccurrenceId);
+                    continue;
+                }
+
+                next[parent].Add(op.OccurrenceId);
+                if (predecessor.SemanticOrder >= op.SemanticOrder) findings.Add("DEPENDENCY_ORDER_CONFLICT:" + op.OccurrenceId);
+                if (op.AlternativeGroup != null && predecessor.AlternativeGroup == op.AlternativeGroup)
+                    findings.Add("ALTERNATIVE_RELATION_CONFLICT:" + op.OccurrenceId);
+            }
         }
         var queue = new Queue<Guid>(pending.Where(x => x.Value == 0).Select(x => x.Key)); var visited = 0;
         while (queue.TryDequeue(out var id)) { visited++; foreach (var successor in next[id]) if (--pending[successor] == 0) queue.Enqueue(successor); }
@@ -156,8 +166,7 @@ internal static class EngineeringRoutingValuesV1
                 if (!validHead || alternative.ReplacesOccurrenceId != first.ReplacesOccurrenceId
                     || op.OccurrenceId == alternative.ReplacesOccurrenceId || alternative.Rule != first.Rule
                     || alternative.When.Name != first.When.Name || alternative.When.Type != first.When.Type
-                    || !choices.Add(ConfigurationRuleValuesV1.Key(alternative.When))
-                    || op.DependsOn.Any(id => index.TryGetValue(id, out var predecessor) && predecessor.AlternativeGroup == group.Key))
+                    || !choices.Add(ConfigurationRuleValuesV1.Key(alternative.When)))
                     findings.Add("ALTERNATIVE_RELATION_CONFLICT:" + op.OccurrenceId);
             }
         }

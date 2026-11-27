@@ -111,14 +111,24 @@ it('explicitly adopts the exact resource capability version, rejects mismatched 
   expect(api.save.mock.calls.at(-1)![0].body.operations[0]).toMatchObject({ resources: [], resourceCapabilities: [] })
 })
 
-it('uses an explicitly selected approved process requirement and preserves its exact unit and limits', async () => {
+it.each([
+  ['uses an explicitly selected approved process requirement and preserves its exact unit and limits',
+    { target: '2.50000000', lowerLimit: '2.48000000', upperLimit: '2.55000000' },
+    { value: '2.50000000', minimum: '2.48000000', maximum: '2.55000000' }],
+  ['带入批准条款时规范目标和上限的负零并保留精确下限',
+    { target: '-0.00000000', lowerLimit: '-0.0000000000000000001', upperLimit: '-0' },
+    { value: '0.00000000', minimum: '-0.0000000000000000001', maximum: '0' }],
+  ['带入批准条款时规范下限的负零并保留空值和精确上限',
+    { target: null, lowerLimit: '-0.00000000', upperLimit: '0.0000000000000000001' },
+    { value: null, minimum: '0.00000000', maximum: '0.0000000000000000001' }],
+] as const)('%s', async (_title, values, expected) => {
   const site = reference('Main.Space.PhysicalSite.v1', 21)
   const specification = reference('Main.Quality.Specification.v1', 22, '4')
   const approval = reference('Main.Quality.SpecificationApproval.v1', 23)
   const unit = reference('Main.Erp.UomProfile.v1', 24, '2')
   persisted.body.siteRef = site
   const requirement = { id: 'SIMULATED-width', characteristic: '模拟宽度', method: '模拟卡尺测量', unit,
-    target: '2.50000000', lowerLimit: '2.48000000', upperLimit: '2.55000000', applicability: 'APPLIES' }
+    ...values, applicability: 'APPLIES' }
   const currentApproval = { reference: approval, body: { specification } }
   const body = { name: '模拟过程质量规格', product, site, stage: 'IPQC', requirements: [requirement] }
   api.quality.mockResolvedValue(ok([{ version: { reference: specification, body }, currentApproval, missing: [] },
@@ -132,7 +142,7 @@ it('uses an explicitly selected approved process requirement and preserves its e
   await submit('工艺名称')
   expect(api.unit).toHaveBeenCalledWith(unit.id, unit.version)
   expect(api.save.mock.calls[0]![0].body.operations[0].parameters[0]).toMatchObject({
-    name: '模拟宽度', value: '2.50000000', minimum: '2.48000000', maximum: '2.55000000', unitRef: unit,
+    name: '模拟宽度', ...expected, unitRef: unit,
     dimensionKey: 'LENGTH', method: '模拟卡尺测量', evidence: { specification, approval, requirementId: requirement.id }
   })
 })

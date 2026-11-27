@@ -158,3 +158,13 @@ W186、W203 已交付工序发生项、旧原件、资源能力版本和工艺�
 ## 5. 交接状态
 
 交接保存在已登记的本地 `codex/wp05-08`，DEV-1 由 `CP6-EXEC` 持有。候选 SHA、树、完整 diff 核对、静态工作流报告、有效时间与 `status --porcelain` 的实际读回见证据。真实投产、现网数据与全场景原 AC 仍待对应 Owner。分支、复核与席位下一步由总控处理。[交付读回](<D:/CP6-test-artifacts/WP05-08/exec-20261127T052752Z/handoff.json>)
+
+## 6. R1 独立复核返工
+
+R1 沿用 DEV-1 和 `codex/wp05-08`，以独立复核的远端任务提交 `e54eea08cae00e47cf7b130de9ce7c7c4ae6d473` 为起点。工序依赖校验在解析每条必需前置时检查替代组成员关系。主工序依赖同组替代项和替代项依赖同组主工序均产生 `ALTERNATIVE_RELATION_CONFLICT`，输入状态为 `BLOCK`。原卡各 AC 的完整场景出口见上表。[独立复核](<D:/CP6-test-artifacts/WP05-08/coord-verify-20261127T090525707Z/COORD-VERIFY.md>) · [接续登记](<D:/CP6-test-artifacts/WP05-08/exec-20261127T095928Z/preflight.json>)
+
+`Wp0508_alternative_group_rejects_dependency_in_either_direction` 用合法语义顺序分别覆盖两个方向。`Wp0508_alternative_is_directional_and_bound_to_an_approved_configuration_option` 通过真实 HTTP 保存、按回执版本读回两个反例，并核对准确摘要、已保存依赖、`BLOCK` 和旧原件。页面带入已批准质量条款时去除零值的负号，保留小数位、非零十进制字符串和批准条款引用。Vitest 覆盖负零目标值、上限、下限以及空值。
+
+`RoutingParameterV1.DimensionKey`、`RoutingParameterV1.Evidence` 和 `RoutingOperationV1.Alternative` 为 `null` 时省略。带有非空 `dimensionKey`、`evidence` 或 `alternative` 的路线原件一旦持久化，回退到引入这些字段之前的应用，旧版模型的 `JsonUnmappedMemberHandling.Disallow` 会拒绝包含未知字段的原件，可能影响按版读回和组合消费。回退前应核查已经保存的路线版本（含历史），并保留能读取这些原件的应用版本。本轮记录该边界，未执行应用回退，也未改写已保存原件或摘要。[路线合同](../../../../CP6.Core/Services/Plm/EngineeringRoutingContractV1.cs)
+
+R1 的四组 Release 回归、Vitest、类型检查及 Vite 构建按本文件所在提交的单次运行取证，命令、环境、TRX 及摘要见最终索引。有效时间、席位状态、工作区读回和回环实例停机状态见 R1 交接读回。[最终验证](<D:/CP6-test-artifacts/WP05-08/exec-20261127T095928Z/validation-final/final-verification.json>) · [R1 交接读回](<D:/CP6-test-artifacts/WP05-08/exec-20261127T095928Z/handoff.json>)
