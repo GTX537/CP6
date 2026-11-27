@@ -83,8 +83,8 @@ ACT 的完整 HTTPS 下载使用逐块守护事务。早期验证两次触及夹
 | AC-PLM-FB02-026 | WP05-22 | 核计划层级按实际受测对象登记，风险和评审由各自政策裁决。 |
 | AC-PLM-FB02-027 | WP05-15，专业结果取 WP05-24 | REQ 分开汇总 PROCESS 证据与产品必需性能缺项，保留各自适用对象。 |
 | AC-PLM-FB02-028 | WP05-15，方法判断取 WP05-24 | 复核提交满足性时的原物理试验要求，演示录像保留为原证据，所缺试验仍阻断。 |
-| AC-PLM-FB02-029 | 无现有接续卡 | 建议补 VER 语义词典卡并在 WP05-22 接入。WP02-17 的语言包可复用，仍缺显示修订、准确语义版和历史计划回读的联验。 |
-| AC-PLM-FB02-030 | 无现有接续卡 | 建议沿同一 VER 语义词典补卡登记词条停用和历史版本读取，WP05-22 的新计划消费当前可用性策略。 |
+| AC-PLM-FB02-029 | WP05-22 | 按总控裁定由验证计划接入准确语义版、显示修订记录和历史回读，语言包可复用 WP02-17。 |
+| AC-PLM-FB02-030 | WP05-22 | 按总控裁定由验证计划保留旧词条版本引用，并按当前可用性策略选择新计划词条。 |
 | AC-PLM-FB02-049 | WP05-24，试制许可取 WP05-32 | 设计确认前检验必需试验齐备，独立获准试制仅可用于取得所缺证据。 |
 | AC-PLM-FB02-050 | WP05-24，正式用途联验 WP05-42 | 固定有证的 E1 确认范围和独立性证据，E2 保持未确认，REL 复核范围上限。 |
 | AC-PLM-FB02-051 | WP05-24 | 条件确认时核验同一范围的原必需项和不可豁免 FAIL，合法变更须有准确后继依据。 |
@@ -93,8 +93,26 @@ ACT 的完整 HTTPS 下载使用逐块守护事务。早期验证两次触及夹
 | AC-PLM-FB02-054 | WP05-28，设计确认联验 WP05-24 | 关闭水位核对明确要求的真实暴露与现场观察；在当前确认中要求该结果时由 VER 核实。 |
 | AC-PLM-PG05-X009 | WP05-24，正式用途联验 WP05-42 | 签署前重核 Quality/VER 新事实和原送审快照，关键要求转重评，REL 依据当前准确范围授权。 |
 
+WP05-22 当前承接以上两项词典场景的接入验收。建议另立 VER 语义词典补充卡，待总控按补充卡流程登记。 [WP05-22](../../task-plans/WP05.md#wp05-22)
+
+## 总控独立复核与同 PR 生效
+
+- R1 `FAIL`。独立复跑与首轮执行侧的 .NET 275 项和 Vitest 145 项一致，迁移审阅通过。阻塞是活动附件待补证坐标不完整、45 项未运行原 AC 缺逐项归属。 [首轮独立复核](</D:/CP6-test-artifacts/WP05-13/coord-verify-20261127T014153130Z/COORD-VERIFY.md>)
+- R2 `PASS_WITH_NITS`。在产品提交 `191a6b9e717c7529bd0bc56486ba30671a9a0f1f`、树 `2812cf73d60882d7f18ebd392ad2f3e179e47c52` 上复验阻塞项，执行侧与独立复跑的用例名和结果一致。两侧各通过 .NET 277 项和 Vitest 147 项，零失败、零跳过，Release 锁定还原与构建、`vue-tsc --build` 和 Vite 均通过。导出动作迁移 `20261126235900_EngineeringRequirementExportV1` 已在隔离 PostgreSQL 18.6 的模拟数据上验证，真实环境迁移和生产采用仍待验证。 [R2 独立复核](</D:/CP6-test-artifacts/WP05-13/coord-verify-r2-20261127T034946532Z/COORD-VERIFY-R2.md>) · [逐组证据对照](</D:/CP6-test-artifacts/WP05-13/coord-verify-r2-20261127T034946532Z/verification-comparison.json>)
+
+| 独立复核 R2 分组 | 通过 | TRX SHA-256 |
+| --- | ---: | --- |
+| WP05-02 | 95/95 | `eb413ee5ccb8f84668076b36a31debfb9dd393df9a0c3a536fb4f8d505b67b88` [TRX](</D:/CP6-test-artifacts/WP05-13/coord-verify-r2-20261127T034946532Z/validation-final-r2/results-wp0502/wp05-13-wp0502.trx>) |
+| WP02-32、FILE、G05 | 35/35 | `a97d1773504e71230c12be6a570627a26cc51bd83f7eecadfb3f857ea2be5996` [TRX](</D:/CP6-test-artifacts/WP05-13/coord-verify-r2-20261127T034946532Z/validation-final-r2/results-file/wp05-13-file.trx>) |
+| REQ、Sales、DOC、QUALITY | 103/103 | `42f3ffabb395a07d1c7c9b91501bf6a6328e1311ad91ee40725ed62d948e7c58` [TRX](</D:/CP6-test-artifacts/WP05-13/coord-verify-r2-20261127T034946532Z/validation-final-r2/results-req/wp05-13-req.trx>) |
+| WP05-03 工程，含 TC-018 | 44/44 | `5b1438501457302c2d846e6be9de72bb5b23184aa4817aef6894cc78f8481736` [TRX](</D:/CP6-test-artifacts/WP05-13/coord-verify-r2-20261127T034946532Z/validation-final-r2/results-engineering/wp05-13-engineering.trx>) |
+
+启用 `actFile` 后，应用回退版本须具备读取该格式的兼容证据。首轮 `89b62833` 程序集在严格读取时拒绝该字段。 [DTO 字节与兼容性核对](</D:/CP6-test-artifacts/WP05-13/coord-verify-r2-20261127T034946532Z/act-wire-compatibility.json>)
+
+总控已推送产品候选并登记 Draft PR #1341。卡级 `DONE` 在该 PR 正常合入受保护的 `main`，并核实远端包含已验收产品提交和本次台账后生效。`delivery_evidence.remote_main_sha` 固定待核的产品祖先，实际合并 SHA 以 PR 回执为准。PLM-REQ-01 与相关目标保持开放。 [PR #1341](https://github.com/GTX537/CP6/pull/1341) · [台账](../../roadmap.json)
+
 ## 同树证据与工作区
 
-- 最终运行从本报告所在提交独立还原并构建 .NET SDK 10.0.404 Release。隔离 PostgreSQL 18 只监听回环，用 D1 范围内的四个端口和独立 `permission-consumption-` 根。按原报告的用例名核验 WP05-02 全部 95 项及 WP05-03 工程 44 项，并执行 FILE、REQ、Sales、DOC、QUALITY 与前端专项。实际 Main API、工作台组件及 PostgreSQL 使用明确合成的租户、用户、权限、商业记录、澄清、文件和守护证明。源与生产部署状态单独保留。
+- 执行侧最终运行从产品提交 `191a6b9e717c7529bd0bc56486ba30671a9a0f1f` 独立还原并构建 .NET SDK 10.0.404 Release。隔离 PostgreSQL 18 只监听回环，用 D1 范围内的四个端口和独立 `permission-consumption-` 根。按原报告的用例名核验 WP05-02 全部 95 项及 WP05-03 工程 44 项，并执行 FILE、REQ、Sales、DOC、QUALITY 与前端专项。实际 Main API、工作台组件及 PostgreSQL 使用明确合成的租户、用户、权限、商业记录、澄清、文件和守护证明。源与生产部署状态单独保留。
 - R1 统一运行记录固定同一源码提交及树、各组完整命令、脱敏环境变量、子进程设置、测试清单、TRX 与摘要。首轮证据保留供比较。 [R1 验证脚本](/D:/CP6-test-artifacts/WP05-13/exec-20261127T023915701Z-r1/run-final.ps1) · [R1 最终验证](/D:/CP6-test-artifacts/WP05-13/exec-20261127T023915701Z-r1/final-verification.json) · [R1 逐项 AC 原件](/D:/CP6-test-artifacts/WP05-13/exec-20261127T023915701Z-r1/original-acceptance-final.json) · [首轮验证](/D:/CP6-test-artifacts/WP05-13/exec-20261126T235242212Z/final-verification.json)
-- 本地分支 `codex/wp05-13` 交总控复核。实际提交、分支处置、秒数和停机读回见外部签收记录。 [R1 工作区读回](/D:/CP6-test-artifacts/WP05-13/exec-20261127T023915701Z-r1/workspace-readback.json)
+- 执行侧累计有效时间 **10929 秒**，首轮 6886 秒含准入 407 秒，返工 4043 秒。M 卡预算 14400 秒，强制拆分线 21600 秒。DEV-1 以 `CP6:WP05-13` 保留本地分支 `codex/wp05-13`，关联 Draft PR #1341。 [执行侧时间与停机读回](/D:/CP6-test-artifacts/WP05-13/exec-20261127T023915701Z-r1/workspace-readback.json)

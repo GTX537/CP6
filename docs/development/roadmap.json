@@ -5556,7 +5556,28 @@
           "scope": "WP03-17 原 AC 10/51、必需补充 3/27、必需运行修订 0/2，CRM-ACT-01 保持开放。"
         }
       ],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "OPEN_GAPS",
+        "reviewed_at": "2026-11-27T04:54:42.657108+00:00",
+        "report": "docs/development/evidence/WP05-13/DELIVERY.md",
+        "coverage_cards": [
+          "WP03-17",
+          "WP03-18",
+          "WP03-19",
+          "WP03-20"
+        ],
+        "gaps": [
+          {
+            "owner_task_id": "WP03-19",
+            "source_cases": [
+              "DR-PE-ACT-FILE-COMMIT-MODE::PE-ACT-FILE-COMMIT-MODE-POS",
+              "DR-PE-ACT-FILE-COMMIT-MODE::PE-ACT-FILE-COMMIT-MODE-NEG"
+            ],
+            "gap": "联验真实 CRM 活动事务对 ACT-FILE-REFERENCE/1 的采用、同文件不同成员坐标及按当前权威守护读取。Main 提供者取 WP02-32，WP05-13 的 REQ 草稿是缺证坐标的保存及回查证据。"
+          }
+        ]
+      }
     },
     {
       "id": "CRM-ACC-01",
@@ -20039,9 +20060,11 @@
               "AC-ENG-REV-01-008",
               "AC-ENG-REV-01-027",
               "TC-ENG-REV-01-053",
-              "TC-ENG-REV-01-054"
+              "TC-ENG-REV-01-054",
+              "AC-PLM-FB01-004",
+              "AC-PLM-FB01-006"
             ],
-            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。版本化工艺由 WP05-08 提供，完备性检查由 WP05-11 提供。在工程冻结事务内绑定准确的逐输出关系集与基线，拒绝错配及陈旧预览。最终冻结复核当前技术源、策略与审批。真实存量档案待业务 Owner 核定类别、映射及批准，冻结核对准确新草稿与当前批件，保留证据不足及历史原件状态。"
+            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。版本化工艺由 WP05-08 提供，完备性检查由 WP05-11 提供。在工程冻结事务内绑定准确的逐输出关系集与基线，拒绝错配及陈旧预览。最终冻结复核当前技术源、策略与审批。真实存量档案待业务 Owner 核定类别、映射及批准，冻结核对准确新草稿与当前批件，保留证据不足及历史原件状态。 依据 WP05-13 的精确需求来源，冻结时联查 WP05-14 的准确需求集、WP05-18/19 的 ITER 评审输入及双候选双摘要。"
           },
           {
             "owner_task_id": "WP05-32",
@@ -23431,7 +23454,85 @@
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "OPEN_GAPS",
+        "reviewed_at": "2026-11-27T04:54:42.657108+00:00",
+        "report": "docs/development/evidence/WP05-13/DELIVERY.md",
+        "coverage_cards": [
+          "WP05-13",
+          "WP05-14",
+          "WP05-15",
+          "WP05-60",
+          "WP05-61"
+        ],
+        "original_cases_reviewed": 70,
+        "required_revision_cases": 0,
+        "scope": "其中 25 项仅有本卡模拟观察，45 项未运行，完整逐项归属见本卡 DELIVERY。原 AC 状态沿基线，其他冻结、迭代、试制、正式用途与设计确认出口由 DELIVERY 所列责任卡承接。",
+        "gaps": [
+          {
+            "owner_task_id": "WP03-19",
+            "source_cases": [
+              "AC-REQ-001",
+              "AC-PLM-PG04-A001",
+              "AC-PLM-PG04-A002"
+            ],
+            "gap": "按真实 CRM 活动 Owner 和 ACT-FILE-REFERENCE/1 核当前权限、准确附件坐标及守护字节。已验证的附件草稿仍待真实宿主采用。"
+          },
+          {
+            "owner_task_id": "WP05-14",
+            "source_cases": [
+              "AC-PLM-PG03-A005",
+              "AC-PLM-PG03-A006",
+              "AC-PLM-PG04-A013",
+              "AC-PLM-PG04-A014",
+              "AC-PLM-PG04-A016",
+              "AC-PLM-PG04-A017",
+              "AC-PLM-PG04-A018",
+              "AC-REQ-008",
+              "AC-REQ-016"
+            ],
+            "gap": "固定需求集、成员及判据，核当前来源和批准范围，记录正式裁决、撤销影响、真实下游接收与旧版保留。"
+          },
+          {
+            "owner_task_id": "WP05-15",
+            "source_cases": [
+              "AC-PLM-PG03-A007",
+              "AC-PLM-PG03-A008",
+              "AC-PLM-FB01-007",
+              "AC-PLM-FB01-008",
+              "AC-PLM-FB01-009",
+              "AC-PLM-PG04-A019",
+              "AC-PLM-PG04-A020",
+              "AC-PLM-PG04-A021",
+              "AC-PLM-PG04-A022",
+              "AC-PLM-PG04-A023",
+              "AC-PLM-PG04-A024",
+              "AC-REQ-011",
+              "AC-REQ-012",
+              "AC-REQ-013",
+              "AC-REQ-014",
+              "AC-PLM-FB02-027",
+              "AC-PLM-FB02-028"
+            ],
+            "gap": "核 ITER/VER 实际接收与执行，按同目标逐必需条件复核准确证据、适用性、专业结论和满足性签署，保留硬失败与缺项。正式用途取 REL 准确授权。"
+          },
+          {
+            "owner_task_id": "WP05-22",
+            "source_cases": [
+              "AC-PLM-FB02-025",
+              "AC-PLM-FB02-026",
+              "AC-PLM-FB02-029",
+              "AC-PLM-FB02-030"
+            ],
+            "gap": "核 VER 计划的验证目标、受测对象及语义词典接入。活动计划使用当前可用词条，历史计划按所固定的语义版回读。建议另立 VER 语义词典补充卡，待总控按补充卡流程登记。"
+          },
+          {
+            "owner_task_id": "WP05-61",
+            "gap": "沿 WP05-60 的工程自然槽与权限前件，核真实受理、进展、退回与更正事实及当前目标范围。"
+          }
+        ]
+      }
     },
     {
       "id": "PLM-ITER-01",
@@ -24562,7 +24663,43 @@
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "OPEN_GAPS",
+        "reviewed_at": "2026-11-27T04:54:42.657108+00:00",
+        "report": "docs/development/evidence/WP05-13/DELIVERY.md",
+        "coverage_cards": [
+          "WP05-18",
+          "WP05-19",
+          "WP05-20",
+          "WP05-21",
+          "WP05-61"
+        ],
+        "gaps": [
+          {
+            "owner_task_id": "WP05-18",
+            "source_cases": [
+              "AC-PLM-FB01-004"
+            ],
+            "gap": "从工程候选输入回查 WP05-14 的 RBS 准确成员和来源版，给 WP05-19 固定送审输入。"
+          },
+          {
+            "owner_task_id": "WP05-19",
+            "source_cases": [
+              "AC-PLM-FB01-004",
+              "AC-PLM-FB01-005"
+            ],
+            "gap": "在审包固定来源和准确输入，来源变化可查，采用后继须生成显式修订。"
+          },
+          {
+            "owner_task_id": "WP05-20",
+            "source_cases": [
+              "AC-PLM-FB01-008"
+            ],
+            "gap": "迭代采用沿真实 REQ/VER 接收及专业结论，在本 Owner 门复核强制 FAIL 和复测责任。"
+          }
+        ]
+      }
     },
     {
       "id": "PLM-DOC-01",
@@ -26578,7 +26715,53 @@
         ]
       },
       "implementation_evidence": [],
-      "delivery_evidence": null
+      "delivery_evidence": null,
+      "completion_audit": {
+        "result": "OPEN_GAPS",
+        "reviewed_at": "2026-11-27T04:54:42.657108+00:00",
+        "report": "docs/development/evidence/WP05-13/DELIVERY.md",
+        "coverage_cards": [
+          "WP05-22",
+          "WP05-23",
+          "WP05-24"
+        ],
+        "gaps": [
+          {
+            "owner_task_id": "WP05-22",
+            "source_cases": [
+              "AC-PLM-FB02-025",
+              "AC-PLM-FB02-026",
+              "AC-PLM-FB02-029",
+              "AC-PLM-FB02-030"
+            ],
+            "gap": "计划须声明主次验证目标和准确受测对象，接入语义词典、显示修订及历史计划的准确词条版本。建议另立 VER 语义词典补充卡，待总控按补充卡流程登记。"
+          },
+          {
+            "owner_task_id": "WP05-23",
+            "source_cases": [
+              "AC-PLM-FB01-001",
+              "AC-PLM-FB01-003"
+            ],
+            "gap": "固定试制申请、REL 独立许可与 MES 根子执行回执，按目标回查专业证据。"
+          },
+          {
+            "owner_task_id": "WP05-24",
+            "source_cases": [
+              "AC-PLM-FB01-002",
+              "AC-PLM-FB02-027",
+              "AC-PLM-FB02-028",
+              "AC-PLM-FB02-049",
+              "AC-PLM-FB02-050",
+              "AC-PLM-FB02-051",
+              "AC-PLM-FB02-052",
+              "AC-PLM-FB02-053",
+              "AC-PLM-FB02-054",
+              "AC-PLM-PG05-X009"
+            ],
+            "gap": "按精准 Baseline 和要求判断 REUSE、RETEST 或 N/A，验证专业方法及结果、设计确认范围和必需证据，签署前复核最新 Quality/VER 事实。现场观察取 WP05-28 的关闭水位。"
+          }
+        ]
+      }
     },
     {
       "id": "PLM-CHG-01",
@@ -30303,9 +30486,11 @@
           {
             "owner_task_id": "WP05-32",
             "source_cases": [
-              "AC-PLM-FB01-027"
+              "AC-PLM-FB01-027",
+              "AC-PLM-FB01-001",
+              "AC-PLM-FB01-003"
             ],
-            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。工具规格与实例证据、工艺引用、检查和冻结分别由 WP05-06/08/11/12 提供，正式后验用途按 WP05-42 验证。按 WP05-03 工作版冻结所得准确基线，验收所选用途的当前前件及使用授权。"
+            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。工具规格与实例证据、工艺引用、检查和冻结分别由 WP05-06/08/11/12 提供，正式后验用途按 WP05-42 验证。按 WP05-03 工作版冻结所得准确基线，验收所选用途的当前前件及使用授权。 按 WP05-13 的试制出口保留 H42 的计划、实际申请及独立用途许可，供 WP05-23 的试制 Owner 做最终准入。"
           },
           {
             "owner_task_id": "WP05-10",
@@ -30319,9 +30504,12 @@
             "owner_task_id": "WP05-42",
             "source_cases": [
               "AC-PLM-FB01-025",
-              "AC-PLM-FB01-027"
+              "AC-PLM-FB01-027",
+              "AC-PLM-FB02-050",
+              "AC-PLM-FB02-052",
+              "AC-PLM-PG05-X009"
             ],
-            "gap": "正式制造用途采用真实专业后验条件及其当前范围，按 WP05-32 的用途政策核验准确授权。"
+            "gap": "正式制造用途采用真实专业后验条件及其当前范围，按 WP05-32 的用途政策核验准确授权。 正式用途按 WP05-24 的设计确认范围及新 Quality/VER 事实复核授权，并保留独立的实例前置。"
           }
         ]
       }
@@ -149581,7 +149769,7 @@
           {
             "case_id": "DR-PE-ACT-FILE-COMMIT-MODE::PE-ACT-FILE-COMMIT-MODE-POS",
             "owner_task_id": "WP03-19",
-            "gap": "CRM ACT 在真实业务 Owner 使用 LOCAL_AUTHORITATIVE_GUARD，验证正反两条必需修订、完整集合、目标权限、分页和新请求持续当前授权。 对应 AC-FI02-02、AC-FI02-03、AC-FI03-01、AC-FI03-04、AC-FI04-01、AC-FI06-01、AC-FI06-02、AC-FI06-04。 Main 提供者侧证据见 WP02-32。生产 guard schema、真实 Activity 事务持有、Add/Retain/Unlink 与字节访问的采用范围仍归 WP03-19。"
+            "gap": "CRM ACT 在真实业务 Owner 使用 LOCAL_AUTHORITATIVE_GUARD，验证正反两条必需修订、完整集合、目标权限、分页和新请求持续当前授权。 对应 AC-FI02-02、AC-FI02-03、AC-FI03-01、AC-FI03-04、AC-FI04-01、AC-FI06-01、AC-FI06-02、AC-FI06-04。 Main 提供者侧证据见 WP02-32。生产 guard schema、真实 Activity 事务持有、Add/Retain/Unlink 与字节访问的采用范围仍归 WP03-19。 WP05-13 复验 REQ 草稿中的活动、引用与文件坐标，以及守护流撤权和普通 FILE 入口封闭。真实 Activity Owner 的采用与两条必需修订验收仍跟随 WP03-19。"
           },
           {
             "case_id": "SYS-FILE-01::AC-FI04-03",
@@ -178273,6 +178461,11 @@
       "at": "2026-11-26T21:56:56.203294+00:00",
       "evidence": "docs/development/evidence/WP05-03/DELIVERY.md",
       "change": "WP05-03 工程修订、工作快照、组成候选与重基登记同 PR 卡级 DONE，在 #1340 合入受保护 main 并核对包含性后生效。执行侧与总控 R3 各通过 .NET 174 项、Vitest 115 项。执行侧累计有效时间 13525.199 秒，计划累计 280681.804 秒。多输出、冻结、真实存量档案核定、正式 ECO 和制造用途出口按现有责任卡登记，相关目标保持开放。"
+    },
+    {
+      "at": "2026-11-27T04:54:42.657108+00:00",
+      "evidence": "docs/development/evidence/WP05-13/DELIVERY.md",
+      "change": "WP05-13 工程需求来源、分解与可评价判据以 #1341 登记同 PR 卡级 DONE，合入受保护 main 并核对包含性后生效。执行侧与总控 R2 各通过 .NET 277 项、Vitest 147 项。R2 综合复核 PASS_WITH_NITS。执行侧累计 10929 秒，计划累计 291610.804 秒。PLM-REQ-01 保持开放，45 项未运行原 AC 逐项接续。AC-PLM-FB02-029/030 归 WP05-22。建议另立 VER 语义词典补充卡，待总控按补充卡流程登记。"
     }
   ],
   "implementation_assessment": {
@@ -212964,14 +213157,51 @@
         "file:Main:CP6.Core/Services/Wf/ApprovalDispatcher.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP05.md",
       "card_anchor": "wp05-13",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "CP6-EXEC",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp05-13",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-26T18:49:13.302712-05:00",
+        "baseline_sha": "0da1432a5802bfae94ad557d1d00a2bbe6e2dca2",
+        "entry_evidence": "docs/development/evidence/WP05-13/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/WP05-13/DELIVERY.md",
+        "dispatch_scope": "从 D1 核验的 Main 基线交付工程需求精确来源与澄清、逐条分解和可评价判据草案，沿 REQ Owner 与原键。验收销售、DOC/FILE 原件及权限、CRM 活动附件待补证坐标、历史回读与隔离库前滚。",
+        "worker_start_received": true
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP05-13/DELIVERY.md",
+          "source_sha": "191a6b9e717c7529bd0bc56486ba30671a9a0f1f",
+          "observed_at": "2026-11-27T03:45:04.6069397+00:00",
+          "environment": "执行侧 Main DEV-1，.NET SDK 10.0.404 Release，隔离 PostgreSQL 18.6 回环 55450–55453，Main HTTP、Node 20.19.0，均为模拟业务数据。",
+          "command": "& 'D:/CP6-test-artifacts/WP05-13/exec-20261127T023915701Z-r1/run-final.ps1' -ExpectedHead 191a6b9e717c7529bd0bc56486ba30671a9a0f1f，实际参数、退出码和产物见同目录 final-verification.json。",
+          "result": "PASS",
+          "scope": "产品树 2812cf73d60882d7f18ebd392ad2f3e179e47c52。Release 锁定还原与构建、vue-tsc 和 Vite 通过。.NET 277 项、Vitest 147 项均通过，零失败、零跳过。覆盖准确原件与权限、受控澄清及判据、ACT 草稿坐标与原键、导出原显示页和迁移 20261126235900_EngineeringRequirementExportV1 的隔离库前滚。WP05-02 95/TRX SHA-256 9bcead368b4860b0762ead81792a92d00e076ad7c4eb819cdcaaa6ae79b62c7c。FILE/G05 35/TRX SHA-256 b154512dffc54579dee837c5e47f858ce87099195696657b2328594559d92519。REQ/Sales/DOC/QUALITY 103/TRX SHA-256 007bd494f64c7ff9ab0dc36c9d3583f383e905ecc6ff97279c4b9d876387676c。WP05-03 工程 44/TRX SHA-256 0ea77c350403f56d04a9a0751708a7fc3b9d789cc0bcd33da6ab94d56289d61e。"
+        },
+        {
+          "path": "docs/development/evidence/WP05-13/DELIVERY.md",
+          "source_sha": "191a6b9e717c7529bd0bc56486ba30671a9a0f1f",
+          "observed_at": "2026-11-27T04:41:59.2995349+00:00",
+          "environment": "总控 R2 独立复核目录，.NET SDK 10.0.404 Release，隔离 PostgreSQL 18.6 回环 55480–55483，Main HTTP、Node 20.19.0，均为模拟业务数据。",
+          "command": "& 'D:/CP6-test-artifacts/WP05-13/coord-verify-r2-20261127T034946532Z/run-coord-verify-r2.ps1' -ExpectedHead 191a6b9e717c7529bd0bc56486ba30671a9a0f1f -Label final-r2，结果见同目录 COORD-VERIFY-R2.md 和 verification-comparison.json。",
+          "result": "PASS",
+          "scope": "总控综合复核 PASS_WITH_NITS。产品树 2812cf73d60882d7f18ebd392ad2f3e179e47c52 上独立复跑 .NET 277 项、Vitest 147 项，零失败、零跳过，与执行侧完整用例名和结果一致。迁移 20261126235900_EngineeringRequirementExportV1 在隔离库验证。首轮程序集拒绝新增 actFile，应用回退需具备该格式读取兼容。WP05-02 95/TRX SHA-256 eb413ee5ccb8f84668076b36a31debfb9dd393df9a0c3a536fb4f8d505b67b88。FILE/G05 35/TRX SHA-256 a97d1773504e71230c12be6a570627a26cc51bd83f7eecadfb3f857ea2be5996。REQ/Sales/DOC/QUALITY 103/TRX SHA-256 42f3ffabb395a07d1c7c9b91501bf6a6328e1311ad91ee40725ed62d948e7c58。WP05-03 工程 44/TRX SHA-256 5b1438501457302c2d846e6be9de72bb5b23184aa4817aef6894cc78f8481736。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP05-13/DELIVERY.md",
+        "source_sha": "191a6b9e717c7529bd0bc56486ba30671a9a0f1f",
+        "remote_main_sha": "191a6b9e717c7529bd0bc56486ba30671a9a0f1f",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1341",
+        "scope": "交付工程需求准确来源、澄清证据、逐条分解与判据草案，以及按当前披露权限访问的原件与导出。remote_main_sha 固定本 PR 须纳入的产品祖先。卡级 DONE 在 #1341 正常合入受保护 main，核对远端包含产品提交及本台账后生效。实际合并 SHA 以 PR 回执为准。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL租户存储/迁移与可信上下文；当前动作/读取授权和共同最终授权fence；Main Owner事务、原键结果及审计能力。",
@@ -213094,6 +213324,68 @@
           "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave308-final-verification.json"
         }
+      },
+      "remaining_scope": [
+        "本卡已产出 W310-01 所列销售及 DOC/FILE 精确原件与当前披露。CRM ACT/OPP 可保留待补证坐标，ACT 附件保留活动版、引用集合、成员和文件准确坐标，真实 ACT 采用由 WP03-19 核验。",
+        "本卡已产出 DOC/FILE 澄清的原问题、原条款、原版和单独答复证据。客户权威缺证保留待核，候选和受权精确回读可追。",
+        "本卡已产出逐条分解、方法、必要性与适用范围观察，保留未覆盖、未知值及待确认条件。后续集合、正式裁决、真实分配、满足性及自然槽按卡定义接续。未运行的 45 项原 AC 逐项归属见本卡 DELIVERY。"
+      ],
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP05-13/DELIVERY.md",
+        "started_at": "2026-11-26T22:02:01.070452Z",
+        "official_started_at": "2026-11-26T18:49:13.302712-05:00",
+        "technical_verified_at": "2026-11-27T03:45:04.6069397+00:00",
+        "verified_at": "2026-11-27T04:41:59.2995349+00:00",
+        "ledger_candidate_at": "2026-11-27T04:54:42.657108+00:00",
+        "effective_seconds": 10929,
+        "accounting_evidence": {
+          "path": "docs/development/evidence/WP05-13/DELIVERY.md#同树证据与工作区",
+          "scope": "执行侧回执累计 10929 秒，首轮 6886 秒含准入 407 秒，返工 4043 秒。"
+        },
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "S01-01",
+          "S01-02",
+          "S01-07",
+          "S01-08",
+          "S01-09",
+          "S02-00",
+          "WP02-01",
+          "WP02-02",
+          "WP02-03",
+          "WP02-04",
+          "WP02-05",
+          "WP02-05b",
+          "WP02-06",
+          "WP02-07",
+          "WP02-09",
+          "WP02-09b",
+          "WP02-10",
+          "WP02-13",
+          "WP02-13b",
+          "WP02-14",
+          "WP02-14b",
+          "WP02-15",
+          "WP02-22",
+          "WP03-05",
+          "WP03-08",
+          "WP03-09",
+          "WP03-10",
+          "WP03-17",
+          "WP03-21",
+          "WP04-01",
+          "WP04-02",
+          "WP04-32",
+          "WP04-33",
+          "WP05-02",
+          "WP11-01",
+          "WP11-65"
+        ],
+        "new_product_execution": true
       }
     },
     {
@@ -213988,6 +214280,9 @@
         "WP02：按S02-00采用的PostgreSQL租户存储/迁移与可信上下文；当前动作/读取授权和共同最终授权fence；Main Owner事务、原键结果及审计能力。",
         "WP08/WP09/WP10：实际试验涉及时提供制造快照、质量/样品/仪器等真实来源与查询权限；分析验证不等待不适用物理Owner。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
+      ],
+      "remaining_scope": [
+        "承接 AC-PLM-FB02-029/030 的 VER 语义词典接入验收，核显示修订、准确词条语义版、停用词条的历史回读与新计划可用性。建议另立 VER 语义词典补充卡，待总控按补充卡流程登记。"
       ]
     },
     {
@@ -306830,7 +307125,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 280681.804,
+      "effective_seconds": 291610.804,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -306907,7 +307202,8 @@
         "WP03-18",
         "WP05-02",
         "WP02-32",
-        "WP05-03"
+        "WP05-03",
+        "WP05-13"
       ],
       "closed_targets": [
         "OA-DEF-01",
