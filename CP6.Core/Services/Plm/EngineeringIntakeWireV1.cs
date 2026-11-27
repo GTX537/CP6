@@ -53,13 +53,16 @@ internal static class EngineeringIntakeWireV1
     }
 
     internal static string SourceDigest(EngineeringIntakeProofKeyV1 key, EngineeringIntakeSourceV1 source) =>
-        key.Sign("HO-ENG-SOURCE-1", source with
+        key.Sign("HO-ENG-SOURCE-1", CanonicalSource(source));
+
+    internal static EngineeringIntakeSourceV1 CanonicalSource(EngineeringIntakeSourceV1 source) =>
+        source with
         {
             ActivitySources = source.ActivitySources.OrderBy(item => item.SourceId.ToString("D"), StringComparer.Ordinal)
                 .ThenBy(item => item.SourceVersion, StringComparer.Ordinal).ThenBy(item => item.ReferenceSetVersion, StringComparer.Ordinal).ToArray(),
             EvidenceRefs = source.EvidenceRefs.OrderBy(item => item.Owner, StringComparer.Ordinal)
                 .ThenBy(item => item.Key, StringComparer.Ordinal).ThenBy(item => item.Version, StringComparer.Ordinal).ToArray()
-        });
+        };
 
     internal static void NextQuery(EngineeringNextQueryV1? input)
     {
@@ -85,16 +88,12 @@ internal static class EngineeringIntakeWireV1
         Text(input.RequestReason, 2000);
         Require(input.Mode is "CREATE" or "REVISE");
         if (input.Mode == "CREATE") Require(input.Target is null);
-        else
-        {
-            Require(input.Target is not null && Guid.TryParseExact(input.Target.EngineeringRequestId, "D", out var targetId)
-                && targetId != Guid.Empty && input.Target.EngineeringRequestId == targetId.ToString("D"));
-            _ = CommercialWireV1.Revision(input.Target!.EngineeringRevision);
-        }
+        else Reference(input.Target);
         var next = input.NextAuthorization;
         Require(next is not null);
         NextQuery(next!.Query);
         Require(next.Query.CaseNaturalKey == input.CaseNaturalKey);
+        if (next.Target is not null) Reference(next.Target);
         Evidence(next.PriorExecutionFence);
         Evidence(next.Decision);
         Require(next.BlockingCodes is not null);
@@ -206,6 +205,13 @@ internal static class EngineeringIntakeWireV1
         Key(evidence.Key);
         Key(evidence.Version);
         Key(evidence.ProofRef);
+    }
+
+    private static void Reference(EngineeringIntakeRefV1? value)
+    {
+        Require(value is not null);
+        Key(value!.EngineeringRequestId);
+        Key(value.EngineeringRevision);
     }
 
     private static void Texts(string[]? values)

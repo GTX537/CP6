@@ -123,6 +123,7 @@ public sealed partial class EngineeringRequirementService
                 Compare("criteria", leftRequirement.Criteria, rightRequirement.Criteria);
                 Compare("relations", leftRequirement.Relations, rightRequirement.Relations);
                 Compare("decomposition", leftRequirement.Decomposition, rightRequirement.Decomposition);
+                Compare("sourceReviews", leftRequirement.SourceReviews, rightRequirement.SourceReviews);
             }
             return new EngineeringRequirementDiffV1(left.Reference, right.Reference, changes.ToArray());
         }, ct);

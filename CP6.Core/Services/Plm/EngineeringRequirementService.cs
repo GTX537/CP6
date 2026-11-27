@@ -87,6 +87,13 @@ public sealed partial class EngineeringRequirementService(CP6Context db,Operatio
             }
             var source=await Exact(a,s,r.Source,"SOURCE",ct);
             await Visit(source,depth);
+            if (r.SourceReviews is { Length: >0 } reviews)
+            {
+                missing.Add("REQUIREMENT_SOURCE_REEVALUATION_REQUIRED");
+                var reviewSources = reviews.SelectMany(review => new[] { review.PreviousSource, review.IncomingSource }).Distinct();
+                foreach (var reference in reviewSources.Where(reference => !seen.Contains(reference)))
+                    await Visit(await Exact(a,s,reference,"SOURCE",ct),depth);
+            }
             if(!source.IsCurrent)missing.Add("SOURCE_VERSION_CHANGED:"+v.Reference.Id);
             if(source.Body.Source!.Kind=="UNRESOLVED")missing.Add("SOURCE_UNRESOLVED:"+v.Reference.Id);
             if(source.Body.Source.Kind=="OWNER_ORIGINAL")
@@ -174,7 +181,7 @@ public sealed partial class EngineeringRequirementService(CP6Context db,Operatio
 
     // 使用同一 Owner 写入用例。事务、权限门与原操作身份由调用入口持有。
     internal async Task<EngineeringRequirementSnapshotV1> WriteWithinAsync(OperationsAccessV1 access, EngineeringRequirementStoreV1 store,
-        EngineeringRequirementCommandV1 command, byte[] bytes, CancellationToken ct)
+        EngineeringRequirementCommandV1 command, byte[] bytes, CancellationToken ct, bool fromEngineeringIntake = false)
     {
         if (!Authority.Owns(store.Context)) throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
         access.RequireRequirementFields(true);
@@ -194,6 +201,15 @@ public sealed partial class EngineeringRequirementService(CP6Context db,Operatio
             if (old.Body.Source?.Origin != null && command.Body.Source?.Origin == null)
                 throw Error("REQUIREMENT_ORIGIN_REMOVAL_FORBIDDEN",422);
             confirmsSource|=old.Body.Source?.Clauses.Any(x=>x.Terms!=null)==true;
+        }
+        if (!fromEngineeringIntake && command.Body.Requirement is { } definition)
+        {
+            var prior = old?.Body.Requirement?.SourceReviews;
+            if (definition.SourceReviews is null && prior is not null)
+                command = command with { Body = command.Body with { Requirement = definition with { SourceReviews = prior } } };
+            else if (definition.SourceReviews is not null &&
+                (prior is null || !EngineeringProductStoreV1.Encode(definition.SourceReviews).AsSpan().SequenceEqual(EngineeringProductStoreV1.Encode(prior))))
+                throw Error("REQUIREMENT_SOURCE_REVIEW_OWNER_REQUIRED",422);
         }
         await ValidateSources(access,store,command,old,ct);
         var saved=await store.Append(command,access.ActorId,ct);

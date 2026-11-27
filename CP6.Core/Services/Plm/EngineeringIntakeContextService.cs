@@ -24,7 +24,8 @@ public sealed partial class EngineeringIntakeContextService(CP6Context db, Opera
     private const string FenceDomain = "HO-ENG-MAIN-FENCE-1", DecisionDomain = "HO-ENG-MAIN-DECISION-1";
 
     private sealed record Current(Slot Slot, Received Original, Terminal Terminal, EngineeringRequirementSnapshotV1? Target,
-        bool SourceMatches);
+        AdoptedSource? Adopted);
+    private sealed record AdoptedSource(EngineeringSourceRefV1 Reference, EngineeringIntakeSourceV1 Original);
     private sealed class Deadlines
     {
         private readonly List<(DateTimeOffset Until, string Code, int Status)> values = [];
@@ -111,7 +112,7 @@ public sealed partial class EngineeringIntakeContextService(CP6Context db, Opera
                 bodyHash, receivedAt);
             await store.InsertRequestAsync(request, bytes, receivedTrust, token);
             var effect = use.MissingRequiredInputs.Length == 0
-                ? await WriteRequirementAsync(access, native, route, request, SourceBytes(bytes), current?.Target, token)
+                ? await WriteRequirementAsync(access, native, route, request, SourceBytes(bytes), current, token)
                 : (current?.Target is { } target ? Reference(target) : null, current?.Terminal.SourcePackageId, current?.Terminal.SourcePackageRevision);
             var resultAt = Milliseconds(await store.NowAsync(token));
             var result = CreateIntake(route, request, effect.Item1, use.MissingRequiredInputs, resultAt);
@@ -245,10 +246,10 @@ public sealed partial class EngineeringIntakeContextService(CP6Context db, Opera
             throw OriginalUnavailable();
         await HoldOriginalAsync(access, previous, deadlines, ct);
         var terminal = await store.ReadTerminalAsync(previous, ct);
-        var package = await ReadAdoptedSourceAsync(access, native, previous, terminal, deadlines, ct);
-        if (terminal.Result.Engineering is not { } engineering) return new(slot, previous, terminal, null, true);
+        var adopted = await ReadAdoptedSourceAsync(access, native, previous, terminal, deadlines, ct);
+        if (terminal.Result.Engineering is not { } engineering) return new(slot, previous, terminal, null, null);
         var target = await native.Read(Guid.Parse(engineering.EngineeringRequestId), null, ct);
-        return new(slot, previous, terminal, target, target.Body.Requirement?.Source == package);
+        return new(slot, previous, terminal, target, adopted);
     }
 
     private async Task HoldOriginalAsync(OperationsAccessV1 access, Received original, Deadlines deadlines, CancellationToken ct)
@@ -257,7 +258,7 @@ public sealed partial class EngineeringIntakeContextService(CP6Context db, Opera
         deadlines.Add(until, "ENGINEERING_INTAKE_SOURCE_UNPROVEN", 503);
     }
 
-    private async Task<EngineeringSourceRefV1?> ReadAdoptedSourceAsync(OperationsAccessV1 access, EngineeringRequirementStoreV1 native,
+    private async Task<AdoptedSource?> ReadAdoptedSourceAsync(OperationsAccessV1 access, EngineeringRequirementStoreV1 native,
         Received observed, Terminal terminal, Deadlines deadlines, CancellationToken ct)
     {
         if (terminal.Result.Engineering is not { } engineering) return null;
@@ -282,7 +283,7 @@ public sealed partial class EngineeringIntakeContextService(CP6Context db, Opera
             await access.RequireEngineeringRequirement(target, token);
             await access.RequireEngineeringRequirement(package, token);
         });
-        return packageVersion.Reference;
+        return new(packageVersion.Reference, accepted.Envelope.Source);
     }
 
     private static EngineeringNextContextV1 Describe(EngineeringNextQueryV1 query, Current? current, EngineeringIntakeRouteV1 route,
@@ -292,7 +293,8 @@ public sealed partial class EngineeringIntakeContextService(CP6Context db, Opera
             : new(query.CaseNaturalKey, current.Slot.CaseId, Version(current.Slot.CurrentEs), current.Slot.CurrentRequestKey,
                 current.Terminal.Result.ReceiptId, current.Original.Envelope.SourceBinding);
         var blocker = expected != query ? "CURRENT_ES_CHANGED"
-            : current is { SourceMatches: false } ? "ENGINEERING_SOURCE_CHANGED"
+            : current?.Target is { } existing && (current.Adopted is null || existing.Body.Requirement?.Source != current.Adopted.Reference)
+                ? "ENGINEERING_SOURCE_CHANGED"
             : current?.Slot.CurrentEs == long.MaxValue || current?.Slot.CaseRevision == long.MaxValue
                 || current?.Target?.Reference.Version == Version(long.MaxValue) ? "ENGINEERING_GENERATION_EXHAUSTED" : null;
         var target = blocker is null && current?.Target is { } native ? Reference(native) : null;
