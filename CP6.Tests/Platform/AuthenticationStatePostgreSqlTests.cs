@@ -266,7 +266,7 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
         return client.SendAsync(request);
     }
     internal static async Task<AuthenticationApiProcess> Start(string connection, IReadOnlyDictionary<string,string>? environment = null,
-        bool allowAutoRedirect = true, string? serverCertificateThumbprint = null)
+        bool allowAutoRedirect = true, string? serverCertificateThumbprint = null, TimeSpan? requestTimeout = null)
     {
         const string sourceFixture = "CP6_FIXTURE_APPROVED_INITIAL_IDENTITY_SOURCE";
         if (environment?.GetValueOrDefault(sourceFixture) == "true")
@@ -312,7 +312,7 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
                 handler.ServerCertificateCustomValidationCallback = (request, certificate, _, _) =>
                     request.RequestUri is { IsLoopback: true, Scheme: "https" } && certificate?.Thumbprint == serverCertificateThumbprint;
             return new AuthenticationApiProcess(child, new HttpClient(handler)
-                { BaseAddress = new Uri(url), Timeout = TimeSpan.FromSeconds(15) }, secret,
+                { BaseAddress = new Uri(url), Timeout = requestTimeout ?? TimeSpan.FromSeconds(15) }, secret,
                 () => { lock(log) File.WriteAllText(Path.Combine(directory, "runtime.log"), log.ToString()); });
         }
         catch
