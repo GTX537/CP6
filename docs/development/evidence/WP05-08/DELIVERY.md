@@ -168,3 +168,11 @@ R1 沿用 DEV-1 和 `codex/wp05-08`，以独立复核的远端任务提交 `e54e
 `RoutingParameterV1.DimensionKey`、`RoutingParameterV1.Evidence` 和 `RoutingOperationV1.Alternative` 为 `null` 时省略。带有非空 `dimensionKey`、`evidence` 或 `alternative` 的路线原件一旦持久化，回退到引入这些字段之前的应用，旧版模型的 `JsonUnmappedMemberHandling.Disallow` 会拒绝包含未知字段的原件，可能影响按版读回和组合消费。回退前应核查已经保存的路线版本（含历史），并保留能读取这些原件的应用版本。本轮记录该边界，未执行应用回退，也未改写已保存原件或摘要。[路线合同](../../../../CP6.Core/Services/Plm/EngineeringRoutingContractV1.cs)
 
 R1 的四组 Release 回归、Vitest、类型检查及 Vite 构建按本文件所在提交的单次运行取证，命令、环境、TRX 及摘要见最终索引。有效时间、席位状态、工作区读回和回环实例停机状态见 R1 交接读回。[最终验证](<D:/CP6-test-artifacts/WP05-08/exec-20261127T095928Z/validation-final/final-verification.json>) · [R1 交接读回](<D:/CP6-test-artifacts/WP05-08/exec-20261127T095928Z/handoff.json>)
+
+## 7. R1B 终态验证说明
+
+测量候选 `fc1accc7ce9871cc76611c1b0f2efc38047357e4` 的源码树为 `6e9635be29236c4e0f031f66d7c727edcfb5d01c`。主线对照为 `76805d0b7daf9673b7ceb67339e6757ab7a33976`。两侧冻结用例和夹具源文件一致，沿用 15 秒客户端时限。使用 .NET SDK 10.0.404 Release，在 55448 端口的新建回环 PostgreSQL 18.6 夹具上，每项用例各交替运行三次，合计 12 次。ASP.NET Core Hosting 日志记录每个 `POST /freeze` 的起止、状态和已完成耗时。客户端取消且服务器缺少完成日志的样本记为右删失。[对照 JSON、负载快照和 12 份 TRX 摘要](<D:/CP6-test-artifacts/WP05-08/exec-20261127T115409Z-r1b/comparison.json>)
+
+六对首次有效冻结的 CPU 样本范围均有重叠。观察窗均有 4 个 dotnet、30 个 PostgreSQL 和 16 个 Chrome 进程，DEV-2 测试 .NET 为 0、PostgreSQL 为 9。候选与主线各有 5 次在有效冻结 POST 触发时限。两次完成的 Program 有效冻结分别为候选第 3 轮 14.985 秒、主线第 1 轮 14.498 秒，随后分别在取消探测和原操作回执读回触发时限。两侧共同失效支持本机环境解释。十个首冻样本的服务器完成耗时不可观测，耗时差及低负载效应仍待验证。临时主线 detached 检出已核实清洁并移除。[基线退场原件](<D:/CP6-test-artifacts/WP05-08/exec-20261127T115409Z-r1b/baseline-retire.json>)
+
+候选低负载补验为 0／6。等待期间，WP03-19 历史红例的 PostgreSQL 主进程 PID 35376 持续存续，最后一次门槛采样为 2026-11-27 12:56:44 UTC，DEV-2 测试相关 .NET 6 个、PostgreSQL 18 个。只读等待已退场。R1 的同树 301 项 .NET 通过、185 项 Vitest 通过及两项前端构建检查仍可追溯，两个冻结用例尚未取得本卡要求的低负载通过证据。R1B 终态为 `BLOCKED`。[低负载门槛记录](<D:/CP6-test-artifacts/WP05-08/exec-20261127T115409Z-r1b/low-wait-stop.json>) · [R1B 交付读回](<D:/CP6-test-artifacts/WP05-08/exec-20261127T115409Z-r1b/handoff.json>)
