@@ -99,8 +99,13 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             }
         }
 
-        internal Task<AuthenticationApiProcess> Start() => AuthenticationApiProcess.Start(harness.Db.Database.GetConnectionString()!, settings,
-            allowAutoRedirect: false, serverCertificateThumbprint: certificate.Thumbprint);
+        internal Task<AuthenticationApiProcess> Start()
+        {
+            // ACT 完整响应逐块运行真实守护事务，需要覆盖较慢本地环境的整包传输时间。
+            TimeSpan? requestTimeout = settings.ContainsKey("ActFileReference__Enabled") ? TimeSpan.FromSeconds(30) : null;
+            return AuthenticationApiProcess.Start(harness.Db.Database.GetConnectionString()!, settings,
+                allowAutoRedirect: false, serverCertificateThumbprint: certificate.Thumbprint, requestTimeout: requestTimeout);
+        }
 
         internal void EnableActFile(ActFileGuardCrmFixtureV1 guard, string localStorage, string key, string privatePem)
         {

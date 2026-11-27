@@ -51,6 +51,25 @@ internal static class RequirementApplicabilityV1
             && (b.From!=null || b.FromUnbounded) && (b.Until!=null || b.UntilUnbounded)?"OVERLAP":"UNKNOWN";
     }
     internal static string Combine(IEnumerable<string> axes)=>axes.Contains("DISJOINT")?"DISJOINT":axes.Contains("UNKNOWN")?"UNKNOWN":"OVERLAP";
+    internal static string Coverage(RequirementClauseTermsV1? parent, RequirementClauseTermsV1? child)
+    {
+        if (parent is null || child is null) return "UNKNOWN";
+        var axes=new[]{Axis(parent.Customers,child.Customers),Axis(parent.Products,child.Products),
+            Axis(parent.Configurations,child.Configurations),Time(parent,child)};
+        var intersection=Combine(axes);
+        if (intersection!="OVERLAP") return intersection;
+        if (parent.Necessity=="UNKNOWN" || child.Necessity=="UNKNOWN" ||
+            parent.Waivability=="UNKNOWN" || child.Waivability=="UNKNOWN" ||
+            parent.Necessity=="MANDATORY" && child.Necessity!="MANDATORY" ||
+            parent.Waivability=="PROHIBITED" && child.Waivability!="PROHIBITED")
+            return "NECESSITY_UNPROVEN";
+        static bool Includes(RequirementScopeAxisV1 outer, RequirementScopeAxisV1 inner) =>
+            outer.Mode=="ALL" || inner.Mode=="VALUES" && inner.Keys.All(key=>outer.Keys.Contains(key,StringComparer.Ordinal));
+        var includesTime = (child.FromUnbounded || parent.From!=null && child.From<=parent.From)
+            && (child.UntilUnbounded || parent.Until!=null && child.Until>=parent.Until);
+        return Includes(child.Customers,parent.Customers) && Includes(child.Products,parent.Products)
+            && Includes(child.Configurations,parent.Configurations) && includesTime ? "COVERED" : "PARTIAL";
+    }
     internal static (string State,int PairCount,RequirementScopeIntersectionV1[] Examples) Intersections(RequirementSetMemberObservationV1 left,RequirementSetMemberObservationV1 right)
     {
         var result=new List<RequirementScopeIntersectionV1>();var count=0;var overlap=false;var unknown=false;

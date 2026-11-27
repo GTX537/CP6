@@ -120,8 +120,24 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var product = await MakeEngineering(h);
         var owner = Revisions(h);
         var command = await NewRevision(owner, product: product.Reference);
-        // 在旧架构下用原工作版与回执存储建立迁移前证据。
-        var (original, originalReceipt) = await CandidateAuthority(h).ExecuteAsync(OperationsOwnerV1.EngineeringRevision, "add", true, async (access, ct) =>
+        var (original, originalReceipt) = await SeedPreLineageRevision(h, CandidateAuthority(h), command);
+        var grants = await h.Db.Sys_RoleActions.OrderBy(x => x.Id).Select(x => new { x.Id, x.MenuId, x.ActionCode }).ToArrayAsync();
+
+        await h.Db.Database.MigrateAsync();
+        Assert.Empty(await h.Db.Database.GetPendingMigrationsAsync());
+        Assert.Equal(grants, await h.Db.Sys_RoleActions.OrderBy(x => x.Id).Select(x => new { x.Id, x.MenuId, x.ActionCode }).ToArrayAsync());
+        Assert.Equal(original.OriginalJson, (await owner.ReadAsync(command.RevisionId, "1")).OriginalJson);
+        Assert.Equal(originalReceipt, await owner.CommandAsync(command));
+        Assert.Equal(404, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => owner.ConflictAsync(command.OperationId))).Status);
+        var menu = await h.Db.Sys_Menus.Where(x => x.MenuKey == "plm-engineering-revision").Select(x => x.MenuId).SingleAsync();
+        Assert.True(await h.Db.Sys_MenuActions.AnyAsync(x => x.MenuId == menu && x.ActionCode == "legacy-register"));
+        Assert.False(await h.Db.Sys_RoleActions.AnyAsync(x => x.MenuId == menu && x.ActionCode == "legacy-register"));
+    }
+
+    // 在谱系迁移之前，用原工作版、对象绑定和回执存储建立父修订夹具。
+    private static Task<(EngineeringRevisionSnapshotV1 Snapshot, EngineeringRevisionResultV1 Receipt)> SeedPreLineageRevision(
+        Harness h, OperationsOwnerV1 authority, EngineeringRevisionCommandV1 command) =>
+        authority.ExecuteAsync(OperationsOwnerV1.EngineeringRevision, "add", true, async (access, ct) =>
         {
             var store = new EngineeringRevisionStoreV1(h.Db);
             await store.Fence(true, ct);
@@ -137,18 +153,6 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             await new MainOwnerOperationJournalV1(h.Db).Store(EngineeringRevisionValuesV1.RevisionOwner, "Main.Plm.EngineeringRevision.commands.v1",
                 command.OperationId, access.ActorId, MainOwnerOperationJournalV1.Encode(command), receipt, [command.RevisionId],
                 new { action = command.Action, actor = access.ActorId, reason = command.Reason, result = receipt, saved.CandidateRef }, ct);
-            return (saved.OriginalJson, receipt);
+            return (saved, receipt);
         });
-        var grants = await h.Db.Sys_RoleActions.OrderBy(x => x.Id).Select(x => new { x.Id, x.MenuId, x.ActionCode }).ToArrayAsync();
-
-        await h.Db.Database.MigrateAsync();
-        Assert.Empty(await h.Db.Database.GetPendingMigrationsAsync());
-        Assert.Equal(grants, await h.Db.Sys_RoleActions.OrderBy(x => x.Id).Select(x => new { x.Id, x.MenuId, x.ActionCode }).ToArrayAsync());
-        Assert.Equal(original, (await owner.ReadAsync(command.RevisionId, "1")).OriginalJson);
-        Assert.Equal(originalReceipt, await owner.CommandAsync(command));
-        Assert.Equal(404, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => owner.ConflictAsync(command.OperationId))).Status);
-        var menu = await h.Db.Sys_Menus.Where(x => x.MenuKey == "plm-engineering-revision").Select(x => x.MenuId).SingleAsync();
-        Assert.True(await h.Db.Sys_MenuActions.AnyAsync(x => x.MenuId == menu && x.ActionCode == "legacy-register"));
-        Assert.False(await h.Db.Sys_RoleActions.AnyAsync(x => x.MenuId == menu && x.ActionCode == "legacy-register"));
-    }
 }

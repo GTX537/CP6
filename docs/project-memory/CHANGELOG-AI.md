@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP05-13 工程需求来源、分解与可评价判据](../development/evidence/WP05-13/DELIVERY.md)（DONE），核对时间 `2026-11-27T04:41:59.2995349+00:00`。
 - [WP05-03 工程修订、工作快照与组成候选](../development/evidence/WP05-03/DELIVERY.md)（DONE），核对时间 `2026-11-26T21:49:27.736715+00:00`。
 - [WP02-32 ACT-FILE-REFERENCE/1 本地权威门与 Owner 守护流式下载](../development/evidence/WP02-32/DELIVERY.md)（DONE），核对时间 `2026-11-26T14:32:49.7826700+00:00`。
 - [WP05-02 工程产品身份与经营料号双Owner映射](../development/evidence/WP05-02/DELIVERY.md)（DONE），核对时间 `2026-11-26T14:24:19.149627+00:00`。

@@ -45,6 +45,15 @@ public sealed partial class EngineeringRequirementService
             }
             foreach(var link in definition.Relations)
             {var target=await Exact(a,s,link.Target,"REQUIREMENT",ct);await Add(target);await Walk(target,depth+1);}
+            foreach (var clarification in definition.Clarifications ?? [])
+                await Add(await Exact(a,s,clarification.Source,"SOURCE",ct));
+            if (definition.Decomposition is { } review)
+                foreach (var dependency in review.Children.Prepend(review.Parent))
+                {
+                    var target=await Exact(a,s,dependency,"REQUIREMENT",ct);
+                    await Add(target);
+                    await Walk(target,depth+1);
+                }
         }
         await Walk(requirement,0);
         var units=new Dictionary<UomProfileRefV1,UomProfileVersionV1>();

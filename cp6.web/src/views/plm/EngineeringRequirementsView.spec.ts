@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import type { RequirementBody, RequirementCommand, RequirementSnapshot } from '@/api/plm/engineeringRequirements'
-const api = vi.hoisted(() => ({ scope: vi.fn(), creationContext: vi.fn(), list: vi.fn(), read: vi.fn(), save: vi.fn(), operation: vi.fn(), allowed: true, authenticated: true }))
+const api = vi.hoisted(() => ({ scope: vi.fn(), creationContext: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), save: vi.fn(), operation: vi.fn(), exportPage: vi.fn(), allowed: true, authenticated: true }))
 vi.mock('@/api/plm/engineeringRequirements', () => ({ requirementApi: api }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ loaded: true, has: () => api.allowed, loadMyActions: vi.fn() }) }))
 vi.mock('@/auth/browserAuthentication', () => ({ authenticationCanRead: () => api.authenticated }))
@@ -33,11 +33,127 @@ beforeEach(() => {
   })
   Object.defineProperty(navigator, 'locks', { configurable: true, value: { request: (_: string, _options: unknown, action: (lock: object) => unknown) => action({}) } })
 })
-afterEach(() => { view?.unmount(); view = undefined })
+afterEach(() => { view?.unmount(); view = undefined; vi.unstubAllGlobals(); vi.restoreAllMocks() })
 it('creates an unresolved source with explicit original clauses and trusted department selection', async () => {
   await render(); await click('新建来源包'); expect((field('来源类别').element as HTMLSelectElement).value).toBe('UNRESOLVED')
   await field('草稿名称').setValue('Unresolved letter'); await field('所属部门').setValue(department); await field('来源描述').setValue('Source channel needs clarification'); await field('条款标识 1').setValue('C1'); await field('来源原文 1').setValue('Exact unedited original'); await field('保存原因').setValue('Record unclear source'); await submit('保存原因')
   expect(api.save.mock.calls[0]![0]).toMatchObject({ action: 'CREATE', departmentId: department, expectedAuthorityVersion: 'current', body: { kind: 'SOURCE', source: { kind: 'UNRESOLVED', clauses: [{ id: 'C1', originalText: 'Exact unedited original', locator: '' }] }, requirement: null } })
+})
+it('保存并回读尚待补证的 ACT 宿主、成员与原件坐标', async () => {
+  await render()
+  await click('新建来源包')
+  await click('保留待补证原件引用')
+  await field('原件 Owner').setValue('ACT-FILE-REFERENCE/1')
+  const actFile = { activityId: sourceId, activityRevision: '5', referenceSetVersion: '8', referenceId: id,
+    attachmentId: 'SIMULATED/File:原键', version: '版本 01', contentSha256: 'c'.repeat(64) }
+  await field('活动 ID').setValue(actFile.activityId)
+  await field('活动准确版本').setValue(actFile.activityRevision)
+  await field('引用集合准确版本').setValue(actFile.referenceSetVersion)
+  await field('引用成员 ID').setValue(actFile.referenceId)
+  await field('附件原键').setValue(actFile.attachmentId)
+  await field('附件准确版本').setValue(actFile.version)
+  await field('附件 SHA-256').setValue(actFile.contentSha256)
+  await field('草稿名称').setValue('SIMULATED 活动附件')
+  await field('所属部门').setValue(department)
+  await field('来源描述').setValue('SIMULATED 待核宿主与附件')
+  await field('保存原因').setValue('保留原坐标')
+  await submit('保存原因')
+  expect(api.save.mock.calls[0]![0].body.source).toMatchObject({
+    kind: 'UNRESOLVED', clauses: [], origin: { reference: null, occurrenceId: null, actFile },
+  })
+  await submit('历史版本')
+  expect((field('历史 活动 ID').element as HTMLInputElement).value).toBe(actFile.activityId)
+  expect((field('历史 附件原键').element as HTMLInputElement).value).toBe(actFile.attachmentId)
+})
+it('导出的类别、筛选和页码对应最近一次成功查询显示的目录', async () => {
+  vi.stubGlobal('URL', class extends URL {
+    static createObjectURL() { return 'blob:simulated' }
+    static revokeObjectURL() {}
+  })
+  vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+  const firstPage = Array.from({ length: 20 }, (_, index) => ({
+    ...structuredClone(requirement), reference: { ...requirement.reference, id: `SIMULATED-${index}` },
+  }))
+  await render()
+  api.list.mockResolvedValueOnce(ok(firstPage))
+  await field('目录类别').setValue('REQUIREMENT')
+  await field('目录搜索').setValue('屏幕筛选')
+  await submit('目录搜索')
+  api.list.mockResolvedValueOnce(ok([requirement]))
+  await click('下一页')
+  expect(view!.text()).toContain('第 2 页')
+
+  await field('目录类别').setValue('SOURCE')
+  await field('目录搜索').setValue('待提交筛选')
+  api.list.mockRejectedValueOnce(new Error('SIMULATED 搜索失败'))
+  await submit('目录搜索')
+  api.exportPage.mockResolvedValueOnce(new Blob(['[]']))
+  await click('导出当前页')
+  expect(api.exportPage).toHaveBeenCalledWith('REQUIREMENT', '屏幕筛选', 2)
+  expect(view!.text()).toContain(requirement.body.name)
+  expect(view!.text()).toContain('第 2 页')
+})
+it('saves an exact DOC occurrence and keeps the quoted source and its location together', async () => {
+  await render()
+  await click('新建来源包')
+  await field('来源类别').setValue('OWNER_ORIGINAL')
+  await field('原件 Owner').setValue('Main.Plm.ControlledDocument.v1')
+  await field('原件 ID').setValue(sourceId)
+  await field('原件准确版本').setValue('7')
+  await field('原件 SHA-256').setValue('b'.repeat(64))
+  await field('文档内容位置 ID').setValue(id)
+  await field('草稿名称').setValue('SIMULATED 客户规格')
+  await field('所属部门').setValue(department)
+  await field('来源描述').setValue('SIMULATED 原版')
+  await field('条款标识 1').setValue('R1')
+  await field('原文位置 1').setValue('LINE:1')
+  await field('来源原文 1').setValue('SIMULATED 客户原文')
+  await field('保存原因').setValue('登记原件')
+  await submit('保存原因')
+  expect(api.save.mock.calls[0]![0].body.source).toMatchObject({
+    kind: 'OWNER_ORIGINAL',
+    origin: { reference: { owner: 'Main.Plm.ControlledDocument.v1', id: sourceId, version: '7', digest: 'b'.repeat(64) }, occurrenceId: id },
+    clauses: [{ id: 'R1', locator: 'LINE:1', originalText: 'SIMULATED 客户原文' }]
+  })
+})
+it('keeps an issued question on its original source and enters a separate exact reply', async () => {
+  await openRequirement()
+  await click('按原条款发起澄清')
+  await field('原版澄清问题 1').setValue('SIMULATED 请确认原规格约束')
+  await field('保存原因').setValue('发起澄清')
+  await submit('保存原因')
+  const question = api.save.mock.calls[0]![0].body.requirement.clarifications[0]
+  expect(question).toMatchObject({ source: source.reference, clauseId: 'R1', question: 'SIMULATED 请确认原规格约束' })
+  expect(question.reply).toBeUndefined()
+  expect(view!.text()).toContain('待答复')
+  expect(field('原版澄清问题 1').attributes('readonly')).toBeDefined()
+  await click('关联准确答复原件')
+  await field('答复 1 原件 ID').setValue(id)
+  await field('答复 1 原件准确版本').setValue('1')
+  await field('答复 1 原件 SHA-256').setValue('b'.repeat(64))
+  await field('保存原因').setValue('关联答复')
+  await submit('保存原因')
+  expect(api.save.mock.calls[1]![0].body.requirement.clarifications[0]).toMatchObject({
+    ...question,
+    reply: { reference: { owner: 'Main.File.Content.v1', id, version: '1', digest: 'b'.repeat(64) } }
+  })
+})
+it('compares an exact old version with the current version without changing the editor', async () => {
+  api.read.mockImplementation(async (selected: string, version?: string) => {
+    if (selected === sourceId) return ok(structuredClone(source))
+    if (version === '1') return ok({ ...structuredClone(current), reference: { ...current.reference, version: '1' } })
+    return ok(structuredClone(current))
+  })
+  api.diff.mockResolvedValue(ok({
+    before: { ...requirement.reference, version: '1' }, after: requirement.reference,
+    changes: [{ path: 'interpretation', before: 'SIMULATED 原工程解释', after: 'SIMULATED 后继解释' }]
+  }))
+  await openRequirement()
+  await submit('历史版本')
+  await click('比较当前版')
+  expect(api.diff).toHaveBeenCalledWith(id, '1', '2')
+  expect(view!.text()).toContain('SIMULATED 原工程解释')
+  expect((field('需求解释').element as HTMLTextAreaElement).value).toBe(body.requirement!.interpretation)
 })
 it('requires explicit source and clause selection without replacing original text by interpretation', async () => {
   await render(); await click('新建需求'); await field('草稿名称').setValue('New requirement'); await field('所属部门').setValue(department); await click('查找来源包')

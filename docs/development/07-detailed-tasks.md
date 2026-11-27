@@ -2,13 +2,13 @@
 
 台账日期：2026-11-26。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 395 项，已交付 116 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 395 项，已交付 117 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)。Main／CRM 双线并行，每线一次一卡。核对完整前置后选择下一卡。[双线治理决定](decisions/DECISION-20261126-two-lanes.md)
 
 原 375 卡及其全部出口保留；已登记 13 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。
 
-原号 DONE 99/375；完整 DONE 96/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 7/7，沿用原卡池内划拨。
+原号 DONE 100/375；完整 DONE 97/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 7/7，沿用原卡池内划拨。
 
 ## WP01 现有实现与设计对照
 
@@ -171,7 +171,7 @@
 | [WP05-10 配置与逐输出输入工序关系](../../docs/development/task-plans/WP05.md#wp05-10) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP05-08, WP05-09 | CODE / L | 未领取 |
 | [WP05-11 工程源固定证明与完整性检查](../../docs/development/task-plans/WP05.md#wp05-11) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP05-03, WP05-06, WP05-10, WP05-16, WP09-11 | CODE / L | 未领取 |
 | [WP05-12 工程基线冻结、后继与准确发布委托](../../docs/development/task-plans/WP05.md#wp05-12) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP05-11, WP05-20 | CODE / L | 未领取 |
-| [WP05-13 工程需求来源、分解与可评价判据](../../docs/development/task-plans/WP05.md#wp05-13) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP02-14, WP03-17, WP03-21, WP04-32, WP05-02 | CODE / M | 未领取 |
+| [WP05-13 工程需求来源、分解与可评价判据](../../docs/development/task-plans/WP05.md#wp05-13) | Main | 已交付 | S01-02, S02-00, WP02-10, WP02-13, WP02-14, WP03-17, WP03-21, WP04-32, WP05-02 | CODE / M | CP6-EXEC |
 | [WP05-14 需求集批准、冲突裁决与后继影响](../../docs/development/task-plans/WP05.md#wp05-14) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP05-13, WP12-06, WP12-07 | CODE / M | 未领取 |
 | [WP05-15 需求分配覆盖与满足性签署](../../docs/development/task-plans/WP05.md#wp05-15) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP05-14, WP05-22, WP05-24 | CODE / M | 未领取 |
 | [WP05-16 受控技术文档版本与原件派生](../../docs/development/task-plans/WP05.md#wp05-16) | Main | 已交付 | S01-02, S01-07, S02-00, WP02-10, WP02-13, WP02-14, WP02-15, WP12-06, WP12-07 | CODE / M | COORD / W307-01 |
