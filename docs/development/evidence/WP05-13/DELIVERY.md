@@ -29,9 +29,12 @@
 | 定量／定性、方法、精度、未知条件、必要性与适用范围。AC-REQ-005/006/009/010，PG04 A005–A012 | `EngineeringRequirement_exact_criteria_keep_unknown_units_and_endpoints_without_guessing` 和 `RequirementEvaluation_unknown_boundary_native_unit_precision_and_disabled_base_fail_closed` 核端点、单位、精度和定性依据；销售来源用例核方法对应条款。逐条覆盖和原冲突回归按来源权威检查范围及必要性。正式裁决、真实分配和执行由后继卡办理。 |
 | 当前授权、共同最终门、同键恢复及前滚 | `EngineeringRequirement_competing_revisions_have_one_CAS_winner_and_close_prevents_late_commit`、`EngineeringRequirement_write_fault_and_missing_journal_rollback_then_same_key_recovers`、`EngineeringRequirement_unknown_commit_rolls_back_binding_and_admin_uses_identity_only` 及 `EngineeringRequirement_wp0513_export_migration_keeps_original_receipt_and_requires_new_permission`。 |
 | ACT 文件守护边界及持久上游回归 | `EngineeringRequirement_wp0513_act_registered_attachment_cannot_use_ordinary_file_source` 核普通 FILE 缺资格。WP02-32 的 `ActFile_stream_returns_exact_hash_and_stops_after_first_slice_when_DL_is_revoked` 运行守护流撤权和截断。CRM 生产消费按 WP03-19。 |
+| D1 谱系与 FILE 前滚兼容 | `ActFile_forward_migration_preserves_an_existing_file_and_receipt_without_CRM_registration` 核旧库原生 FILE 上传、前滚后的原字节、原回执、保留和未登记 CRM。 `EngineeringLegacy_forward_migration_preserves_existing_revision_original_journal_and_grants` 核前滚前后修订原件、原回执及授权。 |
+
+#1339 的 FILE 前滚用例使用早于 #1340 工程谱系的数据库。当前修订 Owner 在创建时读取 `revision_conflicts`，旧库返回 `42P01`。本卡从 WP05-03 的既有前滚用例提取旧库夹具，按同一事务中的工作版、对象绑定、序号和原操作存储准备父修订。仅在待应用谱系迁移的测试库走该夹具。当前库仍经工程修订 Owner。两个前滚测试的业务断言、产品合同和 FILE 提供者保持原有语义。
 
 ## 同树证据与工作区
 
-- 最终运行从本报告所在提交独立还原并构建 .NET SDK 10.0.404 Release。隔离 PostgreSQL 18 只监听回环，用 D1 范围内的三个端口和独立 `permission-consumption-` 根。实际 Main API、浏览器组件及 PostgreSQL 使用明确合成的租户、用户、权限、商业记录、澄清、文件和守护证明。源与生产部署状态单独保留。
+- 最终运行从本报告所在提交独立还原并构建 .NET SDK 10.0.404 Release。隔离 PostgreSQL 18 只监听回环，用 D1 范围内的四个端口和独立 `permission-consumption-` 根。按原报告的用例名核验 WP05-02 全部 95 项及 WP05-03 工程 44 项，并执行 FILE、REQ、Sales、DOC、QUALITY 与前端专项。实际 Main API、工作台组件及 PostgreSQL 使用明确合成的租户、用户、权限、商业记录、澄清、文件和守护证明。源与生产部署状态单独保留。
 - [验证脚本](/D:/CP6-test-artifacts/WP05-13/exec-20261126T235242212Z/run-final.ps1) 固定同一源码提交及树、各组完整命令、脱敏环境变量、子进程设置、测试清单、TRX 与摘要。 [最终验证汇总](/D:/CP6-test-artifacts/WP05-13/exec-20261126T235242212Z/final-verification.json) · [逐项 AC 原件](/D:/CP6-test-artifacts/WP05-13/exec-20261126T235242212Z/original-acceptance-final.json)
 - 本地分支 `codex/wp05-13` 交总控复核。实际提交、分支处置、秒数和停机读回见外部签收记录。 [工作区读回](/D:/CP6-test-artifacts/WP05-13/exec-20261126T235242212Z/workspace-readback.json)

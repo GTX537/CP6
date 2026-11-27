@@ -31,7 +31,17 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         foreach (var action in new[] { "query", "add", "edit" }) await EngineeringAction(h, "plm-engineering-routing", action);
         h.Db.Sys_RoleDataScopes.Add(new() { RoleId = 72, ResourceKey = "plm-engineering-routing", ScopeType = 5 });
         await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
-        return await MakeRevision(RoutingRevisions(h), (await MakeEngineering(h)).Reference);
+        var authority = RoutingAuthority(h);
+        var owner = new EngineeringRevisionOwnerV1(h.Db, authority);
+        var product = (await MakeEngineering(h)).Reference;
+        const string lineageMigration = "20261126160000_EngineeringRevisionLineageV1";
+        if ((await h.Db.Database.GetPendingMigrationsAsync()).Contains(lineageMigration))
+        {
+            var command = await NewRevision(owner, product: product);
+            return (await SeedPreLineageRevision(h, authority, command)).Snapshot;
+        }
+
+        return await MakeRevision(owner, product);
     }
     private static EngineeringRoutingCommandV1 RoutingCreate(EngineeringRevisionSnapshotV1 parent)
         => new(Guid.NewGuid(), Guid.NewGuid(), "CREATE", null, null,
