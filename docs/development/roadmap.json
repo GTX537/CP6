@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "baseline_id": "CP6-DEV-ROADMAP-20261011/R1",
-  "as_of": "2026-11-26",
+  "as_of": "2026-11-27",
   "scope": "125已接受设计目标的全量大任务计划与进度登记。247仅为修订运行场景；原模块验收需继续盘点。不是125目标实现已完成的证明。",
   "main_baseline_sha": "90ea752e9029d171e6a0307fcda06c66c3e04a69",
   "sources": [
@@ -18685,8 +18685,8 @@
       "delivery_evidence": null,
       "completion_audit": {
         "result": "OPEN_GAPS",
-        "reviewed_at": "2026-11-26T14:32:14.071615+00:00",
-        "report": "docs/development/evidence/WP05-02/DELIVERY.md",
+        "reviewed_at": "2026-11-27T18:21:22.496279+00:00",
+        "report": "docs/development/evidence/WP05-08/DELIVERY.md",
         "coverage_cards": [
           "WP05-02",
           "WP05-10"
@@ -18697,21 +18697,21 @@
             "source_cases": [
               "AC-PLM-FB01-025"
             ],
-            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。BOM 和工艺依据由 WP05-09、WP05-08 提供，冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
+            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。采用 WP05-08 已产出的批准工艺不适用依据及 WP05-09 的 BOM 输入。冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
           },
           {
             "owner_task_id": "WP05-12",
             "source_cases": [
               "AC-PLM-FB01-026"
             ],
-            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。版本化工艺由 WP05-08 提供，完备性检查由 WP05-11 提供。"
+            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。在冻结事务中采用 WP05-08 已产出的版本化工艺及缺项输入，联查 WP05-11 的完备性结果。"
           },
           {
             "owner_task_id": "WP05-32",
             "source_cases": [
               "AC-PLM-FB01-027"
             ],
-            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。工具规格与实例证据、工艺引用、检查和冻结分别由 WP05-06/08/11/12 提供，正式后验用途按 WP05-42 验证。"
+            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。采用 WP05-08 已产出的准确工具规格引用及 WP05-06 的真实工具实例证据，检查和冻结由 WP05-11/12 承接，正式后验用途按 WP05-42 验证。"
           },
           {
             "owner_task_id": "WP05-10",
@@ -20036,8 +20036,8 @@
       "delivery_evidence": null,
       "completion_audit": {
         "result": "OPEN_GAPS",
-        "reviewed_at": "2026-11-26T21:56:56.203294+00:00",
-        "report": "docs/development/evidence/WP05-03/DELIVERY.md",
+        "reviewed_at": "2026-11-27T18:21:22.496279+00:00",
+        "report": "docs/development/evidence/WP05-08/DELIVERY.md",
         "coverage_cards": [
           "WP05-03",
           "WP05-11",
@@ -20049,7 +20049,7 @@
             "source_cases": [
               "AC-PLM-FB01-025"
             ],
-            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。BOM 和工艺依据由 WP05-09、WP05-08 提供，冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
+            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。采用 WP05-08 已产出的批准工艺不适用依据及 WP05-09 的 BOM 输入。冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
           },
           {
             "owner_task_id": "WP05-12",
@@ -20064,14 +20064,14 @@
               "AC-PLM-FB01-004",
               "AC-PLM-FB01-006"
             ],
-            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。版本化工艺由 WP05-08 提供，完备性检查由 WP05-11 提供。在工程冻结事务内绑定准确的逐输出关系集与基线，拒绝错配及陈旧预览。最终冻结复核当前技术源、策略与审批。真实存量档案待业务 Owner 核定类别、映射及批准，冻结核对准确新草稿与当前批件，保留证据不足及历史原件状态。 依据 WP05-13 的精确需求来源，冻结时联查 WP05-14 的准确需求集、WP05-18/19 的 ITER 评审输入及双候选双摘要。"
+            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。在冻结事务中采用 WP05-08 已产出的版本化工艺及缺项输入，联查 WP05-11 的完备性结果。在工程冻结事务内绑定准确的逐输出关系集与基线，拒绝错配及陈旧预览。最终冻结复核当前技术源、策略与审批。真实存量档案待业务 Owner 核定类别、映射及批准，冻结核对准确新草稿与当前批件，保留证据不足及历史原件状态。 依据 WP05-13 的精确需求来源，冻结时联查 WP05-14 的准确需求集、WP05-18/19 的 ITER 评审输入及双候选双摘要。"
           },
           {
             "owner_task_id": "WP05-32",
             "source_cases": [
               "AC-PLM-FB01-027"
             ],
-            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。工具规格与实例证据、工艺引用、检查和冻结分别由 WP05-06/08/11/12 提供，正式后验用途按 WP05-42 验证。"
+            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。采用 WP05-08 已产出的准确工具规格引用及 WP05-06 的真实工具实例证据，检查和冻结由 WP05-11/12 承接，正式后验用途按 WP05-42 验证。"
           },
           {
             "owner_task_id": "WP05-10",
@@ -21399,8 +21399,8 @@
       "delivery_evidence": null,
       "completion_audit": {
         "result": "OPEN_GAPS",
-        "reviewed_at": "2026-11-26T14:32:14.071615+00:00",
-        "report": "docs/development/evidence/WP05-02/DELIVERY.md",
+        "reviewed_at": "2026-11-27T18:21:22.496279+00:00",
+        "report": "docs/development/evidence/WP05-08/DELIVERY.md",
         "coverage_cards": [
           "WP05-09",
           "WP05-10"
@@ -21411,21 +21411,21 @@
             "source_cases": [
               "AC-PLM-FB01-025"
             ],
-            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。BOM 和工艺依据由 WP05-09、WP05-08 提供，冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
+            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。采用 WP05-08 已产出的批准工艺不适用依据及 WP05-09 的 BOM 输入。冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
           },
           {
             "owner_task_id": "WP05-12",
             "source_cases": [
               "AC-PLM-FB01-026"
             ],
-            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。版本化工艺由 WP05-08 提供，完备性检查由 WP05-11 提供。"
+            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。在冻结事务中采用 WP05-08 已产出的版本化工艺及缺项输入，联查 WP05-11 的完备性结果。"
           },
           {
             "owner_task_id": "WP05-32",
             "source_cases": [
               "AC-PLM-FB01-027"
             ],
-            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。工具规格与实例证据、工艺引用、检查和冻结分别由 WP05-06/08/11/12 提供，正式后验用途按 WP05-42 验证。"
+            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。采用 WP05-08 已产出的准确工具规格引用及 WP05-06 的真实工具实例证据，检查和冻结由 WP05-11/12 承接，正式后验用途按 WP05-42 验证。"
           },
           {
             "owner_task_id": "WP05-10",
@@ -22609,8 +22609,8 @@
       "delivery_evidence": null,
       "completion_audit": {
         "result": "OPEN_GAPS",
-        "reviewed_at": "2026-11-26T14:32:14.071615+00:00",
-        "report": "docs/development/evidence/WP05-02/DELIVERY.md",
+        "reviewed_at": "2026-11-27T18:21:22.496279+00:00",
+        "report": "docs/development/evidence/WP05-08/DELIVERY.md",
         "coverage_cards": [
           "WP05-08",
           "WP05-10"
@@ -22621,21 +22621,21 @@
             "source_cases": [
               "AC-PLM-FB01-025"
             ],
-            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。BOM 和工艺依据由 WP05-09、WP05-08 提供，冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
+            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。采用 WP05-08 已产出的批准工艺不适用依据及 WP05-09 的 BOM 输入。冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
           },
           {
             "owner_task_id": "WP05-12",
             "source_cases": [
               "AC-PLM-FB01-026"
             ],
-            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。版本化工艺由 WP05-08 提供，完备性检查由 WP05-11 提供。"
+            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。在冻结事务中采用 WP05-08 已产出的版本化工艺及缺项输入，联查 WP05-11 的完备性结果。"
           },
           {
             "owner_task_id": "WP05-32",
             "source_cases": [
               "AC-PLM-FB01-027"
             ],
-            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。工具规格与实例证据、工艺引用、检查和冻结分别由 WP05-06/08/11/12 提供，正式后验用途按 WP05-42 验证。"
+            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。采用 WP05-08 已产出的准确工具规格引用及 WP05-06 的真实工具实例证据，检查和冻结由 WP05-11/12 承接，正式后验用途按 WP05-42 验证。"
           },
           {
             "owner_task_id": "WP05-10",
@@ -22643,7 +22643,7 @@
               "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-POS",
               "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-NEG"
             ],
-            "gap": "核验配置及逐输出输入和生产工序关系的完整性、主产品对应与变更后的旧预览失效。"
+            "gap": "核验配置及逐输出输入和生产工序关系的完整性、主产品对应与变更后的旧预览失效。采用 WP05-08 已产出的准确路线版和工序发生项。"
           },
           {
             "owner_task_id": "WP05-12",
@@ -25062,8 +25062,8 @@
       "delivery_evidence": null,
       "completion_audit": {
         "result": "OPEN_GAPS",
-        "reviewed_at": "2026-11-26T14:32:14.071615+00:00",
-        "report": "docs/development/evidence/WP05-02/DELIVERY.md",
+        "reviewed_at": "2026-11-27T18:21:22.496279+00:00",
+        "report": "docs/development/evidence/WP05-08/DELIVERY.md",
         "coverage_cards": [
           "WP05-16",
           "WP05-17"
@@ -25074,21 +25074,21 @@
             "source_cases": [
               "AC-PLM-FB01-025"
             ],
-            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。BOM 和工艺依据由 WP05-09、WP05-08 提供，冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
+            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。采用 WP05-08 已产出的批准工艺不适用依据及 WP05-09 的 BOM 输入。冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
           },
           {
             "owner_task_id": "WP05-12",
             "source_cases": [
               "AC-PLM-FB01-026"
             ],
-            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。版本化工艺由 WP05-08 提供，完备性检查由 WP05-11 提供。"
+            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。在冻结事务中采用 WP05-08 已产出的版本化工艺及缺项输入，联查 WP05-11 的完备性结果。"
           },
           {
             "owner_task_id": "WP05-32",
             "source_cases": [
               "AC-PLM-FB01-027"
             ],
-            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。工具规格与实例证据、工艺引用、检查和冻结分别由 WP05-06/08/11/12 提供，正式后验用途按 WP05-42 验证。"
+            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。采用 WP05-08 已产出的准确工具规格引用及 WP05-06 的真实工具实例证据，检查和冻结由 WP05-11/12 承接，正式后验用途按 WP05-42 验证。"
           }
         ]
       }
@@ -30455,8 +30455,8 @@
       "delivery_evidence": null,
       "completion_audit": {
         "result": "OPEN_GAPS",
-        "reviewed_at": "2026-11-26T21:56:56.203294+00:00",
-        "report": "docs/development/evidence/WP05-03/DELIVERY.md",
+        "reviewed_at": "2026-11-27T18:21:22.496279+00:00",
+        "report": "docs/development/evidence/WP05-08/DELIVERY.md",
         "coverage_cards": [
           "WP05-32",
           "WP05-33",
@@ -30472,7 +30472,7 @@
             "source_cases": [
               "AC-PLM-FB01-025"
             ],
-            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。BOM 和工艺依据由 WP05-09、WP05-08 提供，冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
+            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。采用 WP05-08 已产出的批准工艺不适用依据及 WP05-09 的 BOM 输入。冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
           },
           {
             "owner_task_id": "WP05-12",
@@ -30481,7 +30481,7 @@
               "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-POS",
               "DR-PE-ENG-MULTI-OUTPUT-MANIFEST::PE-ENG-MULTI-OUTPUT-MANIFEST-NEG"
             ],
-            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。版本化工艺由 WP05-08 提供，完备性检查由 WP05-11 提供。在工程冻结事务内绑定准确的逐输出关系集与基线，拒绝错配及陈旧预览。"
+            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。在冻结事务中采用 WP05-08 已产出的版本化工艺及缺项输入，联查 WP05-11 的完备性结果。在工程冻结事务内绑定准确的逐输出关系集与基线，拒绝错配及陈旧预览。"
           },
           {
             "owner_task_id": "WP05-32",
@@ -30490,7 +30490,7 @@
               "AC-PLM-FB01-001",
               "AC-PLM-FB01-003"
             ],
-            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。工具规格与实例证据、工艺引用、检查和冻结分别由 WP05-06/08/11/12 提供，正式后验用途按 WP05-42 验证。按 WP05-03 工作版冻结所得准确基线，验收所选用途的当前前件及使用授权。 按 WP05-13 的试制出口保留 H42 的计划、实际申请及独立用途许可，供 WP05-23 的试制 Owner 做最终准入。"
+            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。采用 WP05-08 已产出的准确工具规格引用及 WP05-06 的真实工具实例证据，检查和冻结由 WP05-11/12 承接，正式后验用途按 WP05-42 验证。按 WP05-03 工作版冻结所得准确基线，验收所选用途的当前前件及使用授权。 按 WP05-13 的试制出口保留 H42 的计划、实际申请及独立用途许可，供 WP05-23 的试制 Owner 做最终准入。"
           },
           {
             "owner_task_id": "WP05-10",
@@ -158228,8 +158228,8 @@
       "delivery_evidence": null,
       "completion_audit": {
         "result": "OPEN_GAPS",
-        "reviewed_at": "2026-11-26T14:32:14.071615+00:00",
-        "report": "docs/development/evidence/WP05-02/DELIVERY.md",
+        "reviewed_at": "2026-11-27T18:21:22.496279+00:00",
+        "report": "docs/development/evidence/WP05-08/DELIVERY.md",
         "coverage_cards": [
           "WP05-04",
           "WP05-05",
@@ -158242,21 +158242,21 @@
             "source_cases": [
               "AC-PLM-FB01-025"
             ],
-            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。BOM 和工艺依据由 WP05-09、WP05-08 提供，冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
+            "gap": "采购成品在技术包检查中保留有据的 BOM 与工艺不适用。采用 WP05-08 已产出的批准工艺不适用依据及 WP05-09 的 BOM 输入。冻结由 WP05-12 承接，后继用途按 WP05-32/42 验证。"
           },
           {
             "owner_task_id": "WP05-12",
             "source_cases": [
               "AC-PLM-FB01-026"
             ],
-            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。版本化工艺由 WP05-08 提供，完备性检查由 WP05-11 提供。"
+            "gap": "缺失必需工艺的自制品冻结须拒绝，列出缺项及责任。在冻结事务中采用 WP05-08 已产出的版本化工艺及缺项输入，联查 WP05-11 的完备性结果。"
           },
           {
             "owner_task_id": "WP05-32",
             "source_cases": [
               "AC-PLM-FB01-027"
             ],
-            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。工具规格与实例证据、工艺引用、检查和冻结分别由 WP05-06/08/11/12 提供，正式后验用途按 WP05-42 验证。"
+            "gap": "现场活动按用途核验实际工具实例，实例未知时阻断实际使用。采用 WP05-08 已产出的准确工具规格引用及 WP05-06 的真实工具实例证据，检查和冻结由 WP05-11/12 承接，正式后验用途按 WP05-42 验证。"
           }
         ]
       }
@@ -178466,6 +178466,11 @@
       "at": "2026-11-27T04:54:42.657108+00:00",
       "evidence": "docs/development/evidence/WP05-13/DELIVERY.md",
       "change": "WP05-13 工程需求来源、分解与可评价判据以 #1341 登记同 PR 卡级 DONE，合入受保护 main 并核对包含性后生效。执行侧与总控 R2 各通过 .NET 277 项、Vitest 147 项。R2 综合复核 PASS_WITH_NITS。执行侧累计 10929 秒，计划累计 291610.804 秒。PLM-REQ-01 保持开放，45 项未运行原 AC 逐项接续。AC-PLM-FB02-029/030 归 WP05-22。建议另立 VER 语义词典补充卡，待总控按补充卡流程登记。"
+    },
+    {
+      "at": "2026-11-27T18:21:22.496279+00:00",
+      "evidence": "docs/development/evidence/WP05-08/DELIVERY.md",
+      "change": "WP05-08 版本化工艺操作与准确工具规格以 #1342 登记卡级 DONE，合入受保护 main 并核对包含性后生效。执行侧累计 29395.319 秒，超过拆分线 7795.319 秒，新增拆分 0。计划累计 321006.123 秒，缓冲累计 19698.328 秒。ENG-ROU-01 及关联目标保持开放。冻结性能归总控授权的 Main 补充卡。"
     }
   ],
   "implementation_assessment": {
@@ -212558,14 +212563,51 @@
         "file:Main:CP6.Entity/DomainModels/Erp/ProductCoProduct.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP05.md",
       "card_anchor": "wp05-08",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "CP6-EXEC",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp05-08",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-27T05:12:13.779660+00:00",
+        "baseline_sha": "76805d0b7daf9673b7ceb67339e6757ab7a33976",
+        "entry_evidence": "docs/development/evidence/WP05-08/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/WP05-08/DELIVERY.md",
+        "dispatch_scope": "DEV-1 版本化 ProductProcess 路线及稳定工序发生项，验证顺序和依赖、批准资源工时与参数、互斥替代及准确工具规格、旧执行快照及原键回读。",
+        "worker_start_received": true
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP05-08/DELIVERY.md",
+          "source_sha": "8859247034577811cdcc13ba4d6d6bce6eabbdba",
+          "observed_at": "2026-11-27T16:18:49.197375+00:00",
+          "environment": "执行侧 DEV-1，Windows、.NET SDK 10.0.404 Release、仅回环 PostgreSQL 18.6、实际 Main Program HTTP、Node 20.19.0 及隔离 SIMULATED 夹具。",
+          "command": "按 D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/final-verification.json 的同树四组 Release 运行，使用 Vitest、vue-tsc --build --force 和 Vite 构建。",
+          "result": "PASS",
+          "scope": "执行侧 R1F 卡级验收通过，冻结用例按总控裁定归 Main 补充卡。产品树 96c49aec7173726eb0cc601edbd4bcfa3d12ae13，.NET 共 311 次执行（309 通过、2 失败、0 跳过），Vitest 185 通过，强制类型检查和 Vite 构建退出码均为 0。TRX SHA-256 为 wp0502 277a2811c74714942b18d5ca37a9afff41d46f786dc2a674a113f552699257ed、engineering 2aef7759e5495858c1c63d9199e2aaabecc7001e28ad4db3745b1c024c6fa9a4、requirements a4d0c90956a4ba9050455a681b5b1169ea297386cc7035678a409da18931bf24、routing 8fb38fd6091a57bd5ef891316520c39599abf8f32b550b0aa80fc63c514a1f98。执行侧 R1F 的 TC018 与实际 Program HTTP 冻结均在首次有效请求触发原 15 秒客户端时限。总控 R3 的 TC018 同样超时，实际 Program HTTP 冻结通过，首个有效请求服务端耗时 11.509 秒。R1B 确认两项在 origin/main@76805d0b 均可复现。R1D 与 R2 的 Program SQL 对照将耗时定位到同一事务内的既有串行 SQL，包括 OperationsOwnerV1.cs:222 和 IterationReviewOwnerV1.Freeze.cs:86 的提交前复核。本卡新增逐行查询 0。另立 Main 补充卡「冻结链路串行 SQL 性能」，由总控统一授权立卡。"
+        },
+        {
+          "path": "docs/development/evidence/WP05-08/DELIVERY.md",
+          "source_sha": "8859247034577811cdcc13ba4d6d6bce6eabbdba",
+          "observed_at": "2026-11-27T18:11:34.151651+00:00",
+          "environment": "总控 R3 独立复核，Windows、.NET SDK 10.0.404 Release、仅回环 PostgreSQL 18.6、实际 Main Program HTTP、Node 20.19.0 及隔离 SIMULATED 夹具。",
+          "command": "按 D:/CP6-test-artifacts/WP05-08/coord-verify-20261127T165335215Z-r3/final-verification.json 的同树四组 Release 运行，使用 Vitest、vue-tsc --build --force 和 Vite 构建。",
+          "result": "PASS",
+          "scope": "总控 R3 独立复核 PASS，阻塞和建议均为 0。产品树 96c49aec7173726eb0cc601edbd4bcfa3d12ae13，.NET 共 311 次执行（310 通过、1 失败、0 跳过），Vitest 185 通过，强制类型检查和 Vite 构建退出码均为 0。TRX SHA-256 为 wp0502 e83c027c61933bb2ef18e28c5544c4f6d552fcf4a6ee8c0ed23269351247382a、engineering e36150ea95498730eb8026ab6dcaee65baa0b98668acb6aa7eed3ea205b47c0b、requirements a117e142e7d0cb0b28ea36337652d7bc1403e1e9e1042c332011013bfa46ed58、routing 3d52856cc9963e7d9f6759afa5ea5399919c582b90c2c96858740bb722b92dd3。执行侧 R1F 的 TC018 与实际 Program HTTP 冻结均在首次有效请求触发原 15 秒客户端时限。总控 R3 的 TC018 同样超时，实际 Program HTTP 冻结通过，首个有效请求服务端耗时 11.509 秒。R1B 确认两项在 origin/main@76805d0b 均可复现。R1D 与 R2 的 Program SQL 对照将耗时定位到同一事务内的既有串行 SQL，包括 OperationsOwnerV1.cs:222 和 IterationReviewOwnerV1.Freeze.cs:86 的提交前复核。本卡新增逐行查询 0。另立 Main 补充卡「冻结链路串行 SQL 性能」，由总控统一授权立卡。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP05-08/DELIVERY.md",
+        "source_sha": "8859247034577811cdcc13ba4d6d6bce6eabbdba",
+        "remote_main_sha": "8859247034577811cdcc13ba4d6d6bce6eabbdba",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1342",
+        "scope": "交付版本化路线、稳定工序与传递依赖校验、批准资源工时、准确参数与工具规格引用、旧执行快照。新增迁移 0。remote_main_sha 固定同 PR 须纳入的产品祖先。卡级 DONE 在 #1342 合入受保护 main 并核对远端包含产品提交和本次台账后生效，实际合并 SHA 以 PR 回执为准。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL租户存储/迁移与可信上下文；当前动作/读取授权和共同最终授权fence；Main Owner事务、原键结果及审计能力。",
@@ -212663,8 +212705,48 @@
         "new_product_validation": false
       },
       "remaining_scope": [
-        "承接 AC-PLM-FB01-025/026/027 的工艺适用依据、必需工艺缺项和准确工具规格引用，供检查、冻结与现场用途联验。"
-      ]
+        "本卡已产出 W310-01 所列的准确资源能力、工时单位与时基、准确工具规格及过程参数证据，保留原 ProductProcess、稳定工序发生项和旧工单快照。",
+        "本卡已产出显式替代依据、批准规则及选项绑定，互斥成员的直接和经必需工序的传递依赖进入 BLOCK。按版读回及原键回执保留。",
+        "本卡已产出 AC-PLM-FB01-025 的批准工艺不适用依据、026 的自制必需工艺缺项及虚报不适用判断、027 的准确规格引用及同号实例边界。技术包检查与冻结由 WP05-11/12 承接，工具实例关联和现场用途由 WP05-06/32/42 承接，资源 Claim／Start 由执行 Owner 验收。"
+      ],
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP05-08/DELIVERY.md",
+        "started_at": "2026-11-27T05:12:13.779660+00:00",
+        "official_started_at": "2026-11-27T05:12:13.779660+00:00",
+        "technical_verified_at": "2026-11-27T16:18:49.197375+00:00",
+        "verified_at": "2026-11-27T18:11:34.151651+00:00",
+        "ledger_candidate_at": "2026-11-27T18:21:22.496279+00:00",
+        "effective_seconds": 29395.319,
+        "accounting_evidence": {
+          "path": "docs/development/evidence/WP05-08/DELIVERY.md#11-有效时间与交接",
+          "scope": "初轮 13713.139、R1 6763.875、R1B 2624.306、R1C 1037.694、R1D 1091.669、R1E 352.636、R1F 3812 秒。R1B 的原件已扣除待测门槛时间，R1D 采用排查全程，R1E 从执行日志创建至回执落盘重算。合计 29395.319 秒，超过拆分线 7795.319 秒，超过预算 14995.319 秒计入缓冲。本卡新增拆分 0。"
+        },
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "S01-01",
+          "S01-02",
+          "S01-07",
+          "S01-09",
+          "S02-00",
+          "WP02-01",
+          "WP02-02",
+          "WP02-03",
+          "WP02-07",
+          "WP02-10",
+          "WP02-13",
+          "WP02-13b",
+          "WP04-33",
+          "WP05-02",
+          "WP05-03",
+          "WP05-04",
+          "WP08-16"
+        ],
+        "new_product_execution": true
+      }
     },
     {
       "id": "WP05-09",
@@ -307125,7 +307207,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 291610.804,
+      "effective_seconds": 321006.123,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -307203,7 +307285,8 @@
         "WP05-02",
         "WP02-32",
         "WP05-03",
-        "WP05-13"
+        "WP05-13",
+        "WP05-08"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -307613,7 +307696,7 @@
         "wait_seconds": 0.0,
         "remote_main_sha": "b2f3cb9f341f6e15a6cbc31dd3b3d721ec947be8"
       },
-      "buffer_used_seconds": 4703.009,
+      "buffer_used_seconds": 19698.328,
       "stage_a_completion": {
         "result": "COMPLETE",
         "candidate_at": "2026-11-18T21:40:01.981651-05:00",

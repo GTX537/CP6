@@ -21,7 +21,7 @@ W186、W203 已交付工序发生项、旧原件、资源能力版本和工艺�
 
 ## 3. 卡级验证和证据
 
-合成输入标为 `SIMULATED`，实际运行 Main PostgreSQL、Owner 和适用 HTTP。质量与作业资料使用本机受控合成夹具，质量环境为 `DEMO`。最终报告以本文件所在准确提交／树的一次运行结果为准。报告索引包含逐名 TRX、SHA-256、Release 命令、环境变量脱敏记录、前端工具版本及停机读回。[最终证据](<D:/CP6-test-artifacts/WP05-08/exec-20261127T052752Z/validation-final/final-verification.json>) · [执行脚本](<D:/CP6-test-artifacts/WP05-08/exec-20261127T052752Z/run-final.ps1>)
+合成输入标为 `SIMULATED`，实际运行 Main PostgreSQL、Owner 和适用 HTTP。质量与作业资料使用本机受控合成夹具，质量环境为 `DEMO`。首轮证据固定产品提交 e54eea08 的准确树及其单次运行。报告索引包含逐名 TRX、SHA-256、Release 命令、环境变量脱敏记录、前端工具版本及停机读回。[最终证据](<D:/CP6-test-artifacts/WP05-08/exec-20261127T052752Z/validation-final/final-verification.json>) · [执行脚本](<D:/CP6-test-artifacts/WP05-08/exec-20261127T052752Z/run-final.ps1>)
 
 | 用户验收 | 用例 |
 | --- | --- |
@@ -36,7 +36,7 @@ W186、W203 已交付工序发生项、旧原件、资源能力版本和工艺�
 
 同树回归按四组存档。`wp0502` 重新执行并逐名核对原 95 项，`engineering` 重新执行并逐名核对 WP05-03 工程 44 项。`requirements` 沿 WP05-13 的 REQ、销售来源及 DOC／QUALITY 过滤。`routing` 含新卡用例、WP08-16 能力、归属和资源来源，以及工具规格回归。分组各自新建仅回环的隔离 PostgreSQL 18 夹具，避免共享夹具菜单分配相互影响；`restore` 和 `test` 使用同一最终构建目录。前端覆盖路线、工程、BOM、REQ、DOC、QUALITY、工具规格、资源和工时，执行 Vitest、`vue-tsc --build --force` 与 Vite 构建。[测试与停机记录](<D:/CP6-test-artifacts/WP05-08/exec-20261127T052752Z/validation-final/final-verification.json>)
 
-开发原件保留旧实现的缺证红例。首轮组合测试出现夹具菜单主键冲突、新测试重复插入授权范围和尝试为同产品新建第二条配置规则。夹具改为沿既有授权与规则后继，并在同号工具用例中采用两边都能持久化的模拟编号。扩展资源回归还发现两处历史夹具与当前 Main 的迁移清单不兼容。资源源测试改用迁移前的原列写合成行，W203 测试固定目标迁移且校验后续迁移仍待应用。两组保留原件、回执和授权断言。最终证据使用本报告所在提交完整重跑。[开发记录](<D:/CP6-test-artifacts/WP05-08/exec-20261127T051503Z>)
+开发原件保留旧实现的缺证红例。首轮组合测试出现夹具菜单主键冲突、新测试重复插入授权范围和尝试为同产品新建第二条配置规则。夹具改为沿既有授权与规则后继，并在同号工具用例中采用两边都能持久化的模拟编号。扩展资源回归还发现两处历史夹具与当前 Main 的迁移清单不兼容。资源源测试改用迁移前的原列写合成行，W203 测试固定目标迁移且校验后续迁移仍待应用。两组保留原件、回执和授权断言。首轮最终证据在产品提交 e54eea08 上完整重跑。[开发记录](<D:/CP6-test-artifacts/WP05-08/exec-20261127T051503Z>)
 
 ## 4. 原 AC 逐项出口
 
@@ -167,11 +167,11 @@ R1 沿用 DEV-1 和 `codex/wp05-08`，以独立复核的远端任务提交 `e54e
 
 `RoutingParameterV1.DimensionKey`、`RoutingParameterV1.Evidence` 和 `RoutingOperationV1.Alternative` 为 `null` 时省略。带有非空 `dimensionKey`、`evidence` 或 `alternative` 的路线原件一旦持久化，回退到引入这些字段之前的应用，旧版模型的 `JsonUnmappedMemberHandling.Disallow` 会拒绝包含未知字段的原件，可能影响按版读回和组合消费。回退前应核查已经保存的路线版本（含历史），并保留能读取这些原件的应用版本。本轮记录该边界，未执行应用回退，也未改写已保存原件或摘要。[路线合同](../../../../CP6.Core/Services/Plm/EngineeringRoutingContractV1.cs)
 
-R1 的四组 Release 回归、Vitest、类型检查及 Vite 构建按本文件所在提交的单次运行取证，命令、环境、TRX 及摘要见最终索引。有效时间、席位状态、工作区读回和回环实例停机状态见 R1 交接读回。[最终验证](<D:/CP6-test-artifacts/WP05-08/exec-20261127T095928Z/validation-final/final-verification.json>) · [R1 交接读回](<D:/CP6-test-artifacts/WP05-08/exec-20261127T095928Z/handoff.json>)
+R1 的四组 Release 回归、Vitest、类型检查及 Vite 构建按产品提交 fc1accc7 的单次运行取证，命令、环境、TRX 及摘要见最终索引。有效时间、席位状态、工作区读回和回环实例停机状态见 R1 交接读回。[最终验证](<D:/CP6-test-artifacts/WP05-08/exec-20261127T095928Z/validation-final/final-verification.json>) · [R1 交接读回](<D:/CP6-test-artifacts/WP05-08/exec-20261127T095928Z/handoff.json>)
 
 ## 7. R1E 终态验证说明
 
-本节记录当前终态的证据口径。验证候选为 `fc1accc7ce9871cc76611c1b0f2efc38047357e4`，源码树为 `6e9635be29236c4e0f031f66d7c727edcfb5d01c`。终态采用 R1 同树四组其余 .NET 用例 301 项通过（WP05-02 95、工程 42、需求 103、工艺 61），同树 Vitest 185 项通过，`vue-tsc` 与 Vite 构建退出码均为 0，以及下述两个冻结用例的候选与主线成对对照。成对对照保留实际失败结果。[R1 终态索引及原件摘要](<D:/CP6-test-artifacts/WP05-08/exec-20261127T095928Z/validation-final/final-verification.json>)
+本节记录 R1E 的终态证据口径。验证候选为 `fc1accc7ce9871cc76611c1b0f2efc38047357e4`，源码树为 `6e9635be29236c4e0f031f66d7c727edcfb5d01c`。终态采用 R1 同树四组其余 .NET 用例 301 项通过（WP05-02 95、工程 42、需求 103、工艺 61），同树 Vitest 185 项通过，`vue-tsc` 与 Vite 构建退出码均为 0，以及下述两个冻结用例的候选与主线成对对照。成对对照保留实际失败结果。[R1 终态索引及原件摘要](<D:/CP6-test-artifacts/WP05-08/exec-20261127T095928Z/validation-final/final-verification.json>)
 
 TC018 和实际 Program HTTP 冻结共用工程基线冻结入口。候选和 `origin/main@76805d0b7daf9673b7ceb67339e6757ab7a33976` 在这两项均复现了主线既有冻结链路的 15 秒客户端超时。同一事务内串行执行上万条短 SQL，耗时集中于评审、工程来源读取与提交前复核。总控裁定这是主线既有性能缺陷，本卡合并沿用该对照场景在主线的既有表现。
 
@@ -205,4 +205,41 @@ TC018 和实际 Program HTTP 冻结共用工程基线冻结入口。候选和 `o
 
 定向回归修复前 11 项中有 6 项失败，修复后 11 项全部通过。实际 Program HTTP 回归通过 `POST /commands` 保存含间接冲突的路线草稿，按回执版本读回 `DRAFT` 和 `InputValidation=BLOCK`，核对两段依赖、操作键、对象、版本和摘要。按原操作键读取返回 `COMMITTED` 和同一草稿保存回执，旧版原件可读。修复前同一 HTTP 输入读回 `UNKNOWN`。复核脚本资料齐备的两个间接反例均读到 `PASS`。[HTTP 回归](../../../../CP6.Tests/Erp/Wp0508RoutingPostgreSqlTests.cs) · [修复前定向 TRX](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/red/red.trx>) · [修复后定向 TRX](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/green/green.trx>)
 
-R1F 的终态以本节所在提交运行 WP05-02（95 项）、工程（44 项，含两个冻结用例）、REQ／销售／DOC／QUALITY（103 项）、工艺／WP08-16／工具规格（69 项）四组 .NET Release 回归，以及前端 21 个测试文件、强制类型检查和 Vite 构建。下列索引记录各组逐项结果、两条冻结用例的实际结局、原件 SHA-256、编译对象和夹具停机核对。复核脚本仅重绑候选提交和程序集位置，六组场景及原断言沿用复核原件，另逐项核对间接方向的冲突发生项。[R1F 终态验证](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/final-verification.json>) · [脚本来源](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/script-provenance.json>) · [六组判定](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/routing-input-assertions.json>)
+R1F 在产品提交 `8859247034577811cdcc13ba4d6d6bce6eabbdba` 运行 WP05-02（95 项）、工程（44 项，含两个冻结用例）、REQ／销售／DOC／QUALITY（103 项）、工艺／WP08-16／工具规格（69 项）四组 .NET Release 回归，以及前端 21 个测试文件、强制类型检查和 Vite 构建。下列索引记录各组逐项结果、两条冻结用例的实际结局、原件 SHA-256、编译对象和夹具停机核对。复核脚本仅重绑候选提交和程序集位置，六组场景及原断言沿用复核原件，另逐项核对间接方向的冲突发生项。[R1F 终态验证](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/final-verification.json>) · [脚本来源](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/script-provenance.json>) · [六组判定](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/routing-input-assertions.json>)
+
+## 9. 总控独立复核与同 PR 生效
+
+- R1 `FAIL`。主工序直接依赖同组互斥替代项时仍可通过，返工补齐双向直接依赖的冲突判定。 [R1 独立复核](<D:/CP6-test-artifacts/WP05-08/coord-verify-20261127T090525707Z/COORD-VERIFY.md>)
+- R2 `FAIL`。两个直接方向均已阻断，两个经组外必需工序的间接方向仍为 `PASS`。R1F 补齐传递依赖，并通过实际 HTTP 保存草稿、按版读回及原操作回执复验。 [R2 独立复核](<D:/CP6-test-artifacts/WP05-08/coord-verify-20261127T140901676Z-r2/COORD-VERIFY.md>)
+- R3 `PASS`，阻塞和建议各 0。总控在产品提交 `8859247034577811cdcc13ba4d6d6bce6eabbdba`、树 `96c49aec7173726eb0cc601edbd4bcfa3d12ae13` 上复验间接依赖双向 `BLOCK`、共享前置 `PASS` 与 HTTP 第 5 版草稿读回。四组 .NET 共 311 次执行、310 通过、1 失败、0 跳过。执行侧同树为 309 通过、2 失败、0 跳过。两侧 Vitest 各 185 项通过，`vue-tsc --build --force` 及 Vite 构建均退出 0，新增迁移 0。 [R3 独立复核](<D:/CP6-test-artifacts/WP05-08/coord-verify-20261127T165335215Z-r3/COORD-VERIFY.md>) · [R3 验证索引](<D:/CP6-test-artifacts/WP05-08/coord-verify-20261127T165335215Z-r3/final-verification.json>) · [执行侧 R1F 验证索引](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/final-verification.json>)
+
+| R3 分组 | 执行 | 通过 | 失败 | TRX SHA-256 |
+| --- | ---: | ---: | ---: | --- |
+| WP05-02 | 95 | 95 | 0 | `e83c027c61933bb2ef18e28c5544c4f6d552fcf4a6ee8c0ed23269351247382a` [TRX](<D:/CP6-test-artifacts/WP05-08/coord-verify-20261127T165335215Z-r3/wp0502/results.trx>) |
+| 工程 | 44 | 43 | 1 | `e36150ea95498730eb8026ab6dcaee65baa0b98668acb6aa7eed3ea205b47c0b` [TRX](<D:/CP6-test-artifacts/WP05-08/coord-verify-20261127T165335215Z-r3/engineering/results.trx>) |
+| REQ／销售／DOC／QUALITY | 103 | 103 | 0 | `a117e142e7d0cb0b28ea36337652d7bc1403e1e9e1042c332011013bfa46ed58` [TRX](<D:/CP6-test-artifacts/WP05-08/coord-verify-20261127T165335215Z-r3/requirements/results.trx>) |
+| 工艺／WP08-16／工具规格 | 69 | 69 | 0 | `3d52856cc9963e7d9f6759afa5ea5399919c582b90c2c96858740bb722b92dd3` [TRX](<D:/CP6-test-artifacts/WP05-08/coord-verify-20261127T165335215Z-r3/routing/results.trx>) |
+
+总控已推送产品候选并登记 Draft PR #1342。卡级 `DONE` 在该 PR 合入受保护的 `main` 并核对远端包含已验收产品提交和本次台账后生效。`delivery_evidence.remote_main_sha` 固定待核的产品祖先，实际合并 SHA 以 PR 回执为准。`ENG-ROU-01` 及关联目标继续开放。整包检查与工程冻结由 WP05-11／12 承接，资源 Claim／Start 归执行 Owner，工具实例的关联和使用资格由 WP05-06／32／42 承接。原 102 条 AC 和 2 项必需共享修订的完整场景见第 4 节。 [PR #1342](https://github.com/GTX537/CP6/pull/1342) · [台账](../../roadmap.json)
+
+## 10. 已知项
+
+执行侧 R1F 的 TC018 与实际 Program HTTP 冻结均在首次有效 `POST /freeze` 触发原有 15 秒客户端时限。总控 R3 的 TC018 仍超时，实际 Program HTTP 冻结通过，首次有效冻结返回 HTTP 200，服务端耗时 11.509 秒。各轮按 TRX 原结果登记。 [R1F 工程 TRX](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/engineering/results.trx>) · [R3 工程 TRX](<D:/CP6-test-artifacts/WP05-08/coord-verify-20261127T165335215Z-r3/engineering/results.trx>)
+
+两项冻结用例均曾在 `origin/main@76805d0b` 复现同一时限。R1D 与 R2 的成对 SQL 证据将耗时定位到同一事务内的既有串行 SQL，包含 `OperationsOwnerV1.ValidateFinalAuthorityAsync` 及 `IterationReviewOwnerV1.FreezeSource` 登记的提交前复核。本卡新增逐行查询 0。另立 Main 补充卡「冻结链路串行 SQL 性能」，由总控统一授权立卡。 [Owner 提交前复核](../../../../CP6.Core/Services/Integration/OperationsOwnerV1.cs#L222) · [评审回调](../../../../CP6.Core/Services/Plm/IterationReviewOwnerV1.Freeze.cs#L86) · [R1B 两用例成对 TRX](<D:/CP6-test-artifacts/WP05-08/exec-20261127T115409Z-r1b/comparison.json>) · [R1D 成对取证](<D:/CP6-test-artifacts/WP05-08/exec-20261127T134151Z-r1d/comparison-r1d.json>) · [R2 成对取证](<D:/CP6-test-artifacts/WP05-08/coord-verify-20261127T140901676Z-r2/sql-comparison-r2.json>)
+
+## 11. 有效时间与交接
+
+| 执行轮次 | 有效秒 | 记录依据 |
+| --- | ---: | --- |
+| 初轮 | 13,713.139 | 原登记至交付读回。 [回执](<D:/CP6-test-artifacts/WP05-08/exec-20261127T052752Z/handoff.json>) |
+| R1 | 6,763.875 | 开工核对至交付读回，含本机验证。 [回执](<D:/CP6-test-artifacts/WP05-08/exec-20261127T095928Z/handoff.json>) |
+| R1B | 2,624.306 | 原件已扣除等待低负载门槛的 1,230.189 秒。 [回执](<D:/CP6-test-artifacts/WP05-08/exec-20261127T115409Z-r1b/handoff.json>) |
+| R1C | 1,037.694 | 低负载补验及读回。 [回执](<D:/CP6-test-artifacts/WP05-08/exec-20261127T115409Z-r1b/handoff-r1c.json>) |
+| R1D | 1,091.669 | 根因排查全程，其中测试进程运行 424.803 秒。 [回执](<D:/CP6-test-artifacts/WP05-08/exec-20261127T134151Z-r1d/handoff-r1d.json>) |
+| R1E | 352.636 | 按执行日志创建 `14:00:55.7028719Z` 至回执落盘 `14:06:48.3389445Z` 重算至毫秒。 [执行日志](<D:/CP6-test-artifacts/WP05-08/rework1e-dispatch-20261127/codex-run.jsonl>) · [回执](<D:/CP6-test-artifacts/WP05-08/rework1e-dispatch-20261127/codex-last.txt>) |
+| R1F | 3,812 | 返工开工到交付读回，沿用回执的整秒精度。 [回执](<D:/CP6-test-artifacts/WP05-08/exec-20261127T151557Z-r1f/handoff.json>) |
+
+执行侧七轮累计 **29,395.319 秒**。M 预算 14,400 秒，150% 拆分线 21,600 秒，超出拆分线 7,795.319 秒。超预算 14,995.319 秒计入缓冲。依总控派工，本卡无可拆余项，新增拆分 0。计划累计有效时间为 321,006.123 秒，缓冲累计消耗为 19,698.328 秒。七项直接前置及 WP02-13b 余卡均已核实为 `DONE`，递归去重共 17 项。 [工时与前置核对](<D:/CP6-test-artifacts/WP05-08/ledger-20261127T181633Z/input-proof.json>) · [R3 范围与前置证据](<D:/CP6-test-artifacts/WP05-08/coord-verify-20261127T165335215Z-r3/scope-check.json>)
+
+DEV-1 以 `CP6:WP05-08` 保留 `codex/wp05-08`，关联 Draft PR #1342，供总控复核台账及后续核对远端采用。
