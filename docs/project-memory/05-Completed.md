@@ -3,7 +3,7 @@
 <!-- cp6:roadmap -->
 ## 最近交付
 
-- [WP05-60 Main工程自然Case NextContext与M02 M03受理门](../development/evidence/WP05-60/DELIVERY.md)（DONE），核对时间 `2026-11-28T06:29:50.920044+00:00`。
+- [WP03-19 活动引用集合与附件字节访问](https://github.com/GTX537/CP6.CRM/blob/29a167fd065b0a6563659606c04bbcc7437f0b61/docs/development/evidence/WP03-19/DELIVERY.md)（拆卡，余项 WP03-19b），核对时间 `2026-11-28T10:29:55.283882+00:00`。
 
 ### 已关闭目标
 

@@ -3958,7 +3958,125 @@
         "docs/design-handbook/remediation/assets/shared-consumers/sidecar-1.0.0.schema.json",
         "docs/design-handbook/remediation/assets/shared-consumers/validation.json",
         "docs/development/assessments/20261011/catalogs/commercial-finance.json"
+      ],
+      "split_children": [
+        "WP03-19b"
+      ],
+      "split_delivered_scope": [
+        "T14–T15、T29–T35、T43–T46 及 MD-ACT-04 的活动引用和附件出口。完整窗口逐成员核对，保留隐藏和历史成员。精确版本、当前独立下载权、流中撤权与原集合原键恢复均有本地验证。",
+        "T41 的本地引用与来源修订、T51 的原键查询及当前披露裁剪。真实工程联合出口归 WP03-20。",
+        "联系人组合与原生时间线的当前授权、已覆盖的跨源隔离与游标保护。第五轮复核的五项阻塞和来源水位建议归 WP03-19b。",
+        "真实 CRM Activity 事务与隔离 PostgreSQL 的 ACT-FILE-REFERENCE/1 采用及 guard 前向安装，Main FILE 外部路由按同一合同模拟。"
       ]
+    },
+    {
+      "id": "WP03-19b",
+      "package_id": "WP03",
+      "title": "活动时间线填页、来源降级与关系解释余项",
+      "repository": "CRM",
+      "kind": "CODE",
+      "target_ids": [
+        "CRM-ACT-01"
+      ],
+      "relative_size": "M",
+      "dependencies": [
+        "WP02-09",
+        "WP02-14",
+        "WP03-17",
+        "WP02-32",
+        "WP03-19"
+      ],
+      "exclusive_resources": [
+        "CRM:crm-act-owner",
+        "CRM:crm-con-owner",
+        "file:CRM:src/CP6.CRM.Api/Activities/ActivityWorkspaceHostV1.cs",
+        "file:CRM:src/CP6.CRM.Api/Activities/ActivityWorkspaceOwnerV1.cs",
+        "file:CRM:src/CP6.CRM.Api/Activities/ActivityWorkspaceOwnerV1.Reads.cs",
+        "file:CRM:src/CP6.CRM.Api/Activities/ActivityWorkspaceStoreV1.cs",
+        "file:CRM:src/CP6.CRM.Infrastructure/Activities/ActivityWorkspaceSchemaV1.cs",
+        "file:CRM:src/CP6.CRM.Api/Contacts/ContactWorkspaceOwnerV1.HistorySources.cs",
+        "file:CRM:apps/web/src/contacts/ContactHistoryPanel.tsx"
+      ],
+      "external_prerequisites": [
+        "父卡 CP6.CRM #268 的实际远端采用，以及原直接前置和全部适用拆分余项完整 DONE。"
+      ],
+      "scope": [
+        "阻塞 2。组合页按归属冲突隔离后的安全行数填页。覆盖 C2、C4、E5，确认初次截取范围之外的安全尾行能进入本页。",
+        "阻塞 3。外部目录用旧 ACT 游标时，ACT 超时仍核对应查询绑定。",
+        "阻塞 4。区分联系人宿主不可读与仅缺 ACT 来源读权，保留经归属核对、有权的已登记 Lead 活动。",
+        "阻塞 5。续页收到 PostgreSQL 42703 时复核曾就绪的 ACT 必需列，确认结构已变则按 C9 使旧游标失效。",
+        "阻塞 6。原生 ACT 在关系修订表暂不可读时保留已证实且有权的成员，标明解释与覆盖降级。",
+        "来源水位建议。首屏部分来源成功时保留已知水位，联系人面板显示“部分资料”。沿用全部来源均不可读时的提示。"
+      ],
+      "outputs": [
+        "实际 CRM 的 ACT 和联系人时间线分页、授权、游标及降级行为，联系人面板的来源覆盖提示。",
+        "隔离 PostgreSQL 的正反例、现行 CRM API 和 Web 回归证据，逐项对应第五轮复核及合并版 DELIVERY。"
+      ],
+      "code_paths": [
+        "src/CP6.CRM.Api/Activities/ActivityWorkspaceHostV1.cs",
+        "src/CP6.CRM.Api/Activities/ActivityWorkspaceOwnerV1.cs",
+        "src/CP6.CRM.Api/Activities/ActivityWorkspaceOwnerV1.Reads.cs",
+        "src/CP6.CRM.Api/Activities/ActivityWorkspaceStoreV1.cs",
+        "src/CP6.CRM.Infrastructure/Activities/ActivityWorkspaceSchemaV1.cs",
+        "src/CP6.CRM.Api/Contacts/ContactWorkspaceOwnerV1.HistorySources.cs",
+        "apps/web/src/contacts/ContactHistoryPanel.tsx"
+      ],
+      "new_paths": [],
+      "acceptance_positive": [
+        "阻塞 2。页长 30、32 条 ACT 且首两条冲突时，返回全部 30 条安全行、PARTIAL 和空游标，覆盖 C2、C4、E5。",
+        "阻塞 3。来源超时仍依据旧 ACT 游标核对查询绑定，切换到不匹配视图返回 409 CURSOR_STALE。",
+        "阻塞 4。联系人和已登记 Lead 活动可读且仅缺 ACT read 时，返回经归属核对的有权 Lead 行、PARTIAL 和空游标。",
+        "阻塞 5。完整首页之后确认曾就绪的必需列已变化，续页返回 412 VERSION_STALE。",
+        "阻塞 6。仅关系修订表暂不可读时，原生 ACT 保留已核实有权的会议和普通 Note，关系解释为未知，覆盖为部分。",
+        "来源水位。首屏 ACT 超时但可信目录返回已确认空集合或 Lead 成功返回零行，保留该来源 asOf，面板显示“部分资料”。"
+      ],
+      "acceptance_negative": [
+        "阻塞 2。跨源冲突的两方均隔离，隔离前预截断不得吞掉最后一条安全行。",
+        "阻塞 3。无效的旧游标视图绑定在 ACT 超时时同样拒绝，不能返回 200 PARTIAL。",
+        "阻塞 4。联系人宿主不可读仍按原合同拒绝，Lead 来源可读不能绕过宿主许可。",
+        "阻塞 5。已证实必需结构变化时旧游标失效，不能把结果降为 200 PARTIAL 空页。",
+        "阻塞 6。关系解释缺证不得伪造完整关系或披露无权成员，也不得因单一关系读失败丢弃已核实的行。",
+        "来源水位。全部来源均不可读时显示“活动来源暂时无法读取”，不填造 asOf。"
+      ],
+      "notes": "五个阻塞及一项水位建议限于保守降级和展示。原 AC 随父卡完整保留。继承卡预算 0 秒。真实迁移与部署归 WP14，并须独立授权。 [合并版 CRM DELIVERY 的拆分余卡小节](https://github.com/GTX537/CP6.CRM/blob/29a167fd065b0a6563659606c04bbcc7437f0b61/docs/development/evidence/WP03-19/DELIVERY.md#拆分余卡-wp03-19b)",
+      "prerequisite_bindings": [
+        {
+          "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
+          "task_ids": [
+            "WP02-09"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "该仓真实Owner写入前交付；不能以接口存在代替采用。"
+        },
+        {
+          "requirement": "本任务采用的共同服务/先行设计",
+          "task_ids": [
+            "WP02-14"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "按已交付准确合同和当前授权采用。"
+        },
+        {
+          "requirement": "父卡的 ACT 引用、当前权限及时间线既有契约",
+          "task_ids": [
+            "WP03-19"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "以 CRM #268 合并采用的产品树与交付报告为准，保留局部核销后仍适用的原验收。"
+        }
+      ],
+      "source_refs": [
+        "docs/development/08-postgresql-baseline.md",
+        "docs/development/assessments/20261011/implementation-assessment.json",
+        "docs/design-handbook/modules/CRM-ACT-01.md",
+        "docs/design-handbook/remediation/07-shared-consumer-mappings.md",
+        "docs/design-handbook/remediation/assets/shared-consumers/acceptance.json",
+        "docs/design-handbook/remediation/assets/shared-consumers/sidecar-1.0.0.schema.json",
+        "docs/design-handbook/remediation/assets/shared-consumers/validation.json",
+        "docs/development/assessments/20261011/catalogs/commercial-finance.json",
+        "docs/development/planning/20261117-card-execution.md"
+      ],
+      "split_parent": "WP03-19"
     },
     {
       "id": "WP03-20",
@@ -3997,11 +4115,13 @@
       "new_paths": [],
       "acceptance_positive": [
         "重复运输只alias同事实；缺前驱补齐后连续应用",
-        "源历史可追溯且工程序列不与Activity Revision混用"
+        "源历史可追溯且工程序列不与Activity Revision混用",
+        "T49。活动已有受权的 PLM 受理原件及 READY 导出产物，执行获准撤销后只追加 Voided 并退出本域有效视图。工程受理与导出原历史仍可按各自 Owner 当前规则查询。"
       ],
       "acceptance_negative": [
         "工程Ready不自动授权制造或修改活动事实",
-        "冲突/UNKNOWN不能靠新高序覆盖"
+        "冲突/UNKNOWN不能靠新高序覆盖",
+        "T49。DEC02 未批准的历史负向夹具中不启用撤销、不产生业务写入。获准撤销也不级联取消 PLM 受理、改写导出 READY 或新增 Lead 撤销。"
       ],
       "exclusive_resources": [
         "CRM:crm-act-owner",
@@ -4009,7 +4129,7 @@
         "file:CRM:src/CP6.CRM.Api/CrmEndpoints.cs",
         "file:CRM:src/CP6.CRM.Infrastructure/Leads/CrmBusinessService.cs"
       ],
-      "notes": "固定CRM源码c778a3052a4416b82facb07b1244fc98fb6ad8a1；采用有效R1组合。继承当前权限、TenantId和原命令未知恢复；只验证本卡实际行为，不据此关闭整目标。新目录为拟新增位置，执行计划需按届时主线定文件。 设计入口：docs/design-handbook/modules/CRM-ACT-01.md。 本任务负责所改入口的旧writer适配/共同门、schema约束与本地迁移验证；真实数据迁移、环境切换和PrimaryWriter启用由WP14独立任务授权执行。",
+      "notes": "固定CRM源码c778a3052a4416b82facb07b1244fc98fb6ad8a1；采用有效R1组合。继承当前权限、TenantId和原命令未知恢复；只验证本卡实际行为，不据此关闭整目标。新目录为拟新增位置，执行计划需按届时主线定文件。 设计入口：docs/design-handbook/modules/CRM-ACT-01.md。 本任务负责所改入口的旧writer适配/共同门、schema约束与本地迁移验证；真实数据迁移、环境切换和PrimaryWriter启用由WP14独立任务授权执行。 T49 归本卡联验，按正反向验收核对已有导出和工程受理下的活动撤销。 [CRM 合并版 DELIVERY](https://github.com/GTX537/CP6.CRM/blob/29a167fd065b0a6563659606c04bbcc7437f0b61/docs/development/evidence/WP03-19/DELIVERY.md#验收与原-ac-出口)",
       "prerequisite_bindings": [
         {
           "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
