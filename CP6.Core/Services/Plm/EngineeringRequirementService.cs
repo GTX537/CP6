@@ -8,7 +8,8 @@ using static CP6.Core.Services.Plm.EngineeringProductValuesV1;
 
 namespace CP6.Core.Services.Plm;
 public sealed partial class EngineeringRequirementService(CP6Context db,OperationsOwnerV1 owner,
-    FileContentOwnerV1? files = null, ControlledDocumentOwnerV1? documents = null, OrderSourceReader? sales = null)
+    FileContentOwnerV1? files = null, ControlledDocumentOwnerV1? documents = null, OrderSourceReader? sales = null,
+    EngineeringIntakeOriginalsV1? intakeOriginals = null)
 {
     private OperationsOwnerV1 Authority=>owner.Owns(db)?owner:throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
     public Task<EngineeringProductScopeV1> ScopeAsync(CancellationToken ct=default)=>Authority.ExecuteAsync(OperationsOwnerV1.EngineeringRequirement,"query",false,
@@ -48,7 +49,8 @@ public sealed partial class EngineeringRequirementService(CP6Context db,Operatio
                     catch(OrderPriceCorrectionException e) when (
                         e.Status is 403 or 404 or 409 or 412 ||
                         e.Message is "COMMERCIAL_HISTORY_UNPROVEN" or "UNPROVEN_G03" or "REQUIREMENT_CRM_ACT_AUTHORITY_UNPROVEN"
-                            or "SALES_SOURCE_ORIGINAL_UNPROVEN" or "FILE_CONTENT_INTEGRITY_UNAVAILABLE")
+                            or "SALES_SOURCE_ORIGINAL_UNPROVEN" or "FILE_CONTENT_INTEGRITY_UNAVAILABLE"
+                            or "ENGINEERING_INTAKE_SOURCE_UNPROVEN")
                     { continue; }
                     if (skip>0) { skip--; continue; }
                     result.Add(value);
@@ -85,11 +87,22 @@ public sealed partial class EngineeringRequirementService(CP6Context db,Operatio
             }
             var source=await Exact(a,s,r.Source,"SOURCE",ct);
             await Visit(source,depth);
+            if (r.SourceReviews is { Length: >0 } reviews)
+            {
+                missing.Add("REQUIREMENT_SOURCE_REEVALUATION_REQUIRED");
+                var reviewSources = reviews.SelectMany(review => new[] { review.PreviousSource, review.IncomingSource }).Distinct();
+                foreach (var reference in reviewSources.Where(reference => !seen.Contains(reference)))
+                    await Visit(await Exact(a,s,reference,"SOURCE",ct),depth);
+            }
             if(!source.IsCurrent)missing.Add("SOURCE_VERSION_CHANGED:"+v.Reference.Id);
             if(source.Body.Source!.Kind=="UNRESOLVED")missing.Add("SOURCE_UNRESOLVED:"+v.Reference.Id);
             if(source.Body.Source.Kind=="OWNER_ORIGINAL")
-                foreach(var criterion in r.Criteria.Where(c=>c.SourceClauseIds is not { Length: >0 }))
+            {
+                var empty = r.Criteria.Where(c => c.SourceClauseIds is not { Length: > 0 }).ToArray();
+                var historical = await s.RemovedCriterionClauses(v, empty, ct);
+                foreach (var criterion in empty.Where(c => !historical.ContainsKey(c.Id)))
                     missing.Add("CRITERION_SOURCE_BASIS_REQUIRED:"+criterion.Id);
+            }
             foreach (var question in r.Clarifications ?? [])
             {
                 var questionSource=await Exact(a,s,question.Source,"SOURCE",ct);
@@ -148,45 +161,80 @@ public sealed partial class EngineeringRequirementService(CP6Context db,Operatio
     }
     public Task<EngineeringRequirementResultV1> CommandAsync(EngineeringRequirementCommandV1 input,CancellationToken ct=default)
     {
-        if(input==null || input.OperationId==Guid.Empty || input.ObjectId==Guid.Empty || input.Action is not("CREATE" or "REVISE"))throw Error("REQUIREMENT_COMMAND_INVALID",400);
-        var c=OperationsOwnerV1.Freeze(input);EngineeringRequirementValuesV1.Text(c.Reason,true);EngineeringRequirementValuesV1.Body(c.Body);
-        if(c.Action=="CREATE") {if(c.ExpectedVersion!=null || c.ExpectedEtag!=null)throw Error("REQUIREMENT_COMMAND_INVALID",400);}
-        else {Revision(c.ExpectedVersion);if(c.ExpectedEtag==null || c.ExpectedEtag==Guid.Empty || c.DepartmentId!=null || c.ExpectedAuthorityVersion!=null)throw Error("REQUIREMENT_COMMAND_INVALID",400);}
-        var bytes=MainOwnerOperationJournalV1.Encode(c);if(bytes.Length>2097152)throw Error("REQUIREMENT_SIZE_LIMIT",400);
+        var c=OperationsOwnerV1.Freeze(input);
+        var bytes=ValidateCommand(c);
         var journal=new MainOwnerOperationJournalV1(db);MainOwnerOperationJournalV1.Original? original=null;var action=c.Action=="CREATE"?"add":"edit";
         return Authority.ExecuteAsync(OperationsOwnerV1.EngineeringRequirement,action,true,async(a,t)=>
         {
             var s=new EngineeringRequirementStoreV1(db);await s.Fence(true,t);
             if(original!=null)return await Disclose(a,s,original,c.OperationId,bytes,t);
-            a.RequireRequirementFields(true);OperationsAccessV1.NewEngineeringRequirementBinding? ticket=null;
-            EngineeringRequirementSnapshotV1? old=null;
-            var confirmsSource=c.Body.Source?.Clauses.Any(x=>x.Terms!=null)==true;
-            if(c.Action=="CREATE")ticket=await a.BeginEngineeringRequirementCreation(c.ObjectId,c.ExpectedAuthorityVersion,c.DepartmentId,t);
-            else
-            {
-                await a.RequireEngineeringRequirement(c.ObjectId,t);old=await s.Read(c.ObjectId,null,t);
-                if(old.Reference.Version!=c.ExpectedVersion || old.Etag!=c.ExpectedEtag)throw Error("REQUIREMENT_VERSION_CHANGED",412);
-                await RequirementEvaluationStoreV1.GuardRevision(db,c.ObjectId,t);
-                // 历史依赖仍沿原 Owner 授权，原件登记只能通过明确的后继版继续。
-                await Observe(a,s,old,t);
-                if (old.Body.Source?.Origin != null && c.Body.Source?.Origin == null)
-                    throw Error("REQUIREMENT_ORIGIN_REMOVAL_FORBIDDEN",422);
-                confirmsSource|=old.Body.Source?.Clauses.Any(x=>x.Terms!=null)==true;
-            }
-            await ValidateSources(a,s,c,old,t);var saved=await s.Append(c,a.ActorId,t);
-            if(ticket!=null)await a.CompleteEngineeringRequirementCreation(ticket,t);
-            if(confirmsSource)
-            {
-                var sourceAuthority=await a.ActionAsync(OperationsOwnerV1.EngineeringRequirement,"source-confirm",t);
-                sourceAuthority.RequireRequirementFields(true);await sourceAuthority.RequireEngineeringRequirement(c.ObjectId,t);
-                sourceAuthority.AtCommit(token=>sourceAuthority.RequireEngineeringRequirement(c.ObjectId,token));
-            }
-            await Observe(a,s,saved,t);
-            var result=new EngineeringRequirementResultV1(c.OperationId,saved.Body.Kind,c.ObjectId,saved.Reference.Version,saved.Reference.Digest);
-            await journal.Store(EngineeringRequirementValuesV1.Owner,EngineeringRequirementValuesV1.Contract,c.OperationId,a.ActorId,bytes,result,[c.ObjectId],
-                new{c.Action,c.Reason,actor=a.ActorId,result},t);return result;
+            var saved=await WriteWithinAsync(a,s,c,bytes,t);
+            return Result(c,saved);
         },ct,actionAtFence:async t=>{original=await journal.Read(EngineeringRequirementValuesV1.Owner,c.OperationId,t);return original==null?action:"query";});
     }
+
+    internal static byte[] ValidateCommand(EngineeringRequirementCommandV1 c)
+    {
+        if(c==null || c.OperationId==Guid.Empty || c.ObjectId==Guid.Empty || c.Action is not("CREATE" or "REVISE"))throw Error("REQUIREMENT_COMMAND_INVALID",400);
+        EngineeringRequirementValuesV1.Text(c.Reason,true);EngineeringRequirementValuesV1.Body(c.Body);
+        if(c.Action=="CREATE") {if(c.ExpectedVersion!=null || c.ExpectedEtag!=null)throw Error("REQUIREMENT_COMMAND_INVALID",400);}
+        else {Revision(c.ExpectedVersion);if(c.ExpectedEtag==null || c.ExpectedEtag==Guid.Empty || c.DepartmentId!=null || c.ExpectedAuthorityVersion!=null)throw Error("REQUIREMENT_COMMAND_INVALID",400);}
+        var bytes=MainOwnerOperationJournalV1.Encode(c);if(bytes.Length>2097152)throw Error("REQUIREMENT_SIZE_LIMIT",400);
+        return bytes;
+    }
+
+    // 使用同一 Owner 写入用例。事务、权限门与原操作身份由调用入口持有。
+    internal async Task<EngineeringRequirementSnapshotV1> WriteWithinAsync(OperationsAccessV1 access, EngineeringRequirementStoreV1 store,
+        EngineeringRequirementCommandV1 command, byte[] bytes, CancellationToken ct, bool fromEngineeringIntake = false)
+    {
+        if (!Authority.Owns(store.Context)) throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
+        access.RequireRequirementFields(true);
+        OperationsAccessV1.NewEngineeringRequirementBinding? ticket=null;
+        EngineeringRequirementSnapshotV1? old=null;
+        var confirmsSource=command.Body.Source?.Clauses.Any(x=>x.Terms!=null)==true;
+        if(command.Action=="CREATE")
+            ticket=await access.BeginEngineeringRequirementCreation(command.ObjectId,command.ExpectedAuthorityVersion,command.DepartmentId,ct);
+        else
+        {
+            await access.RequireEngineeringRequirement(command.ObjectId,ct);
+            old=await store.Read(command.ObjectId,null,ct);
+            if(old.Reference.Version!=command.ExpectedVersion || old.Etag!=command.ExpectedEtag)throw Error("REQUIREMENT_VERSION_CHANGED",412);
+            await RequirementEvaluationStoreV1.GuardRevision(db,command.ObjectId,ct);
+            // 历史依赖仍沿原 Owner 授权，原件登记只能通过明确的后继版继续。
+            await Observe(access,store,old,ct);
+            if (old.Body.Source?.Origin != null && command.Body.Source?.Origin == null)
+                throw Error("REQUIREMENT_ORIGIN_REMOVAL_FORBIDDEN",422);
+            confirmsSource|=old.Body.Source?.Clauses.Any(x=>x.Terms!=null)==true;
+        }
+        if (!fromEngineeringIntake && command.Body.Requirement is { } definition)
+        {
+            var prior = old?.Body.Requirement?.SourceReviews;
+            if (definition.SourceReviews is null && prior is not null)
+                command = command with { Body = command.Body with { Requirement = definition with { SourceReviews = prior } } };
+            else if (definition.SourceReviews is not null &&
+                (prior is null || !EngineeringProductStoreV1.Encode(definition.SourceReviews).AsSpan().SequenceEqual(EngineeringProductStoreV1.Encode(prior))))
+                throw Error("REQUIREMENT_SOURCE_REVIEW_OWNER_REQUIRED",422);
+        }
+        await ValidateSources(access,store,command,old,ct);
+        var saved=await store.Append(command,access.ActorId,ct);
+        if(ticket!=null)await access.CompleteEngineeringRequirementCreation(ticket,ct);
+        if(confirmsSource)
+        {
+            var sourceAuthority=await access.ActionAsync(OperationsOwnerV1.EngineeringRequirement,"source-confirm",ct);
+            sourceAuthority.RequireRequirementFields(true);
+            await sourceAuthority.RequireEngineeringRequirement(command.ObjectId,ct);
+            sourceAuthority.AtCommit(token=>sourceAuthority.RequireEngineeringRequirement(command.ObjectId,token));
+        }
+        await Observe(access,store,saved,ct);
+        var result=Result(command,saved);
+        await new MainOwnerOperationJournalV1(db).Store(EngineeringRequirementValuesV1.Owner,EngineeringRequirementValuesV1.Contract,
+            command.OperationId,access.ActorId,bytes,result,[command.ObjectId],
+            new{command.Action,command.Reason,actor=access.ActorId,result},ct);
+        return saved;
+    }
+
+    private static EngineeringRequirementResultV1 Result(EngineeringRequirementCommandV1 command, EngineeringRequirementSnapshotV1 saved)
+        => new(command.OperationId,saved.Body.Kind,command.ObjectId,saved.Reference.Version,saved.Reference.Digest);
     private async Task<EngineeringRequirementResultV1> Disclose(OperationsAccessV1 a,EngineeringRequirementStoreV1 s,MainOwnerOperationJournalV1.Original original,Guid id,byte[]? bytes,CancellationToken ct)
     {
         if(original.Actor!=a.ActorId || original.Contract!=EngineeringRequirementValuesV1.Contract)throw Error("ORIGINAL_OPERATION_FORBIDDEN",403);

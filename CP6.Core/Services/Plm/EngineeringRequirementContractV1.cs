@@ -44,11 +44,16 @@ public sealed record RequirementCoverageLinkV1(string ParentClauseId, string Chi
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record RequirementDecompositionV1(EngineeringSourceRefV1 Parent, EngineeringSourceRefV1[] Children, string Basis);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record RequirementSourceReviewV1(EngineeringSourceRefV1 PreviousRequirement, EngineeringSourceRefV1 PreviousSource,
+    EngineeringSourceRefV1 IncomingSource, string[] ChangedClauseIds, string[] ChangedSourceFields, string[] Fields,
+    string[] CriterionIds, string[] RelationIds, string Disposition);
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record RequirementDefinitionV1(EngineeringSourceRefV1 Source, string[] ClauseIds,
     string Interpretation, string ApplicableObject, string Necessity, string[] ClarificationQuestions,
     RequirementCriterionV1[] Criteria, RequirementRelationV1[] Relations,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] RequirementClarificationV1[]? Clarifications = null,
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] RequirementDecompositionV1? Decomposition = null);
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] RequirementDecompositionV1? Decomposition = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] RequirementSourceReviewV1[]? SourceReviews = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record RequirementCoverageEvidenceV1(EngineeringSourceRefV1 Child, string ChildClauseId, string Reason, string Scope,
     RequirementClauseTermsV1? Terms);

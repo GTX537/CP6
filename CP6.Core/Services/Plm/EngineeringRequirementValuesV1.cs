@@ -27,7 +27,7 @@ internal static class EngineeringRequirementValuesV1
             return;
         }
         if (origin?.Reference is not { } reference || reference.Id == Guid.Empty || !ValidDigest(reference.Digest)
-            || reference.Owner is not (ControlledDocumentValuesV1.Owner or FileContentBytesV1.Owner or OrderSourceReader.RequirementSourceOwner
+            || reference.Owner is not (ControlledDocumentValuesV1.Owner or FileContentBytesV1.Owner or OrderSourceReader.RequirementSourceOwner or EngineeringIntakeWireV1.SourceOwner
                 or EngineeringRequirementService.CrmActivityOrigin or EngineeringRequirementService.CrmOpportunityOrigin or EngineeringRequirementService.CrmAttachmentOrigin)
             || (reference.Owner == ControlledDocumentValuesV1.Owner ? origin.OccurrenceId is null || origin.OccurrenceId == Guid.Empty : origin.OccurrenceId is not null))
             throw Error("REQUIREMENT_ORIGIN_INVALID", 400);

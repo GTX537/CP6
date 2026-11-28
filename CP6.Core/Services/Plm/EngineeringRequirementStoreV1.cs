@@ -55,6 +55,60 @@ internal sealed class EngineeringRequirementStoreV1(CP6Context db)
         return new(db.CurrentTenantId,new(EngineeringRequirementValuesV1.Owner,id,v.Version,raw.Digest),v.Etag,selected==head.Revision,
             v.Body,v.CreatorId,v.ActorId,v.ParentVersion,v.Reason,v.RecordedAt,Encoding.UTF8.GetString(raw.Body),[]);
     }
+
+    // 只认来源重评所指的准确前后版。工程人员另行改绑或重新建档后，新判据沿用自己的依据。
+    internal async Task<Dictionary<string, HashSet<string>>> RemovedCriterionClauses(EngineeringRequirementSnapshotV1 version,
+        IEnumerable<RequirementCriterionV1> criteria, CancellationToken ct)
+    {
+        var removed = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
+        if (version.Body.Requirement?.SourceReviews is not { Length: > 0 } reviews) return removed;
+        var tracked = criteria.Select(c => c.Id).ToHashSet(StringComparer.Ordinal);
+        if (tracked.Count == 0) return removed;
+        var changes = reviews.Where(review => review.ChangedClauseIds.Length > 0 && review.CriterionIds.Any(tracked.Contains))
+            .ToDictionary(review => Revision(review.PreviousRequirement.Version));
+        if (changes.Count == 0) return removed;
+        tracked.IntersectWith(changes.Values.SelectMany(review => review.CriterionIds));
+        var oldest = changes.Keys.Min();
+        while (tracked.Count > 0 && version.ParentVersion is { } parent)
+        {
+            var revision = Revision(parent);
+            if (revision < oldest) break;
+            var previous = await Read(version.Reference.Id, revision, ct);
+            var before = previous.Body.Requirement!;
+            var after = version.Body.Requirement!;
+            changes.TryGetValue(revision, out var review);
+            if (review is not null && (review.PreviousRequirement != previous.Reference || review.PreviousSource != before.Source
+                || review.IncomingSource != after.Source)) throw Error("REQUIREMENT_REFERENCE_CHANGED", 412);
+            var oldCriteria = before.Criteria.ToDictionary(c => c.Id, StringComparer.Ordinal);
+            foreach (var criterion in after.Criteria.Where(c => tracked.Contains(c.Id)))
+            {
+                if (!oldCriteria.TryGetValue(criterion.Id, out var old))
+                {
+                    tracked.Remove(criterion.Id);
+                    continue;
+                }
+                var oldBasis = old.SourceClauseIds ?? [];
+                var currentBasis = criterion.SourceClauseIds ?? [];
+                if (oldBasis.SequenceEqual(currentBasis, StringComparer.Ordinal)) continue;
+                var lost = oldBasis.Except(currentBasis, StringComparer.Ordinal).ToArray();
+                var added = currentBasis.Except(oldBasis, StringComparer.Ordinal).Any();
+                if (lost.Length == 0 && !added) continue;
+                if (review is null || !review.CriterionIds.Contains(criterion.Id, StringComparer.Ordinal)
+                    || added
+                    || lost.Any(id => !review.ChangedClauseIds.Contains(id, StringComparer.Ordinal) || after.ClauseIds.Contains(id, StringComparer.Ordinal)))
+                {
+                    tracked.Remove(criterion.Id);
+                    continue;
+                }
+                if (!removed.TryGetValue(criterion.Id, out var binding))
+                    removed.Add(criterion.Id, binding = new HashSet<string>(StringComparer.Ordinal));
+                binding.UnionWith(lost);
+            }
+            version = previous;
+        }
+        return removed;
+    }
+
     internal async Task<EngineeringRequirementSnapshotV1> Append(EngineeringRequirementCommandV1 c,Guid actor,CancellationToken ct)
     {
         Transaction();var h=await Heads(db).SingleOrDefaultAsync(x=>x.Id==c.ObjectId,ct);long next;Guid creator;

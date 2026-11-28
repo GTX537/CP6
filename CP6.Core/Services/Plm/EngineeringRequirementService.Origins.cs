@@ -65,6 +65,12 @@ public sealed partial class EngineeringRequirementService
         EngineeringRequirementValuesV1.Origin(origin);
         if (origin.ActFile is not null) throw OriginUnavailable(CrmAttachmentOrigin);
         var reference = origin.Reference!;
+        if (reference.Owner == EngineeringIntakeWireV1.SourceOwner)
+        {
+            if (intakeOriginals is null) throw Error("ENGINEERING_INTAKE_SOURCE_UNPROVEN", 503);
+            var bytes = await intakeOriginals.ReadRequirementOriginAsync(access, reference, ct);
+            return new(bytes, "CRM 工程需求原件.json", true);
+        }
         if (reference.Owner == OrderSourceReader.RequirementSourceOwner)
         {
             if (sales is null) throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);
@@ -120,7 +126,7 @@ public sealed partial class EngineeringRequirementService
     private static bool QuotesMatch(RequirementOriginMaterial origin, RequirementClauseV1[] clauses)
     {
         if (clauses.Length == 0) return true;
-        if (origin.IsSales)
+        if (origin.IsStructuredJson)
         {
             using var document = JsonDocument.Parse(origin.Bytes);
             return clauses.All(clause => SalesValue(document.RootElement, clause.Locator) == clause.OriginalText);
@@ -181,7 +187,7 @@ public sealed partial class EngineeringRequirementService
         _ => "REQUIREMENT_ORIGIN_PENDING"
     }, 503);
 
-    private sealed record RequirementOriginMaterial(byte[] Bytes, string FileName, bool IsSales);
+    private sealed record RequirementOriginMaterial(byte[] Bytes, string FileName, bool IsStructuredJson);
 }
 
 public sealed record RequirementOriginalDownloadV1(byte[] Bytes, string FileName);

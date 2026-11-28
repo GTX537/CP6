@@ -1053,6 +1053,8 @@ builder.Services.AddScoped<CurrencyPolicyOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringProductOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRevisionOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRequirementService>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringIntakeOriginalsV1>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringIntakeContextService>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetService>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringIterationService>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.IterationCandidateService>();

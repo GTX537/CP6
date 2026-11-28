@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "baseline_id": "CP6-DEV-ROADMAP-20261011/R1",
-  "as_of": "2026-11-27",
+  "as_of": "2026-11-28",
   "scope": "125已接受设计目标的全量大任务计划与进度登记。247仅为修订运行场景；原模块验收需继续盘点。不是125目标实现已完成的证明。",
   "main_baseline_sha": "90ea752e9029d171e6a0307fcda06c66c3e04a69",
   "sources": [
@@ -23457,8 +23457,8 @@
       "delivery_evidence": null,
       "completion_audit": {
         "result": "OPEN_GAPS",
-        "reviewed_at": "2026-11-27T04:54:42.657108+00:00",
-        "report": "docs/development/evidence/WP05-13/DELIVERY.md",
+        "reviewed_at": "2026-11-28T06:40:59.853812+00:00",
+        "report": "docs/development/evidence/WP05-60/DELIVERY.md",
         "coverage_cards": [
           "WP05-13",
           "WP05-14",
@@ -23468,46 +23468,64 @@
         ],
         "original_cases_reviewed": 70,
         "required_revision_cases": 0,
-        "scope": "其中 25 项仅有本卡模拟观察，45 项未运行，完整逐项归属见本卡 DELIVERY。原 AC 状态沿基线，其他冻结、迭代、试制、正式用途与设计确认出口由 DELIVERY 所列责任卡承接。",
+        "scope": "PLM-REQ-01 的 70 项原 AC 全链均为 NOT_RUN，必需共享修订运行项 0。WP05-60 的 Main 受理提供者已完成卡级复核，CRM 实际源、消费和进展链按 WP03-26、WP03-27、WP05-61 接续。对应 19 项 HO 全链也为 NOT_RUN。89 项续办步骤和 19 张现有责任卡见 DELIVERY。",
         "gaps": [
           {
             "owner_task_id": "WP03-19",
             "source_cases": [
-              "AC-REQ-001",
               "AC-PLM-PG04-A001",
-              "AC-PLM-PG04-A002"
+              "AC-PLM-PG04-A002",
+              "AC-REQ-001"
             ],
-            "gap": "按真实 CRM 活动 Owner 和 ACT-FILE-REFERENCE/1 核当前权限、准确附件坐标及守护字节。已验证的附件草稿仍待真实宿主采用。"
+            "gap": "按真实 CRM 活动 Owner 和 ACT-FILE-REFERENCE/1 核当前授权、附件坐标及守护字节。WP03-26 按真实 OPP Requirement 及商机版本完成 H15–H17，并核 CRM 本地冲突门。工程源原键回读证据见 WP05-60。"
           },
           {
             "owner_task_id": "WP05-14",
             "source_cases": [
+              "AC-PLM-PG03-A001",
+              "AC-PLM-PG03-A002",
               "AC-PLM-PG03-A005",
               "AC-PLM-PG03-A006",
+              "AC-PLM-PG04-A009",
+              "AC-PLM-PG04-A010",
+              "AC-PLM-PG04-A011",
+              "AC-PLM-PG04-A012",
               "AC-PLM-PG04-A013",
               "AC-PLM-PG04-A014",
+              "AC-PLM-PG04-A015",
               "AC-PLM-PG04-A016",
               "AC-PLM-PG04-A017",
               "AC-PLM-PG04-A018",
+              "AC-REQ-002",
+              "AC-REQ-009",
+              "AC-REQ-010",
+              "AC-REQ-007",
               "AC-REQ-008",
+              "AC-REQ-015",
               "AC-REQ-016"
             ],
-            "gap": "固定需求集、成员及判据，核当前来源和批准范围，记录正式裁决、撤销影响、真实下游接收与旧版保留。"
+            "gap": "对现有准确 Main 需求原件和后继重评证据，核真实原渠道澄清、正式来源裁决、集合成员、条件、采用及撤销影响。冻结、迭代和候选工程的准确版本采用按 DELIVERY 分项归 WP05-12、WP05-18、WP05-19、WP05-20。"
           },
           {
             "owner_task_id": "WP05-15",
             "source_cases": [
+              "AC-PLM-PG03-A003",
+              "AC-PLM-PG03-A004",
               "AC-PLM-PG03-A007",
               "AC-PLM-PG03-A008",
               "AC-PLM-FB01-007",
               "AC-PLM-FB01-008",
               "AC-PLM-FB01-009",
+              "AC-PLM-PG04-A003",
+              "AC-PLM-PG04-A004",
               "AC-PLM-PG04-A019",
               "AC-PLM-PG04-A020",
               "AC-PLM-PG04-A021",
               "AC-PLM-PG04-A022",
               "AC-PLM-PG04-A023",
               "AC-PLM-PG04-A024",
+              "AC-REQ-003",
+              "AC-REQ-004",
               "AC-REQ-011",
               "AC-REQ-012",
               "AC-REQ-013",
@@ -23515,21 +23533,29 @@
               "AC-PLM-FB02-027",
               "AC-PLM-FB02-028"
             ],
-            "gap": "核 ITER/VER 实际接收与执行，按同目标逐必需条件复核准确证据、适用性、专业结论和满足性签署，保留硬失败与缺项。正式用途取 REL 准确授权。"
+            "gap": "完成真实 ITER/VER 接收与执行、必需条件分解和满足性签署，保留失败与缺项。WP05-23、WP05-24、WP05-28、WP05-32、WP05-33、WP05-42 分别按 DELIVERY 联验试制、设计确认、现场证据、用途许可及执行，Main 202 只确认受理。"
           },
           {
             "owner_task_id": "WP05-22",
             "source_cases": [
+              "AC-PLM-FB01-003",
+              "AC-PLM-PG04-A005",
+              "AC-PLM-PG04-A006",
+              "AC-PLM-PG04-A007",
+              "AC-PLM-PG04-A008",
+              "AC-REQ-005",
+              "AC-REQ-006",
               "AC-PLM-FB02-025",
               "AC-PLM-FB02-026",
               "AC-PLM-FB02-029",
-              "AC-PLM-FB02-030"
+              "AC-PLM-FB02-030",
+              "AC-PLM-FB02-053"
             ],
-            "gap": "核 VER 计划的验证目标、受测对象及语义词典接入。活动计划使用当前可用词条，历史计划按所固定的语义版回读。建议另立 VER 语义词典补充卡，待总控按补充卡流程登记。"
+            "gap": "在 VER 计划验证准确可评条件、原单位、受测对象与所固定的旧版语义词典。专业证据和设计确认继续由 WP05-24 联验。"
           },
           {
             "owner_task_id": "WP05-61",
-            "gap": "沿 WP05-60 的工程自然槽与权限前件，核真实受理、进展、退回与更正事实及当前目标范围。"
+            "gap": "从 Main 实际工程来源和原终态产生 Intake／Progress，验证三用途 readiness、授权纠错与旧源晚更正。WP03-26 负责真实 H15–H17 发起和本地冲突门，WP03-27 负责原进展、STOP／CORRECT 与冲突消费。AC-HO-046–064 全链按 DELIVERY 的 CRM HO 表逐项核验，涉及 WP03-20、WP04-13、WP05-32、WP05-42 的输入继续按原卡完成。"
           }
         ]
       }
@@ -215284,18 +215310,113 @@
         "file:Main:CP6.Core/Services/Wf/ApprovalDispatcher.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP05.md",
       "card_anchor": "wp05-60",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "CP6-EXEC",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/wp05-60",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-27T18:32:26.587931+00:00",
+        "baseline_sha": "40defafc4a36d1aa4dae553a2f6ed5102d78e3fb",
+        "entry_evidence": "docs/development/evidence/WP05-60/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/WP05-60/DELIVERY.md",
+        "dispatch_scope": "DEV-1 完成 Main 工程自然 Case、M02 NextContext 与 M03 同事务最终门、M04 原键回执及实现侧 PostgreSQL 验证。",
+        "worker_start_received": true
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/WP05-60/DELIVERY.md",
+          "source_sha": "22069080c9bd9aa182cdba6e3737cec82a486d73",
+          "observed_at": "2026-11-28T04:26:32.255794+00:00",
+          "environment": "执行侧 DEV-1，Windows、.NET SDK 10.0.404 Release、隔离 PostgreSQL 18.6、实际 Main REQ 与 Program HTTP、SIMULATED 来源及 Node 20.19.0。",
+          "command": "同树锁定还原和 Release 构建，按 D:/CP6-test-artifacts/WP05-60/exec-20261128T030616577Z-r2/final-22069080c9bd/verified-index.json 的过滤执行六组 .NET，随后全量 Vitest、vue-tsc --build --force 和 Vite 构建。",
+          "result": "PASS",
+          "scope": "产品树 aeba5ba36f1623ef40245c1b6d346c8663d2bb2f。R2 同树 .NET 六组 399/399、0 失败、0 跳过，含 v1–v9 后继场景和 R1 两个回归。Vitest 3568/3571，三个文件在 origin/main 复现，类型检查和生产构建通过。六份 TRX 摘要见验证索引。"
+        },
+        {
+          "path": "docs/development/evidence/WP05-60/DELIVERY.md",
+          "source_sha": "22069080c9bd9aa182cdba6e3737cec82a486d73",
+          "observed_at": "2026-11-28T06:29:50.920044+00:00",
+          "environment": "总控 R3 独立复核，Windows、.NET SDK 10.0.404 Release、隔离 PostgreSQL 18.6、实际 Main REQ 与 Program HTTP、SIMULATED 来源及 Node 20.19.0。",
+          "command": "同树锁定还原和 Release 构建，按 D:/CP6-test-artifacts/WP05-60/coord-verify-20261128T043009771Z-r3/results.json 的过滤执行六组 .NET，随后全量 Vitest、vue-tsc --build --force 和 Vite 构建。",
+          "result": "PASS",
+          "scope": "产品树 aeba5ba36f1623ef40245c1b6d346c8663d2bb2f。阻塞 0，独立复跑六组 .NET 399/399、0 失败、0 跳过。v1–v9 同例复跑和额外 14 版组合、P2 的 44 项字段检查、原键与写者代次竞争及隔离库前滚均通过。Vitest 3568/3571，三文件基线同败，类型检查和生产构建通过。独立 TRX 摘要见 DELIVERY。"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/WP05-60/DELIVERY.md",
+        "source_sha": "22069080c9bd9aa182cdba6e3737cec82a486d73",
+        "remote_main_sha": "22069080c9bd9aa182cdba6e3737cec82a486d73",
+        "pr_url": "https://github.com/GTX537/CP6/pull/1343",
+        "scope": "Main 工程自然 Case、M02/M03 受理、M04 原键及准确工程后继。新增 PostgreSQL 前滚迁移 20261127190000_EngineeringIntakeV1，已在隔离库验证。remote_main_sha 固定待核的产品祖先。卡级 DONE 在 #1343 合入受保护 main 且核对远端包含已验收产品提交与本次台账后生效，实际合并 SHA 以 PR 回执为准。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "card_execution": {
+        "result": "DONE",
+        "report": "docs/development/evidence/WP05-60/DELIVERY.md",
+        "started_at": "2026-11-27T18:32:26.587931+00:00",
+        "official_started_at": "2026-11-27T18:32:26.587931+00:00",
+        "technical_verified_at": "2026-11-28T04:26:32.255794+00:00",
+        "verified_at": "2026-11-28T06:29:50.920044+00:00",
+        "ledger_candidate_at": "2026-11-28T06:40:59.853812+00:00",
+        "effective_seconds": 20736.187,
+        "accounting_evidence": {
+          "path": "docs/development/evidence/WP05-60/DELIVERY.md#有效时间与预算",
+          "scope": "执行侧初轮 9000.746 秒、R1 6608.320 秒、R2 5127.121 秒，累计 20736.187 秒。独立复核指出工程后继事实保全、不透明 Key 和后继重评范围，返工与验证计入各轮。M 预算 14400 秒，超预算 6336.187 秒计入缓冲，距 21600 秒拆分线 863.813 秒。本卡新增拆分 0。"
+        },
+        "size": "M",
+        "budget_seconds": 14400,
+        "mandatory_split_seconds": 21600,
+        "new_splits": [],
+        "strict_prerequisites": [
+          "S01-01",
+          "S01-02",
+          "S01-07",
+          "S01-08",
+          "S01-09",
+          "S02-00",
+          "WP02-01",
+          "WP02-02",
+          "WP02-03",
+          "WP02-04",
+          "WP02-05",
+          "WP02-05b",
+          "WP02-06",
+          "WP02-07",
+          "WP02-09",
+          "WP02-09b",
+          "WP02-10",
+          "WP02-13",
+          "WP02-13b",
+          "WP02-14",
+          "WP02-14b",
+          "WP02-15",
+          "WP02-22",
+          "WP03-05",
+          "WP03-08",
+          "WP03-09",
+          "WP03-10",
+          "WP03-17",
+          "WP03-21",
+          "WP04-01",
+          "WP04-02",
+          "WP04-32",
+          "WP04-33",
+          "WP05-02",
+          "WP05-13",
+          "WP11-01",
+          "WP11-65"
+        ],
+        "new_product_execution": true
+      }
     },
     {
       "id": "WP05-61",
@@ -307207,7 +307328,7 @@
       "total_hours": 2503.55,
       "phase0_hours": 12,
       "started_at": "2026-11-17T11:43:54.964043+00:00",
-      "effective_seconds": 321006.123,
+      "effective_seconds": 341742.31,
       "closed_cards": [
         "WP02-03",
         "WP02-10",
@@ -307286,7 +307407,8 @@
         "WP02-32",
         "WP05-03",
         "WP05-13",
-        "WP05-08"
+        "WP05-08",
+        "WP05-60"
       ],
       "closed_targets": [
         "OA-DEF-01",
@@ -307696,7 +307818,7 @@
         "wait_seconds": 0.0,
         "remote_main_sha": "b2f3cb9f341f6e15a6cbc31dd3b3d721ec947be8"
       },
-      "buffer_used_seconds": 19698.328,
+      "buffer_used_seconds": 26034.515,
       "stage_a_completion": {
         "result": "COMPLETE",
         "candidate_at": "2026-11-18T21:40:01.981651-05:00",
