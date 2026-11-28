@@ -40,7 +40,7 @@ public sealed partial class EngineeringIntakeContextService
         else
         {
             var prior = current.Adopted ?? throw OriginalUnavailable();
-            var successor = ReviseDefinition(target, prior.Original, request.Source, sourceSnapshot.Reference);
+            var successor = await ReviseDefinition(native, target, prior.Original, request.Source, sourceSnapshot.Reference, ct);
             var edit = await access.ActionAsync(OperationsOwnerV1.EngineeringRequirement, "edit", ct);
             var revise = new EngineeringRequirementCommandV1
             {
@@ -54,8 +54,9 @@ public sealed partial class EngineeringIntakeContextService
         return (Reference(saved), sourceSnapshot.Reference.Id, CommercialWireV1.Revision(sourceSnapshot.Reference.Version));
     }
 
-    private static RequirementDefinitionV1 ReviseDefinition(EngineeringRequirementSnapshotV1 target, EngineeringIntakeSourceV1 adopted,
-        EngineeringIntakeSourceV1 incoming, EngineeringSourceRefV1 source)
+    private static async Task<RequirementDefinitionV1> ReviseDefinition(EngineeringRequirementStoreV1 native,
+        EngineeringRequirementSnapshotV1 target, EngineeringIntakeSourceV1 adopted, EngineeringIntakeSourceV1 incoming,
+        EngineeringSourceRefV1 source, CancellationToken ct)
     {
         var previous = target.Body.Requirement ?? throw OriginalUnavailable();
         var before = SourceClauses(adopted);
@@ -76,7 +77,11 @@ public sealed partial class EngineeringIntakeContextService
         var scopeChanged = contextChanged || previous.ClauseIds.Any(changed.Contains) || clauseIds.Any(changed.Contains);
 
         bool Affected(IEnumerable<string>? basis) => contextChanged || (basis?.Any() == true ? basis.Any(changed.Contains) : scopeChanged);
-        var criterionIds = previous.Criteria.Where(c => Affected(c.SourceClauseIds)).Select(c => c.Id).ToArray();
+        // 当前依据已命中的判据无需回查。被删除的旧依据只用于判断影响，现行绑定仍取当前草稿。
+        var historical = changed.Count == 0 || contextChanged ? [] : await native.RemovedCriterionClauses(target,
+            previous.Criteria.Where(c => c.SourceClauseIds?.Any(changed.Contains) != true), ct);
+        var criterionIds = previous.Criteria.Where(c => historical.TryGetValue(c.Id, out var lost)
+            ? lost.Any(changed.Contains) : Affected(c.SourceClauseIds)).Select(c => c.Id).ToArray();
         var relationIds = previous.Relations.Where(r => Affected(r.Coverage?.Select(link => link.ChildClauseId))).Select(r => r.Id).ToArray();
         var fields = new List<string>();
         if (scopeChanged)

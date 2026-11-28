@@ -97,8 +97,12 @@ public sealed partial class EngineeringRequirementService(CP6Context db,Operatio
             if(!source.IsCurrent)missing.Add("SOURCE_VERSION_CHANGED:"+v.Reference.Id);
             if(source.Body.Source!.Kind=="UNRESOLVED")missing.Add("SOURCE_UNRESOLVED:"+v.Reference.Id);
             if(source.Body.Source.Kind=="OWNER_ORIGINAL")
-                foreach(var criterion in r.Criteria.Where(c=>c.SourceClauseIds is not { Length: >0 }))
+            {
+                var empty = r.Criteria.Where(c => c.SourceClauseIds is not { Length: > 0 }).ToArray();
+                var historical = await s.RemovedCriterionClauses(v, empty, ct);
+                foreach (var criterion in empty.Where(c => !historical.ContainsKey(c.Id)))
                     missing.Add("CRITERION_SOURCE_BASIS_REQUIRED:"+criterion.Id);
+            }
             foreach (var question in r.Clarifications ?? [])
             {
                 var questionSource=await Exact(a,s,question.Source,"SOURCE",ct);

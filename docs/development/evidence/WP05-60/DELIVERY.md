@@ -150,6 +150,16 @@ Main 线 `DEV-1` 由 `CP6-EXEC` 领取，基线为 `40defafc4a36d1aa4dae553a2f6e
 
 R1 正式候选的六组 .NET 使用 .NET 10.0.404 Release 和隔离 PostgreSQL 18。前端从最终候选精确文件运行完整 Vitest、`vue-tsc --build --force` 和 Vite 构建。各组原始结果、前端基线对照及停机回读归档至 [R1 验证原件](<D:/CP6-test-artifacts/WP05-60/exec-20261127T232158434Z-r1/>)。
 
+## R2 后继判据重评范围
+
+条款删除时，现行判据只保留仍有效的绑定。重评记录固定准确工程前版及前后来源，旧工程原件保留被删条款的绑定。后继在同一租户和工程对象的版本链上回读这些原件。只有该判据在来源重评中确实失去的条款才计入历史依据。来源仅前移或交换行顺序时，已有未决记录原样保留。
+
+工程人员重新绑定判据后，后续评估以新绑定为准。建档即无绑定（`null` 或 `[]`）的判据沿用原合同，需求范围变化会触发重评，并保留 `CRITERION_SOURCE_BASIS_REQUIRED`。因删除条款才变空的判据则按其历史依据判断影响，原重评保留 `REVIEW_REQUIRED`。该条款再次出现会引起新的重评，当前草稿的绑定仍由工程人员决定。
+
+PostgreSQL 用例 `Wp0560_successive_clause_changes_keep_pending_reviews_and_scope_each_new_criterion_review` 逐版核对工程 v1–v9 的新增名单、原未决项、旧需求和来源原文。v7 删除 A 后，v8 只改 B 的数量，仅新增 C_B、C_AB，v9 仅前移。v10–v11 另外核对工程改绑、真正无绑定及 A 再出现。 [用例](../../../../CP6.Tests/Erp/EngineeringIntakeCriterionScopePostgreSqlTests.cs) · [总控独立复核](</D:/CP6-test-artifacts/WP05-60/coord-verify-20261128T011246811Z-r2/COORD-VERIFY.md>)
+
+本轮证据目录收录父提交复现、修复后定向结果和最终候选的六组 TRX。前端完整 Vitest、`vue-tsc --build --force`、Vite 构建和主线失败项对照均在 .NET 结束后运行。正式结果见候选子目录内的 `verified-index.json`，本地回收记录见 `workspace-readback.json`。 [R2 验证原件](</D:/CP6-test-artifacts/WP05-60/exec-20261128T030616577Z-r2/>)
+
 ## 交接
 
 本地候选留在 `codex/wp05-60`，DEV-1 继续登记给 `CP6:WP05-60`，交总控复核及远端处置。精确候选、完整差异、工作流检查、隔离 PostgreSQL 停机与工作区回读随正式证据归档。 [回读和差异](</D:/CP6-test-artifacts/WP05-60/exec-20261127T183833396Z/>)
