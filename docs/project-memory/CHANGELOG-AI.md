@@ -3,6 +3,7 @@
 <!-- cp6:roadmap -->
 ## 单卡交付记录
 
+- [WP05-60 Main工程自然Case NextContext与M02 M03受理门](../development/evidence/WP05-60/DELIVERY.md)（DONE），核对时间 `2026-11-28T06:29:50.920044+00:00`。
 - [WP05-08 版本化工艺操作与工具规格引用](../development/evidence/WP05-08/DELIVERY.md)（DONE），核对时间 `2026-11-27T18:11:34.151651+00:00`。
 - [WP05-13 工程需求来源、分解与可评价判据](../development/evidence/WP05-13/DELIVERY.md)（DONE），核对时间 `2026-11-27T04:41:59.2995349+00:00`。
 - [WP05-03 工程修订、工作快照与组成候选](../development/evidence/WP05-03/DELIVERY.md)（DONE），核对时间 `2026-11-26T21:49:27.736715+00:00`。

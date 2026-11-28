@@ -1,14 +1,14 @@
 # 细分任务进度
 
-台账日期：2026-11-27。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
+台账日期：2026-11-28。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 395 项，已交付 118 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 395 项，已交付 119 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)。Main／CRM 双线并行，每线一次一卡。核对完整前置后选择下一卡。[双线治理决定](decisions/DECISION-20261126-two-lanes.md)
 
 原 375 卡及其全部出口保留；已登记 13 次拆卡。拆后原卡 DONE 仅表示已验证部分，完整前置和目标仍等待全部余卡 DONE。
 
-原号 DONE 101/375；完整 DONE 98/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 7/7，沿用原卡池内划拨。
+原号 DONE 102/375；完整 DONE 99/375。完整 DONE 要求原号及其全部余卡 DONE；余卡不重复计作原号。获批补正完整 DONE 7/7，沿用原卡池内划拨。
 
 ## WP01 现有实现与设计对照
 
@@ -201,7 +201,7 @@
 | [WP05-40 生命周期停用、继任采用与最后活动责任](../../docs/development/task-plans/WP05.md#wp05-40) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP05-25, WP05-34, WP05-39, WP06-03, WP07-05, WP08-15, WP10-05, WP10-36 | CODE / L | 未领取 |
 | [WP05-41 旧版支持、生命周期恢复与受控归档](../../docs/development/task-plans/WP05.md#wp05-41) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP02-14, WP02-15, WP05-17, WP05-31, WP05-36, WP05-40 | CODE / M | 未领取 |
 | [WP05-42 REL专业后验条件采用与正式用途授权](../../docs/development/task-plans/WP05.md#wp05-42) | Main | 待安排 | S01-07, S02-00, WP02-03, WP02-10, WP02-13, WP05-24, WP05-32, WP09-06 | CODE / M | 未领取 |
-| [WP05-60 Main工程自然Case NextContext与M02 M03受理门](../../docs/development/task-plans/WP05.md#wp05-60) | Main | 待安排 | WP02-10, WP02-13, WP02-22, WP05-13 | CODE / M | 未领取 |
+| [WP05-60 Main工程自然Case NextContext与M02 M03受理门](../../docs/development/task-plans/WP05.md#wp05-60) | Main | 已交付 | WP02-10, WP02-13, WP02-22, WP05-13 | CODE / M | CP6-EXEC |
 | [WP05-61 工程Intake Progress规范流与精确纠错提供者](../../docs/development/task-plans/WP05.md#wp05-61) | Main | 待安排 | WP02-10, WP02-12, WP02-13, WP05-20, WP05-24, WP05-32, WP05-60 | CODE / M | 未领取 |
 
 ## WP06 计划计算与决策

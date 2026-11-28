@@ -160,6 +160,35 @@ PostgreSQL 用例 `Wp0560_successive_clause_changes_keep_pending_reviews_and_sco
 
 本轮证据目录收录父提交复现、修复后定向结果和最终候选的六组 TRX。前端完整 Vitest、`vue-tsc --build --force`、Vite 构建和主线失败项对照均在 .NET 结束后运行。正式结果见候选子目录内的 `verified-index.json`，本地回收记录见 `workspace-readback.json`。 [R2 验证原件](</D:/CP6-test-artifacts/WP05-60/exec-20261128T030616577Z-r2/>)
 
+## 总控独立复核与同 PR 生效
+
+- R1 `FAIL`。工程后继遗漏已登记的事实，M03 将 CRM 工程编号和修订限制为 UUID 和正整数。R1 返工保留工程事实并按合同解析不透明 Key。 [R1 独立复核](<D:/CP6-test-artifacts/WP05-60/coord-verify-20261127T213111284Z/COORD-VERIFY.md>)
+- R2 `FAIL`。P2 已通过。v7 删除 A 后，v8 只改 B 时仍重复列入只绑定 A 的 C_A。R2 返工按当前及历史条款确定受影响的判据。 [R2 独立复核](<D:/CP6-test-artifacts/WP05-60/coord-verify-20261128T011246811Z-r2/COORD-VERIFY.md>)
+- R3 `PASS`，阻塞 0。总控在产品提交 `22069080c9bd9aa182cdba6e3737cec82a486d73`、树 `aeba5ba36f1623ef40245c1b6d346c8663d2bb2f` 上原样复跑 v1–v9，并通过额外 14 版组合、P2 字段检查、前滚及两项并发验证。执行侧和独立复核各通过 .NET 399/399，零跳过。两侧 Vitest 均为 3568/3571，三个失败文件在主线复现，`vue-tsc --build --force` 和 Vite 构建均通过。 [R3 独立复核](<D:/CP6-test-artifacts/WP05-60/coord-verify-20261128T043009771Z-r3/COORD-VERIFY.md>) · [R3 验证索引](<D:/CP6-test-artifacts/WP05-60/coord-verify-20261128T043009771Z-r3/results.json>) · [执行侧验证索引](<D:/CP6-test-artifacts/WP05-60/exec-20261128T030616577Z-r2/final-22069080c9bd/verified-index.json>)
+
+| R3 分组 | 通过/执行 | TRX SHA-256 |
+| --- | ---: | --- |
+| WP05-60 定向 | 16/16 | `e2851ce60294c0f68645cad034d7a806fa009c1e13c77ba44447d6c3408ebfec` [TRX](<D:/CP6-test-artifacts/WP05-60/coord-verify-20261128T043009771Z-r3/intake/results.trx>) |
+| WP05-13 需求 | 103/103 | `bfeafce357d14274361c2e074e14edb1998fce64809663cbc51c5daa891fcfde` [TRX](<D:/CP6-test-artifacts/WP05-60/coord-verify-20261128T043009771Z-r3/requirements/results.trx>) |
+| WP05-02 产品 | 95/95 | `700a2bc859d61529f06a2221dfe874b916b373aa88190fb37e6edf6d2cb960f6` [TRX](<D:/CP6-test-artifacts/WP05-60/coord-verify-20261128T043009771Z-r3/wp0502/results.trx>) |
+| WP05-03 工程 | 44/44 | `fd756ea3849b6f48c351aa803484de3339ac6732e89635ec8627653d489090d9` [TRX](<D:/CP6-test-artifacts/WP05-60/coord-verify-20261128T043009771Z-r3/engineering/results.trx>) |
+| WP05-08 工艺 | 69/69 | `2a9a946d17a102cf4f96af350d9e5b3f1fade3be9feb38e91952dd726f2df5f0` [TRX](<D:/CP6-test-artifacts/WP05-60/coord-verify-20261128T043009771Z-r3/routing/results.trx>) |
+| 审批与工作流 | 72/72 | `7f4bee25a3ff4f33e8b23115ce48fc51fde576c1caacc827151196c279d00280` [TRX](<D:/CP6-test-artifacts/WP05-60/coord-verify-20261128T043009771Z-r3/workflow/results.trx>) |
+
+总控已推送产品候选并登记 Draft PR #1343。WP05-60 的卡级 `DONE` 在该 PR 合入受保护的 `main` 并核对远端包含已验收产品提交和本次台账后生效。`delivery_evidence.remote_main_sha` 固定待核的产品祖先，实际合并 SHA 以 PR 回执为准。 [PR #1343](https://github.com/GTX537/CP6/pull/1343) · [台账](../../roadmap.json)
+
+`PLM-REQ-01` 保持 `PLANNED`，完成审计为 `OPEN_GAPS`。70 项 PLM 原 AC 和 19 项 HO 全链均为 `NOT_RUN`。WP03-26 承接真实 CRM H15–H17 发起及本地冲突门，WP03-27 承接进展和纠错消费，WP05-61 承接 Main 实际来源、进展与授权纠错。WP05-14 承接正式裁决和需求集，WP03-19 承接真实 ACT/FILE 来源，覆盖签署、VER 和用途确认由前文表格所列责任卡完成。 [PLM 原 AC 剩余出口](#plm-req-01-原-ac-剩余出口) · [CRM HO 工程链联验](#crm-ho-工程链联验)
+
+## 有效时间与预算
+
+| 执行轮次 | 有效秒 | 原件 |
+| --- | ---: | --- |
+| 初轮 | 9,000.746 | [回执](<D:/CP6-test-artifacts/WP05-60/dispatch-20261127/codex-last.txt>) · [工作区回读](<D:/CP6-test-artifacts/WP05-60/exec-20261127T183833396Z/final-9b66b7487c21/workspace-readback.json>) |
+| R1 | 6,608.320 | [回执](<D:/CP6-test-artifacts/WP05-60/rework1-dispatch-20261127/codex-last.txt>) · [工作区回读](<D:/CP6-test-artifacts/WP05-60/exec-20261127T232158434Z-r1/final-c014eb49b48f/workspace-readback.json>) |
+| R2 | 5,127.121 | [回执](<D:/CP6-test-artifacts/WP05-60/rework2-dispatch-20261128/codex-last.txt>) · [工作区回读](<D:/CP6-test-artifacts/WP05-60/exec-20261128T030616577Z-r2/final-22069080c9bd/workspace-readback.json>) |
+
+执行侧累计 **20,736.187 秒**。初轮后的独立复核要求补齐工程后继事实与不透明 Key，后续复核要求收窄重评范围。返工与验证时间已计入各轮。M 预算 14,400 秒，超出预算 **6,336.187 秒**计入缓冲，距 21,600 秒拆分线 863.813 秒。本卡新增拆分 0，计划累计 341,742.310 秒，缓冲累计消耗 26,034.515 秒。四项直接前置递归展开并去重后共 37 项（含拆分余卡），均已核对为 `DONE`。 [工时与前置核对](<D:/CP6-test-artifacts/WP05-60/ledger-20261128T063653387Z/input-proof.json>)
+
 ## 交接
 
-本地候选留在 `codex/wp05-60`，DEV-1 继续登记给 `CP6:WP05-60`，交总控复核及远端处置。精确候选、完整差异、工作流检查、隔离 PostgreSQL 停机与工作区回读随正式证据归档。 [回读和差异](</D:/CP6-test-artifacts/WP05-60/exec-20261127T183833396Z/>)
+DEV-1 继续登记 `CP6:WP05-60`，`codex/wp05-60` 关联 Draft PR #1343。执行侧 R2 的精确候选、完整差异、工作流检查、隔离库停机与工作区回读已归档。 [产品候选回读](<D:/CP6-test-artifacts/WP05-60/exec-20261128T030616577Z-r2/final-22069080c9bd/workspace-readback.json>) · [PR #1343](https://github.com/GTX537/CP6/pull/1343)
